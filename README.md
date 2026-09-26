@@ -118,3 +118,37 @@ La aplicación está concebida para el **aprendizaje general del japonés**, uti
 3. **Hiragana**: Escribe fonéticamente (ej. `arigatou` → `ありがとう`).
 4. **Kanji**: Presiona la `Barra Espaciadora` sobre la palabra en Hiragana para seleccionar el kanji deseado y pulsa `Enter`.
 5. **Katakana**: Escribe la palabra y pulsa `F7` o la barra espaciadora.
+
+---
+
+## ☁️ Despliegue en Vercel y Git
+
+El repositorio Git ya ha sido inicializado con soporte para **Git LFS** (para gestionar libros grandes sin límites de GitHub) y cuenta con `vercel.json` y `next.config.mjs` optimizados.
+
+### Opción A: Despliegue mediante GitHub (Recomendado)
+
+1. **Crear un repositorio vacío en GitHub** (ej. `nihongo-master`).
+2. **Vincular y subir tu código**:
+   ```bash
+   git remote add origin https://github.com/TU_USUARIO/nihongo-master.git
+   git branch -M main
+   git push -u origin main
+   ```
+3. **Conectar a Vercel**:
+   - Entra en [vercel.com](https://vercel.com) e inicia sesión.
+   - Haz clic en **«Add New...» → «Project»**.
+   - Selecciona el repositorio `nihongo-master` e impórtalo.
+   - En **Settings → Git**, asegúrate de que **Git Large File Storage (LFS)** esté activado (*Enabled*).
+   - Haz clic en **«Deploy»**.
+
+### Opción B: Despliegue directo mediante Vercel CLI
+
+Si tienes cuenta de Vercel y prefieres desplegar desde la terminal:
+```bash
+npx vercel
+```
+Sigue las instrucciones en pantalla para iniciar sesión y vincular el proyecto. Para el despliegue final en producción ejecuta:
+```bash
+npx vercel --prod
+```
+
