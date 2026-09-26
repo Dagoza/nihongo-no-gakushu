@@ -1,0 +1,34 @@
+[
+  {
+    "page": 1,
+    "text": "Hello /\nGood afternoon Good morning こんにちは\nおはよう\nThank you Excuse me /\nI'm sorry\nありがとう\nすみません\nGood evening こんばんは\nPlease おねがいします\nGoodbye\nさようなら\nI don’t understand\nわかりません"
+  },
+  {
+    "page": 2,
+    "text": "One いち\nFive ご\nTwo に\nSix ろく\nThree さん\nSeven なな\nFour\nよん\nEight\nはち"
+  },
+  {
+    "page": 3,
+    "text": "To eat たべる\nTo see みる\nTo drink のむ\nTo ask / listen\nきく\nTo sleep ねる\nTo be\n(for inanimate objects)\nある\nTo speak\nはなす\nTo be\n(for animate objects)\nいる"
+  },
+  {
+    "page": 4,
+    "text": "Egg たまご\nWater みず\nFish さかな\nTea おちゃ\nMeat にく\nApple りんご\nRice\nごはん\nVegetables\nやさい"
+  },
+  {
+    "page": 5,
+    "text": "House いえ\nMountain やま\nStore みせ\nRoom へや\nPark こうえん\nStation えき\nTokyo\nにほん\nSea\nうみ"
+  },
+  {
+    "page": 6,
+    "text": "Red あか\nBlack くろ\nBlue あお\nWhite しろ\nGreen みどり\nPurple むらさき\nYellow\nきいろ\nRainbow\nにじ"
+  },
+  {
+    "page": 7,
+    "text": "Mom おかあさん\nOlderBrother おにいさん\nDad おとうさん\nYounger Brother おとうと\nGrandma おばあさん\nOlder Sister おねえさん\nGrandpa\nおじいさん\nYounger Sister\nいもうと"
+  },
+  {
+    "page": 8,
+    "text": "Happy うれしい\nBoring つまらない\nSad かなしい\nInteresting おもしろい\nFun たのしい\nBusy いそがしい\nLonely\nさびしい\nSea\nねむい"
+  }
+]

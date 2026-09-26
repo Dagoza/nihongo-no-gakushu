@@ -1,0 +1,1319 @@
+[
+  {
+    "id": "v_1",
+    "kanji": "こんにちは",
+    "kana": "こんにちは",
+    "meaning_es": "Hola / Buenas tardes",
+    "meaning_en": "Hello / Good afternoon",
+    "category": "Saludos y Cortesía (saludo)",
+    "level": "N5"
+  },
+  {
+    "id": "v_2",
+    "kanji": "おはよう",
+    "kana": "おはよう",
+    "meaning_es": "Buenos días",
+    "meaning_en": "Good morning",
+    "category": "Saludos y Cortesía (saludo)",
+    "level": "N5"
+  },
+  {
+    "id": "v_3",
+    "kanji": "ありがとう",
+    "kana": "ありがとう",
+    "meaning_es": "Gracias",
+    "meaning_en": "Thank you",
+    "category": "Saludos y Cortesía (cortesía)",
+    "level": "N5"
+  },
+  {
+    "id": "v_4",
+    "kanji": "すみません",
+    "kana": "すみません",
+    "meaning_es": "Disculpe / Lo siento",
+    "meaning_en": "Excuse me / I'm sorry",
+    "category": "Saludos y Cortesía (cortesía)",
+    "level": "N5"
+  },
+  {
+    "id": "v_5",
+    "kanji": "こんばんは",
+    "kana": "こんばんは",
+    "meaning_es": "Buenas noches",
+    "meaning_en": "Good evening",
+    "category": "Saludos y Cortesía (saludo)",
+    "level": "N5"
+  },
+  {
+    "id": "v_6",
+    "kanji": "おねがいします",
+    "kana": "おねがいします",
+    "meaning_es": "Por favor",
+    "meaning_en": "Please",
+    "category": "Saludos y Cortesía (cortesía)",
+    "level": "N5"
+  },
+  {
+    "id": "v_7",
+    "kanji": "さようなら",
+    "kana": "さようなら",
+    "meaning_es": "Adiós",
+    "meaning_en": "Goodbye",
+    "category": "Saludos y Cortesía (saludo)",
+    "level": "N5"
+  },
+  {
+    "id": "v_8",
+    "kanji": "わかりません",
+    "kana": "わかりません",
+    "meaning_es": "No entiendo",
+    "meaning_en": "I don't understand",
+    "category": "Saludos y Cortesía (frase)",
+    "level": "N5"
+  },
+  {
+    "id": "v_9",
+    "kanji": "一",
+    "kana": "いち",
+    "meaning_es": "uno",
+    "meaning_en": "one",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_10",
+    "kanji": "二",
+    "kana": "に",
+    "meaning_es": "dos",
+    "meaning_en": "two",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_11",
+    "kanji": "三",
+    "kana": "さん",
+    "meaning_es": "tres",
+    "meaning_en": "three",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_12",
+    "kanji": "四",
+    "kana": "よん",
+    "meaning_es": "cuatro",
+    "meaning_en": "four",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_13",
+    "kanji": "五",
+    "kana": "ご",
+    "meaning_es": "cinco",
+    "meaning_en": "five",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_14",
+    "kanji": "六",
+    "kana": "ろく",
+    "meaning_es": "seis",
+    "meaning_en": "six",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_15",
+    "kanji": "七",
+    "kana": "なな",
+    "meaning_es": "siete",
+    "meaning_en": "seven",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_16",
+    "kanji": "八",
+    "kana": "はち",
+    "meaning_es": "ocho",
+    "meaning_en": "eight",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_17",
+    "kanji": "九",
+    "kana": "きゅう",
+    "meaning_es": "nueve",
+    "meaning_en": "nine",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_18",
+    "kanji": "十",
+    "kana": "じゅう",
+    "meaning_es": "diez",
+    "meaning_en": "ten",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_19",
+    "kanji": "百",
+    "kana": "ひゃく",
+    "meaning_es": "cien",
+    "meaning_en": "hundred",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_20",
+    "kanji": "千",
+    "kana": "せん",
+    "meaning_es": "mil",
+    "meaning_en": "thousand",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_21",
+    "kanji": "万",
+    "kana": "まん",
+    "meaning_es": "diez mil",
+    "meaning_en": "ten thousand",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_22",
+    "kanji": "卵",
+    "kana": "たまご",
+    "meaning_es": "huevo",
+    "meaning_en": "egg",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_23",
+    "kanji": "水",
+    "kana": "みず",
+    "meaning_es": "agua",
+    "meaning_en": "water",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_24",
+    "kanji": "魚",
+    "kana": "さかな",
+    "meaning_es": "pescado / pez",
+    "meaning_en": "fish",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_25",
+    "kanji": "お茶",
+    "kana": "おちゃ",
+    "meaning_es": "té verde",
+    "meaning_en": "tea",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_26",
+    "kanji": "肉",
+    "kana": "にく",
+    "meaning_es": "carne",
+    "meaning_en": "meat",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_27",
+    "kanji": "林檎",
+    "kana": "りんご",
+    "meaning_es": "manzana",
+    "meaning_en": "apple",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_28",
+    "kanji": "ご飯",
+    "kana": "ごはん",
+    "meaning_es": "arroz / comida",
+    "meaning_en": "rice, meal",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_29",
+    "kanji": "野菜",
+    "kana": "やさい",
+    "meaning_es": "verduras",
+    "meaning_en": "vegetables",
+    "category": "Comidas y Bebidas",
+    "level": "N5"
+  },
+  {
+    "id": "v_30",
+    "kanji": "家",
+    "kana": "いえ",
+    "meaning_es": "casa",
+    "meaning_en": "house",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_31",
+    "kanji": "部屋",
+    "kana": "へや",
+    "meaning_es": "habitación / cuarto",
+    "meaning_en": "room",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_32",
+    "kanji": "店",
+    "kana": "みせ",
+    "meaning_es": "tienda",
+    "meaning_en": "shop, store",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_33",
+    "kanji": "駅",
+    "kana": "えき",
+    "meaning_es": "estación de tren",
+    "meaning_en": "station",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_34",
+    "kanji": "学校",
+    "kana": "がっこう",
+    "meaning_es": "escuela",
+    "meaning_en": "school",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_35",
+    "kanji": "公園",
+    "kana": "こうえん",
+    "meaning_es": "parque",
+    "meaning_en": "park",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_36",
+    "kanji": "山",
+    "kana": "やま",
+    "meaning_es": "montaña",
+    "meaning_en": "mountain",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_37",
+    "kanji": "川",
+    "kana": "かわ",
+    "meaning_es": "río",
+    "meaning_en": "river",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_38",
+    "kanji": "海",
+    "kana": "うみ",
+    "meaning_es": "mar",
+    "meaning_en": "sea",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_39",
+    "kanji": "日本",
+    "kana": "にほん",
+    "meaning_es": "Japón",
+    "meaning_en": "Japan",
+    "category": "Lugares y Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_40",
+    "kanji": "赤",
+    "kana": "あか",
+    "meaning_es": "rojo",
+    "meaning_en": "red",
+    "category": "Colores",
+    "level": "N5"
+  },
+  {
+    "id": "v_41",
+    "kanji": "青",
+    "kana": "あお",
+    "meaning_es": "azul",
+    "meaning_en": "blue",
+    "category": "Colores",
+    "level": "N5"
+  },
+  {
+    "id": "v_42",
+    "kanji": "黒",
+    "kana": "くろ",
+    "meaning_es": "negro",
+    "meaning_en": "black",
+    "category": "Colores",
+    "level": "N5"
+  },
+  {
+    "id": "v_43",
+    "kanji": "白",
+    "kana": "しろ",
+    "meaning_es": "blanco",
+    "meaning_en": "white",
+    "category": "Colores",
+    "level": "N5"
+  },
+  {
+    "id": "v_44",
+    "kanji": "緑",
+    "kana": "みどり",
+    "meaning_es": "verde",
+    "meaning_en": "green",
+    "category": "Colores",
+    "level": "N5"
+  },
+  {
+    "id": "v_45",
+    "kanji": "紫",
+    "kana": "むらさき",
+    "meaning_es": "morado",
+    "meaning_en": "purple",
+    "category": "Colores",
+    "level": "N5"
+  },
+  {
+    "id": "v_46",
+    "kanji": "黄色",
+    "kana": "きいろ",
+    "meaning_es": "amarillo",
+    "meaning_en": "yellow",
+    "category": "Colores",
+    "level": "N5"
+  },
+  {
+    "id": "v_47",
+    "kanji": "食べる",
+    "kana": "たべる",
+    "meaning_es": "comer",
+    "meaning_en": "to eat",
+    "category": "Verbos N5",
+    "group": "Grupo 2 (Ichidan)",
+    "polite_masu": "食べます",
+    "te_form": "食べて",
+    "level": "N5"
+  },
+  {
+    "id": "v_48",
+    "kanji": "飲む",
+    "kana": "のむ",
+    "meaning_es": "beber / tomar",
+    "meaning_en": "to drink",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "飲みます",
+    "te_form": "飲んで",
+    "level": "N5"
+  },
+  {
+    "id": "v_49",
+    "kanji": "見る",
+    "kana": "みる",
+    "meaning_es": "mirar / ver",
+    "meaning_en": "to see, watch",
+    "category": "Verbos N5",
+    "group": "Grupo 2 (Ichidan)",
+    "polite_masu": "見ます",
+    "te_form": "見て",
+    "level": "N5"
+  },
+  {
+    "id": "v_50",
+    "kanji": "聞く",
+    "kana": "きく",
+    "meaning_es": "escuchar / preguntar",
+    "meaning_en": "to hear, listen, ask",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "聞きます",
+    "te_form": "聞いて",
+    "level": "N5"
+  },
+  {
+    "id": "v_51",
+    "kanji": "読む",
+    "kana": "よむ",
+    "meaning_es": "leer",
+    "meaning_en": "to read",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "読みます",
+    "te_form": "読んで",
+    "level": "N5"
+  },
+  {
+    "id": "v_52",
+    "kanji": "書く",
+    "kana": "かく",
+    "meaning_es": "escribir",
+    "meaning_en": "to write",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "書きます",
+    "te_form": "書いて",
+    "level": "N5"
+  },
+  {
+    "id": "v_53",
+    "kanji": "話す",
+    "kana": "はなす",
+    "meaning_es": "hablar / conversar",
+    "meaning_en": "to speak",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "話します",
+    "te_form": "話して",
+    "level": "N5"
+  },
+  {
+    "id": "v_54",
+    "kanji": "行く",
+    "kana": "いく",
+    "meaning_es": "ir",
+    "meaning_en": "to go",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "行きます",
+    "te_form": "行って",
+    "level": "N5"
+  },
+  {
+    "id": "v_55",
+    "kanji": "来る",
+    "kana": "くる",
+    "meaning_es": "venir",
+    "meaning_en": "to come",
+    "category": "Verbos N5",
+    "group": "Grupo 3 (Irregular)",
+    "polite_masu": "来ます",
+    "te_form": "来て",
+    "level": "N5"
+  },
+  {
+    "id": "v_56",
+    "kanji": "帰る",
+    "kana": "かえる",
+    "meaning_es": "regresar / volver",
+    "meaning_en": "to return",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "帰ります",
+    "te_form": "帰って",
+    "level": "N5"
+  },
+  {
+    "id": "v_57",
+    "kanji": "起きる",
+    "kana": "おきる",
+    "meaning_es": "levantarse / despertar",
+    "meaning_en": "to wake up",
+    "category": "Verbos N5",
+    "group": "Grupo 2 (Ichidan)",
+    "polite_masu": "起きます",
+    "te_form": "起きて",
+    "level": "N5"
+  },
+  {
+    "id": "v_58",
+    "kanji": "寝る",
+    "kana": "ねる",
+    "meaning_es": "dormir / acostarse",
+    "meaning_en": "to sleep",
+    "category": "Verbos N5",
+    "group": "Grupo 2 (Ichidan)",
+    "polite_masu": "寝ます",
+    "te_form": "寝て",
+    "level": "N5"
+  },
+  {
+    "id": "v_59",
+    "kanji": "会う",
+    "kana": "あう",
+    "meaning_es": "encontrarse con / ver a alguien",
+    "meaning_en": "to meet",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "会います",
+    "te_form": "会って",
+    "level": "N5"
+  },
+  {
+    "id": "v_60",
+    "kanji": "買う",
+    "kana": "かう",
+    "meaning_es": "comprar",
+    "meaning_en": "to buy",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "買います",
+    "te_form": "買って",
+    "level": "N5"
+  },
+  {
+    "id": "v_61",
+    "kanji": "洗う",
+    "kana": "あらう",
+    "meaning_es": "lavar",
+    "meaning_en": "to wash",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "洗います",
+    "te_form": "洗って",
+    "level": "N5"
+  },
+  {
+    "id": "v_62",
+    "kanji": "待つ",
+    "kana": "まつ",
+    "meaning_es": "esperar",
+    "meaning_en": "to wait",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "待ちます",
+    "te_form": "待って",
+    "level": "N5"
+  },
+  {
+    "id": "v_63",
+    "kanji": "持つ",
+    "kana": "もつ",
+    "meaning_es": "tener / sostener",
+    "meaning_en": "to hold, have",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "持ちます",
+    "te_form": "持って",
+    "level": "N5"
+  },
+  {
+    "id": "v_64",
+    "kanji": "入る",
+    "kana": "はいる",
+    "meaning_es": "entrar",
+    "meaning_en": "to enter",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "入ります",
+    "te_form": "入って",
+    "level": "N5"
+  },
+  {
+    "id": "v_65",
+    "kanji": "出る",
+    "kana": "でる",
+    "meaning_es": "salir",
+    "meaning_en": "to leave, exit",
+    "category": "Verbos N5",
+    "group": "Grupo 2 (Ichidan)",
+    "polite_masu": "出ます",
+    "te_form": "出て",
+    "level": "N5"
+  },
+  {
+    "id": "v_66",
+    "kanji": "乗る",
+    "kana": "のる",
+    "meaning_es": "subirse / montar en (transporte)",
+    "meaning_en": "to ride, board",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "乗ります",
+    "te_form": "乗って",
+    "level": "N5"
+  },
+  {
+    "id": "v_67",
+    "kanji": "立つ",
+    "kana": "たつ",
+    "meaning_es": "estar de pie / levantarse",
+    "meaning_en": "to stand",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "立ちます",
+    "te_form": "立って",
+    "level": "N5"
+  },
+  {
+    "id": "v_68",
+    "kanji": "座る",
+    "kana": "すわる",
+    "meaning_es": "sentarse",
+    "meaning_en": "to sit",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "座ります",
+    "te_form": "座って",
+    "level": "N5"
+  },
+  {
+    "id": "v_69",
+    "kanji": "教える",
+    "kana": "おしえる",
+    "meaning_es": "enseñar",
+    "meaning_en": "to teach",
+    "category": "Verbos N5",
+    "group": "Grupo 2 (Ichidan)",
+    "polite_masu": "教えます",
+    "te_form": "教えて",
+    "level": "N5"
+  },
+  {
+    "id": "v_70",
+    "kanji": "勉強する",
+    "kana": "べんきょうする",
+    "meaning_es": "estudiar",
+    "meaning_en": "to study",
+    "category": "Verbos N5",
+    "group": "Grupo 3 (Irregular)",
+    "polite_masu": "勉強します",
+    "te_form": "勉強して",
+    "level": "N5"
+  },
+  {
+    "id": "v_71",
+    "kanji": "する",
+    "kana": "する",
+    "meaning_es": "hacer",
+    "meaning_en": "to do",
+    "category": "Verbos N5",
+    "group": "Grupo 3 (Irregular)",
+    "polite_masu": "します",
+    "te_form": "して",
+    "level": "N5"
+  },
+  {
+    "id": "v_72",
+    "kanji": "ある",
+    "kana": "ある",
+    "meaning_es": "haber / estar (inanimado)",
+    "meaning_en": "to exist (inanimate)",
+    "category": "Verbos N5",
+    "group": "Grupo 1 (Godan)",
+    "polite_masu": "あります",
+    "te_form": "あって",
+    "level": "N5"
+  },
+  {
+    "id": "v_73",
+    "kanji": "いる",
+    "kana": "いる",
+    "meaning_es": "haber / estar (animado)",
+    "meaning_en": "to exist (living)",
+    "category": "Verbos N5",
+    "group": "Grupo 2 (Ichidan)",
+    "polite_masu": "います",
+    "te_form": "いて",
+    "level": "N5"
+  },
+  {
+    "id": "v_74",
+    "kanji": "大きい",
+    "kana": "おおきい",
+    "meaning_es": "grande",
+    "meaning_en": "big",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_75",
+    "kanji": "小さい",
+    "kana": "ちいさい",
+    "meaning_es": "pequeño",
+    "meaning_en": "small",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_76",
+    "kanji": "高い",
+    "kana": "たかい",
+    "meaning_es": "alto / caro",
+    "meaning_en": "high, expensive",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_77",
+    "kanji": "安い",
+    "kana": "やすい",
+    "meaning_es": "barato",
+    "meaning_en": "cheap",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_78",
+    "kanji": "低い",
+    "kana": "ひくい",
+    "meaning_es": "bajo (altura)",
+    "meaning_en": "low",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_79",
+    "kanji": "新しい",
+    "kana": "あたらしい",
+    "meaning_es": "nuevo",
+    "meaning_en": "new",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_80",
+    "kanji": "古い",
+    "kana": "ふるい",
+    "meaning_es": "viejo / antiguo",
+    "meaning_en": "old",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_81",
+    "kanji": "良い",
+    "kana": "いい / よい",
+    "meaning_es": "bueno / bien",
+    "meaning_en": "good",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_82",
+    "kanji": "悪い",
+    "kana": "わるい",
+    "meaning_es": "malo",
+    "meaning_en": "bad",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_83",
+    "kanji": "近い",
+    "kana": "ちかい",
+    "meaning_es": "cerca",
+    "meaning_en": "near",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_84",
+    "kanji": "遠い",
+    "kana": "とおい",
+    "meaning_es": "lejos",
+    "meaning_en": "far",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_85",
+    "kanji": "早い",
+    "kana": "はやい",
+    "meaning_es": "temprano",
+    "meaning_en": "early",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_86",
+    "kanji": "速い",
+    "kana": "はやい",
+    "meaning_es": "rápido (velocidad)",
+    "meaning_en": "fast",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_87",
+    "kanji": "遅い",
+    "kana": "おそい",
+    "meaning_es": "lento / tarde",
+    "meaning_en": "slow, late",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_88",
+    "kanji": "暑い",
+    "kana": "あつい",
+    "meaning_es": "caluroso (clima)",
+    "meaning_en": "hot (weather)",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_89",
+    "kanji": "寒い",
+    "kana": "さむい",
+    "meaning_es": "frío (clima)",
+    "meaning_en": "cold (weather)",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_90",
+    "kanji": "冷たい",
+    "kana": "つめたい",
+    "meaning_es": "frío (al tacto / bebida)",
+    "meaning_en": "cold (touch)",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_91",
+    "kanji": "美味しい",
+    "kana": "おいしい",
+    "meaning_es": "delicioso / rico",
+    "meaning_en": "delicious",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_92",
+    "kanji": "楽しい",
+    "kana": "たのしい",
+    "meaning_es": "divertido",
+    "meaning_en": "fun, enjoyable",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_93",
+    "kanji": "難しい",
+    "kana": "むずかしい",
+    "meaning_es": "difícil",
+    "meaning_en": "difficult",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_94",
+    "kanji": "易しい",
+    "kana": "やさしい",
+    "meaning_es": "fácil / sencillo",
+    "meaning_en": "easy",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_95",
+    "kanji": "面白い",
+    "kana": "おもしろい",
+    "meaning_es": "interesante",
+    "meaning_en": "interesting",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_96",
+    "kanji": "つまらない",
+    "kana": "つまらない",
+    "meaning_es": "aburrido",
+    "meaning_en": "boring",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_97",
+    "kanji": "忙しい",
+    "kana": "いそがしい",
+    "meaning_es": "ocupado",
+    "meaning_en": "busy",
+    "category": "Adjetivos N5",
+    "type": "い-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_98",
+    "kanji": "静か",
+    "kana": "しずか",
+    "meaning_es": "tranquilo / silencioso",
+    "meaning_en": "quiet",
+    "category": "Adjetivos N5",
+    "type": "な-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_99",
+    "kanji": "元気",
+    "kana": "げんき",
+    "meaning_es": "con energía / sano / bien",
+    "meaning_en": "healthy, energetic",
+    "category": "Adjetivos N5",
+    "type": "な-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_100",
+    "kanji": "便利",
+    "kana": "べんり",
+    "meaning_es": "conveniente / práctico",
+    "meaning_en": "convenient",
+    "category": "Adjetivos N5",
+    "type": "な-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_101",
+    "kanji": "有名",
+    "kana": "ゆうめい",
+    "meaning_es": "famoso",
+    "meaning_en": "famous",
+    "category": "Adjetivos N5",
+    "type": "な-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_102",
+    "kanji": "親切",
+    "kana": "しんせつ",
+    "meaning_es": "amable",
+    "meaning_en": "kind",
+    "category": "Adjetivos N5",
+    "type": "な-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_103",
+    "kanji": "好き",
+    "kana": "すき",
+    "meaning_es": "que gusta / favorito",
+    "meaning_en": "liked, favorite",
+    "category": "Adjetivos N5",
+    "type": "な-adjective",
+    "level": "N5"
+  },
+  {
+    "id": "v_104",
+    "kanji": "とても",
+    "kana": "とても",
+    "meaning_es": "muy",
+    "meaning_en": "very",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_105",
+    "kanji": "少し",
+    "kana": "すこし",
+    "meaning_es": "un poco",
+    "meaning_en": "a little",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_106",
+    "kanji": "ちょっと",
+    "kana": "ちょっと",
+    "meaning_es": "un poco / un momento",
+    "meaning_en": "a bit",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_107",
+    "kanji": "たくさん",
+    "kana": "たくさん",
+    "meaning_es": "mucho / bastante",
+    "meaning_en": "a lot",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_108",
+    "kanji": "いつも",
+    "kana": "いつも",
+    "meaning_es": "siempre",
+    "meaning_en": "always",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_109",
+    "kanji": "だいたい",
+    "kana": "だいたい",
+    "meaning_es": "la mayoría / casi todo",
+    "meaning_en": "mostly, roughly",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_110",
+    "kanji": "早く",
+    "kana": "はやく",
+    "meaning_es": "temprano / rápidamente",
+    "meaning_en": "early, quickly",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_111",
+    "kanji": "よく",
+    "kana": "よく",
+    "meaning_es": "bien / con frecuencia",
+    "meaning_en": "well, often",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_112",
+    "kanji": "もう",
+    "kana": "もう",
+    "meaning_es": "ya",
+    "meaning_en": "already",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_113",
+    "kanji": "まだ",
+    "kana": "まだ",
+    "meaning_es": "todavía / aún",
+    "meaning_en": "still, yet",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_114",
+    "kanji": "もちろん",
+    "kana": "もちろん",
+    "meaning_es": "por supuesto",
+    "meaning_en": "of course",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_115",
+    "kanji": "大勢",
+    "kana": "おおぜい",
+    "meaning_es": "mucha gente / en multitud",
+    "meaning_en": "a crowd of people",
+    "category": "Adverbios N5",
+    "level": "N5"
+  },
+  {
+    "id": "v_116",
+    "kanji": "今日",
+    "kana": "きょう",
+    "meaning_es": "hoy",
+    "meaning_en": "today",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_117",
+    "kanji": "明日",
+    "kana": "あした",
+    "meaning_es": "mañana",
+    "meaning_en": "tomorrow",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_118",
+    "kanji": "昨日",
+    "kana": "きのう",
+    "meaning_es": "ayer",
+    "meaning_en": "yesterday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_119",
+    "kanji": "今",
+    "kana": "いま",
+    "meaning_es": "ahora",
+    "meaning_en": "now",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_120",
+    "kanji": "午前",
+    "kana": "ごぜん",
+    "meaning_es": "la mañana / AM",
+    "meaning_en": "morning / AM",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_121",
+    "kanji": "午後",
+    "kana": "ごご",
+    "meaning_es": "la tarde / PM",
+    "meaning_en": "afternoon / PM",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_122",
+    "kanji": "今週",
+    "kana": "こんしゅう",
+    "meaning_es": "esta semana",
+    "meaning_en": "this week",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_123",
+    "kanji": "来週",
+    "kana": "らいしゅう",
+    "meaning_es": "la próxima semana",
+    "meaning_en": "next week",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_124",
+    "kanji": "先週",
+    "kana": "せんしゅう",
+    "meaning_es": "la semana pasada",
+    "meaning_en": "last week",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_125",
+    "kanji": "月曜日",
+    "kana": "げつようび",
+    "meaning_es": "lunes",
+    "meaning_en": "Monday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_126",
+    "kanji": "火曜日",
+    "kana": "かようび",
+    "meaning_es": "martes",
+    "meaning_en": "Tuesday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_127",
+    "kanji": "水曜日",
+    "kana": "すいようび",
+    "meaning_es": "miércoles",
+    "meaning_en": "Wednesday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_128",
+    "kanji": "木曜日",
+    "kana": "もくようび",
+    "meaning_es": "jueves",
+    "meaning_en": "Thursday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_129",
+    "kanji": "金曜日",
+    "kana": "きんようび",
+    "meaning_es": "viernes",
+    "meaning_en": "Friday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_130",
+    "kanji": "土曜日",
+    "kana": "どようび",
+    "meaning_es": "sábado",
+    "meaning_en": "Saturday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_131",
+    "kanji": "日曜日",
+    "kana": "にちようび",
+    "meaning_es": "domingo",
+    "meaning_en": "Sunday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_132",
+    "kanji": "朝",
+    "kana": "あさ",
+    "meaning_es": "mañana",
+    "meaning_en": "morning",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_133",
+    "kanji": "昼",
+    "kana": "ひる",
+    "meaning_es": "mediodía / tarde",
+    "meaning_en": "midday",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_134",
+    "kanji": "晩 / 夜",
+    "kana": "ばん / よる",
+    "meaning_es": "noche",
+    "meaning_en": "night",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  }
+]

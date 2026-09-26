@@ -1,0 +1,507 @@
+{
+  "id": "story_1",
+  "title": "日本での一日 (Un día en Japón)",
+  "title_en": "A Day in Japan",
+  "level": "N5 / N4",
+  "description": "Una hermosa historia integral diseñada para conectar todo el vocabulario N5, números, días de la semana, partículas, expresiones de tiempo y formas verbales fundamentales.",
+  "paragraphs": [
+    {
+      "chapter": 1,
+      "title": "朝の始まり (Comienza la mañana)",
+      "japanese": "私は今年、外国から来ました。私の国は遠いです。今日は四月一日、月曜日です。今は午前六時半です。私は毎日、早く起きます。天気が良くて、空に白い雲が少しだけあるけど、だいたい青いです。でも、外はとても寒いです。私は冷たい水で顔を洗います。朝ごはんはいつも味が良くて、美味しいです。もちろん、少しだけ食べます。父と母はもう会社へ行きました。子供たちはまだ家にいる。",
+      "hiragana": "わたし は ことし、 がいこく から きました。 わたし の くに は とおい です。 きょう は しがつ ついたち、 げつようび です。 いま は ごぜん ろくじはん です。 わたし は まいにち、 はやく おきます。 てんき が よくて、 そら に しろい くも が すこし だけ ある けど、 だいたい あおい です。 でも、 そと は とても さむい です。 わたし は つめたい みず で かお を あらいます。 あさごはん は いつも あじ が よくて、 おいしい です。 もちろん、 すこし だけ たべます。 ちち と はは は もう かいしゃ へ いきました。 こどもたち は まだ いえ に いる。",
+      "translation_es": "Llegué del extranjero este año. Mi país está lejos. Hoy es lunes 1 de abril. Ahora son las seis y media de la mañana. Me levanto temprano todos los días. Hace buen tiempo, hay pocas nubes blancas en el cielo y está mayormente azul. Pero afuera hace mucho frío. Me lavo la cara con agua fría. El desayuno siempre tiene buen sabor y es delicioso. Por supuesto, solo como un poco. Mi padre y mi madre ya se fueron a la empresa. Los niños todavía están en casa.",
+      "translation_en": "I came from a foreign country this year. My country is far. Today is April 1st, Monday. It is now 6:30 AM. I wake up early every day. The weather is good, and there are only a few white clouds in the sky, but it is mostly blue. But, outside is very cold. I wash my face with cold water. Breakfast always has a good taste and is delicious. Of course, I only eat a little. Father and mother already went to the company. The children are still at home."
+    },
+    {
+      "chapter": 2,
+      "title": "学校への道と友達 (El camino a la escuela y amigos)",
+      "japanese": "私は学生です。学校から駅は近いですが、家から遠いので、電車に乗ります。駅への道は長いです。道に大きい木と美しい花があります。木の下に、男の子と女の子が立っています。右と左に古い店や新しい小さい店が見えます。駅の前に、大勢の人がいます。電車は速いですが、いつも人が多いです。八時に駅を出て、学校へ入ります。学校の南口で友達に会いました。彼女の名前は「みか」です。「おはよう！元気？」と私が言います。",
+      "hiragana": "わたし は がくせい です。 がっこう から えき は ちかい です が、 いえ から とおい ので、 でんしゃ に のります。 えき へ の みち は ながい です。 みち に おおきい き と うつくしい はな が あります。 き の した に、 おとこのこ と おんなのこ が たっています。 みぎ と ひだり に ふるい みせ や あたらしい ちいさい みせ が みえます。 えき の まえ に、 おおぜい の ひと が います。 でんしゃ は はやい です が、 いつも ひと が おおい です。 はちじ に えき を でて、 がっこう へ はいります。 がっこう の みなみぐち で ともだち に あいました。 かのじょ の なまえ は 「みか」 です。 「おはよう！ げんき？」 と わたし が いいます。",
+      "translation_es": "Soy estudiante. La estación está cerca de la escuela, pero como está lejos de mi casa, tomo el tren. El camino a la estación es largo. En el camino hay árboles grandes y hermosas flores. Debajo del árbol, están de pie un niño y una niña. A la derecha y a la izquierda se ven tiendas viejas y tiendas pequeñas nuevas. Frente a la estación hay una multitud de personas. El tren es rápido, pero siempre hay mucha gente. A las ocho salgo de la estación y entro a la escuela. En la entrada sur de la escuela me encontré con mi amiga. Su nombre es Mika. '¡Buenos días! ¿Cómo estás?' le digo.",
+      "translation_en": "I am a student. The station is near the school, but it is far from my house, so I take the train. The road to the station is long. There are big trees and beautiful flowers on the road. Under the tree, a boy and a girl are standing. On the right and left, I can see old shops and new small shops. In front of the station, there are many people. The train is fast, but there are always many people. I leave the station at 8:00 and enter the school. I met my friend at the south entrance of the school. Her name is 'Mika'. 'Good morning! How are you?' I say."
+    },
+    {
+      "chapter": 3,
+      "title": "日本語の授業 (Clase de japonés)",
+      "japanese": "今日は日本語の勉強をします。先生方はみんな、良い人です。かばんの中に本があります。机の上に本を出します。私たちは先生の話をよく聞いて、本を読みます。そして、字を書きます。今日のテストはあまり易しくないです。ちょっと難しいです。私は「この漢字の読み方は何ですか」と先生に聞きます。授業はつまらないですか？いいえ、よく勉強するから、面白いです。休み時間に、私たちは話をします。",
+      "hiragana": "きょう は にほんご の べんきょう を します。 せんせいがた は みんな、 よい ひと です。 かばん の なか に ほん が あります。 つくえ の うえ に ほん を だします。 わたし たち は せんせい の はなし を よく きいて、 ほん を よみます。 そして、 じ を かきます。 きょう の テスト は あまり やさしくない です。 ちょっと むずかしい です。 わたし は 「この かんじ の よみかた は なん です か」 と せんせい に ききます。 じゅぎょう は つまらない です か？ いいえ、 よく べんきょう する から、 おもしろい です。 やすみじかん に、 わたし たち は はなし を します。",
+      "translation_es": "Hoy estudiamos japonés. Los profesores son todos buenas personas. Hay libros dentro de la mochila. Saco los libros sobre el escritorio. Escuchamos atentamente las palabras del profesor y leemos el libro. Luego, escribimos caracteres. El examen de hoy no es muy fácil. Es un poco difícil. Le pregunto al profesor: '¿Cómo se lee este kanji?'. ¿La clase es aburrida? No, como estudio con ganas, es interesante. En el recreo, conversamos.",
+      "translation_en": "Today we will study Japanese. The teachers are all good people. There is a book inside my bag. I take the book out onto the desk. We listen well to what the teacher says, and read the book. And we write characters. Today's test is not very easy. It is a little difficult. I ask the teacher, 'What is the reading of this kanji?' Is the class boring? No, because I study well, it is interesting. During break time, we talk."
+    },
+    {
+      "chapter": 4,
+      "title": "昼休みと週末の計画 (El almuerzo y planes de fin de semana)",
+      "japanese": "午後十二時です。皆で外へ出て、魚を食べます。飲み物も買います。お茶は百五十円ぐらいです。全部で千二百九十八円です。安いです。 私は友達に言います。「今週の土曜日と日曜日に何をしますか？」 「東の山に行きます。山は高いですか？いいえ、低いですが、空気が良くて楽しいです。」 「いいですね。私は西の川に行きます。足を入れると気持ちがいいです。」 「火曜日、水曜日、木曜日、金曜日は忙しいけど、休みは楽しいです。今年は暑いから、たくさん水を飲んでね。」 友達のお父さんは三万円で古い車を買いました。だから、私たちは車で行くかもしれません。でも、車は遅いから、電車で行く方がいいです。 北の空が黒いです。悪い天気になるかもしれません。雨が来るかもしれません。でも、もちろん行きます。 自分の目と耳と口と手で、大きい山を楽しみます。 あと五分で、時間が来ます。二、三、四、五、六、七、八、九、十。さあ、行きましょう！",
+      "hiragana": "ごご じゅうにじ です。 みな で そと へ でて、 さかな を たべます。 のみもの も かいます。 おちゃ は ひゃく ごじゅうえん ぐらい です。 ぜんぶ で せん にひゃく きゅうじゅう はちえん です。 やすい です。 わたし は ともだち に いいます。 「こんしゅう の どようび と にちようび に なに を します か？」 「ひがし の やま に いきます。 やま は たかい です か？ いいえ、 ひくい です が、 くうき が よくて たのしい です。」 「いい です ね。 わたし は にし の かわ に いきます。 あし を いれる と きもち が いい です。」 「かようび、 すいようび、 もくようび、 きんようび は いそがしい けど、 やすみ は たのしい です。 ことし は あつい から、 たくさん みず を のんで ね。」 ともだち の おとうさん は さんまんえん で ふるい くるま を かいました。 だから、 わたし たち は くるま で いく かもしれません。 でも、 くるま は おそい から、 でんしゃ で いく ほうがいい です。 きた の そら が くろい です。 わるい てんき に なる かもしれません。 あめ が くる かもしれません。 でも、 もちろん いきます。 じぶん の め と みみ と くち と て で、 おおきい やま を たのしみます。 あと ごふん で、 じかん が きます。 に、 さん、 よん、 ご、 ろく、 なな、 はち、 きゅう、 じゅう。 さあ、 いきましょう！",
+      "translation_es": "Son las doce del mediodía. Salimos todos afuera y comemos pescado. También compramos bebidas. El té cuesta unos 150 yenes. En total son 1.298 yenes. Es barato. Le digo a mi amiga: '¿Qué harás el sábado y domingo de esta semana?'. 'Voy a la montaña del este. ¿Es alta la montaña? No, es baja, pero el aire es bueno y es divertido'. '¡Qué bien! Yo voy al río del oeste. Meter los pies se siente muy bien'. 'Los martes, miércoles, jueves y viernes son ocupados, pero las vacaciones son divertidas. Este año hace calor, así que bebe mucha agua, ¿eh?'. El papá de mi amiga compró un auto viejo por 30.000 yenes. Así que tal vez vayamos en auto. Pero como el auto es lento, es mejor ir en tren. El cielo del norte está negro. Puede que el tiempo empeore. Podría venir lluvia. Pero, por supuesto, iremos. Con mis propios ojos, oídos, boca y manos, disfrutaré de la gran montaña. En cinco minutos llegará la hora. Dos, tres, cuatro, cinco, seis, siete, ocho, nueve, diez. ¡Vamos!",
+      "translation_en": "It is 12:00 PM. Everyone goes outside, and we eat fish. We also buy drinks. Tea is about 150 yen. In total, it is 1,298 yen. It is cheap. I say to my friend, 'What will you do on Saturday and Sunday of this week?' 'I will go to the east mountain. Is the mountain high? No, it is low, but the air is good and it is fun.' 'That is nice. I will go to the west river. When you put your feet in, it feels good.' 'Tuesday, Wednesday, Thursday, and Friday are busy, but days off are fun. This year is hot, so please drink a lot of water.' My friend's father bought an old car for 30,000 yen. So, we might go by car. But cars are slow, so it is better to go by train. The north sky is black. It might become bad weather. Rain might come. But, of course, we will go. With my own eyes, ears, mouth, and hands, I will enjoy the big mountain. In 5 minutes, the time will come. Two, three, four, five, six, seven, eight, nine, ten. Well then, let's go!"
+    }
+  ],
+  "sentences": [
+    {
+      "id": "sent_1",
+      "japanese": "私は今年、外国から来ました。",
+      "english": "I came from a foreign country this year.",
+      "grammar_note": "The particle から (kara) means \"from\". 来ました (kimashita) is the polite past tense of 来る (kuru - to come).",
+      "typing_prompt": "Escribe en japonés: \"I came from a foreign country this year.\"",
+      "clean_target": "私は今年外国から来ました"
+    },
+    {
+      "id": "sent_2",
+      "japanese": "私の国は遠いです。",
+      "english": "My country is far.",
+      "grammar_note": "The particle の (no) shows possession (\"my\"). 遠い (tooi) is an i-adjective meaning \"far\".",
+      "typing_prompt": "Escribe en japonés: \"My country is far.\"",
+      "clean_target": "私の国は遠いです"
+    },
+    {
+      "id": "sent_3",
+      "japanese": "今日は四月一日、月曜日です。",
+      "english": "Today is April 1st, Monday.",
+      "grammar_note": "一日 (tsuitachi) is a special reading for the 1st day of the month.",
+      "typing_prompt": "Escribe en japonés: \"Today is April 1st, Monday.\"",
+      "clean_target": "今日は四月一日月曜日です"
+    },
+    {
+      "id": "sent_4",
+      "japanese": "今は午前六時半です。",
+      "english": "It is now 6:30 AM.",
+      "grammar_note": "午前 (gozen) means AM (literally \"before noon\"). 半 (han) means \"half\", used here for \"half past six\".",
+      "typing_prompt": "Escribe en japonés: \"It is now 6:30 AM.\"",
+      "clean_target": "今は午前六時半です"
+    },
+    {
+      "id": "sent_5",
+      "japanese": "私は毎日、早く起きます。",
+      "english": "I wake up early every day.",
+      "grammar_note": "早く (hayaku) is the adverbial form of 早い (hayai - early). By changing the final 'i' to 'ku', it modifies the verb 起きます (okimasu - wake up).",
+      "typing_prompt": "Escribe en japonés: \"I wake up early every day.\"",
+      "clean_target": "私は毎日早く起きます"
+    },
+    {
+      "id": "sent_6",
+      "japanese": "天気が良くて、空に白い雲が少しだけあるけど、だいたい青いです。",
+      "english": "The weather is good, and there are only a few white clouds in the sky, but it is mostly blue.",
+      "grammar_note": "良くて (yokute) is the te-form of 良い (yoi - good), used to connect sentences. だけ (dake) means \"only\". ある (aru) is the verb for existence (inanimate objects). けど (kedo) is a casual conjunction meaning \"but\". だいたい (daitai) means \"mostly\" or \"approximately\".",
+      "typing_prompt": "Escribe en japonés: \"The weather is good, and there are only a few white clouds in the sky, but it is mostly blue.\"",
+      "clean_target": "天気が良くて空に白い雲が少しだけあるけどだいたい青いです"
+    },
+    {
+      "id": "sent_7",
+      "japanese": "でも、外はとても寒いです。",
+      "english": "But, outside is very cold.",
+      "grammar_note": "でも (demo) means \"but\" or \"however\" at the start of a sentence. とても (totemo) means \"very\", acting as an intensifier for 寒い (samui - cold).",
+      "typing_prompt": "Escribe en japonés: \"But, outside is very cold.\"",
+      "clean_target": "でも外はとても寒いです"
+    },
+    {
+      "id": "sent_8",
+      "japanese": "私は冷たい水で顔を洗います。",
+      "english": "I wash my face with cold water.",
+      "grammar_note": "The particle で (de) indicates the tool or means used to do an action (with cold water).",
+      "typing_prompt": "Escribe en japonés: \"I wash my face with cold water.\"",
+      "clean_target": "私は冷たい水で顔を洗います"
+    },
+    {
+      "id": "sent_9",
+      "japanese": "朝ごはんはいつも味が良くて、美味しいです。",
+      "english": "Breakfast always has a good taste and is delicious.",
+      "grammar_note": "いつも (itsumo) means \"always\". 味が良い (aji ga yoi) is a common phrase meaning \"tastes good\" (literally \"taste is good\").",
+      "typing_prompt": "Escribe en japonés: \"Breakfast always has a good taste and is delicious.\"",
+      "clean_target": "朝ごはんはいつも味が良くて美味しいです"
+    },
+    {
+      "id": "sent_10",
+      "japanese": "もちろん、少しだけ食べます。",
+      "english": "Of course, I only eat a little.",
+      "grammar_note": "もちろん (mochiron) means \"of course\". 少し (sukoshi - a little) is combined with だけ (dake - only).",
+      "typing_prompt": "Escribe en japonés: \"Of course, I only eat a little.\"",
+      "clean_target": "もちろん少しだけ食べます"
+    },
+    {
+      "id": "sent_11",
+      "japanese": "父と母はもう会社へ行きました。",
+      "english": "Father and mother already went to the company.",
+      "grammar_note": "The particle と (to) means \"and\" when connecting nouns. The particle へ (e) indicates the direction of travel (to the company).",
+      "typing_prompt": "Escribe en japonés: \"Father and mother already went to the company.\"",
+      "clean_target": "父と母はもう会社へ行きました"
+    },
+    {
+      "id": "sent_12",
+      "japanese": "子供たちはまだ家にいる。",
+      "english": "The children are still at home.",
+      "grammar_note": "達 (tachi) is a suffix that makes a noun plural. まだ (mada) means \"still\" or \"not yet\". いる (iru) is the dictionary form of the verb for existence (animate objects, like people).",
+      "typing_prompt": "Escribe en japonés: \"The children are still at home.\"",
+      "clean_target": "子供たちはまだ家にいる"
+    },
+    {
+      "id": "sent_13",
+      "japanese": "私は学生です。",
+      "english": "I am a student.",
+      "grammar_note": "Standard A は B です structure (A is B).",
+      "typing_prompt": "Escribe en japonés: \"I am a student.\"",
+      "clean_target": "私は学生です"
+    },
+    {
+      "id": "sent_14",
+      "japanese": "学校から駅は近いですが、家から遠いので、電車に乗ります。",
+      "english": "The station is near the school, but it is far from my house, so I take the train.",
+      "grammar_note": "が (ga) at the end of a clause means \"but\". ので (node) means \"because/so\". When riding a vehicle, you always use the particle に (ni) with 乗ります (norimasu - to ride).",
+      "typing_prompt": "Escribe en japonés: \"The station is near the school, but it is far from my house, so I take the train.\"",
+      "clean_target": "学校から駅は近いですが家から遠いので電車に乗ります"
+    },
+    {
+      "id": "sent_15",
+      "japanese": "駅への道は長いです。",
+      "english": "The road to the station is long.",
+      "grammar_note": "Particles can be combined. へ (e - to/towards) + の (no - of) makes \"the road [that goes] towards the station\".",
+      "typing_prompt": "Escribe en japonés: \"The road to the station is long.\"",
+      "clean_target": "駅への道は長いです"
+    },
+    {
+      "id": "sent_16",
+      "japanese": "道に大きい木と美しい花があります。",
+      "english": "There are big trees and beautiful flowers on the road.",
+      "grammar_note": "The particle に (ni) marks the location where things exist. あります (arimasu) is the polite form of ある (aru).",
+      "typing_prompt": "Escribe en japonés: \"There are big trees and beautiful flowers on the road.\"",
+      "clean_target": "道に大きい木と美しい花があります"
+    },
+    {
+      "id": "sent_17",
+      "japanese": "木の下に、男の子と女の子が立っています。",
+      "english": "Under the tree, a boy and a girl are standing.",
+      "grammar_note": "〜ています (-te imasu) indicates an ongoing action or state (standing).",
+      "typing_prompt": "Escribe en japonés: \"Under the tree, a boy and a girl are standing.\"",
+      "clean_target": "木の下に男の子と女の子が立っています"
+    },
+    {
+      "id": "sent_18",
+      "japanese": "右と左に古い店や新しい小さい店が見えます。",
+      "english": "On the right and left, I can see old shops and new small shops.",
+      "grammar_note": "The particle や (ya) is used to list items incompletely (\"things like A and B\"). 見えます (miemasu) means \"can be seen\" or \"is visible\".",
+      "typing_prompt": "Escribe en japonés: \"On the right and left, I can see old shops and new small shops.\"",
+      "clean_target": "右と左に古い店や新しい小さい店が見えます"
+    },
+    {
+      "id": "sent_19",
+      "japanese": "駅の前に、大勢の人がいます。",
+      "english": "In front of the station, there are many people.",
+      "grammar_note": "大勢 (oozei) specifically means \"a crowd\" or \"many people\". います (imasu) is the polite form of いる (iru).",
+      "typing_prompt": "Escribe en japonés: \"In front of the station, there are many people.\"",
+      "clean_target": "駅の前に大勢の人がいます"
+    },
+    {
+      "id": "sent_20",
+      "japanese": "電車は速いですが、いつも人が多いです。",
+      "english": "The train is fast, but there are always many people.",
+      "grammar_note": "多い (ooi) is an i-adjective meaning \"many/numerous\". It cannot directly modify a noun in N5 (you don't say 多い人), so it is used as a predicate (人が多い).",
+      "typing_prompt": "Escribe en japonés: \"The train is fast, but there are always many people.\"",
+      "clean_target": "電車は速いですがいつも人が多いです"
+    },
+    {
+      "id": "sent_21",
+      "japanese": "八時に駅を出て、学校へ入ります。",
+      "english": "I leave the station at 8:00 and enter the school.",
+      "grammar_note": "The particle を (o) is used with verbs of leaving (出る - deru) to mark the place you are leaving from. 出て (dete) is the te-form connecting the two actions.",
+      "typing_prompt": "Escribe en japonés: \"I leave the station at 8:00 and enter the school.\"",
+      "clean_target": "八時に駅を出て学校へ入ります"
+    },
+    {
+      "id": "sent_22",
+      "japanese": "学校の南口で友達に会いました。",
+      "english": "I met my friend at the south entrance of the school.",
+      "grammar_note": "The particle で (de) marks the location where an action happens. The verb 会う (au - to meet) always takes the particle に (ni) for the person you meet.",
+      "typing_prompt": "Escribe en japonés: \"I met my friend at the south entrance of the school.\"",
+      "clean_target": "学校の南口で友達に会いました"
+    },
+    {
+      "id": "sent_23",
+      "japanese": "彼女の名前は「みか」です。",
+      "english": "Her name is \"Mika\".",
+      "grammar_note": "彼女 (kanojo) means \"she\" or \"her\".",
+      "typing_prompt": "Escribe en japonés: \"Her name is \"Mika\".\"",
+      "clean_target": "彼女の名前はみかです"
+    },
+    {
+      "id": "sent_24",
+      "japanese": "「おはよう！元気？」と私が言います。",
+      "english": "\"Good morning! How are you?\" I say.",
+      "grammar_note": "The particle と (to) is used for quoting what someone says or thinks, right before 言います (iimasu - say).",
+      "typing_prompt": "Escribe en japonés: \"\"Good morning! How are you?\" I say.\"",
+      "clean_target": "おはよう元気と私が言います"
+    },
+    {
+      "id": "sent_25",
+      "japanese": "今日は日本語の勉強をします。",
+      "english": "Today we will study Japanese.",
+      "grammar_note": "勉強 (benkyou - study) is a noun. Adding をします (o shimasu), using the verb する (suru - to do), turns it into the action \"to study\".",
+      "typing_prompt": "Escribe en japonés: \"Today we will study Japanese.\"",
+      "clean_target": "今日は日本語の勉強をします"
+    },
+    {
+      "id": "sent_26",
+      "japanese": "先生方はみんな、良い人です。",
+      "english": "The teachers are all good people.",
+      "grammar_note": "方 (kata) is a polite plural suffix here (sensei-gata = teachers). みんな (minna) means \"everyone\" or \"all\".",
+      "typing_prompt": "Escribe en japonés: \"The teachers are all good people.\"",
+      "clean_target": "先生方はみんな良い人です"
+    },
+    {
+      "id": "sent_27",
+      "japanese": "かばんの中に本があります。",
+      "english": "There is a book inside my bag.",
+      "grammar_note": "中 (naka) means \"inside\".",
+      "typing_prompt": "Escribe en japonés: \"There is a book inside my bag.\"",
+      "clean_target": "かばんの中に本があります"
+    },
+    {
+      "id": "sent_28",
+      "japanese": "机の上に本を出します。",
+      "english": "I take the book out onto the desk.",
+      "grammar_note": "上 (ue) means \"top\" or \"above\". 出します (dashimasu) means to take out or to submit.",
+      "typing_prompt": "Escribe en japonés: \"I take the book out onto the desk.\"",
+      "clean_target": "机の上に本を出します"
+    },
+    {
+      "id": "sent_29",
+      "japanese": "私たちは先生の話をよく聞いて、本を読みます。",
+      "english": "We listen well to what the teacher says, and read the book.",
+      "grammar_note": "よく (yoku) is the adverb form of 良い (yoi) and means \"well\" or \"often\". 聞いて (kiite) is the te-form of 聞く (kiku - to listen), connecting the sequence of actions.",
+      "typing_prompt": "Escribe en japonés: \"We listen well to what the teacher says, and read the book.\"",
+      "clean_target": "私たちは先生の話をよく聞いて本を読みます"
+    },
+    {
+      "id": "sent_30",
+      "japanese": "そして、字を書きます。",
+      "english": "And we write characters.",
+      "grammar_note": "そして (soshite) is a conjunction used at the start of a sentence to mean \"and\" or \"and then\".",
+      "typing_prompt": "Escribe en japonés: \"And we write characters.\"",
+      "clean_target": "そして字を書きます"
+    },
+    {
+      "id": "sent_31",
+      "japanese": "今日のテストはあまり易しくないです。",
+      "english": "Today's test is not very easy.",
+      "grammar_note": "あまり (amari) means \"not very\" or \"not much\" and must always be paired with a negative verb or adjective. 易しくない (yasashikunai) is the negative form of 易しい (yasashii - easy).",
+      "typing_prompt": "Escribe en japonés: \"Today's test is not very easy.\"",
+      "clean_target": "今日のテストはあまり易しくないです"
+    },
+    {
+      "id": "sent_32",
+      "japanese": "ちょっと難しいです。",
+      "english": "It is a little difficult.",
+      "grammar_note": "ちょっと (chotto) is a very common colloquial word meaning \"a little\".",
+      "typing_prompt": "Escribe en japonés: \"It is a little difficult.\"",
+      "clean_target": "ちょっと難しいです"
+    },
+    {
+      "id": "sent_33",
+      "japanese": "私は「この漢字の読み方は何ですか」と先生に聞きます。",
+      "english": "I ask the teacher, \"What is the reading of this kanji?\"",
+      "grammar_note": "〜方 (kata) added to a verb stem (読み - yomi) means \"the way of doing ~\". So 読み方 means \"how to read\". The verb 聞きます (kikimasu) can mean \"to listen\" or \"to ask\" depending on the context.",
+      "typing_prompt": "Escribe en japonés: \"I ask the teacher, \"What is the reading of this kanji?\"\"",
+      "clean_target": "私はこの漢字の読み方は何ですかと先生に聞きます"
+    },
+    {
+      "id": "sent_34",
+      "japanese": "授業はつまらないですか？",
+      "english": "Is the class boring?",
+      "grammar_note": "つまらない (tsumaranai) is an i-adjective meaning \"boring\" or \"uninteresting\".",
+      "typing_prompt": "Escribe en japonés: \"Is the class boring?\"",
+      "clean_target": "授業はつまらないですか"
+    },
+    {
+      "id": "sent_35",
+      "japanese": "いいえ、よく勉強するから、面白いです。",
+      "english": "No, because I study a lot, it is interesting.",
+      "grammar_note": "から (kara) at the end of a clause means \"because\". Notice よく (yoku) here means \"a lot/thoroughly\" modifying する (suru).",
+      "typing_prompt": "Escribe en japonés: \"No, because I study a lot, it is interesting.\"",
+      "clean_target": "いいえよく勉強するから面白いです"
+    },
+    {
+      "id": "sent_36",
+      "japanese": "休み時間に、私たちは話をします。",
+      "english": "During break time, we talk.",
+      "grammar_note": "休み時間 (yasumi jikan) means break time. 話をします (hanashi o shimasu) literally means \"do a talk\".",
+      "typing_prompt": "Escribe en japonés: \"During break time, we talk.\"",
+      "clean_target": "休み時間に私たちは話をします"
+    },
+    {
+      "id": "sent_37",
+      "japanese": "午後十二時です。",
+      "english": "It is 12:00 PM.",
+      "grammar_note": "午後 (gogo) means PM (after noon).",
+      "typing_prompt": "Escribe en japonés: \"It is 12:00 PM.\"",
+      "clean_target": "午後十二時です"
+    },
+    {
+      "id": "sent_38",
+      "japanese": "皆で外へ出て、魚を食べます。",
+      "english": "Everyone goes outside, and we eat fish.",
+      "grammar_note": "皆で (mina de) means \"everyone together\".",
+      "typing_prompt": "Escribe en japonés: \"Everyone goes outside, and we eat fish.\"",
+      "clean_target": "皆で外へ出て魚を食べます"
+    },
+    {
+      "id": "sent_39",
+      "japanese": "飲み物も買います。",
+      "english": "We also buy drinks.",
+      "grammar_note": "The particle も (mo) means \"also\" or \"too\", replacing は or を.",
+      "typing_prompt": "Escribe en japonés: \"We also buy drinks.\"",
+      "clean_target": "飲み物も買います"
+    },
+    {
+      "id": "sent_40",
+      "japanese": "お茶は百五十円ぐらいです。",
+      "english": "Tea is about 150 yen.",
+      "grammar_note": "ぐらい (gurai) means \"about\" or \"approximately\" when talking about amounts or prices.",
+      "typing_prompt": "Escribe en japonés: \"Tea is about 150 yen.\"",
+      "clean_target": "お茶は百五十円ぐらいです"
+    },
+    {
+      "id": "sent_41",
+      "japanese": "全部で千二百九十八円です。",
+      "english": "In total, it is 1,298 yen.",
+      "grammar_note": "全部で (zenbu de) is a set phrase meaning \"in total\".",
+      "typing_prompt": "Escribe en japonés: \"In total, it is 1,298 yen.\"",
+      "clean_target": "全部で千二百九十八円です"
+    },
+    {
+      "id": "sent_42",
+      "japanese": "安いです。",
+      "english": "It is cheap.",
+      "grammar_note": "安い (yasui) is an i-adjective meaning \"cheap\".",
+      "typing_prompt": "Escribe en japonés: \"It is cheap.\"",
+      "clean_target": "安いです"
+    },
+    {
+      "id": "sent_43",
+      "japanese": "私は友達に言います。",
+      "english": "I say to my friend.",
+      "grammar_note": "The particle に (ni) indicates the target of the action (speaking to the friend).",
+      "typing_prompt": "Escribe en japonés: \"I say to my friend.\"",
+      "clean_target": "私は友達に言います"
+    },
+    {
+      "id": "sent_44",
+      "japanese": "「今週の土曜日と日曜日に何をしますか？」 \"What will you do on Saturday and Sunday of this week?\"",
+      "english": "",
+      "grammar_note": "今週 (konshuu) means \"this week\".",
+      "typing_prompt": "Escribe en japonés:",
+      "clean_target": "今週の土曜日と日曜日に何をしますか\"WhatwillyoudoonSaturdayandSundayofthisweek?\""
+    },
+    {
+      "id": "sent_45",
+      "japanese": "「東の山に行きます。山は高いですか？いいえ、低いですが、空気が良くて楽しいです。」 \"I will go to the east mountain. Is the mountain high? No, it is low, but the air is good and it is fun.\"",
+      "english": "",
+      "grammar_note": "高い (takai) means high/tall. 低い (hikui) means low/short. 良くて (yokute) connects the two adjectives describing the mountain.",
+      "typing_prompt": "Escribe en japonés:",
+      "clean_target": "東の山に行きます山は高いですかいいえ低いですが空気が良くて楽しいです\"Iwillgototheeastmountain.Isthemountainhigh?No,itislow,buttheairisgoodanditisfun.\""
+    },
+    {
+      "id": "sent_46",
+      "japanese": "「いいですね。私は西の川に行きます。足を入れると気持ちがいいです。」 \"That is nice. I will go to the west river. When you put your feet in, it feels good.\"",
+      "english": "",
+      "grammar_note": "The particle と (to) here is used as a conditional meaning \"when\" or \"if\" (When you put feet in -> it feels good). 気持ちがいい (kimochi ga ii) is a set phrase meaning \"feels good/pleasant\".",
+      "typing_prompt": "Escribe en japonés:",
+      "clean_target": "いいですね私は西の川に行きます足を入れると気持ちがいいです\"Thatisnice.Iwillgotothewestriver.Whenyouputyourfeetin,itfeelsgood.\""
+    },
+    {
+      "id": "sent_47",
+      "japanese": "「火曜日、水曜日、木曜日、金曜日は忙しいけど、休みは楽しいです。今年は暑いから、たくさん水を飲んでね。」 \"Tuesday, Wednesday, Thursday, and Friday are busy, but days off are fun. This year is hot, so please drink a lot of water.\"",
+      "english": "",
+      "grammar_note": "けど (kedo) connects the busy weekdays with the fun weekend. 飲んで (nonde) is the te-form of 飲む (nomu). Adding ね (ne) at the end makes it a soft suggestion or request (\"drink water, okay?\").",
+      "typing_prompt": "Escribe en japonés:",
+      "clean_target": "火曜日水曜日木曜日金曜日は忙しいけど休みは楽しいです今年は暑いからたくさん水を飲んでね\"Tuesday,Wednesday,Thursday,andFridayarebusy,butdaysoffarefun.Thisyearishot,sopleasedrinkalotofwater.\""
+    },
+    {
+      "id": "sent_48",
+      "japanese": "友達のお父さんは三万円で古い車を買いました。",
+      "english": "My friend's father bought an old car for 30,000 yen.",
+      "grammar_note": "The particle で (de) is used here to indicate the price paid for an item.",
+      "typing_prompt": "Escribe en japonés: \"My friend's father bought an old car for 30,000 yen.\"",
+      "clean_target": "友達のお父さんは三万円で古い車を買いました"
+    },
+    {
+      "id": "sent_49",
+      "japanese": "だから、私たちは車で行くかもしれません。",
+      "english": "So, we might go by car.",
+      "grammar_note": "だから (dakara) means \"therefore\" or \"so\". かもしれません (kamoshiremasen) is an N5 grammar point meaning \"might\" or \"maybe\".",
+      "typing_prompt": "Escribe en japonés: \"So, we might go by car.\"",
+      "clean_target": "だから私たちは車で行くかもしれません"
+    },
+    {
+      "id": "sent_50",
+      "japanese": "でも、車は遅いから、電車で行く方がいいです。",
+      "english": "But cars are slow, so it is better to go by train.",
+      "grammar_note": "方がいいです (hou ga ii desu) is a grammar structure meaning \"it is better to ~\". It usually follows the plain past tense (行った方がいい), but can follow dictionary form (行く方がいい) for general facts.",
+      "typing_prompt": "Escribe en japonés: \"But cars are slow, so it is better to go by train.\"",
+      "clean_target": "でも車は遅いから電車で行く方がいいです"
+    },
+    {
+      "id": "sent_51",
+      "japanese": "北の空が黒いです。",
+      "english": "The north sky is black.",
+      "grammar_note": "黒い (kuroi) is an i-adjective meaning \"black\".",
+      "typing_prompt": "Escribe en japonés: \"The north sky is black.\"",
+      "clean_target": "北の空が黒いです"
+    },
+    {
+      "id": "sent_52",
+      "japanese": "悪い天気になるかもしれません。",
+      "english": "It might become bad weather.",
+      "grammar_note": "になる (ni naru) means \"to become\". Nouns and na-adjectives take に (ni) before なる.",
+      "typing_prompt": "Escribe en japonés: \"It might become bad weather.\"",
+      "clean_target": "悪い天気になるかもしれません"
+    },
+    {
+      "id": "sent_53",
+      "japanese": "雨が来るかもしれません。",
+      "english": "Rain might come.",
+      "grammar_note": "Simple phrase using 来る (kuru - to come).",
+      "typing_prompt": "Escribe en japonés: \"Rain might come.\"",
+      "clean_target": "雨が来るかもしれません"
+    },
+    {
+      "id": "sent_54",
+      "japanese": "でも、もちろん行きます。",
+      "english": "But, of course, we will go.",
+      "grammar_note": "Reinforcing the previously used words でも (demo) and もちろん (mochiron).",
+      "typing_prompt": "Escribe en japonés: \"But, of course, we will go.\"",
+      "clean_target": "でももちろん行きます"
+    },
+    {
+      "id": "sent_55",
+      "japanese": "自分の目と耳と口と手で、大きい山を楽しみます。",
+      "english": "With my own eyes, ears, mouth, and hands, I will enjoy the big mountain.",
+      "grammar_note": "自分 (jibun) means \"oneself\" (my own). The particle で (de) is again used to indicate the tools/means used (with my eyes, ears, etc.).",
+      "typing_prompt": "Escribe en japonés: \"With my own eyes, ears, mouth, and hands, I will enjoy the big mountain.\"",
+      "clean_target": "自分の目と耳と口と手で大きい山を楽しみます"
+    },
+    {
+      "id": "sent_56",
+      "japanese": "あと五分で、時間が来ます。",
+      "english": "In 5 minutes, the time will come (class will start/it's time to go).",
+      "grammar_note": "あと (ato) means \"remaining\" or \"in\" when talking about time left.",
+      "typing_prompt": "Escribe en japonés: \"In 5 minutes, the time will come (class will start/it's time to go).\"",
+      "clean_target": "あと五分で時間が来ます"
+    },
+    {
+      "id": "sent_57",
+      "japanese": "二、三、四、五、六、七、八、九、十。さあ、行きましょう！",
+      "english": "Two, three, four, five, six, seven, eight, nine, ten. Well then, let's go!",
+      "grammar_note": "さあ (saa) is an interjection used to prompt an action (\"well then / come on\"). 行きましょう (ikimashou) is the volitional form of 行く meaning \"Let's go\".",
+      "typing_prompt": "Escribe en japonés: \"Two, three, four, five, six, seven, eight, nine, ten. Well then, let's go!\"",
+      "clean_target": "二三四五六七八九十さあ行きましょう"
+    },
+    {
+      "id": "sent_58",
+      "japanese": "\u0014\bӁ9\u0010㺦\u0018\bi\u0012\u0012\b\u000f\u0012\u0003\u0001\u0000\u0005\u0018A*\u0006ii\b\u0001\u0012\u0004\bi*",
+      "english": "",
+      "grammar_note": "",
+      "typing_prompt": "Escribe en japonés:",
+      "clean_target": "\u0014\bӁ9\u0010㺦\u0018\bi\u0012\u0012\b\u000f\u0012\u0003\u0001\u0000\u0005\u0018A*\u0006ii\b\u0001\u0012\u0004\bi*"
+    }
+  ]
+}

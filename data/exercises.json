@@ -1,0 +1,137 @@
+[
+  {
+    "id": "ex_1",
+    "level": "N4",
+    "prompt_es": "La vista desde la montaña es maravillosa.",
+    "sentence": "山から見る景色はとても ( すばらしい ) です。",
+    "masked": "山から見る景色はとても 【 ？ 】 です。",
+    "correct": "すばらしい",
+    "options": [
+      "すばらしい",
+      "あぶない",
+      "こわい",
+      "ふかい"
+    ],
+    "explanation": "すばらしい (maravilloso). Se usa comúnmente para describir paisajes o vistas impresionantes."
+  },
+  {
+    "id": "ex_2",
+    "level": "N4",
+    "prompt_es": "Nick vivió en Japón, así que habla bien japonés.",
+    "sentence": "ニックさんは日本に住んでいたから、日本語が ( じょうず ) です。",
+    "masked": "ニックさんは日本に住んでいたから、日本語が 【 ？ 】 です。",
+    "correct": "じょうず",
+    "options": [
+      "じょうず",
+      "きびしい",
+      "うるさい",
+      "にがい"
+    ],
+    "explanation": "じょうず (hábil / bueno en algo). Expresa destreza adquirida tras vivir en Japón."
+  },
+  {
+    "id": "ex_3",
+    "level": "N4",
+    "prompt_es": "Aquel lago es profundo por lo que es peligroso, pero este lago es seguro porque es poco profundo.",
+    "sentence": "あの湖は深いから、( あぶない ) ですが、この湖は浅いから安全です。",
+    "masked": "あの湖は深いから、【 ？ 】 ですが、この湖は浅いから安全です。",
+    "correct": "あぶない",
+    "options": [
+      "あぶない",
+      "うれしい",
+      "ねっしん",
+      "すばらしい"
+    ],
+    "explanation": "あぶない / 危険 (peligroso), contrasta con 安全 (seguro)."
+  },
+  {
+    "id": "ex_4",
+    "level": "N4",
+    "prompt_es": "Esta película de terror me da mucho miedo.",
+    "sentence": "このホラー映画はとても ( こわい ) です。",
+    "masked": "このホラー映画はとても 【 ？ 】 です。",
+    "correct": "こわい",
+    "options": [
+      "こわい",
+      "かなしい",
+      "にがい",
+      "とくべつ"
+    ],
+    "explanation": "こわい (aterrador / que da miedo) es el adjetivo ideal para películas de terror."
+  },
+  {
+    "id": "ex_5",
+    "level": "N4",
+    "prompt_es": "Llevo viviendo un año en Japón. Me siento un poco solitario/nostálgico.",
+    "sentence": "日本に１年住んでいます。少し ( さびしい ) です。",
+    "masked": "日本に１年住んでいます。少し 【 ？ 】 です。",
+    "correct": "さびしい",
+    "options": [
+      "さびしい",
+      "うるさい",
+      "すばらしい",
+      "あさい"
+    ],
+    "explanation": "さびしい (solitario / con nostalgia de casa)."
+  },
+  {
+    "id": "ex_6",
+    "level": "N4",
+    "prompt_es": "El profesor es estricto y apasionado, así que nos deja mucha tarea.",
+    "sentence": "先生は ( きびしい ) し、熱心だし、たくさん宿題を出します。",
+    "masked": "先生は 【 ？ 】 し、熱心だし、たくさん宿題を出します。",
+    "correct": "きびしい",
+    "options": [
+      "きびしい",
+      "にがい",
+      "あぶない",
+      "こわい"
+    ],
+    "explanation": "きびしい (estricto), acompañado de 熱心 (dedicado/entusiasta)."
+  },
+  {
+    "id": "ex_7",
+    "level": "N4",
+    "prompt_es": "En la India, la vaca es un animal especial.",
+    "sentence": "インドでは牛は ( とくべつ ) な動物です。",
+    "masked": "インドでは牛は 【 ？ 】 な動物です。",
+    "correct": "とくべつ",
+    "options": [
+      "とくべつ",
+      "うるさい",
+      "てきせつ",
+      "かなしい"
+    ],
+    "explanation": "とくべつ (especial, adjetivo-na: 特別な動物)."
+  },
+  {
+    "id": "ex_8",
+    "level": "N4",
+    "prompt_es": "Prefiero el café negro amargo al café dulce.",
+    "sentence": "甘いコーヒーより ( にがい ) ブラックコーヒーが好きです。",
+    "masked": "甘いコーヒーより 【 ？ 】 ブラックコーヒーが好きです。",
+    "correct": "にがい",
+    "options": [
+      "にがい",
+      "あぶない",
+      "こわい",
+      "ふかい"
+    ],
+    "explanation": "にがい (amargo), opuesto a 甘い (dulce)."
+  },
+  {
+    "id": "ex_9",
+    "level": "N4",
+    "prompt_es": "Están en obras viales, así que hay mucho ruido.",
+    "sentence": "道路工事をしているから、とても ( うるさい ) です。",
+    "masked": "道路工事をしているから、とても 【 ？ 】 です。",
+    "correct": "うるさい",
+    "options": [
+      "うるさい",
+      "すばらしい",
+      "さびしい",
+      "とくべつ"
+    ],
+    "explanation": "うるさい (ruidoso / molesto) causado por obras en la calle (工事)."
+  }
+]

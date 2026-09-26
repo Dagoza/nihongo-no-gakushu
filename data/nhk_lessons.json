@@ -1,0 +1,215 @@
+[
+  {
+    "lesson": 1,
+    "title_jp": "はじめまして。私はアンナです。",
+    "title_es": "Encantada de conocerte. Soy Anna.",
+    "topic": "Presentación personal y cortesía básica",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "はじめまして。私はアンナです。",
+        "es": "Mucho gusto. Soy Anna."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "はじめまして。さくらです。",
+        "es": "Mucho gusto. Soy Sakura."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "よろしくおねがいします。",
+        "es": "Encantada de conocerte / Cuento contigo."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "こちらこそ。",
+        "es": "El gusto es mío."
+      }
+    ],
+    "grammar_notes": [
+      "は (wa): Se pronuncia 'wa' cuando funciona como partícula de tema.",
+      "です (desu): Cópula equivalente a 'ser' en español en tono formal y respetuoso.",
+      "はじめまして (Hajimemashite): Saludo usado la primera vez que conoces a alguien."
+    ]
+  },
+  {
+    "lesson": 2,
+    "title_jp": "これは何ですか。",
+    "title_es": "¿Qué es esto?",
+    "topic": "Demostrativos de objetos (これ, それ, あれ)",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "さくらさん。はい、どうぞ。",
+        "es": "Sakura. Aquí tienes."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "これは何ですか。",
+        "es": "¿Qué es esto?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "それはタイのお土産です。",
+        "es": "Ese es un recuerdo de Tailandia."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "ありがとうございます。",
+        "es": "Muchas gracias."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "どういたしまして。",
+        "es": "De nada."
+      }
+    ],
+    "grammar_notes": [
+      "これ (kore): 'Esto' (cerca del que habla).",
+      "それ (sore): 'Eso' (cerca del oyente).",
+      "あれ (are): 'Aquello' (lejos de ambos).",
+      "か (ka): Partícula final que convierte cualquier oración afirmativa en pregunta."
+    ]
+  },
+  {
+    "lesson": 3,
+    "title_jp": "トイレはどこですか。",
+    "title_es": "¿Dónde está el baño?",
+    "topic": "Preguntar ubicaciones (ここ, そこ, あそこ, どこ)",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Sakura",
+        "jp": "ここは教室です。",
+        "es": "Aquí está el aula."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "わあ、広い。",
+        "es": "¡Guau, qué espaciosa!"
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "あそこは図書館。",
+        "es": "Allí está la biblioteca."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "トイレはどこですか。",
+        "es": "¿Dónde está el baño?"
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "すぐそこです。",
+        "es": "Está justo ahí al lado."
+      }
+    ],
+    "grammar_notes": [
+      "どこ (doko): Interrogativo para 'dónde'.",
+      "ここ / そこ / あそこ: Aquí, Ahí, Allí.",
+      "Estructura [Lugar] + はどこですか = ¿Dónde está [Lugar]?"
+    ]
+  },
+  {
+    "lesson": 4,
+    "title_jp": "ただいま。",
+    "title_es": "¡Ya llegué!",
+    "topic": "Saludos del hogar y partícula も (también)",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "ただいま。",
+        "es": "¡Ya llegué / Estoy en casa!"
+      },
+      {
+        "speaker": "Encargada",
+        "jp": "おかえりなさい。",
+        "es": "Bienvenida de vuelta."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "こんにちは。",
+        "es": "Buenas tardes."
+      },
+      {
+        "speaker": "Encargada",
+        "jp": "あなたも留学生ですか。",
+        "es": "¿Tú también eres estudiante extranjera?"
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "いいえ、留学生ではありません。",
+        "es": "No, no soy estudiante extranjera."
+      }
+    ],
+    "grammar_notes": [
+      "ただいま / おかえりなさい: Saludos tradicionales japoneses al entrar a casa.",
+      "も (mo): 'También'. Reemplaza a la partícula は.",
+      "ではありません (dewa arimasen): Forma negativa formal de です."
+    ]
+  },
+  {
+    "lesson": 5,
+    "title_jp": "それは私の宝物です。",
+    "title_es": "Ese es mi tesoro.",
+    "topic": "Posesión con la partícula の",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Sakura",
+        "jp": "かわいいですね。何ですか。",
+        "es": "Qué lindo. ¿Qué es?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "それは私の宝物です。",
+        "es": "Ese es mi tesoro."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "誰からもらいましたか。",
+        "es": "¿De quién lo recibiste?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "母からもらいました。",
+        "es": "Lo recibí de mi mamá."
+      }
+    ],
+    "grammar_notes": [
+      "A の B: 'B de A'. Expresa pertenencia o descripción (私の本 = mi libro).",
+      "から (kara): Indica el origen o la persona que otorga algo (madre から = de mi madre)."
+    ]
+  },
+  {
+    "lesson": 6,
+    "title_jp": "電話番号は何番ですか。",
+    "title_es": "¿Cuál es tu número de teléfono?",
+    "topic": "Números de teléfono y preguntas numéricas",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Sakura",
+        "jp": "アンナさんの電話番号は何番ですか。",
+        "es": "Anna, ¿cuál es tu número de teléfono?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "090-1234-5678です。",
+        "es": "Es 090-1234-5678."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "分かりました。ありがとう。",
+        "es": "Entendido. Gracias."
+      }
+    ],
+    "grammar_notes": [
+      "El guión '-' en números de teléfono se pronuncia como 'の' (no).",
+      "何番 (nanban): '¿Qué número?'."
+    ]
+  }
+]
