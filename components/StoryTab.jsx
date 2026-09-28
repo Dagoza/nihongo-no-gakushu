@@ -1,21 +1,45 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import dataStore from '../lib/data';
 import audioManager from '../lib/audioManager';
-import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle } from 'lucide-react';
+import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle } from 'lucide-react';
 
-export default function StoryTab({ userState, onRecordActivity }) {
-  const story = dataStore.stories[0];
+export default function StoryTab({ userState, onRecordActivity, appState, onUpdateState, activeStoryId, onSelectStory, onNavigate }) {
+  const allStories = useMemo(() => {
+    const defaultStories = dataStore.stories || [];
+    const customStories = appState?.savedStories || [];
+    return [...defaultStories, ...customStories];
+  }, [appState?.savedStories]);
+
+  const [selectedStoryId, setSelectedStoryId] = useState(activeStoryId || allStories[0]?.id || 'story_1');
+
+  useEffect(() => {
+    if (activeStoryId && allStories.some(s => s.id === activeStoryId)) {
+      setSelectedStoryId(activeStoryId);
+    }
+  }, [activeStoryId, allStories]);
+
+  const story = allStories.find(s => s.id === selectedStoryId) || allStories[0] || dataStore.stories[0];
   const [currentChapter, setCurrentChapter] = useState(1);
   const [readingMode, setReadingMode] = useState('natural'); // 'natural', 'hiragana', 'kanji_only'
   const [selectedSentenceId, setSelectedSentenceId] = useState('sent_1');
   const [typingInput, setTypingInput] = useState('');
   const [typingFeedback, setTypingFeedback] = useState(null);
 
-  const chapter = story.paragraphs.find(p => p.chapter === currentChapter) || story.paragraphs[0];
+  const paragraphs = story.paragraphs && story.paragraphs.length > 0 ? story.paragraphs : [
+    {
+      chapter: 1,
+      title: story.title || 'Capítulo 1',
+      japanese: story.japanese || '',
+      hiragana: story.hiragana || '',
+      translation_es: story.translation_es || ''
+    }
+  ];
 
-  // Distribute sentences approximately
+  const chapter = paragraphs.find(p => p.chapter === currentChapter) || paragraphs[0];
+
+  // Distribute sentences
   const chapterRanges = {
     1: [0, 12],
     2: [12, 26],
@@ -23,8 +47,12 @@ export default function StoryTab({ userState, onRecordActivity }) {
     4: [40, 58]
   };
   const [start, end] = chapterRanges[currentChapter] || [0, 15];
-  const chapterSentences = story.sentences.slice(start, end);
-  const activeSentence = story.sentences.find(s => s.id === selectedSentenceId) || chapterSentences[0];
+
+  const storySentences = story.sentences && story.sentences.length > 0 ? story.sentences : [];
+  const chapterSentences = story.isCustom
+    ? storySentences
+    : storySentences.slice(start, end);
+  const activeSentence = chapterSentences.find(s => s.id === selectedSentenceId) || chapterSentences[0];
 
   const handlePlayChapter = () => {
     audioManager.setPlaylist(chapterSentences, 0);
@@ -142,6 +170,50 @@ export default function StoryTab({ userState, onRecordActivity }) {
 
   return (
     <div>
+      {/* Story Selector Header */}
+      <div className="story-selection-container">
+        <div className="story-selector-label">
+          <BookOpen size={16} className="text-primary" />
+          <span>Biblioteca de Historias ({allStories.length}):</span>
+        </div>
+        <div className="story-pills-scroll">
+          {allStories.map((s) => (
+            <button
+              key={s.id}
+              className={`story-select-pill ${s.id === story.id ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedStoryId(s.id);
+                setCurrentChapter(1);
+                if (onSelectStory) onSelectStory(s.id);
+              }}
+            >
+              <span>{s.title}</span>
+              {s.isCustom && <span className="custom-story-tag">Creada</span>}
+            </button>
+          ))}
+        </div>
+        <button
+          className="btn btn-outline btn-xs create-story-link-btn"
+          onClick={() => onNavigate && onNavigate('saved')}
+          title="Ir a Guardados para crear una nueva historia con tus palabras"
+        >
+          <Sparkles size={13} />
+          <span>+ Crear Historia</span>
+        </button>
+      </div>
+
+      {story.isCustom && (
+        <div className="custom-story-banner">
+          <Sparkles size={16} className="text-primary" />
+          <div>
+            <strong>Historia Personalizada:</strong> Creada a partir de tus palabras guardadas.
+            {story.wordsUsed && story.wordsUsed.length > 0 && (
+              <span className="words-snippet"> Palabras: {story.wordsUsed.join(', ')}</span>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="section-header">
         <h2 className="section-title">
           <span>📖</span> {story.title}

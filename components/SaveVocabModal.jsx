@@ -18,13 +18,15 @@ import {
   hiraganaToKatakana, 
   katakanaToHiragana, 
   extractKanjis, 
-  containsKanji 
+  containsKanji,
+  lookupJapaneseWord 
 } from '../lib/japaneseUtils';
+import { dataStore } from '../lib/data';
 
 export default function SaveVocabModal({
   isOpen,
   onClose,
-  initialData = {}, // { type: 'word'|'phrase'|'kanji', text, reading, translation, level, videoTitle, videoId, timestamp }
+  initialData = {}, // { type: 'word'|'phrase'|'kanji', text, reading, translation, level, videoTitle, videoId, timestamp, source }
   appState,
   onUpdateState
 }) {
@@ -44,6 +46,7 @@ export default function SaveVocabModal({
   const [videoTitle, setVideoTitle] = useState('');
   const [videoTimestamp, setVideoTimestamp] = useState(0);
   const [videoId, setVideoId] = useState('');
+  const [itemSource, setItemSource] = useState('Reproductor de Audio');
 
   // Status
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -51,28 +54,48 @@ export default function SaveVocabModal({
 
   useEffect(() => {
     if (isOpen && initialData) {
-      setActiveTab(initialData.type || 'word');
-      
-      const rawText = initialData.text || '';
+      const rawText = (initialData.text || '').trim();
       const rawReading = initialData.reading || '';
+      const isPhraseGuessed = rawText.length > 15 || /[。！？\n]/.test(rawText);
+      const defaultType = initialData.type || (isPhraseGuessed ? 'phrase' : 'word');
       
+      setActiveTab(defaultType);
+      setItemSource(initialData.source || (initialData.videoId ? 'YouTube' : 'Reproductor de Audio'));
+
+      // Intentar auto-completar desde catálogo o diccionario
+      const foundInfo = lookupJapaneseWord(rawText, appState?.savedCustomVocab || [], dataStore?.vocabulary || []);
+
       if (containsKanji(rawText)) {
         setKanji(rawText);
-        setHiragana(rawReading || katakanaToHiragana(rawText));
-        setKatakana(hiraganaToKatakana(rawReading || rawText));
+        setHiragana(rawReading || foundInfo?.hiragana || katakanaToHiragana(rawText));
+        setKatakana(foundInfo?.katakana || hiraganaToKatakana(rawReading || foundInfo?.hiragana || rawText));
       } else {
-        // Si no tiene kanji, el kanji es la misma palabra kana
         setKanji(rawText);
-        setHiragana(rawText);
-        setKatakana(hiraganaToKatakana(rawText));
+        setHiragana(foundInfo?.hiragana || rawText);
+        setKatakana(foundInfo?.katakana || hiraganaToKatakana(rawText));
       }
 
-      setMeaningEs(initialData.translation || '');
-      setLevel(initialData.level || 'N5');
-      setCategory(initialData.category || 'Anime y Cultura');
+      setMeaningEs(initialData.translation || foundInfo?.meaning_es || '');
+      setLevel(initialData.level || foundInfo?.level || 'N5');
+      setCategory(initialData.category || foundInfo?.category || 'Vocabulario General');
 
-      setPhraseJapanese(initialData.sentenceText || rawText);
-      setPhraseTranslation(initialData.sentenceTranslation || initialData.translation || '');
+      // Frase
+      const sentenceTarget = initialData.sentenceText || rawText;
+      setPhraseJapanese(sentenceTarget);
+
+      // Buscar si coincide con alguna oración de la historia
+      let matchedTranslation = initialData.sentenceTranslation || initialData.translation || '';
+      if (!matchedTranslation && dataStore?.stories) {
+        for (const st of dataStore.stories) {
+          const matchSent = st.sentences?.find(s => s.japanese?.includes(sentenceTarget) || sentenceTarget.includes(s.japanese));
+          if (matchSent) {
+            matchedTranslation = matchSent.translation_es || matchSent.english || '';
+            break;
+          }
+        }
+      }
+
+      setPhraseTranslation(matchedTranslation);
       setVideoTitle(initialData.videoTitle || '');
       setVideoTimestamp(initialData.timestamp || 0);
       setVideoId(initialData.videoId || '');
@@ -80,7 +103,7 @@ export default function SaveVocabModal({
       setSavedSuccess(false);
       setCopiedJson(false);
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, appState?.savedCustomVocab]);
 
   if (!isOpen) return null;
 
@@ -112,7 +135,7 @@ export default function SaveVocabModal({
       meaning_en: '',
       category: category,
       level: level,
-      source: 'YouTube Immersion',
+      source: itemSource || 'Reproductor de Audio',
       date: new Date().toISOString()
     };
 
@@ -140,7 +163,7 @@ export default function SaveVocabModal({
     setTimeout(() => {
       setSavedSuccess(false);
       onClose();
-    }, 1400);
+    }, 1200);
   };
 
   // Guardar frase de ejemplo con timestamp
@@ -151,10 +174,11 @@ export default function SaveVocabModal({
       id: `phrase_${Date.now()}`,
       japanese: phraseJapanese.trim(),
       translation: phraseTranslation.trim(),
-      videoTitle: videoTitle || 'Video de YouTube',
+      videoTitle: videoTitle || '',
       videoId: videoId,
       timestamp: videoTimestamp,
       youtubeUrl: videoId ? `https://youtu.be/${videoId}?t=${Math.floor(videoTimestamp)}s` : '',
+      source: itemSource || (videoId ? videoTitle : 'Reproductor de Audio'),
       date: new Date().toISOString()
     };
 
@@ -172,7 +196,7 @@ export default function SaveVocabModal({
     setTimeout(() => {
       setSavedSuccess(false);
       onClose();
-    }, 1400);
+    }, 1200);
   };
 
   // Generar JSON según formato de INSTRUCCIONES.md para data/vocabulary.json

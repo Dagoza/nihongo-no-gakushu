@@ -17,13 +17,14 @@ import {
   Grid,
   Sparkles,
   Check,
-  X
+  X,
+  BookmarkCheck
 } from 'lucide-react';
 
 export const NAV_CATEGORIES = [
-  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 9 },
+  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 10 },
   { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 4 },
-  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 4 },
+  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 5 },
   { id: 'progress', label: 'Progreso', shortLabel: 'Progreso', icon: BarChart3, count: 1 },
 ];
 
@@ -109,6 +110,16 @@ export const TABS = [
     color: '#06b6d4',
   },
   {
+    id: 'saved',
+    category: 'practice',
+    categoryName: 'Recursos & Práctica',
+    shortLabel: 'Guardados',
+    fullLabel: 'Palabras & Historias',
+    desc: 'Palabras y frases guardadas para exportar y crear historias',
+    icon: BookmarkCheck,
+    color: '#e11d48',
+  },
+  {
     id: 'progress',
     category: 'progress',
     categoryName: 'Progreso',
@@ -120,7 +131,7 @@ export const TABS = [
   },
 ];
 
-export default function NavigationTabs({ currentTab, onTabChange }) {
+export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0 }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -339,7 +350,7 @@ export default function NavigationTabs({ currentTab, onTabChange }) {
                   <div className="mega-menu-section">
                     <div className="mega-section-header">
                       <Layers size={14} className="text-blue-400" />
-                      <span>Recursos & Práctica (4)</span>
+                      <span>Recursos & Práctica ({TABS.filter((t) => t.category === 'practice').length})</span>
                     </div>
                     <div className="mega-items-grid">
                       {TABS.filter((t) => t.category === 'practice').map((t) => {
@@ -460,6 +471,9 @@ export default function NavigationTabs({ currentTab, onTabChange }) {
                     <span className="tab-pill-label">
                       {selectedCategory === 'all' ? tab.shortLabel : tab.fullLabel}
                     </span>
+                    {tab.id === 'saved' && savedCount > 0 && (
+                      <span className="tab-pill-badge">{savedCount}</span>
+                    )}
                     {isActive && <div className="tab-pill-glow" />}
                   </button>
                 </React.Fragment>

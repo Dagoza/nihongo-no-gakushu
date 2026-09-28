@@ -14,12 +14,14 @@ import ConversationTab from '../components/ConversationTab';
 import MaterialLibraryTab from '../components/MaterialLibraryTab';
 import ProgressTab from '../components/ProgressTab';
 import YouTubeImmersionTab from '../components/YouTubeImmersionTab';
+import SavedTab from '../components/SavedTab';
 
 import { loadSavedState, saveState, getInitialState } from '../lib/storage';
 import { isSupabaseConfigured, executeFullSync } from '../lib/supabaseSync';
 
 export default function Home() {
   const [currentTab, setCurrentTab] = useState('curriculum');
+  const [activeStoryId, setActiveStoryId] = useState('story_1');
   const [appState, setAppState] = useState(getInitialState());
   const [mounted, setMounted] = useState(false);
 
@@ -132,6 +134,7 @@ export default function Home() {
       <NavigationTabs 
         currentTab={currentTab} 
         onTabChange={(tabId) => setCurrentTab(tabId)} 
+        savedCount={(appState.savedCustomVocab?.length || 0) + (appState.savedPhrases?.length || 0)}
       />
 
       {/* Main Container */}
@@ -149,6 +152,9 @@ export default function Home() {
           <StoryTab 
             appState={appState} 
             onUpdateState={handleUpdateState} 
+            activeStoryId={activeStoryId}
+            onSelectStory={(id) => setActiveStoryId(id)}
+            onNavigate={(tabId) => setCurrentTab(tabId)}
           />
         )}
 
@@ -191,6 +197,17 @@ export default function Home() {
           <MaterialLibraryTab />
         )}
 
+        {currentTab === 'saved' && (
+          <SavedTab 
+            appState={appState} 
+            onUpdateState={handleUpdateState}
+            onNavigate={(tabId, storyId) => {
+              if (storyId) setActiveStoryId(storyId);
+              setCurrentTab(tabId);
+            }}
+          />
+        )}
+
         {currentTab === 'progress' && (
           <ProgressTab 
             appState={appState} 
@@ -203,7 +220,11 @@ export default function Home() {
       </main>
 
       {/* Persistent Audio Player Bar with Pause, Skip, Rewind, Click & Selection Speech */}
-      <AudioPlayerBar />
+      <AudioPlayerBar 
+        appState={appState}
+        onUpdateState={handleUpdateState}
+        onNavigate={(tabId) => setCurrentTab(tabId)}
+      />
     </>
   );
 }
