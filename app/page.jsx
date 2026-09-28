@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 import Header from '../components/Header';
 import NavigationTabs from '../components/NavigationTabs';
@@ -16,11 +16,48 @@ import ProgressTab from '../components/ProgressTab';
 import YouTubeImmersionTab from '../components/YouTubeImmersionTab';
 
 import { loadSavedState, saveState, getInitialState } from '../lib/storage';
+import { isSupabaseConfigured, executeFullSync } from '../lib/supabaseSync';
 
 export default function Home() {
   const [currentTab, setCurrentTab] = useState('curriculum');
   const [appState, setAppState] = useState(getInitialState());
   const [mounted, setMounted] = useState(false);
+
+  // Estados de sincronización en la nube
+  const [syncStatus, setSyncStatus] = useState('unconfigured'); // 'unconfigured' | 'synced' | 'syncing' | 'error'
+  const [syncInfo, setSyncInfo] = useState('');
+  const appStateRef = useRef(appState);
+  appStateRef.current = appState;
+
+  const handleTriggerSync = useCallback(async (stateToSync = null, targetCode = null) => {
+    if (!isSupabaseConfigured()) {
+      setSyncStatus('unconfigured');
+      setSyncInfo('Modo Local (Supabase sin configurar)');
+      return;
+    }
+
+    setSyncStatus('syncing');
+    setSyncInfo('Sincronizando con la nube...');
+
+    try {
+      const baseState = stateToSync || appStateRef.current;
+      const res = await executeFullSync(baseState, targetCode);
+
+      if (res.success) {
+        setAppState(res.mergedState);
+        saveState(res.mergedState, false); // Guardar en localStorage sin disparar loop de subida
+        setSyncStatus('synced');
+        const now = new Date();
+        setSyncInfo(`Sincronizado a las ${now.toLocaleTimeString()}`);
+      } else {
+        setSyncStatus('error');
+        setSyncInfo(res.message || 'Error al sincronizar');
+      }
+    } catch (e) {
+      setSyncStatus('error');
+      setSyncInfo('Fallo de conexión al sincronizar');
+    }
+  }, []);
 
   useEffect(() => {
     const saved = loadSavedState();
@@ -29,11 +66,41 @@ export default function Home() {
       document.body.setAttribute('data-theme', saved.theme);
     }
     setMounted(true);
-  }, []);
+
+    // Inicializar sincronización si está configurado
+    if (isSupabaseConfigured()) {
+      handleTriggerSync(saved);
+    } else {
+      setSyncStatus('unconfigured');
+      setSyncInfo('Modo local');
+    }
+
+    // Auto-sincronizar al volver a la pestaña (cambio de dispositivo o ventana)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isSupabaseConfigured()) {
+        handleTriggerSync();
+      }
+    };
+
+    // Auto-sincronizar al reconectarse a internet
+    const handleOnline = () => {
+      if (isSupabaseConfigured()) {
+        handleTriggerSync();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [handleTriggerSync]);
 
   const handleUpdateState = (newState) => {
     setAppState(newState);
-    saveState(newState);
+    saveState(newState, true); // Guarda en localStorage y programa sync debounced
   };
 
   const handleToggleTheme = () => {
@@ -50,11 +117,15 @@ export default function Home() {
         stats={{
           streak: appState.streak || 1,
           xp: appState.xp || 0,
-          level: Math.floor((appState.xp || 0) / 100) + 1
+          level: Math.floor((appState.xp || 0) / 100) + 1,
+          particles: Object.values(appState.masteredParticles || {}).filter(Boolean).length,
+          vocab: Object.values(appState.masteredVocab || {}).filter(Boolean).length
         }}
         theme={appState.theme || 'light'}
         onToggleTheme={handleToggleTheme}
         onNavigate={(tab) => setCurrentTab(tab)}
+        syncStatus={syncStatus}
+        syncInfo={syncInfo}
       />
 
       {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}
@@ -123,7 +194,10 @@ export default function Home() {
         {currentTab === 'progress' && (
           <ProgressTab 
             appState={appState} 
-            onUpdateState={handleUpdateState} 
+            onUpdateState={handleUpdateState}
+            syncStatus={syncStatus}
+            syncInfo={syncInfo}
+            onTriggerSync={handleTriggerSync}
           />
         )}
       </main>

@@ -1,12 +1,103 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { Download, Upload, Flame, Star, Target, BookOpen, Layers, CheckCircle2, RotateCcw, Keyboard } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { 
+  Download, 
+  Upload, 
+  Flame, 
+  Star, 
+  Target, 
+  BookOpen, 
+  Layers, 
+  CheckCircle2, 
+  RotateCcw, 
+  Keyboard,
+  Cloud,
+  CloudOff,
+  CloudCheck,
+  CloudSync,
+  RefreshCw,
+  Copy,
+  Check,
+  Link,
+  Smartphone,
+  Laptop,
+  Settings,
+  ShieldCheck,
+  AlertCircle,
+  ExternalLink,
+  Code
+} from 'lucide-react';
 import { exportData, parseImportData, getInitialState } from '../lib/storage';
+import { 
+  getSupabaseConfig, 
+  saveSupabaseConfig, 
+  clearSupabaseConfig, 
+  isSupabaseConfigured,
+  getSyncCode, 
+  setSyncCode, 
+  generateSyncCode, 
+  testSupabaseConnection, 
+  executeFullSync, 
+  getLastSyncTime 
+} from '../lib/supabaseSync';
 import { dataStore } from '../lib/data';
 
-export default function ProgressTab({ appState, onUpdateState }) {
+const SQL_SCRIPT = `-- Nihongo Master - Tabla de sincronización de progreso
+create table if not exists public.user_progress (
+  sync_id text primary key,
+  data jsonb not null default '{}'::jsonb,
+  device_info text default 'Web Client',
+  client_version integer default 2,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_user_progress_sync_id on public.user_progress (sync_id);
+create index if not exists idx_user_progress_updated_at on public.user_progress (updated_at desc);
+
+alter table public.user_progress enable row level security;
+
+create policy "Acceso total a progreso de usuario"
+  on public.user_progress
+  for all
+  to anon, authenticated
+  using (true)
+  with check (true);`;
+
+export default function ProgressTab({ 
+  appState, 
+  onUpdateState, 
+  syncStatus = 'unconfigured', 
+  syncInfo = '', 
+  onTriggerSync = null 
+}) {
   const fileInputRef = useRef(null);
+
+  // Estados de Sincronización en la Nube
+  const [currentSyncCode, setCurrentSyncCode] = useState('');
+  const [inputDeviceCode, setInputDeviceCode] = useState('');
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
+  const [isSyncingLocal, setIsSyncingLocal] = useState(false);
+  const [syncMessage, setSyncMessage] = useState(null); // { type: 'success' | 'error' | 'info', text: string }
+
+  // Configuración Supabase
+  const [supabaseConfig, setSupabaseConfig] = useState({ url: '', anonKey: '', source: 'none' });
+  const [showConfigDrawer, setShowConfigDrawer] = useState(false);
+  const [showSqlDrawer, setShowSqlDrawer] = useState(false);
+  const [customUrl, setCustomUrl] = useState('');
+  const [customAnonKey, setCustomAnonKey] = useState('');
+  const [isTestingConnection, setIsTestingConnection] = useState(false);
+
+  useEffect(() => {
+    setCurrentSyncCode(getSyncCode());
+    const cfg = getSupabaseConfig();
+    setSupabaseConfig(cfg);
+    if (cfg.source === 'custom') {
+      setCustomUrl(cfg.url);
+      setCustomAnonKey(cfg.anonKey);
+    }
+  }, []);
 
   const streak = appState.streak || 1;
   const xp = appState.xp || 0;
@@ -17,6 +108,132 @@ export default function ProgressTab({ appState, onUpdateState }) {
   const completedSentencesCount = Object.values(appState.completedSentences || {}).filter(Boolean).length;
   const completedConversationsCount = Object.values(appState.completedConversations || {}).filter(Boolean).length;
   const totalConversations = dataStore.nhkLessons?.length || 22;
+
+  // Acciones de sincronización
+  const handleCopyCode = () => {
+    if (!currentSyncCode) return;
+    navigator.clipboard.writeText(currentSyncCode);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2500);
+  };
+
+  const handleGenerateNewCode = () => {
+    if (confirm('¿Deseas generar un nuevo código de sincronización para este dispositivo? Si ya tienes otro dispositivo vinculado con el código actual, dejarán de sincronizarse.')) {
+      const newCode = generateSyncCode();
+      setSyncCode(newCode);
+      setCurrentSyncCode(newCode);
+      setSyncMessage({ type: 'info', text: `Nuevo código generado: ${newCode}` });
+    }
+  };
+
+  const handleManualSync = async () => {
+    setIsSyncingLocal(true);
+    setSyncMessage(null);
+    try {
+      if (onTriggerSync) {
+        await onTriggerSync();
+      } else {
+        const res = await executeFullSync(appState);
+        if (res.success) {
+          onUpdateState(res.mergedState);
+          setSyncMessage({ type: 'success', text: res.message });
+        } else {
+          setSyncMessage({ type: 'error', text: res.message });
+        }
+      }
+    } catch (e) {
+      setSyncMessage({ type: 'error', text: 'Error inesperado durante la sincronización.' });
+    } finally {
+      setIsSyncingLocal(false);
+    }
+  };
+
+  const handleLinkDevice = async (e) => {
+    e.preventDefault();
+    const code = inputDeviceCode.trim().toUpperCase();
+    if (!code) return;
+
+    if (code === currentSyncCode) {
+      setSyncMessage({ type: 'info', text: 'Este ya es el código de este dispositivo.' });
+      return;
+    }
+
+    if (!isSupabaseConfigured()) {
+      setSyncMessage({ 
+        type: 'error', 
+        text: 'Primero debes configurar la base de datos de Supabase antes de vincular dispositivos.' 
+      });
+      setShowConfigDrawer(true);
+      return;
+    }
+
+    setIsSyncingLocal(true);
+    setSyncMessage({ type: 'info', text: `Conectando con el dispositivo [${code}]...` });
+
+    try {
+      // Ejecutar sincronización con el código objetivo
+      const res = await executeFullSync(appState, code);
+      if (res.success) {
+        setSyncCode(code);
+        setCurrentSyncCode(code);
+        setInputDeviceCode('');
+        onUpdateState(res.mergedState);
+        setSyncMessage({ 
+          type: 'success', 
+          text: `¡Dispositivo vinculado con éxito! Todo el progreso ha sido combinado y sincronizado.` 
+        });
+      } else {
+        setSyncMessage({ 
+          type: 'error', 
+          text: res.message || 'No se pudo vincular con el código indicado. Comprueba que el código sea correcto.' 
+        });
+      }
+    } catch (err) {
+      setSyncMessage({ type: 'error', text: 'Error al conectar con la base de datos.' });
+    } finally {
+      setIsSyncingLocal(false);
+    }
+  };
+
+  const handleSaveCustomConfig = async (e) => {
+    e.preventDefault();
+    if (!customUrl || !customAnonKey) {
+      setSyncMessage({ type: 'error', text: 'Ingresa la URL y la Anon Key de Supabase.' });
+      return;
+    }
+
+    setIsTestingConnection(true);
+    const testRes = await testSupabaseConnection({ url: customUrl, anonKey: customAnonKey });
+    setIsTestingConnection(false);
+
+    if (testRes.success) {
+      saveSupabaseConfig(customUrl, customAnonKey);
+      setSupabaseConfig({ url: customUrl, anonKey: customAnonKey, source: 'custom' });
+      setSyncMessage({ type: 'success', text: '¡Conexión verificada y guardada con éxito!' });
+      setShowConfigDrawer(false);
+      // Disparar sincronización inicial
+      handleManualSync();
+    } else {
+      setSyncMessage({ type: 'error', text: testRes.message });
+    }
+  };
+
+  const handleTestExistingConnection = async () => {
+    setIsTestingConnection(true);
+    const testRes = await testSupabaseConnection();
+    setIsTestingConnection(false);
+    if (testRes.success) {
+      setSyncMessage({ type: 'success', text: testRes.message });
+    } else {
+      setSyncMessage({ type: 'error', text: testRes.message });
+    }
+  };
+
+  const handleCopySql = () => {
+    navigator.clipboard.writeText(SQL_SCRIPT);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2500);
+  };
 
   const handleExport = () => {
     exportData(appState);
@@ -33,10 +250,10 @@ export default function ProgressTab({ appState, onUpdateState }) {
         if (typeof text === 'string') {
           const restoredState = parseImportData(text);
           onUpdateState(restoredState);
-          alert('¡Progreso restaurado con éxito!');
+          setSyncMessage({ type: 'success', text: '¡Progreso restaurado con éxito desde el archivo JSON!' });
         }
       } catch (err) {
-        alert('El archivo JSON no es válido o está dañado.');
+        setSyncMessage({ type: 'error', text: 'El archivo JSON no es válido o está dañado.' });
       }
     };
     reader.readAsText(file);
@@ -46,8 +263,11 @@ export default function ProgressTab({ appState, onUpdateState }) {
     if (confirm('¿Estás seguro de que deseas reiniciar todo el progreso acumulado? Esta acción no se puede deshacer.')) {
       const fresh = getInitialState();
       onUpdateState(fresh);
+      setSyncMessage({ type: 'info', text: 'El progreso ha sido reiniciado a cero.' });
     }
   };
+
+  const configured = isSupabaseConfigured();
 
   return (
     <div className="section-panel active">
@@ -57,15 +277,53 @@ export default function ProgressTab({ appState, onUpdateState }) {
           <span>📊</span> Mi Progreso y Estadísticas de Aprendizaje
         </h2>
         <p className="section-desc">
-          Todo tu progreso se guarda automáticamente en tu navegador. Consulta tu rendimiento, exporta tus datos para sincronizar con otros equipos y revisa la guía de teclado japonés.
+          Consulta tu rendimiento, mantén tu sesión sincronizada en tiempo real entre tu móvil, tablet y computadora, y gestiona tus copias de seguridad.
         </p>
       </div>
 
+      {/* Banner de mensajes/alertas de sincronización */}
+      {syncMessage && (
+        <div 
+          style={{
+            padding: '12px 18px',
+            borderRadius: 10,
+            marginBottom: 20,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            background: syncMessage.type === 'success' 
+              ? 'rgba(16, 185, 129, 0.12)' 
+              : syncMessage.type === 'error' 
+              ? 'rgba(239, 68, 68, 0.12)' 
+              : 'rgba(99, 102, 241, 0.12)',
+            border: `1px solid ${
+              syncMessage.type === 'success' 
+                ? 'var(--success, #10b981)' 
+                : syncMessage.type === 'error' 
+                ? 'var(--danger, #ef4444)' 
+                : 'var(--primary, #6366f1)'
+            }`,
+            color: 'var(--text-main)'
+          }}
+        >
+          {syncMessage.type === 'success' && <CheckCircle2 size={18} style={{ color: 'var(--success)' }} />}
+          {syncMessage.type === 'error' && <AlertCircle size={18} style={{ color: 'var(--danger)' }} />}
+          {syncMessage.type === 'info' && <RefreshCw size={18} style={{ color: 'var(--primary)' }} />}
+          <div style={{ flex: 1, fontSize: '0.92rem' }}>{syncMessage.text}</div>
+          <button 
+            onClick={() => setSyncMessage(null)}
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Stats Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 24 }}>
         <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🔥</div>
-          <div style={{ fontSize: '1.8rem', fontBold: true, fontWeight: 800, color: 'var(--accent)' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent)' }}>
             {streak} {streak === 1 ? 'día' : 'días'}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Racha de Estudio</div>
@@ -120,13 +378,386 @@ export default function ProgressTab({ appState, onUpdateState }) {
         </div>
       </div>
 
-      {/* Backup and Restore Box */}
+      {/* CLOUD SYNC & MULTI-DEVICE PERSISTENCE CARD */}
+      <div className="card" style={{ marginBottom: 24, border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+        {/* Card Header with Status Badge */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ 
+              width: 36, 
+              height: 36, 
+              borderRadius: 8, 
+              background: 'rgba(99, 102, 241, 0.12)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              color: 'var(--primary)'
+            }}>
+              <Cloud size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
+                Sincronización en la Nube y Multi-Dispositivo
+              </h3>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                Guarda tu progreso en la nube y continúa exactamente donde lo dejaste en tu teléfono o computadora.
+              </div>
+            </div>
+          </div>
+
+          {/* Connection Status Pill */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 12px',
+              borderRadius: 20,
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              background: isSyncingLocal || syncStatus === 'syncing'
+                ? 'rgba(245, 158, 11, 0.12)'
+                : configured && syncStatus === 'synced'
+                ? 'rgba(16, 185, 129, 0.12)'
+                : configured
+                ? 'rgba(99, 102, 241, 0.12)'
+                : 'rgba(148, 163, 184, 0.12)',
+              color: isSyncingLocal || syncStatus === 'syncing'
+                ? 'var(--accent, #f59e0b)'
+                : configured && syncStatus === 'synced'
+                ? 'var(--success, #10b981)'
+                : configured
+                ? 'var(--primary, #6366f1)'
+                : 'var(--text-muted, #94a3b8)',
+              border: '1px solid currentColor'
+            }}>
+              {isSyncingLocal || syncStatus === 'syncing' ? (
+                <>
+                  <CloudSync size={14} className="animate-spin" />
+                  <span>Sincronizando...</span>
+                </>
+              ) : configured && syncStatus === 'synced' ? (
+                <>
+                  <CloudCheck size={14} />
+                  <span>Sincronizado con la nube</span>
+                </>
+              ) : configured ? (
+                <>
+                  <Cloud size={14} />
+                  <span>Nube lista</span>
+                </>
+              ) : (
+                <>
+                  <CloudOff size={14} />
+                  <span>Modo Local (Sin sincronización)</span>
+                </>
+              )}
+            </div>
+
+            {configured && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={handleManualSync}
+                disabled={isSyncingLocal}
+                title="Sincronizar ahora con la nube"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                <RefreshCw size={14} className={isSyncingLocal ? 'animate-spin' : ''} />
+                <span>Sincronizar ahora</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Pairing Grid */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+          gap: 16,
+          padding: 16,
+          background: 'var(--bg-main)',
+          borderRadius: 12,
+          border: '1px solid var(--border)',
+          marginBottom: 16
+        }}>
+          {/* Column 1: This Device's Sync Code */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+              <Laptop size={16} color="var(--primary)" />
+              <strong style={{ fontSize: '0.92rem' }}>Código de este dispositivo</strong>
+            </div>
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: 12 }}>
+              Comparte este código con tu celular o tablet para estudiar en ambos dispositivos sin perder nada.
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <code style={{
+                flex: 1,
+                padding: '10px 14px',
+                fontSize: '1.05rem',
+                fontWeight: 700,
+                letterSpacing: '1px',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                borderRadius: 8,
+                color: 'var(--primary)',
+                textAlign: 'center'
+              }}>
+                {currentSyncCode || 'CARGANDO...'}
+              </code>
+              <button
+                className="btn btn-outline"
+                onClick={handleCopyCode}
+                title="Copiar código"
+                style={{ padding: '10px 12px' }}
+              >
+                {copiedCode ? <Check size={16} color="var(--success)" /> : <Copy size={16} />}
+              </button>
+            </div>
+            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                {copiedCode ? '¡Copiado al portapapeles!' : 'Privado y seguro'}
+              </span>
+              <button
+                onClick={handleGenerateNewCode}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  fontSize: '0.78rem',
+                  cursor: 'pointer',
+                  textDecoration: 'underline'
+                }}
+              >
+                Generar nuevo código
+              </button>
+            </div>
+          </div>
+
+          {/* Column 2: Link another device */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+              <Smartphone size={16} color="var(--accent)" />
+              <strong style={{ fontSize: '0.92rem' }}>Vincular otro dispositivo</strong>
+            </div>
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: 12 }}>
+              Escribe el código generado en tu otro dispositivo para combinar el progreso de ambos.
+            </p>
+            <form onSubmit={handleLinkDevice} style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="text"
+                value={inputDeviceCode}
+                onChange={(e) => setInputDeviceCode(e.target.value.toUpperCase())}
+                placeholder="Ej: NIH-7K2M-9P4W"
+                maxLength={20}
+                style={{
+                  flex: 1,
+                  padding: '10px 12px',
+                  borderRadius: 8,
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-main)',
+                  fontSize: '0.95rem',
+                  fontFamily: 'monospace',
+                  textTransform: 'uppercase'
+                }}
+              />
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={!inputDeviceCode.trim() || isSyncingLocal}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
+              >
+                <Link size={15} />
+                <span>Vincular</span>
+              </button>
+            </form>
+            <div style={{ marginTop: 8, fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              Fusión inteligente: combina kanjis, vocabulario y XP sin sobreescribir.
+            </div>
+          </div>
+        </div>
+
+        {/* Database Configuration Accordion / Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ShieldCheck size={16} color={configured ? 'var(--success)' : 'var(--text-muted)'} />
+            <span>
+              {configured
+                ? `Base de datos conectada (${supabaseConfig.source === 'env' ? 'Variables de entorno' : 'Configuración personalizada'})`
+                : 'Base de datos no configurada. Conecta Supabase en 2 minutos para activar la sincronización.'}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            {configured && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={handleTestExistingConnection}
+                disabled={isTestingConnection}
+                style={{ fontSize: '0.8rem' }}
+              >
+                {isTestingConnection ? 'Probando...' : 'Probar conexión'}
+              </button>
+            )}
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => setShowConfigDrawer(!showConfigDrawer)}
+              style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              <Settings size={14} />
+              <span>{showConfigDrawer ? 'Ocultar ajustes de BD' : 'Ajustes de Supabase'}</span>
+            </button>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => setShowSqlDrawer(!showSqlDrawer)}
+              style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              <Code size={14} />
+              <span>{showSqlDrawer ? 'Ocultar Script SQL' : 'Ver Script SQL'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Config Drawer */}
+        {showConfigDrawer && (
+          <div style={{
+            marginTop: 16,
+            padding: 16,
+            borderRadius: 10,
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border)'
+          }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '0.98rem', fontWeight: 700 }}>
+              Configuración de Supabase
+            </h4>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 14 }}>
+              Crea un proyecto gratis en{' '}
+              <a href="https://supabase.com" target="_blank" rel="noreferrer" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>
+                supabase.com
+              </a>{' '}
+              y copia aquí tu URL de proyecto y tu clave anónima (Anon Key), o configúralas en Vercel con las variables <code>NEXT_PUBLIC_SUPABASE_URL</code> y <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.
+            </p>
+
+            <form onSubmit={handleSaveCustomConfig}>
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 4 }}>
+                  Supabase Project URL
+                </label>
+                <input
+                  type="text"
+                  value={customUrl}
+                  onChange={(e) => setCustomUrl(e.target.value)}
+                  placeholder="https://xyzabcdefg.supabase.co"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: 6,
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text-main)',
+                    fontSize: '0.9rem'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 4 }}>
+                  Supabase Anon Public Key (API Key)
+                </label>
+                <input
+                  type="password"
+                  value={customAnonKey}
+                  onChange={(e) => setCustomAnonKey(e.target.value)}
+                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: 6,
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text-main)',
+                    fontSize: '0.9rem'
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                {supabaseConfig.source === 'custom' && (
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    style={{ color: 'var(--danger)' }}
+                    onClick={() => {
+                      clearSupabaseConfig();
+                      setSupabaseConfig(getSupabaseConfig());
+                      setCustomUrl('');
+                      setCustomAnonKey('');
+                      setSyncMessage({ type: 'info', text: 'Configuración personalizada eliminada.' });
+                    }}
+                  >
+                    Restablecer
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  disabled={isTestingConnection}
+                >
+                  {isTestingConnection ? 'Verificando...' : 'Guardar y Conectar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* SQL Drawer */}
+        {showSqlDrawer && (
+          <div style={{
+            marginTop: 16,
+            padding: 16,
+            borderRadius: 10,
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>
+                Script SQL para Supabase (Crear tabla <code>user_progress</code>)
+              </h4>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={handleCopySql}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                {copiedSql ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
+                <span>{copiedSql ? '¡Copiado!' : 'Copiar Script SQL'}</span>
+              </button>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 10 }}>
+              Pega este código en el <strong>SQL Editor</strong> de tu panel de Supabase y pulsa <strong>Run</strong>:
+            </p>
+            <pre style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              padding: 12,
+              fontSize: '0.8rem',
+              overflowX: 'auto',
+              maxHeight: 220,
+              color: 'var(--text-main)'
+            }}>
+              {SQL_SCRIPT}
+            </pre>
+          </div>
+        )}
+      </div>
+
+      {/* Backup and Restore Box (JSON Manual) */}
       <div className="card" style={{ marginBottom: 24 }}>
         <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span>💾</span> Respaldo y Sincronización de Datos
+          <span>💾</span> Respaldo Manual en Archivo JSON
         </h3>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: 16 }}>
-          Descarga un archivo JSON de respaldo con tu racha, XP y listas de estudio completadas, o restáuralo si cambias de equipo o navegador.
+          Descarga un archivo JSON de respaldo con tu racha, XP y listas de estudio completadas, o restáuralo si deseas tener copias físicas fuera de la nube.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

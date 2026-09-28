@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard } from 'lucide-react';
+import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync } from 'lucide-react';
 
-export default function Header({ stats, theme, onToggleTheme, onNavigate }) {
+export default function Header({ stats, theme, onToggleTheme, onNavigate, syncStatus = 'unconfigured', syncInfo = '' }) {
   return (
     <header className="app-header">
       <div className="header-container">
@@ -39,6 +39,24 @@ export default function Header({ stats, theme, onToggleTheme, onNavigate }) {
           <div className="stat-badge hidden-sm" title="Teclado Japonés IME listo">
             <Keyboard size={16} className="text-rose-500" />
             <span>IME 🇯🇵</span>
+          </div>
+
+          <div 
+            className="stat-badge" 
+            style={{ cursor: 'pointer' }}
+            onClick={() => onNavigate('progress')}
+            title={syncInfo || (syncStatus === 'synced' ? 'Nube sincronizada (Haz clic para ver)' : 'Haz clic para configurar sincronización multi-dispositivo')}
+          >
+            {syncStatus === 'syncing' ? (
+              <CloudSync size={16} style={{ color: 'var(--accent, #f59e0b)' }} />
+            ) : syncStatus === 'synced' ? (
+              <CloudCheck size={16} style={{ color: 'var(--success, #10b981)' }} />
+            ) : (
+              <CloudOff size={16} style={{ color: 'var(--text-muted, #94a3b8)' }} />
+            )}
+            <span className="hidden-sm" style={{ fontSize: '0.8rem' }}>
+              {syncStatus === 'synced' ? 'Nube activa' : syncStatus === 'syncing' ? 'Sincronizando...' : 'Nube'}
+            </span>
           </div>
 
           <button 
