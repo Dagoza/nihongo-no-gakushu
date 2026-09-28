@@ -32,7 +32,9 @@ import {
   HelpCircle,
   Link as LinkIcon,
   Trash2,
-  Check
+  Check,
+  ShieldCheck,
+  Loader2
 } from 'lucide-react';
 
 import YouTubePlayer from './YouTubePlayer';
@@ -40,6 +42,17 @@ import SaveVocabModal from './SaveVocabModal';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import { tokenizeJapanese, formatTimestamp, containsKanji } from '../lib/japaneseUtils';
+
+const TOPIC_PRESETS = [
+  { id: 'anime', label: '🎌 Anime & Pop', query: 'Anime Japanese conversation', desc: 'Diálogos de anime y expresiones en japonés' },
+  { id: 'food', label: '🍜 Comida & Ramen', query: 'Japanese food street food cooking', desc: 'Gastronomía japonesa, ramen y comida callejera' },
+  { id: 'travel', label: '🚄 Viajes en Japón', query: 'Japan travel vlog Tokyo Kyoto', desc: 'Turismo en Tokio, Kioto, trenes y lugares icónicos' },
+  { id: 'daily', label: '☕ Vida Diaria & Vlogs', query: 'Japanese daily life vlog routine', desc: 'Rutinas cotidianas, compras y vlogs de la vida en Japón' },
+  { id: 'n5', label: '📚 JLPT N5 Gramática', query: 'JLPT N5 Japanese grammar vocabulary lesson', desc: 'Lecciones de gramática básica y vocabulario para principiantes' },
+  { id: 'music', label: '🎵 Música & Canciones', query: 'Japanese song lyrics karaoke', desc: 'Canciones en japonés con letra y subtítulos' },
+  { id: 'stories', label: '🌸 Cuentos & Audio Pausado', query: 'Japanese fairy tales slow easy Japanese for beginners', desc: 'Historias tradicionales contadas en japonés lento y claro' },
+  { id: 'interview', label: '🎙️ Entrevistas Reales', query: 'Japanese street interview Tokyo', desc: 'Japonés real y coloquial hablado por personas en las calles de Tokio' }
+];
 
 export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   // Navigation internal views: 'catalog' | 'player' | 'saved' | 'channels'
@@ -56,6 +69,16 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   const [customLoading, setCustomLoading] = useState(false);
   const [customError, setCustomError] = useState('');
   const [customSuccessMsg, setCustomSuccessMsg] = useState('');
+
+  // Topic search state (Buscador interno de videos verificados)
+  const [topicSearchQuery, setTopicSearchQuery] = useState('');
+  const [activeTopicPreset, setActiveTopicPreset] = useState(null);
+  const [isSearchingTopics, setIsSearchingTopics] = useState(false);
+  const [topicSearchResults, setTopicSearchResults] = useState([]);
+  const [hasSearchedTopics, setHasSearchedTopics] = useState(false);
+  const [topicSearchError, setTopicSearchError] = useState(null);
+  const [loadingTranscriptVid, setLoadingTranscriptVid] = useState(null);
+  const [savingVideoId, setSavingVideoId] = useState(null);
 
   // Selected Video & Player State
   const catalogData = dataStore.youtubeCatalog || { channels: [], videos: [] };
@@ -172,15 +195,53 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
     }
   }, [activeCueIndex]);
 
-  // Manejar selección de video
-  const handleSelectVideo = (video) => {
-    setCurrentVideo(video);
-    setCurrentTime(0);
-    setPlayerError(null);
-    setActiveTrackLang(video.spokenLanguage || 'ja');
-    setActiveView('player');
-    if (playerRef.current) {
-      playerRef.current.seekTo(0, true);
+  // Manejar selección de video (con carga dinámica de transcripción si no está en memoria)
+  const handleSelectVideo = async (video) => {
+    if (!video) return;
+
+    // Si ya tiene subtítulos cargados, abrir directo
+    if (video.subtitles && video.subtitles.length > 0) {
+      setCurrentVideo(video);
+      setCurrentTime(0);
+      setPlayerError(null);
+      setActiveTrackLang(video.spokenLanguage || 'ja');
+      setActiveView('player');
+      if (playerRef.current) {
+        playerRef.current.seekTo(0, true);
+      }
+      return;
+    }
+
+    // Si viene de resultados de búsqueda por tema y requiere cargar transcripción
+    setLoadingTranscriptVid(video.youtubeId);
+    try {
+      const res = await fetch('/api/youtube/transcript', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId: video.youtubeId })
+      });
+      const data = await res.json();
+      const enrichedVideo = {
+        ...video,
+        spokenLanguage: data.spokenLanguage || video.spokenLanguage || 'ja',
+        spokenLanguageName: data.spokenLanguageName || video.spokenLanguageName || 'Original',
+        availableLanguages: data.availableLanguages || video.availableLanguages || [],
+        subtitles: data.cues || []
+      };
+      setCurrentVideo(enrichedVideo);
+      setCurrentTime(0);
+      setPlayerError(null);
+      setActiveTrackLang(data.spokenLanguage || video.spokenLanguage || 'ja');
+      setActiveView('player');
+      if (playerRef.current) {
+        playerRef.current.seekTo(0, true);
+      }
+    } catch (err) {
+      console.error('Error al cargar transcripción para el video:', err);
+      setCurrentVideo(video);
+      setActiveView('player');
+    } finally {
+      setLoadingTranscriptVid(null);
     }
   };
 
@@ -247,28 +308,56 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
     }
   };
 
-  // Guardar / Quitar video personalizado de la biblioteca permanente
-  const isCurrentVideoSaved = useMemo(() => {
-    if (!currentVideo) return false;
+  // Comprobar si un video está guardado en la biblioteca
+  const isVideoSaved = (video) => {
+    if (!video) return false;
     const saved = appState.savedCustomVideos || [];
-    return saved.some(v => v.youtubeId === currentVideo.youtubeId);
-  }, [currentVideo, appState.savedCustomVideos]);
+    return saved.some(v => v.youtubeId === video.youtubeId);
+  };
 
-  const handleToggleSaveCurrentVideo = () => {
-    if (!currentVideo) return;
+  // Guardar o quitar video de la biblioteca permanente
+  const handleToggleSaveVideo = async (videoToSave) => {
+    if (!videoToSave) return;
     const prevSaved = appState.savedCustomVideos || [];
+    const isSaved = prevSaved.some(v => v.youtubeId === videoToSave.youtubeId);
 
-    if (isCurrentVideoSaved) {
+    if (isSaved) {
       // Eliminar de guardados
-      const updated = prevSaved.filter(v => v.youtubeId !== currentVideo.youtubeId);
+      const updated = prevSaved.filter(v => v.youtubeId !== videoToSave.youtubeId);
       onUpdateState({
         ...appState,
         savedCustomVideos: updated
       });
     } else {
       // Guardar en biblioteca
+      setSavingVideoId(videoToSave.youtubeId);
+      let videoWithSubs = videoToSave;
+
+      // Si no tiene subtítulos aún, obtenerlos para guardarlo con transcripción completa
+      if (!videoToSave.subtitles || videoToSave.subtitles.length === 0) {
+        try {
+          const res = await fetch('/api/youtube/transcript', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ videoId: videoToSave.youtubeId })
+          });
+          const data = await res.json();
+          if (data.cues && data.cues.length > 0) {
+            videoWithSubs = {
+              ...videoToSave,
+              spokenLanguage: data.spokenLanguage || videoToSave.spokenLanguage || 'ja',
+              spokenLanguageName: data.spokenLanguageName || 'Original',
+              availableLanguages: data.availableLanguages || [],
+              subtitles: data.cues
+            };
+          }
+        } catch (e) {
+          console.warn('Error descargando subtítulos al guardar:', e);
+        }
+      }
+
       const newSavedItem = {
-        ...currentVideo,
+        ...videoWithSubs,
         category: 'custom',
         savedAt: new Date().toISOString()
       };
@@ -278,6 +367,50 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
         savedCustomVideos: updated,
         xp: (appState.xp || 0) + 20
       });
+      setSavingVideoId(null);
+    }
+  };
+
+  const isCurrentVideoSaved = useMemo(() => {
+    if (!currentVideo) return false;
+    return isVideoSaved(currentVideo);
+  }, [currentVideo, appState.savedCustomVideos]);
+
+  const handleToggleSaveCurrentVideo = () => {
+    if (currentVideo) {
+      handleToggleSaveVideo(currentVideo);
+    }
+  };
+
+  // Ejecutar búsqueda por temas en YouTube con filtro estricto
+  const handleExecuteTopicSearch = async (queryText, presetId = null) => {
+    const q = (queryText !== undefined ? queryText : topicSearchQuery).trim();
+    if (!q) return;
+
+    setIsSearchingTopics(true);
+    setTopicSearchError(null);
+    setActiveTopicPreset(presetId);
+    setHasSearchedTopics(true);
+    setTopicSearchQuery(q);
+
+    try {
+      const res = await fetch('/api/youtube/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: q, maxResults: 8 })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Error al buscar videos.');
+      }
+
+      setTopicSearchResults(data.results || []);
+    } catch (err) {
+      console.error('Error buscando videos por tema:', err);
+      setTopicSearchError(err.message || 'Error al conectar con el buscador de YouTube.');
+    } finally {
+      setIsSearchingTopics(false);
     }
   };
 
@@ -503,6 +636,14 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
             <span>Videoteca ({allVideos.length})</span>
           </button>
           <button
+            className={`immersion-tab-btn ${activeView === 'search' ? 'active' : ''}`}
+            onClick={() => setActiveView('search')}
+          >
+            <Search size={16} />
+            <span>Buscar por Temas</span>
+            <span className="tab-pill-badge">Verificado</span>
+          </button>
+          <button
             className={`immersion-tab-btn ${activeView === 'player' ? 'active' : ''}`}
             onClick={() => setActiveView('player')}
           >
@@ -535,6 +676,52 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
       {/* ============================================================== */}
       {activeView === 'catalog' && (
         <div className="catalog-view-section">
+          {/* Banner de Acceso Rápido al Buscador por Temas de YouTube */}
+          <div className="catalog-topic-search-banner">
+            <div className="banner-left">
+              <div className="banner-icon-circle">
+                <Search size={20} />
+              </div>
+              <div className="banner-text">
+                <div className="banner-title-row">
+                  <h4>Buscador de Videos de YouTube por Temas</h4>
+                  <span className="banner-verified-badge">
+                    <CheckCircle2 size={12} /> Filtro Estricto: 100% Reproducibles & con Transcripción
+                  </span>
+                </div>
+                <p>
+                  Encuentra miles de videos sobre Anime, Cocina, Viajes o Gramática filtrados para garantizar reproducción externa sin errores (sin Error 150) y con transcripción completa.
+                </p>
+              </div>
+            </div>
+            <div className="banner-right">
+              <div className="banner-quick-chips">
+                {TOPIC_PRESETS.slice(0, 4).map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className="banner-chip-btn"
+                    onClick={() => {
+                      setActiveView('search');
+                      handleExecuteTopicSearch(preset.query, preset.id);
+                    }}
+                    title={preset.desc}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="banner-search-all-btn"
+                onClick={() => setActiveView('search')}
+              >
+                <Search size={14} />
+                <span>Explorar Todos los Temas →</span>
+              </button>
+            </div>
+          </div>
+
           {/* Barra de Filtros y Búsqueda */}
           <div className="catalog-filter-controls">
             {/* Tópicos */}
@@ -706,6 +893,274 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
               );
             })}
           </div>
+
+          {/* Mensaje de fallback si la búsqueda local no encuentra videos */}
+          {filteredVideos.length === 0 && (
+            <div className="no-local-videos-card">
+              <div className="empty-search-icon">🔍</div>
+              <h4>No hay videos en tu catálogo local para "{searchQuery}"</h4>
+              <p>Puedes buscar este término directamente en YouTube con verificación de reproducción (sin Error 150) y transcripción completa:</p>
+              <button
+                type="button"
+                className="btn-search-youtube-fallback"
+                onClick={() => {
+                  setActiveView('search');
+                  handleExecuteTopicSearch(searchQuery, null);
+                }}
+              >
+                <Search size={15} />
+                <span>Buscar "{searchQuery}" en YouTube Verificado</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* VISTA: BUSCADOR POR TEMAS (100% REPRODUCIBLES Y CON TRANSCRIPCIÓN) */}
+      {/* ============================================================== */}
+      {activeView === 'search' && (
+        <div className="topic-search-view-section">
+          {/* Header del Buscador */}
+          <div className="topic-search-hero">
+            <div className="topic-search-hero-badge">
+              <ShieldCheck size={16} />
+              <span>Filtro Estricto de Reproducción & Transcripción</span>
+            </div>
+            <h3 className="topic-search-hero-title">
+              Buscador Inteligente de YouTube por Temas
+            </h3>
+            <p className="topic-search-hero-desc">
+              Busca cualquier tema en YouTube. Nuestro motor verifica automáticamente cada video en tiempo real:
+              <strong> solo te mostrará videos 100% reproducibles en la aplicación (sin Error 150/101)</strong> y con
+              <strong> transcripción completa disponible</strong> en su idioma original de audio (Japonés, Inglés o Español).
+            </p>
+          </div>
+
+          {/* Formulario de Búsqueda */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleExecuteTopicSearch(topicSearchQuery, null);
+            }}
+            className="topic-search-form"
+          >
+            <div className="topic-search-input-wrapper">
+              <Search size={20} className="topic-search-icon" />
+              <input
+                type="text"
+                className="topic-search-input"
+                placeholder="Escribe cualquier tema o palabra clave (ej: Anime, Comida callejera, JLPT N5, Vlogs en Kioto)..."
+                value={topicSearchQuery}
+                onChange={(e) => setTopicSearchQuery(e.target.value)}
+                disabled={isSearchingTopics}
+              />
+              {topicSearchQuery && (
+                <button
+                  type="button"
+                  className="btn-clear-topic-search"
+                  onClick={() => setTopicSearchQuery('')}
+                  title="Borrar texto"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="btn-submit-topic-search"
+              disabled={isSearchingTopics || !topicSearchQuery.trim()}
+            >
+              {isSearchingTopics ? (
+                <>
+                  <Loader2 size={18} className="spin-animation" />
+                  <span>Verificando videos...</span>
+                </>
+              ) : (
+                <>
+                  <Search size={18} />
+                  <span>Buscar Videos Verificados</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Chips de Temas Populares */}
+          <div className="topic-preset-chips-container">
+            <span className="preset-chips-label">
+              <Sparkles size={14} /> Temas Populares Recomendados:
+            </span>
+            <div className="preset-chips-list">
+              {TOPIC_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  className={`topic-preset-chip ${activeTopicPreset === preset.id ? 'active' : ''}`}
+                  onClick={() => handleExecuteTopicSearch(preset.query, preset.id)}
+                  disabled={isSearchingTopics}
+                  title={preset.desc}
+                >
+                  <span>{preset.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Estado de Carga */}
+          {isSearchingTopics && (
+            <div className="topic-search-loading-state">
+              <Loader2 size={40} className="spin-animation" />
+              <h4>Buscando y Verificando Videos en YouTube...</h4>
+              <p>
+                Comprobando que no tengan bloqueo de inserción (oEmbed 200) y que contengan pista de subtítulos completa.
+              </p>
+            </div>
+          )}
+
+          {/* Estado de Error */}
+          {topicSearchError && !isSearchingTopics && (
+            <div className="topic-search-error-state">
+              <p>{topicSearchError}</p>
+              <button
+                type="button"
+                className="btn-retry-search"
+                onClick={() => handleExecuteTopicSearch(topicSearchQuery, activeTopicPreset)}
+              >
+                Reintentar Búsqueda
+              </button>
+            </div>
+          )}
+
+          {/* Estado Vacío inicial */}
+          {!hasSearchedTopics && !isSearchingTopics && (
+            <div className="topic-search-empty-prompt">
+              <div className="empty-prompt-icon">🎌</div>
+              <h4>Elige un tema popular arriba o ingresa una búsqueda</h4>
+              <p>
+                Todos los videos que encuentres aquí son garantizados: reproducen directamente sin errores y sincronizan subtítulos interactivos palabra por palabra.
+              </p>
+            </div>
+          )}
+
+          {/* Resultados de Búsqueda */}
+          {hasSearchedTopics && !isSearchingTopics && !topicSearchError && (
+            <div className="topic-search-results-section">
+              <div className="search-results-header">
+                <div className="results-count-tag">
+                  <CheckCircle2 size={16} />
+                  <span>
+                    {topicSearchResults.length} videos verificados encontrados para "{topicSearchQuery}"
+                  </span>
+                </div>
+                <span className="results-verified-note">
+                  🛡️ 100% reproducibles en la app & con transcripción
+                </span>
+              </div>
+
+              {topicSearchResults.length === 0 ? (
+                <div className="no-search-results">
+                  <p>No encontramos videos con transcripción e inserción abierta para este término exacto.</p>
+                  <p className="subtext">Prueba con uno de los temas populares como "🎌 Anime" o "🍜 Comida Japonesa".</p>
+                </div>
+              ) : (
+                <div className="video-cards-grid">
+                  {topicSearchResults.map((video) => {
+                    const isSaved = isVideoSaved(video);
+                    const isLoadingTranscript = loadingTranscriptVid === video.youtubeId;
+                    const isSaving = savingVideoId === video.youtubeId;
+
+                    return (
+                      <div
+                        key={video.id}
+                        className="video-card search-result-card"
+                        onClick={() => handleSelectVideo(video)}
+                      >
+                        <div className="video-thumbnail-container">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="video-thumbnail-img"
+                            loading="lazy"
+                          />
+                          <span className="video-duration-badge">{video.duration}</span>
+                          <span className="video-level-badge level-n5">
+                            {video.level || 'N5'}
+                          </span>
+                          <span className="video-verified-badge" title="Inserción 100% permitida">
+                            <CheckCircle2 size={11} />
+                            <span>100% Reproducible</span>
+                          </span>
+                          <div className="video-play-overlay">
+                            {isLoadingTranscript ? (
+                              <Loader2 size={32} className="spin-animation" />
+                            ) : (
+                              <Play size={28} className="play-icon-pulse" />
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="video-card-content">
+                          <div className="video-card-top-row">
+                            <span className="video-channel-name">{video.channelTitle}</span>
+                            {isSaved && (
+                              <span className="saved-indicator-pill" title="Guardado en tu biblioteca">
+                                <Bookmark size={11} /> Guardado
+                              </span>
+                            )}
+                          </div>
+
+                          <h4 className="video-card-title">{video.title}</h4>
+                          <p className="video-card-desc">{video.description}</p>
+
+                          <div className="video-card-footer">
+                            <div className="video-tags-list">
+                              <span className="mini-tag lang-tag">
+                                🗣 {video.spokenLanguage ? video.spokenLanguage.toUpperCase() : 'JA'}
+                              </span>
+                              <span className="mini-tag verified-tag">
+                                ✓ Transcripción
+                              </span>
+                            </div>
+
+                            <div className="card-quick-actions" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                className={`btn-card-save ${isSaved ? 'is-saved' : ''}`}
+                                onClick={() => handleToggleSaveVideo(video)}
+                                disabled={isSaving}
+                                title={isSaved ? 'Eliminar de biblioteca' : 'Guardar en biblioteca'}
+                              >
+                                {isSaved ? <Check size={13} /> : <Bookmark size={13} />}
+                                <span>{isSaved ? 'Guardado' : 'Guardar'}</span>
+                              </button>
+                              <button
+                                type="button"
+                                className="btn-card-play"
+                                onClick={() => handleSelectVideo(video)}
+                                disabled={isLoadingTranscript}
+                              >
+                                {isLoadingTranscript ? (
+                                  <>
+                                    <Loader2 size={13} className="spin-animation" />
+                                    <span>Cargando...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play size={13} />
+                                    <span>Ver y Estudiar</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
