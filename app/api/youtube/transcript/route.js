@@ -110,6 +110,61 @@ export async function POST(request) {
       // Ignorar fallo de oEmbed
     }
 
+    // 1.5 Intentar obtener subtítulos enriquecidos con tokens morfológicos y furigana desde la API pública de HayaiLearn
+    try {
+      const hayaiRes = await fetch(`https://app.hayailearn.com/api/get-caption-videoId-with-entries?videoId=${videoId}`, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+        signal: AbortSignal.timeout(3000),
+        next: { revalidate: 86400 }
+      });
+      if (hayaiRes.ok) {
+        const hayaiData = await hayaiRes.json();
+        if (hayaiData?.captionEntries && hayaiData.captionEntries.length > 0) {
+          const hayaiTags = hayaiData.caption?.videoTags || [];
+          const cues = hayaiData.captionEntries.map(entry => {
+            const tokens = (entry.spacyTokens || []).map(t => {
+              const readingMatch = t.morph?.match(/Reading=([^\s|]+)/);
+              return {
+                text: t.orth,
+                lemma: t.lemma,
+                pos: t.pos,
+                reading: readingMatch ? readingMatch[1] : null
+              };
+            });
+            return {
+              id: (entry.captionEntryIndex ?? 0) + 1,
+              start: entry.startSec,
+              duration: entry.durationSec,
+              text: entry.text,
+              translation_es: '',
+              translation_en: entry.translation?.text || '',
+              tokens: tokens.length > 0 ? tokens : undefined,
+              score: entry.score || null
+            };
+          });
+
+          return NextResponse.json({
+            videoId,
+            title: videoTitle || hayaiData.caption?.title || 'Video de Inmersión',
+            author: videoAuthor || 'YouTube',
+            isEmbeddable,
+            spokenLanguage: 'ja',
+            spokenLanguageName: 'Japonés (Tokens & Furigana)',
+            availableLanguages: [
+              { code: 'ja', name: 'Japonés (Furigana morfológico)', isOriginal: true },
+              { code: 'en', name: 'Inglés (Traducción IA)', isOriginal: false }
+            ],
+            cuesCount: cues.length,
+            tags: hayaiTags,
+            cues,
+            source: 'hayailearn_enhanced'
+          });
+        }
+      }
+    } catch (hayaiErr) {
+      // Silenciosamente continuar con YouTube InnerTube si falla la consulta
+    }
+
     // 2. Obtener pistas de subtítulos usando InnerTube Android API (alta fiabilidad sin bloqueos de IP)
     let captionTracks = [];
     let videoTitle = oembedTitle;

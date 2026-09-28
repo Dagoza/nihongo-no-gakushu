@@ -41,7 +41,7 @@ import YouTubePlayer from './YouTubePlayer';
 import SaveVocabModal from './SaveVocabModal';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
-import { tokenizeJapanese, formatTimestamp, containsKanji } from '../lib/japaneseUtils';
+import { tokenizeJapanese, formatTimestamp, containsKanji, katakanaToHiragana } from '../lib/japaneseUtils';
 import { signInWithGoogle, signOutUser } from '../lib/supabaseSync';
 
 const TOPIC_PRESETS = [
@@ -255,9 +255,10 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
   };
 
   // Cargar video personalizado por URL (con transcripción en idioma hablado y soporte para guardar)
-  const handleLoadCustomUrl = async (e) => {
-    e.preventDefault();
-    if (!customUrl.trim()) return;
+  const handleLoadCustomUrl = async (e, directUrl = null) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const targetUrl = (directUrl || customUrl).trim();
+    if (!targetUrl) return;
 
     setCustomLoading(true);
     setCustomError('');
@@ -267,7 +268,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
       const res = await fetch('/api/youtube/transcript', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: customUrl.trim() })
+        body: JSON.stringify({ url: targetUrl })
       });
 
       const data = await res.json();
@@ -486,7 +487,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
   };
 
   // Abrir modal de guardado para una palabra específica
-  const handleOpenSaveWord = (wordToken, cue) => {
+  const handleOpenSaveWord = (wordToken, cue, prefillReading = null) => {
     const knownVocab = (dataStore.vocabulary || []).find(
       (v) => v.kanji === wordToken || v.kana === wordToken
     );
@@ -495,12 +496,12 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
     setModalData({
       type: 'word',
       text: wordToken,
-      reading: knownVocab?.kana || knownKanji?.pronunciation || '',
+      reading: knownVocab?.kana || knownKanji?.pronunciation || prefillReading || '',
       translation: knownVocab?.meaning_es || knownKanji?.meaning_es || '',
       level: knownVocab?.level || knownKanji?.level || currentVideo?.level || 'N5',
       category: knownVocab?.category || 'Anime y Cultura',
       sentenceText: cue?.text || '',
-      sentenceTranslation: cue?.translation_es || '',
+      sentenceTranslation: cue?.translation_es || cue?.translation_en || '',
       videoTitle: currentVideo?.title || '',
       videoId: currentVideo?.youtubeId || '',
       timestamp: cue?.start || currentTime
@@ -515,8 +516,8 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
       type: 'phrase',
       text: cue.text,
       sentenceText: cue.text,
-      sentenceTranslation: cue.translation_es,
-      translation: cue.translation_es,
+      sentenceTranslation: cue.translation_es || cue.translation_en || '',
+      translation: cue.translation_es || cue.translation_en || '',
       videoTitle: currentVideo?.title || '',
       videoId: currentVideo?.youtubeId || '',
       timestamp: cue.start
@@ -530,6 +531,47 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
     const isJapanese = /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(sentenceText);
 
     if (isJapanese) {
+      // 1. Si la pista cuenta con tokens morfológicos enriquecidos con furigana (HayaiLearn / Spacy)
+      if (cue?.tokens && cue.tokens.length > 0) {
+        return (
+          <span className="interactive-sentence-tokens">
+            {cue.tokens.map((token, idx) => {
+              if (token.pos === 'PUNCT') {
+                return (
+                  <span key={idx} className="punctuation-token">
+                    {token.text}
+                  </span>
+                );
+              }
+              const hasKanji = containsKanji(token.text);
+              const readingKana = token.reading ? katakanaToHiragana(token.reading) : null;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`word-token-btn ${hasKanji ? 'has-kanji' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenSaveWord(token.lemma || token.text, cue, readingKana);
+                  }}
+                  title={readingKana ? `${token.text} [${readingKana}] (${token.pos || 'palabra'}) - Clic para guardar` : `Clic para guardar: ${token.text}`}
+                >
+                  {hasKanji && readingKana ? (
+                    <ruby className="furigana-ruby">
+                      {token.text}
+                      <rt className="furigana-rt">{readingKana}</rt>
+                    </ruby>
+                  ) : (
+                    token.text
+                  )}
+                </button>
+              );
+            })}
+          </span>
+        );
+      }
+
+      // 2. Tokenización nativa inteligente como fallback
       const tokens = tokenizeJapanese(sentenceText);
       return (
         <span className="interactive-sentence-tokens">
@@ -794,17 +836,58 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
               <span>Solo Reproducibles en App</span>
             </button>
 
-            {/* Buscador */}
+            {/* Buscador Dual Inteligente (Palabra clave o Enlace directo de YouTube) */}
             <div className="catalog-search-box">
               <Search size={16} className="search-icon" />
               <input
                 type="text"
-                placeholder="Buscar por título, canal o palabra clave..."
+                placeholder="Buscar por tema, anime o pegar enlace de YouTube..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const q = searchQuery.trim();
+                    if (q.includes('youtube.com/') || q.includes('youtu.be/')) {
+                      e.preventDefault();
+                      handleLoadCustomUrl(null, q);
+                    }
+                  }
+                }}
               />
             </div>
           </div>
+
+          {/* Banner de detección de URL directa en el buscador */}
+          {searchQuery.trim().match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/) && (
+            <div className="search-url-detected-banner" style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 10,
+              padding: '10px 16px',
+              margin: '0 0 16px 0',
+              background: 'rgba(99, 102, 241, 0.1)',
+              border: '1px solid var(--primary)',
+              borderRadius: '8px',
+              fontSize: '0.88rem'
+            }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--text-main)' }}>
+                <LinkIcon size={16} color="var(--primary)" />
+                <strong>Enlace de YouTube detectado:</strong> Puedes cargarlo directamente con transcripción completa.
+              </span>
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => handleLoadCustomUrl(null, searchQuery.trim())}
+                disabled={customLoading}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                <Play size={13} fill="currentColor" />
+                <span>{customLoading ? 'Cargando...' : 'Cargar y Ver Video'}</span>
+              </button>
+            </div>
+          )}
 
           {/* Formulario para Pegar URL de YouTube Externa */}
           <div className="custom-url-banner">
@@ -1250,9 +1333,9 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
                       {renderInteractiveSentence(activeCue.text, activeCue)}
                     </div>
 
-                    {showSpanishTranslation && activeCue.translation_es && (
+                    {showSpanishTranslation && (activeCue.translation_es || activeCue.translation_en) && (
                       <div className="active-cue-spanish">
-                        {activeCue.translation_es}
+                        {activeCue.translation_es || activeCue.translation_en}
                       </div>
                     )}
 
@@ -1444,8 +1527,8 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
                           <div className="cue-text-jp jp-text">
                             {renderInteractiveSentence(cue.text, cue)}
                           </div>
-                          {showSpanishTranslation && cue.translation_es && (
-                            <div className="cue-text-es">{cue.translation_es}</div>
+                          {showSpanishTranslation && (cue.translation_es || cue.translation_en) && (
+                            <div className="cue-text-es">{cue.translation_es || cue.translation_en}</div>
                           )}
                         </div>
 

@@ -96,7 +96,7 @@
       "subtitles": [
         {
           "id": 1,
-          "start": 0.0,
+          "start": 0,
           "duration": 2.12,
           "text": "7",
           "translation_es": ""
@@ -146,7 +146,7 @@
         {
           "id": 8,
           "start": 29.47,
-          "duration": 8.0,
+          "duration": 8,
           "text": "当たり前だってばよ次大会ちゃんに叩き込んだこと全部なるどちゃんにもっと抱き込ん",
           "translation_es": ""
         },
@@ -216,7 +216,7 @@
         {
           "id": 18,
           "start": 64.65,
-          "duration": 7.0,
+          "duration": 7,
           "text": "深作様豊島様を口寄せしている地雷やにカッター",
           "translation_es": ""
         },
@@ -503,7 +503,7 @@
         {
           "id": 59,
           "start": 223.08,
-          "duration": 9.0,
+          "duration": 9,
           "text": "コーヒー散歩ぽいすちゃちゃ専慶流完成",
           "translation_es": ""
         },
@@ -545,7 +545,7 @@
         {
           "id": 65,
           "start": 245.98,
-          "duration": 3.0,
+          "duration": 3,
           "text": "pai",
           "translation_es": ""
         }
@@ -604,7 +604,7 @@
       "subtitles": [
         {
           "id": 1,
-          "start": 0.0,
+          "start": 0,
           "duration": 4.29,
           "text": "can enjoy the funnies I will not miss on",
           "translation_es": ""
@@ -948,7 +948,7 @@
         {
           "id": 50,
           "start": 149.94,
-          "duration": 9.0,
+          "duration": 9,
           "text": "let's start on three you can say it's a",
           "translation_es": ""
         },
@@ -1088,7 +1088,7 @@
         {
           "id": 70,
           "start": 209.82,
-          "duration": 3.0,
+          "duration": 3,
           "text": "on we would say I see all who might at",
           "translation_es": ""
         },
@@ -1501,7 +1501,7 @@
         {
           "id": 129,
           "start": 377.24,
-          "duration": 6.0,
+          "duration": 6,
           "text": "different videos but book can be used",
           "translation_es": ""
         },
@@ -2243,7 +2243,7 @@
         {
           "id": 235,
           "start": 702.67,
-          "duration": 6.0,
+          "duration": 6,
           "text": "mone okay sir",
           "translation_es": ""
         },
@@ -2928,14 +2928,14 @@
         },
         {
           "id": 333,
-          "start": 1018.0,
+          "start": 1018,
           "duration": 6.85,
           "text": "technique you this take is a bit",
           "translation_es": ""
         },
         {
           "id": 334,
-          "start": 1022.0,
+          "start": 1022,
           "duration": 5.76,
           "text": "difficult and it can mean quite a few",
           "translation_es": ""
@@ -3530,7 +3530,7 @@
         },
         {
           "id": 419,
-          "start": 1264.0,
+          "start": 1264,
           "duration": 5.78,
           "text": "intransitive verb in Japanese so corpus",
           "translation_es": ""
@@ -3797,7 +3797,7 @@
         {
           "id": 457,
           "start": 1371.74,
-          "duration": 8.0,
+          "duration": 8,
           "text": "oh that's why the kubodera not is",
           "translation_es": ""
         },
@@ -3944,7 +3944,7 @@
         {
           "id": 478,
           "start": 1440.07,
-          "duration": 6.0,
+          "duration": 6,
           "text": "use sir without something like a douche",
           "translation_es": ""
         },
@@ -4097,7 +4097,7 @@
         },
         {
           "id": 500,
-          "start": 1510.0,
+          "start": 1510,
           "duration": 7.47,
           "text": "we do use it so don't worry about using",
           "translation_es": ""
@@ -4238,7 +4238,7 @@
         {
           "id": 520,
           "start": 1586.42,
-          "duration": 6.0,
+          "duration": 6,
           "text": "say oh boy tonight koto it's something",
           "translation_es": ""
         },
@@ -4531,7 +4531,7 @@
         },
         {
           "id": 562,
-          "start": 1701.0,
+          "start": 1701,
           "duration": 6.15,
           "text": "so to avoid that you can say this shop",
           "translation_es": ""
@@ -4839,7 +4839,7 @@
         },
         {
           "id": 606,
-          "start": 1839.0,
+          "start": 1839,
           "duration": 5.13,
           "text": "Mena when we want to say everyone and we",
           "translation_es": ""
@@ -4980,7 +4980,7 @@
         {
           "id": 626,
           "start": 1895.52,
-          "duration": 6.0,
+          "duration": 6,
           "text": "is the person's name or the word Otto",
           "translation_es": ""
         },
@@ -5056,7 +5056,7 @@
         },
         {
           "id": 637,
-          "start": 1926.0,
+          "start": 1926,
           "duration": 4.93,
           "text": "kata to refer to tanaka song like Cara",
           "translation_es": ""
@@ -5302,7 +5302,7 @@
         {
           "id": 672,
           "start": 2022.16,
-          "duration": 6.0,
+          "duration": 6,
           "text": "that means oh I'll treasure I'll take a",
           "translation_es": ""
         },
@@ -5378,7 +5378,7 @@
         },
         {
           "id": 683,
-          "start": 2056.0,
+          "start": 2056,
           "duration": 7.38,
           "text": "uh-oh this diet is like the no sir",
           "translation_es": ""
@@ -5547,7 +5547,7 @@
         {
           "id": 707,
           "start": 2122.1,
-          "duration": 6.0,
+          "duration": 6,
           "text": "time to understand this bit either he's",
           "translation_es": ""
         },
@@ -7031,7 +7031,7 @@
         {
           "id": 919,
           "start": 2773.78,
-          "duration": 12.0,
+          "duration": 12,
           "text": "dad condo Hannah yoni red coat like sure",
           "translation_es": ""
         },
@@ -7205,7 +7205,7 @@
         },
         {
           "id": 944,
-          "start": 2852.0,
+          "start": 2852,
           "duration": 5.01,
           "text": "so monterrico no heart so the again",
           "translation_es": ""
@@ -7226,7 +7226,7 @@
         },
         {
           "id": 947,
-          "start": 2861.0,
+          "start": 2861,
           "duration": 5.3,
           "text": "dancing in the air and then the next",
           "translation_es": ""
@@ -7359,7 +7359,7 @@
         },
         {
           "id": 966,
-          "start": 2918.0,
+          "start": 2918,
           "duration": 4.5,
           "text": "formal would you don't really need to",
           "translation_es": ""
@@ -8262,7 +8262,7 @@
         },
         {
           "id": 1095,
-          "start": 3343.0,
+          "start": 3343,
           "duration": 8.1,
           "text": "talking about sides Ernie this is Ernie",
           "translation_es": ""
@@ -8757,7 +8757,7 @@
         {
           "id": 3,
           "start": 7.6,
-          "duration": 11.0,
+          "duration": 11,
           "text": "今回の動画では旅行の話をします。",
           "translation_es": "En este video, voy a hablar sobre viajes. Voy a hablar sobre viajes."
         },
@@ -8862,7 +8862,7 @@
         {
           "id": 18,
           "start": 79.2,
-          "duration": 3.0,
+          "duration": 3,
           "text": "。",
           "translation_es": ""
         },
@@ -8904,7 +8904,7 @@
         {
           "id": 24,
           "start": 102.52,
-          "duration": 10.0,
+          "duration": 10,
           "text": "急いでメイクをしました。10時頃に家を",
           "translation_es": ""
         },
@@ -8932,7 +8932,7 @@
         {
           "id": 28,
           "start": 124.4,
-          "duration": 8.0,
+          "duration": 8,
           "text": "駅でお昼ご飯のお弁当を買いました。",
           "translation_es": ""
         },
@@ -9023,7 +9023,7 @@
         {
           "id": 41,
           "start": 192.84,
-          "duration": 10.0,
+          "duration": 10,
           "text": "3時ぐらいにホテルにチェックインしまし",
           "translation_es": ""
         },
@@ -9100,7 +9100,7 @@
         {
           "id": 52,
           "start": 245.68,
-          "duration": 9.0,
+          "duration": 9,
           "text": "ましょう。5時ぐらいに散歩に行きました",
           "translation_es": "Salí a caminar alrededor de las 5 en punto. Caminé cerca del mar."
         },
@@ -9142,7 +9142,7 @@
         {
           "id": 58,
           "start": 276.48,
-          "duration": 11.0,
+          "duration": 11,
           "text": "ちょうど夕やけの時間でした。",
           "translation_es": "Era justo la hora del atardecer. El atardecer fue muy hermoso."
         },
@@ -9268,13 +9268,13 @@
         {
           "id": 76,
           "start": 360.08,
-          "duration": 10.0,
+          "duration": 10,
           "text": "バスに15分ぐらい乗って駅に戻りました",
           "translation_es": "Tomé el autobús durante unos 15 minutos y regresé a la estación. Aquí tomé el teleférico."
         },
         {
           "id": 77,
-          "start": 366.0,
+          "start": 366,
           "duration": 8.44,
           "text": "。ここでロープウェイに乗りました。山の",
           "translation_es": ""
@@ -9503,14 +9503,14 @@
         {
           "id": 4,
           "start": 13.16,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": "Lunes El"
         },
         {
           "id": 5,
           "start": 18.84,
-          "duration": 10.0,
+          "duration": 10,
           "text": "月曜日月曜日は私の1週間の始まり",
           "translation_es": "lunes es el comienzo de mi semana. Me levanto a las 7 de la mañana, me ducho y luego desayuno."
         },
@@ -9643,7 +9643,7 @@
         {
           "id": 24,
           "start": 127.2,
-          "duration": 12.0,
+          "duration": 12,
           "text": "火曜日火曜日も朝7時に起き",
           "translation_es": "El martes también me despierto a las 7 a.m. Para el desayuno tomo arroz, sopa de miso y pescado a la parrilla."
         },
@@ -9663,7 +9663,7 @@
         },
         {
           "id": 27,
-          "start": 147.0,
+          "start": 147,
           "duration": 4.84,
           "text": "のでしっかりノートを取ります",
           "translation_es": ""
@@ -9685,7 +9685,7 @@
         {
           "id": 30,
           "start": 164.44,
-          "duration": 8.0,
+          "duration": 8,
           "text": "ます午後は部活があり",
           "translation_es": "Por la tarde tengo actividades del club. Estoy en el club de fútbol, ​​entonces practico en el campo."
         },
@@ -9727,7 +9727,7 @@
         {
           "id": 36,
           "start": 194.08,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": "Miércoles El"
         },
@@ -9832,7 +9832,7 @@
         {
           "id": 51,
           "start": 286.88,
-          "duration": 3.0,
+          "duration": 3,
           "text": "にゼミがあり",
           "translation_es": ""
         },
@@ -9846,7 +9846,7 @@
         {
           "id": 53,
           "start": 297.84,
-          "duration": 8.0,
+          "duration": 8,
           "text": "発表をしたりします",
           "translation_es": ""
         },
@@ -9922,7 +9922,7 @@
         },
         {
           "id": 64,
-          "start": 359.0,
+          "start": 359,
           "duration": 2.64,
           "text": "ます",
           "translation_es": ""
@@ -9930,7 +9930,7 @@
         {
           "id": 65,
           "start": 364.96,
-          "duration": 8.0,
+          "duration": 8,
           "text": "特に難しい科目はノートを見直したり",
           "translation_es": "Para temas difíciles, reviso mis notas e investigo en línea para comprender mejor."
         },
@@ -10027,7 +10027,7 @@
         },
         {
           "id": 79,
-          "start": 450.0,
+          "start": 450,
           "duration": 8.6,
           "text": "時にはレストランで夕食を楽しむことも",
           "translation_es": "A veces disfrutamos de una cena en un restaurante y charlamos mientras disfrutamos de una comida deliciosa."
@@ -10049,7 +10049,7 @@
         {
           "id": 82,
           "start": 463.64,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": "Sábado"
         },
@@ -10098,7 +10098,7 @@
         {
           "id": 89,
           "start": 504.04,
-          "duration": 6.0,
+          "duration": 6,
           "text": "スケッチブックに風景画を描いています",
           "translation_es": ""
         },
@@ -10181,8 +10181,8 @@
         },
         {
           "id": 101,
-          "start": 586.0,
-          "duration": 3.0,
+          "start": 586,
+          "duration": 3,
           "text": "ます",
           "translation_es": "Domingo"
         },
@@ -10238,7 +10238,7 @@
         {
           "id": 109,
           "start": 625.12,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": ""
         },
@@ -10252,7 +10252,7 @@
         {
           "id": 111,
           "start": 637.04,
-          "duration": 3.0,
+          "duration": 3,
           "text": "のが楽しい",
           "translation_es": ""
         },
@@ -10363,7 +10363,7 @@
         },
         {
           "id": 127,
-          "start": 726.0,
+          "start": 726,
           "duration": 12.56,
           "text": "ますこうして私の1週間は過ぎていき",
           "translation_es": "Así va mi semana. ¡Cada día es ocupado, pero muy satisfactorio!"
@@ -10378,7 +10378,7 @@
         {
           "id": 129,
           "start": 745.72,
-          "duration": 10.0,
+          "duration": 10,
           "text": "ます皆さんこんにちは",
           "translation_es": ""
         },
@@ -10392,7 +10392,7 @@
         {
           "id": 131,
           "start": 757.52,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": ""
         },
@@ -10490,7 +10490,7 @@
         {
           "id": 145,
           "start": 832.28,
-          "duration": 7.0,
+          "duration": 7,
           "text": "ますそして夕方にはアルバイトに行きます",
           "translation_es": ""
         },
@@ -10525,7 +10525,7 @@
         {
           "id": 150,
           "start": 866.04,
-          "duration": 4.0,
+          "duration": 4,
           "text": "ます火曜日",
           "translation_es": ""
         },
@@ -10574,7 +10574,7 @@
         {
           "id": 157,
           "start": 908.8,
-          "duration": 8.0,
+          "duration": 8,
           "text": "ます午後は部活があり",
           "translation_es": ""
         },
@@ -10616,7 +10616,7 @@
         {
           "id": 163,
           "start": 938.44,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": ""
         },
@@ -10707,7 +10707,7 @@
         {
           "id": 176,
           "start": 1015.92,
-          "duration": 4.0,
+          "duration": 4,
           "text": "ます木曜日",
           "translation_es": ""
         },
@@ -10763,7 +10763,7 @@
         {
           "id": 184,
           "start": 1058.68,
-          "duration": 3.0,
+          "duration": 3,
           "text": "行くことがあり",
           "translation_es": ""
         },
@@ -10791,7 +10791,7 @@
         {
           "id": 188,
           "start": 1078.88,
-          "duration": 5.0,
+          "duration": 5,
           "text": "から1日の出来事を振り返り",
           "translation_es": ""
         },
@@ -10819,14 +10819,14 @@
         {
           "id": 192,
           "start": 1103.4,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": ""
         },
         {
           "id": 193,
           "start": 1109.32,
-          "duration": 8.0,
+          "duration": 8,
           "text": "特に難しい科目はノートを見直したり",
           "translation_es": ""
         },
@@ -10861,7 +10861,7 @@
         {
           "id": 198,
           "start": 1135.4,
-          "duration": 4.0,
+          "duration": 4,
           "text": "ます金曜日",
           "translation_es": ""
         },
@@ -10881,7 +10881,7 @@
         },
         {
           "id": 201,
-          "start": 1151.0,
+          "start": 1151,
           "duration": 4.76,
           "text": "カフェで勉強することが多い",
           "translation_es": ""
@@ -10916,7 +10916,7 @@
         },
         {
           "id": 206,
-          "start": 1183.0,
+          "start": 1183,
           "duration": 7.52,
           "text": "カラオケに行ったりし",
           "translation_es": ""
@@ -10951,8 +10951,8 @@
         },
         {
           "id": 211,
-          "start": 1208.0,
-          "duration": 3.0,
+          "start": 1208,
+          "duration": 3,
           "text": "ます",
           "translation_es": ""
         },
@@ -11001,7 +11001,7 @@
         {
           "id": 218,
           "start": 1248.36,
-          "duration": 5.0,
+          "duration": 5,
           "text": "スケッチブックに風景画を描いてい",
           "translation_es": ""
         },
@@ -11077,7 +11077,7 @@
         },
         {
           "id": 229,
-          "start": 1319.0,
+          "start": 1319,
           "duration": 8.92,
           "text": "料理の後はお気に入りのドラマを見たり本",
           "translation_es": ""
@@ -11092,7 +11092,7 @@
         {
           "id": 231,
           "start": 1330.36,
-          "duration": 3.0,
+          "duration": 3,
           "text": "ます",
           "translation_es": ""
         },
@@ -11224,7 +11224,7 @@
         },
         {
           "id": 250,
-          "start": 1444.0,
+          "start": 1444,
           "duration": 11.36,
           "text": "また週末にやり残したことがないか確認し",
           "translation_es": ""
@@ -11245,7 +11245,7 @@
         },
         {
           "id": 253,
-          "start": 1463.0,
+          "start": 1463,
           "duration": 4.6,
           "text": "よく迎えることができます",
           "translation_es": ""
@@ -11438,7 +11438,7 @@
         },
         {
           "id": 17,
-          "start": 75.0,
+          "start": 75,
           "duration": 11.89,
           "text": "かわいいは小さいものや幼いものに対していと",
           "translation_es": "簡単に言うと、かわいいは小さいものや幼いものに対して愛おしいと思う気持ちのことです\nPara explicarlo de manera simple, kawaii se utiliza para decir que algo pequeño o parecido a un niño o niña es adorable"
@@ -12066,7 +12066,7 @@
         {
           "id": 9,
           "start": 28.4,
-          "duration": 9.0,
+          "duration": 9,
           "text": "ispleasbe",
           "translation_es": ""
         },
@@ -12086,14 +12086,14 @@
         },
         {
           "id": 12,
-          "start": 40.0,
+          "start": 40,
           "duration": 4.64,
           "text": "ですOKLetMOVontothe",
           "translation_es": ""
         },
         {
           "id": 13,
-          "start": 43.0,
+          "start": 43,
           "duration": 3.96,
           "text": "next",
           "translation_es": ""
@@ -12115,14 +12115,14 @@
         {
           "id": 16,
           "start": 52.28,
-          "duration": 3.0,
+          "duration": 3,
           "text": "youONE",
           "translation_es": ""
         },
         {
           "id": 17,
           "start": 53.52,
-          "duration": 3.0,
+          "duration": 3,
           "text": "exampleI",
           "translation_es": ""
         },
@@ -12156,7 +12156,7 @@
         },
         {
           "id": 22,
-          "start": 71.0,
+          "start": 71,
           "duration": 5.08,
           "text": "私",
           "translation_es": ""
@@ -12192,7 +12192,7 @@
         {
           "id": 27,
           "start": 85.84,
-          "duration": 4.0,
+          "duration": 4,
           "text": "はです",
           "translation_es": ""
         },
@@ -12254,7 +12254,7 @@
         },
         {
           "id": 36,
-          "start": 118.0,
+          "start": 118,
           "duration": 7.68,
           "text": "teachertherefore",
           "translation_es": ""
@@ -12304,7 +12304,7 @@
         {
           "id": 43,
           "start": 144.44,
-          "duration": 4.0,
+          "duration": 4,
           "text": "XY",
           "translation_es": ""
         },
@@ -12367,7 +12367,7 @@
         {
           "id": 52,
           "start": 174.24,
-          "duration": 6.0,
+          "duration": 6,
           "text": "vocabyouGOSEARCHon",
           "translation_es": ""
         },
@@ -12387,7 +12387,7 @@
         },
         {
           "id": 55,
-          "start": 184.0,
+          "start": 184,
           "duration": 5.56,
           "text": "dictionaryはいWhyyou",
           "translation_es": ""
@@ -12451,14 +12451,14 @@
         {
           "id": 64,
           "start": 230.32,
-          "duration": 10.0,
+          "duration": 10,
           "text": "かtherefore彼はけ",
           "translation_es": ""
         },
         {
           "id": 65,
           "start": 236.32,
-          "duration": 4.0,
+          "duration": 4,
           "text": "ですthir",
           "translation_es": ""
         },
@@ -12486,7 +12486,7 @@
         {
           "id": 69,
           "start": 253.16,
-          "duration": 10.0,
+          "duration": 10,
           "text": "ですはいなおpleaserepeat",
           "translation_es": ""
         },
@@ -12591,7 +12591,7 @@
         {
           "id": 84,
           "start": 327.84,
-          "duration": 4.0,
+          "duration": 4,
           "text": "sentencesOKAreyou",
           "translation_es": ""
         },
@@ -12843,7 +12843,7 @@
         {
           "id": 120,
           "start": 479.84,
-          "duration": 3.0,
+          "duration": 3,
           "text": "アメリカ人",
           "translation_es": ""
         },
@@ -12857,7 +12857,7 @@
         {
           "id": 122,
           "start": 489.68,
-          "duration": 3.0,
+          "duration": 3,
           "text": "アメリカ人",
           "translation_es": ""
         },
@@ -12934,7 +12934,7 @@
         {
           "id": 133,
           "start": 527.32,
-          "duration": 7.0,
+          "duration": 7,
           "text": "belowandIhaveaHWFor",
           "translation_es": ""
         },
@@ -12983,7 +12983,7 @@
         {
           "id": 140,
           "start": 548.44,
-          "duration": 6.0,
+          "duration": 6,
           "text": "theandIwillyour",
           "translation_es": ""
         },
@@ -13040,6 +13040,90 @@
         }
       ],
       "spokenLanguage": "ja"
+    },
+    {
+      "id": "yt_gundam_ep4",
+      "youtubeId": "s_V6c5UT5h4",
+      "title": "Mobile Suit Gundam: The Witch from Mercury - Episodio 4",
+      "originalTitle": "Mobile Suit Gundam: The Witch from Mercury Episode 4",
+      "channelTitle": "GundamInfo Official",
+      "channelUrl": "https://www.youtube.com/@GundamInfo",
+      "category": "anime",
+      "level": "N3",
+      "duration": "25:09",
+      "thumbnail": "https://img.youtube.com/vi/s_V6c5UT5h4/hqdefault.jpg",
+      "description": "Episodio oficial de anime con transcripción completa enriquecida con furigana morfológico, vocabulario y traducción al inglés.",
+      "tags": [
+        "Anime",
+        "Gundam",
+        "N3",
+        "Diálogos Reales"
+      ],
+      "embeddableVerified": true,
+      "subtitles": []
+    },
+    {
+      "id": "yt_chiikawa_ep381",
+      "youtubeId": "s25BYZonmIw",
+      "title": "Chiikawa (ちいかわ) - Episodio Oficial: Entrenamiento y Esfuerzo",
+      "originalTitle": "ちいかわ 第381話",
+      "channelTitle": "Anime Chiikawa Official",
+      "channelUrl": "https://www.youtube.com/@anime_chiikawa",
+      "category": "anime",
+      "level": "N5",
+      "duration": "01:45",
+      "thumbnail": "https://img.youtube.com/vi/s25BYZonmIw/hqdefault.jpg",
+      "description": "Corto de anime super popular con lenguaje tierno, frases sencillas de repetición y vocabulario para principiantes N5.",
+      "tags": [
+        "Anime",
+        "Chiikawa",
+        "N5",
+        "Principiantes"
+      ],
+      "embeddableVerified": true,
+      "subtitles": []
+    },
+    {
+      "id": "yt_chienowa_pictures",
+      "youtubeId": "XBAzs16aj_w",
+      "title": "Chienowa Japanese: 20 Escenas de la Vida Cotidiana (Inmersión Comprensible)",
+      "originalTitle": "20 Slice-of-Life Pictures - Slow Japanese for Beginners",
+      "channelTitle": "Chienowa Japanese",
+      "channelUrl": "https://www.youtube.com/@ChienowaJapanese",
+      "category": "daily_life",
+      "level": "N5",
+      "duration": "22:54",
+      "thumbnail": "https://img.youtube.com/vi/XBAzs16aj_w/hqdefault.jpg",
+      "description": "Inmersión comprensible (Comprehensible Input) pausada y visual, diseñada especialmente para aprender vocabulario y gramática N5.",
+      "tags": [
+        "Inmersión",
+        "Comprehensible Input",
+        "N5",
+        "Vida Diaria"
+      ],
+      "embeddableVerified": true,
+      "subtitles": []
+    },
+    {
+      "id": "yt_tokyo_couple_vlog",
+      "youtubeId": "EckTfvtj4-w",
+      "title": "Vlog de Pareja en Tokio: Rutina Diaria y Cocina Casera Japonesa",
+      "originalTitle": "Japanese Couple Daily Life Vlog & Homemade Cooking",
+      "channelTitle": "Japanese Daily Vlog",
+      "channelUrl": "https://www.youtube.com/@JapaneseDailyVlog",
+      "category": "food",
+      "level": "N4",
+      "duration": "77:17",
+      "thumbnail": "https://img.youtube.com/vi/EckTfvtj4-w/hqdefault.jpg",
+      "description": "Vlog auténtico de vida cotidiana en Tokio, compras en el supermercado y recetas caseras con conversación natural.",
+      "tags": [
+        "Vlog",
+        "Comida",
+        "Vida Diaria",
+        "N4"
+      ],
+      "embeddableVerified": true,
+      "subtitles": []
     }
   ]
 }
