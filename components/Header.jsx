@@ -1,9 +1,31 @@
 'use client';
 
 import React from 'react';
-import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync } from 'lucide-react';
+import { 
+  Flame, 
+  Star, 
+  CheckCircle, 
+  BookOpen, 
+  Moon, 
+  Sun, 
+  Keyboard, 
+  CloudCheck, 
+  CloudOff, 
+  CloudSync,
+  User,
+  LogIn
+} from 'lucide-react';
 
-export default function Header({ stats, theme, onToggleTheme, onNavigate, syncStatus = 'unconfigured', syncInfo = '' }) {
+export default function Header({ 
+  stats, 
+  theme, 
+  onToggleTheme, 
+  onNavigate, 
+  syncStatus = 'unconfigured', 
+  syncInfo = '',
+  authUser = null,
+  onOpenAuth = null
+}) {
   return (
     <header className="app-header">
       <div className="header-container">
@@ -41,6 +63,7 @@ export default function Header({ stats, theme, onToggleTheme, onNavigate, syncSt
             <span>IME 🇯🇵</span>
           </div>
 
+          {/* Cloud Sync Status */}
           <div 
             className="stat-badge" 
             style={{ cursor: 'pointer' }}
@@ -55,9 +78,48 @@ export default function Header({ stats, theme, onToggleTheme, onNavigate, syncSt
               <CloudOff size={16} style={{ color: 'var(--text-muted, #94a3b8)' }} />
             )}
             <span className="hidden-sm" style={{ fontSize: '0.8rem' }}>
-              {syncStatus === 'synced' ? 'Nube activa' : syncStatus === 'syncing' ? 'Sincronizando...' : 'Nube'}
+              {syncStatus === 'synced' ? 'Nube' : syncStatus === 'syncing' ? 'Sincronizando' : 'Local'}
             </span>
           </div>
+
+          {/* User Session Auth Badge */}
+          {authUser ? (
+            <div 
+              className="stat-badge"
+              style={{ 
+                cursor: 'pointer', 
+                background: 'rgba(99, 102, 241, 0.1)', 
+                borderColor: 'var(--primary, #6366f1)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+              onClick={() => onNavigate('progress')}
+              title={`Sesión activa: ${authUser.email}. Haz clic para gestionar tu cuenta.`}
+            >
+              <User size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--primary, #6366f1)' }}>
+                {authUser.email.split('@')[0]}
+              </span>
+            </div>
+          ) : (
+            <button 
+              className="stat-badge"
+              style={{ 
+                cursor: 'pointer', 
+                background: 'var(--bg-card)', 
+                border: '1px solid var(--border)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+              onClick={onOpenAuth}
+              title="Iniciar sesión para proteger y sincronizar tu progreso"
+            >
+              <LogIn size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+              <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>Entrar</span>
+            </button>
+          )}
 
           <button 
             className="theme-toggle-btn"

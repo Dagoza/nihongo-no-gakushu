@@ -15,9 +15,16 @@ import MaterialLibraryTab from '../components/MaterialLibraryTab';
 import ProgressTab from '../components/ProgressTab';
 import YouTubeImmersionTab from '../components/YouTubeImmersionTab';
 import SavedTab from '../components/SavedTab';
+import AuthModal from '../components/AuthModal';
 
 import { loadSavedState, saveState, getInitialState } from '../lib/storage';
-import { isSupabaseConfigured, executeFullSync } from '../lib/supabaseSync';
+import { 
+  isSupabaseConfigured, 
+  executeFullSync, 
+  getAuthUser, 
+  signOutUser, 
+  subscribeToAuthChanges 
+} from '../lib/supabaseSync';
 
 export default function Home() {
   const [currentTab, setCurrentTab] = useState('curriculum');
@@ -25,7 +32,9 @@ export default function Home() {
   const [appState, setAppState] = useState(getInitialState());
   const [mounted, setMounted] = useState(false);
 
-  // Estados de sincronización en la nube
+  // Estados de sesión de usuario y sincronización
+  const [authUser, setAuthUser] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState('unconfigured'); // 'unconfigured' | 'synced' | 'syncing' | 'error'
   const [syncInfo, setSyncInfo] = useState('');
   const appStateRef = useRef(appState);
@@ -50,7 +59,7 @@ export default function Home() {
         saveState(res.mergedState, false); // Guardar en localStorage sin disparar loop de subida
         setSyncStatus('synced');
         const now = new Date();
-        setSyncInfo(`Sincronizado a las ${now.toLocaleTimeString()}`);
+        setSyncInfo(res.message || `Sincronizado a las ${now.toLocaleTimeString()}`);
       } else {
         setSyncStatus('error');
         setSyncInfo(res.message || 'Error al sincronizar');
@@ -69,13 +78,32 @@ export default function Home() {
     }
     setMounted(true);
 
-    // Inicializar sincronización si está configurado
+    // Obtener usuario autenticado inicial
+    getAuthUser().then((user) => {
+      if (user) {
+        setAuthUser(user);
+      }
+    });
+
+    // Inicializar sincronización inicial
     if (isSupabaseConfigured()) {
       handleTriggerSync(saved);
     } else {
       setSyncStatus('unconfigured');
       setSyncInfo('Modo local');
     }
+
+    // Escuchar cambios de estado en Supabase Auth
+    const { data: { subscription } } = subscribeToAuthChanges(async (event, session) => {
+      const user = session?.user || null;
+      setAuthUser(user);
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        handleTriggerSync();
+      } else if (event === 'SIGNED_OUT') {
+        setSyncStatus('unconfigured');
+        setSyncInfo('Modo local (Sesión cerrada)');
+      }
+    });
 
     // Auto-sincronizar al volver a la pestaña (cambio de dispositivo o ventana)
     const handleVisibilityChange = () => {
@@ -97,6 +125,9 @@ export default function Home() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('online', handleOnline);
+      if (subscription?.unsubscribe) {
+        subscription.unsubscribe();
+      }
     };
   }, [handleTriggerSync]);
 
@@ -110,6 +141,24 @@ export default function Home() {
     document.body.setAttribute('data-theme', nextTheme);
     const updated = { ...appState, theme: nextTheme };
     handleUpdateState(updated);
+  };
+
+  const handleSignOut = async () => {
+    if (confirm('¿Deseas cerrar la sesión en este dispositivo? Tus datos se conservarán en tu cuenta en la nube.')) {
+      try {
+        await signOutUser();
+        setAuthUser(null);
+        setSyncStatus('unconfigured');
+        setSyncInfo('Modo local (Sesión cerrada)');
+      } catch (err) {
+        console.error('Error al cerrar sesión:', err);
+      }
+    }
+  };
+
+  const handleAuthSuccess = (user) => {
+    setAuthUser(user);
+    handleTriggerSync();
   };
 
   return (
@@ -128,13 +177,14 @@ export default function Home() {
         onNavigate={(tab) => setCurrentTab(tab)}
         syncStatus={syncStatus}
         syncInfo={syncInfo}
+        authUser={authUser}
+        onOpenAuth={() => setIsAuthModalOpen(true)}
       />
 
       {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}
       <NavigationTabs 
         currentTab={currentTab} 
         onTabChange={(tabId) => setCurrentTab(tabId)} 
-        savedCount={(appState.savedCustomVocab?.length || 0) + (appState.savedPhrases?.length || 0)}
       />
 
       {/* Main Container */}
@@ -144,7 +194,10 @@ export default function Home() {
             appState={appState} 
             userState={appState}
             onUpdateState={handleUpdateState} 
-            onNavigate={(tabId) => setCurrentTab(tabId)} 
+            onNavigate={(tabId, storyId) => {
+              if (storyId) setActiveStoryId(storyId);
+              setCurrentTab(tabId);
+            }} 
           />
         )}
 
@@ -153,8 +206,11 @@ export default function Home() {
             appState={appState} 
             onUpdateState={handleUpdateState} 
             activeStoryId={activeStoryId}
-            onSelectStory={(id) => setActiveStoryId(id)}
-            onNavigate={(tabId) => setCurrentTab(tabId)}
+            onSelectStory={(storyId) => setActiveStoryId(storyId)}
+            onNavigate={(tabId, storyId) => {
+              if (storyId) setActiveStoryId(storyId);
+              setCurrentTab(tabId);
+            }}
           />
         )}
 
@@ -215,6 +271,9 @@ export default function Home() {
             syncStatus={syncStatus}
             syncInfo={syncInfo}
             onTriggerSync={handleTriggerSync}
+            authUser={authUser}
+            onOpenAuth={() => setIsAuthModalOpen(true)}
+            onSignOut={handleSignOut}
           />
         )}
       </main>
@@ -224,6 +283,13 @@ export default function Home() {
         appState={appState}
         onUpdateState={handleUpdateState}
         onNavigate={(tabId) => setCurrentTab(tabId)}
+      />
+
+      {/* Modal de Autenticación de Usuario Seguro */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onAuthSuccess={handleAuthSuccess} 
       />
     </>
   );

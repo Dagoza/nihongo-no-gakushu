@@ -43,33 +43,52 @@ import {
 } from '../lib/supabaseSync';
 import { dataStore } from '../lib/data';
 
-const SQL_SCRIPT = `-- Nihongo Master - Tabla de sincronización de progreso
+const SQL_SCRIPT = `-- Nihongo Master - Tabla de progreso protegida con Supabase Auth y RLS
 create table if not exists public.user_progress (
-  sync_id text primary key,
+  id text primary key,
+  user_id uuid references auth.users(id) on delete cascade,
+  email text,
   data jsonb not null default '{}'::jsonb,
   device_info text default 'Web Client',
   client_version integer default 2,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
-create index if not exists idx_user_progress_sync_id on public.user_progress (sync_id);
+alter table public.user_progress add column if not exists user_id uuid references auth.users(id) on delete cascade;
+alter table public.user_progress add column if not exists email text;
+
+create index if not exists idx_user_progress_user_id on public.user_progress (user_id);
 create index if not exists idx_user_progress_updated_at on public.user_progress (updated_at desc);
 
 alter table public.user_progress enable row level security;
 
-create policy "Acceso total a progreso de usuario"
+drop policy if exists "Acceso total a progreso de usuario" on public.user_progress;
+drop policy if exists "Usuarios autenticados solo acceden a su progreso" on public.user_progress;
+drop policy if exists "Acceso anónimo con código" on public.user_progress;
+
+create policy "Usuarios autenticados solo acceden a su progreso"
   on public.user_progress
   for all
-  to anon, authenticated
-  using (true)
-  with check (true);`;
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Acceso anónimo con código"
+  on public.user_progress
+  for all
+  to anon
+  using (user_id is null)
+  with check (user_id is null);`;
 
 export default function ProgressTab({ 
   appState, 
   onUpdateState, 
   syncStatus = 'unconfigured', 
   syncInfo = '', 
-  onTriggerSync = null 
+  onTriggerSync = null,
+  authUser = null,
+  onOpenAuth = null,
+  onSignOut = null
 }) {
   const fileInputRef = useRef(null);
 
@@ -464,6 +483,81 @@ export default function ProgressTab({
               >
                 <RefreshCw size={14} className={isSyncingLocal ? 'animate-spin' : ''} />
                 <span>Sincronizar ahora</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* User Account & Security Banner */}
+        <div style={{
+          padding: '16px 20px',
+          borderRadius: 12,
+          background: authUser 
+            ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%)' 
+            : 'rgba(245, 158, 11, 0.08)',
+          border: `1px solid ${authUser ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+          marginBottom: 16,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 12
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              background: authUser ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <strong style={{ fontSize: '0.98rem' }}>
+                  {authUser ? `Sesión Activa: ${authUser.email}` : 'Sesión Local (Invitado)'}
+                </strong>
+                <span style={{
+                  fontSize: '0.75rem',
+                  padding: '2px 8px',
+                  borderRadius: 12,
+                  fontWeight: 600,
+                  background: authUser ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                  color: authUser ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)'
+                }}>
+                  {authUser ? '🔒 RLS Protegido' : '⚠️ Sin Cuenta'}
+                </span>
+              </div>
+              <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                {authUser 
+                  ? 'Tus datos están protegidos en PostgreSQL. Solo tu token de sesión autenticado puede leer o modificar tu progreso.'
+                  : 'Crea una cuenta o inicia sesión para blindar tu progreso y sincronizar automáticamente entre tus dispositivos.'}
+              </p>
+            </div>
+          </div>
+
+          <div>
+            {authUser ? (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={onSignOut}
+                style={{ color: 'var(--danger)', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                <span>Cerrar Sesión</span>
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={onOpenAuth}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                <ShieldCheck size={15} />
+                <span>Iniciar Sesión / Crear Cuenta</span>
               </button>
             )}
           </div>
