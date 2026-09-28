@@ -47,6 +47,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   const [selectedCategory, setSelectedCategory] = useState('all'); // 'all' | 'anime' | 'daily_life' | 'food_travel' | 'stories'
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
   const [searchQuery, setSearchQuery] = useState('');
+  const [onlyVerified, setOnlyVerified] = useState(true); // Filtrar solo videos con inserción 100% verificada
   
   // Custom video input
   const [customUrl, setCustomUrl] = useState('');
@@ -58,6 +59,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   const [currentVideo, setCurrentVideo] = useState(catalogData.videos?.[0] || null);
   const [currentTime, setCurrentTime] = useState(0);
   const [playerState, setPlayerState] = useState(2); // 1 = playing, 2 = paused
+  const [playerError, setPlayerError] = useState(null); // Códigos de error de YouTube (101, 150)
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [autoPauseAfterCue, setAutoPauseAfterCue] = useState(false);
   const [showSpanishTranslation, setShowSpanishTranslation] = useState(true);
@@ -104,6 +106,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
     return (catalogData.videos || []).filter((v) => {
       const matchCategory = selectedCategory === 'all' || v.category === selectedCategory;
       const matchLevel = selectedLevel === 'all' || v.level === selectedLevel;
+      const matchVerified = !onlyVerified || v.embeddableVerified === true;
       const q = searchQuery.trim().toLowerCase();
       const matchSearch =
         !q ||
@@ -112,9 +115,9 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
         v.channelTitle.toLowerCase().includes(q) ||
         (v.tags && v.tags.some((t) => t.toLowerCase().includes(q)));
 
-      return matchCategory && matchLevel && matchSearch;
+      return matchCategory && matchLevel && matchVerified && matchSearch;
     });
-  }, [catalogData.videos, selectedCategory, selectedLevel, searchQuery]);
+  }, [catalogData.videos, selectedCategory, selectedLevel, onlyVerified, searchQuery]);
 
   // Subtítulos del video actual
   const subtitles = currentVideo?.subtitles || [];
@@ -160,6 +163,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   const handleSelectVideo = (video) => {
     setCurrentVideo(video);
     setCurrentTime(0);
+    setPlayerError(null);
     setActiveView('player');
     if (playerRef.current) {
       playerRef.current.seekTo(0, true);
@@ -469,6 +473,17 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
               </select>
             </div>
 
+            {/* Toggle de Videos Verificados / Reproducibles */}
+            <button
+              type="button"
+              className={`filter-pill-verified ${onlyVerified ? 'active' : ''}`}
+              onClick={() => setOnlyVerified(!onlyVerified)}
+              title="Filtrar videos con inserción permitida"
+            >
+              <CheckCircle2 size={14} />
+              <span>Solo Reproducibles en App</span>
+            </button>
+
             {/* Buscador */}
             <div className="catalog-search-box">
               <Search size={16} className="search-icon" />
@@ -523,6 +538,12 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                     <span className={`video-level-badge level-${video.level.toLowerCase()}`}>
                       {video.level}
                     </span>
+                    {video.embeddableVerified && (
+                      <span className="video-verified-badge" title="Inserción 100% verificada">
+                        <CheckCircle2 size={11} />
+                        <span>Reproducible</span>
+                      </span>
+                    )}
                     <div className="video-play-overlay">
                       <Play size={28} className="play-icon-pulse" />
                     </div>
@@ -583,6 +604,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                   playbackRate={playbackRate}
                   onTimeUpdate={(time) => setCurrentTime(time)}
                   onStateChange={(state) => setPlayerState(state)}
+                  onError={(code) => setPlayerError(code)}
                 />
               </div>
 

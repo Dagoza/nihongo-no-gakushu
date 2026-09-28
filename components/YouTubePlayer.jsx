@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { ExternalLink, AlertTriangle, RefreshCw } from 'lucide-react';
 
 const YouTubePlayer = forwardRef(function YouTubePlayer({
   videoId,
   onTimeUpdate,
   onStateChange,
   onReady,
+  onError,
   playbackRate = 1.0,
   autoPlay = false
 }, ref) {
@@ -14,6 +16,8 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
   const playerRef = useRef(null);
   const timerRef = useRef(null);
   const isReadyRef = useRef(false);
+  const [embedError, setEmbedError] = useState(null); // error code (101, 150, 100, etc.)
+  const [currentPlayTime, setCurrentPlayTime] = useState(0);
 
   // Exponer métodos para control externo (seekTo, play, pause, etc.)
   useImperativeHandle(ref, () => ({
@@ -39,7 +43,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
       if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
         return playerRef.current.getCurrentTime();
       }
-      return 0;
+      return currentPlayTime;
     },
     setPlaybackRate: (rate) => {
       if (playerRef.current && typeof playerRef.current.setPlaybackRate === 'function') {
@@ -66,15 +70,17 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
   // Inicializar o actualizar reproductor
   useEffect(() => {
     let isMounted = true;
+    setEmbedError(null);
 
     const startTimer = () => {
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
           const time = playerRef.current.getCurrentTime();
+          setCurrentPlayTime(time);
           if (onTimeUpdate) onTimeUpdate(time);
         }
-      }, 80); // 80ms para suavidad en karaoke
+      }, 80); // 80ms para fluidez en karaoke
     };
 
     const stopTimer = () => {
@@ -87,7 +93,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
     const initPlayer = () => {
       if (!isMounted || !containerRef.current || !window.YT || !window.YT.Player) return;
 
-      // Si ya hay un reproductor, cambiar solo el video
+      // Si ya hay un reproductor, cambiar el video
       if (playerRef.current) {
         try {
           if (typeof playerRef.current.loadVideoById === 'function') {
@@ -105,7 +111,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
 
       // Crear nuevo reproductor
       const targetDiv = document.createElement('div');
-      targetDiv.id = `yt-player-${videoId}`;
+      targetDiv.id = `yt-player-${videoId}-${Date.now()}`;
       containerRef.current.innerHTML = '';
       containerRef.current.appendChild(targetDiv);
 
@@ -141,6 +147,14 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
               stopTimer();
             }
             if (onStateChange) onStateChange(event.data);
+          },
+          onError: (event) => {
+            if (!isMounted) return;
+            // Error 101 o 150 = Inserción inhabilitada por el propietario del video
+            // Error 100 = Video no encontrado o privado
+            console.warn('YouTube Player Error:', event.data);
+            setEmbedError(event.data);
+            if (onError) onError(event.data);
           }
         }
       });
@@ -184,6 +198,35 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
   return (
     <div className="yt-player-wrapper">
       <div ref={containerRef} className="yt-player-container" />
+
+      {/* Overlay amigable si YouTube bloquea la inserción (Error 101 / 150) */}
+      {(embedError === 101 || embedError === 150 || embedError === 100) && (
+        <div className="yt-embed-error-overlay">
+          <div className="yt-error-card">
+            <div className="yt-error-icon">
+              <AlertTriangle size={32} />
+            </div>
+            <h4>Video con Inserción Restringida</h4>
+            <p>
+              El propietario de este video ha desactivado los permisos para reproducirlo dentro de sitios web externos (Restricción de YouTube).
+            </p>
+            <div className="yt-error-actions">
+              <a
+                href={`https://www.youtube.com/watch?v=${videoId}${currentPlayTime > 0 ? `&t=${Math.floor(currentPlayTime)}s` : ''}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-open-youtube"
+              >
+                <span>Abrir y ver en YouTube</span>
+                <ExternalLink size={14} />
+              </a>
+            </div>
+            <small className="yt-error-tip">
+              💡 Puedes usar la transcripción sincronizada lateral para seguir estudiando mientras lo ves en YouTube, o elegir cualquiera de nuestros videos 100% verificados del catálogo.
+            </small>
+          </div>
+        </div>
+      )}
     </div>
   );
 });

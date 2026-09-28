@@ -22,6 +22,28 @@ export async function POST(request) {
       );
     }
 
+    // 1. Verificar si el propietario permite la inserción externa mediante la API oEmbed
+    try {
+      const oembedRes = await fetch(
+        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+        { headers: { 'User-Agent': 'Mozilla/5.0' }, next: { revalidate: 3600 } }
+      );
+
+      if (oembedRes.status === 401 || oembedRes.status === 403) {
+        return NextResponse.json(
+          {
+            error:
+              'El propietario de este video ha inhabilitado su reproducción en sitios web externos (Restricción de YouTube). Por favor intenta con otro video.',
+            isEmbeddable: false,
+            videoId
+          },
+          { status: 403 }
+        );
+      }
+    } catch (oeErr) {
+      console.warn('oEmbed check skipped:', oeErr);
+    }
+
     // Intentar obtener la página de YouTube para extraer la pista de subtítulos
     const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
       headers: {
