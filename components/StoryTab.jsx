@@ -115,11 +115,12 @@ export default function StoryTab({ userState, onRecordActivity }) {
       ['五分', 'ごふん'], ['時間', 'じかん'], ['行きましょう', 'いきましょう']
     ];
 
-    let html = rawJp;
-    rubyMap.forEach(([k, r]) => {
-      const reg = new RegExp(k, 'g');
-      html = html.replace(reg, `<ruby class="ruby-clickable" data-word="${k}">${k}<rt>${r}</rt></ruby>`);
-    });
+    // Sort keys by descending length to match compound kanji before individual characters
+    const sortedRubyMap = [...rubyMap].sort((a, b) => b[0].length - a[0].length);
+    const rubyDict = Object.fromEntries(rubyMap);
+    const escapedKeys = sortedRubyMap.map(([k]) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const reg = new RegExp(escapedKeys.join('|'), 'g');
+    const html = rawJp.replace(reg, (k) => `<ruby class="ruby-clickable" data-word="${k}">${k}<rt>${rubyDict[k]}</rt></ruby>`);
 
     return (
       <div 

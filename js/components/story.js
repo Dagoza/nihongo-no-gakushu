@@ -188,10 +188,12 @@ class StoryComponent {
       ['五分', 'ごふん'], ['時間', 'じかん'], ['行きましょう', 'いきましょう']
     ];
 
-    rubyMap.forEach(([kanji, kana]) => {
-      const reg = new RegExp(kanji, 'g');
-      formatted = formatted.replace(reg, `<ruby>${kanji}<rt>${kana}</rt></ruby>`);
-    });
+    // Sort keys by descending length to match compound kanji before individual characters
+    const sortedRubyMap = [...rubyMap].sort((a, b) => b[0].length - a[0].length);
+    const rubyDict = Object.fromEntries(rubyMap);
+    const escapedKeys = sortedRubyMap.map(([k]) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const reg = new RegExp(escapedKeys.join('|'), 'g');
+    formatted = formatted.replace(reg, (kanji) => `<ruby>${kanji}<rt>${rubyDict[kanji]}</rt></ruby>`);
 
     return formatted;
   }

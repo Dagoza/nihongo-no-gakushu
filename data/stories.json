@@ -343,31 +343,31 @@
       },
       {
         "id": "sent_44",
-        "japanese": "「今週の土曜日と日曜日に何をしますか？」 \"What will you do on Saturday and Sunday of this week?\"",
-        "english": "",
+        "japanese": "「今週の土曜日と日曜日に何をしますか？」",
+      "english": "What will you do on Saturday and Sunday of this week?",
         "grammar_note": "今週 (konshuu) means \"this week\".",
-        "clean_target": "今週の土曜日と日曜日に何をしますか\"WhatwillyoudoonSaturdayandSundayofthisweek?\""
+        "clean_target": "今週の土曜日と日曜日に何をしますか"
       },
       {
         "id": "sent_45",
-        "japanese": "「東の山に行きます。山は高いですか？いいえ、低いですが、空気が良くて楽しいです。」 \"I will go to the east mountain. Is the mountain high? No, it is low, but the air is good and it is fun.\"",
-        "english": "",
+        "japanese": "「東の山に行きます。山は高いですか？いいえ、低いですが、空気が良くて楽しいです。」",
+      "english": "I will go to the east mountain. Is the mountain high? No, it is low, but the air is good and it is fun.",
         "grammar_note": "高い (takai) means high/tall. 低い (hikui) means low/short. 良くて (yokute) connects the two adjectives describing the mountain.",
-        "clean_target": "東の山に行きます山は高いですかいいえ低いですが空気が良くて楽しいです\"Iwillgototheeastmountain.Isthemountainhigh?No,itislow,buttheairisgoodanditisfun.\""
+        "clean_target": "東の山に行きます山は高いですかいいえ低いですが空気が良くて楽しいです"
       },
       {
         "id": "sent_46",
-        "japanese": "「いいですね。私は西の川に行きます。足を入れると気持ちがいいです。」 \"That is nice. I will go to the west river. When you put your feet in, it feels good.\"",
-        "english": "",
+        "japanese": "「いいですね。私は西の川に行きます。足を入れると気持ちがいいです。」",
+      "english": "That is nice. I will go to the west river. When you put your feet in, it feels good.",
         "grammar_note": "The particle と (to) here is used as a conditional meaning \"when\" or \"if\" (When you put feet in -> it feels good). 気持ちがいい (kimochi ga ii) is a set phrase meaning \"feels good/pleasant\".",
-        "clean_target": "いいですね私は西の川に行きます足を入れると気持ちがいいです\"Thatisnice.Iwillgotothewestriver.Whenyouputyourfeetin,itfeelsgood.\""
+        "clean_target": "いいですね私は西の川に行きます足を入れると気持ちがいいです"
       },
       {
         "id": "sent_47",
-        "japanese": "「火曜日、水曜日、木曜日、金曜日は忙しいけど、休みは楽しいです。今年は暑いから、たくさん水を飲んでね。」 \"Tuesday, Wednesday, Thursday, and Friday are busy, but days off are fun. This year is hot, so please drink a lot of water.\"",
-        "english": "",
+        "japanese": "「火曜日、水曜日、木曜日、金曜日は忙しいけど、休みは楽しいです。今年は暑いから、たくさん水を飲んでね。」",
+      "english": "Tuesday, Wednesday, Thursday, and Friday are busy, but days off are fun. This year is hot, so please drink a lot of water.",
         "grammar_note": "けど (kedo) connects the busy weekdays with the fun weekend. 飲んで (nonde) is the te-form of 飲む (nomu). Adding ね (ne) at the end makes it a soft suggestion or request (\"drink water, okay?\").",
-        "clean_target": "火曜日水曜日木曜日金曜日は忙しいけど休みは楽しいです今年は暑いからたくさん水を飲んでね\"Tuesday,Wednesday,Thursday,andFridayarebusy,butdaysoffarefun.Thisyearishot,sopleasedrinkalotofwater.\""
+        "clean_target": "火曜日水曜日木曜日金曜日は忙しいけど休みは楽しいです今年は暑いからたくさん水を飲んでね"
       },
       {
         "id": "sent_48",
@@ -438,14 +438,6 @@
         "english": "Two, three, four, five, six, seven, eight, nine, ten. Well then, let's go!",
         "grammar_note": "さあ (saa) is an interjection used to prompt an action (\"well then / come on\"). 行きましょう (ikimashou) is the volitional form of 行く meaning \"Let's go\".",
         "clean_target": "二三四五六七八九十さあ行きましょう"
-      },
-      {
-        "id": "sent_58",
-        "japanese": "\u0014\bӁ9\u0010㺦\u0018\bi\u0012\u0012\b\u000f\u0012\u0003\u0001\u0000\u0005\u0018A*\u0006ii\b\u0001\u0012\u0004\bi*",
-        "english": "",
-        "grammar_note": "",
-        "clean_target": "\u0014\bӁ9\u0010㺦\u0018\bi\u0012\u0012\b\u000f\u0012\u0003\u0001\u0000\u0005\u0018A*\u0006ii\b\u0001\u0012\u0004\bi*"
-      }
-    ]
+      }]
   }
 ]
