@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { ExternalLink, AlertTriangle, RefreshCw } from 'lucide-react';
+import { ExternalLink, AlertTriangle, Play, Pause, RotateCcw } from 'lucide-react';
 
 const YouTubePlayer = forwardRef(function YouTubePlayer({
   videoId,
@@ -15,13 +15,44 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
   const containerRef = useRef(null);
   const playerRef = useRef(null);
   const timerRef = useRef(null);
+  const virtualTimerRef = useRef(null);
   const isReadyRef = useRef(false);
   const [embedError, setEmbedError] = useState(null); // error code (101, 150, 100, etc.)
   const [currentPlayTime, setCurrentPlayTime] = useState(0);
+  const [isVirtualPlaying, setIsVirtualPlaying] = useState(false);
+
+  // Control del temporizador virtual si la inserción está bloqueada
+  const toggleVirtualPlay = () => {
+    if (isVirtualPlaying) {
+      if (virtualTimerRef.current) clearInterval(virtualTimerRef.current);
+      setIsVirtualPlaying(false);
+      if (onStateChange) onStateChange(2); // Paused
+    } else {
+      setIsVirtualPlaying(true);
+      if (onStateChange) onStateChange(1); // Playing
+      virtualTimerRef.current = setInterval(() => {
+        setCurrentPlayTime((prev) => {
+          const next = prev + 0.1 * playbackRate;
+          if (onTimeUpdate) onTimeUpdate(next);
+          return next;
+        });
+      }, 100);
+    }
+  };
 
   // Exponer métodos para control externo (seekTo, play, pause, etc.)
   useImperativeHandle(ref, () => ({
     seekTo: (seconds, playImmediately = true) => {
+      setCurrentPlayTime(seconds);
+      if (onTimeUpdate) onTimeUpdate(seconds);
+
+      if (embedError === 101 || embedError === 150) {
+        if (playImmediately && !isVirtualPlaying) {
+          toggleVirtualPlay();
+        }
+        return;
+      }
+
       if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
         playerRef.current.seekTo(seconds, true);
         if (playImmediately) {
@@ -30,16 +61,27 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
       }
     },
     play: () => {
+      if (embedError === 101 || embedError === 150) {
+        if (!isVirtualPlaying) toggleVirtualPlay();
+        return;
+      }
       if (playerRef.current && typeof playerRef.current.playVideo === 'function') {
         playerRef.current.playVideo();
       }
     },
     pause: () => {
+      if (embedError === 101 || embedError === 150) {
+        if (isVirtualPlaying) toggleVirtualPlay();
+        return;
+      }
       if (playerRef.current && typeof playerRef.current.pauseVideo === 'function') {
         playerRef.current.pauseVideo();
       }
     },
     getCurrentTime: () => {
+      if (embedError === 101 || embedError === 150) {
+        return currentPlayTime;
+      }
       if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
         return playerRef.current.getCurrentTime();
       }
@@ -71,6 +113,8 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
   useEffect(() => {
     let isMounted = true;
     setEmbedError(null);
+    setIsVirtualPlaying(false);
+    if (virtualTimerRef.current) clearInterval(virtualTimerRef.current);
 
     const startTimer = () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -80,7 +124,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
           setCurrentPlayTime(time);
           if (onTimeUpdate) onTimeUpdate(time);
         }
-      }, 80); // 80ms para fluidez en karaoke
+      }, 80);
     };
 
     const stopTimer = () => {
@@ -109,7 +153,6 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
         }
       }
 
-      // Crear nuevo reproductor
       const targetDiv = document.createElement('div');
       targetDiv.id = `yt-player-${videoId}-${Date.now()}`;
       containerRef.current.innerHTML = '';
@@ -140,7 +183,6 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
           },
           onStateChange: (event) => {
             if (!isMounted) return;
-            // 1: PLAYING, 2: PAUSED, 0: ENDED, 3: BUFFERING
             if (event.data === 1) {
               startTimer();
             } else {
@@ -150,8 +192,6 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
           },
           onError: (event) => {
             if (!isMounted) return;
-            // Error 101 o 150 = Inserción inhabilitada por el propietario del video
-            // Error 100 = Video no encontrado o privado
             console.warn('YouTube Player Error:', event.data);
             setEmbedError(event.data);
             if (onError) onError(event.data);
@@ -173,6 +213,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
     return () => {
       isMounted = false;
       stopTimer();
+      if (virtualTimerRef.current) clearInterval(virtualTimerRef.current);
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         try {
           playerRef.current.destroy();
@@ -184,7 +225,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
     };
   }, [videoId, autoPlay]);
 
-  // Actualizar tasa de reproducción cuando cambie la prop
+  // Actualizar tasa de reproducción
   useEffect(() => {
     if (playerRef.current && typeof playerRef.current.setPlaybackRate === 'function') {
       try {
@@ -199,30 +240,42 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
     <div className="yt-player-wrapper">
       <div ref={containerRef} className="yt-player-container" />
 
-      {/* Overlay amigable si YouTube bloquea la inserción (Error 101 / 150) */}
+      {/* Overlay de Modo Sincronizado si YouTube bloquea la inserción directa */}
       {(embedError === 101 || embedError === 150 || embedError === 100) && (
         <div className="yt-embed-error-overlay">
           <div className="yt-error-card">
             <div className="yt-error-icon">
-              <AlertTriangle size={32} />
+              <AlertTriangle size={30} />
             </div>
-            <h4>Video con Inserción Restringida</h4>
+            <h4>Modo de Estudio Sincronizado Activo</h4>
             <p>
-              El propietario de este video ha desactivado los permisos para reproducirlo dentro de sitios web externos (Restricción de YouTube).
+              El autor ha limitado la reproducción en marcos externos, pero <strong>puedes seguir estudiando este video en la app</strong> gracias al sincronizador de transcripción.
             </p>
+
             <div className="yt-error-actions">
+              <button
+                type="button"
+                className={`btn-virtual-play ${isVirtualPlaying ? 'active' : ''}`}
+                onClick={toggleVirtualPlay}
+              >
+                {isVirtualPlaying ? <Pause size={16} /> : <Play size={16} />}
+                <span>{isVirtualPlaying ? 'Pausar Sincronización' : 'Iniciar Sincronización'}</span>
+              </button>
+
               <a
                 href={`https://www.youtube.com/watch?v=${videoId}${currentPlayTime > 0 ? `&t=${Math.floor(currentPlayTime)}s` : ''}`}
                 target="_blank"
                 rel="noreferrer"
                 className="btn-open-youtube"
+                title="Abre el video en YouTube en el segundo exacto"
               >
-                <span>Abrir y ver en YouTube</span>
+                <span>Abrir en YouTube</span>
                 <ExternalLink size={14} />
               </a>
             </div>
+
             <small className="yt-error-tip">
-              💡 Puedes usar la transcripción sincronizada lateral para seguir estudiando mientras lo ves en YouTube, o elegir cualquiera de nuestros videos 100% verificados del catálogo.
+              💡 La transcripción lateral, las palabras interactivas y el guardado de vocabulario continúan 100% operativos.
             </small>
           </div>
         </div>

@@ -30,7 +30,9 @@ import {
   BookOpen,
   PlusCircle,
   HelpCircle,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Trash2,
+  Check
 } from 'lucide-react';
 
 import YouTubePlayer from './YouTubePlayer';
@@ -44,15 +46,16 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   const [activeView, setActiveView] = useState('catalog');
 
   // Filters
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all' | 'anime' | 'daily_life' | 'food_travel' | 'stories'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all' | 'anime' | 'daily_life' | 'food_travel' | 'stories' | 'custom'
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
   const [searchQuery, setSearchQuery] = useState('');
-  const [onlyVerified, setOnlyVerified] = useState(true); // Filtrar solo videos con inserción 100% verificada
+  const [onlyVerified, setOnlyVerified] = useState(false); // Opcional para filtrar solo verificados
   
   // Custom video input
   const [customUrl, setCustomUrl] = useState('');
   const [customLoading, setCustomLoading] = useState(false);
   const [customError, setCustomError] = useState('');
+  const [customSuccessMsg, setCustomSuccessMsg] = useState('');
 
   // Selected Video & Player State
   const catalogData = dataStore.youtubeCatalog || { channels: [], videos: [] };
@@ -64,6 +67,8 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   const [autoPauseAfterCue, setAutoPauseAfterCue] = useState(false);
   const [showSpanishTranslation, setShowSpanishTranslation] = useState(true);
   const [transcriptSearch, setTranscriptSearch] = useState('');
+  const [activeTrackLang, setActiveTrackLang] = useState(currentVideo?.spokenLanguage || 'ja');
+  const [changingTrackLoading, setChangingTrackLoading] = useState(false);
 
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
@@ -77,6 +82,15 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
 
   // Google Account state in appState
   const googleAccount = appState.googleAccount;
+
+  // Combinar videos del catálogo y videos personalizados guardados por el usuario
+  const allVideos = useMemo(() => {
+    const defaultVids = catalogData.videos || [];
+    const customVids = appState.savedCustomVideos || [];
+    // Evitar duplicados por youtubeId
+    const uniqueCustom = customVids.filter(cv => !defaultVids.some(dv => dv.youtubeId === cv.youtubeId));
+    return [...uniqueCustom, ...defaultVids];
+  }, [catalogData.videos, appState.savedCustomVideos]);
 
   // Toggle Google Account simulation
   const handleToggleGoogleAuth = () => {
@@ -101,9 +115,9 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
     }
   };
 
-  // Filtrado de videos del catálogo
+  // Filtrado de videos
   const filteredVideos = useMemo(() => {
-    return (catalogData.videos || []).filter((v) => {
+    return allVideos.filter((v) => {
       const matchCategory = selectedCategory === 'all' || v.category === selectedCategory;
       const matchLevel = selectedLevel === 'all' || v.level === selectedLevel;
       const matchVerified = !onlyVerified || v.embeddableVerified === true;
@@ -112,12 +126,12 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
         !q ||
         v.title.toLowerCase().includes(q) ||
         (v.originalTitle && v.originalTitle.toLowerCase().includes(q)) ||
-        v.channelTitle.toLowerCase().includes(q) ||
+        (v.channelTitle && v.channelTitle.toLowerCase().includes(q)) ||
         (v.tags && v.tags.some((t) => t.toLowerCase().includes(q)));
 
       return matchCategory && matchLevel && matchVerified && matchSearch;
     });
-  }, [catalogData.videos, selectedCategory, selectedLevel, onlyVerified, searchQuery]);
+  }, [allVideos, selectedCategory, selectedLevel, onlyVerified, searchQuery]);
 
   // Subtítulos del video actual
   const subtitles = currentVideo?.subtitles || [];
@@ -136,7 +150,6 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   useEffect(() => {
     if (!autoPauseAfterCue || activeCueIndex === -1) return;
 
-    // Si cambió de subtítulo y el anterior terminó, pausar
     if (
       lastActiveCueIndexRef.current !== -1 &&
       lastActiveCueIndexRef.current !== activeCueIndex &&
@@ -164,19 +177,21 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
     setCurrentVideo(video);
     setCurrentTime(0);
     setPlayerError(null);
+    setActiveTrackLang(video.spokenLanguage || 'ja');
     setActiveView('player');
     if (playerRef.current) {
       playerRef.current.seekTo(0, true);
     }
   };
 
-  // Cargar video personalizado por URL
+  // Cargar video personalizado por URL (con transcripción en idioma hablado y soporte para guardar)
   const handleLoadCustomUrl = async (e) => {
     e.preventDefault();
     if (!customUrl.trim()) return;
 
     setCustomLoading(true);
     setCustomError('');
+    setCustomSuccessMsg('');
 
     try {
       const res = await fetch('/api/youtube/transcript', {
@@ -187,32 +202,108 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
 
       const data = await res.json();
 
-      if (!res.ok) {
+      if (!res.ok && !data.cues) {
         throw new Error(data.error || 'Error al obtener la transcripción.');
       }
 
       const customVideo = {
-        id: `custom_${data.videoId}`,
+        id: `custom_${data.videoId}_${Date.now()}`,
         youtubeId: data.videoId,
-        title: data.title,
+        title: data.title || 'Video de YouTube',
         originalTitle: data.title,
-        channelTitle: data.author,
+        channelTitle: data.author || 'Canal de YouTube',
         category: 'custom',
         level: 'N5',
         duration: '--:--',
         thumbnail: `https://img.youtube.com/vi/${data.videoId}/hqdefault.jpg`,
-        description: 'Video importado directamente desde YouTube.',
-        tags: ['Personalizado', 'YouTube'],
+        description: data.isEmbeddable
+          ? 'Video importado con transcripción completa.'
+          : 'Video con inserción externa limitada. Transcripción completa lista para Modo de Estudio Sincronizado.',
+        tags: ['Personalizado', 'URL', data.spokenLanguage?.toUpperCase() || 'AUDIO'],
+        embeddableVerified: data.isEmbeddable !== false,
+        isEmbeddable: data.isEmbeddable !== false,
+        spokenLanguage: data.spokenLanguage || 'ja',
+        spokenLanguageName: data.spokenLanguageName || data.spokenLanguage || 'Original',
+        availableLanguages: data.availableLanguages || [],
         subtitles: data.cues || []
       };
 
       setCurrentVideo(customVideo);
+      setActiveTrackLang(data.spokenLanguage || 'ja');
       setActiveView('player');
       setCustomUrl('');
+
+      if (!data.isEmbeddable) {
+        setCustomSuccessMsg(
+          '⚠️ Este video tiene restricciones de reproducción externa en YouTube, pero su transcripción completa se cargó exitosamente. Puedes guardarlo en tu biblioteca y usar el Modo Sincronizado.'
+        );
+      } else {
+        setCustomSuccessMsg('¡Video y transcripción completa cargados con éxito!');
+      }
     } catch (err) {
       setCustomError(err.message);
     } finally {
       setCustomLoading(false);
+    }
+  };
+
+  // Guardar / Quitar video personalizado de la biblioteca permanente
+  const isCurrentVideoSaved = useMemo(() => {
+    if (!currentVideo) return false;
+    const saved = appState.savedCustomVideos || [];
+    return saved.some(v => v.youtubeId === currentVideo.youtubeId);
+  }, [currentVideo, appState.savedCustomVideos]);
+
+  const handleToggleSaveCurrentVideo = () => {
+    if (!currentVideo) return;
+    const prevSaved = appState.savedCustomVideos || [];
+
+    if (isCurrentVideoSaved) {
+      // Eliminar de guardados
+      const updated = prevSaved.filter(v => v.youtubeId !== currentVideo.youtubeId);
+      onUpdateState({
+        ...appState,
+        savedCustomVideos: updated
+      });
+    } else {
+      // Guardar en biblioteca
+      const newSavedItem = {
+        ...currentVideo,
+        category: 'custom',
+        savedAt: new Date().toISOString()
+      };
+      const updated = [newSavedItem, ...prevSaved];
+      onUpdateState({
+        ...appState,
+        savedCustomVideos: updated,
+        xp: (appState.xp || 0) + 20
+      });
+    }
+  };
+
+  // Cambiar pista de idioma (ej. Inglés, Español o Japonés)
+  const handleChangeLanguageTrack = async (langCode) => {
+    if (!currentVideo || changingTrackLoading) return;
+    setChangingTrackLoading(true);
+    try {
+      const res = await fetch('/api/youtube/transcript', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId: currentVideo.youtubeId, lang: langCode })
+      });
+      const data = await res.json();
+      if (data.cues && data.cues.length) {
+        setCurrentVideo({
+          ...currentVideo,
+          spokenLanguage: langCode,
+          subtitles: data.cues
+        });
+        setActiveTrackLang(langCode);
+      }
+    } catch (e) {
+      console.warn('Error cambiando idioma:', e);
+    } finally {
+      setChangingTrackLoading(false);
     }
   };
 
@@ -254,11 +345,9 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
 
   // Abrir modal de guardado para una palabra específica
   const handleOpenSaveWord = (wordToken, cue) => {
-    // Buscar si ya existe en el diccionario para autocompletar lectura y traducción
     const knownVocab = (dataStore.vocabulary || []).find(
       (v) => v.kanji === wordToken || v.kana === wordToken
     );
-
     const knownKanji = (dataStore.kanji || []).find((k) => k.kanji === wordToken);
 
     setModalData({
@@ -293,36 +382,61 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
     setModalOpen(true);
   };
 
-  // Renderizar palabras interactivas dentro de una oración
+  // Renderizar oraciones según idioma hablado (Japonés, Inglés o Español)
   const renderInteractiveSentence = (sentenceText, cue) => {
-    const tokens = tokenizeJapanese(sentenceText);
+    // Si contiene caracteres japoneses (Hiragana, Katakana, Kanji)
+    const isJapanese = /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(sentenceText);
+
+    if (isJapanese) {
+      const tokens = tokenizeJapanese(sentenceText);
+      return (
+        <span className="interactive-sentence-tokens">
+          {tokens.map((token, idx) => {
+            if (!token.isWordLike) {
+              return (
+                <span key={idx} className="punctuation-token">
+                  {token.text}
+                </span>
+              );
+            }
+            const hasKanji = containsKanji(token.text);
+            return (
+              <button
+                key={idx}
+                type="button"
+                className={`word-token-btn ${hasKanji ? 'has-kanji' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenSaveWord(token.text, cue);
+                }}
+                title={`Clic para analizar y guardar: ${token.text}`}
+              >
+                {token.text}
+              </button>
+            );
+          })}
+        </span>
+      );
+    }
+
+    // Si es inglés o español, tokenizar por palabras con espacios
+    const words = sentenceText.split(/\s+/);
     return (
       <span className="interactive-sentence-tokens">
-        {tokens.map((token, idx) => {
-          if (!token.isWordLike) {
-            return (
-              <span key={idx} className="punctuation-token">
-                {token.text}
-              </span>
-            );
-          }
-
-          const hasKanji = containsKanji(token.text);
-          return (
-            <button
-              key={idx}
-              type="button"
-              className={`word-token-btn ${hasKanji ? 'has-kanji' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOpenSaveWord(token.text, cue);
-              }}
-              title={`Clic para analizar y guardar: ${token.text}`}
-            >
-              {token.text}
-            </button>
-          );
-        })}
+        {words.map((w, idx) => (
+          <button
+            key={idx}
+            type="button"
+            className="word-token-btn word-latin-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenSavePhrase(cue);
+            }}
+            title="Clic para guardar esta frase con timestamp"
+          >
+            {w}
+          </button>
+        ))}
       </span>
     );
   };
@@ -336,9 +450,9 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
             <Tv size={24} />
           </div>
           <div>
-            <h2 className="immersion-heading">Inmersión YouTube con Subtítulos Interactivos</h2>
+            <h2 className="immersion-heading">Inmersión YouTube con Transcripciones Completas</h2>
             <p className="immersion-subheading">
-              Aprende japonés auténtico con videos reales filtrados por tópicos (Anime, Vlogs, etc.) y niveles JLPT, con transcripción sincronizada y guardado a tu cuaderno.
+              Aprende en el idioma real en que se habla (Japonés, Inglés o Español), guarda videos enviados por URL incluso si tienen restricciones de inserción, y captura vocabulario en tu cuaderno.
             </p>
           </div>
         </div>
@@ -378,7 +492,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
         </div>
       </div>
 
-      {/* Navegación interna entre Catálogo, Reproductor, Cuaderno y Canales */}
+      {/* Navegación interna */}
       <div className="immersion-nav-strip">
         <div className="immersion-nav-tabs">
           <button
@@ -386,7 +500,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
             onClick={() => setActiveView('catalog')}
           >
             <BookOpen size={16} />
-            <span>Catálogo Curado ({catalogData.videos?.length || 0})</span>
+            <span>Videoteca ({allVideos.length})</span>
           </button>
           <button
             className={`immersion-tab-btn ${activeView === 'player' ? 'active' : ''}`}
@@ -401,7 +515,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
           >
             <Bookmark size={16} />
             <span>
-              Mi Cuaderno de YouTube (
+              Mi Cuaderno de Estudio (
               {(appState.savedCustomVocab?.length || 0) + (appState.savedPhrases?.length || 0)}
               )
             </span>
@@ -417,7 +531,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
       </div>
 
       {/* ============================================================== */}
-      {/* VISTA 1: CATÁLOGO DE VIDEOS Y FILTRADO POR TÓPICO / JLPT */}
+      {/* VISTA 1: CATÁLOGO DE VIDEOS */}
       {/* ============================================================== */}
       {activeView === 'catalog' && (
         <div className="catalog-view-section">
@@ -430,7 +544,13 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                 className={`filter-pill ${selectedCategory === 'all' ? 'active' : ''}`}
                 onClick={() => setSelectedCategory('all')}
               >
-                Todos
+                Todos ({allVideos.length})
+              </button>
+              <button
+                className={`filter-pill ${selectedCategory === 'custom' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('custom')}
+              >
+                📁 Mis Videos Guardados ({appState.savedCustomVideos?.length || 0})
               </button>
               <button
                 className={`filter-pill ${selectedCategory === 'anime' ? 'active' : ''}`}
@@ -448,19 +568,13 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                 className={`filter-pill ${selectedCategory === 'stories' ? 'active' : ''}`}
                 onClick={() => setSelectedCategory('stories')}
               >
-                📖 Cuentos & Historias
-              </button>
-              <button
-                className={`filter-pill ${selectedCategory === 'food_travel' ? 'active' : ''}`}
-                onClick={() => setSelectedCategory('food_travel')}
-              >
-                🍱 Comida & Viajes
+                📖 Cuentos & Gramática
               </button>
             </div>
 
             {/* Nivel JLPT */}
             <div className="filter-level-group">
-              <span className="filter-label">Nivel JLPT:</span>
+              <span className="filter-label">Nivel:</span>
               <select
                 className="filter-select-level"
                 value={selectedLevel}
@@ -473,7 +587,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
               </select>
             </div>
 
-            {/* Toggle de Videos Verificados / Reproducibles */}
+            {/* Toggle de Videos Verificados */}
             <button
               type="button"
               className={`filter-pill-verified ${onlyVerified ? 'active' : ''}`}
@@ -500,27 +614,31 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
           <div className="custom-url-banner">
             <div className="custom-url-label">
               <LinkIcon size={16} />
-              <span>¿Tienes otro video de YouTube en mente?</span>
+              <span>Cargar y guardar cualquier video de YouTube por URL (Incluso con restricciones):</span>
             </div>
             <form onSubmit={handleLoadCustomUrl} className="custom-url-form">
               <input
                 type="text"
-                placeholder="Pega cualquier enlace de YouTube (ej. https://www.youtube.com/watch?v=...)"
+                placeholder="Pega cualquier enlace (ej. https://www.youtube.com/watch?v=... o youtu.be/...)"
                 value={customUrl}
                 onChange={(e) => setCustomUrl(e.target.value)}
                 disabled={customLoading}
               />
               <button type="submit" disabled={customLoading || !customUrl.trim()}>
-                {customLoading ? 'Cargando subtítulos...' : 'Cargar Video'}
+                {customLoading ? 'Cargando transcripción completa...' : 'Cargar Video'}
               </button>
             </form>
             {customError && <p className="custom-url-error">{customError}</p>}
+            {customSuccessMsg && <p className="custom-url-success">{customSuccessMsg}</p>}
           </div>
 
           {/* Grid de Videos */}
           <div className="video-cards-grid">
             {filteredVideos.map((video) => {
               const isCurrent = currentVideo?.id === video.id;
+              const isSaved = (appState.savedCustomVideos || []).some(
+                (v) => v.youtubeId === video.youtubeId
+              );
               return (
                 <div
                   key={video.id}
@@ -535,13 +653,17 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                       loading="lazy"
                     />
                     <span className="video-duration-badge">{video.duration}</span>
-                    <span className={`video-level-badge level-${video.level.toLowerCase()}`}>
-                      {video.level}
+                    <span className={`video-level-badge level-${(video.level || 'n5').toLowerCase()}`}>
+                      {video.level || 'N5'}
                     </span>
-                    {video.embeddableVerified && (
-                      <span className="video-verified-badge" title="Inserción 100% verificada">
+                    {video.embeddableVerified !== false ? (
+                      <span className="video-verified-badge" title="Inserción permitida en la app">
                         <CheckCircle2 size={11} />
                         <span>Reproducible</span>
+                      </span>
+                    ) : (
+                      <span className="video-restricted-badge" title="Modo Sincronizado disponible">
+                        <span>Modo Sincronizado</span>
                       </span>
                     )}
                     <div className="video-play-overlay">
@@ -550,20 +672,33 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                   </div>
 
                   <div className="video-card-content">
-                    <span className="video-channel-name">{video.channelTitle}</span>
+                    <div className="video-card-top-row">
+                      <span className="video-channel-name">{video.channelTitle}</span>
+                      {isSaved && (
+                        <span className="saved-indicator-pill" title="Guardado en tu biblioteca">
+                          <Bookmark size={11} /> Guardado
+                        </span>
+                      )}
+                    </div>
+
                     <h4 className="video-card-title">{video.title}</h4>
                     <p className="video-card-desc">{video.description}</p>
 
                     <div className="video-card-footer">
                       <div className="video-tags-list">
-                        {(video.tags || []).slice(0, 3).map((tag, i) => (
+                        {video.spokenLanguage && (
+                          <span className="mini-tag lang-tag">
+                            🗣 {video.spokenLanguage.toUpperCase()}
+                          </span>
+                        )}
+                        {(video.tags || []).slice(0, 2).map((tag, i) => (
                           <span key={i} className="mini-tag">
                             {tag}
                           </span>
                         ))}
                       </div>
                       <span className="cues-count-badge">
-                        {video.subtitles?.length || 0} frases sincronizadas
+                        {video.subtitles?.length || 0} frases completas
                       </span>
                     </div>
                   </div>
@@ -575,7 +710,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
       )}
 
       {/* ============================================================== */}
-      {/* VISTA 2: REPRODUCTOR CON TRANSCRIPCIÓN Y SUBTÍTULOS DUALES */}
+      {/* VISTA 2: REPRODUCTOR CON TRANSCRIPCIÓN COMPLETA Y DUAL SUBTÍTULOS */}
       {/* ============================================================== */}
       {activeView === 'player' && currentVideo && (
         <div className="player-view-section">
@@ -583,16 +718,51 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
           <div className="player-top-action-bar">
             <button className="btn-back-catalog" onClick={() => setActiveView('catalog')}>
               <ArrowLeft size={16} />
-              <span>Volver al Catálogo</span>
+              <span>Volver a la Videoteca</span>
             </button>
+
             <div className="active-video-meta">
-              <span className={`level-pill level-${currentVideo.level.toLowerCase()}`}>
-                {currentVideo.level}
+              <span className={`level-pill level-${(currentVideo.level || 'n5').toLowerCase()}`}>
+                {currentVideo.level || 'N5'}
               </span>
               <h3 className="active-video-title">{currentVideo.title}</h3>
               <span className="active-video-channel">por {currentVideo.channelTitle}</span>
             </div>
+
+            <div className="player-meta-actions">
+              {/* Botón Guardar Video en Biblioteca */}
+              <button
+                type="button"
+                className={`btn-save-video-library ${isCurrentVideoSaved ? 'is-saved' : ''}`}
+                onClick={handleToggleSaveCurrentVideo}
+                title={isCurrentVideoSaved ? 'Eliminar de videos guardados' : 'Guardar en mi biblioteca permanente'}
+              >
+                {isCurrentVideoSaved ? <Check size={16} /> : <Bookmark size={16} />}
+                <span>{isCurrentVideoSaved ? 'Guardado en Mi Biblioteca' : 'Guardar Video en Biblioteca'}</span>
+              </button>
+            </div>
           </div>
+
+          {/* Selector de Pistas de Idioma (Inglés, Español o Japonés) */}
+          {currentVideo.availableLanguages && currentVideo.availableLanguages.length > 1 && (
+            <div className="language-selector-strip">
+              <span className="lang-selector-label">
+                <Languages size={15} /> Idioma Transcrito:
+              </span>
+              <div className="lang-pills-row">
+                {currentVideo.availableLanguages.map((l) => (
+                  <button
+                    key={l.code}
+                    className={`lang-track-pill ${activeTrackLang === l.code ? 'active' : ''}`}
+                    onClick={() => handleChangeLanguageTrack(l.code)}
+                    disabled={changingTrackLoading}
+                  >
+                    {l.name} {l.isOriginal ? '★ Hablado Original' : ''}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="player-dual-layout">
             {/* Columna Izquierda: Video Player + Subtítulo Karaoke + Controles */}
@@ -626,7 +796,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                       <button
                         className="cue-action-btn"
                         onClick={() => audioManager.speak(activeCue.text)}
-                        title="Escuchar audio nativo (TTS)"
+                        title="Escuchar pronunciación"
                       >
                         <Volume2 size={15} />
                         <span>Escuchar</span>
@@ -635,7 +805,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                       <button
                         className="cue-action-btn"
                         onClick={() => handleOpenSavePhrase(activeCue)}
-                        title="Guardar esta frase en mi cuaderno"
+                        title="Guardar esta frase en mi cuaderno con timestamp"
                       >
                         <Bookmark size={15} />
                         <span>Guardar Frase</span>
@@ -701,7 +871,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                     ))}
                   </div>
 
-                  {/* Modo Shadowing (Auto-pausa) */}
+                  {/* Modo Shadowing */}
                   <button
                     className={`toggle-feature-btn ${autoPauseAfterCue ? 'active' : ''}`}
                     onClick={() => setAutoPauseAfterCue(!autoPauseAfterCue)}
@@ -715,20 +885,20 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                   <button
                     className="toggle-feature-btn"
                     onClick={() => setShowSpanishTranslation(!showSpanishTranslation)}
-                    title="Mostrar u ocultar traducción al español"
+                    title="Mostrar u ocultar traducción secundaria al español"
                   >
                     {showSpanishTranslation ? <Eye size={16} /> : <EyeOff size={16} />}
-                    <span>{showSpanishTranslation ? 'Español On' : 'Español Off'}</span>
+                    <span>{showSpanishTranslation ? 'Traducción On' : 'Traducción Off'}</span>
                   </button>
                 </div>
               </div>
 
-              {/* Vocabulario Recomendado del Video */}
+              {/* Vocabulario Recomendado si existe */}
               {currentVideo.recommendedVocab?.length > 0 && (
                 <div className="recommended-vocab-section">
                   <div className="section-title">
                     <Sparkles size={16} className="text-warning" />
-                    <h4>Vocabulario Clave de este Video (Haz clic para guardar)</h4>
+                    <h4>Vocabulario Clave del Video (Haz clic para guardar)</h4>
                   </div>
                   <div className="vocab-chips-grid">
                     {currentVideo.recommendedVocab.map((w, idx) => (
@@ -763,20 +933,20 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
               )}
             </div>
 
-            {/* Columna Derecha: Transcripción Lateral Sincronizada */}
+            {/* Columna Derecha: Transcripción Completa Sincronizada */}
             <div className="transcript-sidebar-column">
               <div className="transcript-sidebar-header">
                 <div className="transcript-header-title">
                   <ListFilter size={18} />
-                  <span>Transcripción Interactiva</span>
-                  <span className="cues-counter">({subtitles.length})</span>
+                  <span>Transcripción Completa</span>
+                  <span className="cues-counter">({subtitles.length} frases)</span>
                 </div>
 
                 <div className="transcript-search-mini">
                   <Search size={14} />
                   <input
                     type="text"
-                    placeholder="Filtrar en transcripción..."
+                    placeholder="Filtrar en toda la transcripción..."
                     value={transcriptSearch}
                     onChange={(e) => setTranscriptSearch(e.target.value)}
                   />
@@ -821,7 +991,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
                             e.stopPropagation();
                             handleOpenSavePhrase(cue);
                           }}
-                          title="Guardar frase en mi cuaderno"
+                          title="Guardar frase en mi cuaderno con timestamp"
                         >
                           <Bookmark size={15} />
                         </button>
@@ -835,7 +1005,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
       )}
 
       {/* ============================================================== */}
-      {/* VISTA 3: MI CUADERNO DE ESTUDIO (MINED VOCAB & PHRASES) */}
+      {/* VISTA 3: MI CUADERNO DE ESTUDIO */}
       {/* ============================================================== */}
       {activeView === 'saved' && (
         <div className="saved-notebook-view">
@@ -843,7 +1013,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
             <div>
               <h3>Mi Cuaderno de Estudio de Inmersión</h3>
               <p>
-                Palabras, oraciones con video y kanjis capturados directamente desde YouTube. Registrados con Kanji, Hiragana, Katakana y traducción en español.
+                Palabras, oraciones con enlace exacto a YouTube y videos guardados permanentemente en tu biblioteca.
               </p>
             </div>
             <div className="notebook-stats-row">
@@ -854,6 +1024,10 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
               <div className="stat-pill">
                 <span className="num">{appState.savedPhrases?.length || 0}</span>
                 <span className="lbl">Frases con Video</span>
+              </div>
+              <div className="stat-pill">
+                <span className="num">{appState.savedCustomVideos?.length || 0}</span>
+                <span className="lbl">Videos Guardados</span>
               </div>
             </div>
           </div>
@@ -959,14 +1133,14 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
       )}
 
       {/* ============================================================== */}
-      {/* VISTA 4: CANALES RECOMENDADOS PARA INMERSIÓN EN JAPONÉS */}
+      {/* VISTA 4: CANALES RECOMENDADOS */}
       {/* ============================================================== */}
       {activeView === 'channels' && (
         <div className="channels-view-section">
           <div className="channels-header">
             <h3>Los Mejores Canales de YouTube para Aprender Japonés</h3>
             <p>
-              Canales seleccionados con subtítulos oficiales en japonés, lenguaje pausado y contenido estructurado por niveles JLPT.
+              Canales seleccionados con subtítulos verificados, contenido estructurado por niveles JLPT y transcripciones completas.
             </p>
           </div>
 
