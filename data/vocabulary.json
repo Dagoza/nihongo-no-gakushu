@@ -1593,5 +1593,27 @@
     "meaning_en": "recently",
     "category": "Adverbios",
     "level": "N4"
+  },
+  {
+    "id": "v_164",
+    "kanji": "アニメ",
+    "hiragana": "あにめ",
+    "katakana": "アニメ",
+    "kana": "あにめ",
+    "meaning_es": "Anime / Animación japonesa",
+    "meaning_en": "Anime / Japanese animation",
+    "category": "Anime y Cultura",
+    "level": "N5"
+  },
+  {
+    "id": "v_165",
+    "kanji": "君",
+    "hiragana": "きみ",
+    "katakana": "キミ",
+    "kana": "きみ",
+    "meaning_es": "Tú (informal / afectuoso)",
+    "meaning_en": "You (informal / dear)",
+    "category": "Personas y Pronombres",
+    "level": "N5"
   }
 ]

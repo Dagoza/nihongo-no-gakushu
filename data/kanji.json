@@ -1778,5 +1778,29 @@
       }
     ],
     "source": "美 Practice Sheet"
+  },
+  {
+    "kanji": "君",
+    "level": "N5",
+    "meaning_en": "you, monarch",
+    "meaning_es": "tú, gobernante",
+    "pronunciation": "きみ, くん",
+    "onyomi": "KUN [くん]",
+    "kunyomi": "kimi [きみ]",
+    "strokes": 7,
+    "mnemonic": "Una mano con un bastón (尹) dando órdenes por la boca (口). Originalmente el gobernante o noble que manda; hoy en día se usa como 'tú' informal o sufijo cariñoso.",
+    "words": [
+      {
+        "word": "君",
+        "reading": "きみ",
+        "meaning": "tú"
+      },
+      {
+        "word": "君たち",
+        "reading": "きみたち",
+        "meaning": "ustedes / vosotros"
+      }
+    ],
+    "source": "Anime & Immersion Vocab"
   }
 ]

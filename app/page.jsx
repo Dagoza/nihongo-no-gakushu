@@ -9,7 +9,8 @@ import {
   Languages, 
   MessageSquare, 
   FileText, 
-  BarChart3 
+  BarChart3,
+  Tv
 } from 'lucide-react';
 
 import Header from '../components/Header';
@@ -22,6 +23,7 @@ import KanjiTab from '../components/KanjiTab';
 import ConversationTab from '../components/ConversationTab';
 import MaterialLibraryTab from '../components/MaterialLibraryTab';
 import ProgressTab from '../components/ProgressTab';
+import YouTubeImmersionTab from '../components/YouTubeImmersionTab';
 
 import { loadSavedState, saveState, getInitialState } from '../lib/storage';
 
@@ -58,6 +60,7 @@ export default function Home() {
     { id: 'particles', label: 'Partículas & Gramática', icon: Target },
     { id: 'kanji', label: 'Biblioteca Kanji', icon: Languages },
     { id: 'nhk', label: 'Conversación NHK', icon: MessageSquare },
+    { id: 'youtube', label: 'Inmersión YouTube', icon: Tv },
     { id: 'pdf', label: 'Biblioteca de PDFs', icon: FileText },
     { id: 'progress', label: 'Mi Progreso', icon: BarChart3 },
   ];
@@ -138,6 +141,13 @@ export default function Home() {
 
         {currentTab === 'nhk' && (
           <ConversationTab 
+            appState={appState} 
+            onUpdateState={handleUpdateState} 
+          />
+        )}
+
+        {currentTab === 'youtube' && (
+          <YouTubeImmersionTab 
             appState={appState} 
             onUpdateState={handleUpdateState} 
           />
