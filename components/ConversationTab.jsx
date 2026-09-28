@@ -13,7 +13,10 @@ import {
   RotateCcw,
   Sparkles,
   Layers,
-  Award
+  Award,
+  Check,
+  CheckCheck,
+  ChevronRight
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -21,6 +24,7 @@ import { dataStore } from '../lib/data';
 export default function ConversationTab({ appState, onUpdateState }) {
   const [currentLessonNum, setCurrentLessonNum] = useState(1);
   const [activeSubTab, setActiveSubTab] = useState('dialogue'); // 'dialogue' | 'practice'
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'completed' | 'pending'
   
   // Exercise practice state
   const [filterType, setFilterType] = useState('all'); // 'all' | 'reply' | 'missing_word' | 'missing_kanji'
@@ -31,7 +35,20 @@ export default function ConversationTab({ appState, onUpdateState }) {
   const lessons = dataStore.nhkLessons || [];
   const allExercises = dataStore.conversationExercises || [];
 
+  const completedConversations = appState?.completedConversations || {};
+  const completedCount = Object.values(completedConversations).filter(Boolean).length;
+  const progressPercent = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
+
   const lesson = lessons.find(l => l.lesson === currentLessonNum) || lessons[0];
+  const isCurrentLessonCompleted = !!completedConversations[lesson?.lesson];
+
+  // Filter lessons by completion status if requested
+  const visibleLessons = lessons.filter(l => {
+    const isCompleted = !!completedConversations[l.lesson];
+    if (statusFilter === 'completed') return isCompleted;
+    if (statusFilter === 'pending') return !isCompleted;
+    return true;
+  });
 
   // Exercises filtered by current active category
   const filteredExercises = allExercises.filter(ex => {
@@ -40,6 +57,24 @@ export default function ConversationTab({ appState, onUpdateState }) {
   });
 
   const currentExercise = filteredExercises[currentExIndex] || filteredExercises[0];
+
+  const toggleLessonCompletion = (lessonNum) => {
+    if (!onUpdateState || !appState) return;
+    const isCompleted = !!completedConversations[lessonNum];
+    const newCompleted = {
+      ...completedConversations,
+      [lessonNum]: !isCompleted
+    };
+    
+    // Reward XP when newly completing a conversation
+    const xpBonus = !isCompleted ? 30 : 0;
+    
+    onUpdateState({
+      ...appState,
+      xp: (appState.xp || 0) + xpBonus,
+      completedConversations: newCompleted
+    });
+  };
 
   const handlePlayFullDialogue = () => {
     if (!lesson || !lesson.dialogue) return;
@@ -63,6 +98,12 @@ export default function ConversationTab({ appState, onUpdateState }) {
     }));
     if (isCorrect) {
       audioManager.speak(option);
+      if (onUpdateState && appState) {
+        onUpdateState({
+          ...appState,
+          xp: (appState.xp || 0) + 10
+        });
+      }
     }
   };
 
@@ -81,6 +122,13 @@ export default function ConversationTab({ appState, onUpdateState }) {
     setScore({ correct: 0, total: 0 });
   };
 
+  const handleJumpToNextPending = () => {
+    const nextPending = lessons.find(l => !completedConversations[l.lesson]);
+    if (nextPending) {
+      setCurrentLessonNum(nextPending.lesson);
+    }
+  };
+
   return (
     <div className="section-panel active">
       {/* Header */}
@@ -89,12 +137,12 @@ export default function ConversationTab({ appState, onUpdateState }) {
           <span>📻</span> Conversaciones y Diálogos Cotidianos
         </h2>
         <p className="section-desc">
-          Diálogos reales de la vida cotidiana en Japón extraídos del programa oficial de la NHK, con audio interactivo línea por línea, explicaciones gramaticales y nuevos ejercicios interactivos de comprensión, respuesta y kanji.
+          Diálogos reales de la vida cotidiana en Japón extraídos del programa oficial de la NHK, con audio interactivo línea por línea, explicaciones gramaticales, seguimiento de lecciones estudiadas y ejercicios interactivos didácticos.
         </p>
       </div>
 
       {/* Main Mode Switcher: Dialogue vs Practice */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 22, borderBottom: '1px solid var(--border)', paddingBottom: 12, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 20, borderBottom: '1px solid var(--border)', paddingBottom: 12, flexWrap: 'wrap' }}>
         <button
           className={`btn ${activeSubTab === 'dialogue' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveSubTab('dialogue')}
@@ -124,26 +172,148 @@ export default function ConversationTab({ appState, onUpdateState }) {
       {/* SUBTAB 1: DIALOGUES */}
       {activeSubTab === 'dialogue' && (
         <>
+          {/* Progress Overview Card */}
+          <div className="card" style={{ marginBottom: 18, padding: '16px 20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: '1.2rem' }}>🎓</span>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-main)' }}>
+                    Progreso de Estudio: {completedCount} de {lessons.length} conversaciones completadas
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    {progressPercent}% del curso completado · +30 XP por cada lección estudiada
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Filters & Jump */}
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  className={`btn btn-sm ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setStatusFilter('all')}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                >
+                  Todas ({lessons.length})
+                </button>
+                <button
+                  className={`btn btn-sm ${statusFilter === 'completed' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setStatusFilter('completed')}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                >
+                  ✓ Estudiadas ({completedCount})
+                </button>
+                <button
+                  className={`btn btn-sm ${statusFilter === 'pending' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setStatusFilter('pending')}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                >
+                  Pendientes ({lessons.length - completedCount})
+                </button>
+
+                {completedCount < lessons.length && (
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={handleJumpToNextPending}
+                    style={{ fontSize: '0.8rem', padding: '4px 12px', borderColor: 'var(--accent)', color: 'var(--accent)' }}
+                  >
+                    Siguiente pendiente ➔
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Visual Progress Bar */}
+            <div style={{ width: '100%', height: 8, background: 'var(--bg-main)', borderRadius: 999, overflow: 'hidden', border: '1px solid var(--border)' }}>
+              <div 
+                style={{ 
+                  width: `${progressPercent}%`, 
+                  height: '100%', 
+                  background: 'linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%)', 
+                  borderRadius: 999,
+                  transition: 'width 0.4s ease' 
+                }} 
+              />
+            </div>
+          </div>
+
           {/* Lesson Selector Bar */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', maxHeight: 150, overflowY: 'auto', padding: '4px 0' }}>
-            {lessons.map(l => (
-              <button
-                key={l.lesson}
-                className={`btn ${l.lesson === currentLessonNum ? 'btn-primary' : 'btn-outline'} btn-sm`}
-                onClick={() => setCurrentLessonNum(l.lesson)}
-                style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}
-              >
-                L{l.lesson}: {l.title_es.split('.')[0].slice(0, 22)}...
-              </button>
-            ))}
+            {visibleLessons.map(l => {
+              const isDone = !!completedConversations[l.lesson];
+              const isSelected = l.lesson === currentLessonNum;
+
+              let btnClass = `btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`;
+              return (
+                <button
+                  key={l.lesson}
+                  className={btnClass}
+                  onClick={() => setCurrentLessonNum(l.lesson)}
+                  style={{ 
+                    fontSize: '0.85rem', 
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    borderColor: isDone ? (isSelected ? 'var(--primary)' : '#22c55e') : undefined,
+                    background: isDone && !isSelected ? 'rgba(34, 197, 94, 0.08)' : undefined
+                  }}
+                  title={isDone ? `Lección ${l.lesson} (Estudiada)` : `Lección ${l.lesson} (Pendiente)`}
+                >
+                  {isDone ? (
+                    <CheckCircle2 size={14} color={isSelected ? '#fff' : '#22c55e'} />
+                  ) : (
+                    <span style={{ opacity: 0.5 }}>○</span>
+                  )}
+                  <span>L{l.lesson}: {l.title_es.split('.')[0].slice(0, 20)}...</span>
+                </button>
+              );
+            })}
           </div>
 
           {lesson && (
-            <div className="card" style={{ marginBottom: 24 }}>
-              {/* Top Info */}
+            <div className="card" style={{ marginBottom: 24, border: isCurrentLessonCompleted ? '1.5px solid rgba(34, 197, 94, 0.4)' : undefined }}>
+              {/* Top Info Bar */}
               <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
                 <div>
-                  <span className="vocab-tag">Lección {lesson.lesson} de {lessons.length} · {lesson.topic}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span className="vocab-tag">Lección {lesson.lesson} de {lessons.length} · {lesson.topic}</span>
+                    {isCurrentLessonCompleted ? (
+                      <span 
+                        style={{ 
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          gap: 4, 
+                          fontSize: '0.8rem', 
+                          fontWeight: 700, 
+                          color: '#15803d', 
+                          background: 'rgba(34, 197, 94, 0.12)', 
+                          padding: '3px 10px', 
+                          borderRadius: 'var(--radius-full)',
+                          border: '1px solid rgba(34, 197, 94, 0.3)'
+                        }}
+                      >
+                        <CheckCircle2 size={13} color="#22c55e" /> Estudiada
+                      </span>
+                    ) : (
+                      <span 
+                        style={{ 
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          gap: 4, 
+                          fontSize: '0.8rem', 
+                          fontWeight: 600, 
+                          color: 'var(--text-muted)', 
+                          background: 'var(--bg-main)', 
+                          padding: '3px 10px', 
+                          borderRadius: 'var(--radius-full)' 
+                        }}
+                      >
+                        Pendiente de estudio
+                      </span>
+                    )}
+                  </div>
+
                   <h3 className="jp-text" style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--primary)', marginTop: 8 }}>
                     {lesson.title_jp}
                   </h3>
@@ -152,7 +322,34 @@ export default function ConversationTab({ appState, onUpdateState }) {
                   </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: 10 }}>
+                {/* Header Action Buttons */}
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  {/* Mark Completed Toggle Button */}
+                  <button 
+                    className="btn"
+                    onClick={() => toggleLessonCompletion(lesson.lesson)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      background: isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.15)' : 'var(--bg-card)',
+                      color: isCurrentLessonCompleted ? '#15803d' : 'var(--text-main)',
+                      borderColor: isCurrentLessonCompleted ? '#22c55e' : 'var(--border)',
+                      fontWeight: 700
+                    }}
+                    title={isCurrentLessonCompleted ? 'Hacer clic para marcar como pendiente' : 'Hacer clic para marcar como completada (+30 XP)'}
+                  >
+                    {isCurrentLessonCompleted ? (
+                      <>
+                        <CheckCircle2 size={17} color="#22c55e" /> Estudiada ✓
+                      </>
+                    ) : (
+                      <>
+                        <Check size={17} color="var(--primary)" /> Marcar como Estudiada (+30 XP)
+                      </>
+                    )}
+                  </button>
+
                   <button 
                     className="btn btn-primary"
                     onClick={handlePlayFullDialogue}
@@ -178,7 +375,7 @@ export default function ConversationTab({ appState, onUpdateState }) {
                       alignItems: 'flex-start', 
                       padding: '14px 16px', 
                       background: 'var(--bg-main)', 
-                      borderRadius: 'var(--radius-md)',
+                      borderRadius: 'var(--radius-md)', 
                       border: '1px solid var(--border)',
                       cursor: 'pointer',
                       transition: 'background 0.2s, border-color 0.2s'
@@ -213,7 +410,7 @@ export default function ConversationTab({ appState, onUpdateState }) {
               </div>
 
               {/* Grammar Notes in Spanish */}
-              <div style={{ background: 'var(--primary-bg)', borderLeft: '4px solid var(--primary)', padding: '18px 20px', borderRadius: '0 var(--radius-md) var(--radius-md) 0' }}>
+              <div style={{ background: 'var(--primary-bg)', borderLeft: '4px solid var(--primary)', padding: '18px 20px', borderRadius: '0 var(--radius-md) var(--radius-md) 0', marginBottom: 20 }}>
                 <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--primary-dark)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
                   <BookOpen size={18} /> Puntos Clave de Gramática y Uso Cotidiano:
                 </h4>
@@ -222,6 +419,69 @@ export default function ConversationTab({ appState, onUpdateState }) {
                     <li key={idx} style={{ marginBottom: 4 }}>{note}</li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Bottom Study Status & Next Lesson Callout */}
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  padding: '16px 20px', 
+                  borderRadius: 'var(--radius-md)',
+                  background: isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.08)' : 'var(--bg-main)',
+                  border: `1px solid ${isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.25)' : 'var(--border)'}`,
+                  flexWrap: 'wrap',
+                  gap: 12
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 700, color: isCurrentLessonCompleted ? '#15803d' : 'var(--text-main)', fontSize: '0.95rem' }}>
+                    {isCurrentLessonCompleted 
+                      ? '🎉 ¡Has estudiado esta conversación!' 
+                      : '¿Ya escuchaste y comprendiste este diálogo?'}
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    {isCurrentLessonCompleted
+                      ? 'El estado está registrado en tus estadísticas de progreso.'
+                      : 'Márcala como estudiada para sumar +30 XP y avanzar en tu racha.'}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    className="btn btn-sm"
+                    onClick={() => toggleLessonCompletion(lesson.lesson)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      background: isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.2)' : 'var(--primary)',
+                      color: isCurrentLessonCompleted ? '#15803d' : '#fff',
+                      fontWeight: 700
+                    }}
+                  >
+                    {isCurrentLessonCompleted ? (
+                      <>
+                        <CheckCircle2 size={16} /> Estudiada ✓
+                      </>
+                    ) : (
+                      <>
+                        <Check size={16} /> Marcar como Estudiada (+30 XP)
+                      </>
+                    )}
+                  </button>
+
+                  {lesson.lesson < lessons.length && (
+                    <button
+                      className="btn btn-outline btn-sm"
+                      onClick={() => setCurrentLessonNum(lesson.lesson + 1)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    >
+                      Lección {lesson.lesson + 1} <ChevronRight size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -268,13 +528,18 @@ export default function ConversationTab({ appState, onUpdateState }) {
 
           {/* Exercise Card Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: 14, marginBottom: 18 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <span className="vocab-tag" style={{ background: 'var(--accent-bg)', color: 'var(--accent)' }}>
                 {currentExercise.type_label}
               </span>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                 Basado en la Lección {currentExercise.lesson}
               </span>
+              {completedConversations[currentExercise.lesson] && (
+                <span style={{ fontSize: '0.75rem', color: '#15803d', background: 'rgba(34, 197, 94, 0.12)', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>
+                  ✓ Lección estudiada
+                </span>
+              )}
             </div>
             <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>
               {currentExIndex + 1} de {filteredExercises.length}
@@ -378,7 +643,7 @@ export default function ConversationTab({ appState, onUpdateState }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '1.05rem', color: selectedAnswer.isCorrect ? '#15803d' : '#b91c1c', marginBottom: 6 }}>
                 {selectedAnswer.isCorrect ? (
                   <>
-                    <CheckCircle2 size={20} /> ¡Correcto! Exactamente esa es la respuesta.
+                    <CheckCircle2 size={20} /> ¡Correcto! (+10 XP)
                   </>
                 ) : (
                   <>

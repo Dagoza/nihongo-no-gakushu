@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import { Download, Upload, Flame, Star, Target, BookOpen, Layers, CheckCircle2, RotateCcw, Keyboard } from 'lucide-react';
 import { exportData, parseImportData, getInitialState } from '../lib/storage';
+import { dataStore } from '../lib/data';
 
 export default function ProgressTab({ appState, onUpdateState }) {
   const fileInputRef = useRef(null);
@@ -14,6 +15,8 @@ export default function ProgressTab({ appState, onUpdateState }) {
   const masteredVocabCount = Object.values(appState.masteredVocab || {}).filter(Boolean).length;
   const masteredKanjiCount = Object.values(appState.masteredKanji || {}).filter(Boolean).length;
   const completedSentencesCount = Object.values(appState.completedSentences || {}).filter(Boolean).length;
+  const completedConversationsCount = Object.values(appState.completedConversations || {}).filter(Boolean).length;
+  const totalConversations = dataStore.nhkLessons?.length || 22;
 
   const handleExport = () => {
     exportData(appState);
@@ -106,6 +109,14 @@ export default function ProgressTab({ appState, onUpdateState }) {
             {completedSentencesCount}/58
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Oraciones de Historia</div>
+        </div>
+
+        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>📻</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ec4899' }}>
+            {completedConversationsCount}/{totalConversations}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Conversaciones Estudiadas</div>
         </div>
       </div>
 
