@@ -113,15 +113,6 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState }) 
               <CheckCircle2 size={16} color={isDone ? 'var(--success)' : '#fff'} />
               <span>{isDone ? 'Módulo Completado ✓' : 'Marcar como Completado (+25 XP)'}</span>
             </button>
-
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => onNavigate(selectedStep.tab)}
-              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-            >
-              <span>Abrir en Pestaña {selectedStep.tab.toUpperCase()}</span>
-              <ExternalLink size={14} />
-            </button>
           </div>
         </div>
 
@@ -544,27 +535,16 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState }) 
                     <p className="step-subtitle">{step.subtitle}</p>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <div>
                     {/* Primary action: Open deep module view */}
                     <button 
                       className="btn btn-primary btn-sm"
                       onClick={() => handleOpenModule(step.step)}
-                      title="Ver detalles completos, ejercicios, vocabulario y explicaciones"
+                      title="Ver guía completa, ejercicios, vocabulario con audio y notas culturales"
                       style={{ display: 'flex', alignItems: 'center', gap: 6 }}
                     >
                       <span>Ir al Módulo</span>
                       <ArrowRight size={14} />
-                    </button>
-
-                    {/* Secondary action: Jump directly to app tab */}
-                    <button
-                      className="btn btn-outline btn-sm"
-                      onClick={() => onNavigate(step.tab)}
-                      title={`Ir a la pestaña ${step.tab.toUpperCase()}`}
-                      style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-                    >
-                      <ExternalLink size={13} />
-                      <span>Pestaña</span>
                     </button>
                   </div>
                 </div>
