@@ -23,7 +23,8 @@ import {
   executeFullSync, 
   getAuthUser, 
   signOutUser, 
-  subscribeToAuthChanges 
+  subscribeToAuthChanges,
+  extractUserProfile 
 } from '../lib/supabaseSync';
 
 export default function Home() {
@@ -81,7 +82,8 @@ export default function Home() {
     // Obtener usuario autenticado inicial
     getAuthUser().then((user) => {
       if (user) {
-        setAuthUser(user);
+        const profile = extractUserProfile(user);
+        setAuthUser(profile);
       }
     });
 
@@ -95,8 +97,11 @@ export default function Home() {
 
     // Escuchar cambios de estado en Supabase Auth
     const { data: { subscription } } = subscribeToAuthChanges(async (event, session) => {
-      const user = session?.user || null;
-      setAuthUser(user);
+      const profile = session?.user ? extractUserProfile(session.user) : null;
+      setAuthUser(profile);
+      if (profile && profile.provider === 'google') {
+        setAppState(prev => ({ ...prev, googleAccount: profile }));
+      }
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         handleTriggerSync();
       } else if (event === 'SIGNED_OUT') {
@@ -246,6 +251,8 @@ export default function Home() {
           <YouTubeImmersionTab 
             appState={appState} 
             onUpdateState={handleUpdateState} 
+            authUser={authUser}
+            onOpenAuth={() => setIsAuthModalOpen(true)}
           />
         )}
 

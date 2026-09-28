@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, Mail, Lock, AlertCircle, CheckCircle2, X, ArrowRight, Loader2 } from 'lucide-react';
-import { signInWithEmail, signUpWithEmail } from '../lib/supabaseSync';
+import { ShieldCheck, Mail, Lock, AlertCircle, CheckCircle2, X, ArrowRight, Loader2, ExternalLink } from 'lucide-react';
+import { signInWithEmail, signUpWithEmail, signInWithGoogle } from '../lib/supabaseSync';
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   const [activeTab, setActiveTab] = useState('signin'); // 'signin' | 'signup'
@@ -10,10 +10,28 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
   if (!isOpen) return null;
+
+  const handleGoogleSignIn = async () => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      // Supabase redirige automáticamente al flujo de Google OAuth
+    } catch (err) {
+      let msg = err.message || 'Error al conectar con Google.';
+      if (msg.includes('provider is not enabled') || msg.includes('Unsupported provider') || msg.includes('disabled')) {
+        msg = 'El proveedor de Google aún no está activado en tu panel de Supabase (Authentication -> Providers -> Google).';
+      }
+      setErrorMessage(msg);
+      setGoogleLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -131,7 +149,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                 {activeTab === 'signin' ? 'Iniciar Sesión' : 'Crear Cuenta Segura'}
               </h3>
               <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Protege y sincroniza tu progreso en todos tus dispositivos
+                Protege y sincroniza tu progreso con Google o Correo
               </p>
             </div>
           </div>
@@ -209,8 +227,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               gap: 8,
               marginBottom: 16
             }}>
-              <AlertCircle size={16} />
-              <span>{errorMessage}</span>
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>{errorMessage}</div>
             </div>
           )}
 
@@ -227,10 +245,61 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               gap: 8,
               marginBottom: 16
             }}>
-              <CheckCircle2 size={16} />
-              <span>{successMessage}</span>
+              <CheckCircle2 size={16} style={{ flexShrink: 0 }} />
+              <div>{successMessage}</div>
             </div>
           )}
+
+          {/* Google Sign-In Button */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={googleLoading || loading}
+            style={{
+              width: '100%',
+              padding: '11px 16px',
+              borderRadius: 8,
+              border: '1px solid var(--border)',
+              background: 'var(--bg-card, #ffffff)',
+              color: 'var(--text-main, #0f172a)',
+              fontSize: '0.92rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              cursor: googleLoading || loading ? 'not-allowed' : 'pointer',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+              transition: 'all 0.2s',
+              marginBottom: 16
+            }}
+          >
+            {googleLoading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3h3.86c2.26-2.09 3.685-5.17 3.685-9.09z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.31 21.36 7.39 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.39 0 3.31 2.64 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+              </svg>
+            )}
+            <span>Continuar con Google</span>
+          </button>
+
+          {/* Divider */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 16
+          }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              o con correo electrónico
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+          </div>
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: 16 }}>
@@ -314,7 +383,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || googleLoading}
               className="btn btn-primary"
               style={{
                 width: '100%',
@@ -358,7 +427,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           }}>
             <ShieldCheck size={18} style={{ color: 'var(--success, #10b981)', flexShrink: 0, marginTop: 1 }} />
             <div>
-              <strong>Seguridad Row Level Security (RLS)</strong>: Tu progreso queda cifrado y ligado a tu ID único de usuario. Ninguna otra persona puede ver o modificar tus datos.
+              <strong>Seguridad Row Level Security (RLS)</strong>: Tu progreso queda cifrado y ligado a tu ID de Google o correo. Ninguna otra persona puede acceder a tus estadísticas de estudio.
             </div>
           </div>
         </div>

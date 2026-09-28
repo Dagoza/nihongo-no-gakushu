@@ -39,7 +39,8 @@ import {
   generateSyncCode, 
   testSupabaseConnection, 
   executeFullSync, 
-  getLastSyncTime 
+  getLastSyncTime,
+  signInWithGoogle 
 } from '../lib/supabaseSync';
 import { dataStore } from '../lib/data';
 
@@ -98,7 +99,23 @@ export default function ProgressTab({
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedSql, setCopiedSql] = useState(false);
   const [isSyncingLocal, setIsSyncingLocal] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [syncMessage, setSyncMessage] = useState(null); // { type: 'success' | 'error' | 'info', text: string }
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setSyncMessage(null);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      let msg = err.message || 'Error al conectar con Google.';
+      if (msg.includes('provider is not enabled') || msg.includes('disabled')) {
+        msg = 'El proveedor de Google no está activado en tu panel de Supabase (Authentication -> Providers -> Google).';
+      }
+      setSyncMessage({ type: 'error', text: msg });
+      setGoogleLoading(false);
+    }
+  };
 
   // Configuración Supabase
   const [supabaseConfig, setSupabaseConfig] = useState({ url: '', anonKey: '', source: 'none' });
@@ -504,23 +521,31 @@ export default function ProgressTab({
           gap: 12
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              background: authUser ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <ShieldCheck size={22} />
-            </div>
+            {authUser?.avatar ? (
+              <img 
+                src={authUser.avatar} 
+                alt={authUser.name || 'Usuario'} 
+                style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--success, #10b981)' }} 
+              />
+            ) : (
+              <div style={{
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                background: authUser ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <ShieldCheck size={22} />
+              </div>
+            )}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <strong style={{ fontSize: '0.98rem' }}>
-                  {authUser ? `Sesión Activa: ${authUser.email}` : 'Sesión Local (Invitado)'}
+                  {authUser ? (authUser.name || authUser.email) : 'Sesión Local (Invitado)'}
                 </strong>
                 <span style={{
                   fontSize: '0.75rem',
@@ -530,18 +555,18 @@ export default function ProgressTab({
                   background: authUser ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)',
                   color: authUser ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)'
                 }}>
-                  {authUser ? '🔒 RLS Protegido' : '⚠️ Sin Cuenta'}
+                  {authUser ? (authUser.provider === 'google' ? 'Google Account 🔒' : 'Cuenta Segura 🔒') : '⚠️ Sin Cuenta'}
                 </span>
               </div>
               <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                 {authUser 
-                  ? 'Tus datos están protegidos en PostgreSQL. Solo tu token de sesión autenticado puede leer o modificar tu progreso.'
-                  : 'Crea una cuenta o inicia sesión para blindar tu progreso y sincronizar automáticamente entre tus dispositivos.'}
+                  ? `Conectado como ${authUser.email}. Tu progreso está blindado en PostgreSQL con Row Level Security (RLS).`
+                  : 'Inicia sesión con Google o correo para proteger tu racha y sincronizar en tiempo real entre tus dispositivos.'}
               </p>
             </div>
           </div>
 
-          <div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {authUser ? (
               <button
                 className="btn btn-outline btn-sm"
@@ -551,14 +576,31 @@ export default function ProgressTab({
                 <span>Cerrar Sesión</span>
               </button>
             ) : (
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={onOpenAuth}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-              >
-                <ShieldCheck size={15} />
-                <span>Iniciar Sesión / Crear Cuenta</span>
-              </button>
+              <>
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={handleGoogleSignIn}
+                  disabled={googleLoading}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)' }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3h3.86c2.26-2.09 3.685-5.17 3.685-9.09z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.31 21.36 7.39 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.39 0 3.31 2.64 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                  </svg>
+                  <span>{googleLoading ? 'Conectando...' : 'Google'}</span>
+                </button>
+
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={onOpenAuth}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  <ShieldCheck size={15} />
+                  <span>Entrar con Correo</span>
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -693,6 +735,17 @@ export default function ProgressTab({
                 {isTestingConnection ? 'Probando...' : 'Probar conexión'}
               </button>
             )}
+            <a
+              href="https://supabase.com/dashboard/project/ttlwngmidibgcuqsrvnb/auth/providers"
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-outline btn-sm"
+              style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--primary)' }}
+              title="Activar Google OAuth en tu panel de Supabase"
+            >
+              <ExternalLink size={14} />
+              <span>Configurar Google OAuth</span>
+            </a>
             <button
               className="btn btn-outline btn-sm"
               onClick={() => setShowConfigDrawer(!showConfigDrawer)}

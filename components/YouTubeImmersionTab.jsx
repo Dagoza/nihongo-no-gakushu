@@ -42,6 +42,7 @@ import SaveVocabModal from './SaveVocabModal';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import { tokenizeJapanese, formatTimestamp, containsKanji } from '../lib/japaneseUtils';
+import { signInWithGoogle, signOutUser } from '../lib/supabaseSync';
 
 const TOPIC_PRESETS = [
   { id: 'anime', label: '🎌 Anime & Pop', query: 'Anime Japanese conversation', desc: 'Diálogos de anime y expresiones en japonés' },
@@ -54,7 +55,7 @@ const TOPIC_PRESETS = [
   { id: 'interview', label: '🎙️ Entrevistas Reales', query: 'Japanese street interview Tokyo', desc: 'Japonés real y coloquial hablado por personas en las calles de Tokio' }
 ];
 
-export default function YouTubeImmersionTab({ appState, onUpdateState }) {
+export default function YouTubeImmersionTab({ appState, onUpdateState, authUser = null, onOpenAuth = null }) {
   // Navigation internal views: 'catalog' | 'player' | 'saved' | 'channels'
   const [activeView, setActiveView] = useState('catalog');
 
@@ -103,8 +104,18 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
   const activeCueRef = useRef(null);
   const lastActiveCueIndexRef = useRef(-1);
 
-  // Google Account state in appState
-  const googleAccount = appState.googleAccount;
+  // Google Account state: priorizar el usuario autenticado real
+  const googleAccount = useMemo(() => {
+    if (authUser) {
+      return {
+        name: authUser.name || authUser.email?.split('@')[0] || 'Estudiante',
+        email: authUser.email,
+        avatar: authUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+        connectedAt: authUser.connectedAt || new Date().toISOString()
+      };
+    }
+    return appState.googleAccount || null;
+  }, [authUser, appState.googleAccount]);
 
   // Combinar videos del catálogo y videos personalizados guardados por el usuario
   const allVideos = useMemo(() => {
@@ -115,26 +126,24 @@ export default function YouTubeImmersionTab({ appState, onUpdateState }) {
     return [...uniqueCustom, ...defaultVids];
   }, [catalogData.videos, appState.savedCustomVideos]);
 
-  // Toggle Google Account simulation
-  const handleToggleGoogleAuth = () => {
-    if (googleAccount) {
-      onUpdateState({
-        ...appState,
-        googleAccount: null
-      });
+  // Manejar conexión con Google OAuth
+  const handleToggleGoogleAuth = async () => {
+    if (authUser) {
+      if (confirm('¿Deseas cerrar la sesión de tu cuenta en este dispositivo?')) {
+        await signOutUser();
+        onUpdateState({
+          ...appState,
+          googleAccount: null
+        });
+      }
     } else {
-      const simulatedGoogleUser = {
-        name: 'Daniel Gómez',
-        email: 'daniel.gomez@gmail.com',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
-        connectedAt: new Date().toISOString(),
-        preferredTopics: ['anime', 'daily_life'],
-        preferredLevel: 'N5'
-      };
-      onUpdateState({
-        ...appState,
-        googleAccount: simulatedGoogleUser
-      });
+      try {
+        await signInWithGoogle();
+      } catch (err) {
+        if (onOpenAuth) {
+          onOpenAuth();
+        }
+      }
     }
   };
 
