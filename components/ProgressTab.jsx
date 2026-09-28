@@ -719,18 +719,30 @@ export default function ProgressTab({
             background: 'var(--bg-main)',
             border: '1px solid var(--border)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
               <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>
                 Script SQL para Supabase (Crear tabla <code>user_progress</code>)
               </h4>
-              <button
-                className="btn btn-outline btn-sm"
-                onClick={handleCopySql}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-              >
-                {copiedSql ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
-                <span>{copiedSql ? '¡Copiado!' : 'Copiar Script SQL'}</span>
-              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <a
+                  href="https://supabase.com/dashboard/project/ttlwngmidibgcuqsrvnb/sql/new"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-outline btn-sm"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--primary)' }}
+                >
+                  <ExternalLink size={14} />
+                  <span>Abrir SQL Editor en Supabase</span>
+                </a>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={handleCopySql}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  {copiedSql ? <Check size={14} color="#fff" /> : <Copy size={14} />}
+                  <span>{copiedSql ? '¡Copiado!' : 'Copiar Script SQL'}</span>
+                </button>
+              </div>
             </div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 10 }}>
               Pega este código en el <strong>SQL Editor</strong> de tu panel de Supabase y pulsa <strong>Run</strong>:
