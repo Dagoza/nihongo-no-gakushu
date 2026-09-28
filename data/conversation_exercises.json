@@ -1,0 +1,274 @@
+[
+  {
+    "id": "conv_ex_1",
+    "lesson": 1,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "Anna te saluda diciendo: 「はじめまして。アンナです。よろしくおねがいします。」 ¿Cuál es la respuesta cortés más adecuada?",
+    "context": "Anna: はじめまして。よろしくおねがいします。\nTú: 【 ？ 】",
+    "correct": "こちらこそ。よろしくお願いします。",
+    "options": [
+      "こちらこそ。よろしくお願いします。",
+      "どういたしまして。",
+      "いいえ、ちがいます。",
+      "さようなら。"
+    ],
+    "explanation": "「こちらこそ」 significa 'El gusto es mío / Igualmente', la fórmula estándar y educada ante una presentación personal."
+  },
+  {
+    "id": "conv_ex_2",
+    "lesson": 2,
+    "type": "missing_word",
+    "type_label": "¿Qué palabra falta?",
+    "prompt_es": "Sakura señala el recuerdo que Anna sostiene en la mano y pregunta qué es. ¿Qué demostrativo debe utilizar?",
+    "context": "Sakura: 【 ？ 】 は何ですか。\nAnna: それはタイのお土産です。",
+    "correct": "これ",
+    "options": [
+      "これ",
+      "それ",
+      "あれ",
+      "どれ"
+    ],
+    "explanation": "Sakura pregunta por un objeto cercano al hablante ('esto'), por lo que usa これ. Anna responde con それ ('eso')."
+  },
+  {
+    "id": "conv_ex_3",
+    "lesson": 3,
+    "type": "missing_kanji",
+    "type_label": "¿Qué kanji falta?",
+    "prompt_es": "Sakura indica el aula de clases. ¿Cuál es el kanji correcto para 'aula' (きょうしつ)?",
+    "context": "ここは【 ？ 】です。(きょうしつ)",
+    "correct": "教室",
+    "options": [
+      "教室",
+      "教員",
+      "室外",
+      "学校"
+    ],
+    "explanation": "きょうしつ se escribe 教室 (教 enseñar + 室 sala/habitación)."
+  },
+  {
+    "id": "conv_ex_4",
+    "lesson": 4,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "Al llegar a casa o a la residencia dices: 「ただいま！」 (¡Ya llegué!). ¿Cómo responde la encargada?",
+    "context": "Anna: ただいま！\nEncargada: 【 ？ 】",
+    "correct": "おかえりなさい。",
+    "options": [
+      "おかえりなさい。",
+      "いってきます。",
+      "いってらっしゃい。",
+      "おやすみなさい。"
+    ],
+    "explanation": "Ante 「ただいま」(estoy en casa), el saludo de bienvenida de vuelta es siempre 「おかえりなさい」."
+  },
+  {
+    "id": "conv_ex_5",
+    "lesson": 5,
+    "type": "missing_word",
+    "type_label": "¿Qué partícula falta?",
+    "prompt_es": "Anna expresa que lee mangas todos los días. ¿Qué partícula marca el objeto directo 'manga'?",
+    "context": "私は毎日マンガ【 ？ 】読みます。",
+    "correct": "を",
+    "options": [
+      "を",
+      "は",
+      "が",
+      "に"
+    ],
+    "explanation": "La partícula を (o) marca el complemento u objeto directo del verbo de acción transitiva (leer manga = マンガを読む)."
+  },
+  {
+    "id": "conv_ex_6",
+    "lesson": 7,
+    "type": "missing_word",
+    "type_label": "¿Qué palabra falta?",
+    "prompt_es": "En la panadería quieres pedir dos bollos de crema. ¿Qué contador nativo corresponde a 'dos unidades' (ふたつ)?",
+    "context": "シュークリームを【 ？ 】ください。",
+    "correct": "二つ (ふたつ)",
+    "options": [
+      "二つ (ふたつ)",
+      "一つ (ひとつ)",
+      "三つ (みっつ)",
+      "二人 (ふたり)"
+    ],
+    "explanation": "Para pedir dos cosas en comercios se utiliza el contador nativo ふたつ (二つ). 二人 (ふたり) es para dos personas."
+  },
+  {
+    "id": "conv_ex_7",
+    "lesson": 8,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "El profesor explicó un punto importante pero no lo escuchaste bien. ¿Cómo pides cortésmente que lo repita?",
+    "context": "Profesor: ... (explicó rápido)\nEstudiante: 【 ？ 】",
+    "correct": "先生、もう一度お願いします。",
+    "options": [
+      "先生、もう一度お願いします。",
+      "先生、もういいです。",
+      "先生、早くしてください。",
+      "先生、何もしません。"
+    ],
+    "explanation": "「もう一度お願いします」(mô ichido onegaishimasu) es la fórmula educada universal en japonés para pedir una repetición."
+  },
+  {
+    "id": "conv_ex_8",
+    "lesson": 9,
+    "type": "missing_word",
+    "type_label": "¿Qué palabra/partícula falta?",
+    "prompt_es": "Quieres preguntar el horario de inicio del reconocimiento médico: '¿Desde qué hora es?'.",
+    "context": "健康診断は何時【 ？ 】ですか。",
+    "correct": "から",
+    "options": [
+      "から",
+      "まで",
+      "より",
+      "ほど"
+    ],
+    "explanation": "〜から indica el punto de origen o partida temporal ('desde')."
+  },
+  {
+    "id": "conv_ex_9",
+    "lesson": 10,
+    "type": "missing_word",
+    "type_label": "¿Qué palabra falta?",
+    "prompt_es": "El profesor pasa lista preguntando si están todos los alumnos presentes. ¿Qué palabra significa 'todos los integrantes'?",
+    "context": "初めに身長を測ります。【 ？ 】いますか。",
+    "correct": "全員 (ぜんいん)",
+    "options": [
+      "全員 (ぜんいん)",
+      "全国 (ぜんこく)",
+      "全角 (ぜんかく)",
+      "全然 (ぜんぜん)"
+    ],
+    "explanation": "全員 (ぜんいん) significa todos los miembros del grupo o personas presentes."
+  },
+  {
+    "id": "conv_ex_10",
+    "lesson": 11,
+    "type": "missing_word",
+    "type_label": "¿Qué palabra falta?",
+    "prompt_es": "Anna invita a Sakura a la fiesta y quiere enfatizar 'por favor no dejes de venir / sin falta'. ¿Qué adverbio usa?",
+    "context": "さくらさん、【 ？ 】来てください。",
+    "correct": "ぜひ",
+    "options": [
+      "ぜひ",
+      "たぶん",
+      "ぜんぜん",
+      "あまり"
+    ],
+    "explanation": "ぜひ (zehi) se coloca antes de una petición o invitación para darle un sentido sincero y entusiasta de 'sin falta'."
+  },
+  {
+    "id": "conv_ex_11",
+    "lesson": 13,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "Sakura te pregunta: 「趣味は何ですか。」 (¿Cuál es tu pasatiempo?). ¿Cómo respondes que te gusta leer novelas?",
+    "context": "Sakura: 趣味は何ですか。\nRodrigo: 【 ？ 】",
+    "correct": "読書です。歴史小説が好きです。",
+    "options": [
+      "読書です。歴史小説が好きです。",
+      "読書です。小説を食べます。",
+      "読書ではありません。小説に行きます。",
+      "小説は高くありません。"
+    ],
+    "explanation": "読書 (dokusho - leer) y [Cosa] が好きです (me gusta...) es la construcción idiomática natural para hablar de aficiones."
+  },
+  {
+    "id": "conv_ex_12",
+    "lesson": 14,
+    "type": "missing_word",
+    "type_label": "¿Qué estructura verbal falta?",
+    "prompt_es": "Pides permiso para tirar la basura en un recipiente: '¿Puedo tirar la basura aquí?'.",
+    "context": "ここにゴミを【 ？ 】いいですか。",
+    "correct": "捨てても",
+    "options": [
+      "捨てても",
+      "捨てないで",
+      "捨てたら",
+      "捨てれば"
+    ],
+    "explanation": "Pedir permiso se formula con el verbo en forma 〜て + もいいですか: 捨ててもいいですか."
+  },
+  {
+    "id": "conv_ex_13",
+    "lesson": 16,
+    "type": "missing_kanji",
+    "type_label": "¿Qué kanji falta?",
+    "prompt_es": "En la tienda te indican: 'Suba la escalera y vaya a la derecha'. ¿Qué kanji corresponde a 'escalera' (かいだん)?",
+    "context": "二階です。【 ？ 】を上がって、右に行ってください。(かいだん)",
+    "correct": "階段",
+    "options": [
+      "階段",
+      "教室",
+      "図書館",
+      "郵便局"
+    ],
+    "explanation": "かいだん se escribe 階段 (階 piso + 段 escalón)."
+  },
+  {
+    "id": "conv_ex_14",
+    "lesson": 18,
+    "type": "missing_kanji",
+    "type_label": "¿Qué kanji falta?",
+    "prompt_es": "Llamas a tu amiga diciendo que te perdiste y ves enfrente una 'oficina de correos' (ゆうびんきょく). ¿Cuál es?",
+    "context": "目の前に【 ？ 】があります。(ゆうびんきょく)",
+    "correct": "郵便局",
+    "options": [
+      "郵便局",
+      "博物館",
+      "美術館",
+      "大使館"
+    ],
+    "explanation": "ゆうびんきょく se escribe 郵便局 (oficina postal / correos)."
+  },
+  {
+    "id": "conv_ex_15",
+    "lesson": 20,
+    "type": "missing_word",
+    "type_label": "¿Qué forma verbal falta?",
+    "prompt_es": "Preguntas a alguien si alguna vez ha cantado canciones japonesas. ¿Cómo se expresa 'has cantado alguna vez'?",
+    "context": "日本の歌を【 ？ 】ことがありますか。",
+    "correct": "歌った",
+    "options": [
+      "歌った",
+      "歌う",
+      "歌って",
+      "歌わない"
+    ],
+    "explanation": "La experiencia pasada se forma con verbo en pasado llano (forma た) + ことがある: 歌ったことがある."
+  },
+  {
+    "id": "conv_ex_16",
+    "lesson": 21,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "Sakura te dice con admiración: 「アンナ、上手だね！」 (¡Anna, qué bien lo haces!). ¿Cuál es la respuesta japonesa más humilde y natural?",
+    "context": "Sakura: 上手だね！\nAnna: 【 ？ 】",
+    "correct": "いいえ、それほどでも。",
+    "options": [
+      "いいえ、それほどでも。",
+      "はい、天才ですから。",
+      "全然できませんよ、バカ。",
+      "お疲れ様でした。"
+    ],
+    "explanation": "「いいえ、それほどでも」(No, no es para tanto) demuestra humildad ante un elogio, pilar fundamental de la cortesía en Japón."
+  },
+  {
+    "id": "conv_ex_17",
+    "lesson": 22,
+    "type": "missing_word",
+    "type_label": "¿Qué estructura de prohibición falta?",
+    "prompt_es": "La encargada advierte con firmeza: 'No debes romper las promesas'. ¿Qué forma prohibitiva completa la frase?",
+    "context": "約束を【 ？ 】いけません。",
+    "correct": "破っては",
+    "options": [
+      "破っては",
+      "破っても",
+      "破るなら",
+      "破ると"
+    ],
+    "explanation": "La prohibición formal estricta se construye con la forma en 〜て + はいけません: 破ってはいけません."
+  }
+]

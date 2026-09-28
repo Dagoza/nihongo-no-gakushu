@@ -2,6 +2,7 @@
 window.KANJI_DATA = [
   {
     "kanji": "一",
+    "level": "N5",
     "meaning_en": "one 一",
     "meaning_es": "one 一",
     "pronunciation": "いち, ひと",
@@ -15,12 +16,18 @@ window.KANJI_DATA = [
         "word": "一人",
         "reading": "ひとり",
         "meaning": "one person"
+      },
+      {
+        "word": "一度",
+        "reading": "いちど",
+        "meaning": "Una vez"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "二",
+    "level": "N5",
     "meaning_en": "two 二",
     "meaning_es": "two 二",
     "pronunciation": "に",
@@ -29,12 +36,18 @@ window.KANJI_DATA = [
         "word": "二",
         "reading": "に",
         "meaning": "two"
+      },
+      {
+        "word": "二つ",
+        "reading": "ふたつ",
+        "meaning": "Dos cosas (contador general)"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "三",
+    "level": "N5",
     "meaning_en": "three 三",
     "meaning_es": "three 三",
     "pronunciation": "さん",
@@ -49,6 +62,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "四",
+    "level": "N5",
     "meaning_en": "four 四",
     "meaning_es": "four 四",
     "pronunciation": "よん、 よ",
@@ -68,6 +82,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "五",
+    "level": "N5",
     "meaning_en": "five 五",
     "meaning_es": "five 五",
     "pronunciation": "ご",
@@ -82,6 +97,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "六",
+    "level": "N5",
     "meaning_en": "six 六",
     "meaning_es": "six 六",
     "pronunciation": "ろく",
@@ -96,6 +112,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "七",
+    "level": "N5",
     "meaning_en": "seven 七",
     "meaning_es": "seven 七",
     "pronunciation": "なな、 しち",
@@ -115,6 +132,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "八",
+    "level": "N5",
     "meaning_en": "eight 八",
     "meaning_es": "eight 八",
     "pronunciation": "はち",
@@ -129,6 +147,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "九",
+    "level": "N5",
     "meaning_en": "nine 九",
     "meaning_es": "nine 九",
     "pronunciation": "きゅう、 く",
@@ -148,6 +167,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "十",
+    "level": "N5",
     "meaning_en": "ten 十",
     "meaning_es": "ten 十",
     "pronunciation": "じゅう",
@@ -162,6 +182,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "人",
+    "level": "N5",
     "meaning_en": "person 人",
     "meaning_es": "person 人",
     "pronunciation": "ひと、 じん",
@@ -181,6 +202,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "何",
+    "level": "N5",
     "meaning_en": "what, how, which 何",
     "meaning_es": "what, how, which 何",
     "pronunciation": "なに",
@@ -204,6 +226,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "今",
+    "level": "N5",
     "meaning_en": "now 今",
     "meaning_es": "now 今",
     "pronunciation": "いま、 こん",
@@ -227,6 +250,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "入",
+    "level": "N5",
     "meaning_en": "to enter, to insert 入る",
     "meaning_es": "to enter, to insert 入る",
     "pronunciation": "はい",
@@ -241,6 +265,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "出",
+    "level": "N5",
     "meaning_en": "to leave, to get out 出る",
     "meaning_es": "to leave, to get out 出る",
     "pronunciation": "で",
@@ -255,6 +280,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "上",
+    "level": "N5",
     "meaning_en": "on, above, upper 上",
     "meaning_es": "on, above, upper 上",
     "pronunciation": "うえ",
@@ -269,6 +295,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "下",
+    "level": "N5",
     "meaning_en": "under, below, down 下",
     "meaning_es": "under, below, down 下",
     "pronunciation": "した",
@@ -283,6 +310,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "中",
+    "level": "N5",
     "meaning_en": "inside, inner, between 中",
     "meaning_es": "inside, inner, between 中",
     "pronunciation": "なか、ちゅう",
@@ -306,6 +334,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "右",
+    "level": "N5",
     "meaning_en": "right 右",
     "meaning_es": "right 右",
     "pronunciation": "みぎ",
@@ -320,6 +349,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "左",
+    "level": "N5",
     "meaning_en": "left 左",
     "meaning_es": "left 左",
     "pronunciation": "ひだり",
@@ -334,6 +364,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "道",
+    "level": "N5",
     "meaning_en": "street 道",
     "meaning_es": "street 道",
     "pronunciation": "みち",
@@ -348,6 +379,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "北",
+    "level": "N5",
     "meaning_en": "north 北",
     "meaning_es": "north 北",
     "pronunciation": "きた",
@@ -366,6 +398,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "南",
+    "level": "N5",
     "meaning_en": "south 南",
     "meaning_es": "south 南",
     "pronunciation": "みなみ",
@@ -384,6 +417,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "東",
+    "level": "N5",
     "meaning_en": "east 東",
     "meaning_es": "east 東",
     "pronunciation": "ひがし、とう",
@@ -403,6 +437,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "西",
+    "level": "N5",
     "meaning_en": "west 西",
     "meaning_es": "west 西",
     "pronunciation": "にし",
@@ -421,6 +456,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "大",
+    "level": "N5",
     "meaning_en": "big, grand 大きい",
     "meaning_es": "big, grand 大きい",
     "pronunciation": "おお、 だい",
@@ -440,6 +476,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "小",
+    "level": "N5",
     "meaning_en": "small 小さい",
     "meaning_es": "small 小さい",
     "pronunciation": "ちい",
@@ -448,12 +485,18 @@ window.KANJI_DATA = [
         "word": "小さい",
         "reading": "ちいさい",
         "meaning": "small"
+      },
+      {
+        "word": "小説",
+        "reading": "しょうせつ",
+        "meaning": "Novela"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "少",
+    "level": "N5",
     "meaning_en": "few , a littre",
     "meaning_es": "few , a littre",
     "pronunciation": "すく",
@@ -472,6 +515,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "古",
+    "level": "N5",
     "meaning_en": "old 古い",
     "meaning_es": "old 古い",
     "pronunciation": "ふる",
@@ -486,6 +530,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "新",
+    "level": "N5",
     "meaning_en": "new",
     "meaning_es": "new",
     "pronunciation": "あたら",
@@ -504,6 +549,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "週",
+    "level": "N5",
     "meaning_en": "week 来週",
     "meaning_es": "week 来週",
     "pronunciation": "しゅう",
@@ -518,6 +564,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "月",
+    "level": "N5",
     "meaning_en": "month, moon 来月",
     "meaning_es": "month, moon 来月",
     "pronunciation": "げつ、がつ",
@@ -537,6 +584,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "年",
+    "level": "N5",
     "meaning_en": "year 今年",
     "meaning_es": "year 今年",
     "pronunciation": "とし、 ねん",
@@ -556,6 +604,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "来",
+    "level": "N5",
     "meaning_en": "to come 来る",
     "meaning_es": "to come 来る",
     "pronunciation": "く、 らい",
@@ -579,6 +628,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "食",
+    "level": "N5",
     "meaning_en": "to eat 食べる",
     "meaning_es": "to eat 食べる",
     "pronunciation": "た",
@@ -597,6 +647,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "日",
+    "level": "N5",
     "meaning_en": "sun, day 日本",
     "meaning_es": "sun, day 日本",
     "pronunciation": "に、にち、ひ、び",
@@ -610,6 +661,11 @@ window.KANJI_DATA = [
         "word": "日よう日",
         "reading": "にちようび",
         "meaning": "Sunday"
+      },
+      {
+        "word": "土曜日",
+        "reading": "どようび",
+        "meaning": "Sábado"
       }
     ],
     "source": "Kanji Book",
@@ -620,6 +676,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "本",
+    "level": "N5",
     "meaning_en": "book, origin, source 本",
     "meaning_es": "book, origin, source 本",
     "pronunciation": "ほん、ぽん、ぼん",
@@ -634,6 +691,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "木",
+    "level": "N5",
     "meaning_en": "tree 木",
     "meaning_es": "tree 木",
     "pronunciation": "き",
@@ -648,6 +706,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "車",
+    "level": "N5",
     "meaning_en": "car 車",
     "meaning_es": "car 車",
     "pronunciation": "くるま、しゃ",
@@ -662,6 +721,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "魚",
+    "level": "N5",
     "meaning_en": "fish 魚",
     "meaning_es": "fish 魚",
     "pronunciation": "さかな",
@@ -680,6 +740,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "山",
+    "level": "N5",
     "meaning_en": "mountain 山",
     "meaning_es": "mountain 山",
     "pronunciation": "やま",
@@ -694,6 +755,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "川",
+    "level": "N5",
     "meaning_en": "river 川",
     "meaning_es": "river 川",
     "pronunciation": "かわ",
@@ -708,6 +770,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "雨",
+    "level": "N5",
     "meaning_en": "rain 雨",
     "meaning_es": "rain 雨",
     "pronunciation": "あめ",
@@ -722,6 +785,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "土",
+    "level": "N5",
     "meaning_en": "earth, ground 土よう日",
     "meaning_es": "earth, ground 土よう日",
     "pronunciation": "ど",
@@ -730,12 +794,23 @@ window.KANJI_DATA = [
         "word": "土よう日",
         "reading": "どようび",
         "meaning": "Saturday"
+      },
+      {
+        "word": "土産",
+        "reading": "みやげ",
+        "meaning": "Recuerdo / Souvenir"
+      },
+      {
+        "word": "土曜日",
+        "reading": "どようび",
+        "meaning": "Sábado"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "天",
+    "level": "N5",
     "meaning_en": "sky, heaven 天気",
     "meaning_es": "sky, heaven 天気",
     "pronunciation": "てん",
@@ -750,6 +825,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "見",
+    "level": "N5",
     "meaning_en": "to see, to be visible, to show 見る",
     "meaning_es": "to see, to be visible, to show 見る",
     "pronunciation": "み",
@@ -764,6 +840,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "言",
+    "level": "N5",
     "meaning_en": "to say, to talk 言う",
     "meaning_es": "to say, to talk 言う",
     "pronunciation": "い",
@@ -778,6 +855,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "話",
+    "level": "N5",
     "meaning_en": "to talk, to speak, story 話す",
     "meaning_es": "to talk, to speak, story 話す",
     "pronunciation": "はな",
@@ -786,12 +864,18 @@ window.KANJI_DATA = [
         "word": "話す",
         "reading": "はなす",
         "meaning": "to speak"
+      },
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "語",
+    "level": "N5",
     "meaning_en": "language",
     "meaning_es": "language",
     "pronunciation": "ご",
@@ -806,6 +890,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "読",
+    "level": "N5",
     "meaning_en": "to read 読む",
     "meaning_es": "to read 読む",
     "pronunciation": "よ",
@@ -814,6 +899,11 @@ window.KANJI_DATA = [
         "word": "読む",
         "reading": "よむ",
         "meaning": "to read"
+      },
+      {
+        "word": "読書",
+        "reading": "どくしょ",
+        "meaning": "Lectura de libros"
       }
     ],
     "source": "Kanji Book",
@@ -824,6 +914,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "書",
+    "level": "N5",
     "meaning_en": "to write 書く",
     "meaning_es": "to write 書く",
     "pronunciation": "か",
@@ -832,12 +923,23 @@ window.KANJI_DATA = [
         "word": "書く",
         "reading": "かく",
         "meaning": "to write"
+      },
+      {
+        "word": "図書館",
+        "reading": "としょかん",
+        "meaning": "Biblioteca"
+      },
+      {
+        "word": "読書",
+        "reading": "どくしょ",
+        "meaning": "Lectura de libros"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "聞",
+    "level": "N5",
     "meaning_en": "to listen, hear 聞く",
     "meaning_es": "to listen, hear 聞く",
     "pronunciation": "き、 ぶん",
@@ -857,6 +959,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "飲",
+    "level": "N5",
     "meaning_en": "to drink 飲む",
     "meaning_es": "to drink 飲む",
     "pronunciation": "の",
@@ -875,6 +978,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "立",
+    "level": "N5",
     "meaning_en": "to stand 立つ",
     "meaning_es": "to stand 立つ",
     "pronunciation": "た",
@@ -889,6 +993,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "買",
+    "level": "N5",
     "meaning_en": "to buy 買う",
     "meaning_es": "to buy 買う",
     "pronunciation": "か",
@@ -907,6 +1012,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "前",
+    "level": "N5",
     "meaning_en": "before, in front of 前",
     "meaning_es": "before, in front of 前",
     "pronunciation": "まえ、 ぜん",
@@ -926,6 +1032,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "後",
+    "level": "N5",
     "meaning_en": "after, behind 後ろ",
     "meaning_es": "after, behind 後ろ",
     "pronunciation": "うし、 ご",
@@ -945,6 +1052,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "午",
+    "level": "N5",
     "meaning_en": "noon 午前",
     "meaning_es": "noon 午前",
     "pronunciation": "ご",
@@ -968,6 +1076,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "間",
+    "level": "N5",
     "meaning_en": "between, span 間",
     "meaning_es": "between, span 間",
     "pronunciation": "あいだ、 かん",
@@ -987,6 +1096,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "毎",
+    "level": "N5",
     "meaning_en": "every, each 毎日",
     "meaning_es": "every, each 毎日",
     "pronunciation": "まい",
@@ -1005,6 +1115,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "白",
+    "level": "N5",
     "meaning_en": "white 白い",
     "meaning_es": "white 白い",
     "pronunciation": "しろ",
@@ -1019,6 +1130,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "高",
+    "level": "N5",
     "meaning_en": "high, expensive 高い",
     "meaning_es": "high, expensive 高い",
     "pronunciation": "たか",
@@ -1037,6 +1149,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "安",
+    "level": "N5",
     "meaning_en": "cheap 安い",
     "meaning_es": "cheap 安い",
     "pronunciation": "やす",
@@ -1055,6 +1168,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "長",
+    "level": "N5",
     "meaning_en": "long 長い",
     "meaning_es": "long 長い",
     "pronunciation": "なが",
@@ -1069,6 +1183,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "多",
+    "level": "N5",
     "meaning_en": "many 多い",
     "meaning_es": "many 多い",
     "pronunciation": "おお",
@@ -1087,6 +1202,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "父",
+    "level": "N5",
     "meaning_en": "father 父",
     "meaning_es": "father 父",
     "pronunciation": "ちち、 とう",
@@ -1110,6 +1226,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "母",
+    "level": "N5",
     "meaning_en": "mother 母",
     "meaning_es": "mother 母",
     "pronunciation": "はは、 かあ",
@@ -1133,6 +1250,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "男",
+    "level": "N5",
     "meaning_en": "man, male 男の子",
     "meaning_es": "man, male 男の子",
     "pronunciation": "おとこ",
@@ -1147,6 +1265,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "女",
+    "level": "N5",
     "meaning_en": "woman. female 女の子",
     "meaning_es": "woman. female 女の子",
     "pronunciation": "おんな",
@@ -1161,6 +1280,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "子",
+    "level": "N5",
     "meaning_en": "child, kid 子ども",
     "meaning_es": "child, kid 子ども",
     "pronunciation": "こ",
@@ -1175,6 +1295,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "百",
+    "level": "N5",
     "meaning_en": "hundred",
     "meaning_es": "hundred",
     "pronunciation": "ひゃく、 びゃく、 ぴゃく",
@@ -1189,6 +1310,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "千",
+    "level": "N5",
     "meaning_en": "thousand",
     "meaning_es": "thousand",
     "pronunciation": "せん",
@@ -1203,6 +1325,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "万",
+    "level": "N5",
     "meaning_en": "ten thousand",
     "meaning_es": "ten thousand",
     "pronunciation": "まん",
@@ -1217,6 +1340,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "円",
+    "level": "N5",
     "meaning_en": "Yen, circle",
     "meaning_es": "Yen, circle",
     "pronunciation": "えん",
@@ -1231,6 +1355,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "金",
+    "level": "N5",
     "meaning_en": "money, gold お金",
     "meaning_es": "money, gold お金",
     "pronunciation": "かね、 きん",
@@ -1250,6 +1375,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "電",
+    "level": "N5",
     "meaning_en": "electricity 電車",
     "meaning_es": "electricity 電車",
     "pronunciation": "でん",
@@ -1263,6 +1389,11 @@ window.KANJI_DATA = [
         "word": "電気",
         "reading": "でんき",
         "meaning": "electricity"
+      },
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
       }
     ],
     "source": "Kanji Book",
@@ -1273,6 +1404,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "気",
+    "level": "N5",
     "meaning_en": "spirit, power 天気",
     "meaning_es": "spirit, power 天気",
     "pronunciation": "き",
@@ -1287,6 +1419,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "花",
+    "level": "N5",
     "meaning_en": "flower 花",
     "meaning_es": "flower 花",
     "pronunciation": "はな",
@@ -1301,6 +1434,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "水",
+    "level": "N5",
     "meaning_en": "water 水",
     "meaning_es": "water 水",
     "pronunciation": "みず、 すい",
@@ -1320,6 +1454,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "火",
+    "level": "N5",
     "meaning_en": "fire",
     "meaning_es": "fire",
     "pronunciation": "か",
@@ -1334,6 +1469,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "学",
+    "level": "N5",
     "meaning_en": "to learn 学生",
     "meaning_es": "to learn 学生",
     "pronunciation": "まな、 がく、 がっ",
@@ -1347,12 +1483,18 @@ window.KANJI_DATA = [
         "word": "学校",
         "reading": "がっこう",
         "meaning": "school"
+      },
+      {
+        "word": "留学生",
+        "reading": "りゅうがくせい",
+        "meaning": "Estudiante extranjero"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "校",
+    "level": "N5",
     "meaning_en": "school 学校",
     "meaning_es": "school 学校",
     "pronunciation": "こう",
@@ -1367,6 +1509,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "先",
+    "level": "N5",
     "meaning_en": "before, future 先生",
     "meaning_es": "before, future 先生",
     "pronunciation": "せん",
@@ -1381,6 +1524,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "生",
+    "level": "N5",
     "meaning_en": "to be born, to live 生まれる",
     "meaning_es": "to be born, to live 生まれる",
     "pronunciation": "う、 せい",
@@ -1394,12 +1538,18 @@ window.KANJI_DATA = [
         "word": "学生",
         "reading": "がくせい",
         "meaning": "student"
+      },
+      {
+        "word": "留学生",
+        "reading": "りゅうがくせい",
+        "meaning": "Estudiante extranjero"
       }
     ],
     "source": "Kanji Book"
   },
   {
     "kanji": "友",
+    "level": "N5",
     "meaning_en": "friend 友だち",
     "meaning_es": "friend 友だち",
     "pronunciation": "とも",
@@ -1418,6 +1568,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "名",
+    "level": "N5",
     "meaning_en": "name 名前",
     "meaning_es": "name 名前",
     "pronunciation": "な",
@@ -1432,6 +1583,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "社",
+    "level": "N5",
     "meaning_en": "society 会社",
     "meaning_es": "society 会社",
     "pronunciation": "しゃ",
@@ -1446,6 +1598,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "会",
+    "level": "N5",
     "meaning_en": "to meet, meeting 会う",
     "meaning_es": "to meet, meeting 会う",
     "pronunciation": "あ、 かい",
@@ -1469,6 +1622,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "行",
+    "level": "N5",
     "meaning_en": "to go, to carry out 行く",
     "meaning_es": "to go, to carry out 行く",
     "pronunciation": "い、 こう",
@@ -1488,6 +1642,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "休",
+    "level": "N5",
     "meaning_en": "rest",
     "meaning_es": "rest",
     "pronunciation": "やす",
@@ -1502,6 +1657,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "時",
+    "level": "N5",
     "meaning_en": "hour, time 時間",
     "meaning_es": "hour, time 時間",
     "pronunciation": "じ",
@@ -1516,6 +1672,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "分",
+    "level": "N5",
     "meaning_en": "to understand, minute 分かる",
     "meaning_es": "to understand, minute 分かる",
     "pronunciation": "わ、 ふん、 ぷん",
@@ -1535,6 +1692,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "半",
+    "level": "N5",
     "meaning_en": "half",
     "meaning_es": "half",
     "pronunciation": "はん",
@@ -1553,6 +1711,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "無",
+    "level": "N5",
     "meaning_en": "Word, to talk",
     "meaning_es": "Word, to talk",
     "pronunciation": "I(u) [い(う)]",
@@ -1565,6 +1724,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "文",
+    "level": "N5",
     "meaning_en": "To write",
     "meaning_es": "To write",
     "pronunciation": "Ka(ku) [か(く)]",
@@ -1577,6 +1737,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "店",
+    "level": "N5",
     "meaning_en": "Shop",
     "meaning_es": "Shop",
     "pronunciation": "Mise [みせ]",
@@ -1589,6 +1750,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "外",
+    "level": "N5",
     "meaning_en": "Outside/Other/Foreign",
     "meaning_es": "Outside/Other/Foreign",
     "pronunciation": "Soto/Hoka [そと/ほか]",
@@ -1601,6 +1763,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "国",
+    "level": "N5",
     "meaning_en": "Street, path, way",
     "meaning_es": "Street, path, way",
     "pronunciation": "Michi [ち]",
@@ -1613,6 +1776,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "発",
+    "level": "N5",
     "meaning_en": "Station",
     "meaning_es": "Station",
     "pronunciation": "/",
@@ -1625,6 +1789,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "思",
+    "level": "N4",
     "meaning_en": "to think, to feel",
     "meaning_es": "pensar, sentir, recordar",
     "pronunciation": "おもう, し",
@@ -1653,6 +1818,7 @@ window.KANJI_DATA = [
   },
   {
     "kanji": "美",
+    "level": "N4",
     "meaning_en": "beauty, beautiful",
     "meaning_es": "belleza, hermoso",
     "pronunciation": "うつくしい, び",
@@ -1678,5 +1844,479 @@ window.KANJI_DATA = [
       }
     ],
     "source": "美 Practice Sheet"
+  },
+  {
+    "kanji": "君",
+    "level": "N5",
+    "meaning_en": "you, monarch",
+    "meaning_es": "tú, gobernante",
+    "pronunciation": "きみ, くん",
+    "onyomi": "KUN [くん]",
+    "kunyomi": "kimi [きみ]",
+    "strokes": 7,
+    "mnemonic": "Una mano con un bastón (尹) dando órdenes por la boca (口). Originalmente el gobernante o noble que manda; hoy en día se usa como 'tú' informal o sufijo cariñoso.",
+    "words": [
+      {
+        "word": "君",
+        "reading": "きみ",
+        "meaning": "tú"
+      },
+      {
+        "word": "君たち",
+        "reading": "きみたち",
+        "meaning": "ustedes / vosotros"
+      }
+    ],
+    "source": "Anime & Immersion Vocab"
+  },
+  {
+    "kanji": "産",
+    "level": "N4",
+    "meaning_en": "produce / birth",
+    "meaning_es": "dar a luz / producto",
+    "pronunciation": "さん, う・む",
+    "words": [
+      {
+        "word": "土産",
+        "reading": "みやげ",
+        "meaning": "Recuerdo / Souvenir"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "教",
+    "level": "N5",
+    "meaning_en": "teach / faith",
+    "meaning_es": "enseñar / fe",
+    "pronunciation": "きょう, おし・える",
+    "words": [
+      {
+        "word": "教室",
+        "reading": "きょうしつ",
+        "meaning": "Aula / Salón de clases"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "室",
+    "level": "N4",
+    "meaning_en": "room",
+    "meaning_es": "habitación / sala",
+    "pronunciation": "しつ, むろ",
+    "words": [
+      {
+        "word": "教室",
+        "reading": "きょうしつ",
+        "meaning": "Aula / Salón de clases"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "図",
+    "level": "N4",
+    "meaning_en": "drawing / diagram",
+    "meaning_es": "dibujo / diagrama / mapa",
+    "pronunciation": "ず, と, はか・る",
+    "words": [
+      {
+        "word": "図書館",
+        "reading": "としょかん",
+        "meaning": "Biblioteca"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "館",
+    "level": "N4",
+    "meaning_en": "building / mansion",
+    "meaning_es": "edificio público / palacio",
+    "pronunciation": "かん, やかた",
+    "words": [
+      {
+        "word": "図書館",
+        "reading": "としょかん",
+        "meaning": "Biblioteca"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "留",
+    "level": "N4",
+    "meaning_en": "stay / detain",
+    "meaning_es": "detener / quedarse",
+    "pronunciation": "りゅう, と・める",
+    "words": [
+      {
+        "word": "留学生",
+        "reading": "りゅうがくせい",
+        "meaning": "Estudiante extranjero"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "宝",
+    "level": "N4",
+    "meaning_en": "treasure",
+    "meaning_es": "tesoro",
+    "pronunciation": "ほう, たから",
+    "words": [
+      {
+        "word": "宝物",
+        "reading": "たからもの",
+        "meaning": "Tesoro / Objeto preciado"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "物",
+    "level": "N5",
+    "meaning_en": "thing / object",
+    "meaning_es": "cosa / objeto",
+    "pronunciation": "ぶつ, もの",
+    "words": [
+      {
+        "word": "宝物",
+        "reading": "たからもの",
+        "meaning": "Tesoro / Objeto preciado"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "番",
+    "level": "N5",
+    "meaning_en": "number / turn",
+    "meaning_es": "número / turno",
+    "pronunciation": "ばん",
+    "words": [
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "号",
+    "level": "N4",
+    "meaning_en": "number / item",
+    "meaning_es": "número / señal",
+    "pronunciation": "ごう",
+    "words": [
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "試",
+    "level": "N4",
+    "meaning_en": "test / try",
+    "meaning_es": "probar / intentar",
+    "pronunciation": "し, こころ・みる",
+    "words": [
+      {
+        "word": "試験",
+        "reading": "しけん",
+        "meaning": "Examen / Prueba"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "験",
+    "level": "N4",
+    "meaning_en": "verification / test",
+    "meaning_es": "probar / efecto / examen",
+    "pronunciation": "けん, ため・す",
+    "words": [
+      {
+        "word": "試験",
+        "reading": "しけん",
+        "meaning": "Examen / Prueba"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "度",
+    "level": "N4",
+    "meaning_en": "degree / occurrence",
+    "meaning_es": "grado / vez",
+    "pronunciation": "ど, たび",
+    "words": [
+      {
+        "word": "一度",
+        "reading": "いちど",
+        "meaning": "Una vez"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "健",
+    "level": "N4",
+    "meaning_en": "healthy / strength",
+    "meaning_es": "salud / saludable",
+    "pronunciation": "けん, すこ・やか",
+    "words": [
+      {
+        "word": "健康",
+        "reading": "けんこう",
+        "meaning": "Salud"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "康",
+    "level": "N4",
+    "meaning_en": "ease / health",
+    "meaning_es": "paz / salud",
+    "pronunciation": "こう",
+    "words": [
+      {
+        "word": "健康",
+        "reading": "けんこう",
+        "meaning": "Salud"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "全",
+    "level": "N4",
+    "meaning_en": "all / whole",
+    "meaning_es": "todo / entero",
+    "pronunciation": "ぜん, すべ・て",
+    "words": [
+      {
+        "word": "全員",
+        "reading": "ぜんいん",
+        "meaning": "Todos los miembros / Todos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "員",
+    "level": "N4",
+    "meaning_en": "member / employee",
+    "meaning_es": "miembro / empleado",
+    "pronunciation": "いん",
+    "words": [
+      {
+        "word": "全員",
+        "reading": "ぜんいん",
+        "meaning": "Todos los miembros / Todos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "曜",
+    "level": "N5",
+    "meaning_en": "day of the week",
+    "meaning_es": "día de la semana",
+    "pronunciation": "よう",
+    "words": [
+      {
+        "word": "土曜日",
+        "reading": "どようび",
+        "meaning": "Sábado"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "説",
+    "level": "N4",
+    "meaning_en": "theory / explanation",
+    "meaning_es": "explicar / teoría",
+    "pronunciation": "せつ, と・く",
+    "words": [
+      {
+        "word": "小説",
+        "reading": "しょうせつ",
+        "meaning": "Novela"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "階",
+    "level": "N4",
+    "meaning_en": "floor / stairs",
+    "meaning_es": "piso / planta / escalera",
+    "pronunciation": "かい",
+    "words": [
+      {
+        "word": "階段",
+        "reading": "かいだん",
+        "meaning": "Escalera"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "段",
+    "level": "N4",
+    "meaning_en": "step / grade",
+    "meaning_es": "escalón / nivel",
+    "pronunciation": "だん",
+    "words": [
+      {
+        "word": "階段",
+        "reading": "かいだん",
+        "meaning": "Escalera"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "郵",
+    "level": "N4",
+    "meaning_en": "mail",
+    "meaning_es": "correo / correo postal",
+    "pronunciation": "ゆう",
+    "words": [
+      {
+        "word": "郵便局",
+        "reading": "ゆうびんきょく",
+        "meaning": "Oficina de correos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "便",
+    "level": "N4",
+    "meaning_en": "convenience / mail",
+    "meaning_es": "correo / conveniencia",
+    "pronunciation": "べん, びん, たよ・り",
+    "words": [
+      {
+        "word": "郵便局",
+        "reading": "ゆうびんきょく",
+        "meaning": "Oficina de correos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "局",
+    "level": "N4",
+    "meaning_en": "bureau / office",
+    "meaning_es": "oficina / departamento",
+    "pronunciation": "きょく",
+    "words": [
+      {
+        "word": "郵便局",
+        "reading": "ゆうびんきょく",
+        "meaning": "Oficina de correos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "心",
+    "level": "N4",
+    "meaning_en": "heart / mind",
+    "meaning_es": "corazón / mente",
+    "pronunciation": "しん, こころ",
+    "words": [
+      {
+        "word": "心配",
+        "reading": "しんぱい",
+        "meaning": "Preocupación"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "配",
+    "level": "N4",
+    "meaning_en": "distribute / deliver",
+    "meaning_es": "distribuir / repartir",
+    "pronunciation": "はい, くば・る",
+    "words": [
+      {
+        "word": "心配",
+        "reading": "しんぱい",
+        "meaning": "Preocupación"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "遅",
+    "level": "N4",
+    "meaning_en": "late / slow",
+    "meaning_es": "tarde / retraso / lento",
+    "pronunciation": "ち, おそ・い, おく・れる",
+    "words": [
+      {
+        "word": "遅刻",
+        "reading": "ちこく",
+        "meaning": "Llegada tarde / Retraso"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "刻",
+    "level": "N4",
+    "meaning_en": "engrave / time",
+    "meaning_es": "grabar / tiempo / tictac",
+    "pronunciation": "こく, きざ・む",
+    "words": [
+      {
+        "word": "遅刻",
+        "reading": "ちこく",
+        "meaning": "Llegada tarde / Retraso"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "約",
+    "level": "N4",
+    "meaning_en": "promise / approximately",
+    "meaning_es": "promesa / aproximadamente",
+    "pronunciation": "やく",
+    "words": [
+      {
+        "word": "約束",
+        "reading": "やくそく",
+        "meaning": "Promesa / Cita pactada"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "束",
+    "level": "N4",
+    "meaning_en": "bundle / tie",
+    "meaning_es": "atado / haz / fardo",
+    "pronunciation": "そく, たば",
+    "words": [
+      {
+        "word": "約束",
+        "reading": "やくそく",
+        "meaning": "Promesa / Cita pactada"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
   }
 ];

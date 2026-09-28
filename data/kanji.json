@@ -15,6 +15,11 @@
         "word": "一人",
         "reading": "ひとり",
         "meaning": "one person"
+      },
+      {
+        "word": "一度",
+        "reading": "いちど",
+        "meaning": "Una vez"
       }
     ],
     "source": "Kanji Book"
@@ -30,6 +35,11 @@
         "word": "二",
         "reading": "に",
         "meaning": "two"
+      },
+      {
+        "word": "二つ",
+        "reading": "ふたつ",
+        "meaning": "Dos cosas (contador general)"
       }
     ],
     "source": "Kanji Book"
@@ -474,6 +484,11 @@
         "word": "小さい",
         "reading": "ちいさい",
         "meaning": "small"
+      },
+      {
+        "word": "小説",
+        "reading": "しょうせつ",
+        "meaning": "Novela"
       }
     ],
     "source": "Kanji Book"
@@ -645,6 +660,11 @@
         "word": "日よう日",
         "reading": "にちようび",
         "meaning": "Sunday"
+      },
+      {
+        "word": "土曜日",
+        "reading": "どようび",
+        "meaning": "Sábado"
       }
     ],
     "source": "Kanji Book",
@@ -773,6 +793,16 @@
         "word": "土よう日",
         "reading": "どようび",
         "meaning": "Saturday"
+      },
+      {
+        "word": "土産",
+        "reading": "みやげ",
+        "meaning": "Recuerdo / Souvenir"
+      },
+      {
+        "word": "土曜日",
+        "reading": "どようび",
+        "meaning": "Sábado"
       }
     ],
     "source": "Kanji Book"
@@ -833,6 +863,11 @@
         "word": "話す",
         "reading": "はなす",
         "meaning": "to speak"
+      },
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
       }
     ],
     "source": "Kanji Book"
@@ -863,6 +898,11 @@
         "word": "読む",
         "reading": "よむ",
         "meaning": "to read"
+      },
+      {
+        "word": "読書",
+        "reading": "どくしょ",
+        "meaning": "Lectura de libros"
       }
     ],
     "source": "Kanji Book",
@@ -882,6 +922,16 @@
         "word": "書く",
         "reading": "かく",
         "meaning": "to write"
+      },
+      {
+        "word": "図書館",
+        "reading": "としょかん",
+        "meaning": "Biblioteca"
+      },
+      {
+        "word": "読書",
+        "reading": "どくしょ",
+        "meaning": "Lectura de libros"
       }
     ],
     "source": "Kanji Book"
@@ -1338,6 +1388,11 @@
         "word": "電気",
         "reading": "でんき",
         "meaning": "electricity"
+      },
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
       }
     ],
     "source": "Kanji Book",
@@ -1427,6 +1482,11 @@
         "word": "学校",
         "reading": "がっこう",
         "meaning": "school"
+      },
+      {
+        "word": "留学生",
+        "reading": "りゅうがくせい",
+        "meaning": "Estudiante extranjero"
       }
     ],
     "source": "Kanji Book"
@@ -1477,6 +1537,11 @@
         "word": "学生",
         "reading": "がくせい",
         "meaning": "student"
+      },
+      {
+        "word": "留学生",
+        "reading": "りゅうがくせい",
+        "meaning": "Estudiante extranjero"
       }
     ],
     "source": "Kanji Book"
@@ -1802,5 +1867,455 @@
       }
     ],
     "source": "Anime & Immersion Vocab"
+  },
+  {
+    "kanji": "産",
+    "level": "N4",
+    "meaning_en": "produce / birth",
+    "meaning_es": "dar a luz / producto",
+    "pronunciation": "さん, う・む",
+    "words": [
+      {
+        "word": "土産",
+        "reading": "みやげ",
+        "meaning": "Recuerdo / Souvenir"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "教",
+    "level": "N5",
+    "meaning_en": "teach / faith",
+    "meaning_es": "enseñar / fe",
+    "pronunciation": "きょう, おし・える",
+    "words": [
+      {
+        "word": "教室",
+        "reading": "きょうしつ",
+        "meaning": "Aula / Salón de clases"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "室",
+    "level": "N4",
+    "meaning_en": "room",
+    "meaning_es": "habitación / sala",
+    "pronunciation": "しつ, むろ",
+    "words": [
+      {
+        "word": "教室",
+        "reading": "きょうしつ",
+        "meaning": "Aula / Salón de clases"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "図",
+    "level": "N4",
+    "meaning_en": "drawing / diagram",
+    "meaning_es": "dibujo / diagrama / mapa",
+    "pronunciation": "ず, と, はか・る",
+    "words": [
+      {
+        "word": "図書館",
+        "reading": "としょかん",
+        "meaning": "Biblioteca"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "館",
+    "level": "N4",
+    "meaning_en": "building / mansion",
+    "meaning_es": "edificio público / palacio",
+    "pronunciation": "かん, やかた",
+    "words": [
+      {
+        "word": "図書館",
+        "reading": "としょかん",
+        "meaning": "Biblioteca"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "留",
+    "level": "N4",
+    "meaning_en": "stay / detain",
+    "meaning_es": "detener / quedarse",
+    "pronunciation": "りゅう, と・める",
+    "words": [
+      {
+        "word": "留学生",
+        "reading": "りゅうがくせい",
+        "meaning": "Estudiante extranjero"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "宝",
+    "level": "N4",
+    "meaning_en": "treasure",
+    "meaning_es": "tesoro",
+    "pronunciation": "ほう, たから",
+    "words": [
+      {
+        "word": "宝物",
+        "reading": "たからもの",
+        "meaning": "Tesoro / Objeto preciado"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "物",
+    "level": "N5",
+    "meaning_en": "thing / object",
+    "meaning_es": "cosa / objeto",
+    "pronunciation": "ぶつ, もの",
+    "words": [
+      {
+        "word": "宝物",
+        "reading": "たからもの",
+        "meaning": "Tesoro / Objeto preciado"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "番",
+    "level": "N5",
+    "meaning_en": "number / turn",
+    "meaning_es": "número / turno",
+    "pronunciation": "ばん",
+    "words": [
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "号",
+    "level": "N4",
+    "meaning_en": "number / item",
+    "meaning_es": "número / señal",
+    "pronunciation": "ごう",
+    "words": [
+      {
+        "word": "電話番号",
+        "reading": "でんわばんごう",
+        "meaning": "Número de teléfono"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "試",
+    "level": "N4",
+    "meaning_en": "test / try",
+    "meaning_es": "probar / intentar",
+    "pronunciation": "し, こころ・みる",
+    "words": [
+      {
+        "word": "試験",
+        "reading": "しけん",
+        "meaning": "Examen / Prueba"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "験",
+    "level": "N4",
+    "meaning_en": "verification / test",
+    "meaning_es": "probar / efecto / examen",
+    "pronunciation": "けん, ため・す",
+    "words": [
+      {
+        "word": "試験",
+        "reading": "しけん",
+        "meaning": "Examen / Prueba"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "度",
+    "level": "N4",
+    "meaning_en": "degree / occurrence",
+    "meaning_es": "grado / vez",
+    "pronunciation": "ど, たび",
+    "words": [
+      {
+        "word": "一度",
+        "reading": "いちど",
+        "meaning": "Una vez"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "健",
+    "level": "N4",
+    "meaning_en": "healthy / strength",
+    "meaning_es": "salud / saludable",
+    "pronunciation": "けん, すこ・やか",
+    "words": [
+      {
+        "word": "健康",
+        "reading": "けんこう",
+        "meaning": "Salud"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "康",
+    "level": "N4",
+    "meaning_en": "ease / health",
+    "meaning_es": "paz / salud",
+    "pronunciation": "こう",
+    "words": [
+      {
+        "word": "健康",
+        "reading": "けんこう",
+        "meaning": "Salud"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "全",
+    "level": "N4",
+    "meaning_en": "all / whole",
+    "meaning_es": "todo / entero",
+    "pronunciation": "ぜん, すべ・て",
+    "words": [
+      {
+        "word": "全員",
+        "reading": "ぜんいん",
+        "meaning": "Todos los miembros / Todos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "員",
+    "level": "N4",
+    "meaning_en": "member / employee",
+    "meaning_es": "miembro / empleado",
+    "pronunciation": "いん",
+    "words": [
+      {
+        "word": "全員",
+        "reading": "ぜんいん",
+        "meaning": "Todos los miembros / Todos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "曜",
+    "level": "N5",
+    "meaning_en": "day of the week",
+    "meaning_es": "día de la semana",
+    "pronunciation": "よう",
+    "words": [
+      {
+        "word": "土曜日",
+        "reading": "どようび",
+        "meaning": "Sábado"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "説",
+    "level": "N4",
+    "meaning_en": "theory / explanation",
+    "meaning_es": "explicar / teoría",
+    "pronunciation": "せつ, と・く",
+    "words": [
+      {
+        "word": "小説",
+        "reading": "しょうせつ",
+        "meaning": "Novela"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "階",
+    "level": "N4",
+    "meaning_en": "floor / stairs",
+    "meaning_es": "piso / planta / escalera",
+    "pronunciation": "かい",
+    "words": [
+      {
+        "word": "階段",
+        "reading": "かいだん",
+        "meaning": "Escalera"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "段",
+    "level": "N4",
+    "meaning_en": "step / grade",
+    "meaning_es": "escalón / nivel",
+    "pronunciation": "だん",
+    "words": [
+      {
+        "word": "階段",
+        "reading": "かいだん",
+        "meaning": "Escalera"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "郵",
+    "level": "N4",
+    "meaning_en": "mail",
+    "meaning_es": "correo / correo postal",
+    "pronunciation": "ゆう",
+    "words": [
+      {
+        "word": "郵便局",
+        "reading": "ゆうびんきょく",
+        "meaning": "Oficina de correos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "便",
+    "level": "N4",
+    "meaning_en": "convenience / mail",
+    "meaning_es": "correo / conveniencia",
+    "pronunciation": "べん, びん, たよ・り",
+    "words": [
+      {
+        "word": "郵便局",
+        "reading": "ゆうびんきょく",
+        "meaning": "Oficina de correos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "局",
+    "level": "N4",
+    "meaning_en": "bureau / office",
+    "meaning_es": "oficina / departamento",
+    "pronunciation": "きょく",
+    "words": [
+      {
+        "word": "郵便局",
+        "reading": "ゆうびんきょく",
+        "meaning": "Oficina de correos"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "心",
+    "level": "N4",
+    "meaning_en": "heart / mind",
+    "meaning_es": "corazón / mente",
+    "pronunciation": "しん, こころ",
+    "words": [
+      {
+        "word": "心配",
+        "reading": "しんぱい",
+        "meaning": "Preocupación"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "配",
+    "level": "N4",
+    "meaning_en": "distribute / deliver",
+    "meaning_es": "distribuir / repartir",
+    "pronunciation": "はい, くば・る",
+    "words": [
+      {
+        "word": "心配",
+        "reading": "しんぱい",
+        "meaning": "Preocupación"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "遅",
+    "level": "N4",
+    "meaning_en": "late / slow",
+    "meaning_es": "tarde / retraso / lento",
+    "pronunciation": "ち, おそ・い, おく・れる",
+    "words": [
+      {
+        "word": "遅刻",
+        "reading": "ちこく",
+        "meaning": "Llegada tarde / Retraso"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "刻",
+    "level": "N4",
+    "meaning_en": "engrave / time",
+    "meaning_es": "grabar / tiempo / tictac",
+    "pronunciation": "こく, きざ・む",
+    "words": [
+      {
+        "word": "遅刻",
+        "reading": "ちこく",
+        "meaning": "Llegada tarde / Retraso"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "約",
+    "level": "N4",
+    "meaning_en": "promise / approximately",
+    "meaning_es": "promesa / aproximadamente",
+    "pronunciation": "やく",
+    "words": [
+      {
+        "word": "約束",
+        "reading": "やくそく",
+        "meaning": "Promesa / Cita pactada"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "kanji": "束",
+    "level": "N4",
+    "meaning_en": "bundle / tie",
+    "meaning_es": "atado / haz / fardo",
+    "pronunciation": "そく, たば",
+    "words": [
+      {
+        "word": "約束",
+        "reading": "やくそく",
+        "meaning": "Promesa / Cita pactada"
+      }
+    ],
+    "source": "NHK Spanish Lessons / Material de Estudio"
   }
 ]

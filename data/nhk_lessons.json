@@ -141,8 +141,8 @@
       },
       {
         "speaker": "Sakura",
-        "jp": "いいえ、留学生ではありません。",
-        "es": "No, no soy estudiante extranjera."
+        "jp": "いいえ、留学生ではありません。日本人の学生です。",
+        "es": "No, no soy estudiante extranjera. Soy una estudiante japonesa."
       }
     ],
     "grammar_notes": [
@@ -155,61 +155,551 @@
     "lesson": 5,
     "title_jp": "それは私の宝物です。",
     "title_es": "Ese es mi tesoro.",
-    "topic": "Posesión con la partícula の",
+    "topic": "Posesión con la partícula の y objeto directo を",
     "level": "N5",
     "dialogue": [
       {
-        "speaker": "Sakura",
-        "jp": "かわいいですね。何ですか。",
-        "es": "Qué lindo. ¿Qué es?"
-      },
-      {
         "speaker": "Anna",
-        "jp": "それは私の宝物です。",
-        "es": "Ese es mi tesoro."
+        "jp": "私の部屋はこちらです。どうぞ。",
+        "es": "Mi habitación está por aquí. Por favor."
       },
       {
         "speaker": "Sakura",
-        "jp": "誰からもらいましたか。",
-        "es": "¿De quién lo recibiste?"
+        "jp": "すごい！これは全部マンガ？",
+        "es": "¡Increíble! ¿Estas son todas manga?"
       },
       {
         "speaker": "Anna",
-        "jp": "母からもらいました。",
-        "es": "Lo recibí de mi mamá."
+        "jp": "それは私の宝物です。私は毎日マンガを読みます。",
+        "es": "Esos son mis tesoros. Leo manga todos los días."
       }
     ],
     "grammar_notes": [
-      "A の B: 'B de A'. Expresa pertenencia o descripción (私の本 = mi libro).",
-      "から (kara): Indica el origen o la persona que otorga algo (madre から = de mi madre)."
+      "A の B: Posesión o relación de A con B (mi tesoro = 私の宝物).",
+      "を (o): Partícula que marca el objeto directo del verbo (マンガを読みます = leer manga)."
     ]
   },
   {
     "lesson": 6,
     "title_jp": "電話番号は何番ですか。",
     "title_es": "¿Cuál es tu número de teléfono?",
-    "topic": "Números de teléfono y preguntas numéricas",
+    "topic": "Preguntas con 何番 (nanban) y números de teléfono",
     "level": "N5",
     "dialogue": [
       {
         "speaker": "Sakura",
-        "jp": "アンナさんの電話番号は何番ですか。",
-        "es": "Anna, ¿cuál es tu número de teléfono?"
+        "jp": "ところでアンナさん。電話番号は何番ですか。",
+        "es": "A propósito, Anna... ¿Cuál es tu número de teléfono?"
       },
       {
         "speaker": "Anna",
-        "jp": "090-1234-5678です。",
-        "es": "Es 090-1234-5678."
+        "jp": "えーと。080-1234-...です。",
+        "es": "Eh... Déjame ver... Es el 080-1234-..."
       },
       {
         "speaker": "Sakura",
-        "jp": "分かりました。ありがとう。",
-        "es": "Entendido. Gracias."
+        "jp": "ありがとう。じゃ、今度、電話をしますね。",
+        "es": "Gracias. Entonces, te llamaré la próxima vez."
       }
     ],
     "grammar_notes": [
-      "El guión '-' en números de teléfono se pronuncia como 'の' (no).",
-      "何番 (nanban): '¿Qué número?'."
+      "何番 (nanban): Pregunta por números específicos o posiciones.",
+      "El guión en números de teléfono se pronuncia como の (no).",
+      "電話をします (denwa o shimasu): Hacer una llamada telefónica."
+    ]
+  },
+  {
+    "lesson": 7,
+    "title_jp": "シュークリームはありますか。",
+    "title_es": "¿Hay bollos de crema?",
+    "topic": "Preguntar existencia en tiendas (〜はありますか) y pedir cosas (〜をください)",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "ケーキがいっぱいありますね。",
+        "es": "Hay muchos pasteles, ¿verdad?"
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "すみません、シュークリームはありますか。",
+        "es": "Perdón, ¿hay bollos de crema?"
+      },
+      {
+        "speaker": "Vendedora",
+        "jp": "はい、こちらです。",
+        "es": "Sí, por aquí."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "シュークリームを二つください。",
+        "es": "Dos bollos de crema, por favor."
+      }
+    ],
+    "grammar_notes": [
+      "ありますか (arimasu ka): Pregunta si hay algo inanimado.",
+      "ひとつ (hitotsu), ふたつ (futatsu): Contadores nativos japoneses de objetos.",
+      "[Cosa] を [Cantidad] ください: Fórmula educada para pedir artículos en una tienda o restaurante."
+    ]
+  },
+  {
+    "lesson": 8,
+    "title_jp": "もう一度お願いします。",
+    "title_es": "¿Podría repetirlo una vez más?",
+    "topic": "Peticiones con 〜てください y fórmulas en clase",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Profesor",
+        "jp": "皆さん、これを覚えてください。試験によく出ます。",
+        "es": "Memoricen esto todos. Aparece a menudo en los exámenes."
+      },
+      {
+        "speaker": "Estudiantes",
+        "jp": "えーっ。",
+        "es": "¡Ehh! (expresión de sorpresa/queja)"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "先生、もう一度お願いします。",
+        "es": "Profesor, ¿podría repetirlo una vez más, por favor?"
+      }
+    ],
+    "grammar_notes": [
+      "〜てください (-te kudasai): Petición educada (覚えてください = por favor memoricen).",
+      "もう一度 (mô ichido): Una vez más.",
+      "お願いします (onegaishimasu): Por favor / Solicito su amabilidad."
+    ]
+  },
+  {
+    "lesson": 9,
+    "title_jp": "何時からですか。",
+    "title_es": "¿Desde qué hora es?",
+    "topic": "Horarios con から (desde) y まで (hasta)",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Profesor",
+        "jp": "明日、健康診断があります。",
+        "es": "Mañana habrá un reconocimiento médico."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "何時からですか。",
+        "es": "¿Desde qué hora es?"
+      },
+      {
+        "speaker": "Profesor",
+        "jp": "午前九時から十一時までです。ここに八時半に集まってください。",
+        "es": "Desde las nueve hasta las once de la mañana. Reúnanse aquí a las ocho y media."
+      }
+    ],
+    "grammar_notes": [
+      "何時 (nanji): ¿Qué hora?",
+      "〜から 〜まで (-kara -made): Desde ... hasta ... (expresa límites de tiempo o espacio).",
+      "半 (han): Y media (ocho y media = 八時半)."
+    ]
+  },
+  {
+    "lesson": 10,
+    "title_jp": "全員いますか。",
+    "title_es": "¿Están todos?",
+    "topic": "Existencia de personas (います / いません) y verbos en pasado",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Profesor",
+        "jp": "初めに身長と体重を測ります。全員いますか。",
+        "es": "Primero vamos a medirles la estatura y el peso. ¿Están todos?"
+      },
+      {
+        "speaker": "Rodrigo",
+        "jp": "アンナさんがいません。",
+        "es": "Anna no está."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "すみません。遅れました。",
+        "es": "Perdón, llegué tarde."
+      }
+    ],
+    "grammar_notes": [
+      "います / いません: Verbo existir para seres animados (personas y animales).",
+      "全員 (zen-in): Todos los miembros presentes.",
+      "遅れました (okuremashita): Forma pasada formal del verbo 遅れる (llegar tarde)."
+    ]
+  },
+  {
+    "lesson": 11,
+    "title_jp": "ぜひ来てください。",
+    "title_es": "Por favor no dejes de venir.",
+    "topic": "Invitaciones enfáticas (ぜひ) y días de la semana",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "今週の土曜日に寮でパーティーを開きます。さくらさん、ぜひ来てください。",
+        "es": "Este sábado haremos una fiesta en la residencia. Sakura, no dejes de venir."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "わあ、行く行く。今度の土曜日ね。",
+        "es": "¡Guau, voy seguro! Este sábado, ¿verdad?"
+      }
+    ],
+    "grammar_notes": [
+      "ぜひ (zehi): Sin falta / por todos los medios (se usa para reforzar una invitación).",
+      "土曜日 (doyôbi): Sábado.",
+      "寮 (ryô): Residencia de estudiantes / dormitorio común."
+    ]
+  },
+  {
+    "lesson": 12,
+    "title_jp": "いつ日本に来ましたか。",
+    "title_es": "¿Cuándo viniste a Japón?",
+    "topic": "Preguntar fechas con いつ (itsu) y meses del año",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Sakura",
+        "jp": "ロドリゴさんはいつ日本に来ましたか。",
+        "es": "Rodrigo, ¿cuándo viniste a Japón?"
+      },
+      {
+        "speaker": "Rodrigo",
+        "jp": "三月に来ました。",
+        "es": "Vine en marzo."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "もう日本の生活に慣れた？",
+        "es": "¿Ya te acostumbraste a la vida en Japón?"
+      },
+      {
+        "speaker": "Rodrigo",
+        "jp": "ええ、まあ。",
+        "es": "Sí, hasta cierto punto."
+      }
+    ],
+    "grammar_notes": [
+      "いつ (itsu): Interrogativo para tiempo o fecha (¿Cuándo?).",
+      "三月 (sangatsu): Mes de marzo (número + 月).",
+      "生活に慣れる (seikatsu ni nareru): Acostumbrarse a la vida cotidiana."
+    ]
+  },
+  {
+    "lesson": 13,
+    "title_jp": "小説が好きです。",
+    "title_es": "Me gustan las novelas.",
+    "topic": "Gustos con 〜が好きです e invitaciones con 〜ませんか",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Sakura",
+        "jp": "ロドリゴさんの趣味は何ですか。",
+        "es": "Rodrigo, ¿cuál es tu pasatiempo?"
+      },
+      {
+        "speaker": "Rodrigo",
+        "jp": "読書です。特に歴史小説が好きです。",
+        "es": "Leer libros. Me gustan especialmente las novelas históricas."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "へえ。新宿に新しい本屋ができましたよ。みんなで行きませんか。",
+        "es": "Ajá. Han inaugurado una nueva librería en Shinjuku. ¿Por qué no vamos todos juntos?"
+      }
+    ],
+    "grammar_notes": [
+      "趣味 (shumi): Pasatiempo o hobby.",
+      "[Cosa] が好きです (ga suki desu): Me gusta [Cosa]. Se usa が y no を.",
+      "〜ませんか (-masen ka): ¿Por qué no...? Invitación educada a realizar una acción juntos."
+    ]
+  },
+  {
+    "lesson": 14,
+    "title_jp": "ここにゴミを捨ててもいいですか。",
+    "title_es": "¿Puedo tirar la basura aquí?",
+    "topic": "Permiso con 〜てもいいですか y causa con 〜から",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "お母さん、ここにゴミを捨ててもいいですか。",
+        "es": "Madre, ¿puedo tirar la basura aquí?"
+      },
+      {
+        "speaker": "Encargada",
+        "jp": "そうねえ。缶は別の袋に入れてください。資源ですから。",
+        "es": "A ver... Mete las latas en otra bolsa, porque son recursos reciclables."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "はい、分かりました。",
+        "es": "Sí, entendido."
+      }
+    ],
+    "grammar_notes": [
+      "〜てもいいですか (-te mo ii desu ka): ¿Puedo hacer...? Estructura para pedir permiso.",
+      "〜から (kara al final de oración): Indica causa o justificación (porque...).",
+      "ゴミを捨てる (gomi o suteru): Tirar la basura."
+    ]
+  },
+  {
+    "lesson": 15,
+    "title_jp": "寝ています。",
+    "title_es": "Están durmiendo.",
+    "topic": "Acción en progreso con 〜ています (gerundio) y sugerencias con 〜ましょう",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Sakura",
+        "jp": "次は新宿駅です。さあ、降りましょう。",
+        "es": "La siguiente parada es la estación de Shinjuku. Bueno, bajemos."
+      },
+      {
+        "speaker": "Rodrigo",
+        "jp": "あれ。あの人たち、寝ています。",
+        "es": "Vaya, aquellas personas están durmiendo."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "大丈夫かな。",
+        "es": "¿Estarán bien?"
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "大丈夫、大丈夫。ほら、起きた。",
+        "es": "Están bien, están bien. Mira, se despertaron."
+      }
+    ],
+    "grammar_notes": [
+      "〜ています (-te imasu): Indica una acción continua en progreso (estar haciendo algo).",
+      "〜ましょう (-mashô): Sugerencia formal entusiasta (hagamos / bajemos).",
+      "ほら (hora): Interjección equivalente a mira o fíjate."
+    ]
+  },
+  {
+    "lesson": 16,
+    "title_jp": "階段を上がって、右に行ってください。",
+    "title_es": "Suba la escalera y vaya a la derecha.",
+    "topic": "Conectar acciones en secuencia con la forma 〜て e indicaciones espaciales",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Vendedor",
+        "jp": "いらっしゃいませ。",
+        "es": "Bienvenidos."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "あのう、マンガ売り場はどこですか。",
+        "es": "Perdón, ¿dónde está la sección de manga?"
+      },
+      {
+        "speaker": "Vendedor",
+        "jp": "二階です。階段を上がって、右に行ってください。",
+        "es": "En el segundo piso. Suba la escalera y vaya a la derecha."
+      }
+    ],
+    "grammar_notes": [
+      "Forma 〜て para conectar verbos: 上がって (suba y...) 行ってください (vaya por favor).",
+      "売り場 (uriba): Sección de ventas o mostrador.",
+      "右 / 左 (migi / hidari): Derecha / Izquierda."
+    ]
+  },
+  {
+    "lesson": 17,
+    "title_jp": "おすすめは何ですか。",
+    "title_es": "¿Cuál me recomiendas?",
+    "topic": "Pedir sugerencias (おすすめ) y conjeturas con 〜そう (parece...)",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "あ、この本いいなあ。あれも面白そう。さくらさんのおすすめは何ですか。",
+        "es": "Ah, este libro es bueno. Aquel también parece interesante. ¿Cuál me recomiendas, Sakura?"
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "これはどう？",
+        "es": "¿Qué tal este?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "ホラーはちょっと…",
+        "es": "Los de terror son un poco... (no me convencen)"
+      }
+    ],
+    "grammar_notes": [
+      "〜そう (sô): Sufijo de apariencia (面白そう = parece interesante).",
+      "おすすめ (osusume): Recomendación o sugerencia personal.",
+      "ちょっと… (chotto): Forma cortés y diplomática de rechazar o mostrar duda sin decir un no rotundo."
+    ]
+  },
+  {
+    "lesson": 18,
+    "title_jp": "道に迷ってしまいました。",
+    "title_es": "Me he perdido.",
+    "topic": "Acción involuntaria o lamentable con 〜てしまいました",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "もしもし、さくらさん。助けてください。道に迷ってしまいました。",
+        "es": "Hola Sakura. Ayúdame por favor. Me he perdido en el camino."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "今、どこ？",
+        "es": "¿Dónde estás ahora?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "目の前に郵便局があります。",
+        "es": "Frente a mis ojos hay una oficina de correos."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "分かった。そこにいて。",
+        "es": "Ya entiendo. Quédate ahí."
+      }
+    ],
+    "grammar_notes": [
+      "〜てしまう / 〜てしまいました: Indica la conclusión involuntaria de una acción con matiz de pesar o error.",
+      "もしもし (moshi moshi): Saludo telefónico japonés (Hola / Aló).",
+      "目の前 (me no mae): Justo delante de los ojos o en frente."
+    ]
+  },
+  {
+    "lesson": 19,
+    "title_jp": "よかった。心配したよ。",
+    "title_es": "Menos mal. Me preocupé.",
+    "topic": "Causa explicativa con 〜ので e impulsos involuntarios con つい",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Rodrigo",
+        "jp": "おーい、アンナさん。",
+        "es": "¡Oye, Anna!"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "みんな。",
+        "es": "¡Amigos! (Todos)."
+      },
+      {
+        "speaker": "Rodrigo",
+        "jp": "よかった。心配したよ。",
+        "es": "Menos mal. Nos preocupamos."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "ごめんなさい。カメラが安かったので、つい見てしまいました。",
+        "es": "Perdónenme. Como las cámaras estaban baratas, sin querer me quedé mirándolas."
+      }
+    ],
+    "grammar_notes": [
+      "〜ので (-node): Expresa razón o causa de manera cortés y natural (porque...).",
+      "つい (tsui): Involuntariamente, sin darse cuenta, por impulso.",
+      "よかった (yokatta): Pasado de いい (bien/bueno), usado como alivio (¡Menos mal!)."
+    ]
+  },
+  {
+    "lesson": 20,
+    "title_jp": "日本の歌を歌ったことがありますか。",
+    "title_es": "¿Has cantado canciones japonesas alguna vez?",
+    "topic": "Experiencias pasadas con 〜たことがありますか y habilidades con 得意 (tokui)",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Rodrigo",
+        "jp": "アンナさんは日本の歌を歌ったことがありますか。",
+        "es": "Anna, ¿has cantado canciones japonesas alguna vez?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "はい、あります。",
+        "es": "Sí, alguna vez."
+      },
+      {
+        "speaker": "Sakura",
+        "jp": "どんな曲が得意？",
+        "es": "¿Qué tipo de canciones cantas bien?"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "アニメの曲です。",
+        "es": "Canciones de anime (dibujos animados)."
+      }
+    ],
+    "grammar_notes": [
+      "Verbo en pasado informal (た) + ことがある: Expresa la experiencia de haber hecho algo alguna vez en la vida.",
+      "得意 (tokui): Ser bueno o habilidoso en algo (se usa para uno mismo o con personas de confianza).",
+      "どんな (donna): ¿Qué tipo de...?"
+    ]
+  },
+  {
+    "lesson": 21,
+    "title_jp": "いいえ、それほどでも。",
+    "title_es": "No, no es para tanto.",
+    "topic": "Modestia japonesa con それほどでも y llegar a tiempo con 間に合う",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Sakura",
+        "jp": "アンナ、上手だね。",
+        "es": "Anna, ¡qué bien lo haces!"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "いいえ、それほどでも。",
+        "es": "No, no es para tanto (modestia)."
+      },
+      {
+        "speaker": "Rodrigo",
+        "jp": "あ、もうこんな時間です。",
+        "es": "¡Ah, ya se ha hecho tan tarde!"
+      },
+      {
+        "speaker": "Anna",
+        "jp": "大変。門限に間に合わない。",
+        "es": "¡Qué terrible! No llegaré a tiempo para el toque de queda de la residencia."
+      }
+    ],
+    "grammar_notes": [
+      "それほどでも (sorehodo demo): Expresión típica de modestia ante un cumplido.",
+      "門限 (mongen): Toque de queda u hora de cierre del edificio.",
+      "間に合わない (maniawanai): Forma negativa informal de 間に合う (llegar a tiempo)."
+    ]
+  },
+  {
+    "lesson": 22,
+    "title_jp": "遅くなりました。",
+    "title_es": "Llegué tarde.",
+    "topic": "Prohibición con 〜てはいけません y pedir disculpas",
+    "level": "N5",
+    "dialogue": [
+      {
+        "speaker": "Anna",
+        "jp": "お母さん、ごめんなさい。遅くなりました。",
+        "es": "Madre, perdón. Llegué tarde."
+      },
+      {
+        "speaker": "Encargada",
+        "jp": "アンナさん、十分も遅刻です。約束を破ってはいけません。",
+        "es": "Anna, llegas diez minutos tarde. No debes romper las promesas."
+      },
+      {
+        "speaker": "Anna",
+        "jp": "すみません。気をつけます。",
+        "es": "Lo siento mucho. Tendré mucho cuidado."
+      }
+    ],
+    "grammar_notes": [
+      "〜てはいけません (-te wa ikemasen): Expresa prohibición estricta (no debes / no se puede).",
+      "遅刻 (chikoku): Llegar tarde / retraso.",
+      "気をつける (ki o tsukeru): Tener cuidado / prestar atención."
     ]
   }
 ]

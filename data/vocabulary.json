@@ -6,7 +6,9 @@
     "meaning_es": "Hola / Buenas tardes",
     "meaning_en": "Hello / Good afternoon",
     "category": "Saludos y Cortesía",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "こんにちは",
+    "katakana": "コンニチハ"
   },
   {
     "id": "v_2",
@@ -15,7 +17,9 @@
     "meaning_es": "Buenos días",
     "meaning_en": "Good morning",
     "category": "Saludos y Cortesía",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おはよう",
+    "katakana": "オハヨウ"
   },
   {
     "id": "v_3",
@@ -24,7 +28,9 @@
     "meaning_es": "Gracias",
     "meaning_en": "Thank you",
     "category": "Saludos y Cortesía",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ありがとう",
+    "katakana": "アリガトウ"
   },
   {
     "id": "v_4",
@@ -33,7 +39,9 @@
     "meaning_es": "Disculpe / Lo siento",
     "meaning_en": "Excuse me / I'm sorry",
     "category": "Saludos y Cortesía",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "すみません",
+    "katakana": "スミマセン"
   },
   {
     "id": "v_5",
@@ -42,7 +50,9 @@
     "meaning_es": "Buenas noches",
     "meaning_en": "Good evening",
     "category": "Saludos y Cortesía",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "こんばんは",
+    "katakana": "コンバンハ"
   },
   {
     "id": "v_6",
@@ -51,7 +61,9 @@
     "meaning_es": "Por favor",
     "meaning_en": "Please",
     "category": "Saludos y Cortesía",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おねがいします",
+    "katakana": "オネガイシマス"
   },
   {
     "id": "v_7",
@@ -60,7 +72,9 @@
     "meaning_es": "Adiós",
     "meaning_en": "Goodbye",
     "category": "Saludos y Cortesía",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "さようなら",
+    "katakana": "サヨウナラ"
   },
   {
     "id": "v_8",
@@ -69,7 +83,9 @@
     "meaning_es": "No entiendo",
     "meaning_en": "I don't understand",
     "category": "Frases Cotidianas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "わかりません",
+    "katakana": "ワカリマセン"
   },
   {
     "id": "v_9",
@@ -78,7 +94,9 @@
     "meaning_es": "uno",
     "meaning_en": "one",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "いち",
+    "katakana": "イチ"
   },
   {
     "id": "v_10",
@@ -87,7 +105,9 @@
     "meaning_es": "dos",
     "meaning_en": "two",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "に",
+    "katakana": "ニ"
   },
   {
     "id": "v_11",
@@ -96,7 +116,9 @@
     "meaning_es": "tres",
     "meaning_en": "three",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "さん",
+    "katakana": "サン"
   },
   {
     "id": "v_12",
@@ -105,7 +127,9 @@
     "meaning_es": "cuatro",
     "meaning_en": "four",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "よん",
+    "katakana": "ヨン"
   },
   {
     "id": "v_13",
@@ -114,7 +138,9 @@
     "meaning_es": "cinco",
     "meaning_en": "five",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ご",
+    "katakana": "ゴ"
   },
   {
     "id": "v_14",
@@ -123,7 +149,9 @@
     "meaning_es": "seis",
     "meaning_en": "six",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ろく",
+    "katakana": "ロク"
   },
   {
     "id": "v_15",
@@ -132,7 +160,9 @@
     "meaning_es": "siete",
     "meaning_en": "seven",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "なな",
+    "katakana": "ナナ"
   },
   {
     "id": "v_16",
@@ -141,7 +171,9 @@
     "meaning_es": "ocho",
     "meaning_en": "eight",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "はち",
+    "katakana": "ハチ"
   },
   {
     "id": "v_17",
@@ -150,7 +182,9 @@
     "meaning_es": "nueve",
     "meaning_en": "nine",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "きゅう",
+    "katakana": "キュウ"
   },
   {
     "id": "v_18",
@@ -159,7 +193,9 @@
     "meaning_es": "diez",
     "meaning_en": "ten",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "じゅう",
+    "katakana": "ジュウ"
   },
   {
     "id": "v_19",
@@ -168,7 +204,9 @@
     "meaning_es": "cien",
     "meaning_en": "hundred",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ひゃく",
+    "katakana": "ヒャク"
   },
   {
     "id": "v_20",
@@ -177,7 +215,9 @@
     "meaning_es": "mil",
     "meaning_en": "thousand",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "せん",
+    "katakana": "セン"
   },
   {
     "id": "v_21",
@@ -186,7 +226,9 @@
     "meaning_es": "diez mil",
     "meaning_en": "ten thousand",
     "category": "Números y Contadores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "まん",
+    "katakana": "マン"
   },
   {
     "id": "v_22",
@@ -195,7 +237,9 @@
     "meaning_es": "huevo",
     "meaning_en": "egg",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "たまご",
+    "katakana": "タマゴ"
   },
   {
     "id": "v_23",
@@ -204,7 +248,9 @@
     "meaning_es": "agua",
     "meaning_en": "water",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "みず",
+    "katakana": "ミズ"
   },
   {
     "id": "v_24",
@@ -213,7 +259,9 @@
     "meaning_es": "pescado / pez",
     "meaning_en": "fish",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "さかな",
+    "katakana": "サカナ"
   },
   {
     "id": "v_25",
@@ -222,7 +270,9 @@
     "meaning_es": "té verde",
     "meaning_en": "tea",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おちゃ",
+    "katakana": "オチャ"
   },
   {
     "id": "v_26",
@@ -231,7 +281,9 @@
     "meaning_es": "carne",
     "meaning_en": "meat",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "にく",
+    "katakana": "ニク"
   },
   {
     "id": "v_27",
@@ -240,7 +292,9 @@
     "meaning_es": "manzana",
     "meaning_en": "apple",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "りんご",
+    "katakana": "リンゴ"
   },
   {
     "id": "v_28",
@@ -249,7 +303,9 @@
     "meaning_es": "arroz / comida",
     "meaning_en": "rice, meal",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ごはん",
+    "katakana": "ゴハン"
   },
   {
     "id": "v_29",
@@ -258,7 +314,9 @@
     "meaning_es": "verduras",
     "meaning_en": "vegetables",
     "category": "Comidas y Bebidas",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "やさい",
+    "katakana": "ヤサイ"
   },
   {
     "id": "v_30",
@@ -267,7 +325,9 @@
     "meaning_es": "casa",
     "meaning_en": "house",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "いえ",
+    "katakana": "イエ"
   },
   {
     "id": "v_31",
@@ -276,7 +336,9 @@
     "meaning_es": "habitación / cuarto",
     "meaning_en": "room",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "へや",
+    "katakana": "ヘヤ"
   },
   {
     "id": "v_32",
@@ -285,7 +347,9 @@
     "meaning_es": "tienda",
     "meaning_en": "shop, store",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "みせ",
+    "katakana": "ミセ"
   },
   {
     "id": "v_33",
@@ -294,7 +358,9 @@
     "meaning_es": "estación de tren",
     "meaning_en": "station",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "えき",
+    "katakana": "エキ"
   },
   {
     "id": "v_34",
@@ -303,7 +369,9 @@
     "meaning_es": "escuela",
     "meaning_en": "school",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "がっこう",
+    "katakana": "ガッコウ"
   },
   {
     "id": "v_35",
@@ -312,7 +380,9 @@
     "meaning_es": "parque",
     "meaning_en": "park",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "こうえん",
+    "katakana": "コウエン"
   },
   {
     "id": "v_36",
@@ -321,7 +391,9 @@
     "meaning_es": "montaña",
     "meaning_en": "mountain",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "やま",
+    "katakana": "ヤマ"
   },
   {
     "id": "v_37",
@@ -330,7 +402,9 @@
     "meaning_es": "río",
     "meaning_en": "river",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "かわ",
+    "katakana": "カワ"
   },
   {
     "id": "v_38",
@@ -339,7 +413,9 @@
     "meaning_es": "mar",
     "meaning_en": "sea",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "うみ",
+    "katakana": "ウミ"
   },
   {
     "id": "v_39",
@@ -348,7 +424,9 @@
     "meaning_es": "Japón",
     "meaning_en": "Japan",
     "category": "Lugares y Naturaleza",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "にほん",
+    "katakana": "ニホン"
   },
   {
     "id": "v_40",
@@ -357,7 +435,9 @@
     "meaning_es": "rojo",
     "meaning_en": "red",
     "category": "Colores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "あか",
+    "katakana": "アカ"
   },
   {
     "id": "v_41",
@@ -366,7 +446,9 @@
     "meaning_es": "azul",
     "meaning_en": "blue",
     "category": "Colores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "あお",
+    "katakana": "アオ"
   },
   {
     "id": "v_42",
@@ -375,7 +457,9 @@
     "meaning_es": "negro",
     "meaning_en": "black",
     "category": "Colores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "くろ",
+    "katakana": "クロ"
   },
   {
     "id": "v_43",
@@ -384,7 +468,9 @@
     "meaning_es": "blanco",
     "meaning_en": "white",
     "category": "Colores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "しろ",
+    "katakana": "シロ"
   },
   {
     "id": "v_44",
@@ -393,7 +479,9 @@
     "meaning_es": "verde",
     "meaning_en": "green",
     "category": "Colores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "みどり",
+    "katakana": "ミドリ"
   },
   {
     "id": "v_45",
@@ -402,7 +490,9 @@
     "meaning_es": "morado",
     "meaning_en": "purple",
     "category": "Colores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "むらさき",
+    "katakana": "ムラサキ"
   },
   {
     "id": "v_46",
@@ -411,7 +501,9 @@
     "meaning_es": "amarillo",
     "meaning_en": "yellow",
     "category": "Colores",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "きいろ",
+    "katakana": "キイロ"
   },
   {
     "id": "v_47",
@@ -423,7 +515,9 @@
     "group": "Grupo 2 (Ichidan)",
     "polite_masu": "食べます",
     "te_form": "食べて",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "たべる",
+    "katakana": "タベル"
   },
   {
     "id": "v_48",
@@ -435,7 +529,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "飲みます",
     "te_form": "飲んで",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "のむ",
+    "katakana": "ノム"
   },
   {
     "id": "v_49",
@@ -447,7 +543,9 @@
     "group": "Grupo 2 (Ichidan)",
     "polite_masu": "見ます",
     "te_form": "見て",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "みる",
+    "katakana": "ミル"
   },
   {
     "id": "v_50",
@@ -459,7 +557,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "聞きます",
     "te_form": "聞いて",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "きく",
+    "katakana": "キク"
   },
   {
     "id": "v_51",
@@ -471,7 +571,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "読みます",
     "te_form": "読んで",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "よむ",
+    "katakana": "ヨム"
   },
   {
     "id": "v_52",
@@ -483,7 +585,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "書きます",
     "te_form": "書いて",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "かく",
+    "katakana": "カク"
   },
   {
     "id": "v_53",
@@ -495,7 +599,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "話します",
     "te_form": "話して",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "はなす",
+    "katakana": "ハナス"
   },
   {
     "id": "v_54",
@@ -507,7 +613,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "行きます",
     "te_form": "行って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "いく",
+    "katakana": "イク"
   },
   {
     "id": "v_55",
@@ -519,7 +627,9 @@
     "group": "Grupo 3 (Irregular)",
     "polite_masu": "来ます",
     "te_form": "来て",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "くる",
+    "katakana": "クル"
   },
   {
     "id": "v_56",
@@ -531,7 +641,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "帰ります",
     "te_form": "帰って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "かえる",
+    "katakana": "カエル"
   },
   {
     "id": "v_57",
@@ -543,7 +655,9 @@
     "group": "Grupo 2 (Ichidan)",
     "polite_masu": "起きます",
     "te_form": "起きて",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おきる",
+    "katakana": "オキル"
   },
   {
     "id": "v_58",
@@ -555,7 +669,9 @@
     "group": "Grupo 2 (Ichidan)",
     "polite_masu": "寝ます",
     "te_form": "寝て",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ねる",
+    "katakana": "ネル"
   },
   {
     "id": "v_59",
@@ -567,7 +683,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "会います",
     "te_form": "会って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "あう",
+    "katakana": "アウ"
   },
   {
     "id": "v_60",
@@ -579,7 +697,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "買います",
     "te_form": "買って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "かう",
+    "katakana": "カウ"
   },
   {
     "id": "v_61",
@@ -591,7 +711,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "洗います",
     "te_form": "洗って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "あらう",
+    "katakana": "アラウ"
   },
   {
     "id": "v_62",
@@ -603,7 +725,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "待ちます",
     "te_form": "待って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "まつ",
+    "katakana": "マツ"
   },
   {
     "id": "v_63",
@@ -615,7 +739,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "持ちます",
     "te_form": "持って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "もつ",
+    "katakana": "モツ"
   },
   {
     "id": "v_64",
@@ -627,7 +753,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "入ります",
     "te_form": "入って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "はいる",
+    "katakana": "ハイル"
   },
   {
     "id": "v_65",
@@ -639,7 +767,9 @@
     "group": "Grupo 2 (Ichidan)",
     "polite_masu": "出ます",
     "te_form": "出て",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "でる",
+    "katakana": "デル"
   },
   {
     "id": "v_66",
@@ -651,7 +781,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "乗ります",
     "te_form": "乗って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "のる",
+    "katakana": "ノル"
   },
   {
     "id": "v_67",
@@ -663,7 +795,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "立ちます",
     "te_form": "立って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "たつ",
+    "katakana": "タツ"
   },
   {
     "id": "v_68",
@@ -675,7 +809,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "座ります",
     "te_form": "座って",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "すわる",
+    "katakana": "スワル"
   },
   {
     "id": "v_69",
@@ -687,7 +823,9 @@
     "group": "Grupo 2 (Ichidan)",
     "polite_masu": "教えます",
     "te_form": "教えて",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おしえる",
+    "katakana": "オシエル"
   },
   {
     "id": "v_70",
@@ -699,7 +837,9 @@
     "group": "Grupo 3 (Irregular)",
     "polite_masu": "勉強します",
     "te_form": "勉強して",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "べんきょうする",
+    "katakana": "ベンキョウスル"
   },
   {
     "id": "v_71",
@@ -711,7 +851,9 @@
     "group": "Grupo 3 (Irregular)",
     "polite_masu": "します",
     "te_form": "して",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "する",
+    "katakana": "スル"
   },
   {
     "id": "v_72",
@@ -723,7 +865,9 @@
     "group": "Grupo 1 (Godan)",
     "polite_masu": "あります",
     "te_form": "あって",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ある",
+    "katakana": "アル"
   },
   {
     "id": "v_73",
@@ -735,7 +879,9 @@
     "group": "Grupo 2 (Ichidan)",
     "polite_masu": "います",
     "te_form": "いて",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "いる",
+    "katakana": "イル"
   },
   {
     "id": "v_74",
@@ -745,7 +891,9 @@
     "meaning_en": "big",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おおきい",
+    "katakana": "オオキイ"
   },
   {
     "id": "v_75",
@@ -755,7 +903,9 @@
     "meaning_en": "small",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ちいさい",
+    "katakana": "チイサイ"
   },
   {
     "id": "v_76",
@@ -765,7 +915,9 @@
     "meaning_en": "high, expensive",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "たかい",
+    "katakana": "タカイ"
   },
   {
     "id": "v_77",
@@ -775,7 +927,9 @@
     "meaning_en": "cheap",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "やすい",
+    "katakana": "ヤスイ"
   },
   {
     "id": "v_78",
@@ -785,7 +939,9 @@
     "meaning_en": "low",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ひくい",
+    "katakana": "ヒクイ"
   },
   {
     "id": "v_79",
@@ -795,7 +951,9 @@
     "meaning_en": "new",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "あたらしい",
+    "katakana": "アタラシイ"
   },
   {
     "id": "v_80",
@@ -805,7 +963,9 @@
     "meaning_en": "old",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ふるい",
+    "katakana": "フルイ"
   },
   {
     "id": "v_81",
@@ -815,7 +975,9 @@
     "meaning_en": "good",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "いい / よい",
+    "katakana": "イイ / ヨイ"
   },
   {
     "id": "v_82",
@@ -825,7 +987,9 @@
     "meaning_en": "bad",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "わるい",
+    "katakana": "ワルイ"
   },
   {
     "id": "v_83",
@@ -835,7 +999,9 @@
     "meaning_en": "near",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ちかい",
+    "katakana": "チカイ"
   },
   {
     "id": "v_84",
@@ -845,7 +1011,9 @@
     "meaning_en": "far",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "とおい",
+    "katakana": "トオイ"
   },
   {
     "id": "v_85",
@@ -855,7 +1023,9 @@
     "meaning_en": "early",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "はやい",
+    "katakana": "ハヤイ"
   },
   {
     "id": "v_86",
@@ -865,7 +1035,9 @@
     "meaning_en": "fast",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "はやい",
+    "katakana": "ハヤイ"
   },
   {
     "id": "v_87",
@@ -875,7 +1047,9 @@
     "meaning_en": "slow, late",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おそい",
+    "katakana": "オソイ"
   },
   {
     "id": "v_88",
@@ -885,7 +1059,9 @@
     "meaning_en": "hot (weather)",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "あつい",
+    "katakana": "アツイ"
   },
   {
     "id": "v_89",
@@ -895,7 +1071,9 @@
     "meaning_en": "cold (weather)",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "さむい",
+    "katakana": "サムイ"
   },
   {
     "id": "v_90",
@@ -905,7 +1083,9 @@
     "meaning_en": "cold (touch)",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "つめたい",
+    "katakana": "ツメタイ"
   },
   {
     "id": "v_91",
@@ -915,7 +1095,9 @@
     "meaning_en": "delicious",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おいしい",
+    "katakana": "オイシイ"
   },
   {
     "id": "v_92",
@@ -925,7 +1107,9 @@
     "meaning_en": "fun, enjoyable",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "たのしい",
+    "katakana": "タノシイ"
   },
   {
     "id": "v_93",
@@ -935,7 +1119,9 @@
     "meaning_en": "difficult",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "むずかしい",
+    "katakana": "ムズカシイ"
   },
   {
     "id": "v_94",
@@ -945,7 +1131,9 @@
     "meaning_en": "easy",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "やさしい",
+    "katakana": "ヤサシイ"
   },
   {
     "id": "v_95",
@@ -955,7 +1143,9 @@
     "meaning_en": "interesting",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おもしろい",
+    "katakana": "オモシロイ"
   },
   {
     "id": "v_96",
@@ -965,7 +1155,9 @@
     "meaning_en": "boring",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "つまらない",
+    "katakana": "ツマラナイ"
   },
   {
     "id": "v_97",
@@ -975,7 +1167,9 @@
     "meaning_en": "busy",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "いそがしい",
+    "katakana": "イソガシイ"
   },
   {
     "id": "v_98",
@@ -985,7 +1179,9 @@
     "meaning_en": "quiet",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "しずか",
+    "katakana": "シズカ"
   },
   {
     "id": "v_99",
@@ -995,7 +1191,9 @@
     "meaning_en": "healthy, energetic",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "げんき",
+    "katakana": "ゲンキ"
   },
   {
     "id": "v_100",
@@ -1005,7 +1203,9 @@
     "meaning_en": "convenient",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "べんり",
+    "katakana": "ベンリ"
   },
   {
     "id": "v_101",
@@ -1015,7 +1215,9 @@
     "meaning_en": "famous",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ゆうめい",
+    "katakana": "ユウメイ"
   },
   {
     "id": "v_102",
@@ -1025,7 +1227,9 @@
     "meaning_en": "kind",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "しんせつ",
+    "katakana": "シンセツ"
   },
   {
     "id": "v_103",
@@ -1035,7 +1239,9 @@
     "meaning_en": "liked, favorite",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "すき",
+    "katakana": "スキ"
   },
   {
     "id": "v_104",
@@ -1044,7 +1250,9 @@
     "meaning_es": "muy",
     "meaning_en": "very",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "とても",
+    "katakana": "トテモ"
   },
   {
     "id": "v_105",
@@ -1053,7 +1261,9 @@
     "meaning_es": "un poco",
     "meaning_en": "a little",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "すこし",
+    "katakana": "スコシ"
   },
   {
     "id": "v_106",
@@ -1062,7 +1272,9 @@
     "meaning_es": "un poco / un momento",
     "meaning_en": "a bit",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "ちょっと",
+    "katakana": "チョット"
   },
   {
     "id": "v_107",
@@ -1071,7 +1283,9 @@
     "meaning_es": "mucho / bastante",
     "meaning_en": "a lot",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "たくさん",
+    "katakana": "タクサン"
   },
   {
     "id": "v_108",
@@ -1080,7 +1294,9 @@
     "meaning_es": "siempre",
     "meaning_en": "always",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "いつも",
+    "katakana": "イツモ"
   },
   {
     "id": "v_109",
@@ -1089,7 +1305,9 @@
     "meaning_es": "la mayoría / casi todo",
     "meaning_en": "mostly, roughly",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "だいたい",
+    "katakana": "ダイタイ"
   },
   {
     "id": "v_110",
@@ -1098,7 +1316,9 @@
     "meaning_es": "temprano / rápidamente",
     "meaning_en": "early, quickly",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "はやく",
+    "katakana": "ハヤク"
   },
   {
     "id": "v_111",
@@ -1107,7 +1327,9 @@
     "meaning_es": "bien / con frecuencia",
     "meaning_en": "well, often",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "よく",
+    "katakana": "ヨク"
   },
   {
     "id": "v_112",
@@ -1116,7 +1338,9 @@
     "meaning_es": "ya",
     "meaning_en": "already",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "もう",
+    "katakana": "モウ"
   },
   {
     "id": "v_113",
@@ -1125,7 +1349,9 @@
     "meaning_es": "todavía / aún",
     "meaning_en": "still, yet",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "まだ",
+    "katakana": "マダ"
   },
   {
     "id": "v_114",
@@ -1134,7 +1360,9 @@
     "meaning_es": "por supuesto",
     "meaning_en": "of course",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "もちろん",
+    "katakana": "モチロン"
   },
   {
     "id": "v_115",
@@ -1143,7 +1371,9 @@
     "meaning_es": "mucha gente / en multitud",
     "meaning_en": "a crowd of people",
     "category": "Adverbios",
-    "level": "N5"
+    "level": "N5",
+    "hiragana": "おおぜい",
+    "katakana": "オオゼイ"
   },
   {
     "id": "v_116",
@@ -1153,7 +1383,9 @@
     "meaning_en": "wonderful",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "すばらしい",
+    "katakana": "スバラシイ"
   },
   {
     "id": "v_117",
@@ -1163,7 +1395,9 @@
     "meaning_en": "skillful, good at",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "じょうず",
+    "katakana": "ジョウズ"
   },
   {
     "id": "v_118",
@@ -1173,7 +1407,9 @@
     "meaning_en": "one's forte",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "とくい",
+    "katakana": "トクイ"
   },
   {
     "id": "v_119",
@@ -1183,7 +1419,9 @@
     "meaning_en": "dangerous",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "あぶない",
+    "katakana": "アブナイ"
   },
   {
     "id": "v_120",
@@ -1193,7 +1431,9 @@
     "meaning_en": "danger, hazardous",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "きけん",
+    "katakana": "キケン"
   },
   {
     "id": "v_121",
@@ -1203,7 +1443,9 @@
     "meaning_en": "safe",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "あんぜん",
+    "katakana": "アンゼン"
   },
   {
     "id": "v_122",
@@ -1213,7 +1455,9 @@
     "meaning_en": "deep",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ふかい",
+    "katakana": "フカイ"
   },
   {
     "id": "v_123",
@@ -1223,7 +1467,9 @@
     "meaning_en": "shallow",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "あさい",
+    "katakana": "アサイ"
   },
   {
     "id": "v_124",
@@ -1233,7 +1479,9 @@
     "meaning_en": "scary",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "こわい",
+    "katakana": "コワイ"
   },
   {
     "id": "v_125",
@@ -1243,7 +1491,9 @@
     "meaning_en": "lonely, homesick",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "さびしい",
+    "katakana": "サビシイ"
   },
   {
     "id": "v_126",
@@ -1253,7 +1503,9 @@
     "meaning_en": "strict",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "きびしい",
+    "katakana": "キビシイ"
   },
   {
     "id": "v_127",
@@ -1263,7 +1515,9 @@
     "meaning_en": "enthusiastic",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ねっしん",
+    "katakana": "ネッシン"
   },
   {
     "id": "v_128",
@@ -1273,7 +1527,9 @@
     "meaning_en": "sad",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "かなしい",
+    "katakana": "カナシイ"
   },
   {
     "id": "v_129",
@@ -1283,7 +1539,9 @@
     "meaning_en": "special",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "とくべつ",
+    "katakana": "トクベツ"
   },
   {
     "id": "v_130",
@@ -1293,7 +1551,9 @@
     "meaning_en": "bitter",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "にがい",
+    "katakana": "ニガイ"
   },
   {
     "id": "v_131",
@@ -1303,7 +1563,9 @@
     "meaning_en": "noisy, annoying",
     "category": "Adjetivos",
     "type": "い-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "うるさい",
+    "katakana": "ウルサイ"
   },
   {
     "id": "v_132",
@@ -1313,7 +1575,9 @@
     "meaning_en": "appropriate",
     "category": "Adjetivos",
     "type": "な-adjective",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "てきせつ",
+    "katakana": "テキセツ"
   },
   {
     "id": "v_133",
@@ -1322,7 +1586,9 @@
     "meaning_es": "entonces / dicho eso",
     "meaning_en": "then, upon which",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "すると",
+    "katakana": "スルト"
   },
   {
     "id": "v_134",
@@ -1331,7 +1597,9 @@
     "meaning_es": "ya es hora de / pronto",
     "meaning_en": "it's about time, soon",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "そろそろ",
+    "katakana": "ソロソロ"
   },
   {
     "id": "v_135",
@@ -1340,7 +1608,9 @@
     "meaning_es": "en cualquier momento / a punto de",
     "meaning_en": "at any moment",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "いまにも",
+    "katakana": "イマニモ"
   },
   {
     "id": "v_136",
@@ -1349,7 +1619,9 @@
     "meaning_es": "antes / por adelantado",
     "meaning_en": "ahead, before",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "さきに",
+    "katakana": "サキニ"
   },
   {
     "id": "v_137",
@@ -1358,7 +1630,9 @@
     "meaning_es": "al principio / para empezar",
     "meaning_en": "at first, to begin with",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "はじめに",
+    "katakana": "ハジメニ"
   },
   {
     "id": "v_138",
@@ -1367,7 +1641,9 @@
     "meaning_es": "de vez en cuando / raras veces",
     "meaning_en": "occasionally, rarely",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "たまに",
+    "katakana": "タマニ"
   },
   {
     "id": "v_139",
@@ -1376,7 +1652,9 @@
     "meaning_es": "en la medida de lo posible",
     "meaning_en": "as much as possible",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "できるだけ",
+    "katakana": "デキルダケ"
   },
   {
     "id": "v_140",
@@ -1385,7 +1663,9 @@
     "meaning_es": "firmemente / con ganas",
     "meaning_en": "firmly, diligently",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "しっかり",
+    "katakana": "シッカリ"
   },
   {
     "id": "v_141",
@@ -1394,7 +1674,9 @@
     "meaning_es": "sin falta / ciertamente",
     "meaning_en": "by all means, certainly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "かならず",
+    "katakana": "カナラズ"
   },
   {
     "id": "v_142",
@@ -1403,7 +1685,9 @@
     "meaning_es": "por lo tanto / por eso",
     "meaning_en": "therefore, so",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "だから",
+    "katakana": "ダカラ"
   },
   {
     "id": "v_143",
@@ -1412,7 +1696,9 @@
     "meaning_es": "finalmente / al fin",
     "meaning_en": "finally, at last",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "とうとう",
+    "katakana": "トウトウ"
   },
   {
     "id": "v_144",
@@ -1421,7 +1707,9 @@
     "meaning_es": "por ejemplo",
     "meaning_en": "for example",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "たとえば",
+    "katakana": "タトエバ"
   },
   {
     "id": "v_145",
@@ -1430,7 +1718,9 @@
     "meaning_es": "directamente",
     "meaning_en": "directly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ちょくせつ",
+    "katakana": "チョクセツ"
   },
   {
     "id": "v_146",
@@ -1439,7 +1729,9 @@
     "meaning_es": "no particularmente (con negativo)",
     "meaning_en": "not particularly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "べつに",
+    "katakana": "ベツニ"
   },
   {
     "id": "v_147",
@@ -1448,7 +1740,9 @@
     "meaning_es": "ordenadamente / como corresponde",
     "meaning_en": "properly, neatly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "きちんと",
+    "katakana": "キチント"
   },
   {
     "id": "v_148",
@@ -1457,7 +1751,9 @@
     "meaning_es": "claramente",
     "meaning_en": "clearly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "はっきり",
+    "katakana": "ハッキリ"
   },
   {
     "id": "v_149",
@@ -1466,7 +1762,9 @@
     "meaning_es": "bastante / considerablemente",
     "meaning_en": "considerably, quite",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "かなり",
+    "katakana": "カナリ"
   },
   {
     "id": "v_150",
@@ -1475,7 +1773,9 @@
     "meaning_es": "suficientemente",
     "meaning_en": "sufficiently",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "じゅうぶんに",
+    "katakana": "ジュウブンニ"
   },
   {
     "id": "v_151",
@@ -1484,7 +1784,9 @@
     "meaning_es": "bastante / mucho",
     "meaning_en": "extremely, a lot",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ずいぶん",
+    "katakana": "ズイブン"
   },
   {
     "id": "v_152",
@@ -1493,7 +1795,9 @@
     "meaning_es": "sumamente / en extremo",
     "meaning_en": "extremely",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ひじょうに",
+    "katakana": "ヒジョウニ"
   },
   {
     "id": "v_153",
@@ -1502,7 +1806,9 @@
     "meaning_es": "ni un poco (con negativo)",
     "meaning_en": "not in the least",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ちっとも",
+    "katakana": "チットモ"
   },
   {
     "id": "v_154",
@@ -1511,7 +1817,9 @@
     "meaning_es": "jamás / de ninguna manera",
     "meaning_en": "never, by no means",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "けっして",
+    "katakana": "ケッシテ"
   },
   {
     "id": "v_155",
@@ -1520,7 +1828,9 @@
     "meaning_es": "absolutamente",
     "meaning_en": "definitely, absolutely",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ぜったいに",
+    "katakana": "ゼッタイニ"
   },
   {
     "id": "v_156",
@@ -1529,7 +1839,9 @@
     "meaning_es": "normalmente / por lo general",
     "meaning_en": "normally",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ふつうは",
+    "katakana": "フツウハ"
   },
   {
     "id": "v_157",
@@ -1538,7 +1850,9 @@
     "meaning_es": "de repente",
     "meaning_en": "suddenly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "きゅうに",
+    "katakana": "キュウニ"
   },
   {
     "id": "v_158",
@@ -1547,7 +1861,9 @@
     "meaning_es": "completamente / del todo",
     "meaning_en": "completely",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "すっかり",
+    "katakana": "スッカリ"
   },
   {
     "id": "v_159",
@@ -1556,7 +1872,9 @@
     "meaning_es": "cada vez más / sin parar",
     "meaning_en": "steadily, rapidly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "どんどん",
+    "katakana": "ドンドン"
   },
   {
     "id": "v_160",
@@ -1565,7 +1883,9 @@
     "meaning_es": "por un tiempo / un rato",
     "meaning_en": "for a while",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "しばらく",
+    "katakana": "シバラク"
   },
   {
     "id": "v_161",
@@ -1574,7 +1894,9 @@
     "meaning_es": "casi todo / casi nada",
     "meaning_en": "almost, hardly",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "ほとんど",
+    "katakana": "ホトンド"
   },
   {
     "id": "v_162",
@@ -1583,7 +1905,9 @@
     "meaning_es": "hace un momento",
     "meaning_en": "a little while ago",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "さっき",
+    "katakana": "サッキ"
   },
   {
     "id": "v_163",
@@ -1592,7 +1916,9 @@
     "meaning_es": "recientemente / últimamente",
     "meaning_en": "recently",
     "category": "Adverbios",
-    "level": "N4"
+    "level": "N4",
+    "hiragana": "さいきん",
+    "katakana": "サイキン"
   },
   {
     "id": "v_164",
@@ -1615,5 +1941,225 @@
     "meaning_en": "You (informal / dear)",
     "category": "Personas y Pronombres",
     "level": "N5"
+  },
+  {
+    "kanji": "土産",
+    "hiragana": "みやげ",
+    "katakana": "ミヤゲ",
+    "kana": "みやげ",
+    "meaning_es": "Recuerdo / Souvenir",
+    "meaning_en": "Souvenir / Gift",
+    "category": "Viajes y Cultura",
+    "level": "N5",
+    "id": "v_166"
+  },
+  {
+    "kanji": "教室",
+    "hiragana": "きょうしつ",
+    "katakana": "キョウシツ",
+    "kana": "きょうしつ",
+    "meaning_es": "Aula / Salón de clases",
+    "meaning_en": "Classroom",
+    "category": "Educación",
+    "level": "N5",
+    "id": "v_167"
+  },
+  {
+    "kanji": "図書館",
+    "hiragana": "としょかん",
+    "katakana": "トショカン",
+    "kana": "としょかん",
+    "meaning_es": "Biblioteca",
+    "meaning_en": "Library",
+    "category": "Educación",
+    "level": "N5",
+    "id": "v_168"
+  },
+  {
+    "kanji": "留学生",
+    "hiragana": "りゅうがくせい",
+    "katakana": "リュウガクセイ",
+    "kana": "りゅうがくせい",
+    "meaning_es": "Estudiante extranjero",
+    "meaning_en": "International student",
+    "category": "Educación",
+    "level": "N5",
+    "id": "v_169"
+  },
+  {
+    "kanji": "宝物",
+    "hiragana": "たからもの",
+    "katakana": "タカラモノ",
+    "kana": "たからもの",
+    "meaning_es": "Tesoro / Objeto preciado",
+    "meaning_en": "Treasure",
+    "category": "Vida Diaria",
+    "level": "N5",
+    "id": "v_170"
+  },
+  {
+    "kanji": "電話番号",
+    "hiragana": "でんわばんごう",
+    "katakana": "デンワバンゴウ",
+    "kana": "でんわばんごう",
+    "meaning_es": "Número de teléfono",
+    "meaning_en": "Telephone number",
+    "category": "Vida Diaria",
+    "level": "N5",
+    "id": "v_171"
+  },
+  {
+    "kanji": "二つ",
+    "hiragana": "ふたつ",
+    "katakana": "フタツ",
+    "kana": "ふたつ",
+    "meaning_es": "Dos cosas (contador general)",
+    "meaning_en": "Two things",
+    "category": "Números y Cantidades",
+    "level": "N5",
+    "id": "v_172"
+  },
+  {
+    "kanji": "試験",
+    "hiragana": "しけん",
+    "katakana": "シケン",
+    "kana": "しけん",
+    "meaning_es": "Examen / Prueba",
+    "meaning_en": "Exam / Test",
+    "category": "Educación",
+    "level": "N5",
+    "id": "v_173"
+  },
+  {
+    "kanji": "一度",
+    "hiragana": "いちど",
+    "katakana": "イチド",
+    "kana": "いちど",
+    "meaning_es": "Una vez",
+    "meaning_en": "Once / One time",
+    "category": "Tiempo",
+    "level": "N5",
+    "id": "v_174"
+  },
+  {
+    "kanji": "健康",
+    "hiragana": "けんこう",
+    "katakana": "ケンコウ",
+    "kana": "けんこう",
+    "meaning_es": "Salud",
+    "meaning_en": "Health",
+    "category": "Salud",
+    "level": "N5",
+    "id": "v_175"
+  },
+  {
+    "kanji": "午前",
+    "hiragana": "ごぜん",
+    "katakana": "ゴゼン",
+    "kana": "ごぜん",
+    "meaning_es": "Mañana / A.M.",
+    "meaning_en": "Morning / AM",
+    "category": "Tiempo",
+    "level": "N5",
+    "id": "v_176"
+  },
+  {
+    "kanji": "全員",
+    "hiragana": "ぜんいん",
+    "katakana": "ゼンイン",
+    "kana": "ぜんいん",
+    "meaning_es": "Todos los miembros / Todos",
+    "meaning_en": "Everyone / All members",
+    "category": "Personas y Profesiones",
+    "level": "N5",
+    "id": "v_177"
+  },
+  {
+    "kanji": "土曜日",
+    "hiragana": "どようび",
+    "katakana": "ドヨウビ",
+    "kana": "どようび",
+    "meaning_es": "Sábado",
+    "meaning_en": "Saturday",
+    "category": "Tiempo",
+    "level": "N5",
+    "id": "v_178"
+  },
+  {
+    "kanji": "読書",
+    "hiragana": "どくしょ",
+    "katakana": "ドクショ",
+    "kana": "どくしょ",
+    "meaning_es": "Lectura de libros",
+    "meaning_en": "Reading books",
+    "category": "Pasatiempos",
+    "level": "N5",
+    "id": "v_179"
+  },
+  {
+    "kanji": "小説",
+    "hiragana": "しょうせつ",
+    "katakana": "ショウセツ",
+    "kana": "しょうせつ",
+    "meaning_es": "Novela",
+    "meaning_en": "Novel",
+    "category": "Pasatiempos",
+    "level": "N5",
+    "id": "v_180"
+  },
+  {
+    "kanji": "階段",
+    "hiragana": "かいだん",
+    "katakana": "カイダン",
+    "kana": "かいだん",
+    "meaning_es": "Escalera",
+    "meaning_en": "Stairs",
+    "category": "Lugares y Ciudad",
+    "level": "N5",
+    "id": "v_181"
+  },
+  {
+    "kanji": "郵便局",
+    "hiragana": "ゆうびんきょく",
+    "katakana": "ユウビンキョク",
+    "kana": "ゆうびんきょく",
+    "meaning_es": "Oficina de correos",
+    "meaning_en": "Post office",
+    "category": "Lugares y Ciudad",
+    "level": "N5",
+    "id": "v_182"
+  },
+  {
+    "kanji": "心配",
+    "hiragana": "しんぱい",
+    "katakana": "シンパイ",
+    "kana": "しんぱい",
+    "meaning_es": "Preocupación",
+    "meaning_en": "Worry / Concern",
+    "category": "Emociones",
+    "level": "N5",
+    "id": "v_183"
+  },
+  {
+    "kanji": "遅刻",
+    "hiragana": "ちこく",
+    "katakana": "チコク",
+    "kana": "ちこく",
+    "meaning_es": "Llegada tarde / Retraso",
+    "meaning_en": "Lateness / Tardy",
+    "category": "Vida Diaria",
+    "level": "N5",
+    "id": "v_184"
+  },
+  {
+    "kanji": "約束",
+    "hiragana": "やくそく",
+    "katakana": "ヤクソク",
+    "kana": "やくそく",
+    "meaning_es": "Promesa / Cita pactada",
+    "meaning_en": "Promise / Appointment",
+    "category": "Vida Diaria",
+    "level": "N5",
+    "id": "v_185"
   }
 ]
