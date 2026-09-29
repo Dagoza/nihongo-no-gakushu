@@ -255,9 +255,17 @@ export function AppProvider({ children }) {
       if (target === '/story') {
         target += `?id=${encodeURIComponent(extraParam)}`;
       } else if (target === '/curriculum') {
-        target += `?step=${encodeURIComponent(extraParam)}`;
+        const paramStr = String(extraParam);
+        if (paramStr.includes('#')) {
+          const [stepPart, hashPart] = paramStr.split('#');
+          target += `?step=${encodeURIComponent(stepPart)}#${hashPart}`;
+        } else {
+          target += `?step=${encodeURIComponent(paramStr)}`;
+        }
       } else if (target === '/kanji') {
         target += `?draw=${encodeURIComponent(extraParam)}`;
+      } else if (target === '/nhk') {
+        target += `?lesson=${encodeURIComponent(extraParam)}&tab=practice`;
       }
     }
     router.push(target);

@@ -49,6 +49,7 @@ function AppShellContent({ children }) {
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onSignOut={handleSignOut}
         onTriggerSync={handleTriggerSync}
+        userState={appState}
       />
 
       {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}

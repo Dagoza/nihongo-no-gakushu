@@ -91,13 +91,21 @@ export default function ConversationTab({
     return true;
   });
 
-  // Exercises filtered by current active category
+  const [exerciseStatusFilter, setExerciseStatusFilter] = useState('all'); // 'all' | 'pending' | 'completed'
+
+  const convCompletedCount = allExercises.filter(ex => !!appState?.completedExercises?.[ex.id]).length;
+  const convPendingCount = allExercises.length - convCompletedCount;
+
+  // Exercises filtered by current active category and status
   const filteredExercises = allExercises.filter(ex => {
-    if (filterType === 'all') return true;
-    return ex.type === filterType;
+    const matchType = filterType === 'all' || ex.type === filterType;
+    const isCompleted = !!appState?.completedExercises?.[ex.id];
+    if (exerciseStatusFilter === 'completed' && !isCompleted) return false;
+    if (exerciseStatusFilter === 'pending' && isCompleted) return false;
+    return matchType;
   });
 
-  const currentExercise = filteredExercises[currentExIndex] || filteredExercises[0];
+  const currentExercise = filteredExercises[currentExIndex] || filteredExercises[0] || null;
 
   const toggleLessonCompletion = (lessonNum) => {
     if (!onUpdateState || !appState) return;
@@ -143,9 +151,14 @@ export default function ConversationTab({
     if (isCorrect) {
       audioManager.speak(option);
       if (onUpdateState && appState) {
+        const alreadyDone = !!appState.completedExercises?.[currentExercise.id];
         onUpdateState({
           ...appState,
-          xp: (appState.xp || 0) + 10
+          xp: (appState.xp || 0) + (!alreadyDone ? 10 : 0),
+          completedExercises: {
+            ...(appState.completedExercises || {}),
+            [currentExercise.id]: true
+          }
         });
       }
     }
@@ -571,10 +584,10 @@ export default function ConversationTab({
       )}
 
       {/* SUBTAB 2: INTERACTIVE EXERCISES */}
-      {activeSubTab === 'practice' && currentExercise && (
+      {activeSubTab === 'practice' && (
         <div className="card" style={{ maxWidth: 820, margin: '0 auto', padding: '24px 28px' }}>
           {/* Practice Filter Pills */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 12 }}>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button
                 className={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-outline'}`}
@@ -628,25 +641,85 @@ export default function ConversationTab({
             </div>
           </div>
 
-          {/* Exercise Card Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: 14, marginBottom: 18 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <span className="vocab-tag" style={{ background: 'var(--accent-bg)', color: 'var(--accent)' }}>
-                {currentExercise.type_label}
-              </span>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                Basado en la Lección {currentExercise.lesson}
-              </span>
-              {completedConversations[currentExercise.lesson] && (
-                <span style={{ fontSize: '0.75rem', color: '#15803d', background: 'rgba(34, 197, 94, 0.12)', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>
-                  ✓ Lección estudiada
-                </span>
-              )}
-            </div>
-            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-              {currentExIndex + 1} de {filteredExercises.length}
-            </span>
+          {/* Status filter row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 18, borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
+            {[
+              { id: 'all', label: `Todos (${allExercises.length})` },
+              { id: 'pending', label: `Pendientes (${convPendingCount})` },
+              { id: 'completed', label: `Superados (${convCompletedCount})` }
+            ].map(st => (
+              <button
+                key={st.id}
+                className={`btn btn-sm ${exerciseStatusFilter === st.id ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => {
+                  setExerciseStatusFilter(st.id);
+                  setCurrentExIndex(0);
+                  setSelectedAnswer(null);
+                }}
+                style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+              >
+                {st.label}
+              </button>
+            ))}
           </div>
+
+          {!currentExercise ? (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🎉</div>
+              <p style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 8 }}>
+                {exerciseStatusFilter === 'pending'
+                  ? '¡Excelente trabajo! Has completado todos los ejercicios de conversación en esta categoría.'
+                  : 'No hay ejercicios disponibles con este filtro.'}
+              </p>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setExerciseStatusFilter('all');
+                  setFilterType('all');
+                  setCurrentExIndex(0);
+                  setSelectedAnswer(null);
+                }}
+              >
+                Restablecer filtros
+              </button>
+            </div>
+          ) : (
+            <div>
+              {/* Exercise Card Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: 14, marginBottom: 18 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span className="vocab-tag" style={{ background: 'var(--accent-bg)', color: 'var(--accent)' }}>
+                    {currentExercise.type_label}
+                  </span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Basado en la Lección {currentExercise.lesson}
+                  </span>
+                  {completedConversations[currentExercise.lesson] && (
+                    <span style={{ fontSize: '0.75rem', color: '#15803d', background: 'rgba(34, 197, 94, 0.12)', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>
+                      ✓ Lección estudiada
+                    </span>
+                  )}
+                  {appState?.completedExercises?.[currentExercise.id] && (
+                    <span style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      background: 'rgba(16, 185, 129, 0.15)',
+                      color: 'var(--success, #10b981)',
+                      borderRadius: 'var(--radius-full)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}>
+                      <Check size={12} /> Superado (+10 XP)
+                    </span>
+                  )}
+                </div>
+                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                  {currentExIndex + 1} de {filteredExercises.length}
+                </span>
+              </div>
 
           {/* Question Box */}
           <div style={{ background: 'var(--bg-main)', borderRadius: 'var(--radius-lg)', padding: '20px 22px', border: '1px solid var(--border)', marginBottom: 22 }}>
@@ -786,5 +859,7 @@ export default function ConversationTab({
         </div>
       )}
     </div>
-  );
+  )}
+</div>
+);
 }

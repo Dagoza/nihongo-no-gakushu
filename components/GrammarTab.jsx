@@ -16,8 +16,10 @@ export default function GrammarTab({
   onParamsChange
 }) {
   const [filterParticle, setFilterParticle] = useState(initialParticle || 'all');
+  const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'pending' | 'mastered'
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [quizActive, setQuizActive] = useState(!!initialQuiz);
+  const [quizFilter, setQuizFilter] = useState('all'); // 'all' | 'pending'
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizFeedback, setQuizFeedback] = useState(null); // { selected, isCorrect, correct, sentence, role }
   const [imeInput, setImeInput] = useState('');
@@ -52,6 +54,10 @@ export default function GrammarTab({
 
   const filteredParticles = useMemo(() => {
     return particlesData.filter(p => {
+      const isMastered = !!appState.masteredParticles?.[p.id];
+      if (filterStatus === 'mastered' && !isMastered) return false;
+      if (filterStatus === 'pending' && isMastered) return false;
+
       const matchFilter = filterParticle === 'all' || p.particle === filterParticle;
       const search = searchTerm.trim().toLowerCase();
       if (!search) return matchFilter;
@@ -69,9 +75,10 @@ export default function GrammarTab({
 
       return matchFilter && (matchParticle || matchRoleEs || matchRoleEn || matchFormula || matchExamples);
     });
-  }, [particlesData, filterParticle, searchTerm]);
+  }, [particlesData, filterParticle, filterStatus, searchTerm, appState.masteredParticles]);
 
   const masteredCount = particlesData.filter(p => !!appState.masteredParticles?.[p.id]).length;
+  const pendingCount = particlesData.length - masteredCount;
   const progressPercent = Math.round((masteredCount / Math.max(1, particlesData.length)) * 100);
 
   const toggleParticleMastery = (id) => {
@@ -90,18 +97,22 @@ export default function GrammarTab({
   const quizQuestions = useMemo(() => {
     const questions = [];
     particlesData.forEach(p => {
+      const isMastered = !!appState.masteredParticles?.[p.id];
+      if (quizFilter === 'pending' && isMastered) return;
+
       if (p.quiz_items && p.quiz_items.length > 0) {
         p.quiz_items.forEach(q => {
           questions.push({
             ...q,
             particleRole: p.role_es,
-            particleName: p.particle
+            particleName: p.particle,
+            particleId: p.id
           });
         });
       }
     });
     return questions.sort(() => 0.5 - Math.random());
-  }, [quizActive, particlesData]);
+  }, [quizActive, particlesData, quizFilter, appState.masteredParticles]);
 
   const currentQuiz = quizQuestions[quizIndex];
 
@@ -117,10 +128,16 @@ export default function GrammarTab({
     });
 
     if (isCorrect) {
-      const newXp = (appState.xp || 0) + 15;
+      const exId = `PARTICLE-${currentQuiz.particleName}-${currentQuiz.sentence.slice(0, 10)}`;
+      const alreadyDone = !!appState.completedExercises?.[exId];
+      const newXp = (appState.xp || 0) + (!alreadyDone ? 15 : 0);
       onUpdateState({
         ...appState,
-        xp: newXp
+        xp: newXp,
+        completedExercises: {
+          ...(appState.completedExercises || {}),
+          [exId]: true
+        }
       });
       audioManager.speak(currentQuiz.sentence);
     }
@@ -219,6 +236,24 @@ export default function GrammarTab({
                   }}
                 >
                   {p === 'all' ? 'Todas' : p}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', borderLeft: '1px solid var(--border)', paddingLeft: 10 }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
+              {[
+                { id: 'all', label: `Todas (${particlesData.length})` },
+                { id: 'pending', label: `Por aprender (${pendingCount})` },
+                { id: 'mastered', label: `Dominadas (${masteredCount})` }
+              ].map(st => (
+                <button
+                  key={st.id}
+                  className={`btn ${filterStatus === st.id ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                  onClick={() => setFilterStatus(st.id)}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                >
+                  {st.label}
                 </button>
               ))}
             </div>
@@ -336,7 +371,7 @@ export default function GrammarTab({
         <div className="quiz-container" style={{ maxWidth: 700 }}>
           {currentQuiz ? (
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
                 <button 
                   className="btn btn-outline btn-sm"
                   onClick={() => {
@@ -346,6 +381,25 @@ export default function GrammarTab({
                 >
                   <ArrowLeft size={16} /> Volver al Checklist
                 </button>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-main)', padding: '3px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Preguntas:</span>
+                  <button
+                    className={`btn btn-sm ${quizFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => { setQuizFilter('all'); setQuizIndex(0); setQuizFeedback(null); }}
+                    style={{ fontSize: '0.78rem', padding: '3px 8px', height: 'auto' }}
+                  >
+                    Todas
+                  </button>
+                  <button
+                    className={`btn btn-sm ${quizFilter === 'pending' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => { setQuizFilter('pending'); setQuizIndex(0); setQuizFeedback(null); }}
+                    style={{ fontSize: '0.78rem', padding: '3px 8px', height: 'auto' }}
+                  >
+                    Por aprender ({pendingCount})
+                  </button>
+                </div>
+
                 <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                   Pregunta {quizIndex + 1} de {quizQuestions.length}
                 </span>

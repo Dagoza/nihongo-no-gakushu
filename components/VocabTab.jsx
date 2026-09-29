@@ -374,7 +374,21 @@ export default function VocabTab({
   };
 
   // N4 Exercise Handler
-  const currentExercise = n4Exercises[exerciseIndex];
+  const [exerciseStatusFilter, setExerciseStatusFilter] = useState('all'); // 'all' | 'pending' | 'completed'
+
+  const filteredN4Exercises = useMemo(() => {
+    return n4Exercises.filter(ex => {
+      const isCompleted = !!appState?.completedExercises?.[ex.id];
+      if (exerciseStatusFilter === 'completed') return isCompleted;
+      if (exerciseStatusFilter === 'pending') return !isCompleted;
+      return true;
+    });
+  }, [n4Exercises, exerciseStatusFilter, appState?.completedExercises]);
+
+  const n4CompletedCount = n4Exercises.filter(ex => !!appState?.completedExercises?.[ex.id]).length;
+  const n4PendingCount = n4Exercises.length - n4CompletedCount;
+
+  const currentExercise = filteredN4Exercises[exerciseIndex] || filteredN4Exercises[0] || null;
 
   const handleSelectExerciseOption = (opt) => {
     if (!currentExercise || exerciseAnswer) return;
@@ -382,10 +396,15 @@ export default function VocabTab({
     setExerciseAnswer({ selected: opt, isCorrect });
 
     if (isCorrect) {
-      const newXp = (appState.xp || 0) + 15;
+      const alreadyDone = !!appState?.completedExercises?.[currentExercise.id];
+      const newXp = (appState.xp || 0) + (!alreadyDone ? 15 : 0);
       onUpdateState({
         ...appState,
-        xp: newXp
+        xp: newXp,
+        completedExercises: {
+          ...(appState.completedExercises || {}),
+          [currentExercise.id]: true
+        }
       });
       audioManager.speak(currentExercise.sentence);
     }
@@ -393,12 +412,12 @@ export default function VocabTab({
 
   const handleNextExercise = () => {
     setExerciseAnswer(null);
-    setExerciseIndex((prev) => (prev + 1) % n4Exercises.length);
+    setExerciseIndex((prev) => (prev + 1) % Math.max(1, filteredN4Exercises.length));
   };
 
   const handlePrevExercise = () => {
     setExerciseAnswer(null);
-    setExerciseIndex((prev) => (prev - 1 + n4Exercises.length) % n4Exercises.length);
+    setExerciseIndex((prev) => (prev - 1 + Math.max(1, filteredN4Exercises.length)) % Math.max(1, filteredN4Exercises.length));
   };
 
   return (
@@ -965,91 +984,158 @@ export default function VocabTab({
       )}
 
       {/* MODE 3: N4 CONTEXT EXERCISES */}
-      {mode === 'n4_exercises' && currentExercise && (
+      {mode === 'n4_exercises' && (
         <div className="quiz-container" style={{ maxWidth: 720 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <span className="vocab-tag">N4 · Ejercicio en Contexto</span>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              Ejercicio {exerciseIndex + 1} de {n4Exercises.length}
-            </span>
-          </div>
-
-          <div className="quiz-question-box">
-            <p style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: 12 }}>
-              🇪🇸 {currentExercise.prompt_es}
-            </p>
-
-            <div className="quiz-sentence jp-text" style={{ fontSize: '1.4rem', lineHeight: 2, marginBottom: 14 }}>
-              {currentExercise.masked}
+          {/* Status filter bar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
+              {[
+                { id: 'all', label: `Todos (${n4Exercises.length})` },
+                { id: 'pending', label: `Pendientes (${n4PendingCount})` },
+                { id: 'completed', label: `Superados (${n4CompletedCount})` }
+              ].map(st => (
+                <button
+                  key={st.id}
+                  className={`btn btn-sm ${exerciseStatusFilter === st.id ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => {
+                    setExerciseStatusFilter(st.id);
+                    setExerciseIndex(0);
+                    setExerciseAnswer(null);
+                  }}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                >
+                  {st.label}
+                </button>
+              ))}
             </div>
 
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              Elige la opción correcta para completar la oración:
-            </p>
+            {currentExercise && (
+              <span style={{ fontSize: '0.88rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                Ejercicio {exerciseIndex + 1} de {filteredN4Exercises.length}
+              </span>
+            )}
           </div>
 
-          {/* Options Grid */}
-          <div className="quiz-options-grid">
-            {currentExercise.options.map((opt) => {
-              const isSelected = exerciseAnswer?.selected === opt;
-              const isCorrectTarget = opt === currentExercise.correct;
-              let btnClass = 'quiz-option-btn jp-text';
-              if (exerciseAnswer) {
-                if (isCorrectTarget) btnClass += ' correct';
-                else if (isSelected && !exerciseAnswer.isCorrect) btnClass += ' wrong';
-              }
+          {!currentExercise ? (
+            <div className="card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🎉</div>
+              <p style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 8 }}>
+                {exerciseStatusFilter === 'pending'
+                  ? '¡Excelente trabajo! Has completado todos los ejercicios de contexto N4.'
+                  : 'No hay ejercicios en esta categoría.'}
+              </p>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setExerciseStatusFilter('all');
+                  setExerciseIndex(0);
+                  setExerciseAnswer(null);
+                }}
+              >
+                Ver todos los ejercicios
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <span className="vocab-tag">N4 · Ejercicio en Contexto</span>
+                {appState?.completedExercises?.[currentExercise.id] && (
+                  <span style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    padding: '3px 8px',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    color: 'var(--success)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: 999,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}>
+                    ✓ Superado (+15 XP)
+                  </span>
+                )}
+              </div>
 
-              return (
-                <button
-                  key={opt}
-                  className={btnClass}
-                  onClick={() => handleSelectExerciseOption(opt)}
-                  disabled={!!exerciseAnswer}
+              <div className="quiz-question-box">
+                <p style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: 12 }}>
+                  🇪🇸 {currentExercise.prompt_es}
+                </p>
+
+                <div className="quiz-sentence jp-text" style={{ fontSize: '1.4rem', lineHeight: 2, marginBottom: 14 }}>
+                  {currentExercise.masked}
+                </div>
+
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  Elige la opción correcta para completar la oración:
+                </p>
+              </div>
+
+              {/* Options Grid */}
+              <div className="quiz-options-grid">
+                {currentExercise.options.map((opt) => {
+                  const isSelected = exerciseAnswer?.selected === opt;
+                  const isCorrectTarget = opt === currentExercise.correct;
+                  let btnClass = 'quiz-option-btn jp-text';
+                  if (exerciseAnswer) {
+                    if (isCorrectTarget) btnClass += ' correct';
+                    else if (isSelected && !exerciseAnswer.isCorrect) btnClass += ' wrong';
+                  }
+
+                  return (
+                    <button
+                      key={opt}
+                      className={btnClass}
+                      onClick={() => handleSelectExerciseOption(opt)}
+                      disabled={!!exerciseAnswer}
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Feedback Explanation */}
+              {exerciseAnswer && (
+                <div 
+                  style={{ 
+                    marginTop: 20, 
+                    padding: '16px 20px', 
+                    borderRadius: 'var(--radius-md)', 
+                    background: exerciseAnswer.isCorrect ? 'var(--success-bg)' : 'var(--danger-bg)',
+                    border: `1px solid ${exerciseAnswer.isCorrect ? 'var(--success)' : 'var(--danger)'}`
+                  }}
                 >
-                  {opt}
+                  <div style={{ fontWeight: 700, color: exerciseAnswer.isCorrect ? 'var(--success)' : 'var(--danger)', marginBottom: 6 }}>
+                    {exerciseAnswer.isCorrect ? '🎉 ¡Excelente! (+15 XP)' : `❌ Respuesta correcta: ${currentExercise.correct}`}
+                  </div>
+                  <div style={{ fontSize: '0.95rem', color: 'var(--text-main)', marginBottom: 8 }}>
+                    {currentExercise.explanation}
+                  </div>
+                  <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span>{currentExercise.sentence}</span>
+                    <button 
+                      className="audio-btn" 
+                      style={{ width: 30, height: 30 }}
+                      onClick={() => audioManager.speak(currentExercise.sentence)}
+                    >
+                      <Volume2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
+                <button className="btn btn-outline btn-sm" onClick={handlePrevExercise}>
+                  <ArrowLeft size={16} /> Anterior
                 </button>
-              );
-            })}
-          </div>
-
-          {/* Feedback Explanation */}
-          {exerciseAnswer && (
-            <div 
-              style={{ 
-                marginTop: 20, 
-                padding: '16px 20px', 
-                borderRadius: 'var(--radius-md)', 
-                background: exerciseAnswer.isCorrect ? 'var(--success-bg)' : 'var(--danger-bg)',
-                border: `1px solid ${exerciseAnswer.isCorrect ? 'var(--success)' : 'var(--danger)'}`
-              }}
-            >
-              <div style={{ fontWeight: 700, color: exerciseAnswer.isCorrect ? 'var(--success)' : 'var(--danger)', marginBottom: 6 }}>
-                {exerciseAnswer.isCorrect ? '🎉 ¡Excelente! (+15 XP)' : `❌ Respuesta correcta: ${currentExercise.correct}`}
-              </div>
-              <div style={{ fontSize: '0.95rem', color: 'var(--text-main)', marginBottom: 8 }}>
-                {currentExercise.explanation}
-              </div>
-              <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span>{currentExercise.sentence}</span>
-                <button 
-                  className="audio-btn" 
-                  style={{ width: 30, height: 30 }}
-                  onClick={() => audioManager.speak(currentExercise.sentence)}
-                >
-                  <Volume2 size={16} />
+                <button className="btn btn-outline btn-sm" onClick={handleNextExercise}>
+                  Siguiente <ArrowRight size={16} />
                 </button>
               </div>
             </div>
           )}
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
-            <button className="btn btn-outline btn-sm" onClick={handlePrevExercise}>
-              <ArrowLeft size={16} /> Anterior
-            </button>
-            <button className="btn btn-outline btn-sm" onClick={handleNextExercise}>
-              Siguiente <ArrowRight size={16} />
-            </button>
-          </div>
         </div>
       )}
 

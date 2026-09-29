@@ -41,12 +41,41 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const [quizFeedback, setQuizFeedback] = useState({}); // { [exerciseId]: { isCorrect, explanation } }
 
   React.useEffect(() => {
-    if (initialStep !== undefined) {
+    if (initialStep !== undefined && initialStep !== null) {
       setSelectedStepNum(initialStep);
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          if (window.location.hash === '#exercises') {
+            const exSection = document.getElementById('exercises-section');
+            if (exSection) {
+              exSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              return;
+            }
+          }
+          const detail = document.querySelector('.curriculum-detail');
+          if (detail) {
+            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 150);
+      }
     }
   }, [initialStep]);
 
   const selectedStep = steps.find(s => s.step === selectedStepNum) || null;
+
+  // Temarios revisados con ejercicios pendientes
+  const reviewedStepsWithPendingExercises = React.useMemo(() => {
+    return steps.filter(step => {
+      const isStepMarked = !!userState?.completedSteps?.[step.step];
+      const hasAnyCanDo = (step.can_do || []).some(cd => !!userState?.completedCanDos?.[cd.id]);
+      const isReviewed = isStepMarked || hasAnyCanDo;
+      if (!isReviewed) return false;
+      const stepExercises = step.exercises || [];
+      if (stepExercises.length === 0) return false;
+      const pending = stepExercises.filter(ex => !userState?.completedExercises?.[ex.id]);
+      return pending.length > 0;
+    });
+  }, [steps, userState]);
 
   // Theme step mapping
   const themeSteps = {
@@ -533,7 +562,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           const allCompleted = completedExCount === selectedStep.exercises.length;
 
           return (
-            <div className="card" style={{ marginBottom: 30 }}>
+            <div id="exercises-section" className="card" style={{ marginBottom: 30 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
                 <div>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -978,6 +1007,52 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           </div>
         </div>
       </div>
+
+      {/* Alert Banner for Reviewed Modules with Pending Exercises */}
+      {reviewedStepsWithPendingExercises.length > 0 && (
+        <div style={{
+          marginBottom: 20,
+          padding: '14px 18px',
+          background: 'rgba(245, 158, 11, 0.08)',
+          border: '1px solid rgba(245, 158, 11, 0.35)',
+          borderRadius: 'var(--radius-md)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 12
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 240, flex: 1 }}>
+            <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>⚠️</span>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.94rem', color: 'var(--text-main)' }}>
+                {reviewedStepsWithPendingExercises.length} {reviewedStepsWithPendingExercises.length === 1 ? 'módulo revisado tiene' : 'módulos revisados tienen'} ejercicios prácticos pendientes
+              </div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                Has completado la teoría o Can-Dos de estos temas pero aún tienes preguntas para poner a prueba tu dominio.
+              </div>
+            </div>
+          </div>
+          <button
+            className="btn btn-sm btn-primary"
+            style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            onClick={() => {
+              const target = reviewedStepsWithPendingExercises[0];
+              if (target) {
+                setSelectedStepNum(target.step);
+                if (onStepChange) onStepChange(target.step);
+                setTimeout(() => {
+                  const exEl = document.getElementById('exercises-section');
+                  if (exEl) exEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+              }
+            }}
+          >
+            <span>Resolver Módulo {reviewedStepsWithPendingExercises[0]?.step}</span>
+            <ArrowRight size={14} />
+          </button>
+        </div>
+      )}
 
       <div className="curriculum-list">
         {filteredSteps.length === 0 ? (

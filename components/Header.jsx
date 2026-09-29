@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Flame, 
   Star, 
@@ -18,8 +18,13 @@ import {
   ChevronDown,
   RefreshCw,
   Mail,
-  ShieldCheck
+  ShieldCheck,
+  Bell,
+  AlertCircle,
+  ArrowRight,
+  X
 } from 'lucide-react';
+import { dataStore } from '../lib/data';
 
 function GoogleLogo({ size = 14 }) {
   return (
@@ -42,25 +47,32 @@ export default function Header({
   authUser = null,
   onOpenAuth = null,
   onSignOut = null,
-  onTriggerSync = null
+  onTriggerSync = null,
+  userState = null
 }) {
   const [isMinimized, setIsMinimized] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const notifRef = useRef(null);
 
-  // Close dropdown on click outside or escape key
+  // Close dropdowns on click outside or escape key
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotifOpen(false);
+      }
     }
     function handleKeyDown(event) {
       if (event.key === 'Escape') {
         setIsDropdownOpen(false);
+        setIsNotifOpen(false);
       }
     }
-    if (isDropdownOpen) {
+    if (isDropdownOpen || isNotifOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('touchstart', handleClickOutside);
       document.addEventListener('keydown', handleKeyDown);
@@ -70,7 +82,75 @@ export default function Header({
       document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isNotifOpen]);
+
+  // Compute reviewed topics that have pending exercises
+  const reviewedTopicsWithPendingExercises = useMemo(() => {
+    if (!userState) return [];
+    const curriculum = dataStore.curriculum || [];
+    const completedSteps = userState.completedSteps || {};
+    const completedCanDos = userState.completedCanDos || {};
+    const completedExercises = userState.completedExercises || {};
+
+    const results = [];
+
+    // 1. Revisar los módulos curriculares revisados/tocados con ejercicios pendientes
+    curriculum.forEach(step => {
+      const isStepMarked = !!completedSteps[step.step];
+      const hasAnyCanDo = (step.can_do || []).some(cd => !!completedCanDos[cd.id]);
+      const isReviewed = isStepMarked || hasAnyCanDo;
+
+      const stepExercises = step.exercises || [];
+      if (stepExercises.length === 0) return;
+
+      const pendingExercises = stepExercises.filter(ex => !completedExercises[ex.id]);
+
+      if (isReviewed && pendingExercises.length > 0) {
+        results.push({
+          type: 'curriculum',
+          id: step.step,
+          title: step.title,
+          level: step.level,
+          totalExercises: stepExercises.length,
+          pendingExercises: pendingExercises.length,
+          completedExercises: stepExercises.length - pendingExercises.length,
+          isStepMarked
+        });
+      }
+    });
+
+    // 2. Revisar Lecciones NHK completadas con ejercicios pendientes
+    const nhkLessons = dataStore.nhkLessons || [];
+    const convExercises = dataStore.conversationExercises || [];
+    const completedConversations = userState.completedConversations || {};
+
+    nhkLessons.forEach(l => {
+      const isLessonCompleted = !!completedConversations[l.lesson];
+      if (!isLessonCompleted) return;
+
+      const lessonExs = convExercises.filter(ex => ex.lesson === l.lesson);
+      if (lessonExs.length === 0) return;
+
+      const pendingLessonExs = lessonExs.filter(ex => !completedExercises[ex.id]);
+      if (pendingLessonExs.length > 0) {
+        results.push({
+          type: 'nhk',
+          id: l.lesson,
+          title: `Lección ${l.lesson}: ${l.title_es || l.title_jp}`,
+          level: 'N5',
+          totalExercises: lessonExs.length,
+          pendingExercises: pendingLessonExs.length,
+          completedExercises: lessonExs.length - pendingLessonExs.length,
+          isStepMarked: true
+        });
+      }
+    });
+
+    return results;
+  }, [userState]);
+
+  const pendingTopicsCount = reviewedTopicsWithPendingExercises.length;
+  const totalPendingQuestions = reviewedTopicsWithPendingExercises.reduce((acc, item) => acc + item.pendingExercises, 0);
 
   const displayName = authUser?.name || authUser?.email?.split('@')[0] || 'Estudiante';
   const initialLetter = (displayName || 'U')[0].toUpperCase();
@@ -88,6 +168,165 @@ export default function Header({
           </div>
           
           <div className="header-actions-right">
+            {/* Notification / Pending Exercises Status Button & Dropdown */}
+            <div className="header-notif-wrapper" ref={notifRef}>
+              <button
+                type="button"
+                className={`header-notif-btn ${isNotifOpen ? 'active' : ''}`}
+                onClick={() => setIsNotifOpen(prev => !prev)}
+                title={pendingTopicsCount > 0 
+                  ? `${pendingTopicsCount} temario(s) revisado(s) con ${totalPendingQuestions} ejercicios pendientes. Haz clic para ver y resolver.` 
+                  : 'Todo al día: sin ejercicios pendientes en temarios revisados'}
+                aria-haspopup="true"
+                aria-expanded={isNotifOpen}
+              >
+                <Bell size={18} />
+                {pendingTopicsCount > 0 && (
+                  <span className="header-notif-badge">
+                    {pendingTopicsCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown Menu */}
+              {isNotifOpen && (
+                <div className="notif-dropdown-card" role="dialog" aria-label="Temarios revisados con ejercicios pendientes">
+                  <div className="notif-dropdown-header">
+                    <div className="notif-dropdown-title">
+                      <Bell size={16} className="text-amber-500" />
+                      <span>Ejercicios Pendientes</span>
+                    </div>
+                    {pendingTopicsCount > 0 && (
+                      <span style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        padding: '2px 8px',
+                        background: 'rgba(245, 158, 11, 0.15)',
+                        color: 'var(--accent, #f59e0b)',
+                        borderRadius: 999
+                      }}>
+                        {totalPendingQuestions} por resolver
+                      </span>
+                    )}
+                  </div>
+
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 8px', lineHeight: 1.35 }}>
+                    {pendingTopicsCount > 0
+                      ? 'Temarios que has revisado pero que aún tienen preguntas prácticas sin completar:'
+                      : '¡Excelente! Has resuelto todos los ejercicios de los módulos y lecciones que has revisado.'}
+                  </p>
+
+                  <div className="notif-items-list">
+                    {pendingTopicsCount === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '24px 12px', color: 'var(--text-muted)' }}>
+                        <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎉</div>
+                        <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.9rem', marginBottom: 4 }}>
+                          ¡Práctica al día!
+                        </div>
+                        <div style={{ fontSize: '0.8rem' }}>
+                          No hay ejercicios pendientes en tus temarios revisados.
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-sm"
+                          style={{ marginTop: 12, width: '100%', justifyContent: 'center' }}
+                          onClick={() => {
+                            setIsNotifOpen(false);
+                            onNavigate('curriculum');
+                          }}
+                        >
+                          Ir al Currículum General
+                        </button>
+                      </div>
+                    ) : (
+                      reviewedTopicsWithPendingExercises.map((item) => (
+                        <div
+                          key={`${item.type}-${item.id}`}
+                          className="notif-item"
+                          onClick={() => {
+                            setIsNotifOpen(false);
+                            if (item.type === 'curriculum') {
+                              onNavigate('curriculum', `${item.id}#exercises`);
+                            } else {
+                              onNavigate('nhk', item.id);
+                            }
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontSize: '1rem' }}>
+                                {item.type === 'curriculum' ? '🎯' : '🎙️'}
+                              </span>
+                              <span style={{ fontWeight: 700, fontSize: '0.86rem', color: 'var(--text-main)' }}>
+                                {item.type === 'curriculum' ? `Módulo ${item.id}` : `NHK`}
+                              </span>
+                              <span style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                padding: '1px 6px',
+                                background: 'rgba(16, 185, 129, 0.12)',
+                                color: 'var(--success, #10b981)',
+                                borderRadius: 4
+                              }}>
+                                ✓ Revisado
+                              </span>
+                            </div>
+                            <span style={{
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              color: 'var(--accent, #f59e0b)',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              ⚠️ {item.pendingExercises} pend.
+                            </span>
+                          </div>
+
+                          <div style={{
+                            fontSize: '0.82rem',
+                            color: 'var(--text-main)',
+                            fontWeight: 500,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {item.title}
+                          </div>
+
+                          {/* Mini Progress Bar */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
+                            <div style={{ flex: 1, height: 5, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
+                              <div style={{
+                                width: `${Math.round((item.completedExercises / item.totalExercises) * 100)}%`,
+                                height: '100%',
+                                background: 'var(--primary)'
+                              }} />
+                            </div>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                              {item.completedExercises}/{item.totalExercises}
+                            </span>
+                          </div>
+
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-end',
+                            gap: 4,
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            color: 'var(--primary)',
+                            marginTop: 2
+                          }}>
+                            <span>Resolver ejercicios</span>
+                            <ArrowRight size={13} />
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Theme Toggle Button */}
             <button 
               className="theme-toggle-btn"
@@ -280,6 +519,21 @@ export default function Header({
             <CheckCircle size={16} className="text-emerald-500" />
             <span>{stats.particles}/25 part.</span>
           </div>
+
+          {/* Temarios revisados con ejercicios pendientes */}
+          {pendingTopicsCount > 0 && (
+            <div 
+              className="stat-badge notif-stat-badge" 
+              style={{ cursor: 'pointer', borderColor: 'rgba(245, 158, 11, 0.4)', background: 'rgba(245, 158, 11, 0.12)' }}
+              onClick={() => setIsNotifOpen(prev => !prev)}
+              title={`${pendingTopicsCount} temarios revisados con ${totalPendingQuestions} ejercicios pendientes. Clic para ver lista.`}
+            >
+              <Bell size={15} style={{ color: 'var(--accent, #f59e0b)' }} />
+              <span style={{ color: 'var(--accent, #f59e0b)', fontWeight: 700 }}>
+                {pendingTopicsCount} tem. pend.
+              </span>
+            </div>
+          )}
 
           <div className="stat-badge" title="Palabras aprendidas">
             <BookOpen size={16} className="text-blue-500" />
