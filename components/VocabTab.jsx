@@ -1327,6 +1327,91 @@ export default function VocabTab({
         appState={appState}
         onUpdateState={onUpdateState}
       />
+
+      {/* Floating Action Bar cuando hay palabras seleccionadas */}
+      {selectedWordIds.size > 0 && (
+        <div style={{
+          position: 'fixed',
+          bottom: 24,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 900,
+          background: 'var(--surface)',
+          border: '2px solid var(--primary)',
+          borderRadius: 16,
+          padding: '10px 18px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.28)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          backdropFilter: 'blur(12px)',
+          maxWidth: '92%',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{
+              background: 'var(--primary)',
+              color: '#fff',
+              borderRadius: 999,
+              padding: '2px 9px',
+              fontSize: '0.8rem',
+              fontWeight: 800
+            }}>
+              {selectedWordIds.size}
+            </span>
+            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              {selectedWordIds.size === 1 ? 'palabra seleccionada' : 'palabras seleccionadas'}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', maxWidth: 280, overflow: 'hidden' }}>
+            {Array.from(selectedWordIds).slice(0, 4).map(id => {
+              const w = effectiveVocabList.find(x => (x.id === id || x.kanji === id));
+              return w ? (
+                <span key={id} className="jp-text" style={{ fontSize: '0.82rem', background: 'rgba(99, 102, 241, 0.12)', color: 'var(--primary)', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
+                  {w.kanji}
+                </span>
+              ) : null;
+            })}
+            {selectedWordIds.size > 4 && (
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>+{selectedWordIds.size - 4} más</span>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => setIsAIGeneratorOpen(true)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+            >
+              <Sparkles size={15} />
+              <span>Generar con IA</span>
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setSelectedWordIds(new Set())}
+              style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}
+            >
+              Limpiar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Generador con IA */}
+      <AIGeneratorModal
+        isOpen={isAIGeneratorOpen}
+        onClose={() => setIsAIGeneratorOpen(false)}
+        initialType="story"
+        initialItems={selectedWordsForAI}
+        itemType="vocab"
+        defaultLevel={level}
+        appState={appState}
+        onUpdateState={onUpdateState}
+        authUser={authUser}
+      />
     </div>
   );
 }
