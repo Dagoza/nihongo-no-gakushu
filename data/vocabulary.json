@@ -1,5 +1,47 @@
 [
   {
+    "id": "v_tatoeba_1",
+    "kanji": "先生",
+    "kana": "せんせい",
+    "meaning_es": "Profesor / Maestro",
+    "meaning_en": "Teacher",
+    "category": "Trabajo y Estudio",
+    "level": "N5",
+    "hiragana": "せんせい",
+    "katakana": "センセイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "あの人は私の先生です。",
+        "es": "Aquella persona es mi profesor."
+      },
+      {
+        "jp": "先生に質問があります。",
+        "es": "Tengo una pregunta para el profesor."
+      }
+    ]
+  },
+  {
+    "id": "v_tatoeba_3",
+    "kanji": "経験",
+    "kana": "けいけん",
+    "meaning_es": "Experiencia",
+    "meaning_en": "Experience",
+    "category": "Vocabulario General",
+    "level": "N3",
+    "hiragana": "けいけん",
+    "katakana": "ケイケン",
+    "tatoeba_sentences": [
+      {
+        "jp": "それはとても良い経験になりました。",
+        "es": "Eso se convirtió en una muy buena experiencia."
+      },
+      {
+        "jp": "彼には経験が足りない。",
+        "es": "A él le falta experiencia."
+      }
+    ]
+  },
+  {
     "id": "v_1",
     "kanji": "こんにちは",
     "kana": "こんにちは",

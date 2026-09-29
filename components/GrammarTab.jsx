@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { Volume2, CheckCircle2, Search, ArrowRight, ArrowLeft, Play, Sparkles, Check, X, RotateCcw } from 'lucide-react';
+import React, { useState, useRef, useMemo } from 'react';
+import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -21,16 +21,26 @@ export default function GrammarTab({ appState, onUpdateState }) {
   // Filter particles
   const uniqueParticles = ['all', ...new Set(particlesData.map(p => p.particle))];
 
-  const filteredParticles = particlesData.filter(p => {
-    const matchFilter = filterParticle === 'all' || p.particle === filterParticle;
-    const search = searchTerm.trim().toLowerCase();
-    const matchSearch = !search ||
-      p.particle.toLowerCase().includes(search) ||
-      (p.role_es && p.role_es.toLowerCase().includes(search)) ||
-      (p.role_en && p.role_en.toLowerCase().includes(search)) ||
-      (p.examples && p.examples.some(ex => ex.toLowerCase().includes(search)));
-    return matchFilter && matchSearch;
-  });
+  const filteredParticles = useMemo(() => {
+    return particlesData.filter(p => {
+      const matchFilter = filterParticle === 'all' || p.particle === filterParticle;
+      const search = searchTerm.trim().toLowerCase();
+      if (!search) return matchFilter;
+
+      const matchParticle = p.particle.toLowerCase().includes(search);
+      const matchRoleEs = p.role_es && p.role_es.toLowerCase().includes(search);
+      const matchRoleEn = p.role_en && p.role_en.toLowerCase().includes(search);
+      const matchFormula = p.formula && p.formula.toLowerCase().includes(search);
+      const matchExamples = p.examples && p.examples.some(ex => {
+        const ja = typeof ex === 'string' ? ex : (ex.ja || '');
+        const es = typeof ex === 'string' ? '' : (ex.es || '');
+        const romaji = typeof ex === 'string' ? '' : (ex.romaji || '');
+        return ja.toLowerCase().includes(search) || es.toLowerCase().includes(search) || romaji.toLowerCase().includes(search);
+      });
+
+      return matchFilter && (matchParticle || matchRoleEs || matchRoleEn || matchFormula || matchExamples);
+    });
+  }, [particlesData, filterParticle, searchTerm]);
 
   const masteredCount = particlesData.filter(p => !!appState.masteredParticles?.[p.id]).length;
   const progressPercent = Math.round((masteredCount / Math.max(1, particlesData.length)) * 100);
@@ -48,7 +58,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
   };
 
   // Compile quiz questions from particle quiz_items
-  const quizQuestions = React.useMemo(() => {
+  const quizQuestions = useMemo(() => {
     const questions = [];
     particlesData.forEach(p => {
       if (p.quiz_items && p.quiz_items.length > 0) {
@@ -62,7 +72,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
       }
     });
     return questions.sort(() => 0.5 - Math.random());
-  }, [quizActive]);
+  }, [quizActive, particlesData]);
 
   const currentQuiz = quizQuestions[quizIndex];
 
@@ -94,6 +104,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
   };
 
   const highlightParticle = (sentence, particle) => {
+    if (!sentence) return '';
     const pClean = particle.split('・')[0];
     const parts = sentence.split(pClean);
     if (parts.length === 1) return sentence;
@@ -102,7 +113,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
       if (i === 0) return [part];
       return [
         ...acc,
-        <span key={i} style={{ color: 'var(--accent)', fontWeight: 800, borderBottom: '2px solid var(--accent)' }}>
+        <span key={i} className="particle-highlight">
           {pClean}
         </span>,
         part
@@ -118,7 +129,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
           <span>🎯</span> Partículas y Gramática Japonesa
         </h2>
         <p className="section-desc">
-          Guía y checklist interactivo con las 25 funciones fundamentales de las partículas japonesas extraídas de tus materiales de estudio, con explicaciones claras en español, pronunciación nativa y cuestionario de evaluación.
+          Guía y checklist interactivo con las 25 funciones fundamentales de las partículas japonesas de nivel N5. Incluye fórmulas gramaticales, ejemplos con pronunciación nativa, lectura en romaji y traducción detallada al español.
         </p>
       </div>
 
@@ -128,7 +139,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
           <div className="card" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
             <div>
               <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 4 }}>
-                Tu Progreso del Checklist: <span style={{ color: 'var(--primary)' }}>{masteredCount} de {particlesData.length} dominadas</span> ({progressPercent}%)
+                Progreso del Checklist: <span style={{ color: 'var(--primary)' }}>{masteredCount} de {particlesData.length} dominadas</span> ({progressPercent}%)
               </div>
               <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                 Marca las casillas conforme comprendas cada función y pon a prueba tu dominio en el Quiz.
@@ -158,7 +169,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
                 type="text" 
                 className="search-input" 
                 style={{ paddingLeft: 38 }}
-                placeholder="Buscar función, ejemplo o partícula (ej. は, posesión, tiempo)..."
+                placeholder="Buscar función, fórmula, ejemplo o traducción..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -177,6 +188,13 @@ export default function GrammarTab({ appState, onUpdateState }) {
             </div>
           </div>
 
+          {/* Results count indicator */}
+          <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 16 }}>
+            Mostrando <strong>{filteredParticles.length}</strong> de {particlesData.length} partículas
+            {filterParticle !== 'all' && ` con filtro "${filterParticle}"`}
+            {searchTerm.trim() && ` para "${searchTerm.trim()}"`}
+          </div>
+
           {/* Particles Grid */}
           <div className="particles-grid">
             {filteredParticles.map((p) => {
@@ -186,53 +204,91 @@ export default function GrammarTab({ appState, onUpdateState }) {
                   key={p.id}
                   className={`particle-card ${isMastered ? 'mastered' : ''}`}
                 >
+                  {/* Card Header */}
                   <div className="particle-header">
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 0 }}>
                       <div className="particle-symbol jp-text">
                         {p.particle}
                       </div>
                       <div className="particle-role">
-                        <h4>{p.role_es}</h4>
-                        <p>{p.role_en}</p>
+                        <div className="particle-meta">
+                          <span className="particle-level-tag">{p.level || 'N5'}</span>
+                          <span className="particle-role-en">{p.role_en}</span>
+                        </div>
+                        <h4 className="particle-role-title">{p.role_es || 'Función gramatical'}</h4>
                       </div>
                     </div>
 
-                    <label className="particle-check" title="Marcar función como dominada">
-                      <input 
-                        type="checkbox"
-                        checked={isMastered}
-                        onChange={() => toggleParticleMastery(p.id)}
-                        style={{ width: 18, height: 18, accentColor: 'var(--success)', cursor: 'pointer' }}
-                      />
-                      <span style={{ fontSize: '0.8rem', color: isMastered ? 'var(--success)' : 'var(--text-muted)', fontWeight: isMastered ? 700 : 500 }}>
-                        {isMastered ? 'Dominada' : 'Aprender'}
-                      </span>
-                    </label>
+                    <button
+                      type="button"
+                      className={`particle-master-btn ${isMastered ? 'mastered' : ''}`}
+                      onClick={() => toggleParticleMastery(p.id)}
+                      title={isMastered ? "Marcar como por aprender" : "Marcar como dominada"}
+                    >
+                      {isMastered ? <CheckCircle2 size={16} /> : <Circle size={16} />}
+                      <span>{isMastered ? 'Dominada' : 'Aprender'}</span>
+                    </button>
                   </div>
 
-                  {/* Examples */}
-                  <div className="particle-examples">
-                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
-                      Ejemplos de Uso:
+                  {/* Grammar Formula / Structure */}
+                  {p.formula && (
+                    <div className="particle-formula-box">
+                      <span className="particle-formula-tag">Fórmula</span>
+                      <span className="particle-formula-code jp-text">{p.formula}</span>
                     </div>
-                    {p.examples.map((ex, idx) => (
-                      <div key={idx} className="particle-example-row">
-                        <span className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-main)', flex: 1 }}>
-                          {highlightParticle(ex, p.particle)}
-                        </span>
-                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <button 
-                            className="audio-btn" 
-                            style={{ width: 28, height: 28 }}
-                            onClick={() => audioManager.speak(ex)}
-                            title="Escuchar pronunciación"
-                          >
-                            <Volume2 size={15} />
-                          </button>
-                          <SpeechPractice targetText={ex} />
-                        </div>
-                      </div>
-                    ))}
+                  )}
+
+                  {/* Examples Section */}
+                  <div className="particle-examples-section">
+                    <div className="particle-examples-header">
+                      <span>Ejemplos de uso ({p.examples?.length || 0})</span>
+                    </div>
+
+                    <div className="particle-examples-list" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {p.examples && p.examples.map((ex, idx) => {
+                        const exJa = typeof ex === 'string' ? ex : ex.ja;
+                        const exRomaji = typeof ex === 'string' ? '' : ex.romaji;
+                        const exEs = typeof ex === 'string' ? '' : ex.es;
+
+                        return (
+                          <div key={idx} className="particle-example-card">
+                            <div className="particle-example-main">
+                              <div className="jp-text particle-example-sentence">
+                                {highlightParticle(exJa, p.particle)}
+                              </div>
+                              <div className="particle-example-actions">
+                                <button 
+                                  type="button"
+                                  className="audio-btn" 
+                                  onClick={() => audioManager.speak(exJa)}
+                                  title="Escuchar pronunciación nativa"
+                                >
+                                  <Volume2 size={15} />
+                                </button>
+                                <SpeechPractice 
+                                  targetText={exJa} 
+                                  targetKana={wanakana.toKana(exRomaji || '')}
+                                  compact={true} 
+                                />
+                              </div>
+                            </div>
+
+                            {exRomaji && (
+                              <div className="particle-example-romaji">
+                                {exRomaji}
+                              </div>
+                            )}
+
+                            {exEs && (
+                              <div className="particle-example-trans">
+                                <span style={{ opacity: 0.8, marginRight: 4 }}>🇪🇸</span>
+                                <span>{exEs}</span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );

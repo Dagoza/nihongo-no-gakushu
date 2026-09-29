@@ -1542,6 +1542,11 @@
         "word": "留学生",
         "reading": "りゅうがくせい",
         "meaning": "Estudiante extranjero"
+      },
+      {
+        "word": "先生",
+        "reading": "せんせい",
+        "meaning": "Profesor / Maestro"
       }
     ],
     "source": "Kanji Book"
@@ -2044,6 +2049,11 @@
         "word": "試験",
         "reading": "しけん",
         "meaning": "Examen / Prueba"
+      },
+      {
+        "word": "経験",
+        "reading": "けいけん",
+        "meaning": "Experiencia"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2317,5 +2327,22 @@
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
+  },
+  {
+    "id": "k_kei",
+    "kanji": "経",
+    "meaning_es": "Pasar, transcurrir, gestionar",
+    "meaning_en": "Pass through, experience, manage",
+    "onyomi": "ケイ",
+    "kunyomi": "へ.る",
+    "strokes": 11,
+    "level": "N3",
+    "words": [
+      {
+        "word": "経験",
+        "reading": "けいけん",
+        "meaning": "Experiencia"
+      }
+    ]
   }
 ]

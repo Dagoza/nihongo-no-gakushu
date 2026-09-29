@@ -1107,31 +1107,44 @@ rt {
 /* Particles Table & Checklist */
 .particles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .particles-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .particle-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 18px;
+  border-radius: var(--radius-lg, 14px);
+  padding: 20px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.particle-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
 }
 
 .particle-card.mastered {
-  border-color: var(--success);
-  background: linear-gradient(180deg, var(--bg-surface) 0%, var(--success-bg) 100%);
+  border-color: rgba(34, 197, 94, 0.4);
+  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(34, 197, 94, 0.05) 100%);
 }
 
 .particle-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .particle-symbol {
@@ -1140,56 +1153,186 @@ rt {
   font-family: var(--font-jp);
   color: var(--accent);
   background: var(--accent-bg);
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .particle-role {
   flex: 1;
-  margin-left: 14px;
+  min-width: 0;
 }
 
-.particle-role h4 {
-  font-size: 1rem;
+.particle-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.particle-level-tag {
+  font-size: 0.72rem;
   font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--primary-bg, rgba(59, 130, 246, 0.1));
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.particle-role-en {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.particle-role-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.particle-master-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-main);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.particle-master-btn:hover {
+  border-color: var(--primary);
   color: var(--text-main);
 }
 
-.particle-role p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.particle-master-btn.mastered {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: var(--success);
+  color: var(--success);
+  font-weight: 700;
 }
 
-.particle-check {
+.particle-formula-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--bg-main);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--primary);
+  font-size: 0.88rem;
+  overflow-x: auto;
+}
+
+.particle-formula-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.particle-formula-code {
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.particle-examples-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.particle-examples-header {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.particle-example-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.2s;
+}
+
+.particle-example-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.particle-example-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.particle-example-sentence {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  flex: 1;
+  min-width: 0;
+}
+
+.particle-example-actions {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  user-select: none;
+  flex-shrink: 0;
 }
 
-.particle-examples {
-  background: var(--bg-main);
-  padding: 12px;
-  border-radius: var(--radius-sm);
+.particle-highlight {
+  color: var(--accent);
+  font-weight: 800;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 1px 4px;
+  border-radius: 4px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.particle-example-romaji {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.particle-example-trans {
   font-size: 0.95rem;
-  line-height: 1.8;
-}
-
-.particle-example-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-.particle-example-row:last-child {
-  margin-bottom: 0;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.4;
 }
 
 /* Vocabulary & Flashcards */

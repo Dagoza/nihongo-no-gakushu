@@ -1,52 +1,66 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
-import * as wanakana from 'wanakana';
+'use client';
 
-export default function SpeechPractice({ targetText, targetKana, onMatch }) {
+import React, { useState, useEffect, useRef } from 'react';
+import { Mic, MicOff, CheckCircle2, RefreshCw } from 'lucide-react';
+
+export default function SpeechPractice({ targetText, targetKana, onMatch, compact = false }) {
+  const [mounted, setMounted] = useState(false);
+  const [isSupported, setIsSupported] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState(null); // 'match', 'nomatch', null
   const recognitionRef = useRef(null);
 
   useEffect(() => {
-    // Check browser support
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setMounted(true);
+    const SpeechRecognition = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
     
     if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'ja-JP';
-      recognition.continuous = false;
-      recognition.interimResults = true;
+      setIsSupported(true);
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'ja-JP';
+        recognition.continuous = false;
+        recognition.interimResults = true;
 
-      recognition.onstart = () => {
-        setIsListening(true);
-        setTranscript('');
-        setFeedback(null);
-      };
+        recognition.onstart = () => {
+          setIsListening(true);
+          setTranscript('');
+          setFeedback(null);
+        };
 
-      recognition.onresult = (event) => {
-        const currentTranscript = Array.from(event.results)
-          .map((result) => result[0].transcript)
-          .join('');
-        setTranscript(currentTranscript);
-      };
+        recognition.onresult = (event) => {
+          const currentTranscript = Array.from(event.results)
+            .map((result) => result[0].transcript)
+            .join('');
+          setTranscript(currentTranscript);
+        };
 
-      recognition.onerror = (event) => {
-        console.error('Speech recognition error', event.error);
-        setIsListening(false);
-      };
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error', event.error);
+          setIsListening(false);
+        };
 
-      recognition.onend = () => {
-        setIsListening(false);
-        // Evaluar en el onend
-      };
+        recognition.onend = () => {
+          setIsListening(false);
+        };
 
-      recognitionRef.current = recognition;
+        recognitionRef.current = recognition;
+      } catch (err) {
+        console.error('Failed to init SpeechRecognition', err);
+        setIsSupported(false);
+      }
+    } else {
+      setIsSupported(false);
     }
 
     return () => {
       if (recognitionRef.current) {
-        recognitionRef.current.abort();
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {
+          // ignore
+        }
       }
     };
   }, []);
@@ -60,7 +74,6 @@ export default function SpeechPractice({ targetText, targetKana, onMatch }) {
 
   const cleanText = (text) => {
     if (!text) return '';
-    // Removes japanese punctuation and whitespace
     return text.replace(/[。、！？\s]/g, '');
   };
 
@@ -74,16 +87,14 @@ export default function SpeechPractice({ targetText, targetKana, onMatch }) {
     // Mismo texto exacto
     let isMatch = cleanSpoken === cleanTarget;
 
-    // Si no es el kanji exacto, a veces la API devuelve Kana u homófonos.
-    // Convertimos lo hablado a Kana puro asumiendo que wanakana puede fallar si hay Kanjis que no sabe leer,
-    // pero si lo que habló es puro Hiragana, podemos compararlo con el targetKana.
+    // Comparar con kana si está disponible
     if (!isMatch && cleanTargetKana) {
       if (cleanSpoken === cleanTargetKana) {
         isMatch = true;
       }
     }
 
-    // Match parcial (si es una oración larga y captó el 80% o está incluido)
+    // Match parcial
     if (!isMatch && cleanTarget.length > 3) {
       if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
         isMatch = true;
@@ -98,19 +109,125 @@ export default function SpeechPractice({ targetText, targetKana, onMatch }) {
     }
   };
 
-  const toggleListening = () => {
+  const toggleListening = (e) => {
+    if (e) e.stopPropagation();
+    if (!isSupported || !recognitionRef.current) return;
+
     if (isListening) {
-      recognitionRef.current?.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {
+        setIsListening(false);
+      }
     } else {
-      recognitionRef.current?.start();
+      try {
+        setTranscript('');
+        setFeedback(null);
+        recognitionRef.current.start();
+      } catch (err) {
+        console.error('Error starting recognition', err);
+        setIsListening(false);
+      }
     }
   };
 
-  if (!recognitionRef.current) {
-    // Navigate away or show unsupported
+  if (!mounted) {
+    return null;
+  }
+
+  // COMPACT MODE (for lists, cards, tables)
+  if (compact) {
+    if (!isSupported) {
+      return (
+        <button 
+          type="button"
+          className="audio-btn" 
+          disabled
+          style={{ width: 28, height: 28, opacity: 0.35, cursor: 'not-allowed', flexShrink: 0 }}
+          title="Reconocimiento de voz no soportado en este navegador (usa Chrome o Edge)"
+        >
+          <MicOff size={14} />
+        </button>
+      );
+    }
+
     return (
-      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-        🎤 API de voz no soportada en este navegador. Usa Chrome o Edge.
+      <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+        <button 
+          type="button"
+          onClick={toggleListening}
+          className={`audio-btn ${isListening ? 'listening' : ''}`}
+          style={{
+            width: 28,
+            height: 28,
+            flexShrink: 0,
+            background: isListening 
+              ? 'var(--danger)' 
+              : feedback === 'match' 
+                ? 'var(--success)' 
+                : feedback === 'nomatch' 
+                  ? 'var(--danger-bg)' 
+                  : undefined,
+            color: isListening || feedback === 'match' ? '#fff' : undefined,
+            borderColor: feedback === 'match' 
+              ? 'var(--success)' 
+              : feedback === 'nomatch' 
+                ? 'var(--danger)' 
+                : undefined,
+            transition: 'all 0.2s ease'
+          }}
+          title={isListening ? "Escuchando... Habla ahora" : feedback === 'match' ? "¡Pronunciación correcta! Clic para repetir" : "Practicar pronunciación"}
+        >
+          {isListening ? (
+            <Mic size={14} style={{ animation: 'pulse 1s infinite' }} />
+          ) : feedback === 'match' ? (
+            <CheckCircle2 size={14} />
+          ) : (
+            <Mic size={14} />
+          )}
+        </button>
+
+        {/* Small floating pill if feedback or transcript */}
+        {feedback && (
+          <span 
+            style={{ 
+              position: 'absolute', 
+              top: '100%', 
+              right: 0, 
+              marginTop: 4, 
+              fontSize: '0.72rem', 
+              whiteSpace: 'nowrap',
+              padding: '2px 6px',
+              borderRadius: 4,
+              zIndex: 10,
+              background: feedback === 'match' ? 'var(--success)' : 'var(--danger)',
+              color: '#fff',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+            }}
+          >
+            {feedback === 'match' ? '¡Excelente!' : transcript ? `Diste: "${transcript}"` : 'Intenta de nuevo'}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  // STANDARD EXPANDED MODE
+  if (!isSupported) {
+    return (
+      <div style={{ 
+        fontSize: '0.8rem', 
+        color: 'var(--text-muted)', 
+        display: 'inline-flex', 
+        alignItems: 'center', 
+        gap: 6,
+        padding: '6px 12px',
+        background: 'var(--bg-main)',
+        borderRadius: 'var(--radius-full)',
+        border: '1px solid var(--border)'
+      }}>
+        <MicOff size={14} />
+        <span>Voz no soportada (usa Chrome/Edge)</span>
       </div>
     );
   }
@@ -126,6 +243,7 @@ export default function SpeechPractice({ targetText, targetKana, onMatch }) {
       border: `1px solid ${feedback === 'match' ? 'var(--success)' : feedback === 'nomatch' ? 'var(--danger)' : 'var(--border)'}`
     }}>
       <button 
+        type="button"
         onClick={toggleListening}
         className={`speech-btn ${isListening ? 'listening' : ''}`}
         style={{
@@ -166,6 +284,7 @@ export default function SpeechPractice({ targetText, targetKana, onMatch }) {
       {feedback === 'match' && <CheckCircle2 size={18} color="var(--success)" />}
       {feedback === 'nomatch' && (
         <button 
+          type="button"
           onClick={toggleListening} 
           style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex' }}
           title="Intentar de nuevo"

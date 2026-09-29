@@ -465,6 +465,32 @@ export default function VocabTab({ appState, onUpdateState }) {
                   🇬🇧 {item.meaning_en}
                 </div>
               )}
+
+              {/* Tatoeba Sentences Integration */}
+              {item.tatoeba_sentences && item.tatoeba_sentences.length > 0 && (
+                <div style={{ marginTop: 24, textAlign: 'left', background: 'var(--bg-main)', padding: 12, borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: 8 }}>
+                    📚 Ejemplos (Tatoeba):
+                  </div>
+                  {item.tatoeba_sentences.map((sentence, idx) => (
+                    <div key={idx} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: idx === item.tatoeba_sentences.length - 1 ? 'none' : '1px solid var(--border)' }}>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                        <button 
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', marginTop: 2 }}
+                          onClick={() => audioManager.speak(sentence.jp)}
+                          title="Escuchar ejemplo"
+                        >
+                          <Volume2 size={16} />
+                        </button>
+                        <div>
+                          <div className="jp-text" style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>{sentence.jp}</div>
+                          <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>🇪🇸 {sentence.es}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16 }}>
                 <button 

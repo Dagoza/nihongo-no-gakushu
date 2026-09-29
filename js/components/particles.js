@@ -30,11 +30,18 @@ class ParticlesComponent {
 
     const filtered = this.data.filter(p => {
       const matchFilter = this.filterParticle === 'all' || p.particle === this.filterParticle;
+      const s = this.searchTerm.toLowerCase();
       const matchSearch = !this.searchTerm || 
-        p.particle.includes(this.searchTerm) || 
-        p.role_es.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        p.role_en.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        p.examples.some(ex => ex.includes(this.searchTerm));
+        p.particle.toLowerCase().includes(s) || 
+        (p.role_es && p.role_es.toLowerCase().includes(s)) ||
+        (p.role_en && p.role_en.toLowerCase().includes(s)) ||
+        (p.formula && p.formula.toLowerCase().includes(s)) ||
+        p.examples.some(ex => {
+          const ja = typeof ex === 'string' ? ex : (ex.ja || '');
+          const es = typeof ex === 'string' ? '' : (ex.es || '');
+          const romaji = typeof ex === 'string' ? '' : (ex.romaji || '');
+          return ja.toLowerCase().includes(s) || es.toLowerCase().includes(s) || romaji.toLowerCase().includes(s);
+        });
       return matchFilter && matchSearch;
     });
 
@@ -98,13 +105,16 @@ class ParticlesComponent {
     return `
       <div class="particle-card ${isMastered ? 'mastered' : ''}">
         <div class="particle-header">
-          <div style="display: flex; align-items: center;">
+          <div style="display: flex; align-items: flex-start; gap: 12px; flex: 1; min-width: 0;">
             <div class="particle-symbol">
               ${p.particle}
             </div>
             <div class="particle-role">
-              <h4>${p.role_es}</h4>
-              <p>${p.role_en}</p>
+              <div class="particle-meta">
+                <span class="particle-level-tag">${p.level || 'N5'}</span>
+                <span class="particle-role-en">${p.role_en}</span>
+              </div>
+              <h4 class="particle-role-title">${p.role_es || 'Función gramatical'}</h4>
             </div>
           </div>
 
@@ -115,25 +125,46 @@ class ParticlesComponent {
               onchange="window.particlesComp.toggleMastery('${p.id}')"
               style="width: 18px; height: 18px; accent-color: var(--success); cursor: pointer;"
             />
-            <span style="font-size: 0.8rem; color: var(--text-muted);">${isMastered ? 'Dominada' : 'Aprender'}</span>
+            <span style="font-size: 0.8rem; color: ${isMastered ? 'var(--success)' : 'var(--text-muted)'}; font-weight: ${isMastered ? '700' : '500'};">${isMastered ? 'Dominada' : 'Aprender'}</span>
           </label>
         </div>
 
-        <!-- Examples with Audio -->
-        <div class="particle-examples">
-          <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">
-            Ejemplos de Uso:
+        ${p.formula ? `
+          <div class="particle-formula-box">
+            <span class="particle-formula-tag">Fórmula</span>
+            <span class="particle-formula-code jp-text">${p.formula}</span>
           </div>
-          ${p.examples.map(ex => `
-            <div class="particle-example-row">
-              <span class="jp-text" style="font-size: 1.05rem; font-weight: 600; color: var(--text-main);">
-                ${this.highlightParticle(ex, p.particle)}
-              </span>
-              <button class="audio-btn" style="width: 28px; height: 28px; font-size: 0.85rem;" onclick="window.appAudio.speak('${this.escapeAudio(ex)}')">
-                🔊
-              </button>
-            </div>
-          `).join('')}
+        ` : ''}
+
+        <!-- Examples with Audio, Romaji, and Translation -->
+        <div class="particle-examples-section">
+          <div class="particle-examples-header">
+            <span>Ejemplos de uso (${p.examples ? p.examples.length : 0})</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            ${(p.examples || []).map(ex => {
+              const exJa = typeof ex === 'string' ? ex : ex.ja;
+              const exRomaji = typeof ex === 'string' ? '' : (ex.romaji || '');
+              const exEs = typeof ex === 'string' ? '' : (ex.es || '');
+
+              return `
+                <div class="particle-example-card">
+                  <div class="particle-example-main">
+                    <div class="jp-text particle-example-sentence">
+                      ${this.highlightParticle(exJa, p.particle)}
+                    </div>
+                    <div class="particle-example-actions">
+                      <button class="audio-btn" style="width: 28px; height: 28px;" onclick="window.appAudio.speak('${this.escapeAudio(exJa)}')">
+                        🔊
+                      </button>
+                    </div>
+                  </div>
+                  ${exRomaji ? `<div class="particle-example-romaji">${exRomaji}</div>` : ''}
+                  ${exEs ? `<div class="particle-example-trans">🇪🇸 ${exEs}</div>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
         </div>
       </div>
     `;
