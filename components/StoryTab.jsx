@@ -205,14 +205,29 @@ export default function StoryTab({ userState, onRecordActivity, appState, onUpda
       </div>
 
       {story.isCustom && (
-        <div className="custom-story-banner">
-          <Sparkles size={16} className="text-primary" />
-          <div>
-            <strong>Historia Personalizada:</strong> Creada a partir de tus palabras guardadas.
-            {story.wordsUsed && story.wordsUsed.length > 0 && (
-              <span className="words-snippet"> Palabras: {story.wordsUsed.join(', ')}</span>
-            )}
+        <div className="custom-story-banner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Sparkles size={16} className="text-primary" />
+            <div>
+              <strong>Historia Personalizada:</strong> Creada a partir de tus palabras guardadas.
+              {story.wordsUsed && story.wordsUsed.length > 0 && (
+                <span className="words-snippet"> Palabras: {story.wordsUsed.join(', ')}</span>
+              )}
+            </div>
           </div>
+          <button 
+            className="btn btn-outline btn-sm" 
+            style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
+            onClick={() => {
+              if (window.confirm("¿Estás seguro de eliminar esta historia generada?")) {
+                const updatedStories = (appState.customStories || []).filter(s => s.id !== story.id);
+                onUpdateState({ customStories: updatedStories });
+                setSelectedStoryId(allStories[0]?.id || null);
+              }
+            }}
+          >
+            Eliminar
+          </button>
         </div>
       )}
 

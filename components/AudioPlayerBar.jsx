@@ -45,6 +45,8 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
       audioManager.pause();
     } else if (audioState.state === 'paused') {
       audioManager.resume();
+    } else if (audioState.selectedText) {
+      audioManager.playSelection();
     } else if (audioState.currentText) {
       audioManager.speak(audioState.currentText);
     }
@@ -108,19 +110,21 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                 <div className="audio-status-label">
                   {audioState.state === 'playing' && '🔊 Reproduciendo audio en japonés:'}
                   {audioState.state === 'paused' && '⏸️ En pausa:'}
-                  {audioState.state === 'idle' && (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en cualquier palabra u oración para escucharla')}
+                  {audioState.state === 'idle' && (audioState.selectedText ? 'Selección lista para reproducir:' : (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en cualquier palabra u oración para escucharla'))}
                 </div>
-                <div className="audio-current-sentence jp-text" title={audioState.currentText || ''}>
-                  {audioState.currentText || 'Selecciona texto en pantalla o toca cualquier palabra con furigana'}
+                <div className="audio-current-sentence jp-text" title={audioState.selectedText || audioState.currentText || ''}>
+                  {audioState.selectedText ? `"${audioState.selectedText}"` : (audioState.currentText || 'Selecciona texto en pantalla o toca cualquier palabra con furigana')}
                 </div>
               </div>
 
               {/* Quick save button for active sentence if present */}
-              {audioState.currentText && (
+              {(audioState.selectedText || audioState.currentText) && (
                 <button
                   className="audio-save-inline-btn"
                   title="Guardar esta frase u oración en tu cuaderno para crear historias"
-                  onClick={handleSaveCurrent}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onTouchStart={(e) => e.preventDefault()}
+                  onClick={audioState.selectedText ? handleSaveSelection : handleSaveCurrent}
                   type="button"
                 >
                   <BookmarkPlus size={14} />
@@ -172,32 +176,6 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
           {/* Actions: Play Selection, Save Selection, Saved Link & Speed */}
           {!isMinimized && (
             <div className="audio-actions">
-              {audioState.selectedText && (
-                <div className="audio-selection-group">
-                  <button 
-                    className="btn btn-accent btn-sm audio-selection-btn"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onTouchStart={(e) => e.preventDefault()}
-                    onClick={handlePlaySelection}
-                    title={`Reproducir: "${audioState.selectedText}"`}
-                  >
-                    <Sparkles size={14} />
-                    <span>Escuchar ({audioState.selectedText.slice(0, 8)}...)</span>
-                  </button>
-
-                  <button 
-                    className="btn btn-primary btn-sm audio-save-sel-btn"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onTouchStart={(e) => e.preventDefault()}
-                    onClick={handleSaveSelection}
-                    title={`Guardar selección "${audioState.selectedText}" en tu cuaderno`}
-                  >
-                    <BookmarkPlus size={14} />
-                    <span>Guardar Selección</span>
-                  </button>
-                </div>
-              )}
-
               {/* Quick Link to Saved Words Tab */}
               <button
                 className="audio-saved-tab-link"
