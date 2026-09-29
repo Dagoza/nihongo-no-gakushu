@@ -165,21 +165,21 @@ export default function GrammarTab({
       {!quizActive ? (
         <div>
           {/* Progress Overview Card */}
-          <div className="card" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-            <div>
+          <div className="card grammar-progress-card" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, minWidth: 0, maxWidth: '100%' }}>
+            <div style={{ flex: 1, minWidth: 220, maxWidth: '100%' }}>
               <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 4 }}>
                 Progreso del Checklist: <span style={{ color: 'var(--primary)' }}>{masteredCount} de {particlesData.length} dominadas</span> ({progressPercent}%)
               </div>
               <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                 Marca las casillas conforme comprendas cada función y pon a prueba tu dominio en el Quiz.
               </div>
-              <div style={{ width: 280, height: 8, background: 'var(--border)', borderRadius: 999, marginTop: 8, overflow: 'hidden' }}>
+              <div style={{ width: '100%', maxWidth: 280, height: 8, background: 'var(--border)', borderRadius: 999, marginTop: 8, overflow: 'hidden' }}>
                 <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent))', transition: 'width 0.4s' }} />
               </div>
             </div>
 
             <button 
-              className="btn btn-accent btn-lg"
+              className="btn btn-accent btn-lg grammar-quiz-btn"
               onClick={() => {
                 setQuizIndex(0);
                 setQuizFeedback(null);
@@ -192,8 +192,8 @@ export default function GrammarTab({
           </div>
 
           {/* Filter Bar */}
-          <div className="vocab-filter-bar">
-            <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
+          <div className="vocab-filter-bar" style={{ minWidth: 0, maxWidth: '100%' }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: '100%' }}>
               <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
                 type="text" 

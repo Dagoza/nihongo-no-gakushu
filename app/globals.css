@@ -50,6 +50,11 @@
   padding: 0;
 }
 
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--bg-main);
@@ -1107,13 +1112,18 @@ rt {
 /* Particles Table & Checklist */
 .particles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .particles-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px;
+    width: 100%;
   }
 }
 
@@ -1128,6 +1138,10 @@ rt {
   gap: 16px;
   position: relative;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .particle-card:hover {
@@ -1237,7 +1251,9 @@ rt {
   border-radius: var(--radius-sm);
   border-left: 3px solid var(--primary);
   font-size: 0.88rem;
-  overflow-x: auto;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .particle-formula-tag {
@@ -1252,7 +1268,8 @@ rt {
 .particle-formula-code {
   font-weight: 600;
   color: var(--text-main);
-  white-space: nowrap;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .particle-examples-section {
@@ -5854,9 +5871,112 @@ rt {
   }
   .main-container {
     padding: 12px !important;
+    overflow-x: hidden;
   }
   .card {
     padding: 16px !important;
+  }
+
+  /* Grammar & Particle Cards Mobile Polish */
+  .particles-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 14px;
+    width: 100% !important;
+  }
+
+  .particle-card {
+    padding: 14px 12px !important;
+    border-radius: var(--radius-md, 12px) !important;
+    gap: 12px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .particle-header {
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .particle-symbol {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    font-size: 1.45rem !important;
+  }
+
+  .particle-role-title {
+    font-size: 0.95rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .particle-role-en {
+    font-size: 0.75rem !important;
+  }
+
+  .particle-master-btn {
+    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
+    gap: 4px !important;
+  }
+
+  .particle-master-btn span {
+    font-size: 0.72rem !important;
+  }
+
+  .particle-formula-box {
+    flex-wrap: wrap !important;
+    padding: 8px 10px !important;
+    gap: 6px !important;
+    font-size: 0.82rem !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .particle-formula-tag {
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .particle-formula-code {
+    white-space: normal !important;
+    word-break: break-word !important;
+    line-height: 1.4 !important;
+    font-size: 0.82rem !important;
+  }
+
+  .particle-example-card {
+    padding: 10px 10px !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .particle-example-sentence {
+    font-size: 1.05rem !important;
+    word-break: break-word !important;
+    line-height: 1.45 !important;
+    min-width: 0 !important;
+  }
+
+  .particle-example-romaji {
+    font-size: 0.8rem !important;
+    word-break: break-word !important;
+  }
+
+  .particle-example-trans {
+    font-size: 0.82rem !important;
+    word-break: break-word !important;
+  }
+
+  .particle-example-main {
+    gap: 8px !important;
+  }
+
+  .grammar-quiz-btn {
+    width: 100% !important;
+    justify-content: center !important;
   }
 }
 

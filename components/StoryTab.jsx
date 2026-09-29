@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import dataStore from '../lib/data';
+import { dataStore } from '../lib/data';
 import audioManager from '../lib/audioManager';
 import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle } from 'lucide-react';
 import * as wanakana from 'wanakana';
@@ -21,7 +21,7 @@ export default function StoryTab({
   onParamsChange
 }) {
   const allStories = useMemo(() => {
-    const defaultStories = dataStore.stories || [];
+    const defaultStories = dataStore?.stories || [];
     const customStories = appState?.savedStories || [];
     return [...defaultStories, ...customStories];
   }, [appState?.savedStories]);
@@ -50,17 +50,22 @@ export default function StoryTab({
       setReadingMode(initialMode);
     }
   }, [initialMode]);
+
+  const story = useMemo(() => {
+    return allStories.find(s => s.id === selectedStoryId) || allStories[0] || dataStore.stories?.[0] || {};
+  }, [allStories, selectedStoryId]);
+
   const [selectedSentenceId, setSelectedSentenceId] = useState('sent_1');
   const [typingInput, setTypingInput] = useState('');
   const [typingFeedback, setTypingFeedback] = useState(null);
 
-  const paragraphs = story.paragraphs && story.paragraphs.length > 0 ? story.paragraphs : [
+  const paragraphs = story?.paragraphs && story.paragraphs.length > 0 ? story.paragraphs : [
     {
       chapter: 1,
-      title: story.title || 'Capítulo 1',
-      japanese: story.japanese || '',
-      hiragana: story.hiragana || '',
-      translation_es: story.translation_es || ''
+      title: story?.title || 'Capítulo 1',
+      japanese: story?.japanese || '',
+      hiragana: story?.hiragana || '',
+      translation_es: story?.translation_es || ''
     }
   ];
 
@@ -246,8 +251,8 @@ export default function StoryTab({
             style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
             onClick={() => {
               if (window.confirm("¿Estás seguro de eliminar esta historia generada?")) {
-                const updatedStories = (appState.customStories || []).filter(s => s.id !== story.id);
-                onUpdateState({ customStories: updatedStories });
+                const updatedStories = (appState?.savedStories || []).filter(s => s.id !== story.id);
+                onUpdateState({ ...appState, savedStories: updatedStories });
                 setSelectedStoryId(allStories[0]?.id || null);
               }
             }}
@@ -304,7 +309,7 @@ export default function StoryTab({
 
       {/* Chapter Tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        {story.paragraphs.map(p => (
+        {paragraphs.map(p => (
           <button
             key={p.chapter}
             className={`btn ${p.chapter === currentChapter ? 'btn-primary' : 'btn-outline'} btn-sm`}
@@ -314,7 +319,7 @@ export default function StoryTab({
               if (onParamsChange) onParamsChange({ id: selectedStoryId, chapter: p.chapter, mode: readingMode });
             }}
           >
-            Capítulo {p.chapter}: {p.title.split(' ')[0]}
+            Capítulo {p.chapter}: {p.title?.split(' ')?.[0] || `Capítulo ${p.chapter}`}
           </button>
         ))}
       </div>
