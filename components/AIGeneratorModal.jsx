@@ -148,6 +148,23 @@ export default function AIGeneratorModal({
   }, [selectedThemeId, customThemeText]);
 
   const handleGenerate = async () => {
+    // 1. Requerir sesión activa para generar con IA
+    if (!authUser) {
+      showAlert({
+        type: 'lock',
+        title: 'Generación con Inteligencia Artificial',
+        message: 'Debes iniciar sesión con tu cuenta de Google o correo para generar historias u oraciones personalizadas con IA.',
+        actionLabel: 'Iniciar Sesión',
+        onAction: () => {
+          onClose();
+          if (contextApp?.setIsAuthModalOpen) {
+            contextApp.setIsAuthModalOpen(true);
+          }
+        }
+      });
+      return;
+    }
+
     if (selectedItems.length === 0) {
       showAlert({
         type: 'warning',
@@ -167,6 +184,23 @@ export default function AIGeneratorModal({
       const itemsList = selectedItems.map(i => i.text);
       const session = await getAuthSession();
       const token = session?.access_token;
+
+      if (!token) {
+        showAlert({
+          type: 'lock',
+          title: 'Sesión Requerida',
+          message: 'Tu sesión no está activa o ha expirado. Por favor vuelve a iniciar sesión.',
+          actionLabel: 'Iniciar Sesión',
+          onAction: () => {
+            onClose();
+            if (contextApp?.setIsAuthModalOpen) {
+              contextApp.setIsAuthModalOpen(true);
+            }
+          }
+        });
+        setIsGenerating(false);
+        return;
+      }
 
       const payload = {
         type: contentType,
@@ -442,6 +476,42 @@ export default function AIGeneratorModal({
         {/* Modal Body */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
           
+          {/* Auth requirement notice */}
+          {!authUser && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              background: 'rgba(99, 102, 241, 0.08)',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
+              borderRadius: 10,
+              padding: '12px 16px',
+              fontSize: '0.86rem',
+              color: 'var(--text-main)',
+              marginBottom: 18
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: '1.25rem' }}>🔒</span>
+                <span>
+                  Para generar historias u oraciones con IA debes <strong>iniciar sesión</strong> con tu cuenta.
+                </span>
+              </div>
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                onClick={() => {
+                  onClose();
+                  if (contextApp?.setIsAuthModalOpen) {
+                    contextApp.setIsAuthModalOpen(true);
+                  }
+                }}
+              >
+                Iniciar Sesión
+              </button>
+            </div>
+          )}
+
           {/* If NOT generated yet */}
           {!resultStory && !resultSentences && !isGenerating && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -1065,7 +1135,7 @@ export default function AIGeneratorModal({
                 }}
               >
                 <Sparkles size={16} />
-                <span>Generar con IA</span>
+                <span>{!authUser ? '🔒 Inicia sesión para Generar' : (contentType === 'story' ? 'Generar Historia con IA' : 'Generar Oraciones con IA')}</span>
               </button>
             )}
 

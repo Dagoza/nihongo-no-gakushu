@@ -38,13 +38,15 @@ export default function ConversationGeneratorModal({
   defaultLevel = 'N5',
   appState,
   onUpdateState,
-  onSelectConversation
+  onSelectConversation,
+  authUser: propAuthUser = null
 }) {
   let contextApp = null;
   try {
     contextApp = useApp();
   } catch (e) {}
 
+  const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
 
   const [selectedWords, setSelectedWords] = useState([]);
@@ -93,6 +95,23 @@ export default function ConversationGeneratorModal({
     : (CONVERSATION_CATEGORIES.find(c => c.id === selectedCatId)?.prompt || 'Comida & Restaurantes');
 
   const handleGenerate = async () => {
+    // 1. Requerir sesión activa para interactuar con la IA
+    if (!authUser) {
+      showAlert({
+        type: 'lock',
+        title: 'Generador de Diálogos con IA',
+        message: 'Debes iniciar sesión con tu cuenta de Google o correo para generar diálogos situacionales con Inteligencia Artificial.',
+        actionLabel: 'Iniciar Sesión',
+        onAction: () => {
+          onClose();
+          if (contextApp?.setIsAuthModalOpen) {
+            contextApp.setIsAuthModalOpen(true);
+          }
+        }
+      });
+      return;
+    }
+
     setIsGenerating(true);
     setGeneratedConv(null);
     setSavedSuccess(false);
@@ -100,6 +119,23 @@ export default function ConversationGeneratorModal({
     try {
       const session = await getAuthSession();
       const token = session?.access_token;
+
+      if (!token) {
+        showAlert({
+          type: 'lock',
+          title: 'Sesión Requerida',
+          message: 'Tu sesión no está activa o ha expirado. Por favor vuelve a iniciar sesión.',
+          actionLabel: 'Iniciar Sesión',
+          onAction: () => {
+            onClose();
+            if (contextApp?.setIsAuthModalOpen) {
+              contextApp.setIsAuthModalOpen(true);
+            }
+          }
+        });
+        setIsGenerating(false);
+        return;
+      }
 
       const payload = {
         action: 'generate_dialogue',
@@ -126,7 +162,14 @@ export default function ConversationGeneratorModal({
         showAlert({
           type: 'error',
           title: 'Error de Generación',
-          message: data.error || 'No se pudo generar el diálogo con el servicio de IA.'
+          message: data.error || 'No se pudo generar el diálogo con el servicio de IA.',
+          actionLabel: response.status === 401 ? 'Iniciar Sesión' : undefined,
+          onAction: response.status === 401 ? () => {
+            onClose();
+            if (contextApp?.setIsAuthModalOpen) {
+              contextApp.setIsAuthModalOpen(true);
+            }
+          } : undefined
         });
         setIsGenerating(false);
         return;
@@ -253,6 +296,47 @@ export default function ConversationGeneratorModal({
         {/* Modal Body */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
           
+          {/* Auth requirement notice */}
+          {!authUser && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              background: 'rgba(236, 72, 153, 0.08)',
+              border: '1px solid rgba(236, 72, 153, 0.25)',
+              borderRadius: 10,
+              padding: '12px 16px',
+              fontSize: '0.86rem',
+              color: 'var(--text-main)',
+              marginBottom: 16
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: '1.25rem' }}>🔒</span>
+                <span>
+                  Para generar diálogos con IA debes <strong>iniciar sesión</strong> con tu cuenta.
+                </span>
+              </div>
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                onClick={() => {
+                  onClose();
+                  if (contextApp?.setIsAuthModalOpen) {
+                    contextApp.setIsAuthModalOpen(true);
+                  }
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+                  border: 'none',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                Iniciar Sesión
+              </button>
+            </div>
+          )}
+
           {!generatedConv && !isGenerating && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
               

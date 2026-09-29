@@ -11,24 +11,17 @@ export async function POST(req) {
     const authHeader = req.headers.get('authorization') || '';
     const token = authHeader.replace(/^Bearer\s+/i, '').trim();
 
-    let user = null;
-    if (token) {
-      const { data, error: authError } = await supabase.auth.getUser(token);
-      if (!authError && data?.user) {
-        user = data.user;
-      }
+    if (!token) {
+      return NextResponse.json(
+        { error: "Debes iniciar sesión con tu cuenta para interactuar con la IA de conversaciones." },
+        { status: 401 }
+      );
     }
 
-    // En producción se requiere autenticación para resguardar cuotas del servicio de IA
-    if (process.env.NODE_ENV === 'production' && !user) {
-      if (!token) {
-        return NextResponse.json(
-          { error: "Debes iniciar sesión con tu cuenta para interactuar con la IA de conversaciones." },
-          { status: 401 }
-        );
-      }
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
       return NextResponse.json(
-        { error: "Sesión no válida o expirada. Por favor, vuelve a iniciar sesión." },
+        { error: "Sesión no válida o expirada. Por favor, vuelve a iniciar sesión con tu cuenta." },
         { status: 401 }
       );
     }

@@ -804,28 +804,19 @@ export default function ConversationTab({
                           </div>
                         </div>
 
-                        {/* Line Audio Playback */}
-                        <button 
-                          className="audio-btn" 
-                          style={{ width: 34, height: 34, flexShrink: 0 }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            audioManager.speak(lineJp);
-                          }}
-                          title={isMuted ? "Escuchar modelo de pronunciación (Tokio)" : "Escuchar audio"}
-                        >
-                          <Volume2 size={16} />
-                        </button>
-                      </div>
-
-                      {/* Interactive Pronunciation Evaluation for the Muted Character */}
-                      {isMuted && (
-                        <div style={{ borderTop: '1px solid rgba(139, 92, 246, 0.25)', paddingTop: 10, marginTop: 4 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                              <Mic size={14} /> Evaluación oral en tiempo real:
-                            </span>
-                          </div>
+                        {/* Line Audio Playback & Speech Practice */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            className="audio-btn" 
+                            style={{ width: 34, height: 34, flexShrink: 0 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              audioManager.speak(lineJp);
+                            }}
+                            title={isMuted ? "Escuchar modelo de pronunciación (Tokio)" : "Escuchar audio"}
+                          >
+                            <Volume2 size={16} />
+                          </button>
                           <SpeechPractice 
                             targetText={lineJp} 
                             targetKana={lineKana} 
@@ -839,6 +830,15 @@ export default function ConversationTab({
                               }
                             }}
                           />
+                        </div>
+                      </div>
+
+                      {/* Interactive Pronunciation Evaluation for the Muted Character */}
+                      {isMuted && (
+                        <div style={{ borderTop: '1px solid rgba(139, 92, 246, 0.25)', paddingTop: 8, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                            <Mic size={14} /> ¡Tu turno de hablar! Presiona el micrófono arriba para evaluar tu dicción en japonés.
+                          </span>
                         </div>
                       )}
                     </div>
@@ -1273,26 +1273,19 @@ export default function ConversationTab({
                               </div>
                             </div>
 
-                            <button 
-                              className="audio-btn" 
-                              style={{ width: 34, height: 34, flexShrink: 0 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                audioManager.speak(lineJp);
-                              }}
-                              title={isMuted ? "Escuchar modelo" : "Escuchar audio"}
-                            >
-                              <Volume2 size={16} />
-                            </button>
-                          </div>
-
-                          {isMuted && (
-                            <div style={{ borderTop: '1px solid rgba(139, 92, 246, 0.25)', paddingTop: 10, marginTop: 4 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                                  <Mic size={14} /> Evaluación oral en tiempo real:
-                                </span>
-                              </div>
+                            {/* Line Audio Playback & Speech Practice */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+                              <button 
+                                className="audio-btn" 
+                                style={{ width: 34, height: 34, flexShrink: 0 }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  audioManager.speak(lineJp);
+                                }}
+                                title={isMuted ? "Escuchar modelo" : "Escuchar audio"}
+                              >
+                                <Volume2 size={16} />
+                              </button>
                               <SpeechPractice 
                                 targetText={lineJp} 
                                 targetKana={lineKana} 
@@ -1306,6 +1299,14 @@ export default function ConversationTab({
                                   }
                                 }}
                               />
+                            </div>
+                          </div>
+
+                          {isMuted && (
+                            <div style={{ borderTop: '1px solid rgba(139, 92, 246, 0.25)', paddingTop: 8, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                                <Mic size={14} /> ¡Tu turno de hablar! Presiona el micrófono arriba para evaluar tu pronunciación.
+                              </span>
                             </div>
                           )}
                         </div>
@@ -1567,16 +1568,29 @@ export default function ConversationTab({
                     marginBottom: 20
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '1.05rem', color: selectedAnswer.isCorrect ? '#15803d' : '#b91c1c', marginBottom: 6 }}>
-                    {selectedAnswer.isCorrect ? (
-                      <>
-                        <CheckCircle2 size={20} /> ¡Correcto! (+10 XP)
-                      </>
-                    ) : (
-                      <>
-                        <XCircle size={20} /> Incorrecto. La respuesta adecuada es: <span className="jp-text">{currentExercise.correct}</span>
-                      </>
-                    )}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '1.05rem', color: selectedAnswer.isCorrect ? '#15803d' : '#b91c1c' }}>
+                      {selectedAnswer.isCorrect ? (
+                        <>
+                          <CheckCircle2 size={20} /> ¡Correcto! (+10 XP)
+                        </>
+                      ) : (
+                        <>
+                          <XCircle size={20} /> Incorrecto. La respuesta adecuada es: <span className="jp-text">{currentExercise.correct}</span>
+                        </>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button
+                        className="audio-btn"
+                        style={{ width: 28, height: 28 }}
+                        onClick={() => audioManager.speak(currentExercise.correct)}
+                        title="Escuchar respuesta"
+                      >
+                        <Volume2 size={14} />
+                      </button>
+                      <SpeechPractice targetText={currentExercise.correct} compact={true} />
+                    </div>
                   </div>
                   <p style={{ fontSize: '0.95rem', color: 'var(--text-main)', lineHeight: 1.6, margin: 0 }}>
                     💡 <strong>Explicación:</strong> {currentExercise.explanation}
