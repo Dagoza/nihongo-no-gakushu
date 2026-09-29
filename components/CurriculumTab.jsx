@@ -40,6 +40,18 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const [quizAnswers, setQuizAnswers] = useState({}); // { [exerciseId]: selectedOption }
   const [quizFeedback, setQuizFeedback] = useState({}); // { [exerciseId]: { isCorrect, explanation } }
 
+  // Listen for browser Back/Forward navigation to smoothly switch between list and module view
+  React.useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window === 'undefined') return;
+      const params = new URLSearchParams(window.location.search);
+      const step = params.get('step');
+      setSelectedStepNum(step ? parseInt(step, 10) : null);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   React.useEffect(() => {
     if (initialStep !== undefined && initialStep !== null) {
       setSelectedStepNum(initialStep);
@@ -52,11 +64,11 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               return;
             }
           }
-          const detail = document.querySelector('.curriculum-detail');
+          const detail = document.querySelector('.curriculum-detail-view');
           if (detail) {
             detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        }, 150);
+        }, 100);
       }
     }
   }, [initialStep]);
@@ -109,17 +121,23 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
   const handleOpenModule = (stepNum) => {
     setSelectedStepNum(stepNum);
+    if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', `/curriculum?step=${stepNum}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     if (onStepChange) onStepChange(stepNum);
     setQuizAnswers({});
     setQuizFeedback({});
-    // Scroll smoothly to top
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   };
 
   const handleCloseModule = () => {
     setSelectedStepNum(null);
+    if (typeof window !== 'undefined') {
+      if (window.location.search.includes('step=')) {
+        window.history.pushState(null, '', '/curriculum');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     if (onStepChange) onStepChange(null);
   };
 

@@ -276,7 +276,6 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     const tabObj = TABS.find((t) => t.id === tabId);
     const targetPath = tabObj ? tabObj.path : `/${tabId}`;
     router.push(targetPath);
-    if (onTabChange) onTabChange(tabId);
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -362,7 +361,6 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                             href={t.path}
                             className={`mega-item-btn ${isActive ? 'active' : ''}`}
                             onClick={() => {
-                              if (onTabChange) onTabChange(t.id);
                               setIsMenuOpen(false);
                             }}
                             role="menuitem"
@@ -399,7 +397,6 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                             href={t.path}
                             className={`mega-item-btn ${isActive ? 'active' : ''}`}
                             onClick={() => {
-                              if (onTabChange) onTabChange(t.id);
                               setIsMenuOpen(false);
                             }}
                             role="menuitem"
@@ -436,7 +433,6 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                             href={t.path}
                             className={`mega-item-btn ${isActive ? 'active' : ''}`}
                             onClick={() => {
-                              if (onTabChange) onTabChange(t.id);
                               setIsMenuOpen(false);
                             }}
                             role="menuitem"
@@ -503,7 +499,6 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                     href={tab.path}
                     className={`nav-tab-pill ${isActive ? 'active' : ''}`}
                     onClick={() => {
-                      if (onTabChange) onTabChange(tab.id);
                       if (typeof window !== 'undefined') {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }
