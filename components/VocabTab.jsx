@@ -614,6 +614,42 @@ export default function VocabTab({
             </select>
           </div>
 
+          {/* Quick Filter Chips & Action Row */}
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 }}>
+            <button
+              type="button"
+              className={`btn btn-xs ${filterOnlyWithNotes ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setFilterOnlyWithNotes(!filterOnlyWithNotes)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, borderRadius: '20px', padding: '4px 12px' }}
+              title="Ver únicamente palabras que contienen notas de estudio personales"
+            >
+              <StickyNote size={13} />
+              <span>Con Notas ({effectiveVocabList.filter(v => v.notes && v.notes.trim()).length})</span>
+            </button>
+
+            <button
+              type="button"
+              className={`btn btn-xs ${filterOnlyCustomized ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setFilterOnlyCustomized(!filterOnlyCustomized)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, borderRadius: '20px', padding: '4px 12px' }}
+              title="Ver palabras modificadas o personalizadas"
+            >
+              <Edit3 size={13} />
+              <span>Personalizadas ({effectiveVocabList.filter(v => v.isCustomized).length})</span>
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-outline btn-xs"
+              onClick={() => setIsCreateModalOpen(true)}
+              style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, borderColor: 'var(--primary)', color: 'var(--primary-light)' }}
+              title="Registrar una nueva palabra con Kanji, Hiragana, Katakana y notas"
+            >
+              <Plus size={14} />
+              <span>Nueva Palabra</span>
+            </button>
+          </div>
+
           <div style={{ marginBottom: 16, fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Mostrando <strong>{filteredVocab.length}</strong> palabras:</span>
             <span>
@@ -629,11 +665,29 @@ export default function VocabTab({
                 <div 
                   key={item.id} 
                   className="vocab-card"
-                  style={{ borderColor: isMastered ? 'var(--success)' : 'var(--border)' }}
+                  style={{ borderColor: isMastered ? 'var(--success)' : (item.isCustomized ? 'rgba(99, 102, 241, 0.4)' : 'var(--border)') }}
                 >
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                      <span className="vocab-tag">{item.level} · {item.category}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        <span className="vocab-tag">{item.level} · {item.category}</span>
+                        {item.isCustomized && (
+                          <span 
+                            style={{ 
+                              fontSize: '0.72rem', 
+                              background: 'rgba(99, 102, 241, 0.15)', 
+                              color: 'var(--primary-light)', 
+                              padding: '2px 6px', 
+                              borderRadius: '4px', 
+                              fontWeight: 600,
+                              border: '1px solid rgba(99, 102, 241, 0.3)'
+                            }}
+                            title="Esta palabra tiene modificaciones personalizadas"
+                          >
+                            ✏️ Editado
+                          </span>
+                        )}
+                      </div>
                       <label style={{ cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 5 }}>
                         <input 
                           type="checkbox"
@@ -652,14 +706,21 @@ export default function VocabTab({
                       <button 
                         className="audio-btn" 
                         style={{ width: 32, height: 32 }}
-                        onClick={() => audioManager.speak(item.kana || item.kanji)}
+                        onClick={() => audioManager.speak(item.kana || item.hiragana || item.kanji)}
                         title="Escuchar pronunciación"
                       >
                         <Volume2 size={16} />
                       </button>
                     </div>
 
-                    <div className="vocab-kana jp-text">{item.kana || ''}</div>
+                    <div className="vocab-kana jp-text">
+                      {item.kana || item.hiragana || ''}
+                      {item.katakana && item.katakana !== (item.kana || item.hiragana) && (
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: 8, fontWeight: 400 }}>
+                          · {item.katakana}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="vocab-meanings">
@@ -669,6 +730,60 @@ export default function VocabTab({
                       <div style={{ marginTop: 8, fontSize: '0.8rem', color: 'var(--primary)', background: 'var(--primary-bg)', padding: '4px 8px', borderRadius: '4px' }}>
                         Forma ます: <strong className="jp-text">{item.polite_masu}</strong> | て: <strong className="jp-text">{item.te_form}</strong>
                       </div>
+                    )}
+
+                    {/* Nota de Estudio Personal */}
+                    {item.notes && (
+                      <div style={{
+                        marginTop: 10,
+                        background: 'rgba(245, 158, 11, 0.08)',
+                        border: '1px solid rgba(245, 158, 11, 0.25)',
+                        borderRadius: '8px',
+                        padding: '8px 10px',
+                        fontSize: '0.84rem'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--amber-700, #b45309)', fontWeight: 700, fontSize: '0.78rem', marginBottom: 3 }}>
+                          <StickyNote size={13} />
+                          <span>Nota de Estudio:</span>
+                        </div>
+                        <div style={{ color: 'var(--text-main)', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+                          {item.notes}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Action Row */}
+                  <div style={{
+                    marginTop: 12,
+                    paddingTop: 10,
+                    borderTop: '1px solid var(--border)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-xs"
+                      onClick={() => setEditingWord(item)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', padding: '4px 8px' }}
+                      title="Modificar cómo se escribe esta palabra o agregar/editar notas"
+                    >
+                      <Edit3 size={13} />
+                      <span>{item.notes ? 'Editar / Notas' : '+ Nota / Editar'}</span>
+                    </button>
+
+                    {item.isCustomized && (
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-xs"
+                        onClick={() => handleResetWordEdit(item.id || item.kanji)}
+                        style={{ color: 'var(--text-muted)', fontSize: '0.75rem', padding: '2px 6px', display: 'inline-flex', alignItems: 'center', gap: 3 }}
+                        title="Restablecer palabra a su valor original"
+                      >
+                        <RotateCcw size={12} />
+                        <span>Restaurar</span>
+                      </button>
                     )}
                   </div>
                 </div>
@@ -937,6 +1052,27 @@ export default function VocabTab({
           </div>
         </div>
       )}
+
+      {/* Modal para Editar Palabra y Agregar Notas */}
+      {editingWord && (
+        <EditWordModal
+          isOpen={Boolean(editingWord)}
+          onClose={() => setEditingWord(null)}
+          word={editingWord}
+          onSave={handleSaveWordEdit}
+          onReset={handleResetWordEdit}
+          isCustomized={Boolean(editingWord.isCustomized)}
+        />
+      )}
+
+      {/* Modal para Crear Nueva Palabra */}
+      <SaveVocabModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        initialData={{ type: 'word', source: 'Entrenador de Vocabulario' }}
+        appState={appState}
+        onUpdateState={onUpdateState}
+      />
     </div>
   );
 }

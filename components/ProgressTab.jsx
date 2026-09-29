@@ -26,6 +26,7 @@ import {
   signInWithGoogle 
 } from '../lib/supabaseSync';
 import { dataStore } from '../lib/data';
+import { useApp } from '../lib/AppContext';
 
 export default function ProgressTab({ 
   appState, 
@@ -37,6 +38,12 @@ export default function ProgressTab({
   onOpenAuth = null,
   onSignOut = null
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+  const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
+
   const fileInputRef = useRef(null);
 
   // Estados de Sincronización en la Nube
@@ -121,8 +128,14 @@ export default function ProgressTab({
     reader.readAsText(file);
   };
 
-  const handleReset = () => {
-    if (confirm('¿Estás seguro de que deseas reiniciar todo el progreso acumulado? Esta acción no se puede deshacer.')) {
+  const handleReset = async () => {
+    const ok = await showConfirm({
+      title: '¿Reiniciar Progreso?',
+      message: '¿Estás seguro de que deseas reiniciar todo el progreso acumulado? Esta acción restablecerá tus rachas y XP a cero y no se puede deshacer.',
+      confirmText: 'Reiniciar Todo',
+      isDestructive: true
+    });
+    if (ok) {
       const fresh = getInitialState();
       onUpdateState(fresh);
       setSyncMessage({ type: 'info', text: 'El progreso ha sido reiniciado a cero.' });
