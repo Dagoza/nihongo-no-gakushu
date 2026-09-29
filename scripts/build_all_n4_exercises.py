@@ -1,0 +1,364 @@
+import json
+
+exercises = [
+    # Unit 1 (11 exercises)
+    {
+        "id": "ex_1",
+        "level": "N4",
+        "prompt_es": "La vista desde la montaña es maravillosa.",
+        "sentence": "山から見る景色はとても ( すばらしい ) です。",
+        "masked": "山から見る景色はとても 【 ？ 】 です。",
+        "correct": "すばらしい",
+        "options": ["すばらしい", "あぶない", "こわい", "ふかい"],
+        "explanation": "すばらしい (maravilloso). Se usa comúnmente para describir paisajes o vistas impresionantes."
+    },
+    {
+        "id": "ex_2",
+        "level": "N4",
+        "prompt_es": "Nick vivió en Japón, así que habla bien japonés.",
+        "sentence": "ニックさんは日本に住んでいたから、日本語が ( じょうず ) です。",
+        "masked": "ニックさんは日本に住んでいたから、日本語が 【 ？ 】 です。",
+        "correct": "じょうず",
+        "options": ["じょうず", "きびしい", "うるさい", "にがい"],
+        "explanation": "じょうず (hábil / bueno en algo). Expresa destreza adquirida tras vivir en Japón."
+    },
+    {
+        "id": "ex_3",
+        "level": "N4",
+        "prompt_es": "Aquel lago es profundo por lo que es peligroso, pero este lago es seguro porque es poco profundo.",
+        "sentence": "あの湖は深いから、( あぶない ) ですが、この湖は浅いから安全です。",
+        "masked": "あの湖は深いから、【 ？ 】 ですが、この湖は浅いから安全です。",
+        "correct": "あぶない",
+        "options": ["あぶない", "うれしい", "ねっしん", "すばらしい"],
+        "explanation": "あぶない / 危険 (peligroso), contrasta con 安全 (seguro) y 浅い (poco profundo)."
+    },
+    {
+        "id": "ex_4",
+        "level": "N4",
+        "prompt_es": "La madera es dura, pero es más blanda que el hierro.",
+        "sentence": "木は硬いですが、鉄より ( やわらかい ) です。",
+        "masked": "木は硬いですが、鉄より 【 ？ 】 です。",
+        "correct": "やわらかい",
+        "options": ["やわらかい", "あつい", "ふかい", "おもい"],
+        "explanation": "やわらかい / 柔らかい (blando / suave), es el antónimo directo de 硬い (duro)."
+    },
+    {
+        "id": "ex_5",
+        "level": "N4",
+        "prompt_es": "Esta máquina es complicada, así que no es fácil de usar.",
+        "sentence": "この機械は ( ふくざつ ) ですから、使うのは簡単じゃありません。",
+        "masked": "この機械は 【 ？ 】 ですから、使うのは簡単じゃありません。",
+        "correct": "ふくざつ",
+        "options": ["ふくざつ", "かんたん", "へん", "とくべつ"],
+        "explanation": "ふくざつ / 複雑 (complicado / complejo), se opone a 簡単 (sencillo)."
+    },
+    {
+        "id": "ex_6",
+        "level": "N4",
+        "prompt_es": "Como hay muchas fábricas cerca de aquí, el aire está contaminado / sucio.",
+        "sentence": "この近くは工場が多いですから、空気が ( きたない ) です。",
+        "masked": "この近くは工場が多いですから、空気が 【 ？ 】 です。",
+        "correct": "きたない",
+        "options": ["きたない", "あぶない", "ひどい", "うすい"],
+        "explanation": "きたない / 汚い (sucio / contaminado), describe aire o entorno afectado por polución."
+    },
+    {
+        "id": "ex_7",
+        "level": "N4",
+        "prompt_es": "Esta sopa es insípida / aguada y no está rica.",
+        "sentence": "このスープは ( うすく ) て、美味しくないです。",
+        "masked": "このスープは 【 ？ 】 て、美味しくないです。",
+        "correct": "うすく",
+        "options": ["うすく", "あつく", "からく", "あまく"],
+        "explanation": "うすい / 薄い (insípido / aguado / tenue). En forma te conectiva se transforma en 薄くて."
+    },
+    {
+        "id": "ex_8",
+        "level": "N4",
+        "prompt_es": "Mi hermana mayor hace footing todos los días, por lo que su cuerpo es delgado.",
+        "sentence": "姉は毎日ジョギングしているから、体が ( ほそい ) です。",
+        "masked": "姉は毎日ジョギングしているから、体が 【 ？ 】 です。",
+        "correct": "ほそい",
+        "options": ["ほそい", "ふとい", "ひくい", "わかい"],
+        "explanation": "ほそい / 細い (delgado / esbelto), contrasta con 太い (grueso / corpulento)."
+    },
+    {
+        "id": "ex_9",
+        "level": "N4",
+        "prompt_es": "Como esa moneda es rara / escasa, su precio es elevado.",
+        "sentence": "あのコインは ( めずらしい ) から、値段が高いです。",
+        "masked": "あのコインは 【 ？ 】 から、値段が高いです。",
+        "correct": "めずらしい",
+        "options": ["めずらしい", "ふつう", "ひどい", "あぶない"],
+        "explanation": "めずらしい / 珍しい (raro / poco común / valioso)."
+    },
+    {
+        "id": "ex_10",
+        "level": "N4",
+        "prompt_es": "La palabra opuesta a 'normal' es 'extraño / raro'.",
+        "sentence": "「普通」の反対の言葉は「 ( へん ) 」です。",
+        "masked": "「普通」の反対の言葉は「 【 ？ 】 」です。",
+        "correct": "へん",
+        "options": ["へん", "ふくざつ", "あんぜん", "ただしい"],
+        "explanation": "へん / 変 (raro / extraño), es el antónimo canónico de 普通 (normal / corriente)."
+    },
+    {
+        "id": "ex_11",
+        "level": "N4",
+        "prompt_es": "El diccionario de kanji es grueso y pesado.",
+        "sentence": "漢字の辞書は ( あつく ) て、重いです。",
+        "masked": "漢字の辞書は 【 ？ 】 て、重いです。",
+        "correct": "あつく",
+        "options": ["あつく", "うすく", "おもく", "ひろく"],
+        "explanation": "あつい / 厚い (grueso / de mucho grosor para libros/papeles). En forma te conectiva: 厚くて."
+    },
+
+    # Unit 2 (12 exercises)
+    {
+        "id": "ex_12",
+        "level": "N4",
+        "prompt_es": "Esta película de terror me da mucho miedo.",
+        "sentence": "このホラー映画はとても ( こわい ) です。",
+        "masked": "このホラー映画はとても 【 ？ 】 です。",
+        "correct": "こわい",
+        "options": ["こわい", "かなしい", "にがい", "とくべつ"],
+        "explanation": "こわい / 怖い (aterrador / que da miedo), adjetivo ideal para películas de terror."
+    },
+    {
+        "id": "ex_13",
+        "level": "N4",
+        "prompt_es": "Llevo viviendo un año en Japón. Me siento un poco nostálgico / solitario.",
+        "sentence": "日本に１年住んでいます。少し ( さびしい ) です。",
+        "masked": "日本に１年住んでいます。少し 【 ？ 】 です。",
+        "correct": "さびしい",
+        "options": ["さびしい", "うるさい", "すばらしい", "あさい"],
+        "explanation": "さびしい / 寂しい (solitario / con morriña / nostálgico de su tierra)."
+    },
+    {
+        "id": "ex_14",
+        "level": "N4",
+        "prompt_es": "El profesor es estricto y apasionado, así que nos deja mucha tarea.",
+        "sentence": "先生は ( きびしい ) し、熱心だし、たくさん宿題を出します。",
+        "masked": "先生は 【 ？ 】 し、熱心だし、たくさん宿題を出します。",
+        "correct": "きびしい",
+        "options": ["きびしい", "にがい", "あぶない", "こわい"],
+        "explanation": "きびしい / 厳しい (estricto / riguroso), describe docentes o normas exigentes."
+    },
+    {
+        "id": "ex_15",
+        "level": "N4",
+        "prompt_es": "Mi mascota ha muerto y estoy muy triste.",
+        "sentence": "ペットが死んでとても ( かなしい ) です。",
+        "masked": "ペットが死んでとても 【 ？ 】 です。",
+        "correct": "かなしい",
+        "options": ["かなしい", "うれしい", "はずかしい", "さびしい"],
+        "explanation": "かなしい / 悲しい (triste / afligido), expresa dolor emocional por una pérdida."
+    },
+    {
+        "id": "ex_16",
+        "level": "N4",
+        "prompt_es": "La casa de Mari es muy grande porque sus padres son ricos.",
+        "sentence": "マリさんの家はとても大きいです。両親は ( おかねもち ) ですから。",
+        "masked": "マリさんの家はとても大きいです。両親は 【 ？ 】 ですから。",
+        "correct": "おかねもち",
+        "options": ["おかねもち", "まじめ", "えらい", "ていねい"],
+        "explanation": "おかねもち / お金持ち (rico / adinerado)."
+    },
+    {
+        "id": "ex_17",
+        "level": "N4",
+        "prompt_es": "En la empresa, por favor habla con palabras corteses / educadas.",
+        "sentence": "会社では ( ていねい ) な言葉で話してください。",
+        "masked": "会社では 【 ？ 】 な言葉で話してください。",
+        "correct": "ていねい",
+        "options": ["ていねい", "まじめ", "へん", "ふくざつ"],
+        "explanation": "ていねい / 丁寧 (educado / cortés / formal), fundamental en entornos laborales."
+    },
+    {
+        "id": "ex_18",
+        "level": "N4",
+        "prompt_es": "Tengo sueño, por eso quiero beber café.",
+        "sentence": "( ねむい ) から、コーヒーが飲みたい。",
+        "masked": "【 ？ 】 から、コーヒーが飲みたい。",
+        "correct": "ねむい",
+        "options": ["ねむい", "こわい", "さびしい", "つらい"],
+        "explanation": "ねむい / 眠い (con sueño / somnoliento)."
+    },
+    {
+        "id": "ex_19",
+        "level": "N4",
+        "prompt_es": "El presidente es la persona más importante / de mayor rango de la empresa.",
+        "sentence": "社長は会社でいちばん ( えらい ) 人です。",
+        "masked": "社長は会社でいちばん 【 ？ 】 人です。",
+        "correct": "えらい",
+        "options": ["えらい", "きびしい", "すご", "まじめ"],
+        "explanation": "えらい / 偉い (eminente / admirable / de alto rango jerárquico)."
+    },
+    {
+        "id": "ex_20",
+        "level": "N4",
+        "prompt_es": "Aprender 100 kanjis en un solo día es imposible.",
+        "sentence": "１日で１００個漢字を覚えるのは ( むり ) です。",
+        "masked": "１日で１００個漢字を覚えるのは 【 ？ 】 です。",
+        "correct": "むり",
+        "options": ["むり", "へん", "ひつよう", "いや"],
+        "explanation": "むり / 無理 (imposible / excesivo / irrealizable)."
+    },
+    {
+        "id": "ex_21",
+        "level": "N4",
+        "prompt_es": "Tanaka se acaba de casar el mes pasado y se la ve muy feliz.",
+        "sentence": "田中さんは先月結婚したばかりでとても ( しあわせ ) そうです。",
+        "masked": "田中さんは先月結婚したばかりでとても 【 ？ 】 そうです。",
+        "correct": "しあわせ",
+        "options": ["しあわせ", "うれしい", "まじめ", "えらい"],
+        "explanation": "しあわせ / 幸せ (feliz / afortunado en la vida)."
+    },
+    {
+        "id": "ex_22",
+        "level": "N4",
+        "prompt_es": "Wan es una estudiante seria y formal, por eso hace la tarea todos los días.",
+        "sentence": "ワンさんは ( まじめ ) な学生ですから、毎日宿題をします。",
+        "masked": "ワンさんは 【 ？ 】 な学生ですから、毎日宿題をします。",
+        "correct": "まじめ",
+        "options": ["まじめ", "ていねい", "えらい", "ねっしん"],
+        "explanation": "まじめ / 真面目 (serio / responsable / trabajador)."
+    },
+    {
+        "id": "ex_23",
+        "level": "N4",
+        "prompt_es": "Me da vergüenza, por eso no quiero hablar delante de mucha gente.",
+        "sentence": "( はずかしい ) から、たくさんの人の前で話したくありません。",
+        "masked": "【 ？ 】 から、たくさんの人の前で話したくありません。",
+        "correct": "はずかしい",
+        "options": ["はずかしい", "こわい", "さびしい", "かなしい"],
+        "explanation": "はずかしい / 恥ずかしい (tímido / avergonzado / dar vergüenza ajena o propia)."
+    },
+
+    # Unit 3 (12 exercises)
+    {
+        "id": "ex_24",
+        "level": "N4",
+        "prompt_es": "En la India, la vaca es un animal especial.",
+        "sentence": "インドでは牛は ( とくべつ ) な動物です。",
+        "masked": "インドでは牛は 【 ？ 】 な動物です。",
+        "correct": "とくべつ",
+        "options": ["とくべつ", "うるさい", "てきせつ", "かなしい"],
+        "explanation": "とくべつ / 特別 (especial, adjetivo-na: 特別な動物)."
+    },
+    {
+        "id": "ex_25",
+        "level": "N4",
+        "prompt_es": "Prefiero el café solo amargo al café dulce.",
+        "sentence": "甘いコーヒーより ( にがい ) ブラックコーヒーが好きです。",
+        "masked": "甘いコーヒーより 【 ？ 】 ブラックコーヒーが好きです。",
+        "correct": "にがい",
+        "options": ["にがい", "あぶない", "こわい", "ふかい"],
+        "explanation": "にがい / 苦い (amargo), opuesto a 甘い (dulce)."
+    },
+    {
+        "id": "ex_26",
+        "level": "N4",
+        "prompt_es": "Están haciendo obras en la carretera, así que hay mucho ruido.",
+        "sentence": "道路工事をしているから、とても ( うるさい ) です。",
+        "masked": "道路工事をしているから、とても 【 ？ 】 です。",
+        "correct": "うるさい",
+        "options": ["うるさい", "すばらしい", "さびしい", "とくべつ"],
+        "explanation": "うるさい / 煩い (ruidoso / molesto)."
+    },
+    {
+        "id": "ex_27",
+        "level": "N4",
+        "prompt_es": "Pregunta 1: Coloca una palabra apropiada / adecuada en el espacio en blanco.",
+        "sentence": "問題 1：空欄に ( てきとう ) な言葉をいれなさい。",
+        "masked": "問題 1：空欄に 【 ？ 】 な言葉をいれなさい。",
+        "correct": "てきとう",
+        "options": ["てきとう", "とくべつ", "じゆう", "ふべん"],
+        "explanation": "てきとう / 適当 (adecuado / apropiado / idóneo)."
+    },
+    {
+        "id": "ex_28",
+        "level": "N4",
+        "prompt_es": "Los insectos me dan asco / repugnancia, por eso no me gustan.",
+        "sentence": "虫は ( きもちがわるい ) ですから、好きじゃないです。",
+        "masked": "虫は 【 ？ 】 ですから、好きじゃないです。",
+        "correct": "きもちがわるい",
+        "options": ["きもちがわるい", "こわい", "うるさい", "にがい"],
+        "explanation": "きもちがわるい / 気持ちが悪い (asqueroso / desagradable / que da repelús)."
+    },
+    {
+        "id": "ex_29",
+        "level": "N4",
+        "prompt_es": "En esta ciudad la industria es próspera / floreciente.",
+        "sentence": "この町は工業が ( さかん ) です。",
+        "masked": "この町は工業が 【 ？ 】 です。",
+        "correct": "さかん",
+        "options": ["さかん", "じょうぶ", "じゆう", "ふべん"],
+        "explanation": "さかん / 盛ん (próspero / activo / floreciente)."
+    },
+    {
+        "id": "ex_30",
+        "level": "N4",
+        "prompt_es": "Me surgió un asunto urgente, así que hoy no puedo ir.",
+        "sentence": "( きゅう ) な用事ができたので今日は行けません。",
+        "masked": "【 ？ 】 な用事ができたので今日は行けません。",
+        "correct": "きゅう",
+        "options": ["きゅう", "とくべつ", "ふべん", "ひつよう"],
+        "explanation": "きゅう / 急 (repentino / urgente / precipitado)."
+    },
+    {
+        "id": "ex_31",
+        "level": "N4",
+        "prompt_es": "El dinero es necesario, pero hay muchas cosas más importantes que el dinero.",
+        "sentence": "お金は ( ひつよう ) ですが、お金より大事なものはたくさんあります。",
+        "masked": "お金は 【 ？ 】 ですが、お金より大事なものはたくさんあります。",
+        "correct": "ひつよう",
+        "options": ["ひつよう", "じゆう", "さかん", "てきとう"],
+        "explanation": "ひつよう / 必要 (necesario / indispensable)."
+    },
+    {
+        "id": "ex_32",
+        "level": "N4",
+        "prompt_es": "Este smartphone es resistente / sólido y difícil de romper.",
+        "sentence": "このスマホは ( じょうぶ ) で壊れにくいです。",
+        "masked": "このスマホは 【 ？ 】 で壊れにくいです。",
+        "correct": "じょうぶ",
+        "options": ["じょうぶ", "とくべつ", "べんり", "さかん"],
+        "explanation": "じょうぶ / 丈夫 (resistente / robusto / duradero)."
+    },
+    {
+        "id": "ex_33",
+        "level": "N4",
+        "prompt_es": "Ese aeropuerto está lejos de la ciudad, por lo que es incómodo / poco práctico.",
+        "sentence": "あの空港は町から遠いので、( ふべん ) です。",
+        "masked": "あの空港は町から遠いので、 【 ？ 】 です。",
+        "correct": "ふべん",
+        "options": ["ふべん", "あぶない", "うるさい", "ひどい"],
+        "explanation": "ふべん / 不便 (incómodo / poco práctico / mal comunicado)."
+    },
+    {
+        "id": "ex_34",
+        "level": "N4",
+        "prompt_es": "Tengo muchas ganas e ilusión por mi viaje a Japón.",
+        "sentence": "日本の旅行が ( たのしみ ) です。",
+        "masked": "日本の旅行が 【 ？ 】 です。",
+        "correct": "たのしみ",
+        "options": ["たのしみ", "うれしい", "しあわせ", "だいじ"],
+        "explanation": "たのしみ / 楽しみ (esperar con ansias / ilusión por algo venidero)."
+    },
+    {
+        "id": "ex_35",
+        "level": "N4",
+        "prompt_es": "Tanaka conoce con mucho detalle la historia de Japón.",
+        "sentence": "田中さんは日本の歴史について ( くわしい ) です。",
+        "masked": "田中さんは日本の歴史について 【 ？ 】 です。",
+        "correct": "くわしい",
+        "options": ["くわしい", "まじめ", "えらい", "じょうぶ"],
+        "explanation": "くわしい / 詳しい (bien informado / conocedor al detalle)."
+    }
+]
+
+with open("data/exercises.json", "w", encoding="utf-8") as f:
+    json.dump(exercises, f, ensure_ascii=False, indent=2)
+
+print(f"Generated data/exercises.json with {len(exercises)} exercises successfully!")

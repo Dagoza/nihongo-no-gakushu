@@ -13,6 +13,7 @@
     "jlpt": "^1.0.4",
     "kanji-data": "^1.1.0",
     "lucide-react": "^1.16.0",
+    "msedge-tts": "^2.0.8",
     "next": "^16.3.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

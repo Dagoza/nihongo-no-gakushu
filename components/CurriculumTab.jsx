@@ -131,6 +131,21 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     });
   };
 
+  const toggleCanDoCompleted = (canDoId) => {
+    if (!onUpdateState || !userState) return;
+    const currentCanDos = userState.completedCanDos || {};
+    const isDone = !!currentCanDos[canDoId];
+    const updated = {
+      ...currentCanDos,
+      [canDoId]: !isDone
+    };
+    onUpdateState({
+      ...userState,
+      completedCanDos: updated,
+      xp: (userState.xp || 0) + (!isDone ? 10 : 0)
+    });
+  };
+
   // If a specific module is selected, render the deep interactive view
   if (selectedStep) {
     const isDone = userState?.completedSteps?.[selectedStep.step];
@@ -261,57 +276,104 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         </div>
 
         {/* Can-Do Objectives for Irodori */}
-        {selectedStep.can_dos && selectedStep.can_dos.length > 0 && (
-          <div className="card cando-section" style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
-              <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                  <span>🎯</span>
-                  <span>Competencias Can-Do (Fundación Japón / MCER A1)</span>
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  Objetivos prácticos de comunicación: lo que serás capaz de realizar en situaciones reales cotidianas y laborales.
-                </p>
-              </div>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '4px 10px', borderRadius: 'var(--radius-full)', background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', border: '1px solid rgba(236, 72, 153, 0.3)' }}>
-                {selectedStep.can_dos.length} {selectedStep.can_dos.length === 1 ? 'competencia' : 'competencias'}
-              </span>
-            </div>
+        {selectedStep.can_dos && selectedStep.can_dos.length > 0 && (() => {
+          const completedInModule = selectedStep.can_dos.filter(cd => userState?.completedCanDos?.[cd.id]).length;
+          const totalInModule = selectedStep.can_dos.length;
+          const percentInModule = Math.round((completedInModule / totalInModule) * 100);
 
-            <div className="cando-grid">
-              {selectedStep.can_dos.map((cd, idx) => (
-                <div key={idx} className="cando-card">
-                  <div className="cando-card-header">
-                    <span className="cando-badge">
-                      <Target size={13} />
-                      {cd.id}
-                    </span>
-                    <span className="cando-tag">Irodori A1</span>
-                  </div>
-
-                  <h4 className="cando-task">{cd.task}</h4>
-
-                  {cd.sample && (
-                    <div className="cando-expression-box">
-                      <div className="cando-expression-content">
-                        <span className="cando-expression-label">💬 Frase clave</span>
-                        <div className="cando-expression-text jp-text">{cd.sample}</div>
-                      </div>
-                      <button 
-                        className="cando-audio-btn" 
-                        onClick={() => audioManager.speak(cd.sample.replace(/\//g, '、'))}
-                        title="Escuchar pronunciación"
-                        aria-label="Escuchar pronunciación"
-                      >
-                        <Volume2 size={14} />
-                      </button>
-                    </div>
-                  )}
+          return (
+            <div className="card cando-section" style={{ marginBottom: 24 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span>🎯</span>
+                    <span>Competencias Can-Do (Fundación Japón / MCER A1)</span>
+                  </h3>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Autoevaluación práctica: valida las competencias comunicativas que puedas realizar en el mundo real (+10 XP cada una).
+                  </p>
                 </div>
-              ))}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ 
+                    fontSize: '0.82rem', 
+                    fontWeight: 700, 
+                    padding: '4px 12px', 
+                    borderRadius: 'var(--radius-full)', 
+                    background: completedInModule === totalInModule ? 'rgba(16, 185, 129, 0.15)' : 'rgba(236, 72, 153, 0.15)', 
+                    color: completedInModule === totalInModule ? 'var(--success)' : '#ec4899', 
+                    border: `1px solid ${completedInModule === totalInModule ? 'rgba(16, 185, 129, 0.3)' : 'rgba(236, 72, 153, 0.3)'}` 
+                  }}>
+                    {completedInModule} / {totalInModule} dominadas ({percentInModule}%)
+                  </span>
+                </div>
+              </div>
+
+              {/* Progress Bar for Module's Can-Dos */}
+              <div style={{ width: '100%', height: 6, background: 'var(--bg-main)', borderRadius: 10, overflow: 'hidden', marginBottom: 18, border: '1px solid var(--border)' }}>
+                <div style={{ 
+                  height: '100%', 
+                  width: `${percentInModule}%`, 
+                  background: completedInModule === totalInModule ? 'var(--success)' : 'linear-gradient(90deg, #ec4899, #f43f5e)', 
+                  transition: 'width 0.3s ease' 
+                }} />
+              </div>
+
+              <div className="cando-grid">
+                {selectedStep.can_dos.map((cd, idx) => {
+                  const isCanDoDone = !!userState?.completedCanDos?.[cd.id];
+
+                  return (
+                    <div key={idx} className={`cando-card ${isCanDoDone ? 'completed-cando' : ''}`}>
+                      <div className="cando-card-header">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span className={`cando-badge ${isCanDoDone ? 'badge-completed' : ''}`}>
+                            <Target size={13} />
+                            {cd.id}
+                          </span>
+                          <span className="cando-tag">Irodori A1</span>
+                        </div>
+
+                        {/* Interactive Checkbox / Autoevaluación Button */}
+                        <button
+                          type="button"
+                          onClick={() => toggleCanDoCompleted(cd.id)}
+                          className={`cando-check-btn ${isCanDoDone ? 'checked' : ''}`}
+                          title={isCanDoDone ? 'Desmarcar competencia' : 'Validar competencia como dominada (+10 XP)'}
+                        >
+                          <div className={`cando-checkbox-square ${isCanDoDone ? 'checked' : ''}`}>
+                            {isCanDoDone && <Check size={12} strokeWidth={3} />}
+                          </div>
+                          <span>{isCanDoDone ? 'Dominada ✓' : 'Autoevaluar'}</span>
+                        </button>
+                      </div>
+
+                      <h4 className="cando-task">
+                        {cd.task}
+                      </h4>
+
+                      {cd.sample && (
+                        <div className="cando-expression-box">
+                          <div className="cando-expression-content">
+                            <span className="cando-expression-label">💬 Frase clave</span>
+                            <div className="cando-expression-text jp-text">{cd.sample}</div>
+                          </div>
+                          <button 
+                            className="cando-audio-btn" 
+                            onClick={() => audioManager.speak(cd.sample.replace(/\//g, '、'))}
+                            title="Escuchar pronunciación"
+                            aria-label="Escuchar pronunciación"
+                          >
+                            <Volume2 size={14} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Integrated Vocabulary Section */}
         {selectedStep.vocab_details && selectedStep.vocab_details.length > 0 && (
@@ -695,6 +757,72 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         </p>
       </div>
 
+      {/* Overall Progress Banner */}
+      {(() => {
+        const totalModules = steps.length;
+        const completedModulesCount = steps.filter(s => userState?.completedSteps?.[s.step]).length;
+        const modulePercent = totalModules > 0 ? Math.round((completedModulesCount / totalModules) * 100) : 0;
+
+        const allCanDos = steps.flatMap(s => s.can_dos || []);
+        const totalCanDos = allCanDos.length;
+        const completedCanDosCount = allCanDos.filter(cd => userState?.completedCanDos?.[cd.id]).length;
+        const canDoPercent = totalCanDos > 0 ? Math.round((completedCanDosCount / totalCanDos) * 100) : 0;
+
+        return (
+          <div className="card ruta-progress-banner" style={{ marginBottom: 24, padding: '18px 22px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(236, 72, 153, 0.07) 100%)', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 14 }}>
+              <div>
+                <h3 style={{ fontSize: '1.12rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+                  <span>📊</span> Progreso de Ruta Consolidada y Competencias Can-Do
+                </h3>
+                <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: 4, marginBottom: 0 }}>
+                  Valida los módulos completados y autoevalúa cada competencia comunicativa con los checkbox interactivos para acumular XP.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <div style={{ padding: '6px 14px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border)', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Ruta Consolidada</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--primary)' }}>
+                    {completedModulesCount}/{totalModules} ({modulePercent}%)
+                  </div>
+                </div>
+
+                <div style={{ padding: '6px 14px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border)', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Can-Dos Validadas</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ec4899' }}>
+                    {completedCanDosCount}/{totalCanDos} ({canDoPercent}%)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dual visual progress bars */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
+                  <span>🗺️ Módulos de la Ruta</span>
+                  <span>{modulePercent}% completado</span>
+                </div>
+                <div style={{ width: '100%', height: 7, background: 'var(--bg-main)', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  <div style={{ height: '100%', width: `${modulePercent}%`, background: 'var(--primary)', transition: 'width 0.3s ease' }} />
+                </div>
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
+                  <span>🎯 Competencias Can-Do</span>
+                  <span>{canDoPercent}% dominado</span>
+                </div>
+                <div style={{ width: '100%', height: 7, background: 'var(--bg-main)', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  <div style={{ height: '100%', width: `${canDoPercent}%`, background: 'linear-gradient(90deg, #ec4899, #f43f5e)', transition: 'width 0.3s ease' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Theme & Level Filter Controls */}
       <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
         {/* Theme Pills */}
@@ -817,18 +945,25 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                         }}>
                           {step.level}
                         </span>
-                        {step.can_dos && step.can_dos.length > 0 && (
-                          <span style={{ 
-                            fontSize: '0.72rem', 
-                            fontWeight: 700, 
-                            padding: '2px 8px', 
-                            borderRadius: 4, 
-                            background: 'rgba(236, 72, 153, 0.12)', 
-                            color: '#db2777' 
-                          }}>
-                            🎯 {step.can_dos.length} Can-Dos
-                          </span>
-                        )}
+                        {step.can_dos && step.can_dos.length > 0 && (() => {
+                          const mTotal = step.can_dos.length;
+                          const mDone = step.can_dos.filter(cd => userState?.completedCanDos?.[cd.id]).length;
+                          const isAllDone = mDone === mTotal;
+
+                          return (
+                            <span style={{ 
+                              fontSize: '0.72rem', 
+                              fontWeight: 700, 
+                              padding: '2px 8px', 
+                              borderRadius: 4, 
+                              background: isAllDone ? 'rgba(16, 185, 129, 0.15)' : 'rgba(236, 72, 153, 0.12)', 
+                              color: isAllDone ? 'var(--success)' : '#db2777',
+                              border: isAllDone ? '1px solid rgba(16, 185, 129, 0.3)' : 'none'
+                            }}>
+                              🎯 {mDone}/{mTotal} Can-Dos {isAllDone ? '✓' : ''}
+                            </span>
+                          );
+                        })()}
                         {step.related_topics && step.related_topics.length > 0 && (
                           <span style={{ 
                             fontSize: '0.72rem', 
@@ -847,7 +982,25 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                       <p className="step-subtitle">{step.subtitle}</p>
                     </div>
 
-                  <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {/* Direct Checkbox to Mark Module as Completed */}
+                    <button 
+                      type="button"
+                      className={`step-card-check-btn ${isDone ? 'checked' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleStepCompleted(step.step);
+                      }}
+                      title={isDone ? 'Módulo completado (Clic para desmarcar)' : 'Marcar módulo como completado (+25 XP)'}
+                    >
+                      <div className={`step-checkbox-square ${isDone ? 'checked' : ''}`}>
+                        {isDone ? <Check size={12} strokeWidth={3} /> : null}
+                      </div>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>
+                        {isDone ? 'Completado ✓' : 'Marcar'}
+                      </span>
+                    </button>
+
                     {/* Primary action: Open deep module view */}
                     <button 
                       className="btn btn-primary btn-sm"

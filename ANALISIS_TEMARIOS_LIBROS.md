@@ -400,9 +400,9 @@ Cada entrada contiene rigurosamente:
 | Categoría de Ejercicio | Archivo Fuente | Cantidad Total | Tipología / Mecánica | Puntos XP |
 | :--- | :--- | :---: | :--- | :---: |
 | **Conversación y Diálogo Situacional** | `data/conversation_exercises.json` | **144 ejercicios** (3 por lección NHK) | `reply` (seleccionar réplica adecuada), `missing_word` (rellenar hueco), `missing_kanji` (ortografía correcta) | +10 XP |
-| **Quizzes de Módulo Curricular** | `data/curriculum.json` | **53 ejercicios** | Selección múltiple contextual basada en los Can-Dos y gramática del módulo | +5 XP |
-| **Drills Gramaticales y Partículas** | `data/exercises.json` | **9 ejercicios** | Rellenado de partículas y conjugaciones adjetivales/adverbiales | +5 XP |
-| **TOTAL EJERCICIOS ACTIVOS** | — | **206 ejercicios** | — | — |
+| **Quizzes de Módulo Curricular** | `data/curriculum.json` | **82 ejercicios** | Selección múltiple contextual basada en los Can-Dos y gramática del módulo (mínimo 3 a 7 por módulo) | +5 XP |
+| **Drills Gramaticales y Contexto N4** | `data/exercises.json` | **35 ejercicios** | Rellenado de adjetivos, partículas y conjugaciones extraídos de los materiales N4 de estudio | +5 XP |
+| **TOTAL EJERCICIOS ACTIVOS** | — | **261 ejercicios** | — | — |
 
 ---
 
@@ -410,11 +410,12 @@ Cada entrada contiene rigurosamente:
 
 Antes de proponer o implementar cualquier cambio en el temario, responde a estas preguntas:
 
-- [ ] **1. No Duplicidad:** ¿Revisaste la **Sección 2** de este documento y confirmaste que la temática no está ya cubierta en los Módulos 1 al 19?
-- [ ] **2. Complementación:** Si el tema ya existe, ¿agregaste los nuevos ejemplos, Can-Dos o ejercicios directamente dentro del módulo correspondiente de `data/curriculum.json` en lugar de crear un módulo nuevo?
-- [ ] **3. Enlaces Temáticos:** ¿Configuraste o actualizaste el bloque `related_topics` de los módulos vinculados con `step`, `title`, `relationship` y `reason`?
-- [ ] **4. Vocabulario Completo:** Si agregaste palabras nuevas, ¿las registraste con sus 3 escrituras (**Kanji**, **Hiragana**, **Katakana**) y su nivel JLPT en `data/vocabulary.json`?
-- [ ] **5. Sincronización Kanji:** ¿Añadiste la referencia de cada palabra al array `words` de **todos los kanjis que la componen** en `data/kanji.json`?
-- [ ] **6. Build Check:** ¿Ejecutaste `npm run build` y verificaste que compile con 0 errores?
-- [ ] **7. Registro de Seguimiento:** ¿Actualizaste las tablas de este documento (`ANALISIS_TEMARIOS_LIBROS.md`) para reflejar las nuevas adiciones?
-- [ ] **8. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
+- [x] **1. No Duplicidad:** ¿Revisaste la **Sección 2** de este documento y confirmaste que la temática no está ya cubierta en los Módulos 1 al 19?
+- [x] **2. Complementación:** ¿Agregaste los nuevos ejemplos, Can-Dos o ejercicios directamente dentro del módulo correspondiente de `data/curriculum.json` en lugar de crear un módulo nuevo?
+- [x] **3. Enlaces Temáticos:** ¿Configuraste o actualizaste el bloque `related_topics` de los módulos vinculados con `step`, `title`, `relationship` y `reason`?
+- [x] **4. Vocabulario Completo:** ¿Las palabras están registradas con sus 3 escrituras (**Kanji**, **Hiragana**, **Katakana**) y su nivel JLPT en `data/vocabulary.json`?
+- [x] **5. Sincronización Kanji:** ¿Añadiste la referencia de cada palabra al array `words` de **todos los kanjis que la componen** en `data/kanji.json`?
+- [x] **6. Build Check:** ¿Ejecutaste `npm run build` y verificaste que compile con 0 errores?
+- [x] **7. Registro de Seguimiento:** ¿Actualizaste las tablas de este documento (`ANALISIS_TEMARIOS_LIBROS.md`) para reflejar las nuevas adiciones?
+- [x] **8. Autoevaluación Can-Do y Ruta:** ¿Se encuentran implementados y operativos los checkboxes interactivos para la Ruta Consolidada y las Competencias Can-Do en la interfaz?
+- [ ] **9. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?

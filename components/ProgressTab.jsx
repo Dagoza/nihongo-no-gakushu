@@ -74,7 +74,12 @@ export default function ProgressTab({
   const masteredKanjiCount = Object.values(appState.masteredKanji || {}).filter(Boolean).length;
   const completedSentencesCount = Object.values(appState.completedSentences || {}).filter(Boolean).length;
   const completedConversationsCount = Object.values(appState.completedConversations || {}).filter(Boolean).length;
-  const totalConversations = dataStore.nhkLessons?.length || 22;
+  const totalConversations = dataStore.nhkLessons?.length || 48;
+  const completedStepsCount = Object.values(appState.completedSteps || {}).filter(Boolean).length;
+  const totalSteps = dataStore.curriculum?.length || 19;
+  const allCanDos = (dataStore.curriculum || []).flatMap(s => s.can_dos || []);
+  const totalCanDos = allCanDos.length || 87;
+  const completedCanDosCount = Object.values(appState.completedCanDos || {}).filter(Boolean).length;
 
   // Sincronización manual en la nube (requiere sesión activa)
   const handleManualSync = async () => {
@@ -248,6 +253,22 @@ export default function ProgressTab({
             {completedConversationsCount}/{totalConversations}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Conversaciones Estudiadas</div>
+        </div>
+
+        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🗺️</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
+            {completedStepsCount}/{totalSteps}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Ruta Consolidada (Módulos)</div>
+        </div>
+
+        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎯</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ec4899' }}>
+            {completedCanDosCount}/{totalCanDos}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Competencias Can-Do</div>
         </div>
       </div>
 

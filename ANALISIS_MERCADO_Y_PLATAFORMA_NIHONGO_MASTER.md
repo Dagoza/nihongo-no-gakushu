@@ -39,11 +39,11 @@ graph TD
 
 | Módulo | Base Técnica | Estado Actual | Fortalezas Observadas | Cuellos de Botella Detectados |
 | :--- | :--- | :---: | :--- | :--- |
-| **🗺️ Ruta de Aprendizaje** (`/curriculum`) | `dataStore.curriculum` (9 módulos estructurados) | **Operativo** | Objetivos formativos claros, micro-evaluaciones integradas con recompensas de XP, explicaciones concisas. | Faltan lecciones intermedias para cubrir los niveles N3-N1; no integra aún los objetivos Can-do de Irodori. |
+| **🗺️ Ruta de Aprendizaje** (`/curriculum`) | `dataStore.curriculum` (19 módulos consolidados con 87 Can-Dos y 82 ejercicios) | **Operativo** | Temario unificado sin redundancias, autoevaluación interactiva Can-Do con checkboxes, micro-evaluaciones por módulo (+5 XP), audio nativo y enlaces directos a temas relacionados. | Faltan lecciones avanzadas para cubrir N3-N1 (planificadas para Fase 4). |
 | **📖 Historias Interactivas** (`/story`) | Generador JSON con etiquetas `<ruby>`, Web Speech API, Wanakana | **Operativo** | 3 modos de visualización (Natural con Furigana, Solo Kana, Solo Kanji), desglose oracional, notas gramaticales, práctica de mecanografía IME. | Catálogo precargado de historias reducido; audio sintético sin entonación contextual de Tokio. |
 | **📻 Conversación NHK** (`/nhk`) | 48 lecciones completas del curso "Hablemos en Japón", 144 ejercicios | **Operativo** | Cobertura de las 48 lecciones de Anna y Sakura, audio línea por línea, 3 ejercicios interactivos por lección (preguntas de opción, kanji y respuesta). | Las voces son sintéticas (Web Speech API) en lugar de los clips de audio radiofónico originales de la NHK. |
 | **📺 Inmersión YouTube** (`/youtube`) | YouTube IFrame API, API de transcripciones, `Intl.Segmenter` | **Operativo** | Subtítulos bilingües sincronizados con auto-scroll, clic en cualquier token japonés para ver significado y furigana, práctica de shadowing con speech-to-text. | Depende de la disponibilidad de subtítulos oficiales o generados en YouTube; videos con subtítulos quemados en video no son interactivos. |
-| **📚 Vocabulario & SRS** (`/vocab`) | Algoritmo **ts-fsrs** (FSRS v5), Wanakana, Web Speech API | **Operativo** | FSRS supera drásticamente a SM-2 (Anki clásico); 4 modos (Tarjetas, Mecanografía IME, Ejercicios de contexto, Repaso SRS); notas de usuario y edición. | Volumen precargado en JSON (~190 palabras); ausencia de indicación gráfica de *Pitch Accent* y audio neuronal. |
+| **📚 Vocabulario & SRS** (`/vocab`) | Algoritmo **ts-fsrs** (FSRS v5), Wanakana, Web Speech API | **Operativo** | FSRS supera drásticamente a SM-2 (Anki clásico); 4 modos (Tarjetas, Mecanografía IME, 35 ejercicios de contexto N4, Repaso SRS); notas de usuario y edición. | Volumen precargado en JSON (208 palabras sincronizadas); ausencia de indicación gráfica de *Pitch Accent* y audio neuronal. |
 | **🎯 Partículas & Gramática** (`/grammar`) | `dataStore.particles` (25 partículas clave) | **Operativo** | Explicaciones en español muy claras, fórmulas de construcción, ejemplos con audio y modo Quiz con selección y entrada IME. | Cubre 25 funciones elementales; falta expandir a construcciones compuestas de nivel N4 y N3 (ej. 〜わけにはいかない, 〜はずだ). |
 | **漢 Biblioteca de Kanjis** (`/kanji`) | `HanziWriter`, multi-CDN stroke loader, `wanakana`, SRS | **Operativo** | Animación trazo por trazo, guía de radicales, modo prueba de dibujo interactivo en pantalla, lecturas On/Kun, palabras compuestas sincronizadas. | Falta desglose de componentes fonéticos/semánticos y mnemotecnias visuales ilustradas. |
 | **📑 Visor de Documentos** (`/pdf`) | Iframe modal vinculado a `public/material_de_estudio/` | **Operativo** | Acceso inmediato a los 15 materiales de referencia originales (PDFs, hojas de cálculo de partículas) sin salir de la plataforma. | Es un visor pasivo; no permite hacer clic en palabras dentro del PDF para agregarlas a vocabulario o reproducir audio. |
@@ -186,8 +186,8 @@ flowchart TD
    - No tiene la prosodia ni el timbre cálido de un hablante nativo real.
 2. **Ausencia de Acento Tonal (*Pitch Accent*):**
    - En japonés, el acento no es de intensidad o volumen sino de altura tonal (*pitch*). Hablar con acento plano o equivocado produce un acento extranjero marcado e impide distinguir homófonos vitales como *ame* (lluvia vs caramelo) o *hashi* (palillos vs puente vs borde).
-3. **El curso "Irodori Elementary 1" está en PDF pero no en formato interactivo:**
-   - Las 515 páginas de Irodori y sus 79 objetivos Can-do solo están disponibles como archivo PDF en la biblioteca, sin lecciones guiadas ni ejercicios prácticos en la aplicación.
+3. **El curso "Irodori Elementary 1" (Digitalización e Interactividad Completadas):**
+   - Los 79 objetivos Can-do oficiales de Irodori y sus 8 objetivos complementarios (87 Can-dos en total) se han digitalizado e integrado en los 19 Módulos Maestros con checklist interactivo de autoevaluación (checkboxes persistentes), audio nativo y ejercicios de aplicación.
 4. **Sin notificaciones push:**
    - Si el estudiante no abre la app por voluntad propia, no recibe recordatorios cuando tiene tarjetas acumuladas en el sistema SRS.
 
@@ -426,16 +426,16 @@ flowchart TD
 
 ---
 
-#### 3. Digitalización Interactiva del Curso Irodori A1 (18 Lecciones / 79 Can-dos)
-- **Qué es:** Llevar a la práctica interactiva las 515 páginas del PDF `irodori elementary.pdf` que actualmente solo descansan en la biblioteca pasiva.
-- **Implementación:**
-  - Crear una nueva sección dentro de `/curriculum` o `/nhk` dedicada a **Irodori: Vida en Japón**.
-  - Cada lección incluirá:
+#### 3. Digitalización Interactiva del Curso Irodori A1 (18 Lecciones / 79 Can-dos) — [✅ Implementado]
+- **Qué es:** Llevar a la práctica interactiva las 515 páginas del PDF `irodori elementary.pdf`.
+- **Implementación Realizada:**
+  - Integrado de forma canónica dentro de `/curriculum` en los **19 Módulos Consolidados**.
+  - Cada lección incluye:
     1. *Objetivo Can-do*: Meta comunicativa clara en español (ej. "Pedir comida en un restaurante de comida rápida").
     2. *Diálogo situacional con audio*: Voces auténticas de situaciones cotidianas de la Fundación Japón.
-    3. *Kanjis de la lección*: Los 93 kanjis cotidianos de Irodori vinculados a `kanji.json`.
+    3. *Kanjis de la lección*: 24 kanjis clave de Irodori vinculados a `kanji.json`.
     4. *Consejos de vida en Japón*: Cápsulas culturales sobre trámites, conveniencias y etiqueta social.
-    5. *Autoevaluación Can-do*: Checklist interactivo donde el alumno valida si puede o no realizar la tarea en el mundo real.
+    5. *Autoevaluación Can-do*: Checklist interactivo con checkboxes persistentes en `completedCanDos` (+10 XP por logro) y barra de progreso dinámica por módulo y en la vista general.
 
 ---
 

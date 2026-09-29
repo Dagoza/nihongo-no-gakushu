@@ -2165,6 +2165,115 @@ rt {
   transform: scale(1.08);
 }
 
+.cando-card.completed-cando {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.08);
+}
+
+.cando-badge.badge-completed {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: var(--success, #10b981) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+.cando-check-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.cando-check-btn:hover {
+  border-color: #ec4899;
+  color: #ec4899;
+  background: rgba(236, 72, 153, 0.06);
+}
+
+.cando-check-btn.checked {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--success, #10b981);
+}
+
+.cando-checkbox-square {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  transition: all 0.15s ease;
+  color: transparent;
+}
+
+.cando-checkbox-square.checked {
+  background: var(--success, #10b981);
+  border-color: var(--success, #10b981);
+  color: #ffffff;
+}
+
+.step-card-check-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.step-card-check-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-bg);
+}
+
+.step-card-check-btn.checked {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--success, #10b981);
+}
+
+.step-checkbox-square {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  transition: all 0.15s ease;
+  color: transparent;
+}
+
+.step-checkbox-square.checked {
+  background: var(--success, #10b981);
+  border-color: var(--success, #10b981);
+  color: #ffffff;
+}
+
+.ruta-progress-banner {
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+}
+
 
 
 /* PDF Hub Catalog */
