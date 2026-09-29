@@ -4,6 +4,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import dataStore from '../lib/data';
 import audioManager from '../lib/audioManager';
 import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle } from 'lucide-react';
+import * as wanakana from 'wanakana';
+import SpeechPractice from './SpeechPractice';
 
 export default function StoryTab({ userState, onRecordActivity, appState, onUpdateState, activeStoryId, onSelectStory, onNavigate }) {
   const allStories = useMemo(() => {
@@ -309,17 +311,26 @@ export default function StoryTab({ userState, onRecordActivity, appState, onUpda
 
         {activeSentence && (
           <div className="breakdown-card" style={{ borderLeft: '5px solid var(--primary)' }}>
-            <div className="breakdown-header">
+            <div className="breakdown-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="breakdown-jp jp-text">
                 {activeSentence.japanese}
               </div>
-              <button 
-                className="audio-btn"
-                onClick={() => audioManager.speak(activeSentence.japanese)}
-                title="Escuchar oración"
-              >
-                <Volume2 size={16} />
-              </button>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <button 
+                  className="audio-btn"
+                  onClick={() => audioManager.speak(activeSentence.japanese)}
+                  title="Escuchar oración"
+                >
+                  <Volume2 size={16} />
+                </button>
+                <SpeechPractice 
+                  targetText={activeSentence.japanese} 
+                  targetKana={activeSentence.clean_target}
+                  onMatch={() => {
+                    // Optional XP or celebration
+                  }}
+                />
+              </div>
             </div>
 
             <div className="breakdown-translations">
@@ -349,9 +360,13 @@ export default function StoryTab({ userState, onRecordActivity, appState, onUpda
                 <input
                   type="text"
                   className="japanese-input jp-text"
-                  placeholder="Escribe la frase en japonés..."
+                  placeholder="Escribe la frase en romaji (se convertirá a hiragana)..."
                   value={typingInput}
-                  onChange={(e) => setTypingInput(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const converted = wanakana.toKana(val, { IMEMode: true });
+                    setTypingInput(converted);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleCheckTyping();
                   }}

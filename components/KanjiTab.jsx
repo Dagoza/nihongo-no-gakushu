@@ -4,6 +4,10 @@ import React, { useState, useRef } from 'react';
 import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
+import * as wanakana from 'wanakana';
+import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
+import SrsReview from './SrsReview';
+import KanjiDraw from './KanjiDraw';
 
 export default function KanjiTab({ appState, onUpdateState }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,6 +16,13 @@ export default function KanjiTab({ appState, onUpdateState }) {
   const [quizInput, setQuizInput] = useState('');
   const [quizFeedback, setQuizFeedback] = useState(null); // { type: 'correct'|'wrong', msg, reading }
   const isComposingRef = useRef(false);
+
+  // SRS State
+  const [srsActive, setSrsActive] = useState(false);
+  const [srsQueue, setSrsQueue] = useState([]);
+
+  // Drawing Mode
+  const [drawingKanji, setDrawingKanji] = useState(null);
 
   const kanjiList = dataStore.kanji || [];
 
@@ -41,6 +52,36 @@ export default function KanjiTab({ appState, onUpdateState }) {
     onUpdateState({
       ...appState,
       masteredKanji: newMastered
+    });
+  };
+
+  const startSrsSession = () => {
+    const queue = kanjiList.filter(item => {
+      const card = appState.masteredKanji?.[item.kanji];
+      if (!card) return true;
+      if (typeof card === 'boolean') return true;
+      return isDue(card);
+    }).sort(() => Math.random() - 0.5);
+    
+    setSrsQueue(queue);
+    setSrsActive(true);
+    setQuizActive(false);
+  };
+
+  const handleSrsReview = (item, rating) => {
+    const currentCardData = appState.masteredKanji?.[item.kanji];
+    const oldCard = (currentCardData && typeof currentCardData === 'object') 
+      ? currentCardData 
+      : getNewCard();
+      
+    const newCard = reviewCard(oldCard, rating);
+    
+    onUpdateState({
+      ...appState,
+      masteredKanji: {
+        ...(appState.masteredKanji || {}),
+        [item.kanji]: newCard
+      }
     });
   };
 
@@ -126,7 +167,7 @@ export default function KanjiTab({ appState, onUpdateState }) {
         </p>
       </div>
 
-      {!quizActive ? (
+      {!quizActive && !srsActive ? (
         <div>
           {/* Overview Stats Bar */}
           <div className="card" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
@@ -142,17 +183,25 @@ export default function KanjiTab({ appState, onUpdateState }) {
               </div>
             </div>
 
-            <button 
-              className="btn btn-primary btn-lg"
-              onClick={() => {
-                setQuizIndex(0);
-                setQuizFeedback(null);
-                setQuizInput('');
-                setQuizActive(true);
-              }}
-            >
-              ✍️ Practicar Lecturas de Kanji
-            </button>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button 
+                className="btn btn-outline btn-lg"
+                onClick={startSrsSession}
+              >
+                🧠 Repaso SRS
+              </button>
+              <button 
+                className="btn btn-primary btn-lg"
+                onClick={() => {
+                  setQuizIndex(0);
+                  setQuizFeedback(null);
+                  setQuizInput('');
+                  setQuizActive(true);
+                }}
+              >
+                ✍️ Practicar Lecturas
+              </button>
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -184,8 +233,17 @@ export default function KanjiTab({ appState, onUpdateState }) {
                   style={{ borderColor: isMastered ? 'var(--success)' : 'var(--border)' }}
                 >
                   <div className="kanji-header">
-                    <div className="kanji-big-char jp-text">
-                      {k.kanji}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                      <div className="kanji-big-char jp-text">
+                        {k.kanji}
+                      </div>
+                      <button 
+                        className="btn btn-outline btn-xs" 
+                        onClick={() => setDrawingKanji(k.kanji)}
+                        title="Practicar orden de trazos"
+                      >
+                        ✍️ Trazos
+                      </button>
                     </div>
 
                     <div className="kanji-meta">
@@ -264,6 +322,48 @@ export default function KanjiTab({ appState, onUpdateState }) {
             })}
           </div>
         </div>
+      ) : srsActive ? (
+        <SrsReview 
+          queue={srsQueue}
+          onRate={handleSrsReview}
+          onExit={() => setSrsActive(false)}
+          renderFront={(item) => (
+            <div className="kanji-big-char jp-text" style={{ fontSize: '5rem', marginBottom: 16 }}>
+              {item.kanji}
+            </div>
+          )}
+          renderBack={(item) => (
+            <>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 12 }}>
+                🇪🇸 {item.meaning_es}
+              </div>
+              <div style={{ background: 'var(--bg-main)', padding: '12px', borderRadius: 'var(--radius-sm)', fontSize: '1rem', textAlign: 'left', marginBottom: 16 }}>
+                {item.kunyomi && (
+                  <div><strong>Kun:</strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{item.kunyomi}</span></div>
+                )}
+                {item.onyomi && (
+                  <div><strong>On:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{item.onyomi}</span></div>
+                )}
+                {item.pronunciation && !item.kunyomi && !item.onyomi && (
+                  <div><strong>Lectura:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{item.pronunciation}</span></div>
+                )}
+              </div>
+              {item.mnemonic && (
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textAlign: 'left', fontStyle: 'italic', marginBottom: 16 }}>
+                  💡 {item.mnemonic}
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                <button 
+                  className="btn btn-outline btn-sm" 
+                  onClick={() => setDrawingKanji(item.kanji)}
+                >
+                  ✍️ Practicar Trazos
+                </button>
+              </div>
+            </>
+          )}
+        />
       ) : (
         /* QUIZ MODE */
         <div className="quiz-container" style={{ maxWidth: 640 }}>
@@ -303,9 +403,13 @@ export default function KanjiTab({ appState, onUpdateState }) {
                   <input 
                     type="text" 
                     className="japanese-input jp-text"
-                    placeholder="Escribe la lectura (ej. ひと, いち)..."
+                    placeholder="Escribe la lectura en romaji (se convierte a hiragana)..."
                     value={quizInput}
-                    onChange={(e) => setQuizInput(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const converted = wanakana.toKana(val, { IMEMode: true });
+                      setQuizInput(converted);
+                    }}
                     onCompositionStart={() => { isComposingRef.current = true; }}
                     onCompositionEnd={() => { isComposingRef.current = false; }}
                     onKeyDown={(e) => {
@@ -371,6 +475,37 @@ export default function KanjiTab({ appState, onUpdateState }) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* DRAWING MODAL */}
+      {drawingKanji && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          background: 'rgba(0,0,0,0.5)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
+        }}>
+          <div className="card" style={{ maxWidth: 400, width: '100%', position: 'relative', textAlign: 'center' }}>
+            <button 
+              className="btn btn-outline btn-sm"
+              style={{ position: 'absolute', top: 12, right: 12, borderRadius: '50%', width: 32, height: 32, padding: 0 }}
+              onClick={() => setDrawingKanji(null)}
+            >
+              ✕
+            </button>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 16 }}>Práctica de Trazos</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 20 }}>
+              Dibuja los trazos en el orden y dirección correctos.
+            </p>
+            
+            <KanjiDraw 
+              character={drawingKanji} 
+              size={250} 
+              onQuizComplete={() => {
+                // Optional: add XP or mark as practiced
+              }} 
+            />
+          </div>
         </div>
       )}
     </div>

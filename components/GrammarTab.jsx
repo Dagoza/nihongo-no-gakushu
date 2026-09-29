@@ -4,6 +4,8 @@ import React, { useState, useRef } from 'react';
 import { Volume2, CheckCircle2, Search, ArrowRight, ArrowLeft, Play, Sparkles, Check, X, RotateCcw } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
+import * as wanakana from 'wanakana';
+import SpeechPractice from './SpeechPractice';
 
 export default function GrammarTab({ appState, onUpdateState }) {
   const [filterParticle, setFilterParticle] = useState('all');
@@ -218,14 +220,17 @@ export default function GrammarTab({ appState, onUpdateState }) {
                         <span className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-main)', flex: 1 }}>
                           {highlightParticle(ex, p.particle)}
                         </span>
-                        <button 
-                          className="audio-btn" 
-                          style={{ width: 28, height: 28 }}
-                          onClick={() => audioManager.speak(ex)}
-                          title="Escuchar pronunciación"
-                        >
-                          <Volume2 size={15} />
-                        </button>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <button 
+                            className="audio-btn" 
+                            style={{ width: 28, height: 28 }}
+                            onClick={() => audioManager.speak(ex)}
+                            title="Escuchar pronunciación"
+                          >
+                            <Volume2 size={15} />
+                          </button>
+                          <SpeechPractice targetText={ex} />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -296,9 +301,13 @@ export default function GrammarTab({ appState, onUpdateState }) {
                   <input 
                     type="text" 
                     className="japanese-input jp-text" 
-                    placeholder="Escribe la partícula (ej. は, を, に)..."
+                    placeholder="Escribe la partícula en romaji (ej. wa, o, ni)..."
                     value={imeInput}
-                    onChange={(e) => setImeInput(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const converted = wanakana.toKana(val, { IMEMode: true });
+                      setImeInput(converted);
+                    }}
                     onCompositionStart={() => { isComposingRef.current = true; }}
                     onCompositionEnd={() => { isComposingRef.current = false; }}
                     onKeyDown={(e) => {

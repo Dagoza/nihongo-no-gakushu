@@ -4,9 +4,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, CheckCircle2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, BookOpen, Layers } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
+import * as wanakana from 'wanakana';
+import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
+import SrsReview from './SrsReview';
+import SpeechPractice from './SpeechPractice';
 
 export default function VocabTab({ appState, onUpdateState }) {
-  const [mode, setMode] = useState('cards'); // 'cards' | 'typing' | 'n4_exercises'
+  const [mode, setMode] = useState('cards'); // 'cards' | 'typing' | 'n4_exercises' | 'srs'
   const [level, setLevel] = useState('all'); // 'all' | 'N5' | 'N4'
   const [category, setCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,6 +24,9 @@ export default function VocabTab({ appState, onUpdateState }) {
   // N4 Exercises state
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [exerciseAnswer, setExerciseAnswer] = useState(null); // { selected, isCorrect }
+
+  // SRS state
+  const [srsQueue, setSrsQueue] = useState([]);
 
   const vocabularyList = dataStore.vocabulary || [];
   const n4Exercises = dataStore.exercises || [];
@@ -54,6 +61,35 @@ export default function VocabTab({ appState, onUpdateState }) {
     onUpdateState({
       ...appState,
       masteredVocab: newMastered
+    });
+  };
+
+  const startSrsSession = () => {
+    const queue = vocabularyList.filter(item => {
+      const card = appState.masteredVocab?.[item.id];
+      if (!card) return true; // aprender nueva
+      if (typeof card === 'boolean') return true; // migrar
+      return isDue(card); // repasar
+    }).sort(() => Math.random() - 0.5); // barajar
+    
+    setSrsQueue(queue);
+    setMode('srs');
+  };
+
+  const handleSrsReview = (item, rating) => {
+    const currentCardData = appState.masteredVocab?.[item.id];
+    const oldCard = (currentCardData && typeof currentCardData === 'object') 
+      ? currentCardData 
+      : getNewCard();
+      
+    const newCard = reviewCard(oldCard, rating);
+    
+    onUpdateState({
+      ...appState,
+      masteredVocab: {
+        ...(appState.masteredVocab || {}),
+        [item.id]: newCard
+      }
     });
   };
 
@@ -163,6 +199,12 @@ export default function VocabTab({ appState, onUpdateState }) {
             }}
           >
             <Keyboard size={16} /> ⌨️ Práctica Teclado IME
+          </button>
+          <button 
+            className={`mode-btn ${mode === 'srs' ? 'active' : ''}`}
+            onClick={startSrsSession}
+          >
+            🧠 Repaso Espaciado (SRS)
           </button>
           <button 
             className={`mode-btn ${mode === 'n4_exercises' ? 'active' : ''}`}
@@ -337,9 +379,13 @@ export default function VocabTab({ appState, onUpdateState }) {
               <input 
                 type="text" 
                 className="japanese-input jp-text"
-                placeholder="Escribe la palabra en japonés..."
+                placeholder="Escribe en romaji (se convertirá a hiragana)..."
                 value={typingInput}
-                onChange={(e) => setTypingInput(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const converted = wanakana.toKana(val, { IMEMode: true });
+                  setTypingInput(converted);
+                }}
                 onCompositionStart={() => { isComposingRef.current = true; }}
                 onCompositionEnd={() => { isComposingRef.current = false; }}
                 onKeyDown={(e) => {
@@ -393,6 +439,45 @@ export default function VocabTab({ appState, onUpdateState }) {
             </button>
           </div>
         </div>
+      )}
+
+      {/* MODE: SRS REVIEW */}
+      {mode === 'srs' && (
+        <SrsReview 
+          queue={srsQueue}
+          onRate={handleSrsReview}
+          onExit={() => setMode('cards')}
+          renderFront={(item) => (
+            <div className="vocab-kanji" style={{ fontSize: '4rem', marginBottom: 16 }}>
+              <span className="jp-text">{item.kanji}</span>
+            </div>
+          )}
+          renderBack={(item) => (
+            <>
+              <div className="vocab-kana jp-text" style={{ fontSize: '1.5rem', marginBottom: 12, color: 'var(--primary)' }}>
+                {item.kana || ''}
+              </div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-main)' }}>
+                🇪🇸 {item.meaning_es}
+              </div>
+              {item.meaning_en && (
+                <div style={{ fontSize: '1rem', color: 'var(--text-muted)', marginTop: 8 }}>
+                  🇬🇧 {item.meaning_en}
+                </div>
+              )}
+              
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16 }}>
+                <button 
+                  className="btn btn-outline btn-sm"
+                  onClick={() => audioManager.speak(item.kana || item.kanji)}
+                >
+                  <Volume2 size={16} /> Escuchar
+                </button>
+                <SpeechPractice targetText={item.kanji} targetKana={item.kana} />
+              </div>
+            </>
+          )}
+        />
       )}
 
       {/* MODE 3: N4 CONTEXT EXERCISES */}

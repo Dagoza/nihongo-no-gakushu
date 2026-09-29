@@ -162,6 +162,8 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
               <div className="audio-selection-group">
                 <button 
                   className="btn btn-accent btn-sm audio-selection-btn"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onTouchStart={(e) => e.preventDefault()}
                   onClick={handlePlaySelection}
                   title={`Reproducir: "${audioState.selectedText}"`}
                 >
@@ -171,6 +173,8 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
 
                 <button 
                   className="btn btn-primary btn-sm audio-save-sel-btn"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onTouchStart={(e) => e.preventDefault()}
                   onClick={handleSaveSelection}
                   title={`Guardar selección "${audioState.selectedText}" en tu cuaderno`}
                 >
