@@ -683,7 +683,7 @@ export default function ConversationGeneratorModal({
                 }}
               >
                 <Sparkles size={16} />
-                <span>Generar Diálogo con IA</span>
+                <span>{!authUser ? '🔒 Inicia sesión para Generar' : 'Generar Diálogo con IA'}</span>
               </button>
             )}
 

@@ -99,12 +99,13 @@ export const ROLEPLAY_SCENARIOS = [
   }
 ];
 
-export default function RoleplayChat({ appState, onUpdateState }) {
+export default function RoleplayChat({ appState, onUpdateState, authUser: propAuthUser = null }) {
   let contextApp = null;
   try {
     contextApp = useApp();
   } catch (e) {}
 
+  const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
 
@@ -224,6 +225,22 @@ export default function RoleplayChat({ appState, onUpdateState }) {
     const textToSend = inputDraft.trim();
     if (!textToSend || isSending) return;
 
+    // 1. Requerir sesión activa para conversar con la IA
+    if (!authUser) {
+      showAlert({
+        type: 'lock',
+        title: 'Práctica Conversacional con IA',
+        message: 'Debes iniciar sesión con tu cuenta de Google o correo para interactuar en tiempo real y recibir correcciones didácticas del interlocutor IA.',
+        actionLabel: 'Iniciar Sesión',
+        onAction: () => {
+          if (contextApp?.setIsAuthModalOpen) {
+            contextApp.setIsAuthModalOpen(true);
+          }
+        }
+      });
+      return;
+    }
+
     // Add student message to history
     const userMsg = {
       id: `user_${Date.now()}`,
@@ -241,6 +258,25 @@ export default function RoleplayChat({ appState, onUpdateState }) {
     try {
       const session = await getAuthSession();
       const token = session?.access_token;
+
+      if (!token) {
+        showAlert({
+          type: 'lock',
+          title: 'Sesión Requerida',
+          message: 'Tu sesión no está activa o ha expirado. Por favor vuelve a iniciar sesión.',
+          actionLabel: 'Iniciar Sesión',
+          onAction: () => {
+            if (contextApp?.setIsAuthModalOpen) {
+              contextApp.setIsAuthModalOpen(true);
+            }
+          }
+        });
+        // Deshacer mensaje añadido si falló por falta de sesión
+        setMessages(messages);
+        setInputDraft(textToSend);
+        setIsSending(false);
+        return;
+      }
 
       const scenarioText = selectedScenarioId === 'custom' 
         ? (customScenarioText.trim() || activeScenario.scenario) 
@@ -269,8 +305,19 @@ export default function RoleplayChat({ appState, onUpdateState }) {
         showAlert({
           type: 'error',
           title: 'Error de Respuesta IA',
-          message: data.error || 'No se pudo obtener la respuesta del interlocutor.'
+          message: data.error || 'No se pudo obtener la respuesta del interlocutor.',
+          actionLabel: response.status === 401 ? 'Iniciar Sesión' : undefined,
+          onAction: response.status === 401 ? () => {
+            if (contextApp?.setIsAuthModalOpen) {
+              contextApp.setIsAuthModalOpen(true);
+            }
+          } : undefined
         });
+        // Deshacer mensaje añadido si fue rechazado por 401
+        if (response.status === 401) {
+          setMessages(messages);
+          setInputDraft(textToSend);
+        }
         setIsSending(false);
         return;
       }
@@ -652,6 +699,42 @@ export default function RoleplayChat({ appState, onUpdateState }) {
           boxShadow: '0 4px 20px rgba(99, 102, 241, 0.12)'
         }}
       >
+        {/* Auth requirement notice */}
+        {!authUser && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            background: 'rgba(99, 102, 241, 0.08)',
+            border: '1px solid rgba(99, 102, 241, 0.25)',
+            borderRadius: 10,
+            padding: '10px 14px',
+            fontSize: '0.85rem',
+            color: 'var(--text-main)',
+            marginBottom: 12
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: '1.2rem' }}>🔒</span>
+              <span>
+                Para chatear en vivo con el interlocutor de IA debes <strong>iniciar sesión</strong> con tu cuenta.
+              </span>
+            </div>
+            <button
+              type="button"
+              className="btn btn-sm btn-primary"
+              onClick={() => {
+                if (contextApp?.setIsAuthModalOpen) {
+                  contextApp.setIsAuthModalOpen(true);
+                }
+              }}
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              Iniciar Sesión
+            </button>
+          </div>
+        )}
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)' }}>
@@ -765,7 +848,7 @@ export default function RoleplayChat({ appState, onUpdateState }) {
             }}
           >
             <Send size={15} />
-            <span>Enviar Respuesta</span>
+            <span>{!authUser ? '🔒 Inicia sesión para Enviar' : 'Enviar Respuesta'}</span>
           </button>
         </div>
       </div>
