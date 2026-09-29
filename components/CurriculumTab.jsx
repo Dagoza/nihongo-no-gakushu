@@ -629,20 +629,27 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             ))}
           </div>
 
-          <div style={{ position: 'relative', minWidth: 260 }}>
-            <Search size={16} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <div style={{ position: 'relative', minWidth: 260, flex: '1 1 260px', maxWidth: 380 }}>
+            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
             <input
               type="text"
-              className="input input-sm"
+              className="search-input"
               placeholder="Buscar tema, kanji o vocabulario..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ paddingLeft: 34, width: '100%' }}
+              style={{
+                width: '100%',
+                padding: '7px 32px 7px 36px',
+                fontSize: '0.85rem',
+                minWidth: 'unset',
+              }}
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                className="clear-search-btn"
+                style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="Limpiar búsqueda"
               >
                 <X size={14} />
               </button>
