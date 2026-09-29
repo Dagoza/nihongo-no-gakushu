@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles } from 'lucide-react';
+import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -588,40 +588,62 @@ export default function KanjiTab({
                     boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
                   }}
                 >
-                  <div className="kanji-header">
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                      {/* Checkbox IA */}
-                      <label
-                        style={{
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          padding: '1px 5px',
-                          borderRadius: '4px',
-                          background: isSelected ? 'var(--primary)' : 'rgba(99, 102, 241, 0.08)',
-                          color: isSelected ? '#fff' : 'var(--primary)',
-                          fontSize: '0.7rem',
-                          fontWeight: 700,
-                          border: isSelected ? '1px solid var(--primary)' : '1px solid rgba(99, 102, 241, 0.2)'
-                        }}
-                        title="Seleccionar kanji para generar historia u oraciones con IA"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => {
-                            const next = new Set(selectedKanjiChars);
-                            if (next.has(k.kanji)) next.delete(k.kanji);
-                            else next.add(k.kanji);
-                            setSelectedKanjiChars(next);
-                          }}
-                          style={{ accentColor: 'var(--primary)', width: 12, height: 12, cursor: 'pointer' }}
-                        />
-                        <span>IA</span>
-                      </label>
+                  {/* Top Bar: Tag & Actions */}
+                  <div className="kanji-card-topbar">
+                    <span className="vocab-tag">
+                      {k.strokes ? `${k.strokes} trazo${k.strokes === 1 ? '' : 's'}` : 'General'}
+                    </span>
 
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {/* Botón elegante de Selección */}
+                      <button
+                        type="button"
+                        className={`kanji-select-btn ${isSelected ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const next = new Set(selectedKanjiChars);
+                          if (next.has(k.kanji)) next.delete(k.kanji);
+                          else next.add(k.kanji);
+                          setSelectedKanjiChars(next);
+                        }}
+                        title={isSelected ? "Deseleccionar kanji" : "Seleccionar kanji para generar historia u oraciones con IA"}
+                        aria-pressed={isSelected}
+                      >
+                        {isSelected ? (
+                          <Check size={12} strokeWidth={2.5} />
+                        ) : (
+                          <Sparkles size={12} />
+                        )}
+                        <span>{isSelected ? 'Seleccionado' : 'Seleccionar'}</span>
+                      </button>
+
+                      {/* Checkbox de Dominado / Aprender */}
+                      <label 
+                        className="kanji-mastery-label"
+                        style={{ 
+                          cursor: 'pointer', 
+                          fontSize: '0.8rem', 
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          gap: 5,
+                          userSelect: 'none'
+                        }}
+                      >
+                        <input 
+                          type="checkbox"
+                          checked={isMastered}
+                          onChange={() => toggleKanjiMastery(k.kanji)}
+                          style={{ accentColor: 'var(--success)', cursor: 'pointer', width: 14, height: 14 }}
+                        />
+                        <span style={{ color: isMastered ? 'var(--success)' : 'var(--text-muted)', fontWeight: isMastered ? 700 : 500 }}>
+                          {isMastered ? 'Dominado' : 'Aprender'}
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="kanji-header" style={{ alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                       <div className="kanji-big-char jp-text">
                         {k.kanji}
                       </div>
@@ -637,27 +659,12 @@ export default function KanjiTab({
                       </button>
                     </div>
 
-                    <div className="kanji-meta">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <span className="vocab-tag">{k.strokes ? `${k.strokes} trazo${k.strokes === 1 ? '' : 's'}` : 'General'}</span>
-                        <label style={{ cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 5 }}>
-                          <input 
-                            type="checkbox"
-                            checked={isMastered}
-                            onChange={() => toggleKanjiMastery(k.kanji)}
-                            style={{ accentColor: 'var(--success)' }}
-                          />
-                          <span style={{ color: isMastered ? 'var(--success)' : 'var(--text-muted)', fontWeight: isMastered ? 700 : 500 }}>
-                            {isMastered ? 'Dominado' : 'Aprender'}
-                          </span>
-                        </label>
-                      </div>
-
-                      <div className="kanji-meaning" style={{ marginTop: 4 }}>
+                    <div className="kanji-meta" style={{ marginTop: 2 }}>
+                      <div className="kanji-meaning">
                         {k.meaning_es}
                       </div>
                       {k.meaning_en && (
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 2 }}>
                           ({k.meaning_en})
                         </div>
                       )}
