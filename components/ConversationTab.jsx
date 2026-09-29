@@ -46,13 +46,15 @@ export default function ConversationTab({
   initialTab = 'dialogue',
   initialStatus = 'all',
   initialType = 'all',
-  onParamsChange
+  onParamsChange,
+  authUser: propAuthUser = null
 }) {
   let contextApp = null;
   try {
     contextApp = useApp();
   } catch (e) {}
 
+  const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
   const showConfirm = contextApp?.showConfirm || ((opts) => Promise.resolve(window.confirm(opts.message || opts.title)));
 
@@ -929,7 +931,7 @@ export default function ConversationTab({
       {/* SUBTAB 2: AI ROLEPLAY INTERACTIVE MODE                                    */}
       {/* ========================================================================= */}
       {activeSubTab === 'roleplay' && (
-        <RoleplayChat appState={appState} onUpdateState={onUpdateState} />
+        <RoleplayChat appState={appState} onUpdateState={onUpdateState} authUser={authUser} />
       )}
 
       {/* ========================================================================= */}
@@ -1636,6 +1638,7 @@ export default function ConversationTab({
         defaultLevel="N5"
         appState={appState}
         onUpdateState={onUpdateState}
+        authUser={authUser}
         onSelectConversation={(newConv) => {
           setIsGenModalOpen(false);
           setActiveSubTab('saved');

@@ -62,6 +62,19 @@ export async function POST(req) {
         sentences: generatedData.sentences || [],
         meta: generatedData 
       });
+    } else if (type === 'conversation') {
+      const generatedConversation = await aiFacade.generateConversation({
+        items: actualItems,
+        level,
+        theme,
+        category: theme,
+        count: Number(count) || 8,
+        characters: body.characters || ['Persona A', 'Persona B']
+      });
+      return NextResponse.json({
+        type: 'conversation',
+        conversation: generatedConversation
+      });
     } else {
       // type === 'story'
       const generatedStory = await aiFacade.generateStory({
