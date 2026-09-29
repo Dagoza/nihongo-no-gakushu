@@ -336,18 +336,21 @@ export default function SaveVocabModal({
 
             <div className="form-group">
               <label className="form-label">Categoría Temática</label>
-              <select
-                className="form-select"
+              <input
+                list="category-options"
+                className="form-input"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="Anime y Cultura">Anime y Cultura</option>
-                <option value="Vida Diaria">Vida Diaria</option>
-                <option value="Comida y Bebida">Comida y Bebida</option>
-                <option value="Viajes y Lugares">Viajes y Lugares</option>
-                <option value="Personas y Relaciones">Personas y Relaciones</option>
-                <option value="Saludos y Cortesía">Saludos y Cortesía</option>
-              </select>
+                placeholder="Ej. Vida Diaria"
+              />
+              <datalist id="category-options">
+                <option value="Anime y Cultura" />
+                <option value="Vida Diaria" />
+                <option value="Comida y Bebida" />
+                <option value="Viajes y Lugares" />
+                <option value="Personas y Relaciones" />
+                <option value="Saludos y Cortesía" />
+              </datalist>
             </div>
 
             {/* Kanjis detectados con advertencia de sincronización */}

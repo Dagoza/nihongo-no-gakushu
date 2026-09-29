@@ -58,92 +58,90 @@ export default function Header({
           </div>
         </div>
 
-        {!isMinimized && (
-          <div className="header-badges">
-            <div className="stat-badge" title="Racha de estudio activa">
-              <Flame size={16} className="text-amber-500" />
-              <span>{stats.streak}d</span>
-            </div>
+        <div className={`header-badges ${isMinimized ? 'minimized-mobile' : ''}`}>
+          <div className="stat-badge" title="Racha de estudio activa">
+            <Flame size={16} className="text-amber-500" />
+            <span>{stats.streak}d</span>
+          </div>
 
-            <div className="stat-badge" title="Puntos de experiencia y nivel">
-              <Star size={16} className="text-indigo-500" />
-              <span>Nivel {stats.level} ({stats.xp} XP)</span>
-            </div>
+          <div className="stat-badge" title="Puntos de experiencia y nivel">
+            <Star size={16} className="text-indigo-500" />
+            <span>Nivel {stats.level} ({stats.xp} XP)</span>
+          </div>
 
-            <div className="stat-badge" title="Partículas dominadas">
-              <CheckCircle size={16} className="text-emerald-500" />
-              <span>{stats.particles}/25 part.</span>
-            </div>
+          <div className="stat-badge" title="Partículas dominadas">
+            <CheckCircle size={16} className="text-emerald-500" />
+            <span>{stats.particles}/25 part.</span>
+          </div>
 
-            <div className="stat-badge" title="Palabras aprendidas">
-              <BookOpen size={16} className="text-blue-500" />
-              <span>{stats.vocab} pal.</span>
-            </div>
+          <div className="stat-badge" title="Palabras aprendidas">
+            <BookOpen size={16} className="text-blue-500" />
+            <span>{stats.vocab} pal.</span>
+          </div>
 
-            <div className="stat-badge hidden-sm" title="Teclado Japonés IME listo">
-              <Keyboard size={16} className="text-rose-500" />
-              <span>IME 🇯🇵</span>
-            </div>
+          <div className="stat-badge hidden-sm" title="Teclado Japonés IME listo">
+            <Keyboard size={16} className="text-rose-500" />
+            <span>IME 🇯🇵</span>
+          </div>
 
-            {/* Cloud Sync Status */}
+          {/* Cloud Sync Status */}
+          <div 
+            className="stat-badge" 
+            style={{ cursor: 'pointer' }}
+            onClick={() => onNavigate('progress')}
+            title={syncInfo || (syncStatus === 'synced' ? 'Nube sincronizada (Haz clic para ver)' : 'Haz clic para configurar sincronización multi-dispositivo')}
+          >
+            {syncStatus === 'syncing' ? (
+              <CloudSync size={16} style={{ color: 'var(--accent, #f59e0b)' }} />
+            ) : syncStatus === 'synced' ? (
+              <CloudCheck size={16} style={{ color: 'var(--success, #10b981)' }} />
+            ) : (
+              <CloudOff size={16} style={{ color: 'var(--text-muted, #94a3b8)' }} />
+            )}
+            <span className="hidden-sm" style={{ fontSize: '0.8rem' }}>
+              {syncStatus === 'synced' ? 'Nube' : syncStatus === 'syncing' ? 'Sincronizando' : 'Local'}
+            </span>
+          </div>
+
+          {/* User Session Auth Badge */}
+          {authUser ? (
             <div 
-              className="stat-badge" 
-              style={{ cursor: 'pointer' }}
+              className="stat-badge"
+              style={{ 
+                cursor: 'pointer', 
+                background: 'rgba(99, 102, 241, 0.1)', 
+                borderColor: 'var(--primary, #6366f1)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6
+              }}
               onClick={() => onNavigate('progress')}
-              title={syncInfo || (syncStatus === 'synced' ? 'Nube sincronizada (Haz clic para ver)' : 'Haz clic para configurar sincronización multi-dispositivo')}
+              title={`Sesión activa: ${authUser.email}. Haz clic para gestionar tu cuenta.`}
             >
-              {syncStatus === 'syncing' ? (
-                <CloudSync size={16} style={{ color: 'var(--accent, #f59e0b)' }} />
-              ) : syncStatus === 'synced' ? (
-                <CloudCheck size={16} style={{ color: 'var(--success, #10b981)' }} />
-              ) : (
-                <CloudOff size={16} style={{ color: 'var(--text-muted, #94a3b8)' }} />
-              )}
-              <span className="hidden-sm" style={{ fontSize: '0.8rem' }}>
-                {syncStatus === 'synced' ? 'Nube' : syncStatus === 'syncing' ? 'Sincronizando' : 'Local'}
+              <User size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--primary, #6366f1)' }}>
+                {authUser.email.split('@')[0]}
               </span>
             </div>
-
-            {/* User Session Auth Badge */}
-            {authUser ? (
-              <div 
-                className="stat-badge"
-                style={{ 
-                  cursor: 'pointer', 
-                  background: 'rgba(99, 102, 241, 0.1)', 
-                  borderColor: 'var(--primary, #6366f1)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6
-                }}
-                onClick={() => onNavigate('progress')}
-                title={`Sesión activa: ${authUser.email}. Haz clic para gestionar tu cuenta.`}
-              >
-                <User size={15} style={{ color: 'var(--primary, #6366f1)' }} />
-                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--primary, #6366f1)' }}>
-                  {authUser.email.split('@')[0]}
-                </span>
-              </div>
-            ) : (
-              <button 
-                className="stat-badge"
-                style={{ 
-                  cursor: 'pointer', 
-                  background: 'var(--bg-card)', 
-                  border: '1px solid var(--border)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6
-                }}
-                onClick={onOpenAuth}
-                title="Iniciar sesión para proteger y sincronizar tu progreso"
-              >
-                <LogIn size={15} style={{ color: 'var(--primary, #6366f1)' }} />
-                <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>Entrar</span>
-              </button>
-            )}
-          </div>
-        )}
+          ) : (
+            <button 
+              className="stat-badge"
+              style={{ 
+                cursor: 'pointer', 
+                background: 'var(--bg-card)', 
+                border: '1px solid var(--border)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+              onClick={onOpenAuth}
+              title="Iniciar sesión para proteger y sincronizar tu progreso"
+            >
+              <LogIn size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+              <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>Entrar</span>
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );

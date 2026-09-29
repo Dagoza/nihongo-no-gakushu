@@ -41,6 +41,7 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
   const [subView, setSubView] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
+  const [selectedCategory, setSelectedCategory] = useState('all');
   
   // Selection state for batch actions
   const [selectedWordIds, setSelectedWordIds] = useState(new Set());
@@ -71,10 +72,13 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
   const savedPhrases = appState.savedPhrases || [];
   const customStories = appState.savedStories || [];
 
+  const allCategories = useMemo(() => Array.from(new Set(savedWords.map(w => w.category).filter(Boolean))), [savedWords]);
+
   // Filtered words
   const filteredWords = useMemo(() => {
     return savedWords.filter((w) => {
       const matchLevel = selectedLevel === 'all' || w.level === selectedLevel;
+      const matchCat = selectedCategory === 'all' || w.category === selectedCategory;
       const q = searchQuery.trim().toLowerCase();
       const matchSearch =
         !q ||
@@ -82,9 +86,9 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
         (w.hiragana && w.hiragana.toLowerCase().includes(q)) ||
         (w.katakana && w.katakana.toLowerCase().includes(q)) ||
         (w.meaning_es && w.meaning_es.toLowerCase().includes(q));
-      return matchLevel && matchSearch;
+      return matchLevel && matchSearch && matchCat;
     });
-  }, [savedWords, selectedLevel, searchQuery]);
+  }, [savedWords, selectedLevel, selectedCategory, searchQuery]);
 
   // Filtered phrases
   const filteredPhrases = useMemo(() => {
@@ -501,7 +505,7 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
             </div>
 
             {/* JLPT Level Filter */}
-            <div className="saved-level-filter">
+            <div className="saved-level-filter" style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
               {['all', 'N5', 'N4', 'N3'].map((lvl) => (
                 <button
                   key={lvl}
@@ -511,6 +515,18 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
                   {lvl === 'all' ? 'Todos' : lvl}
                 </button>
               ))}
+              
+              <select 
+                className="form-select" 
+                style={{ width: 'auto', padding: '4px 8px', fontSize: '0.85rem' }}
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="all">Todas las Categorías</option>
+                {allCategories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
             </div>
           </div>
         )}

@@ -5770,3 +5770,9 @@ rt {
     padding-bottom: 80px; /* Reduced since we can minimize it */
   }
 }
+
+@media (max-width: 640px) {
+  .header-badges.minimized-mobile {
+    display: none !important;
+  }
+}
