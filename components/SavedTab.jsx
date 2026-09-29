@@ -35,17 +35,32 @@ import {
   exportAsMarkdown,
   formatTimestamp 
 } from '../lib/japaneseUtils';
+import { getAuthSession } from '../lib/supabaseSync';
+import { useApp } from '../lib/AppContext';
 
 export default function SavedTab({ 
   appState, 
   onUpdateState, 
   onNavigate,
+  authUser: propAuthUser = null,
+  onOpenAuth: propOnOpenAuth = null,
   initialView = 'all',
   initialSearch = '',
   initialLevel = 'all',
   initialCategory = 'all',
   onParamsChange
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+
+  const authUser = propAuthUser || contextApp?.authUser;
+  const onOpenAuth = propOnOpenAuth || (() => {
+    if (contextApp?.setIsAuthModalOpen) {
+      contextApp.setIsAuthModalOpen(true);
+    }
+  });
   // Subview tabs: 'all' | 'words' | 'phrases' | 'stories'
   const [subView, setSubView] = useState(initialView || 'all');
   const [searchQuery, setSearchQuery] = useState(initialSearch || '');
@@ -252,6 +267,15 @@ export default function SavedTab({
   }, [selectedWordsList, selectedPhrasesList, storyLevel, storyTheme]);
 
   const handleGenerateAIStory = async () => {
+    // Requerir inicio de sesión para generar historias con IA
+    if (!authUser) {
+      if (onOpenAuth) {
+        onOpenAuth();
+      }
+      alert("Debes iniciar sesión con tu cuenta de Google o correo para generar historias con Inteligencia Artificial.");
+      return;
+    }
+
     setIsGenerating(true);
     try {
       const vocabList = selectedWordsList.map(w => w.kanji || w.hiragana);
@@ -261,9 +285,16 @@ export default function SavedTab({
         return;
       }
 
+      // Obtener token de sesión activa de Supabase
+      const session = await getAuthSession();
+      const token = session?.access_token;
+
       const response = await fetch('/api/stories/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           vocabList,
           level: storyLevel,
@@ -274,6 +305,9 @@ export default function SavedTab({
 
       const data = await response.json();
       if (data.error) {
+        if (response.status === 401 && onOpenAuth) {
+          onOpenAuth();
+        }
         alert("Error de la IA: " + data.error);
         setIsGenerating(false);
         return;
@@ -884,7 +918,7 @@ export default function SavedTab({
                   }}
                 >
                   <Sparkles size={16} />
-                  <span>Generar Prompt de Historia con IA</span>
+                  <span>{authUser ? 'Generar Historia con IA' : '🔒 Generar Historia con IA (Requiere sesión)'}</span>
                 </button>
                 <button
                   className="btn btn-outline"
@@ -1091,6 +1125,40 @@ export default function SavedTab({
                   <p>
                     💡 <strong>Nueva IA Integrada:</strong> Haz clic en el botón de abajo para que Nihongo Master genere automáticamente esta historia usando <strong>Groq Llama-3</strong>, y la guarde en tu biblioteca de historias.
                   </p>
+
+                  {!authUser && (
+                    <div style={{
+                      background: 'rgba(234, 179, 8, 0.12)',
+                      border: '1px solid rgba(234, 179, 8, 0.35)',
+                      borderRadius: '8px',
+                      padding: '12px 16px',
+                      fontSize: '0.88rem',
+                      color: 'var(--text-secondary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                      flexWrap: 'wrap'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '1.2rem' }}>🔒</span>
+                        <span>
+                          Para generar historias automáticas con IA debes <strong>iniciar sesión</strong> con tu cuenta.
+                        </span>
+                      </div>
+                      <button 
+                        type="button"
+                        className="btn btn-sm btn-primary"
+                        onClick={() => {
+                          setIsExportModalOpen(false);
+                          if (onOpenAuth) onOpenAuth();
+                        }}
+                      >
+                        Iniciar Sesión
+                      </button>
+                    </div>
+                  )}
+
                   <div style={{ display: 'flex', gap: 12 }}>
                     <button
                       className="btn btn-primary"
@@ -1098,7 +1166,7 @@ export default function SavedTab({
                       onClick={handleGenerateAIStory}
                       disabled={isGenerating}
                     >
-                      {isGenerating ? 'Generando Historia...' : '✨ Auto-Generar con IA (Groq)'}
+                      {isGenerating ? 'Generando Historia...' : !authUser ? '🔒 Inicia sesión para Generar con IA' : '✨ Auto-Generar con IA (Groq)'}
                     </button>
                     <button
                       className="btn btn-outline"

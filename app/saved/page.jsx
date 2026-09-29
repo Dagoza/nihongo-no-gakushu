@@ -6,7 +6,7 @@ import { useApp } from '../../lib/AppContext';
 import SavedTab from '../../components/SavedTab';
 
 function SavedPageContent() {
-  const { appState, handleUpdateState, navigate } = useApp();
+  const { appState, handleUpdateState, navigate, authUser, setIsAuthModalOpen } = useApp();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -31,6 +31,8 @@ function SavedPageContent() {
       appState={appState} 
       onUpdateState={handleUpdateState} 
       onNavigate={navigate}
+      authUser={authUser}
+      onOpenAuth={() => setIsAuthModalOpen(true)}
       initialView={viewParam || 'all'}
       initialSearch={searchParam || ''}
       initialLevel={levelParam || 'all'}

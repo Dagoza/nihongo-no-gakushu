@@ -46,6 +46,14 @@ export function AppProvider({ children }) {
       return;
     }
 
+    // Si el usuario no ha iniciado sesión, mostrar solo datos locales y no llamar a la BD
+    const user = await getAuthUser();
+    if (!user) {
+      setSyncStatus('local');
+      setSyncInfo('Modo local (Sin cuenta)');
+      return;
+    }
+
     setSyncStatus('syncing');
     setSyncInfo('Sincronizando con la nube...');
 

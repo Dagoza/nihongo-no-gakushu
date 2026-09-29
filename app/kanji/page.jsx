@@ -6,7 +6,7 @@ import { useApp } from '../../lib/AppContext';
 import KanjiTab from '../../components/KanjiTab';
 
 function KanjiPageContent() {
-  const { appState, handleUpdateState } = useApp();
+  const { appState, handleUpdateState, authUser } = useApp();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -28,6 +28,7 @@ function KanjiPageContent() {
     <KanjiTab 
       appState={appState} 
       onUpdateState={handleUpdateState} 
+      authUser={authUser}
       initialSearch={searchParam || ''}
       initialMode={modeParam || 'list'}
       initialDraw={drawParam || null}

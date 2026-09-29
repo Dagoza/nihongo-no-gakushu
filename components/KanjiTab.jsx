@@ -9,15 +9,22 @@ import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import KanjiDraw from './KanjiDraw';
 import { getKanjiFromSupabase } from '../lib/supabaseData';
+import { useApp } from '../lib/AppContext';
 
 export default function KanjiTab({ 
   appState, 
   onUpdateState,
+  authUser: propAuthUser = null,
   initialSearch = '',
   initialMode = 'list',
   initialDraw = null,
   onParamsChange
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+  const authUser = propAuthUser || contextApp?.authUser;
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [quizActive, setQuizActive] = useState(initialMode === 'quiz');
   const [quizIndex, setQuizIndex] = useState(0);
@@ -74,9 +81,16 @@ export default function KanjiTab({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Si no ha iniciado sesión, mostrar exclusivamente los datos locales guardados sin consultar la BD
+    if (!authUser) {
+      setKanjiList(dataStore.kanji || []);
+      setIsLoading(false);
+      return;
+    }
+
     let isMounted = true;
     setIsLoading(true);
-    getKanjiFromSupabase({ level })
+    getKanjiFromSupabase({ level, authUser })
       .then(data => {
         if (isMounted && data && data.length > 0) {
           setKanjiList(data);
@@ -87,7 +101,7 @@ export default function KanjiTab({
         if (isMounted) setIsLoading(false);
       });
     return () => { isMounted = false; };
-  }, [level]);
+  }, [level, authUser]);
 
   // Filter kanji
   const filteredKanji = kanjiList.filter(k => {

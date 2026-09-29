@@ -6,7 +6,7 @@ import { useApp } from '../../lib/AppContext';
 import VocabTab from '../../components/VocabTab';
 
 function VocabPageContent() {
-  const { appState, handleUpdateState } = useApp();
+  const { appState, handleUpdateState, authUser } = useApp();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -30,6 +30,7 @@ function VocabPageContent() {
     <VocabTab 
       appState={appState} 
       onUpdateState={handleUpdateState} 
+      authUser={authUser}
       initialMode={modeParam}
       initialLevel={levelParam}
       initialCategory={categoryParam}

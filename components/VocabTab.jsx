@@ -9,16 +9,23 @@ import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import SpeechPractice from './SpeechPractice';
 import { getVocabularyFromSupabase } from '../lib/supabaseData';
+import { useApp } from '../lib/AppContext';
 
 export default function VocabTab({ 
   appState, 
   onUpdateState,
+  authUser: propAuthUser = null,
   initialMode = null,
   initialLevel = null,
   initialCategory = null,
   initialSearch = null,
   onParamsChange
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+  const authUser = propAuthUser || contextApp?.authUser;
   const [mode, setMode] = useState(initialMode || 'cards'); // 'cards' | 'typing' | 'n4_exercises' | 'srs'
   const [level, setLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4'
   const [category, setCategory] = useState(initialCategory || 'all');
@@ -76,9 +83,16 @@ export default function VocabTab({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Si no ha iniciado sesión, mostrar exclusivamente los datos locales guardados sin consultar la BD
+    if (!authUser) {
+      setVocabularyList(dataStore.vocabulary || []);
+      setIsLoading(false);
+      return;
+    }
+
     let isMounted = true;
     setIsLoading(true);
-    getVocabularyFromSupabase({ level })
+    getVocabularyFromSupabase({ level, authUser })
       .then(data => {
         if (isMounted && data && data.length > 0) {
           setVocabularyList(data);
@@ -89,7 +103,7 @@ export default function VocabTab({
         if (isMounted) setIsLoading(false);
       });
     return () => { isMounted = false; };
-  }, [level]);
+  }, [level, authUser]);
 
   const n4Exercises = dataStore.exercises || [];
 
