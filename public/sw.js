@@ -1,5 +1,5 @@
 // Nihongo Master Service Worker
-const CACHE_NAME = 'nihongo-master-v2';
+const CACHE_NAME = 'nihongo-master-v3';
 const OFFLINE_URL = '/offline';
 
 const PRECACHE_ASSETS = [
@@ -49,11 +49,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Bypass API, Supabase, and range requests (PDFs, audio streams)
+  // Bypass API, Supabase, Next.js internal RSC data requests, and range requests (PDFs, audio streams)
   if (
     url.pathname.startsWith('/api/') ||
     url.hostname.includes('supabase.co') ||
     url.pathname.endsWith('.pdf') ||
+    url.searchParams.has('_rsc') ||
+    request.headers.get('RSC') === '1' ||
+    request.headers.get('Next-Router-State-Tree') ||
     request.headers.get('range')
   ) {
     return;
@@ -129,8 +132,8 @@ self.addEventListener('fetch', (event) => {
             return networkResponse;
           })
           .catch(() => {
-            // Nothing in cache and network failed
-            return null;
+            // Nothing in cache and network failed - return fallback Response instead of illegal null
+            return new Response('Network error or offline', { status: 503, statusText: 'Service Unavailable' });
           })
       );
     })

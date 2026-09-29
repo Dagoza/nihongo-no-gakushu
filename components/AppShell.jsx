@@ -55,7 +55,6 @@ function AppShellContent({ children }) {
       {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}
       <NavigationTabs 
         currentTab={currentTab} 
-        onTabChange={(tabId) => navigate(tabId)} 
         savedCount={savedCount}
       />
 

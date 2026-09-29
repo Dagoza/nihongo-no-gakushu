@@ -41,9 +41,9 @@ graph TD
 | :--- | :--- | :---: | :--- | :--- |
 | **🗺️ Ruta de Aprendizaje** (`/curriculum`) | `dataStore.curriculum` (19 módulos consolidados con 87 Can-Dos y 82 ejercicios) | **Operativo** | Temario unificado sin redundancias, autoevaluación interactiva Can-Do con checkboxes, micro-evaluaciones por módulo (+5 XP), audio nativo y enlaces directos a temas relacionados. | Faltan lecciones avanzadas para cubrir N3-N1 (planificadas para Fase 4). |
 | **📖 Historias Interactivas** (`/story`) | Generador JSON con etiquetas `<ruby>`, Web Speech API, Wanakana | **Operativo** | 3 modos de visualización (Natural con Furigana, Solo Kana, Solo Kanji), desglose oracional, notas gramaticales, práctica de mecanografía IME. | Catálogo precargado de historias reducido; audio sintético sin entonación contextual de Tokio. |
-| **📻 Conversación NHK** (`/nhk`) | 48 lecciones completas del curso "Hablemos en Japón", 144 ejercicios | **Operativo** | Cobertura de las 48 lecciones de Anna y Sakura, audio línea por línea, 3 ejercicios interactivos por lección (preguntas de opción, kanji y respuesta). | Las voces son sintéticas (Web Speech API) en lugar de los clips de audio radiofónico originales de la NHK. |
+| **📻 Conversación NHK** (`/nhk`) | 48 lecciones completas del curso "Hablemos en Japón", 144 ejercicios | **Operativo** | Cobertura de las 48 lecciones de Anna y Sakura, audios MP3 oficiales nativos integrados en `public/audio/nhk/`, streaming de `/api/tts`, 3 ejercicios interactivos por lección. | Modo roleplay interactivo (ocultar un personaje para doblarlo en voz alta) planificado para Fase 3. |
 | **📺 Inmersión YouTube** (`/youtube`) | YouTube IFrame API, API de transcripciones, `Intl.Segmenter` | **Operativo** | Subtítulos bilingües sincronizados con auto-scroll, clic en cualquier token japonés para ver significado y furigana, práctica de shadowing con speech-to-text. | Depende de la disponibilidad de subtítulos oficiales o generados en YouTube; videos con subtítulos quemados en video no son interactivos. |
-| **📚 Vocabulario & SRS** (`/vocab`) | Algoritmo **ts-fsrs** (FSRS v5), Wanakana, Web Speech API | **Operativo** | FSRS supera drásticamente a SM-2 (Anki clásico); 4 modos (Tarjetas, Mecanografía IME, 35 ejercicios de contexto N4, Repaso SRS); notas de usuario y edición. | Volumen precargado en JSON (208 palabras sincronizadas); ausencia de indicación gráfica de *Pitch Accent* y audio neuronal. |
+| **📚 Vocabulario & SRS** (`/vocab`) | Algoritmo **ts-fsrs** (FSRS v5), Wanakana, Pitch Accent SVG, Edge TTS | **Operativo** | FSRS supera drásticamente a SM-2 (Anki clásico); 4 modos (Tarjetas, Mecanografía IME, 35 ejercicios de contexto N4, Repaso SRS); curvas SVG de *Pitch Accent* (7,472 entradas); audio neuronal de Tokio vía `/api/tts`. | Catálogo masivo de 30,000+ términos dependiente de conexión a Supabase; sistema de detección de cartas conflictivas (*leech detection*) pendiente. |
 | **🎯 Partículas & Gramática** (`/grammar`) | `dataStore.particles` (25 partículas clave) | **Operativo** | Explicaciones en español muy claras, fórmulas de construcción, ejemplos con audio y modo Quiz con selección y entrada IME. | Cubre 25 funciones elementales; falta expandir a construcciones compuestas de nivel N4 y N3 (ej. 〜わけにはいかない, 〜はずだ). |
 | **漢 Biblioteca de Kanjis** (`/kanji`) | `HanziWriter`, multi-CDN stroke loader, `wanakana`, SRS | **Operativo** | Animación trazo por trazo, guía de radicales, modo prueba de dibujo interactivo en pantalla, lecturas On/Kun, palabras compuestas sincronizadas. | Falta desglose de componentes fonéticos/semánticos y mnemotecnias visuales ilustradas. |
 | **📑 Visor de Documentos** (`/pdf`) | Iframe modal vinculado a `public/material_de_estudio/` | **Operativo** | Acceso inmediato a los 15 materiales de referencia originales (PDFs, hojas de cálculo de partículas) sin salir de la plataforma. | Es un visor pasivo; no permite hacer clic en palabras dentro del PDF para agregarlas a vocabulario o reproducir audio. |
@@ -512,11 +512,165 @@ flowchart TD
 
 ---
 
-## 5. Inventario de Información, Documentación y Material Adicional Requerido
+## 5. Auditoría de la Consolidación Curricular (Can-dos, Módulos Unificados y Temas Relacionados)
+
+La plataforma ha dado un paso de madurez decisivo al superar la fragmentación de libros de texto tradicionales mediante la **consolidación unificada en 19 módulos temáticos** (`curriculum.json`), fusionando el curso *Irodori Elementary 1 (A1)* de Fundación Japón, *Hablemos en Japonés* de NHK World y los estándares del examen oficial *JLPT N5/N4*.
+
+```mermaid
+flowchart TD
+    subgraph Fuentes["Fuentes Didácticas Originales"]
+        Iro["Irodori Elementary 1 (A1)<br>18 Lecciones · 79 Can-dos"]
+        NHK["NHK: Hablemos en Japonés<br>48 Lecciones Situacionales"]
+        JLPT["Estándares Oficiales JLPT<br>Niveles N5 y N4"]
+    end
+
+    subgraph Fusion["Motor de Consolidación y Desduplicación"]
+        AntiDup["Filtro Antiduplicidad<br>(Regla 4: No repetir temas idénticos)"]
+        CanDoEngine["Banco Integrado de 87 Can-Dos<br>Frases clave y síntesis de voz"]
+        RelNet["Red Semántica de Temas Relacionados<br>Vínculos bidireccionales"]
+    end
+
+    subgraph Output["Ruta Unificada Nihongo Master"]
+        M1["M1: Saludos y Presentación"]
+        M2["M2: Gestión de Idiomas"]
+        M3["M3: Identidad y Familia"]
+        Dots["... Módulos 4 al 18 ..."]
+        M19["M19: Metas y Despedidas"]
+    end
+
+    Fuentes --> AntiDup
+    AntiDup --> CanDoEngine & RelNet
+    CanDoEngine & RelNet --> Output
+```
+
+### 5.1. Qué se ha Consolidado y Cómo se Evita la Duplicidad
+
+1. **Desduplicación Temática Inteligente:**  
+   En lugar de obligar al estudiante a cursar dos veces el mismo tema (por ejemplo, saludos básicos en NHK Lección 1 y en Irodori Lección 1), se unificaron en módulos comprehensivos:
+   - *Módulo 1:* Agrupa las presentaciones de Irodori L1/L3, NHK L1/L2 y gramática base JLPT.
+   - *Módulo 5:* Unifica los pedidos en restaurantes de comida rápida y tabernas de Irodori L6 con los diálogos de restaurantes de NHK L7/L17.
+   - *Módulo 6:* Consolida la vivienda, distribución espacial y electrodomésticos de Irodori L7 con la vida en la residencia de NHK L4/L14.
+   - *Módulo 12:* Concentra transporte, trenes y desplazamientos de Irodori L11 y NHK L16/L28.
+2. **87 Competencias Can-Do Incorporadas con Autoevaluación:**  
+   Cada módulo incluye sus fichas de objetivos prácticos observables (*"Lo que el estudiante es capaz de hacer en el mundo real"*), con código Can-do, tarea funcional en español, frase de ejemplo en japonés, botón de audio y checkbox de autoevaluación interactivo (+10 XP) persistido en `appState.completedCanDos`.
+3. **Sección de «Temas y Módulos Relacionados»:**  
+   Siguiendo la Regla 4 del proyecto, cada uno de los 19 módulos incorpora entre 2 y 3 temas relacionados explícitamente justificados (`relationship` y `reason`) con botones interactivos que permiten saltar inmediatamente al módulo vinculado.
+
+---
+
+### 5.2. Diagnóstico: ¿Qué Hace Falta con Respecto a los Can-Dos y Módulos Consolidados?
+
+A pesar de los grandes avances implementados recientemente (autoevaluación interactiva, filtros de estado y 82 quizzes), existen áreas clave pendientes de abordaje:
+
+```mermaid
+flowchart LR
+    subgraph Gaps["Gaps Pendientes en la Ruta y Materiales"]
+        direction TB
+        G1["1. Incorporación Serie Irodori Completa<br>(Elementary 1, 2 y Pre-Intermediate)"]
+        G2["2. Enlace Directo al PDF con Página<br>(Salto exacto en el visor modal #page=X)"]
+        G3["3. Importación de Vocabulario al FSRS<br>(Botón 1-clic al repaso diario)"]
+        G4["4. Enlaces Cruzados Externos<br>(Hacia Partículas y Diálogos NHK)"]
+    end
+```
+
+1. **Incorporación de la Serie Oficial Completa de Materiales de Estudio Irodori:**  
+   - *Situación actual:* En la biblioteca local únicamente figura una versión preliminar de Elementary 1.
+   - *Lo que falta:* Descargar e incorporar formalmente tanto los libros de texto como los paquetes de audios y hojas de trabajo oficiales de la serie de la Fundación Japón:
+     - 📘 **[Elementary 1](https://www.irodori.jpf.go.jp/en/elementary01/pdf.html)** (A1/A2.1): Incorporar la versión completa oficial (515 páginas) y sus audios de shadowing y diálogos cotidianos.
+     - 📙 **[Elementary 2](https://www.irodori.jpf.go.jp/en/elementary02/pdf.html)** (A2.2): Indispensable para extender la ruta curricular hacia JLPT N4 avanzado y cubrir situaciones de vida comunitaria y laboral independiente.
+     - 📕 **[Pre-Intermediate](https://www.irodori.jpf.go.jp/en/pre-intermediate/pdf.html)** (A2/B1): Requerido para la fase de transición hacia JLPT N3 y resolución de imprevistos complejos en Japón.
+2. **Enlace Directo del Módulo al PDF con Número de Página:**  
+   - *Situación actual:* El campo `sourcePdf` o `sourceBooks` indica texto estático como `irodori elementary.pdf (Págs. 44-61)`.
+   - *Lo que falta:* Un botón interactivo *"Ver material original"* que abra el visor modal de PDFs directamente en la página correspondiente (utilizando fragmentos `#page=44`).
+3. **Acción Rápida «Añadir Vocabulario del Módulo a mi Repaso FSRS»:**  
+   - *Situación actual:* Los términos de `vocab_details` se leen en pantalla pero no se pueden enviar en bloque al algoritmo de repetición espaciada.
+   - *Lo que falta:* Botón en la cabecera de vocabulario del módulo: *"Incorporar estas 10 palabras a mis repasos diarios"*.
+4. **Enlaces Cruzados Más Allá del Currículum (Hacia Gramática y NHK):**  
+   - *Situación actual:* Los "Temas Relacionados" solo enlazan hacia otros números de módulo de la misma ruta.
+   - *Lo que falta:* Enriquecer la red relacional para que si el Módulo 1 trata sobre la partícula `は`, ofrezca un enlace directo al punto interactivo de la partícula en `/grammar`; y si trata de compras, enlace al diálogo dramatizado correspondiente en `/nhk`.
+
+---
+
+## 6. Matriz de Seguimiento y Checkbox de Implementación Actualizada
+
+Esta matriz centraliza el estado real de desarrollo de la plataforma, reflejando las **actualizaciones completadas en producción** `[x]` y las **tareas pendientes** `[ ]`:
+
+### 6.1. Ruta Consolidada y Competencias Can-Do
+- [x] **Consolidación de temarios:** 19 módulos unificados fusionando Irodori A1, NHK y JLPT N5/N4 sin duplicidad.
+- [x] **Banco de 87 Can-dos:** Definición de objetivos observables con tarea funcional, frase clave en japonés y botón de audio.
+- [x] **Red de Temas Relacionados:** Enlace con justificación pedagógica (`relationship` y `reason`) y navegación interactiva entre módulos.
+- [x] **Modo Detallado de Módulo:** Vista expandida con guía cultural, puntos gramaticales, tabla léxica y micro-quizzes con XP.
+- [x] **Checkbox de Autoevaluación Can-do:** Selección individual de dominio interactiva (+10 XP) con persistencia en `completedCanDos`.
+- [x] **Métricas Can-Do en Mi Progreso:** Barra dinámica y contador de competencias logradas en `/progress`.
+- [x] **Equiparación de ejercicios:** Banco ampliado a 82 ejercicios en `exercises.json` y 35 ejercicios de contexto N4.
+- [x] **Filtros por nivel y estado en `/curriculum`:** Selectores de `Todos`, `Completados`, `Pendientes` y badges de estado completado.
+- [ ] **Importación en bloque a FSRS:** Botón para añadir todo el vocabulario del módulo al mazo de repetición espaciada.
+- [ ] **Hipervínculo a página de PDF:** Salto automático al visor modal en `#page=X` del libro fuente.
+- [ ] **Incorporación de la Serie Oficial Completa de Materiales Irodori:**
+  - [ ] Descargar e incorporar [Elementary 1](https://www.irodori.jpf.go.jp/en/elementary01/pdf.html) (A1/A2.1) al catálogo de PDFs y visor interactivo.
+  - [ ] Descargar e incorporar [Elementary 2](https://www.irodori.jpf.go.jp/en/elementary02/pdf.html) (A2.2) para expandir los módulos hacia JLPT N4.
+  - [ ] Descargar e incorporar [Pre-Intermediate](https://www.irodori.jpf.go.jp/en/pre-intermediate/pdf.html) (A2/B1) para la transición intermedia hacia JLPT N3.
+
+### 6.2. Vocabulario, Pronunciación y Repaso Espaciado (SRS)
+- [x] **Motor FSRS v5:** Algoritmo matemático `ts-fsrs` integrado para programación de repasos adaptativos.
+- [x] **4 Modos de Práctica:** Tarjetas (*flashcards*), Escritura IME, Ejercicios contextuales N4 y Sesión SRS.
+- [x] **Notación Visual de Pitch Accent:** Curvas SVG dinámicas, badges tonales (Heiban, Atamadaka, Nakadaka, Odaka) y base de 7,472 entradas.
+- [x] **Smart Audio Pipeline:** Audio híbrido con streaming de Edge TTS (`ja-JP-NanamiNeural`) y fallback a Web Speech API.
+- [x] **Edición y Notas de Vocabulario:** Modal para agregar notas personales y modificar traducciones.
+- [x] **Regla de las 3 Escrituras:** Obligatoriedad de Kanji, Hiragana y Katakana en todo el vocabulario.
+- [x] **Sincronización Bidireccional Kanji-Vocabulario:** Palabras compuestas replicadas en el array `words` de cada kanji en `kanji.json`.
+- [ ] **Filtro de palabras problemáticas:** Vista rápida de términos con alta tasa de fallos (*leech detection*).
+
+### 6.3. Biblioteca de Kanjis
+- [x] **Lienzo de Dibujo HanziWriter:** Renderizado animado trazo por trazo, detección de orden y modo quiz interactivo de caligrafía.
+- [x] **Pitch Accent en Fichas de Kanji:** Curvas tonales integradas para las lecturas y palabras compuestas.
+- [x] **Información Enciclopédica:** Número de trazos, radicales, lecturas On'yomi, Kun'yomi y ejemplos compuestos con audio.
+- [x] **Modo Quiz de Lecturas:** Práctica con entrada de texto IME convertida en kana con Wanakana.
+- [x] **Soporte Masivo Supabase:** Conmutador opcional para desbloquear catálogo extendido de 2,136 kanjis Jōyō.
+- [ ] **Mnemotécnicas Gráficas e Ilustraciones:** Apoyo visual para la memorización de radicales y partes del ideograma.
+- [ ] **Desglose de Componente Fonético vs Semántico:** Identificación de qué parte del kanji aporta el sonido On'yomi.
+
+### 6.4. Conversación Situacional (NHK "Hablemos en Japonés")
+- [x] **48 Lecciones Completas:** Cobertura de las 48 lecciones de la serie con transcripción japonesa y traducción al español.
+- [x] **144 Ejercicios Interactivos:** 3 preguntas situacionales por lección (preguntas de opción, kanji y respuesta).
+- [x] **Audios Nativos MP3:** Descarga y mapeo de clips oficiales en `public/audio/nhk/` y URLs con streaming.
+- [x] **Reproducción Línea por Línea:** Control de audio individual para cada frase de los diálogos.
+- [x] **Notas Gramaticales y Culturales:** Explicaciones de expresiones idiomáticas japonesas (*otsukaresama*, *itadakimasu*, etc.).
+- [ ] **Modo Roleplay / Ocultar Personaje:** Permitir silenciar las líneas de un interlocutor para que el alumno las diga en voz alta.
+
+### 6.5. Inmersión en YouTube y Tokenización
+- [x] **Reproductor Sincronizado:** Subtítulos bilingües interactivos con auto-scroll conforme avanza el video.
+- [x] **Tokenizador Nativo:** Segmentación con `Intl.Segmenter` para tocar cualquier palabra y consultar significado/furigana.
+- [x] **Minería de Palabras a 1 Clic:** Modal para guardar términos desconocidos a la libreta personal con contexto.
+- [x] **Catálogo Verificado:** Canales y videos clasificados por nivel (N5 a N3) y temáticas de interés (anime, vlogs, comida).
+- [x] **Buscador de Videos con Subtítulos Oficiales:** Endpoint `/api/youtube/search` para explorar material nuevo.
+- [ ] **Lector Libre de Artículos y Textos Web:** Pantalla para pegar textos externos (NHK Easy News, canciones) con tokenización automática.
+- [ ] **Importador de Subtítulos Locales (.srt / .vtt):** Soporte para practicar con archivos multimedia locales o anime.
+
+### 6.6. Historias Interactivas e Inteligencia Artificial
+- [x] **Lectura con Ruby `<ruby>`:** 3 modos de visualización (Natural con Furigana, Solo Kana, Solo Kanji).
+- [x] **Desglose Oracional y Práctica IME:** Validación de digitación de cada oración con teclado japonés.
+- [x] **Arquitectura AI Facade:** Abstracción agnóstica de proveedores LLM (Groq/Llama-3, OpenAI, Anthropic).
+- [x] **Generador de Historias Personalizadas:** Creación de lecturas graduadas con vocabulario guardado por el usuario.
+- [ ] **Caché Pública de Historias en Supabase:** Reutilización de historias generadas para evitar llamadas innecesarias a la API.
+- [ ] **Preguntas de Comprensión Lectora generadas por IA:** 3 preguntas de opción múltiple al final de cada historia personalizada.
+
+### 6.7. Infraestructura, Navegación y Experiencia de Práctica
+- [x] **Filtros Globales de Práctica:** Menú interactivo en cabecera para filtrar ejercicios por estado y tipo.
+- [x] **Barra de Notificación de Pendientes:** Dropdown en Header que resume ejercicios pendientes en todos los módulos.
+- [x] **Offline-First:** Funcionamiento total sin conexión a internet mediante `localStorage`.
+- [x] **Sincronización en la Nube (Supabase Auth & RLS):** Cuentas de usuario y políticas de seguridad estrictas.
+- [x] **Exportación Multiformato:** Descarga de datos en JSON, Markdown y CSV optimizado para Anki.
+- [x] **PWA Manifest & Service Worker:** Instalable como aplicación nativa en macOS, iOS y Android.
+- [ ] **Notificaciones Web Push:** Recordatorios diarios para revisiones pendientes de FSRS y rachas de estudio.
+
+---
+
+## 7. Inventario de Información, Documentación y Material Adicional Requerido
 
 Para ejecutar la hoja de ruta sin vacíos pedagógicos ni problemas de derechos de autor, se deben incorporar y gestionar los siguientes paquetes de recursos y documentación:
 
-### 5.1. Recursos Lingüísticos de Datos Abiertos (Open Data)
+### 7.1. Recursos Lingüísticos de Datos Abiertos (Open Data)
 
 1. **Base de Datos de Pitch Accent (Kanjium / ACCENT-DICT / Wadoku):**
    - Diccionario abierto en JSON/TSV con el número de mora de caída tonal y estructura para más de 45,000 vocablos japoneses.
@@ -528,22 +682,25 @@ Para ejecutar la hoja de ruta sin vacíos pedagógicos ni problemas de derechos 
    - Kanjidic2 contiene las especificaciones oficiales de los 2,136 kanjis Jōyō (lecturas, significados, grado escolar, frecuencia).
    - KanjiVG proporciona las coordenadas vectoriales SVG de cada trazo de kanji con el orden canónico (*stroke order*).
 
-### 5.2. Materiales Educativos de Dominio Público o Licencias Educativas
+### 7.2. Materiales Educativos de Dominio Público o Licencias Educativas
 
 1. **Audios Oficiales de NHK World "Hablemos en Japonés":**
    - Licencia educativa gratuita para fines de estudio. Paquete de los 48 audios originales en formato MP3 para enriquecer `/nhk`.
-2. **Materiales Didácticos de Japan Foundation (Irodori):**
-   - Licencia Creative Commons (CC BY-NC-ND 4.0). Audios nativos de las 18 lecciones de A1, hojas de trabajo de kanji y fichas de consejos interculturales.
+2. **Materiales Didácticos Oficiales de Japan Foundation (Serie Irodori - CC BY-NC-ND 4.0):**
+   - Disponibles con descarga gratuita oficial (PDFs, audios y hojas de kanji) para su incorporación a la plataforma:
+     - 📘 **[Elementary 1](https://www.irodori.jpf.go.jp/en/elementary01/pdf.html):** Módulos completos A1/A2.1 (Páginas 1 a 515), audios de shadowing y diálogos cotidianos.
+     - 📙 **[Elementary 2](https://www.irodori.jpf.go.jp/en/elementary02/pdf.html):** Continuación curricular A2.2 centrada en vida independiente, comunidad y trabajo en Japón.
+     - 📕 **[Pre-Intermediate](https://www.irodori.jpf.go.jp/en/pre-intermediate/pdf.html):** Nivel pre-intermedio A2/B1 que articula la preparación hacia JLPT N3 y gestión de situaciones complejas.
 3. **Modelos de Síntesis de Voz Open Source (Edge TTS / VOICEVOX):**
    - Voces libres `ja-JP-NanamiNeural` y `ja-JP-KeitaNeural` vía Edge TTS WebSocket.
    - Contenedor Docker de VOICEVOX Engine para Hugging Face Spaces.
 
-### 5.3. Documentación Técnica del Proyecto Requerida
+### 7.3. Documentación Técnica del Proyecto Requerida
 
 1. **Especificación del Sistema de Audio y Pitch Accent (`docs/AUDIO_AND_PITCH_ACCENT.md`):**
    - Arquitectura del proxy de streaming `/api/tts`, manejo de caché en Vercel/Supabase y tipología del esquema `pitch_accents.json`.
 2. **Guía de Arquitectura de Datos (`docs/DATA_MODELS.md`):**
-   - Especificación formal de los esquemas JSON de `vocabulary.json`, `kanji.json`, `particles.json`, `nhk_lessons.json` y `stories.json`.
+   - Especificación formal de los esquemas JSON de `vocabulary.json`, `kanji.json`, `particles.json`, `nhk_lessons.json`, `curriculum.json` y `stories.json`.
    - Reglas de validación relacional (kanji, hiragana, katakana y sincronización bidireccional del array `words` de cada kanji).
 3. **Manual de Infraestructura y Despliegue (`docs/DEPLOYMENT_GUIDE.md`):**
    - Configuración de variables de entorno (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`).
@@ -553,12 +710,13 @@ Para ejecutar la hoja de ruta sin vacíos pedagógicos ni problemas de derechos 
 
 ---
 
-## 6. Conclusión y Posicionamiento Estratégico
+## 8. Conclusión y Posicionamiento Estratégico
 
 Nihongo Master cuenta con la base técnica más sólida y moderna del panorama hispanohablante: **Next.js 16 con Turbopack, motor FSRS v5, trazador de kanjis con HanziWriter, inmersión en YouTube con tokenización léxica y generación de historias con IA**.
 
-Con la incorporación de los dos pilares evaluados en este informe:
+Con la incorporación de los hitos evaluados e implementados en producción:
 1. **La Notación Visual de Pitch Accent:** Supera la mayor carencia de las apps tradicionales (Duolingo, LingoDeer, WaniKani), dotando al estudiante de conciencia fonológica rigurosa desde la primera lección para distinguir homófonos y hablar con entonación natural de Tokio.
 2. **El Pipeline de Audio Neuronal Sin Costo ($0):** Al combinar clips nativos MP3 para las conversaciones, Microsoft Edge TTS (`ja-JP-NanamiNeural`) para el vocabulario dinámico e historias, y caché persistente en CDN/Supabase Storage, la plataforma alcanza calidad de audio humana profesional sin incurrir en costos operativos recurrentes de APIs de voz de pago.
+3. **Ruta Consolidada con 87 Can-dos y Autoevaluación Persistente:** Desduplicación curricular efectiva y portfolio activo de competencias de comunicación en el mundo real.
 
 Con estas ventajas competitivas unificadas en español nativo, Nihongo Master se posiciona a la vanguardia del aprendizaje de idiomas asiáticos en el mundo hispanohablante.
