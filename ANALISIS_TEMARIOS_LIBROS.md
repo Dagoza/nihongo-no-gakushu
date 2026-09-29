@@ -487,70 +487,57 @@ Al contrastar los 93 kanjis introducidos a lo largo de las 18 lecciones de Irodo
 
 ## 4. Matriz Comparativa de Cobertura en la Aplicación Actual
 
-Esta matriz expone exactamente en qué componentes de la plataforma `Nihongo Master` impacta cada libro y el nivel de implementación alcanzado:
+Tras la ejecución de las fases de integración y consolidación curricular, la cobertura en `Nihongo Master` es la siguiente:
 
 | Componente de la App | Archivo de Origen / Datos | Libro 1 (NHK) | Libro 2 (Irodori) | Estado Actual y Diagnóstico |
 | :--- | :--- | :---: | :---: | :--- |
-| **Conversaciones (`ConversationTab`)** | `data/nhk_lessons.json`<br>`data/conversation_exercises.json` | ⚠️ 45.8% (22/48) | ❌ 0% | Contiene 22 lecciones de NHK con audio sintético y solo 17 ejercicios. Faltan lecciones 23 a 48 y todas las situaciones de Irodori. |
-| **Ruta Guiada (`CurriculumTab`)** | `data/curriculum.json` | ⚠️ 10% (L1-L2) | ❌ 0% | Posee 9 niveles generales pero ningún enlace a los 79 Can-dos de Irodori ni a los diálogos avanzados de NHK. |
-| **Gramática y Partículas (`GrammarTab`)** | `data/particles.json` | ⚠️ 40% (Partículas) | ❌ 0% | Gran cobertura de partículas básicas N5, pero carece de estructuras oracionales complejas (Pasiva, Potencial, Imperativo, Volitivo, Condicional と, なければなりません, Secuencias てから). |
-| **Diccionario Kanji (`KanjiTab`)** | `data/kanji.json` | — | ⚠️ 74.2% | Contiene 80+ kanjis, pero le faltan **24 kanjis elementales** enseñados en las 18 lecciones de Irodori. |
-| **Vocabulario Maestro (`VocabTab`)** | `data/vocabulary.json` | ⚠️ Parcial | ❌ Incompleto | Registra 185 palabras. Faltan categorías de transporte urbano, señalización, trámites, electrodomésticos y vida laboral cotidiana. |
-| **Biblioteca de PDFs (`MaterialLibraryTab`)** | `data/pdf_catalog.json` | ✅ 100% | ✅ 100% | Ambos PDFs están indexados con visor integrado, conteo de páginas y descarga directa. |
-| **Ejercicios de Contexto (`exercises.json`)** | `data/exercises.json` | ❌ 0% | ❌ 0% | Solo cuenta con 9 ejercicios de rellenar huecos enfocados exclusivamente en adjetivos y adverbios N4. |
+| **Conversaciones (`ConversationTab`)** | `data/nhk_lessons.json`<br>`data/conversation_exercises.json` | ✅ **100% (48/48)** | ✅ Integrado | 48 lecciones completas de NHK con diálogos bilingües, notas gramaticales y **144 ejercicios interactivos** (3 por lección). |
+| **Currículum Consolidado (`CurriculumTab`)** | `data/curriculum.json` | ✅ **100%** | ✅ **100% (79/79)** | **19 Módulos Maestros Unificados** sin duplicidades temáticas, integrando los 79 Can-Dos de Irodori + 8 complementarios (87 en total), ejercicios, guías y enlaces directos a temas relacionados. |
+| **Gramática y Partículas (`GrammarTab`)** | `data/particles.json` | ✅ 100% | ✅ 100% | Partículas N5/N4 y estructuras clave (cópula, existencia, movimiento, transitividad, peticiones 〜てください, 〜たい, 〜なければなりません). |
+| **Diccionario Kanji (`KanjiTab`)** | `data/kanji.json` | ✅ 100% | ✅ 100% | **159 kanjis catalogados**, incluyendo los 24 kanjis elementales de Irodori con trazos, lecturas On/Kun y palabras sincronizadas. |
+| **Vocabulario Maestro (`VocabTab`)** | `data/vocabulary.json` | ✅ 100% | ✅ 100% | **208 entradas** con registro estricto en sus tres formas (Kanji, Hiragana, Katakana), español y nivel JLPT sincronizado con los kanjis. |
+| **Biblioteca de PDFs (`MaterialLibraryTab`)** | `data/pdf_catalog.json` | ✅ 100% | ✅ 100% | Ambos manuales originales indexados con visor integrado, conteo de páginas y descarga directa. |
 
 ---
 
-## 5. Subtemas y Tipologías de Ejercicios Faltantes
+## 5. Arquitectura del Currículum Consolidado (19 Módulos Maestros)
 
-### 5.1. Ejercicios y Dinámicas Prácticas Faltantes
-1. **Comprensión Auditiva Situacional (Listening Tasks):**
-   - *Irodori* cuenta con pistas de audio reales grabadas en andenes, megafonías de tiendas, timbres de caja registradora y ambientes laborales que no están digitalizados en los ejercicios interactivos.
-2. **Lectura de Textos Reales del Entorno Japonés (Authentic Realia):**
-   - Interpretación de paneles de aire acondicionado (冷房, 暖房, 除湿, 風量).
-   - Lectura de planos de viviendas y botones de lavadoras.
-   - Pizarras de disponibilidad de turnos de trabajo (*schedule board*).
-   - Letreros de estaciones (何番線, 改札口, 乗り換え, 出口).
-   - Guías de plantas de centros comerciales (*floor guides*) y etiquetas de descuento (*2割引*, *半額*).
-3. **Producción Escrita Funcional (Guided Writing):**
-   - Rellenado de formularios de registro y empadronamiento (*zairyu card*, solicitud de tarjeta).
-   - Redacción de notas breves a compañeros de trabajo para dejar encargos o disculpas.
-   - Publicaciones breves e interactivas en redes sociales con fotografías.
-4. **Respuestas Conversacionales Múltiples:**
-   - En `conversation_exercises.json` solo hay 1 pregunta por lección (y solo en 17 lecciones). Es urgente crear variantes de:
-     - Respuesta adecuada a una intervención de Anna o Sakura.
-     - Detección de palabra o partícula faltante en el diálogo.
-     - Identificación del kanji correcto para una palabra del diálogo.
+Para erradicar la fragmentación pedagógica y las lecciones repetidas entre distintas rutas (JLPT, Irodori y NHK), se han unificado todos los contenidos temáticamente afines en **19 Módulos Maestros Cohesivos**, cada uno dotado de navegación bidireccional mediante **Temas Relacionados**:
+
+| Módulo | Título Central y Enfoque | Nivel | Can-Dos | Fuentes Consolidadas | Temas Relacionados Enlazados |
+| :---: | :--- | :---: | :---: | :--- | :--- |
+| **M1** | **Saludos, Cortesía y Presentación Personal**<br>*(はじめまして。私はアンナです)* | A1 / N5 | 8 (CD 1-4, 8-11) | Irodori L1, L3 · NHK L1-2 · JLPT Nivel 1 | 🔗 M2 (Estrategias de Comunicación), M3 (Familia y Residencia), M19 (Metas y Despedida) |
+| **M2** | **Estrategias de Comunicación y Gestión de Idiomas**<br>*(すみません、もう一度ゆっくりお願いします)* | A1 / N5 | 3 (CD 5-7) | Irodori L2 · NHK L8 | 🔗 M1 (Saludos y Presentación), M9 (Instrucciones Laborales) |
+| **M3** | **Identidad, Familia, Residencia y Contacto**<br>*(東京に住んでいます。家族は3人です)* | A1 / N5 | 4 (CD 12-15) | Irodori L4 · NHK L4-6, L31 · JLPT Nivel 2 | 🔗 M1 (Presentación), M6 (El Hogar), M8 (Horarios y Números) |
+| **M4** | **Gustos, Preferencias Culinarias y Hábitos Diarios**<br>*(うどんが好きです。毎朝コーヒーを飲みます)* | A1 / N5 | 5 (CD 16-20) | Irodori L5 · JLPT Nivel 4 · NHK L13 | 🔗 M5 (Restaurantes y Pedidos), M8 (Rutinas Diarias) |
+| **M5** | **Restaurantes, Menús, Pedidos y Contadores**<br>*(これを2つとウーロン茶をください)* | A1 / N5 | 5 (CD 21-25) | Irodori L6 · NHK L7, L17, L34, L42 | 🔗 M4 (Gustos Culinarios), M14 (Tiendas y Compras), M15 (Precios y Caja) |
+| **M6** | **El Hogar, Vivienda, Distribución y Electrodomésticos**<br>*(部屋が4つあります。エアコンと洗濯機があります)* | A1 / N5 | 5 (CD 26-30) | Irodori L7 · NHK L5, L14, L32 | 🔗 M3 (Residencia), M7 (Existencia y Ubicación ある/いる) |
+| **M7** | **El Lugar de Trabajo, Orientación y Existencia (ある／いる)**<br>*(山田さんは2階の会議室にいます)* | A1 / N5 | 4 (CD 31-34) | Irodori L8 · JLPT Nivel 3 · NHK L3, L10, L25 | 🔗 M6 (El Hogar), M9 (Instrucciones Laborales), M13 (Orientación Urbana) |
+| **M8** | **Rutinas, Horarios, Días de la Semana e Intervalos**<br>*(9時から5時まで働きます。水曜日は休みです)* | A1 / N5 | 4 (CD 35-38) | Irodori L9 · JLPT Nivel 2 · NHK L9 | 🔗 M4 (Hábitos Diarios), M9 (Horarios Laborales), M16 (Fin de Semana y Pasado) |
+| **M9** | **Instrucciones de Trabajo, Peticiones y Reglas Laborales**<br>*(ホチキスを貸してください。ここでタバコを吸わないで)* | A1 / N5 | 5 (CD 39-43) | Irodori L10 · NHK L8, L23, L24 | 🔗 M2 (Estrategias de Comunicación), M7 (Lugar de Trabajo), M18 (Salud y Ausencias) |
+| **M10** | **Aficiones, Tiempo Libre, Ocio y Redes Sociales**<br>*(休みの日は何をしますか？マンガを読んだりします)* | A1 / N5 | 4 (CD 44-47) | Irodori L11 · NHK L11, L20 | 🔗 M4 (Gustos y Preferencias), M11 (Eventos e Invitaciones), M16 (Experiencias Pasadas) |
+| **M11** | **Eventos, Festivales, Invitaciones y Propuestas**<br>*(今週の土曜日、いっしょにお祭りに行きませんか？)* | A1 / N5 | 4 (CD 48-51) | Irodori L12 · NHK L26, L27, L41 | 🔗 M10 (Aficiones), M12 (Transporte a Eventos), M13 (Puntos de Encuentro) |
+| **M12** | **Movilidad, Transporte Público y Estaciones**<br>*(この電車は新宿に行きますか？何番線ですか？)* | A1 / N5 | 5 (CD 52-56) | Irodori L13 · JLPT Nivel 5 · NHK L12, L16, L28 | 🔗 M11 (Eventos y Salidas), M13 (Orientación Urbana), M17 (Viajes y Excursiones) |
+| **M13** | **Orientación Urbana, Puntos de Encuentro y Señalización**<br>*(交差点を右に曲がってください。大きなビルの前です)* | A1 / N5 | 4 (CD 57-60) | Irodori L14 · NHK L18, L38 | 🔗 M7 (Demostrativos de Lugar), M12 (Estaciones y Metro), M14 (Comercios) |
+| **M14** | **Tiendas, Grandes Almacenes y Búsqueda de Productos**<br>*(電池がほしいんですが、何階にありますか？)* | A1 / N5 | 5 (CD 61-65) | Irodori L15 · NHK L35 | 🔗 M5 (Restaurantes y Pedidos), M13 (Orientación Urbana), M15 (Precios y Caja) |
+| **M15** | **Precios, Descuentos y Caja del Combini**<br>*(これ、いくらですか？袋はいりません)* | A1 / N5 | 5 (CD 66-70) | Irodori L16 · NHK L35, L42 | 🔗 M8 (Sistema Numérico), M14 (Tiendas y Búsqueda de Productos) |
+| **M16** | **Fin de Semana, Relatar el Pasado y Experiencias de Ocio**<br>*(週末はどうでしたか？映画を見ました)* | A1 / N5 | 5 (CD 71-75) | Irodori L17 · JLPT Nivel 6, 7 | 🔗 M8 (Rutinas y Horarios), M10 (Aficiones y Ocio), M17 (Planes Vacacionales) |
+| **M17** | **Planes Vacacionales, Deseos y Cultura Onsen**<br>*(次の休みに温泉に行きたいです。富士山に登りたい)* | A1 / N5-N4 | 4 (CD 76-79) | Irodori L18 · NHK L29, L30, L33, L37 · JLPT Nivel 8 | 🔗 M12 (Transporte y Viajes), M16 (Relatar el Pasado), M19 (Metas Personales) |
+| **M18** | **Salud, Síntomas Corporales y Deberes Ineludibles**<br>*(頭が痛いです。病院へ行かなければなりません)* | N5 - N4 | 4 (CD 80-83) | NHK L19, L22, L36, L39-40 · JLPT Nivel 9 | 🔗 M9 (Instrucciones Laborales y Bajas), M14 (Compras en Farmacia) |
+| **M19** | **Metas Personales, Despedidas y Expresiones de Gratitud**<br>*(日本語が上手になりたいです。大変お世話になりました)* | N5 - N4 | 4 (CD 84-87) | NHK L21, L26, L43, L47-48 · JLPT Nivel 8-9 | 🔗 M1 (Saludos y Presentación Inicial), M17 (Deseos y Futuro con 〜たい) |
 
 ---
 
-## 6. Plan de Acción y Roadmap de Implementación Recomendado
+## 6. Reglas Obligatorias para la Incorporación de Nuevos Módulos
 
-```mermaid
-flowchart TD
-    A["Auditoría Finalizada"] --> B["Fase 1: Completar NHK en nhk_lessons.json (L23 - L48)"]
-    B --> C["Fase 2: Creación del Banco Masivo de Ejercicios Conversacionales"]
-    C --> D["Fase 3: Alta de los 24 Kanjis Faltantes en kanji.json"]
-    D --> E["Fase 4: Sincronización de Vocabulario Bidireccional (vocabulary.json)"]
-    E --> F["Fase 5: Integración del Módulo Irodori Can-Do en CurriculumTab"]
-    F --> G["Fase 6: Build de Verificación y Despliegue en Vercel"]
-```
+Para preservar la arquitectura limpia y libre de redundancias en el tiempo, cualquier nuevo material o módulo debe ajustarse a las siguientes pautas estrictas:
 
-### Fase 1: Incorporar las 26 lecciones faltantes de NHK en `data/nhk_lessons.json`
-- Extraer de `data/japones_from_spanish_raw.json` los diálogos íntegros de las Lecciones 23 a 48.
-- Traducir y formatear con kanji, hiragana y traducción precisa en español para cada hablante (Anna, Sakura, Profesor, Kenta, Abuela, etc.).
-- Incorporar las notas gramaticales específicas (pasiva, condicional と, volitivo, imperativo, potencial, etc.).
-
-### Fase 2: Expandir `data/conversation_exercises.json`
-- Añadir un mínimo de 3 ejercicios interactivos por cada una de las 48 lecciones de NHK (alcanzando más de 144 ejercicios interactivos).
-- Incluir los tipos: `reply` (¿qué responder?), `missing_word` (rellenar hueco) y `missing_kanji` (ortografía).
-
-### Fase 3: Dar de alta los 24 Kanjis de Irodori en `data/kanji.json`
-- Incorporar cada una de las 24 fichas con significado en español, lecturas On/Kun, número de trazos y palabras de ejemplo.
-- Cumplir la **Regla de Oro** de sincronización bidireccional entre `kanji.json` y `vocabulary.json`.
-
-### Fase 4: Enriquecer `data/vocabulary.json` con el vocabulario funcional de Irodori
-- Incorporar las palabras en sus tres formas obligatorias: Kanji, Hiragana y Katakana, junto con `meaning_es` y nivel JLPT (`N5` o `N4`).
-
-### Fase 5: Integrar el temario y los 79 Can-Dos de Irodori en la Interfaz
-- Habilitar una vista de **Objetivos Can-Do de Irodori** dentro de la pestaña de Currículum o como un módulo específico de inmersión para la vida en Japón.
+1. **Auditoría Previa de No Duplicidad:**
+   - Antes de dar de alta un módulo nuevo en `data/curriculum.json`, se debe revisar exhaustivamente si la temática central ya está cubierta en los 19 módulos maestros existentes.
+2. **Complementación vs. Descarte:**
+   - **Si el tema ya existe:** Extraer los ejemplos útiles, competencias Can-Do adicionales o diálogos auténticos e **incorporarlos directamente al módulo existente**. Si la información es redundante o idéntica, se descarta.
+   - **Si el tema es nuevo:** Se da de alta asignándole un número secuencial único, objetivos Can-Do, nivel pedagógico y fuentes bibliográficas.
+3. **Enlace Obligatorio con Temas Relacionados (`related_topics`):**
+   - Todo módulo debe enlazar bidireccionalmente con sus módulos precedentes, consecutivos o complementarios, detallando `step`, `title`, `relationship` y `reason`.
+4. **Verificación Técnica:**
+   - Ejecutar `npm run build` sin errores, sincronizar con el repositorio Git y validar el despliegue en producción en Vercel.
