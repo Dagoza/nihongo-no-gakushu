@@ -8,6 +8,7 @@ import * as wanakana from 'wanakana';
 import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import SpeechPractice from './SpeechPractice';
+import { getVocabularyFromSupabase } from '../lib/supabaseData';
 
 export default function VocabTab({ 
   appState, 
@@ -30,7 +31,7 @@ export default function VocabTab({
   }, [initialMode]);
 
   useEffect(() => {
-    if (initialLevel && ['all', 'N5', 'N4'].includes(initialLevel)) {
+    if (initialLevel && ['all', 'N5', 'N4', 'N3', 'N2', 'N1'].includes(initialLevel)) {
       setLevel(initialLevel);
     }
   }, [initialLevel]);
@@ -71,7 +72,25 @@ export default function VocabTab({
   // SRS state
   const [srsQueue, setSrsQueue] = useState([]);
 
-  const vocabularyList = dataStore.vocabulary || [];
+  const [vocabularyList, setVocabularyList] = useState(dataStore.vocabulary || []);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    getVocabularyFromSupabase({ level })
+      .then(data => {
+        if (isMounted && data && data.length > 0) {
+          setVocabularyList(data);
+        }
+      })
+      .catch(err => console.error("Error cargando vocabulario:", err))
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, [level]);
+
   const n4Exercises = dataStore.exercises || [];
 
   // Filter vocabulary
@@ -269,38 +288,27 @@ export default function VocabTab({
         </div>
 
         {/* Level Filters */}
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Nivel:</span>
-          <button 
-            className={`btn ${level === 'all' ? 'btn-primary' : 'btn-outline'} btn-sm`}
-            onClick={() => { 
-              setLevel('all'); 
-              setCategory('all'); 
-              updateParams(mode, 'all', 'all', searchTerm);
-            }}
-          >
-            Todos
-          </button>
-          <button 
-            className={`btn ${level === 'N5' ? 'btn-primary' : 'btn-outline'} btn-sm`}
-            onClick={() => { 
-              setLevel('N5'); 
-              setCategory('all'); 
-              updateParams(mode, 'N5', 'all', searchTerm);
-            }}
-          >
-            N5
-          </button>
-          <button 
-            className={`btn ${level === 'N4' ? 'btn-primary' : 'btn-outline'} btn-sm`}
-            onClick={() => { 
-              setLevel('N4'); 
-              setCategory('all'); 
-              updateParams(mode, 'N4', 'all', searchTerm);
-            }}
-          >
-            N4
-          </button>
+          {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
+            <button
+              key={lvl}
+              className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
+              style={{ minWidth: 42, padding: '4px 10px' }}
+              onClick={() => {
+                setLevel(lvl);
+                setCategory('all');
+                updateParams(mode, lvl, 'all', searchTerm);
+              }}
+            >
+              {lvl === 'all' ? 'Todos' : lvl}
+            </button>
+          ))}
+          {isLoading && (
+            <span style={{ fontSize: '0.8rem', color: 'var(--primary)', marginLeft: 8 }}>
+              ⚡ Cargando Supabase...
+            </span>
+          )}
         </div>
       </div>
 

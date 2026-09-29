@@ -8,6 +8,7 @@ import * as wanakana from 'wanakana';
 import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import KanjiDraw from './KanjiDraw';
+import { getKanjiFromSupabase } from '../lib/supabaseData';
 
 export default function KanjiTab({ 
   appState, 
@@ -68,11 +69,31 @@ export default function KanjiTab({
     }
   }, [initialDraw]);
 
-  const kanjiList = dataStore.kanji || [];
+  const [level, setLevel] = useState('all');
+  const [kanjiList, setKanjiList] = useState(dataStore.kanji || []);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    getKanjiFromSupabase({ level })
+      .then(data => {
+        if (isMounted && data && data.length > 0) {
+          setKanjiList(data);
+        }
+      })
+      .catch(err => console.error("Error cargando kanjis:", err))
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, [level]);
 
   // Filter kanji
   const filteredKanji = kanjiList.filter(k => {
+    const matchLevel = level === 'all' || k.level === level;
     const search = searchTerm.trim().toLowerCase();
+    if (!matchLevel) return false;
     if (!search) return true;
     return (
       k.kanji.includes(search) ||
@@ -249,6 +270,26 @@ export default function KanjiTab({
                 ✍️ Practicar Lecturas
               </button>
             </div>
+          </div>
+
+          {/* Level Selector */}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Nivel:</span>
+            {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
+              <button
+                key={lvl}
+                className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                style={{ minWidth: 42, padding: '4px 10px' }}
+                onClick={() => setLevel(lvl)}
+              >
+                {lvl === 'all' ? 'Todos' : lvl}
+              </button>
+            ))}
+            {isLoading && (
+              <span style={{ fontSize: '0.8rem', color: 'var(--primary)', marginLeft: 8 }}>
+                ⚡ Cargando Supabase...
+              </span>
+            )}
           </div>
 
           {/* Search Bar */}
