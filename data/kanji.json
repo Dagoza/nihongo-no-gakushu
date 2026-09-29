@@ -794,6 +794,11 @@
         "word": "土曜日",
         "reading": "どようび",
         "meaning": "Sábado"
+      },
+      {
+        "word": "明後日",
+        "reading": "あさって",
+        "meaning": "pasado mañana"
       }
     ],
     "source": "Kanji Book"
@@ -1243,6 +1248,11 @@
         "word": "午後",
         "reading": "ごご",
         "meaning": "afternoon, P.M"
+      },
+      {
+        "word": "明後日",
+        "reading": "あさって",
+        "meaning": "pasado mañana"
       }
     ],
     "source": "Kanji Book"
@@ -1415,6 +1425,11 @@
         "word": "多い",
         "reading": "おおい",
         "meaning": "many, a lot"
+      },
+      {
+        "word": "多分",
+        "reading": "たぶん",
+        "meaning": "quizás / probablemente"
       }
     ],
     "source": "Kanji Book"
@@ -2023,6 +2038,11 @@
         "word": "随分",
         "reading": "ずいぶん",
         "meaning": "bastante / mucho"
+      },
+      {
+        "word": "多分",
+        "reading": "たぶん",
+        "meaning": "quizás / probablemente"
       }
     ],
     "source": "Kanji Book"
@@ -2848,5 +2868,34 @@
       }
     ],
     "source": "Vocabulario N5"
+  },
+  {
+    "kanji": "明",
+    "level": "N5",
+    "meaning_es": "brillante, claro, iluminar",
+    "meaning_en": "bright, clear, light",
+    "pronunciation": "めい, みょう, あか, あき",
+    "strokes": 8,
+    "onyomi": "MEI, MYOU [めい, みょう]",
+    "kunyomi": "aka(rui), aki(raka) [あか(るい), あき(らか)]",
+    "mnemonic": "El sol (日) y la luna (月) combinados producen la máxima claridad y luz brillante.",
+    "words": [
+      {
+        "word": "明後日",
+        "reading": "あさって",
+        "meaning": "pasado mañana"
+      },
+      {
+        "word": "明日",
+        "reading": "あした",
+        "meaning": "mañana"
+      },
+      {
+        "word": "明るい",
+        "reading": "あかるい",
+        "meaning": "brillante, alegre"
+      }
+    ],
+    "source": "Kanji Book"
   }
 ]

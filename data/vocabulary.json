@@ -2203,5 +2203,29 @@
     "category": "Vida Diaria",
     "level": "N5",
     "id": "v_185"
+  },
+  {
+    "id": "v_186",
+    "kanji": "多分",
+    "hiragana": "たぶん",
+    "katakana": "タブン",
+    "kana": "たぶん",
+    "meaning_es": "Quizás / Probablemente / Tal vez",
+    "meaning_en": "Perhaps / Probably",
+    "category": "Adverbios y Expresiones",
+    "level": "N5",
+    "notes": "Adverbio que indica probabilidad o conjetura moderada."
+  },
+  {
+    "id": "v_187",
+    "kanji": "明後日",
+    "hiragana": "あさって",
+    "katakana": "アサッテ",
+    "kana": "あさって",
+    "meaning_es": "Pasado mañana",
+    "meaning_en": "Day after tomorrow",
+    "category": "Tiempo y Fechas",
+    "level": "N5",
+    "notes": "Lectura irregular jukujikun: se pronuncia あさって o みょうごにち (formal)."
   }
 ]

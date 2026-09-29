@@ -1315,5 +1315,23 @@
     "meaning_en": "night",
     "category": "Días, Horas y Tiempo",
     "level": "N5"
+  },
+  {
+    "id": "v_186",
+    "kanji": "多分",
+    "kana": "たぶん",
+    "meaning_es": "Quizás / Probablemente / Tal vez",
+    "meaning_en": "Perhaps / Probably",
+    "category": "Adverbios y Expresiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_187",
+    "kanji": "明後日",
+    "kana": "あさって",
+    "meaning_es": "Pasado mañana",
+    "meaning_en": "Day after tomorrow",
+    "category": "Tiempo y Fechas",
+    "level": "N5"
   }
 ]

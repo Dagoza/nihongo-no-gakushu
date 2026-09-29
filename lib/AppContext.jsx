@@ -36,6 +36,69 @@ export function AppProvider({ children }) {
   const [syncStatus, setSyncStatus] = useState('local'); // 'local' | 'synced' | 'syncing' | 'error'
   const [syncInfo, setSyncInfo] = useState('Modo local (Sin cuenta)');
   
+  // Modal amigable para alertas, avisos y confirmaciones (Reemplazo total de alert() y confirm())
+  const [uiModal, setUiModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    confirmText: 'Entendido',
+    cancelText: null,
+    isDestructive: false,
+    actionLabel: null,
+    onAction: null,
+    resolve: null
+  });
+
+  const closeUiModal = useCallback((result = false) => {
+    setUiModal(prev => {
+      if (prev.resolve) {
+        prev.resolve(result);
+      }
+      return { ...prev, isOpen: false, resolve: null };
+    });
+  }, []);
+
+  const showAlert = useCallback((optionsOrMsg) => {
+    return new Promise((resolve) => {
+      const config = typeof optionsOrMsg === 'string'
+        ? { message: optionsOrMsg }
+        : (optionsOrMsg || {});
+      setUiModal({
+        isOpen: true,
+        title: config.title || (config.type === 'lock' ? 'Acceso con Sesión' : config.type === 'error' ? 'Error' : config.type === 'success' ? '¡Éxito!' : config.type === 'warning' ? 'Atención' : 'Aviso'),
+        message: config.message || '',
+        type: config.type || 'info',
+        confirmText: config.confirmText || 'Entendido',
+        cancelText: null,
+        isDestructive: false,
+        actionLabel: config.actionLabel || null,
+        onAction: config.onAction || null,
+        resolve: () => resolve(true)
+      });
+    });
+  }, []);
+
+  const showConfirm = useCallback((optionsOrMsg) => {
+    return new Promise((resolve) => {
+      const config = typeof optionsOrMsg === 'string'
+        ? { message: optionsOrMsg }
+        : (optionsOrMsg || {});
+      setUiModal({
+        isOpen: true,
+        title: config.title || '¿Estás seguro?',
+        message: config.message || '',
+        type: config.type || 'confirm',
+        confirmText: config.confirmText || 'Confirmar',
+        cancelText: config.cancelText || 'Cancelar',
+        isDestructive: config.isDestructive ?? true,
+        actionLabel: config.actionLabel || null,
+        onAction: config.onAction || null,
+        resolve: (val) => resolve(Boolean(val))
+      });
+    });
+  }, []);
+
   const appStateRef = useRef(appState);
   appStateRef.current = appState;
 
@@ -157,17 +220,24 @@ export function AppProvider({ children }) {
   }, []);
 
   const handleSignOut = useCallback(async () => {
-    if (confirm('¿Deseas cerrar la sesión en este dispositivo? Tus datos se conservarán en tu cuenta en la nube.')) {
+    const ok = await showConfirm({
+      title: '¿Cerrar Sesión?',
+      message: '¿Deseas cerrar la sesión en este dispositivo? Tus datos se conservarán seguros en tu cuenta en la nube.',
+      confirmText: 'Cerrar Sesión',
+      cancelText: 'Cancelar',
+      isDestructive: false
+    });
+    if (ok) {
       try {
         await signOutUser();
         setAuthUser(null);
-        setSyncStatus('unconfigured');
+        setSyncStatus('local');
         setSyncInfo('Modo local (Sesión cerrada)');
       } catch (err) {
         console.error('Error al cerrar sesión:', err);
       }
     }
-  }, []);
+  }, [showConfirm]);
 
   const handleAuthSuccess = useCallback((user) => {
     setAuthUser(user);
@@ -234,7 +304,12 @@ export function AppProvider({ children }) {
     onSignOut: handleSignOut,
     handleAuthSuccess,
     savedCount,
-    mounted
+    mounted,
+    // Sistema global de alertas y confirmaciones amigables
+    showAlert,
+    showConfirm,
+    uiModal,
+    closeUiModal
   };
 
   return (

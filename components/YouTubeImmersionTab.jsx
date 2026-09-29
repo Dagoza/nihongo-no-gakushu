@@ -20,9 +20,7 @@ import {
   ArrowLeft, 
   Eye, 
   EyeOff, 
-  UserCheck, 
   LogIn, 
-  LogOut, 
   Download, 
   ListFilter,
   CheckCircle2,
@@ -42,7 +40,6 @@ import SaveVocabModal from './SaveVocabModal';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import { tokenizeJapanese, formatTimestamp, containsKanji, katakanaToHiragana } from '../lib/japaneseUtils';
-import { signInWithGoogle, signOutUser } from '../lib/supabaseSync';
 
 const TOPIC_PRESETS = [
   { id: 'anime', label: '🎌 Anime & Pop', query: 'Anime Japanese conversation', desc: 'Diálogos de anime y expresiones en japonés' },
@@ -129,19 +126,6 @@ export default function YouTubeImmersionTab({
   const activeCueRef = useRef(null);
   const lastActiveCueIndexRef = useRef(-1);
 
-  // Google Account state: priorizar el usuario autenticado real
-  const googleAccount = useMemo(() => {
-    if (authUser) {
-      return {
-        name: authUser.name || authUser.email?.split('@')[0] || 'Estudiante',
-        email: authUser.email,
-        avatar: authUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
-        connectedAt: authUser.connectedAt || new Date().toISOString()
-      };
-    }
-    return appState.googleAccount || null;
-  }, [authUser, appState.googleAccount]);
-
   // Combinar videos del catálogo y videos personalizados guardados por el usuario
   const allVideos = useMemo(() => {
     const defaultVids = catalogData.videos || [];
@@ -150,27 +134,6 @@ export default function YouTubeImmersionTab({
     const uniqueCustom = customVids.filter(cv => !defaultVids.some(dv => dv.youtubeId === cv.youtubeId));
     return [...uniqueCustom, ...defaultVids];
   }, [catalogData.videos, appState.savedCustomVideos]);
-
-  // Manejar conexión con Google OAuth
-  const handleToggleGoogleAuth = async () => {
-    if (authUser) {
-      if (confirm('¿Deseas cerrar la sesión de tu cuenta en este dispositivo?')) {
-        await signOutUser();
-        onUpdateState({
-          ...appState,
-          googleAccount: null
-        });
-      }
-    } else {
-      try {
-        await signInWithGoogle();
-      } catch (err) {
-        if (onOpenAuth) {
-          onOpenAuth();
-        }
-      }
-    }
-  };
 
   // Filtrado de videos
   const filteredVideos = useMemo(() => {
@@ -694,7 +657,7 @@ export default function YouTubeImmersionTab({
 
   return (
     <div className="tab-pane-container youtube-immersion-page">
-      {/* Top Banner & Google Integration */}
+      {/* Top Banner */}
       <div className="immersion-header-bar">
         <div className="immersion-title-group">
           <div className="icon-badge">
@@ -708,37 +671,43 @@ export default function YouTubeImmersionTab({
           </div>
         </div>
 
-        {/* Google Account Bar */}
-        <div className="google-auth-card">
-          {googleAccount ? (
-            <div className="google-profile-connected">
-              <img
-                src={googleAccount.avatar}
-                alt={googleAccount.name}
-                className="google-avatar"
-              />
-              <div className="google-info">
-                <div className="google-name-row">
-                  <span className="google-name">{googleAccount.name}</span>
-                  <span className="google-badge">
-                    <UserCheck size={12} /> Google Conectado
+        {/* Sesión general de la aplicación */}
+        <div className="immersion-auth-status">
+          {authUser ? (
+            <div className="immersion-auth-pill connected" title={`Sesión activa: ${authUser.name || authUser.email}. Videos y cuaderno sincronizados con tu cuenta.`}>
+              {authUser.avatar ? (
+                <img
+                  src={authUser.avatar}
+                  alt={authUser.name || 'Usuario'}
+                  className="immersion-auth-avatar"
+                />
+              ) : (
+                <div className="immersion-auth-avatar-fallback">
+                  {(authUser.name || authUser.email || 'U')[0].toUpperCase()}
+                </div>
+              )}
+              <div className="immersion-auth-text">
+                <div className="immersion-auth-name-row">
+                  <span className="immersion-auth-name">{authUser.name || authUser.email.split('@')[0]}</span>
+                  <span className="immersion-auth-badge">
+                    <ShieldCheck size={11} /> Conectado
                   </span>
                 </div>
-                <span className="google-email">{googleAccount.email}</span>
+                <span className="immersion-auth-email">{authUser.email}</span>
               </div>
-              <button
-                className="btn-google-disconnect"
-                onClick={handleToggleGoogleAuth}
-                title="Desconectar cuenta"
-              >
-                <LogOut size={14} />
-              </button>
             </div>
           ) : (
-            <button className="btn-google-connect" onClick={handleToggleGoogleAuth}>
-              <LogIn size={16} />
-              <span>Conectar con Google</span>
-            </button>
+            onOpenAuth && (
+              <button 
+                type="button"
+                className="btn-immersion-login" 
+                onClick={onOpenAuth}
+                title="Inicia sesión con tu cuenta para sincronizar videos y notas en la nube"
+              >
+                <LogIn size={15} />
+                <span>Iniciar sesión</span>
+              </button>
+            )
           )}
         </div>
       </div>

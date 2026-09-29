@@ -44,3 +44,50 @@ export async function GET(request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export async function PUT(request) {
+  try {
+    const authHeader = request.headers.get('authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+
+    if (!token) {
+      return NextResponse.json({ error: 'Acceso restringido. Inicia sesión.' }, { status: 401 });
+    }
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Sesión no válida o expirada.' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { id, kanji, kana, meaning_es, meaning_en, level, category } = body;
+
+    if (!id && !kanji) {
+      return NextResponse.json({ error: 'Falta identificador de la palabra.' }, { status: 400 });
+    }
+
+    const updatePayload = {};
+    if (kanji !== undefined) updatePayload.kanji = kanji;
+    if (kana !== undefined) updatePayload.kana = kana;
+    if (meaning_es !== undefined) updatePayload.meaning_es = meaning_es;
+    if (meaning_en !== undefined) updatePayload.meaning_en = meaning_en;
+    if (level !== undefined) updatePayload.level = level;
+    if (category !== undefined) updatePayload.category = category;
+
+    let updateQuery = supabase.from('vocabulary').update(updatePayload);
+    if (id) {
+      updateQuery = updateQuery.eq('id', id);
+    } else {
+      updateQuery = updateQuery.eq('kanji', kanji);
+    }
+
+    const { data, error } = await updateQuery.select();
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data: data?.[0] || body });
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}

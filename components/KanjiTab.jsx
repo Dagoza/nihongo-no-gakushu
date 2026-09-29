@@ -84,10 +84,21 @@ export default function KanjiTab({
   const handleToggleSource = (enableMassive) => {
     if (enableMassive) {
       if (!authUser) {
-        if (contextApp?.setIsAuthModalOpen) {
+        if (contextApp?.showAlert) {
+          contextApp.showAlert({
+            type: 'lock',
+            title: 'Catálogo Masivo de Kanjis',
+            message: 'Inicia sesión con tu cuenta de Google o correo para desbloquear el catálogo masivo con más de 2,100 kanjis.',
+            actionLabel: 'Iniciar Sesión',
+            onAction: () => {
+              if (contextApp?.setIsAuthModalOpen) {
+                contextApp.setIsAuthModalOpen(true);
+              }
+            }
+          });
+        } else if (contextApp?.setIsAuthModalOpen) {
           contextApp.setIsAuthModalOpen(true);
         }
-        alert("Inicia sesión con tu cuenta de Google o correo para acceder al catálogo masivo de kanjis en la nube.");
         return;
       }
       onUpdateState({

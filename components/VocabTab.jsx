@@ -86,10 +86,21 @@ export default function VocabTab({
   const handleToggleSource = (enableMassive) => {
     if (enableMassive) {
       if (!authUser) {
-        if (contextApp?.setIsAuthModalOpen) {
+        if (contextApp?.showAlert) {
+          contextApp.showAlert({
+            type: 'lock',
+            title: 'Diccionario Masivo en la Nube',
+            message: 'Inicia sesión con tu cuenta de Google o correo para desbloquear el diccionario masivo con más de 2,000 palabras.',
+            actionLabel: 'Iniciar Sesión',
+            onAction: () => {
+              if (contextApp?.setIsAuthModalOpen) {
+                contextApp.setIsAuthModalOpen(true);
+              }
+            }
+          });
+        } else if (contextApp?.setIsAuthModalOpen) {
           contextApp.setIsAuthModalOpen(true);
         }
-        alert("Inicia sesión con tu cuenta de Google o correo para acceder al catálogo masivo en la nube.");
         return;
       }
       onUpdateState({

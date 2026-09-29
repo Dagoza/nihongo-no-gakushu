@@ -39,6 +39,7 @@ export default function SaveVocabModal({
   const [meaningEs, setMeaningEs] = useState('');
   const [level, setLevel] = useState('N5');
   const [category, setCategory] = useState('Anime y Cultura');
+  const [notes, setNotes] = useState('');
 
   // Phrase state
   const [phraseJapanese, setPhraseJapanese] = useState('');
@@ -78,6 +79,7 @@ export default function SaveVocabModal({
       setMeaningEs(initialData.translation || foundInfo?.meaning_es || '');
       setLevel(initialData.level || foundInfo?.level || 'N5');
       setCategory(initialData.category || foundInfo?.category || 'Vocabulario General');
+      setNotes(initialData.notes || foundInfo?.notes || '');
 
       // Frase
       const sentenceTarget = initialData.sentenceText || rawText;
@@ -126,17 +128,18 @@ export default function SaveVocabModal({
 
     const finalKatakana = katakana.trim() || hiraganaToKatakana(hiragana);
     const newWord = {
-      id: `v_custom_${Date.now()}`,
+      id: initialData?.id || `v_custom_${Date.now()}`,
       kanji: kanji.trim(),
       hiragana: hiragana.trim(),
       katakana: finalKatakana,
       kana: hiragana.trim(),
       meaning_es: meaningEs.trim(),
-      meaning_en: '',
+      meaning_en: initialData?.meaning_en || '',
       category: category,
       level: level,
+      notes: notes.trim(),
       source: itemSource || 'Reproductor de Audio',
-      date: new Date().toISOString()
+      date: initialData?.date || new Date().toISOString()
     };
 
     // Actualizar estado general
@@ -210,7 +213,8 @@ export default function SaveVocabModal({
       kana: hiragana.trim(),
       meaning_es: meaningEs.trim(),
       category: category,
-      level: level
+      level: level,
+      ...(notes.trim() ? { notes: notes.trim() } : {})
     };
     return JSON.stringify(obj, null, 2);
   };
@@ -351,6 +355,18 @@ export default function SaveVocabModal({
                 <option value="Personas y Relaciones" />
                 <option value="Saludos y Cortesía" />
               </datalist>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Notas Personales (Nemotecnia, Matices de Uso, Gramática)</label>
+              <textarea
+                className="form-input"
+                rows={2}
+                placeholder="ej. Se usa comúnmente con だろう, o notas de pronunciación..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                style={{ resize: 'vertical' }}
+              />
             </div>
 
             {/* Kanjis detectados con advertencia de sincronización */}

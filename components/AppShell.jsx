@@ -6,6 +6,7 @@ import Header from './Header';
 import NavigationTabs from './NavigationTabs';
 import AudioPlayerBar from './AudioPlayerBar';
 import AuthModal from './AuthModal';
+import UIModal from './UIModal';
 
 function AppShellContent({ children }) {
   const {
@@ -21,7 +22,11 @@ function AppShellContent({ children }) {
     syncStatus,
     syncInfo,
     handleAuthSuccess,
-    savedCount
+    handleSignOut,
+    handleTriggerSync,
+    savedCount,
+    uiModal,
+    closeUiModal
   } = useApp();
 
   return (
@@ -42,6 +47,8 @@ function AppShellContent({ children }) {
         syncInfo={syncInfo}
         authUser={authUser}
         onOpenAuth={() => setIsAuthModalOpen(true)}
+        onSignOut={handleSignOut}
+        onTriggerSync={handleTriggerSync}
       />
 
       {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}
@@ -68,6 +75,20 @@ function AppShellContent({ children }) {
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
         onAuthSuccess={handleAuthSuccess} 
+      />
+
+      {/* Modal Global Amigable para Avisos y Confirmaciones (Cero alerts) */}
+      <UIModal 
+        isOpen={uiModal?.isOpen}
+        onClose={closeUiModal}
+        title={uiModal?.title}
+        message={uiModal?.message}
+        type={uiModal?.type}
+        confirmText={uiModal?.confirmText}
+        cancelText={uiModal?.cancelText}
+        isDestructive={uiModal?.isDestructive}
+        actionLabel={uiModal?.actionLabel}
+        onAction={uiModal?.onAction}
       />
     </>
   );

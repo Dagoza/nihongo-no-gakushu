@@ -24,7 +24,8 @@ import {
   FileCode,
   Share2,
   Calendar,
-  Tag
+  Tag,
+  StickyNote
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import SaveVocabModal from './SaveVocabModal';
@@ -61,6 +62,8 @@ export default function SavedTab({
       contextApp.setIsAuthModalOpen(true);
     }
   });
+  const showAlert = contextApp?.showAlert || ((opts) => console.log(opts));
+  const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
   // Subview tabs: 'all' | 'words' | 'phrases' | 'stories'
   const [subView, setSubView] = useState(initialView || 'all');
   const [searchQuery, setSearchQuery] = useState(initialSearch || '');
@@ -202,8 +205,14 @@ export default function SavedTab({
   }, [savedPhrases, filteredPhrases, selectedPhraseIds]);
 
   // Delete handlers
-  const handleDeleteWord = (id) => {
-    if (!window.confirm('¿Deseas eliminar esta palabra guardada?')) return;
+  const handleDeleteWord = async (id) => {
+    const ok = await showConfirm({
+      title: '¿Eliminar palabra?',
+      message: '¿Deseas eliminar esta palabra de tu cuaderno de estudio?',
+      confirmText: 'Eliminar',
+      isDestructive: true
+    });
+    if (!ok) return;
     const updated = savedWords.filter((w) => w.id !== id);
     onUpdateState({
       ...appState,
@@ -216,8 +225,14 @@ export default function SavedTab({
     });
   };
 
-  const handleDeletePhrase = (id) => {
-    if (!window.confirm('¿Deseas eliminar esta frase guardada?')) return;
+  const handleDeletePhrase = async (id) => {
+    const ok = await showConfirm({
+      title: '¿Eliminar frase?',
+      message: '¿Deseas eliminar esta frase guardada de tu lista de estudio?',
+      confirmText: 'Eliminar',
+      isDestructive: true
+    });
+    if (!ok) return;
     const updated = savedPhrases.filter((p) => p.id !== id);
     onUpdateState({
       ...appState,
@@ -230,9 +245,15 @@ export default function SavedTab({
     });
   };
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
     if (totalSelected === 0) return;
-    if (!window.confirm(`¿Deseas eliminar los ${totalSelected} elementos seleccionados?`)) return;
+    const ok = await showConfirm({
+      title: '¿Eliminar elementos?',
+      message: `¿Deseas eliminar los ${totalSelected} elementos seleccionados de tu cuaderno de estudio?`,
+      confirmText: `Eliminar (${totalSelected})`,
+      isDestructive: true
+    });
+    if (!ok) return;
 
     const updatedWords = savedWords.filter((w) => !selectedWordIds.has(w.id));
     const updatedPhrases = savedPhrases.filter((p) => !selectedPhraseIds.has(p.id));
@@ -247,8 +268,14 @@ export default function SavedTab({
     setSelectedPhraseIds(new Set());
   };
 
-  const handleDeleteStory = (storyId) => {
-    if (!window.confirm('¿Deseas eliminar esta historia personalizada?')) return;
+  const handleDeleteStory = async (storyId) => {
+    const ok = await showConfirm({
+      title: '¿Eliminar historia?',
+      message: '¿Deseas eliminar esta historia personalizada de tu biblioteca?',
+      confirmText: 'Eliminar',
+      isDestructive: true
+    });
+    if (!ok) return;
     const updated = customStories.filter((s) => s.id !== storyId);
     onUpdateState({
       ...appState,
@@ -743,6 +770,23 @@ export default function SavedTab({
                           </div>
 
                           <div className="saved-word-meaning">{w.meaning_es}</div>
+
+                          {w.notes && (
+                            <div style={{
+                              marginTop: 6,
+                              fontSize: '0.82rem',
+                              color: 'var(--amber-700, #b45309)',
+                              background: 'rgba(245, 158, 11, 0.1)',
+                              padding: '5px 8px',
+                              borderRadius: '6px',
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: 6
+                            }}>
+                              <StickyNote size={13} style={{ flexShrink: 0, marginTop: 2 }} />
+                              <span>{w.notes}</span>
+                            </div>
+                          )}
 
                           <div className="saved-card-footer">
                             <div className="card-tags-row">
