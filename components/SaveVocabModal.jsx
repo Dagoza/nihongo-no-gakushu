@@ -22,6 +22,7 @@ import {
   lookupJapaneseWord 
 } from '../lib/japaneseUtils';
 import { dataStore } from '../lib/data';
+import { useApp } from '../lib/AppContext';
 
 export default function SaveVocabModal({
   isOpen,
@@ -30,6 +31,11 @@ export default function SaveVocabModal({
   appState,
   onUpdateState
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+  const showAlert = contextApp?.showAlert || ((opts) => console.log(opts));
   const [activeTab, setActiveTab] = useState(initialData.type || 'word'); // 'word' | 'phrase' | 'kanji'
   
   // Word state
@@ -122,7 +128,11 @@ export default function SaveVocabModal({
   // Guardar palabra cumpliendo INSTRUCCIONES.md
   const handleSaveWord = () => {
     if (!kanji.trim() || !hiragana.trim() || !meaningEs.trim()) {
-      alert('Por favor completa el término en Kanji/Kana, Hiragana y su significado en español.');
+      showAlert({
+        type: 'warning',
+        title: 'Campos Incompletos',
+        message: 'Por favor completa el término en Kanji/Kana, su lectura en Hiragana y el significado en español para guardar la palabra.'
+      });
       return;
     }
 

@@ -296,10 +296,16 @@ export default function SavedTab({
   const handleGenerateAIStory = async () => {
     // Requerir inicio de sesión para generar historias con IA
     if (!authUser) {
-      if (onOpenAuth) {
-        onOpenAuth();
-      }
-      alert("Debes iniciar sesión con tu cuenta de Google o correo para generar historias con Inteligencia Artificial.");
+      showAlert({
+        type: 'lock',
+        title: 'Generación con Inteligencia Artificial',
+        message: 'Debes iniciar sesión con tu cuenta de Google o correo para generar historias personalizadas con IA.',
+        actionLabel: 'Iniciar Sesión',
+        onAction: () => {
+          setIsExportModalOpen(false);
+          if (onOpenAuth) onOpenAuth();
+        }
+      });
       return;
     }
 
@@ -307,7 +313,11 @@ export default function SavedTab({
     try {
       const vocabList = selectedWordsList.map(w => w.kanji || w.hiragana);
       if (vocabList.length === 0) {
-        alert("Selecciona al menos una palabra para generar la historia.");
+        showAlert({
+          type: 'warning',
+          title: 'Vocabulario Requerido',
+          message: 'Por favor selecciona al menos una palabra de tu cuaderno de estudio para generar la historia con IA.'
+        });
         setIsGenerating(false);
         return;
       }
@@ -332,10 +342,16 @@ export default function SavedTab({
 
       const data = await response.json();
       if (data.error) {
-        if (response.status === 401 && onOpenAuth) {
-          onOpenAuth();
-        }
-        alert("Error de la IA: " + data.error);
+        showAlert({
+          type: 'error',
+          title: 'Error al Generar con IA',
+          message: data.error,
+          actionLabel: response.status === 401 ? 'Iniciar Sesión' : undefined,
+          onAction: response.status === 401 ? () => {
+            setIsExportModalOpen(false);
+            if (onOpenAuth) onOpenAuth();
+          } : undefined
+        });
         setIsGenerating(false);
         return;
       }
@@ -352,11 +368,19 @@ export default function SavedTab({
       setIsExportModalOpen(false);
       setStorySavedSuccess(true);
       setTimeout(() => setStorySavedSuccess(false), 3000);
-      alert("¡Historia generada y guardada con éxito!");
+      showAlert({
+        type: 'success',
+        title: '¡Historia Generada!',
+        message: '¡Tu historia personalizada ha sido creada y guardada con éxito en tu biblioteca! (+50 XP)'
+      });
 
     } catch (error) {
       console.error(error);
-      alert("Ocurrió un error al generar la historia.");
+      showAlert({
+        type: 'error',
+        title: 'Fallo de Red',
+        message: 'Ocurrió un error inesperado al conectar con el servicio de IA. Por favor intenta de nuevo.'
+      });
     }
     setIsGenerating(false);
   };
@@ -406,7 +430,11 @@ export default function SavedTab({
   // Save new custom story
   const handleSaveCustomStory = () => {
     if (!storyJapaneseText.trim()) {
-      alert('Por favor introduce al menos el texto en japonés de la historia.');
+      showAlert({
+        type: 'warning',
+        title: 'Texto Requerido',
+        message: 'Por favor introduce al menos el texto en japonés de la historia para poder crearla.'
+      });
       return;
     }
 

@@ -1,7 +1,22 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, CheckCircle2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, BookOpen, Layers } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { 
+  Volume2, 
+  CheckCircle2, 
+  Search, 
+  ArrowRight, 
+  ArrowLeft, 
+  Lightbulb, 
+  Keyboard, 
+  BookOpen, 
+  Layers,
+  Edit3,
+  StickyNote,
+  Plus,
+  RotateCcw,
+  Sparkles
+} from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -10,6 +25,9 @@ import SrsReview from './SrsReview';
 import SpeechPractice from './SpeechPractice';
 import { getVocabularyFromSupabase } from '../lib/supabaseData';
 import { useApp } from '../lib/AppContext';
+import { getAuthSession } from '../lib/supabaseSync';
+import EditWordModal from './EditWordModal';
+import SaveVocabModal from './SaveVocabModal';
 
 export default function VocabTab({ 
   appState, 
@@ -79,6 +97,12 @@ export default function VocabTab({
   // SRS state
   const [srsQueue, setSrsQueue] = useState([]);
 
+  // Word Editing & Notes State
+  const [editingWord, setEditingWord] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [filterOnlyWithNotes, setFilterOnlyWithNotes] = useState(false);
+  const [filterOnlyCustomized, setFilterOnlyCustomized] = useState(false);
+
   const isMassive = Boolean(authUser && appState?.useMassiveDictionary);
   const [vocabularyList, setVocabularyList] = useState(dataStore.vocabulary || []);
   const [isLoading, setIsLoading] = useState(false);
@@ -140,26 +164,125 @@ export default function VocabTab({
 
   const n4Exercises = dataStore.exercises || [];
 
+  // Merge vocabulary with user customizations and saved custom words
+  const effectiveVocabList = useMemo(() => {
+    const customizations = appState?.vocabCustomizations || {};
+    const baseList = (vocabularyList || []).map(item => {
+      const override = customizations[item.id] || customizations[item.kanji] || customizations[item.kana];
+      if (override) {
+        return {
+          ...item,
+          ...override,
+          isCustomized: true
+        };
+      }
+      return item;
+    });
+
+    const existingKanjis = new Set(baseList.map(v => v.kanji));
+    const extraCustom = (appState?.savedCustomVocab || [])
+      .filter(v => !existingKanjis.has(v.kanji))
+      .map(v => ({
+        ...v,
+        isCustomized: true
+      }));
+
+    return [...extraCustom, ...baseList];
+  }, [vocabularyList, appState?.vocabCustomizations, appState?.savedCustomVocab]);
+
   // Filter vocabulary
-  const filteredVocab = vocabularyList.filter(item => {
+  const filteredVocab = effectiveVocabList.filter(item => {
     const matchLevel = level === 'all' || item.level === level;
     const matchCategory = category === 'all' || item.category === category;
     const search = searchTerm.trim().toLowerCase();
     const matchSearch = !search ||
       (item.kanji && item.kanji.toLowerCase().includes(search)) ||
       (item.kana && item.kana.toLowerCase().includes(search)) ||
+      (item.hiragana && item.hiragana.toLowerCase().includes(search)) ||
+      (item.katakana && item.katakana.toLowerCase().includes(search)) ||
       (item.meaning_es && item.meaning_es.toLowerCase().includes(search)) ||
-      (item.meaning_en && item.meaning_en.toLowerCase().includes(search));
-    return matchLevel && matchCategory && matchSearch;
+      (item.meaning_en && item.meaning_en.toLowerCase().includes(search)) ||
+      (item.notes && item.notes.toLowerCase().includes(search));
+
+    const matchNotesOnly = !filterOnlyWithNotes || Boolean(item.notes && item.notes.trim());
+    const matchCustomOnly = !filterOnlyCustomized || Boolean(item.isCustomized);
+
+    return matchLevel && matchCategory && matchSearch && matchNotesOnly && matchCustomOnly;
   });
 
   // Extract unique categories based on current level
   const availableCategories = ['all', ...new Set(
-    vocabularyList
+    effectiveVocabList
       .filter(item => level === 'all' || item.level === level)
       .map(item => item.category)
       .filter(Boolean)
   )];
+
+  const handleSaveWordEdit = async (updatedWord) => {
+    const wordKey = updatedWord.id || updatedWord.kanji;
+    const prevCustomizations = appState?.vocabCustomizations || {};
+    const newCustomizations = {
+      ...prevCustomizations,
+      [wordKey]: {
+        ...updatedWord,
+        isCustomized: true,
+        updatedAt: new Date().toISOString()
+      },
+      [updatedWord.kanji]: {
+        ...updatedWord,
+        isCustomized: true,
+        updatedAt: new Date().toISOString()
+      }
+    };
+
+    const prevCustomVocab = appState?.savedCustomVocab || [];
+    const updatedCustomVocab = prevCustomVocab.map(v => 
+      (v.id === updatedWord.id || v.kanji === updatedWord.kanji) ? { ...v, ...updatedWord } : v
+    );
+
+    const newXp = (appState?.xp || 0) + 15;
+    onUpdateState({
+      ...appState,
+      vocabCustomizations: newCustomizations,
+      savedCustomVocab: updatedCustomVocab,
+      xp: newXp
+    });
+
+    try {
+      const session = await getAuthSession();
+      if (session?.access_token) {
+        fetch('/api/data/vocabulary', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({
+            id: updatedWord.id,
+            kanji: updatedWord.kanji,
+            kana: updatedWord.kana || updatedWord.hiragana,
+            meaning_es: updatedWord.meaning_es,
+            meaning_en: updatedWord.meaning_en,
+            level: updatedWord.level,
+            category: updatedWord.category
+          })
+        }).catch(e => console.warn('Supabase background update error:', e));
+      }
+    } catch (e) {}
+  };
+
+  const handleResetWordEdit = (wordKey) => {
+    const prevCustomizations = { ...(appState?.vocabCustomizations || {}) };
+    delete prevCustomizations[wordKey];
+    if (editingWord) {
+      if (editingWord.id) delete prevCustomizations[editingWord.id];
+      if (editingWord.kanji) delete prevCustomizations[editingWord.kanji];
+    }
+    onUpdateState({
+      ...appState,
+      vocabCustomizations: prevCustomizations
+    });
+  };
 
   const toggleVocabMastery = (id) => {
     const isMastered = !!appState.masteredVocab?.[id];
@@ -174,7 +297,7 @@ export default function VocabTab({
   };
 
   const startSrsSession = () => {
-    const queue = vocabularyList.filter(item => {
+    const queue = effectiveVocabList.filter(item => {
       const card = appState.masteredVocab?.[item.id];
       if (!card) return true; // aprender nueva
       if (typeof card === 'boolean') return true; // migrar
