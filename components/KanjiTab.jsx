@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -12,6 +12,7 @@ import PitchAccent from './PitchAccent';
 import SpeechPractice from './SpeechPractice';
 import { getKanjiFromSupabase } from '../lib/supabaseData';
 import { useApp } from '../lib/AppContext';
+import AIGeneratorModal from './AIGeneratorModal';
 
 export function getPrimaryKanjiReading(k) {
   if (!k) return '';
@@ -119,6 +120,10 @@ export default function KanjiTab({
   const [kanjiList, setKanjiList] = useState(dataStore.kanji || []);
   const [isLoading, setIsLoading] = useState(false);
 
+  // AI Content Generator & Kanji Selection State
+  const [selectedKanjiChars, setSelectedKanjiChars] = useState(new Set());
+  const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
+
   const handleToggleSource = (enableMassive) => {
     if (enableMassive) {
       if (!authUser) {
@@ -189,6 +194,24 @@ export default function KanjiTab({
       (k.kunyomi && k.kunyomi.toLowerCase().includes(search))
     );
   });
+
+  const selectedKanjisForAI = React.useMemo(() => {
+    if (selectedKanjiChars.size === 0) {
+      return filteredKanji.slice(0, 5).map(k => ({
+        text: k.kanji,
+        reading: getPrimaryKanjiReading(k),
+        meaning: k.meaning_es
+      }));
+    }
+    return Array.from(selectedKanjiChars).map(char => {
+      const found = kanjiList.find(k => k.kanji === char);
+      return {
+        text: char,
+        reading: found ? getPrimaryKanjiReading(found) : '',
+        meaning: found ? found.meaning_es : ''
+      };
+    });
+  }, [selectedKanjiChars, filteredKanji, kanjiList]);
 
   const masteredCount = kanjiList.filter(k => !!appState.masteredKanji?.[k.kanji]).length;
   const progressPercent = Math.round((masteredCount / Math.max(1, kanjiList.length)) * 100);
@@ -495,18 +518,110 @@ export default function KanjiTab({
             </div>
           </div>
 
+          {/* Quick AI & Selection Helper Bar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button
+                type="button"
+                className={`btn btn-xs ${selectedKanjiChars.size > 0 ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setIsAIGeneratorOpen(true)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  borderRadius: '20px',
+                  padding: '4px 12px',
+                  borderColor: 'var(--primary)',
+                  color: selectedKanjiChars.size > 0 ? '#fff' : 'var(--primary)',
+                  fontWeight: 600
+                }}
+                title="Generar historias u oraciones de ejemplo con IA usando kanjis seleccionados"
+              >
+                <Sparkles size={13} />
+                <span>Generar con IA {selectedKanjiChars.size > 0 ? `(${selectedKanjiChars.size})` : ''}</span>
+              </button>
+
+              {selectedKanjiChars.size > 0 ? (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs"
+                  onClick={() => setSelectedKanjiChars(new Set())}
+                  style={{ color: 'var(--danger)', fontSize: '0.8rem', padding: '2px 6px' }}
+                >
+                  Deseleccionar ({selectedKanjiChars.size})
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs"
+                  onClick={() => {
+                    const first5 = new Set(filteredKanji.slice(0, 5).map(k => k.kanji));
+                    setSelectedKanjiChars(first5);
+                  }}
+                  style={{ color: 'var(--primary)', fontSize: '0.8rem', padding: '2px 6px' }}
+                  title="Seleccionar rápidamente los primeros 5 kanjis para IA"
+                >
+                  + Seleccionar 5 para IA
+                </button>
+              )}
+            </div>
+
+            <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+              Dominados: <strong>{masteredCount}</strong> de {kanjiList.length}
+            </div>
+          </div>
+
           {/* Kanji Cards Grid */}
           <div className="kanji-grid">
             {filteredKanji.map((k) => {
               const isMastered = !!appState.masteredKanji?.[k.kanji];
+              const isSelected = selectedKanjiChars.has(k.kanji);
               return (
                 <div 
                   key={k.kanji} 
-                  className="kanji-card"
-                  style={{ borderColor: isMastered ? 'var(--success)' : 'var(--border)' }}
+                  className={`kanji-card ${isSelected ? 'selected-card' : ''}`}
+                  style={{ 
+                    borderColor: isSelected 
+                      ? 'var(--primary)' 
+                      : (isMastered ? 'var(--success)' : 'var(--border)'),
+                    background: isSelected ? 'var(--primary-bg, rgba(99, 102, 241, 0.04))' : undefined,
+                    boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
+                  }}
                 >
                   <div className="kanji-header">
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                      {/* Checkbox IA */}
+                      <label
+                        style={{
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          padding: '1px 5px',
+                          borderRadius: '4px',
+                          background: isSelected ? 'var(--primary)' : 'rgba(99, 102, 241, 0.08)',
+                          color: isSelected ? '#fff' : 'var(--primary)',
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          border: isSelected ? '1px solid var(--primary)' : '1px solid rgba(99, 102, 241, 0.2)'
+                        }}
+                        title="Seleccionar kanji para generar historia u oraciones con IA"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => {
+                            const next = new Set(selectedKanjiChars);
+                            if (next.has(k.kanji)) next.delete(k.kanji);
+                            else next.add(k.kanji);
+                            setSelectedKanjiChars(next);
+                          }}
+                          style={{ accentColor: 'var(--primary)', width: 12, height: 12, cursor: 'pointer' }}
+                        />
+                        <span>IA</span>
+                      </label>
+
                       <div className="kanji-big-char jp-text">
                         {k.kanji}
                       </div>
@@ -880,6 +995,88 @@ export default function KanjiTab({
           </div>
         </div>
       )}
+
+      {/* Floating Action Bar para Kanjis Seleccionados */}
+      {selectedKanjiChars.size > 0 && (
+        <div style={{
+          position: 'fixed',
+          bottom: 24,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 900,
+          background: 'var(--surface)',
+          border: '2px solid var(--primary)',
+          borderRadius: 16,
+          padding: '10px 18px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.28)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          backdropFilter: 'blur(12px)',
+          maxWidth: '92%',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{
+              background: 'var(--primary)',
+              color: '#fff',
+              borderRadius: 999,
+              padding: '2px 9px',
+              fontSize: '0.8rem',
+              fontWeight: 800
+            }}>
+              {selectedKanjiChars.size}
+            </span>
+            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              {selectedKanjiChars.size === 1 ? 'kanji seleccionado' : 'kanjis seleccionados'}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', maxWidth: 280, overflow: 'hidden' }}>
+            {Array.from(selectedKanjiChars).slice(0, 6).map(char => (
+              <span key={char} className="jp-text" style={{ fontSize: '1rem', background: 'rgba(99, 102, 241, 0.12)', color: 'var(--primary)', padding: '2px 8px', borderRadius: 6, fontWeight: 800 }}>
+                {char}
+              </span>
+            ))}
+            {selectedKanjiChars.size > 6 && (
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>+{selectedKanjiChars.size - 6} más</span>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => setIsAIGeneratorOpen(true)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+            >
+              <Sparkles size={15} />
+              <span>Generar con IA</span>
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setSelectedKanjiChars(new Set())}
+              style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}
+            >
+              Limpiar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Generador con IA para Kanjis */}
+      <AIGeneratorModal
+        isOpen={isAIGeneratorOpen}
+        onClose={() => setIsAIGeneratorOpen(false)}
+        initialType="story"
+        initialItems={selectedKanjisForAI}
+        itemType="kanji"
+        defaultLevel={level}
+        appState={appState}
+        onUpdateState={onUpdateState}
+        authUser={authUser}
+      />
     </div>
   );
 }

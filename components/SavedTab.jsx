@@ -362,8 +362,12 @@ export default function SavedTab({
       storyObj.isCustom = true;
       storyObj.wordsUsed = vocabList;
       
-      const newStoriesList = [...(appState.customStories || []), storyObj];
-      onUpdateState({ customStories: newStoriesList });
+      const newStoriesList = [storyObj, ...(appState.savedStories || [])];
+      onUpdateState({ 
+        ...appState,
+        savedStories: newStoriesList,
+        xp: (appState.xp || 0) + 50
+      });
       
       setIsExportModalOpen(false);
       setStorySavedSuccess(true);
