@@ -455,8 +455,39 @@ flowchart TD
    - Si no se cuenta con MP3 humano nativo, el sistema debe registrar las cadenas fonéticas limpias en hiragana/kanji para su síntesis automática mediante `/api/tts`.
 3. **Integración con `audioManager` en la UI:**
    - Conectar los componentes de lectura, tarjetas o diálogos para invocar `audioManager.playAudioUrl(...)` o `audioManager.speak(texto, { audioUrl })`.
-4. **Validación Auditiva y de Compilación:**
-   - Verificar que al pulsar los botones de audio se escuche el clip nativo o la voz neuronal de Tokio sin retrasos perceptibles y ejecutar `npm run build` sin errores.
+##### F. Sistema Unificado de Captación de Audio y Práctica Oral Bidireccional (Speech-to-Text y Shadowing Activo) — [✅ Implementado]
+
+Para transformar la experiencia de aprendizaje de un consumo meramente pasivo (escuchar) a un **entrenamiento activo de producción oral (hablar / *shadowing*)**, Nihongo Master incorpora un sistema transversal de reconocimiento fonético en tiempo real:
+
+```mermaid
+flowchart LR
+    Mic["🎙️ Captación de Audio del Usuario (Web Speech API ja-JP)"] --> STT["Motor SpeechRecognition / WebkitSpeechRecognition"]
+    STT --> Token["Normalización Moraica y Fonética (Wanakana + Regex)"]
+    Token --> Evaluator{"Evaluador de Pronunciación Multi-Candidato"}
+    
+    Evaluator -- "Coincidencia Exacta o Parcial" --> Match["🟢 Feedback Visual (Verde) + Animación + XP Ganados"]
+    Evaluator -- "Discrepancia Fonética" --> NoMatch["🔴 Feedback Amable (Rojo) + Transcripción Obtenida para Comparar"]
+```
+
+1. **Arquitectura del Componente `SpeechPractice` (`components/SpeechPractice.jsx`):**
+   - Utiliza la interfaz nativa del navegador `window.SpeechRecognition || window.webkitSpeechRecognition` configurada estrictamente para el idioma japonés (`lang: 'ja-JP'`).
+   - Cuenta con dos variantes visuales: modo expandido (con transcripción tipográfica en tiempo real) y modo compacto (`compact={true}`) para botones de acción rápida en listas, tablas y tarjetas.
+2. **Algoritmo de Normalización y Comparación Flexible Multi-Candidato:**
+   - Resuelve el mayor desafío del reconocimiento de voz en japonés: el motor del navegador a menudo transcribe indistintamente en kanji (`猫`), hiragana (`ねこ`) o katakana (`ネコ`).
+   - El sistema extrae todos los candidatos válidos (`targetText`, `targetKana`, lecturas alternativas On/Kun de kanjis y variantes entre paréntesis como `ひと(つ)`), normalizándolos a hiragana canónico con `wanakana.toHiragana`.
+   - Soporta coincidencia exacta fonética y coincidencia inclusiva para oraciones largas de más de 3 caracteres.
+3. **Despliegue Transversal en los 3 Pilares del Estudio:**
+   - **🎯 Gramática y Partículas (`/grammar`):** Botón de micrófono interactivo en cada una de las oraciones de ejemplo y en la retroalimentación de los quizzes para repetir la frase completa con entonación natural.
+   - **📚 Vocabulario (`/vocab`):**
+     1. *Fichas de Vocabulario:* Botón de captación oral junto al altavoz de pronunciación en cada tarjeta del catálogo.
+     2. *Modo Mecanografía IME:* Permite responder tanto por teclado como por voz con autocompletado y validación inmediata.
+     3. *Ejemplos Tatoeba:* Práctica de shadowing en cada oración de contexto.
+     4. *Repaso SRS:* Práctica oral con feedback visual antes o después de evaluar la tarjeta.
+   - **漢 Biblioteca de Kanjis (`/kanji`):**
+     1. *Ficha de Kanji:* Reconocimiento de voz para las lecturas principales On'yomi y Kun'yomi.
+     2. *Palabras Compuestas:* Micrófono interactivo en cada vocablo compuesto del ideograma.
+     3. *Repaso SRS de Kanji:* Práctica de pronunciación de la lectura principal al voltear la tarjeta.
+     4. *Modo Quiz de Kanjis:* Los alumnos pueden responder al quiz simplemente diciendo la lectura en voz alta; al detectar una pronunciación correcta, el sistema valida la respuesta y otorga +20 XP automáticamente.
 
 ---
 
@@ -1021,6 +1052,7 @@ Esta matriz centraliza el estado real de desarrollo de la plataforma, reflejando
 - [x] **Edición y Notas de Vocabulario:** Modal para agregar notas personales y modificar traducciones.
 - [x] **Regla de las 3 Escrituras:** Obligatoriedad de Kanji, Hiragana y Katakana en todo el vocabulario.
 - [x] **Sincronización Bidireccional Kanji-Vocabulario:** Palabras compuestas replicadas en el array `words` de cada kanji en `kanji.json`.
+- [x] **Captación de Audio y Práctica Oral (SpeechRecognition):** Reconocimiento de voz interactivo en fichas de vocabulario, mecanografía IME, ejemplos de contexto Tatoeba y repasos SRS con evaluación de pronunciación y normalización moraica Wanakana.
 - [ ] **Filtro de palabras problemáticas:** Vista rápida de términos con alta tasa de fallos (*leech detection*).
 
 ### 6.3. Biblioteca de Kanjis
@@ -1028,6 +1060,7 @@ Esta matriz centraliza el estado real de desarrollo de la plataforma, reflejando
 - [x] **Pitch Accent en Fichas de Kanji:** Curvas tonales integradas para las lecturas y palabras compuestas.
 - [x] **Información Enciclopédica:** Número de trazos, radicales, lecturas On'yomi, Kun'yomi y ejemplos compuestos con audio.
 - [x] **Modo Quiz de Lecturas:** Práctica con entrada de texto IME convertida en kana con Wanakana.
+- [x] **Captación de Audio y Práctica Oral en Kanjis:** Reconocimiento de voz para lecturas On'yomi y Kun'yomi, palabras compuestas, tarjetas SRS y modo Quiz (validación por pronunciación).
 - [x] **Soporte Masivo Supabase:** Conmutador opcional para desbloquear catálogo extendido de 2,136 kanjis Jōyō.
 - [x] **Especificación Epistemológica y Arquitectónica Fono-Semántica:** Taxonomía Rikushō, identificación de las 7 posiciones canónicas del radical (*Hen*, *Tsukuri*, *Kanmuri*, *Ashi*, *Tare*, *Nyō*, *Kamae*) y atlas de las 8 series fonéticas canónicas (同, 寺, 青, 方, 交, 生, 包, etc.).
 - [x] **Tríada de Retención Visual en Español Nativo:** Modelo de ilustraciones vectoriales SVG, colorimetría cognitiva (azul semántico, violeta fonético, verde ideográfico) y anclas auditivas en español para On'yomi.

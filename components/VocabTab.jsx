@@ -29,6 +29,7 @@ import { useApp } from '../lib/AppContext';
 import { getAuthSession } from '../lib/supabaseSync';
 import EditWordModal from './EditWordModal';
 import SaveVocabModal from './SaveVocabModal';
+import AIGeneratorModal from './AIGeneratorModal';
 
 export default function VocabTab({ 
   appState, 
@@ -103,6 +104,10 @@ export default function VocabTab({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filterOnlyWithNotes, setFilterOnlyWithNotes] = useState(false);
   const [filterOnlyCustomized, setFilterOnlyCustomized] = useState(false);
+
+  // AI Content Generator & Multi-selection State
+  const [selectedWordIds, setSelectedWordIds] = useState(new Set());
+  const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
 
   const isMassive = Boolean(authUser && appState?.useMassiveDictionary);
   const [vocabularyList, setVocabularyList] = useState(dataStore.vocabulary || []);
@@ -219,6 +224,15 @@ export default function VocabTab({
       .filter(Boolean)
   )];
 
+  const selectedWordsForAI = useMemo(() => {
+    if (selectedWordIds.size === 0) {
+      return filteredVocab.slice(0, 5);
+    }
+    return Array.from(selectedWordIds).map(id => {
+      return effectiveVocabList.find(x => (x.id === id || x.kanji === id)) || { kanji: id, kana: '', meaning_es: '' };
+    });
+  }, [selectedWordIds, effectiveVocabList, filteredVocab]);
+
   const handleSaveWordEdit = async (updatedWord) => {
     const wordKey = updatedWord.id || updatedWord.kanji;
     const prevCustomizations = appState?.vocabCustomizations || {};
@@ -329,11 +343,12 @@ export default function VocabTab({
   // Typing validation
   const currentTypingItem = filteredVocab[typingIndex] || filteredVocab[0];
 
-  const handleValidateTyping = () => {
-    if (!currentTypingItem || !typingInput.trim()) return;
-    const inputVal = typingInput.trim();
+  const handleValidateTyping = (forcedValue = null) => {
+    if (!currentTypingItem) return;
+    const inputVal = (typeof forcedValue === 'string' ? forcedValue : typingInput).trim();
+    if (!inputVal) return;
     const targetKanji = (currentTypingItem.kanji || '').trim();
-    const targetKana = (currentTypingItem.kana || '').trim();
+    const targetKana = (currentTypingItem.kana || currentTypingItem.hiragana || '').trim();
 
     const isMatch = inputVal === targetKanji || inputVal === targetKana;
 
@@ -660,6 +675,26 @@ export default function VocabTab({
 
             <button
               type="button"
+              className={`btn btn-xs ${selectedWordIds.size > 0 ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setIsAIGeneratorOpen(true)}
+              style={{ 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: 5, 
+                borderRadius: '20px', 
+                padding: '4px 12px',
+                borderColor: 'var(--primary)',
+                color: selectedWordIds.size > 0 ? '#fff' : 'var(--primary)',
+                fontWeight: 600
+              }}
+              title="Generar historias u oraciones de ejemplo con IA usando palabras seleccionadas"
+            >
+              <Sparkles size={13} />
+              <span>Generar con IA {selectedWordIds.size > 0 ? `(${selectedWordIds.size})` : ''}</span>
+            </button>
+
+            <button
+              type="button"
               className="btn btn-outline btn-xs"
               onClick={() => setIsCreateModalOpen(true)}
               style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, borderColor: 'var(--primary)', color: 'var(--primary-light)' }}
@@ -670,8 +705,33 @@ export default function VocabTab({
             </button>
           </div>
 
-          <div style={{ marginBottom: 16, fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Mostrando <strong>{filteredVocab.length}</strong> palabras:</span>
+          <div style={{ marginBottom: 16, fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span>Mostrando <strong>{filteredVocab.length}</strong> palabras:</span>
+              {selectedWordIds.size > 0 ? (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs"
+                  onClick={() => setSelectedWordIds(new Set())}
+                  style={{ color: 'var(--danger)', fontSize: '0.8rem', padding: '2px 6px' }}
+                >
+                  Deseleccionar ({selectedWordIds.size})
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs"
+                  onClick={() => {
+                    const first5 = new Set(filteredVocab.slice(0, 5).map(v => v.id || v.kanji));
+                    setSelectedWordIds(first5);
+                  }}
+                  style={{ color: 'var(--primary)', fontSize: '0.8rem', padding: '2px 6px' }}
+                  title="Seleccionar rápidamente las primeras 5 palabras para IA"
+                >
+                  + Seleccionar 5 para IA
+                </button>
+              )}
+            </div>
             <span>
               Dominadas: <strong>{filteredVocab.filter(v => appState.masteredVocab?.[v.id]).length}</strong> de {filteredVocab.length}
             </span>
@@ -681,15 +741,55 @@ export default function VocabTab({
           <div className="vocab-grid">
             {filteredVocab.map((item) => {
               const isMastered = !!appState.masteredVocab?.[item.id];
+              const wordKey = item.id || item.kanji;
+              const isSelected = selectedWordIds.has(wordKey);
               return (
                 <div 
                   key={item.id} 
-                  className="vocab-card"
-                  style={{ borderColor: isMastered ? 'var(--success)' : (item.isCustomized ? 'rgba(99, 102, 241, 0.4)' : 'var(--border)') }}
+                  className={`vocab-card ${isSelected ? 'selected-card' : ''}`}
+                  style={{ 
+                    borderColor: isSelected 
+                      ? 'var(--primary)' 
+                      : (isMastered ? 'var(--success)' : (item.isCustomized ? 'rgba(99, 102, 241, 0.4)' : 'var(--border)')),
+                    background: isSelected ? 'var(--primary-bg, rgba(99, 102, 241, 0.04))' : undefined,
+                    boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
+                  }}
                 >
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 8 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        {/* Selector para Generador IA */}
+                        <label 
+                          style={{ 
+                            cursor: 'pointer', 
+                            display: 'inline-flex', 
+                            alignItems: 'center', 
+                            gap: 4, 
+                            padding: '1px 6px', 
+                            borderRadius: '4px',
+                            background: isSelected ? 'var(--primary)' : 'rgba(99, 102, 241, 0.08)',
+                            color: isSelected ? '#fff' : 'var(--primary)',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            border: isSelected ? '1px solid var(--primary)' : '1px solid rgba(99, 102, 241, 0.2)'
+                          }}
+                          title="Seleccionar para generar historia u oraciones con IA"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input 
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              const next = new Set(selectedWordIds);
+                              if (next.has(wordKey)) next.delete(wordKey);
+                              else next.add(wordKey);
+                              setSelectedWordIds(next);
+                            }}
+                            style={{ accentColor: 'var(--primary)', width: 13, height: 13, cursor: 'pointer' }}
+                          />
+                          <span>IA</span>
+                        </label>
+
                         <span className="vocab-tag">{item.level} · {item.category}</span>
                         {item.isCustomized && (
                           <span 
@@ -723,14 +823,22 @@ export default function VocabTab({
 
                     <div className="vocab-kanji">
                       <span className="jp-text">{item.kanji}</span>
-                      <button 
-                        className="audio-btn" 
-                        style={{ width: 32, height: 32 }}
-                        onClick={() => audioManager.speak(item.kana || item.hiragana || item.kanji)}
-                        title="Escuchar pronunciación"
-                      >
-                        <Volume2 size={16} />
-                      </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <button 
+                          type="button"
+                          className="audio-btn" 
+                          style={{ width: 32, height: 32 }}
+                          onClick={() => audioManager.speak(item.kana || item.hiragana || item.kanji)}
+                          title="Escuchar pronunciación"
+                        >
+                          <Volume2 size={16} />
+                        </button>
+                        <SpeechPractice 
+                          targetText={item.kanji} 
+                          targetKana={item.kana || item.hiragana} 
+                          compact={true} 
+                        />
+                      </div>
                     </div>
 
                     <div className="vocab-kana jp-text">
@@ -848,13 +956,27 @@ export default function VocabTab({
                 ({currentTypingItem.meaning_en})
               </div>
             )}
-            <button 
-              className="btn btn-outline btn-sm"
-              onClick={() => audioManager.speak(currentTypingItem.kana || currentTypingItem.kanji)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            >
-              <Volume2 size={16} /> Escuchar pronunciación
-            </button>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
+              <button 
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => audioManager.speak(currentTypingItem.kana || currentTypingItem.hiragana || currentTypingItem.kanji)}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                <Volume2 size={16} /> Escuchar
+              </button>
+              <SpeechPractice 
+                targetText={currentTypingItem.kanji} 
+                targetKana={currentTypingItem.kana || currentTypingItem.hiragana} 
+                onMatch={() => {
+                  const targetVal = currentTypingItem.kana || currentTypingItem.hiragana || currentTypingItem.kanji;
+                  if (targetVal) {
+                    setTypingInput(targetVal);
+                    handleValidateTyping(targetVal);
+                  }
+                }}
+              />
+            </div>
           </div>
 
           <div className="typing-box" style={{ marginTop: 16 }}>
@@ -983,13 +1105,20 @@ export default function VocabTab({
                   {item.tatoeba_sentences.map((sentence, idx) => (
                     <div key={idx} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: idx === item.tatoeba_sentences.length - 1 ? 'none' : '1px solid var(--border)' }}>
                       <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                        <button 
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', marginTop: 2 }}
-                          onClick={() => audioManager.speak(sentence.jp)}
-                          title="Escuchar ejemplo"
-                        >
-                          <Volume2 size={16} />
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2, flexShrink: 0 }}>
+                          <button 
+                            type="button"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                            onClick={() => audioManager.speak(sentence.jp)}
+                            title="Escuchar ejemplo"
+                          >
+                            <Volume2 size={16} />
+                          </button>
+                          <SpeechPractice 
+                            targetText={sentence.jp} 
+                            compact={true} 
+                          />
+                        </div>
                         <div>
                           <div className="jp-text" style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>{sentence.jp}</div>
                           <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>🇪🇸 {sentence.es}</div>
@@ -1144,15 +1273,23 @@ export default function VocabTab({
                   <div style={{ fontSize: '0.95rem', color: 'var(--text-main)', marginBottom: 8 }}>
                     {currentExercise.explanation}
                   </div>
-                  <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                     <span>{currentExercise.sentence}</span>
-                    <button 
-                      className="audio-btn" 
-                      style={{ width: 30, height: 30 }}
-                      onClick={() => audioManager.speak(currentExercise.sentence)}
-                    >
-                      <Volume2 size={16} />
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button 
+                        type="button"
+                        className="audio-btn" 
+                        style={{ width: 30, height: 30 }}
+                        onClick={() => audioManager.speak(currentExercise.sentence)}
+                        title="Escuchar oración completa"
+                      >
+                        <Volume2 size={16} />
+                      </button>
+                      <SpeechPractice 
+                        targetText={currentExercise.sentence} 
+                        compact={true} 
+                      />
+                    </div>
                   </div>
                 </div>
               )}

@@ -8,19 +8,25 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(req) {
   try {
-    // 1. Verificar autenticación: solo usuarios con sesión activa pueden generar historias con IA
     const authHeader = req.headers.get('authorization') || '';
     const token = authHeader.replace(/^Bearer\s+/i, '').trim();
 
-    if (!token) {
-      return NextResponse.json(
-        { error: "Debes iniciar sesión con tu cuenta para generar historias con Inteligencia Artificial." },
-        { status: 401 }
-      );
+    let user = null;
+    if (token) {
+      const { data, error: authError } = await supabase.auth.getUser(token);
+      if (!authError && data?.user) {
+        user = data.user;
+      }
     }
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
+    // En producción se requiere autenticación para resguardar cuotas del servicio de IA
+    if (process.env.NODE_ENV === 'production' && !user) {
+      if (!token) {
+        return NextResponse.json(
+          { error: "Debes iniciar sesión con tu cuenta para generar contenido con Inteligencia Artificial." },
+          { status: 401 }
+        );
+      }
       return NextResponse.json(
         { error: "Sesión no válida o expirada. Por favor, vuelve a iniciar sesión." },
         { status: 401 }
@@ -28,20 +34,55 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { vocabList, level, theme, provider } = body;
+    const { 
+      type = 'story', 
+      vocabList, 
+      items = vocabList, 
+      itemType = 'vocab', 
+      level = 'N5', 
+      theme = 'Vida cotidiana', 
+      length = 'medium',
+      count = 5,
+      provider = 'groq' 
+    } = body;
 
-    if (!vocabList || !level || !theme) {
-      return NextResponse.json({ error: "Faltan parámetros requeridos (vocabList, level, theme)" }, { status: 400 });
+    const actualItems = Array.isArray(items) ? items : (Array.isArray(vocabList) ? vocabList : []);
+    if (!actualItems || actualItems.length === 0) {
+      return NextResponse.json(
+        { error: `Debes seleccionar al menos un elemento (${itemType === 'kanji' ? 'kanji' : 'palabra'}) para la generación.` },
+        { status: 400 }
+      );
     }
 
-    // Instanciar el facade con el proveedor deseado (por defecto 'groq')
     const aiFacade = new AIFacade(provider || 'groq');
-    
-    // Generar la historia
-    const generatedStory = await aiFacade.generateStory(vocabList, level, theme);
 
-    return NextResponse.json({ story: generatedStory });
-
+    if (type === 'sentences') {
+      const generatedData = await aiFacade.generateSentences({
+        items: actualItems,
+        itemType,
+        level,
+        theme,
+        count: Number(count) || 5
+      });
+      return NextResponse.json({ 
+        type: 'sentences',
+        sentences: generatedData.sentences || [],
+        meta: generatedData 
+      });
+    } else {
+      // type === 'story'
+      const generatedStory = await aiFacade.generateStory({
+        items: actualItems,
+        itemType,
+        level,
+        theme,
+        length
+      });
+      return NextResponse.json({ 
+        type: 'story',
+        story: generatedStory 
+      });
+    }
   } catch (error) {
     console.error("AI Generation Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

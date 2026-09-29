@@ -491,8 +491,23 @@ export default function GrammarTab({
                   <div style={{ fontWeight: 700, color: quizFeedback.isCorrect ? 'var(--success)' : 'var(--danger)', marginBottom: 4 }}>
                     {quizFeedback.isCorrect ? `🎉 ¡Correcto! (+15 XP) Partícula: ${quizFeedback.correct}` : `❌ Incorrecto. La partícula correcta es: ${quizFeedback.correct} (${quizFeedback.role})`}
                   </div>
-                  <div className="jp-text" style={{ fontSize: '1.15rem', color: 'var(--text-main)', marginTop: 4 }}>
-                    {quizFeedback.sentence}
+                  <div className="jp-text" style={{ fontSize: '1.15rem', color: 'var(--text-main)', marginTop: 6, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span>{quizFeedback.sentence}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button 
+                        type="button"
+                        className="audio-btn" 
+                        style={{ width: 28, height: 28 }}
+                        onClick={() => audioManager.speak(quizFeedback.sentence)}
+                        title="Escuchar oración completa"
+                      >
+                        <Volume2 size={14} />
+                      </button>
+                      <SpeechPractice 
+                        targetText={quizFeedback.sentence} 
+                        compact={true} 
+                      />
+                    </div>
                   </div>
                 </div>
               )}

@@ -3,7 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, CheckCircle2, RefreshCw } from 'lucide-react';
 
-export default function SpeechPractice({ targetText, targetKana, onMatch, compact = false }) {
+import * as wanakana from 'wanakana';
+
+export default function SpeechPractice({ targetText, targetKana, acceptableReadings, onMatch, compact = false }) {
   const [mounted, setMounted] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -74,30 +76,92 @@ export default function SpeechPractice({ targetText, targetKana, onMatch, compac
 
   const cleanText = (text) => {
     if (!text) return '';
-    return text.replace(/[。、！？\s]/g, '');
+    return String(text).replace(/[。、！？!?,，[\]()（）\s]/g, '');
+  };
+
+  const getCandidates = () => {
+    const candidates = new Set();
+
+    const addClean = (raw) => {
+      if (!raw) return;
+      const cleaned = cleanText(raw);
+      if (cleaned) {
+        candidates.add(cleaned);
+        try {
+          const hira = wanakana.toHiragana(cleaned);
+          if (hira) candidates.add(hira);
+        } catch (e) {}
+      }
+    };
+
+    const parseStr = (val) => {
+      if (!val) return;
+      if (Array.isArray(val)) {
+        val.forEach(parseStr);
+        return;
+      }
+      const str = String(val);
+      // Remove bracket wrappers like [いち, いつ]
+      const insideBrackets = str.match(/\[(.*?)\]/);
+      const textToSplit = insideBrackets ? `${str} ${insideBrackets[1]}` : str;
+      const parts = textToSplit.split(/[,、/・;\s]+/);
+      for (const p of parts) {
+        if (!p) continue;
+        addClean(p);
+        // If parentheses like ひと(つ) -> add 'ひと' and 'ひとつ'
+        if (p.includes('(') || p.includes('（')) {
+          const withoutParen = p.replace(/[()（）]/g, '');
+          const baseOnly = p.replace(/[(（].*?[)）]/g, '');
+          addClean(withoutParen);
+          addClean(baseOnly);
+        }
+      }
+    };
+
+    if (targetText) addClean(targetText);
+    if (targetKana) parseStr(targetKana);
+    if (acceptableReadings) parseStr(acceptableReadings);
+
+    return Array.from(candidates);
   };
 
   const evaluatePronunciation = (spoken) => {
     if (!spoken) return;
     
     const cleanSpoken = cleanText(spoken);
-    const cleanTarget = cleanText(targetText);
-    const cleanTargetKana = cleanText(targetKana);
+    let spokenHiragana = cleanSpoken;
+    try {
+      spokenHiragana = wanakana.toHiragana(cleanSpoken);
+    } catch (e) {}
 
-    // Mismo texto exacto
-    let isMatch = cleanSpoken === cleanTarget;
+    const candidates = getCandidates();
 
-    // Comparar con kana si está disponible
-    if (!isMatch && cleanTargetKana) {
-      if (cleanSpoken === cleanTargetKana) {
+    let isMatch = false;
+    for (const cand of candidates) {
+      if (!cand) continue;
+      const candClean = cleanText(cand);
+      let candHira = candClean;
+      try {
+        candHira = wanakana.toHiragana(candClean);
+      } catch (e) {}
+
+      // Match exacto en kanji o en hiragana
+      if (cleanSpoken === candClean || spokenHiragana === candHira) {
         isMatch = true;
+        break;
       }
-    }
 
-    // Match parcial
-    if (!isMatch && cleanTarget.length > 3) {
-      if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
-        isMatch = true;
+      // Match parcial para oraciones compuestas (> 3 caracteres)
+      if (candClean.length > 3) {
+        if (
+          cleanSpoken.includes(candClean) || 
+          candClean.includes(cleanSpoken) ||
+          spokenHiragana.includes(candHira) || 
+          candHira.includes(spokenHiragana)
+        ) {
+          isMatch = true;
+          break;
+        }
       }
     }
 

@@ -9,8 +9,45 @@ import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import KanjiDraw from './KanjiDraw';
 import PitchAccent from './PitchAccent';
+import SpeechPractice from './SpeechPractice';
 import { getKanjiFromSupabase } from '../lib/supabaseData';
 import { useApp } from '../lib/AppContext';
+
+export function getPrimaryKanjiReading(k) {
+  if (!k) return '';
+  if (k.kunyomi && k.kunyomi.includes('[')) {
+    const inside = k.kunyomi.split('[')[1]?.replace(']', '').trim();
+    if (inside) return inside.split(/[,、]/)[0]?.replace(/[(（].*?[)）]/g, '').trim();
+  }
+  if (k.kunyomi) {
+    return k.kunyomi.split(/[,、]/)[0]?.replace(/[(（].*?[)）]/g, '').trim();
+  }
+  if (k.onyomi && k.onyomi.includes('[')) {
+    const inside = k.onyomi.split('[')[1]?.replace(']', '').trim();
+    if (inside) return inside.split(/[,、]/)[0]?.trim();
+  }
+  if (k.onyomi) {
+    return k.onyomi.split(/[,、]/)[0]?.trim();
+  }
+  if (k.pronunciation) {
+    return k.pronunciation.split(/[,、]/)[0]?.trim();
+  }
+  return '';
+}
+
+export function getAllKanjiReadings(k) {
+  if (!k) return [];
+  const list = [];
+  if (k.kunyomi) list.push(k.kunyomi);
+  if (k.onyomi) list.push(k.onyomi);
+  if (k.pronunciation) list.push(k.pronunciation);
+  if (k.words && Array.isArray(k.words)) {
+    k.words.forEach(w => {
+      if (w.reading) list.push(w.reading);
+    });
+  }
+  return list;
+}
 
 export default function KanjiTab({ 
   appState, 
@@ -228,9 +265,10 @@ export default function KanjiTab({
 
   const currentQuizItem = quizItems[quizIndex];
 
-  const handleValidateReading = () => {
-    if (!currentQuizItem || !quizInput.trim()) return;
-    const inputVal = quizInput.trim();
+  const handleValidateReading = (forcedValue = null) => {
+    if (!currentQuizItem) return;
+    const inputVal = (typeof forcedValue === 'string' ? forcedValue : quizInput).trim();
+    if (!inputVal) return;
     const expected = currentQuizItem.reading.trim();
 
     // Check if input matches primary reading or any compound word reading
@@ -513,15 +551,36 @@ export default function KanjiTab({
 
                   {/* Readings */}
                   <div style={{ background: 'var(--bg-main)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '0.9rem', marginTop: 12 }}>
-                    {k.kunyomi && (
-                      <div><strong>Kun (japonesa):</strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{k.kunyomi}</span></div>
-                    )}
-                    {k.onyomi && (
-                      <div><strong>On (china):</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.onyomi}</span></div>
-                    )}
-                    {!k.kunyomi && !k.onyomi && k.pronunciation && (
-                      <div><strong>Lectura:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.pronunciation}</span></div>
-                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                      <div style={{ flex: 1 }}>
+                        {k.kunyomi && (
+                          <div><strong>Kun (japonesa):</strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{k.kunyomi}</span></div>
+                        )}
+                        {k.onyomi && (
+                          <div><strong>On (china):</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.onyomi}</span></div>
+                        )}
+                        {!k.kunyomi && !k.onyomi && k.pronunciation && (
+                          <div><strong>Lectura:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.pronunciation}</span></div>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, marginTop: 2 }}>
+                        <button 
+                          type="button"
+                          className="audio-btn" 
+                          style={{ width: 28, height: 28 }}
+                          onClick={() => audioManager.speak(getPrimaryKanjiReading(k) || k.kanji)}
+                          title="Escuchar pronunciación del kanji"
+                        >
+                          <Volume2 size={14} />
+                        </button>
+                        <SpeechPractice 
+                          targetText={k.kanji} 
+                          targetKana={getPrimaryKanjiReading(k)} 
+                          acceptableReadings={getAllKanjiReadings(k)}
+                          compact={true} 
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Mnemonic */}
@@ -544,14 +603,22 @@ export default function KanjiTab({
                               {w.word} <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
                             </span>
                             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1, marginLeft: 8 }}>{w.meaning}</span>
-                            <button 
-                              className="audio-btn" 
-                              style={{ width: 26, height: 26, flexShrink: 0 }}
-                              onClick={() => audioManager.speak(w.reading || w.word)}
-                              title="Escuchar palabra"
-                            >
-                              <Volume2 size={13} />
-                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                              <button 
+                                type="button"
+                                className="audio-btn" 
+                                style={{ width: 26, height: 26, flexShrink: 0 }}
+                                onClick={() => audioManager.speak(w.reading || w.word)}
+                                title="Escuchar palabra"
+                              >
+                                <Volume2 size={13} />
+                              </button>
+                              <SpeechPractice 
+                                targetText={w.word} 
+                                targetKana={w.reading} 
+                                compact={true} 
+                              />
+                            </div>
                           </div>
                           {/* Curva visual de Pitch Accent */}
                           <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-start' }}>
@@ -611,8 +678,21 @@ export default function KanjiTab({
                   showAudio={true} 
                 />
               </div>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
                 <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => audioManager.speak(getPrimaryKanjiReading(item) || item.kanji)}
+                >
+                  <Volume2 size={16} /> Escuchar
+                </button>
+                <SpeechPractice 
+                  targetText={item.kanji} 
+                  targetKana={getPrimaryKanjiReading(item)} 
+                  acceptableReadings={getAllKanjiReadings(item)}
+                />
+                <button 
+                  type="button"
                   className="btn btn-outline btn-sm" 
                   onClick={() => setDrawingKanji(item.kanji)}
                 >
@@ -686,6 +766,19 @@ export default function KanjiTab({
                   <button className="btn btn-outline" onClick={handleShowHint} title="Revelar primer kana">
                     <Lightbulb size={16} /> Pista
                   </button>
+                </div>
+
+                <div style={{ marginTop: 14, paddingTop: 10, borderTop: '1px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>O practica diciendo la lectura:</span>
+                  <SpeechPractice 
+                    targetText={currentQuizItem.kanji} 
+                    targetKana={currentQuizItem.reading} 
+                    acceptableReadings={currentQuizItem.words?.map(w => w.reading)}
+                    onMatch={(spoken) => {
+                      setQuizInput(currentQuizItem.reading);
+                      handleValidateReading(currentQuizItem.reading);
+                    }}
+                  />
                 </div>
 
                 {quizFeedback && (
