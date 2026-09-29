@@ -1,543 +1,420 @@
-# Auditoría y Temarios Completos de Libros de Estudio vs. Nihongo Master
-## Análisis Comparativo de "Irodori: Elementary 1 (Starter A1)" y "Hablemos en Japonés (Japonés from Spanish - NHK World)"
+# Registro Maestro y Cuaderno de Seguimiento Curricular — Nihongo Master
+## Guía Canónica de Referencia para la Incorporación de Temas, Módulos y Ejercicios
 
-> **Fecha del informe:** 29 de Septiembre de 2026 (Actualizado tras Importación Completa)  
-> **Estado global de integración interactiva:**
-> - 📘 **Japonés from Spanish (NHK World):** ✅ **100% Importado** (48/48 lecciones completas con diálogos, notas gramaticales y 144 ejercicios interactivos en `data/conversation_exercises.json`).
-> - 📙 **Irodori Elementary 1 (Fundación Japón):** ✅ **100% Importado** (18/18 lecciones en la Ruta Can-Do con los 79 objetivos Can-Do, 24 kanjis clave incorporados en `kanji.json` y sincronización bidireccional de vocabulario).
-
----
-
-## 1. Resumen Ejecutivo y Métricas Clave
-
-| Métrica / Dimensión | NHK: Japonés from Spanish | Irodori: Elementary 1 (A1) | Total / Global |
-| :--- | :---: | :---: | :---: |
-| **Páginas del material original** | 58 páginas | 515 páginas | 573 páginas |
-| **Unidades / Bloques temáticos** | 7 ejes temáticos | 9 grandes tópicos | 16 ejes temáticos |
-| **Lecciones totales en el temario** | 48 lecciones | 18 lecciones (79 Can-dos) | 66 lecciones / unidades |
-| **Lecciones en la aplicación** | **48 lecciones** (`nhk_lessons.json`) | **18 módulos** (`curriculum.json`) | **66 lecciones (100%)** |
-| **Lecciones con Gramática y Diálogo** | 48 lecciones (100%) | 18 módulos (100%) | **66 lecciones (100%)** |
-| **Lecciones faltantes por incorporar** | **0 lecciones** | **0 lecciones** | **0 lecciones (Completado)** |
-| **Ejercicios interactivos en la app** | **144 ejercicios** (3 por lección) | **26+ ejercicios Can-Do** | **170+ ejercicios** |
-| **Kanjis objetivo introducidos** | En apéndice y diálogos | 93 kanjis cotidianos | 93+ kanjis |
-| **Kanjis faltantes en `kanji.json`** | 0 kanjis | 0 kanjis | **0 kanjis (24 añadidos)** |
-| **Vocabulario registrado con 3 formas** | 100% sincronizado | 100% sincronizado | **208 entradas con Kanji/Kana/Katakana** |
+> **Fecha de Actualización:** 29 de Septiembre de 2026  
+> **Estado Global del Sistema:** ✅ **100% de los manuales base integrados y consolidados**  
+> - 📘 **Japonés from Spanish (NHK World):** ✅ **48/48 Lecciones (100%)** con diálogos íntegros bilingües, notas gramaticales y **144 ejercicios interactivos** en `data/conversation_exercises.json`.  
+> - 📙 **Irodori Elementary 1 (Fundación Japón):** ✅ **18/18 Lecciones (100%)** con sus **79 Objetivos Can-Do**, 24 kanjis clave incorporados en `data/kanji.json` y vocabulario sincronizado.  
+> - ⛩️ **Currículum Maestro:** ✅ **19 Módulos Consolidados** sin duplicidad temática, con **87 Can-Dos**, audio nativo, ejercicios por nivel y enlaces bidireccionales a **Temas Relacionados**.  
+>  
+> **⚠️ REGLA PRIMORDIAL:** Este documento es la **Única Fuente de Verdad pedagógica y curricular** del proyecto `Nihongo Master`. **Todo desarrollador o agente de IA DEBE consultarlo obligatoriamente antes de agregar cualquier nuevo tema, módulo o ejercicio** para garantizar la no duplicidad, la complementación de contenido y la preservación de los enlaces formativos.
 
 ---
 
-## 2. Libro 1: "Japonés from Spanish" (NHK World — Hablemos en Japonés)
+## 1. Protocolo Canónico: ¿Cómo agregar un nuevo Tema, Módulo o Ejercicio?
 
-### 2.1. Ficha del Material
-- **Archivo:** `public/material_de_estudio/cursos/japones from spanish.pdf` (y `data/japones_from_spanish_raw.json`)
-- **Enfoque pedagógico:** Curso de iniciación comunicativa de 48 lecciones situacionales narrado a través de la vida de Anna (estudiante tailandesa en Tokio) y Sakura.
-- **Ejes temáticos:** 
-  1. *En la universidad*
-  2. *En la residencia*
-  3. *Compras y restaurantes*
-  4. *Cultura japonesa*
-  5. *Viajes y salidas*
-  6. *Ayuda y emergencias*
-  7. *Ocasiones especiales*
+Para mantener una arquitectura curricular limpia, coherente y escalable en el tiempo, rige el siguiente flujo obligatorio:
 
----
-
-### 2.2. Temario Completo y Estado de Integración de las 48 Lecciones
-
-> **Criterio de Evaluación:**
-> - `[x] Completo`: Diálogo completo con kanji/kana, audio integrado, explicación gramatical y al menos 3 ejercicios de práctica.
-> - `[-] Parcial`: Diálogo básico integrado en `nhk_lessons.json`, pero carece de explicación gramatical detallada, notas culturales, lista de vocabulario o ejercicios suficientes.
-> - `[ ] Faltante`: No existe en la base de datos de lecciones de la aplicación.
-
-| Lecc. | Título en Romaji | Título en Japonés y Español | Foco Gramatical / Estructura | Eje Temático | Estado en App | Ejercicios Actuales |
-| :---: | :--- | :--- | :--- | :--- | :---: | :---: |
-| **1** | WATASHI WA ANNA DESU | はじめまして。私はアンナです。<br>*(Encantada de conocerte. Soy Anna)* | Cópula です, partícula は, saludo canónico de presentación | En la universidad | `[-]` Parcial | 1 ejercicio (`conv_ex_1`) |
-| **2** | KORE WA NAN DESU KA | これは何ですか。<br>*(¿Qué es esto?)* | Demostrativos de objetos: これ, それ, あれ | En la universidad | `[-]` Parcial | 1 ejercicio (`conv_ex_2`) |
-| **3** | TOIRE WA DOKO DESU KA | トイレはどこですか。<br>*(¿Dónde está el baño?)* | Demostrativos de lugar: ここ, そこ, あそこ y pronombre どこ | En la universidad | `[-]` Parcial | 1 ejercicio (`conv_ex_3`) |
-| **4** | TADAIMA | ただいま。<br>*(¡Ya llegué! / Estoy en casa)* | Negación de identidad: ではありません / じゃありません | En la residencia | `[-]` Parcial | 1 ejercicio (`conv_ex_4`) |
-| **5** | SORE WA WATASHI NO TAKARAMONO DESU | それは私の宝物です。<br>*(Ese es mi tesoro)* | Partícula conectiva y posesiva の (Noun + の + Noun) | En la residencia | `[-]` Parcial | 1 ejercicio (`conv_ex_5`) |
-| **6** | DENWABANGÔ WA NANBAN DESU KA | 電話番号は何番ですか。<br>*(¿Cuál es tu número de teléfono?)* | Pregunta por números con 何番 y números telefónicos | En la residencia | `[-]` Parcial | 0 ejercicios |
-| **7** | SHÛKURÎMU WA ARIMASU KA | シュークリームはありますか。<br>*(¿Hay bollos de crema?)* | Existencia de cosas inanimadas (ありますか) y pedir cosas (〜をください) | Compras y restaurantes | `[-]` Parcial | 1 ejercicio (`conv_ex_7`) |
-| **8** | MÔICHIDO ONEGAI SHIMASU | もう一度お願いします。<br>*(¿Podría repetirlo una vez más?)* | Peticiones con 〜てください / 〜お願いします | En la universidad | `[-]` Parcial | 1 ejercicio (`conv_ex_8`) |
-| **9** | NANJI KARA DESU KA | 何時からですか。<br>*(¿Desde qué hora es?)* | Expresión horaria con から y まで | En la universidad | `[-]` Parcial | 1 ejercicio (`conv_ex_9`) |
-| **10** | ZEN-IN IMASU KA | 全員いますか。<br>*(¿Están todos?)* | Existencia de seres animados (います / いません) | En la universidad | `[-]` Parcial | 1 ejercicio (`conv_ex_10`) |
-| **11** | ZEHI KITE KUDASAI | ぜひ来てください。<br>*(Por favor no dejes de venir)* | Invitación efusiva con el adverbio ぜひ + 〜てください | Cultura japonesa | `[-]` Parcial | 1 ejercicio (`conv_ex_11`) |
-| **12** | ITSU NIHON NI KIMASHITA KA | いつ日本に来ましたか。<br>*(¿Cuándo viniste a Japón?)* | Pasado verbal 〜ました y partícula de tiempo/destino に | Viajes y salidas | `[-]` Parcial | 0 ejercicios |
-| **13** | SHÔSETSU GA SUKI DESU | 小説が好きです。<br>*(Me gustan las novelas)* | Marcador de gusto o afición: Objeto + が + 好きです | Compras y restaurantes | `[-]` Parcial | 1 ejercicio (`conv_ex_13`) |
-| **14** | KOKO NI GOMI O SUTETE MO II DESU KA | ここにゴミを捨ててもいいですか。<br>*(¿Puedo tirar la basura aquí?)* | Permiso con la estructura: Forma-て + もいいですか | En la residencia | `[-]` Parcial | 1 ejercicio (`conv_ex_14`) |
-| **15** | NETE IMASU | 寝ています。<br>*(Están durmiendo)* | Acción continua / progresiva: Forma-て + います | En la residencia | `[-]` Parcial | 0 ejercicios |
-| **16** | KAIDAN O AGATTE, MIGI NI ITTE KUDASAI | 階段を上がって、右に行ってください。<br>*(Suba la escalera y vaya a la derecha)* | Conexión de verbos en secuencia continua con Forma-て | Viajes y salidas | `[-]` Parcial | 1 ejercicio (`conv_ex_16`) |
-| **17** | OSUSUME WA NAN DESU KA | おすすめは何ですか。<br>*(¿Cuál es la recomendación?)* | Preguntar sugerencias o platos recomendados en restaurantes | Compras y restaurantes | `[-]` Parcial | 0 ejercicios |
-| **18** | MICHI NI MAYOTTE SHIMAIMASHITA | 道に迷ってしまいました。<br>*(Me he perdido)* | Acción involuntaria o pesar con: Forma-て + しまいました | Viajes y salidas | `[-]` Parcial | 1 ejercicio (`conv_ex_18`) |
-| **19** | YOKATTA | よかった。<br>*(Menos mal / Qué alivio)* | Pasado de adjetivo-い: いい → よかった | Ayuda | `[-]` Parcial | 0 ejercicios |
-| **20** | NIHON NO UTA O UTATTA KOTO GA ARIMASU KA | 日本の歌を歌ったことがありますか。<br>*(¿Has cantado canciones japonesas?)* | Experiencias pasadas: Verbo en Pasado Simple (Ta-form) + ことがある | Cultura japonesa | `[-]` Parcial | 1 ejercicio (`conv_ex_20`) |
-| **21** | IIE, SOREHODODEMO | いいえ、それほどでも。<br>*(No, no es para tanto)* | Modestia japonesa ante un cumplido o elogio | Ocasiones especiales | `[-]` Parcial | 1 ejercicio (`conv_ex_21`) |
-| **22** | OSOKU NARIMASHITA | 遅くなりました。<br>*(Llegué tarde)* | Cambio de estado con adjetivos: Forma-く + なりました | Ayuda | `[-]` Parcial | 1 ejercicio (`conv_ex_22`) |
-| **23** | OKÂSAN NI SHIKARAREMASHITA | お母さんに叱られました。<br>*(Mi madre me regañó)* | **Voz Pasiva:** Sujeto + に + Verbo Pasivo (〜られました) | En la residencia | `[ ]` **Faltante** | 0 ejercicios |
-| **24** | TSUKAWANAIDE KUDASAI | 使わないでください。<br>*(Por favor no lo use)* | **Petición Negativa:** Verbo en forma-ない + でください | En la residencia | `[ ]` **Faltante** | 0 ejercicios |
-| **25** | TSUKUE NO SHITA NI HAIRE | 机の下に入れ。<br>*(¡Métanse debajo de los escritorios!)* | **Modo Imperativo directo:** Forma verbal de orden (入れ, 逃げろ) | En la residencia | `[ ]` **Faltante** | 0 ejercicios |
-| **26** | TSUGI WA GANBARÔ | 次はがんばろう。<br>*(Esforcémonos la próxima vez)* | **Modo Volitivo informal:** Forma-おう / 〜よう (がんばろう) | Ocasiones especiales | `[ ]` **Faltante** | 0 ejercicios |
-| **27** | DARE GA KEKKON SURU N DESU KA | 誰が結婚するんですか。<br>*(¿Quién es el que se casa?)* | **Construcción explicativa:** 〜んですか / 〜のですか | Cultura japonesa | `[ ]` **Faltante** | 0 ejercicios |
-| **28** | SHIZUOKA E YÔKOSO | 静岡へようこそ。<br>*(Bienvenida a Shizuoka)* | Fórmulas de bienvenida y partícula de dirección へ | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **29** | CHIKAKU DE MIRU TO, ÔKII DESU NE | 近くで見ると、大きいですね。<br>*(Visto de cerca es enorme)* | **Condicional natural con 〜と:** Verbo dicc. + と (Consecuencia inmediata) | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **30** | MÔ SUKOSHI SHASHIN O TORITAI DESU | もう少し写真を撮りたいです。<br>*(Quiero tomar un poco más de fotos)* | **Expresión de deseo personal:** Raíz verbal + 〜たいです | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **31** | MÔ HACHIJÛNI SAI DESU YO | もう82歳ですよ。<br>*(¡Ya tengo 82 años!)* | Partícula informativa よ y uso del adverbio temporal もう | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **32** | FUTON NO HÔ GA SUKI DESU | 布団のほうが好きです。<br>*(Prefiero el futón)* | **Comparación de preferencia:** A のほうが (B より) 好きです | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **33** | ANNA-SAN NI AGEMASU | アンナさんにあげます。<br>*(Se lo doy a Anna)* | **Verbos de entrega y recepción:** あげる (dar), くれる (darme), もらう (recibir) | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **34** | YAWARAKAKUTE OISHII DESU | 柔らかくておいしいです。<br>*(Es suave y delicioso)* | **Unión de Adjetivos-い:** Reemplazo de 〜い por 〜くて | Compras y restaurantes | `[ ]` **Faltante** | 0 ejercicios |
-| **35** | KUREJITTO KÂDO WA TSUKAEMASU KA | クレジットカードは使えますか。<br>*(¿Se puede usar tarjeta de crédito?)* | **Forma Potencial:** Capacidad de hacer algo (使えます, 買えます) | Compras y restaurantes | `[ ]` **Faltante** | 0 ejercicios |
-| **36** | BENKYÔ SHINAKEREBA NARIMASEN | 勉強しなければなりません。<br>*(Tengo que estudiar)* | **Obligación imprescindible:** Forma-ない → 〜なければなりません | Ayuda | `[ ]` **Faltante** | 0 ejercicios |
-| **37** | FUJISAN O MITARI, OSUSHI O TABETARI SHIMASHITA | 富士山を見たり、お寿司を食べたりしました。<br>*(Vi el monte Fuji, comí sushi...)* | **Enumeración de acciones no exhaustivas:** Forma-たり 〜たりします | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **38** | KASHIKOMARIMASHITA | かしこまりました。<br>*(Entendido con mucho gusto)* | **Lenguaje formal / Keigo en el servicio:** Fórmulas de atención al cliente | Compras y restaurantes | `[ ]` **Faltante** | 0 ejercicios |
-| **39** | KAZE DA TO OMOIMASU | 風邪だと思います。<br>*(Creo que es un resfriado)* | **Expresión de opinión o hipótesis:** Estilo informal + と思います | Ayuda | `[ ]` **Faltante** | 0 ejercicios |
-| **40** | ATAMA GA ZUKIZUKI SHIMASU | 頭がずきずきします。<br>*(Me palpita intensamente la cabeza)* | **Onomatopeyas físicas y síntomas:** ずきずき (punzante), ぺこぺこ (hambre) | Ayuda | `[ ]` **Faltante** | 0 ejercicios |
-| **41** | GAKUEN-SAI NI IKU KOTO GA DEKITE, TANOSHIKATTA DESU | 学園祭に行くことができて、楽しかったです。<br>*(Pude ir al festival y fue divertido)* | Nominalización con ことができる (Poder hacer) y conector causal en -て | Cultura japonesa | `[ ]` **Faltante** | 0 ejercicios |
-| **42** | DORE GA ICHIBAN OISHII KANA | どれが一番おいしいかな。<br>*(¿Cuál será el más sabroso?)* | Superlativo con 一番 (el número 1) y partícula de reflexión interior かな | Compras y restaurantes | `[ ]` **Faltante** | 0 ejercicios |
-| **43** | DÔSHITE DESHÔ KA | どうしてでしょうか。<br>*(¿Por qué será?)* | Pregunta formal atenuada de conjetura con でしょうか | Ocasiones especiales | `[ ]` **Faltante** | 0 ejercicios |
-| **44** | WAGASHI O TABETE KARA, MACCHA O NOMIMASU | 和菓子を食べてから、抹茶を飲みます。<br>*(Tras comer el dulce, se bebe el té)* | **Secuencia temporal estricta:** Forma-て + から (Después de hacer A...) | Compras y restaurantes | `[ ]` **Faltante** | 0 ejercicios |
-| **45** | OTANJÔBI OMEDETÔ | お誕生日おめでとう。<br>*(¡Feliz cumpleaños!)* | Fórmulas de felicitación y cortesía en celebraciones | Cultura japonesa | `[ ]` **Faltante** | 0 ejercicios |
-| **46** | KIKOKU SURU MAE NI, YUKI O MIRU KOTO GA DEKITE SHIAWASE DESU | 帰国する前に、雪を見ることができて幸せです。<br>*(Ver la nieve antes de volver me hace feliz)* | Construcción temporal con: Verbo en forma diccionario + 前に (Antes de) | Viajes y salidas | `[ ]` **Faltante** | 0 ejercicios |
-| **47** | NIHONGO-KYÔSHI NI NARU NO GA YUME DESU | 日本語教師になるのが夢です。<br>*(Convertirme en profesora es mi sueño)* | **Nominalización de acciones:** Forma diccionario + の / こと | Ocasiones especiales | `[ ]` **Faltante** | 0 ejercicios |
-| **48** | IROIRO OSEWA NI NARIMASHITA | いろいろお世話になりました。<br>*(Gracias por todo su apoyo y atenciones)* | Expresión canónica japonesa de agradecimiento al culminar un ciclo | Ocasiones especiales | `[ ]` **Faltante** | 0 ejercicios |
+```mermaid
+flowchart TD
+    A["Nueva Propuesta de Contenido"] --> B{"¿El tema central ya existe en la Matriz de 19 Módulos?"}
+    B -- "SÍ (Tema ya cubierto)" --> C{"¿Aporta información o ejercicios nuevos?"}
+    C -- "SÍ (Ejemplos, Can-Do, Diálogo)" --> D["COMPLEMENTAR el Módulo Existente (step)"]
+    C -- "NO (Información redundante)" --> E["DESCARTAR / SALTAR (No duplicar)"]
+    B -- "NO (Tema enteramente nuevo)" --> F["Crear Nuevo Módulo Secuencial (M20+)"]
+    D --> G["Verificar y Añadir 'related_topics'"]
+    F --> G
+    G --> H{"¿Se agregan palabras con Kanji?"}
+    H -- "SÍ" --> I["Sincronizar en data/vocabulary.json (3 formas) y data/kanji.json (words)"]
+    H -- "NO" --> J["Validar con npm run build"]
+    I --> J
+    J --> K["Actualizar este MD (ANALISIS_TEMARIOS_LIBROS.md)"]
+    K --> L["Commit, Push a main y Deploy en Vercel"]
+```
 
 ---
 
-### 2.3. Subtemas y Apéndices de NHK Faltantes en la Aplicación
-1. **Páginas 53 a 56 del libro (Apéndices gramaticales completos):**
-   - **Contadores japoneses (pág. 53):** Tablas de 〜人 (personas), 〜本 (objetos alargados), 〜枚 (objetos planos), 〜冊 (libros), 〜台 (vehículos/máquinas), 〜つ (general nativo). *Estado: Disperso, no sistematizado en la app.*
-   - **Conjugaciones Verbales Fundamentales (pág. 54-55):** Tablas de clasificación de Grupo 1 (Godan), Grupo 2 (Ichidan) y Grupo 3 (Irregulares: する, くる) en sus formas Diccionario, ます, て y ない. *Estado: No existe una tabla interactiva de referencia.*
-   - **Guía fonética y Silabarios (pág. 56):** Reglas de pronunciación de sonidos contraídos (Yôon: きゃ, しゅ), sonidos dobles (Sokuon: っ) y sonidos nasales.
-2. **Vacío Crítico de Ejercicios en NHK:**
-   - La base de datos `conversation_exercises.json` solo tiene **17 preguntas** en total.
-   - De la Lección 1 a la 22, cinco lecciones (L6, L12, L15, L17, L19) tienen **0 ejercicios**.
-   - De la Lección 23 a la 48, **todas las 26 lecciones tienen 0 ejercicios**.
-   - No hay ejercicios de audio de escucha activa ni de formulación de respuestas abiertas.
+### 1.1. Reglas de Oro para la Incorporación de Contenido
+
+1. **Auditoría Previa de No Duplicidad:**  
+   Antes de escribir una sola línea de código o JSON, buscar en la **Sección 2 (Matriz de 19 Módulos)** por palabras clave de gramática, vocabulario o función comunicativa. Nunca debe crearse un módulo paralelo que compita sobre el mismo tópico (ej. presentaciones personales, existencia, comida, transporte o compras).
+2. **Principio de Complementación:**  
+   Si el tema ya existe en alguno de los 19 módulos maestros, **se debe complementar dicho módulo** agregando los nuevos ejercicios a su array `"exercises"`, los ejemplos a `"examples"` o las competencias a `"can_dos"`. Si la propuesta no aporta valor adicional o es idéntica a lo ya existente, **se omite**.
+3. **Enlace Obligatorio con Temas Relacionados (`related_topics`):**  
+   Todo módulo nuevo o modificado debe incorporar enlaces explícitos a sus módulos precedentes, consecutivos o complementarios, detallando:
+   - `step`: Número del módulo destino.
+   - `title`: Título oficial del módulo destino.
+   - `icon`: Emoji distintivo.
+   - `relationship`: Tipo de relación (`Precedente`, `Consecutivo Natural`, `Ampliación de Perfil`, `Complementario`, `Entorno Espacial`, etc.).
+   - `reason`: Explicación pedagógica de por qué están vinculados.
+4. **Destino Canónico de los Ejercicios:**  
+   - **Ejercicios de comprensión de lecciones de conversación (NHK):** Se alojan en `data/conversation_exercises.json`.
+   - **Ejercicios prácticos integrados de cada módulo:** Se alojan dentro del array `"exercises"` del módulo en `data/curriculum.json`.
+   - **Ejercicios contextuales de rellenar huecos gramaticales:** Se alojan en `data/exercises.json`.
+5. **Estructura de Tres Formas de Vocabulario y Sincronización Kanji:**  
+   Toda nueva palabra debe registrarse con `kanji`, `hiragana`, `katakana`, traducción en español y nivel JLPT en `data/vocabulary.json`, y vincularse en el array `words` de cada kanji correspondiente en `data/kanji.json`.
+6. **Actualización Obligatoria de este Documento:**  
+   Cada adición o modificación debe registrarse de inmediato en las tablas de seguimiento de este archivo.
 
 ---
 
-## 3. Libro 2: "Irodori: Japanese for Life in Japan — Elementary 1 (A1)"
+### 1.2. Plantillas y Formatos Canónicos JSON
 
-### 3.1. Ficha del Material
-- **Archivo:** `public/material_de_estudio/cursos/irodori elementary.pdf`
-- **Autoría:** Fundación Japón (Japan Foundation).
-- **Extensión:** 515 páginas.
-- **Marco de referencia:** Estándar JF / Marco Común Europeo de Referencia para las lenguas (MCER A1).
-- **Estructura pedagógica:**
-  - 9 Tópicos temáticos integrales de la vida en Japón.
-  - 18 Lecciones con situaciones laborales y comunitarias auténticas.
-  - **79 Objetivos Can-Do** (competencias prácticas observables).
-  - Componentes por lección: Actividades (Listen, Speak, Read, Write), Palabras en Kanji, Notas gramaticales, Consejos de vida en Japón (*Tips for life in Japan*), Autoevaluación Can-do.
+#### A. Para un Módulo del Currículum (`data/curriculum.json`):
+```json
+{
+  "step": 20,
+  "title": "Título del Módulo en Español",
+  "subtitle": "Frase canónica en japonés. (Traducción al español)",
+  "icon": "🎯",
+  "level": "N4",
+  "stage": "Módulo 20 · Fase Temática",
+  "track": "consolidated",
+  "track_label": "Módulo Consolidado",
+  "sourceBooks": ["Nombre del Manual Original (Págs. X-Y)"],
+  "sourcePdf": "Nombre del PDF",
+  "detailed_guide": "Explicación teórica profunda, contexto sociocultural y notas de uso comunicativo.",
+  "objectives": [
+    "Objetivo pedagógico observable 1",
+    "Objetivo pedagógico observable 2"
+  ],
+  "can_dos": [
+    {
+      "id": "CD-88",
+      "task": "Descripción de la competencia práctica observable",
+      "sample": "Expresión japonesa modelo (ej. 日本語で話すことができます)"
+    }
+  ],
+  "grammar_focus": [
+    "Punto gramatical clave 1",
+    "Punto gramatical clave 2"
+  ],
+  "included_vocab": ["単語1", "単語2"],
+  "vocab_details": [
+    {
+      "kanji": "単語",
+      "kana": "たんご",
+      "meaning": "palabra / vocabulario",
+      "type": "Sustantivo"
+    }
+  ],
+  "examples": [
+    {
+      "jp": "日本語の単語を覚えます。",
+      "kana": "にほんごのたんごをおぼえます。",
+      "romaji": "Nihongo no tango o oboemasu.",
+      "es": "Memorizo palabras en japonés.",
+      "explanation": "Uso de la partícula acusativa を con el verbo transitivo 覚えます."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "m20_ex1",
+      "question": "Selecciona la opción correcta:",
+      "sentence": "毎日単語を [___]。",
+      "options": ["覚えます", "食べます", "行きます", "寝ます"],
+      "correct": "覚えます",
+      "explanation": "El verbo adecuado para memorizar o aprender vocabulario es 覚えます."
+    }
+  ],
+  "related_topics": [
+    {
+      "step": 1,
+      "title": "Saludos, Cortesía y Presentación Personal",
+      "icon": "🤝",
+      "relationship": "Precedente",
+      "reason": "Justificación pedagógica del enlace."
+    }
+  ]
+}
+```
 
----
-
-### 3.2. Temario Completo y Objetivos Can-Do de las 18 Lecciones
-
-> **Estado en la App:** Todas las lecciones de Irodori (`Lesson 1` a `Lesson 18`) están actualmente en estado `[ ] No Integrado` a nivel interactivo (el archivo PDF está registrado en el visor de `MaterialLibraryTab.jsx`, pero no existen lecciones, tarjetas ni ejercicios en el código interactivo).
-
----
-
-#### 🎌 TÓPICO 1: はじめての日本語 (Iniciación al Japonés)
-
-##### Lección 1: おはようございます (¡Buenos días!) — Págs. 44-61
-- **Objetivos Can-Do del libro:**
-  - `Can-do 01`: Saludar al encontrarse con alguien según el momento del día (おはようございます, こんにちは, こんばんは).
-  - `Can-do 02`: Despedirse al retirarse o terminar la jornada (お先に失礼します, お疲れさまでした, 失礼します, じゃあまた).
-  - `Can-do 03`: Agradecer y pedir disculpas en situaciones concretas (ありがとうございます, すみません).
-  - `Can-do 04`: Comprender stickers y estampas de mensajería digital con mensajes cotidianos.
-- **Palabras en Hiragana:** Práctica de lectura y reconocimiento de todo el silabario Hiragana.
-- **Consejos de vida en Japón:** Gestos e inclinaciones al saludar; uso real de "Sayounara" vs "Mata ne"; cuándo utilizar "Sumimasen" (perdón, gracias, disculpe).
-- **Subtemas y Ejercicios Prácticos:**
-  - Distinción auditiva entre trato formal (おはようございます) y de confianza (おはよう).
-  - Prácticas de Shadowing (01-06 a 01-09).
-  - Emparejamiento de situaciones con fórmulas de despedida de trabajo y noche.
-- **Estado en App:** `[ ]` Faltante (Solo saludos básicos en vocabulario general; sin contexto laboral ni Can-dos).
-
-##### Lección 2: すみません、よくわかりません (Disculpe, no entiendo bien) — Págs. 62-80
-- **Objetivos Can-Do del libro:**
-  - `Can-do 05`: Pedir que repitan o hablen más despacio cuando no se entiende (もう一度お願いします, ゆっくりお願いします).
-  - `Can-do 06`: Responder qué idiomas se hablan y preguntar a otros (日本語、できますか？ / 英語ができます / 少しできます).
-  - `Can-do 07`: Preguntar cómo se dice una palabra u objeto en japonés (これは日本語で何と言いますか？).
-- **Palabras en Katakana:** Práctica de reconocimiento del silabario Katakana en palabras prestadas y letreros.
-- **Consejos de vida en Japón:** Tarjeta de residencia (*Zairyu Card*); el plato oden; abreviaciones japonesas; términos de prevención ante mosquitos.
-- **Subtemas y Ejercicios Prácticos:**
-  - Audios de aclaración comunicativa y gestión del malentendido en el trabajo.
-  - Ejercicios de rellenado de términos en katakana.
-- **Estado en App:** `[ ]` Faltante.
-
----
-
-#### 👤 TÓPICO 2: 私のこと (Sobre mí mismo)
-
-##### Lección 3: よろしくお願いします (Mucho gusto / Encantado) — Págs. 81-100
-- **Objetivos Can-Do del libro:**
-  - `Can-do 08`: Presentarse de forma sencilla indicando nombre, país y ciudad natal.
-  - `Can-do 09`: Escribir nombre y nacionalidad en tarjetas de identificación y etiquetas (*name tags*).
-  - `Can-do 10`: Preguntar y responder sobre origen y procedencia al conocer a alguien nuevo (ご出身は？).
-  - `Can-do 11`: Rellenar formularios de solicitud oficiales (nombre, nacionalidad, fecha de nacimiento).
-- **Kanjis Objetivo:** `名前` (nombre), `国` (país), `私` (yo).
-- **Estructuras Gramaticales (Grammar Notes):**
-  1. `Nです` / `N1 は N2 です` (Identificación personal).
-  2. `【Lugar】から来ました` (Procedencia).
-  3. `Nは？` (Pregunta elíptica de cortesía: ¿Y usted?).
-  4. Oración interrogativa con partícula `か`.
-  5. Partícula de inclusión `も` (también).
-  6. Negación con `Nじゃないです` / `ではありません`.
-- **Consejos de vida en Japón:** Los caracteres de la escritura japonesa; sufijos honoríficos (-san, -kun, -chan); las eras imperiales japonesas (Reiwa, Heisei).
-- **Estado en App:** `[ ]` Faltante (Solo gramática aislada en `curriculum.json` Nivel 1; faltan formularios y Can-dos).
-
-##### Lección 4: 東京に住んでいます (Vivo en Tokio) — Págs. 101-123
-- **Objetivos Can-Do del libro:**
-  - `Can-do 12`: Escuchar la presentación de una familia y comprender quién es quién.
-  - `Can-do 13`: Preguntar y responder sobre el lugar de residencia actual y la edad (何歳ですか？ / 〜歳です).
-  - `Can-do 14`: Hacer y responder preguntas sobre fotografías familiares o de mascotas (ペットのジョンです / これは誰ですか？).
-  - `Can-do 15`: Leer publicaciones cortas de amigos en redes sociales con apoyo de fotografías.
-- **Kanjis Objetivo:** `父` (padre), `母` (madre), `子ども` (hijo/niño), `日本` (Japón).
-- **Estructuras Gramaticales:**
-  1. Conexión de sustantivos con `と` (compañía o enumeración: 夫と子ども).
-  2. Preguntas interrogativas de edad y estado: `何歳ですか？`.
-  3. Residencia con verbo de estado: `【Lugar】に住んでいます`.
-  4. Relación de pertenencia o parentesco: `N1 の N2` (私の母, 友だちの写真).
-- **Consejos de vida en Japón:** Principales urbes japonesas; etiqueta al preguntar la edad; la geografía marítima de Japón.
-- **Estado en App:** `[ ]` Faltante.
-
----
-
-#### 🍜 TÓPICO 3: 好きな食べ物 (Comida Favorita)
-
-##### Lección 5: うどんが好きです (Me gusta el udon) — Págs. 124-158
-- **Objetivos Can-Do del libro:**
-  - `Can-do 16`: Responder preguntas sobre gustos y disgustos culinarios (肉と野菜が好きです / 魚は好きじゃないです).
-  - `Can-do 17`: Expresar de forma diplomática qué comidas japonesas no se prefieren (わさびは、ちょっと…).
-  - `Can-do 18`: Responder a invitaciones y ofertas de bebidas (お茶、飲みますか？ / お願いします).
-  - `Can-do 19`: Hablar sobre los hábitos del desayuno (朝ご飯は、あまり食べません).
-  - `Can-do 20`: Escribir un pie de foto sencillo sobre una comida para redes sociales.
-- **Kanjis Objetivo:** `水` (agua), `食べます` (comer), `飲みます` (beber).
-- **Estructuras Gramaticales:**
-  1. `Nが好きです` / `Nは好きじゃないです`.
-  2. Atenuación cortés: `Nはちょっと…` (Rechazo sin decir "no").
-  3. Invitación/pregunta informal vs formal: `V-ますか？` vs `V-る？`.
-  4. Objeto directo con verbo de acción: `Nを V-ます`.
-  5. Negación de hábitos: `（Nは）V-ません` / `V-ないです`.
-  6. Adverbios de frecuencia: `いつも`, `よく`, `あまり`, `ぜんぜん`.
-- **Consejos de vida en Japón:** Tipos de gastronomía japonesa (Sushi, Sashimi, Tempura, Udon, Soba, Curry japonés); ingredientes polémicos para extranjeros (natto, umeboshi); el sake japonés; los *donburi-mono*; el desayuno tradicional vs moderno.
-- **Estado en App:** `[ ]` Faltante.
-
-##### Lección 6: チーズバーガーください (Una hamburguesa con queso, por favor) — Págs. 159-181
-- **Objetivos Can-Do del libro:**
-  - `Can-do 21`: Leer un menú con imágenes en un restaurante de comida rápida e identificar opciones disponibles.
-  - `Can-do 22`: Hacer un pedido en un establecimiento de comida rápida (para comer allí o llevar: 店内 / お持ち帰り).
-  - `Can-do 23`: Decidir qué pedir en grupo y consensuar opciones (私はカレーにします).
-  - `Can-do 24`: Pedir raciones, platos, vasos o condimentos en un restaurante o izakaya (枝豆2つください).
-  - `Can-do 25`: Reconocer letreros luminosos y carteles de tipos de locales de comida en la calle.
-- **Kanjis Objetivo:** `魚` (pescado), `肉` (carne), `好き（な）` (gustar).
-- **Estructuras Gramaticales:**
-  1. Pedir artículos: `N、お願いします` / `N、ください`.
-  2. Elección personal: `Nにします` (Me decanto por... / Elijo...).
-  3. Especificar cantidades: `N、【contador】お願いします` / `ください` (ひとつ, ふたつ, みっつ).
-  4. Consultar disponibilidad: `N（は）ありますか？`.
-- **Consejos de vida en Japón:** Cadenas de hamburguesas japonesas; máquinas expendedoras de tickets de comida (*shokkenki*); etiqueta en las tabernas *izakaya*; la cultura del *otôshi* y *oshibori*.
-- **Estado en App:** `[ ]` Faltante.
+#### B. Para un Ejercicio Conversacional (`data/conversation_exercises.json`):
+```json
+{
+  "id": "conv_ex_49_1",
+  "lesson_id": 49,
+  "type": "reply",
+  "question": "¿Qué debes responder ante este comentario?",
+  "prompt": "Anna dice: 「はじめまして、よろしくお願いします。」",
+  "sentence": "こちらこそ、[___]。",
+  "options": [
+    "よろしくお願いします",
+    "さようなら",
+    "いただきます",
+    "ごちそうさまでした"
+  ],
+  "correct": "よろしくお願いします",
+  "explanation": "Ante la fórmula de cortesía よろしくお願いします, se responde recíprocamente こちらこそ、よろしくお願いします (Mucho gusto igualmente)."
+}
+```
 
 ---
 
-#### 🏠 TÓPICO 4: 家と職場 (Hogar y Lugar de Trabajo)
+## 2. Matriz Maestra de Seguimiento: Los 19 Módulos Consolidados
 
-##### Lección 7: 部屋が4つあります (Hay 4 habitaciones) — Págs. 182-214
-- **Objetivos Can-Do del libro:**
-  - `Can-do 26`: Escuchar explicaciones sobre la distribución de una casa o apartamento y comprender su plano.
-  - `Can-do 27`: Preguntar y verificar si una vivienda dispone de electrodomésticos y servicios esenciales.
-  - `Can-do 28`: Describir de forma básica las características y dimensiones de la vivienda (静かです, ちょっとせまいです).
-  - `Can-do 29`: Conversar sobre el tipo de vivienda en el que se habita (apartamento, dormitorio de empresa, casa unifamiliar).
-  - `Can-do 30`: Leer los botones clave de electrodomésticos cotidianos (aire acondicionado: 冷房, 暖房, 停止; lavadora).
-- **Kanjis Objetivo:** `家` (casa), `新しい` (nuevo), `広い` (amplio), `古い` (antiguo).
-- **Estructuras Gramaticales:**
-  1. Señalar estancias: `ここは【Lugar】です` (ここは玄関です).
-  2. Existencia en el espacio: `【Lugar】に Nがあります` / `Nが【número】あります`.
-  3. Ausencia: `（Nは）ありません` / `ないです`.
-  4. Descripción con Adjetivos-い y Adjetivos-な afirmativos.
-  5. Descripción negativa: `ナA-じゃないです` / `イA-くないです`.
-- **Consejos de vida en Japón:** Características de las viviendas niponas (genkan, tatami); tipos de futón; el sistema postal y numeración de direcciones japonesas.
-- **Estado en App:** `[ ]` Faltante.
+Esta matriz representa la **estructura nuclear de la aplicación**. Ningún contenido nuevo puede solaparse con estos 19 tópicos:
 
-##### Lección 8: 山田さんはどこにいますか？ (¿Dónde está el señor Yamada?) — Págs. 215-239
-- **Objetivos Can-Do del libro:**
-  - `Can-do 31`: Escuchar un recorrido de orientación en el centro de trabajo y reconocer las diferentes salas.
-  - `Can-do 32`: Preguntar y responder sobre el paradero de compañeros de trabajo (食堂にいます / 今、会議室です).
-  - `Can-do 33`: Preguntar y responder dónde están los materiales de trabajo (はさみは、そこにあります).
-  - `Can-do 34`: Leer placas y letreros en las puertas de oficinas y salas de empresas (事務室, 休憩室, 倉庫).
-- **Kanjis Objetivo:** `上` (arriba), `下` (abajo), `中` (adentro/centro).
-- **Estructuras Gramaticales:**
-  1. Lugar de acción dinámica: `【Lugar】で V-ます` (ここで着替えます).
-  2. Ubicación de personas: `【Persona】は【Lugar】にいます`.
-  3. Ausencia de personas: `（【Persona】は）いません` / `いないです`.
-  4. Ubicación de objetos inanimados: `【Objeto】は【ここ／そこ／あそこ】にあります`.
-  5. Posiciones relativas con sustantivos: `Nの【Ubicación】にあります` (引き出しの中にあります).
-- **Consejos de vida en Japón:** Uniformes laborales; pausas para el té; el uso continuado del fax en oficinas de Japón.
-- **Estado en App:** `[ ]` Faltante.
+| Mód. | Título Central | Nivel | Can-Dos | Fuentes Integradas | Temas Relacionados Enlazados | Estado en App |
+| :---: | :--- | :---: | :---: | :--- | :--- | :---: |
+| **M1** | **Saludos, Cortesía y Presentación Personal**<br>*(はじめまして。私はアンナです)* | A1 / N5 | 8 (CD 1-4, 8-11) | Irodori L1, L3 · NHK L1-2 · JLPT N1 | 🔗 **M2** (Comunicación), **M3** (Familia), **M19** (Metas) | ✅ 100% |
+| **M2** | **Estrategias de Comunicación y Gestión de Idiomas**<br>*(すみません、もう一度ゆっくりお願いします)* | A1 / N5 | 3 (CD 5-7) | Irodori L2 · NHK L8 | 🔗 **M1** (Saludos), **M9** (Instrucciones Trabajo) | ✅ 100% |
+| **M3** | **Identidad, Familia, Residencia y Contacto**<br>*(東京に住んでいます。家族は3人です)* | A1 / N5 | 4 (CD 12-15) | Irodori L4 · NHK L4-6, L31 · JLPT N2 | 🔗 **M1** (Presentación), **M6** (Hogar), **M8** (Horarios) | ✅ 100% |
+| **M4** | **Gustos, Preferencias Culinarias y Hábitos Diarios**<br>*(うどんが好きです。毎朝コーヒーを飲みます)* | A1 / N5 | 5 (CD 16-20) | Irodori L5 · JLPT N4 · NHK L13 | 🔗 **M5** (Restaurantes), **M8** (Rutinas Diarias) | ✅ 100% |
+| **M5** | **Restaurantes, Menús, Pedidos y Contadores**<br>*(これを2つとウーロン茶をください)* | A1 / N5 | 5 (CD 21-25) | Irodori L6 · NHK L7, L17, L34, L42 | 🔗 **M4** (Gustos), **M14** (Tiendas), **M15** (Precios/Caja) | ✅ 100% |
+| **M6** | **El Hogar, Vivienda, Distribución y Electrodomésticos**<br>*(部屋が4つあります。エアコンと洗濯機があります)* | A1 / N5 | 5 (CD 26-30) | Irodori L7 · NHK L5, L14, L32 | 🔗 **M3** (Residencia), **M7** (Existencia ある/いる) | ✅ 100% |
+| **M7** | **El Lugar de Trabajo, Orientación y Existencia (ある／いる)**<br>*(山田さんは2階の会議室にいます)* | A1 / N5 | 4 (CD 31-34) | Irodori L8 · JLPT N3 · NHK L3, L10, L25 | 🔗 **M6** (Hogar), **M9** (Instrucciones), **M13** (Orientación) | ✅ 100% |
+| **M8** | **Rutinas, Horarios, Días de la Semana e Intervalos**<br>*(9時から5時まで働きます。水曜日は休みです)* | A1 / N5 | 4 (CD 35-38) | Irodori L9 · JLPT N2 · NHK L9 | 🔗 **M4** (Hábitos), **M9** (Horarios Trabajo), **M16** (Pasado) | ✅ 100% |
+| **M9** | **Instrucciones de Trabajo, Peticiones y Reglas Laborales**<br>*(ホチキスを貸してください。ここでタバコを吸わないで)* | A1 / N5 | 5 (CD 39-43) | Irodori L10 · NHK L8, L23, L24 | 🔗 **M2** (Comunicación), **M7** (Trabajo), **M18** (Salud) | ✅ 100% |
+| **M10** | **Aficiones, Tiempo Libre, Ocio y Redes Sociales**<br>*(休みの日は何をしますか？マンガを読んだりします)* | A1 / N5 | 4 (CD 44-47) | Irodori L11 · NHK L11, L20 | 🔗 **M4** (Gustos), **M11** (Eventos), **M16** (Experiencias) | ✅ 100% |
+| **M11** | **Eventos, Festivales, Invitaciones y Propuestas**<br>*(今週の土曜日、いっしょにお祭りに行きませんか？)* | A1 / N5 | 4 (CD 48-51) | Irodori L12 · NHK L26, L27, L41 | 🔗 **M10** (Aficiones), **M12** (Transporte), **M13** (Citas) | ✅ 100% |
+| **M12** | **Movilidad, Transporte Público y Estaciones**<br>*(この電車は新宿に行きますか？何番線ですか？)* | A1 / N5 | 5 (CD 52-56) | Irodori L13 · JLPT N5 · NHK L12, L16, L28 | 🔗 **M11** (Eventos), **M13** (Ciudad), **M17** (Viajes) | ✅ 100% |
+| **M13** | **Orientación Urbana, Puntos de Encuentro y Señalización**<br>*(交差点を右に曲がってください。大きなビルの前です)* | A1 / N5 | 4 (CD 57-60) | Irodori L14 · NHK L18, L38 | 🔗 **M7** (Demostrativos), **M12** (Metro), **M14** (Comercios) | ✅ 100% |
+| **M14** | **Tiendas, Grandes Almacenes y Búsqueda de Productos**<br>*(電池がほしいんですが、何階にありますか？)* | A1 / N5 | 5 (CD 61-65) | Irodori L15 · NHK L35 | 🔗 **M5** (Restaurantes), **M13** (Orientación), **M15** (Caja) | ✅ 100% |
+| **M15** | **Precios, Descuentos y Caja del Combini**<br>*(これ、いくらですか？袋はいりません)* | A1 / N5 | 5 (CD 66-70) | Irodori L16 · NHK L35, L42 | 🔗 **M8** (Números), **M14** (Tiendas) | ✅ 100% |
+| **M16** | **Fin de Semana, Relatar el Pasado y Experiencias de Ocio**<br>*(週末はどうでしたか？映画を見ました)* | A1 / N5 | 5 (CD 71-75) | Irodori L17 · JLPT N6, N7 | 🔗 **M8** (Rutinas), **M10** (Aficiones), **M17** (Vacaciones) | ✅ 100% |
+| **M17** | **Planes Vacacionales, Deseos y Cultura Onsen**<br>*(次の休みに温泉に行きたいです。富士山に登りたい)* | A1 / N5-N4 | 4 (CD 76-79) | Irodori L18 · NHK L29-30, L33, L37 · JLPT N8 | 🔗 **M12** (Transporte), **M16** (Pasado), **M19** (Metas) | ✅ 100% |
+| **M18** | **Salud, Síntomas Corporales y Deberes Ineludibles**<br>*(頭が痛いです。病院へ行かなければなりません)* | N5 - N4 | 4 (CD 80-83) | NHK L19, L22, L36, L39-40 · JLPT N9 | 🔗 **M9** (Reglas Laborales y Bajas), **M14** (Farmacias) | ✅ 100% |
+| **M19** | **Metas Personales, Despedidas y Expresiones de Gratitud**<br>*(日本語が上手になりたいです。大変お世話になりました)* | N5 - N4 | 4 (CD 84-87) | NHK L21, L26, L43, L47-48 · JLPT N8-9 | 🔗 **M1** (Saludos Iniciales), **M17** (Deseos con 〜たい) | ✅ 100% |
 
 ---
 
-#### ⏰ TÓPICO 5: 毎日の生活 (La Vida Diaria)
+## 3. Seguimiento Detallado: Japonés from Spanish (NHK World — 48 Lecciones)
 
-##### Lección 9: 12時から1時まで昼休みです (El descanso es de 12 a 1) — Págs. 240-259
-- **Objetivos Can-Do del libro:**
-  - `Can-do 35`: Preguntar y responder a qué hora nos levantamos, comemos o dormimos.
-  - `Can-do 36`: Comprender la explicación del horario de una jornada laboral en la empresa.
-  - `Can-do 37`: Leer un panel de planificación / pizarra de horarios de compañeros (*schedule board*).
-  - `Can-do 38`: Proponer y acordar días u horas convenientes para una reunión o plan (私は日曜日がいいです).
-- **Kanjis Objetivo:** `月`, `火`, `水`, `木`, `金`, `土`, `日`, `～曜日` (Días de la semana).
-- **Estructuras Gramaticales:**
-  1. Punto de tiempo exacto o aproximado: `【Hora】に V-ます` / `【Hora】ごろ V-ます`.
-  2. Intervalos temporales: `【Hora A】から【Hora B】まで`.
-  3. Indicar preferencia o conveniencia: `【Fecha/Hora】がいいです`.
-- **Consejos de vida en Japón:** El ritual del *chôrei* (reunión matutina laboral); piscinas públicas; ir al cine en Japón.
-- **Estado en App:** `[ ]` Faltante.
+Curso situacional oficial de 48 lecciones protagonizado por Anna. **Estado global: 100% integrado en `data/nhk_lessons.json` con 144 ejercicios interactivos en `data/conversation_exercises.json`**.
 
-##### Lección 10: ホチキス貸してください (Por favor, préstame la grapadora) — Págs. 260-284
-- **Objetivos Can-Do del libro:**
-  - `Can-do 39`: Escuchar instrucciones breves en el puesto de trabajo y comprender la acción requerida.
-  - `Can-do 40`: Confirmar datos y pedir que repitan puntos clave de una tarea laboral (すみません、いくつですか？).
-  - `Can-do 41`: Leer notas e instrucciones manuscritas sencillas dejadas por compañeros.
-  - `Can-do 42`: Pedir prestadas herramientas u objetos a compañeros de trabajo (スマホの充電器、ありますか？).
-  - `Can-do 43`: Cotejar un checklist de materiales y comprobar si están todos los elementos.
-- **Kanjis Objetivo:** `朝` (mañana), `昼` (mediodía), `夜` (noche), `～時`, `～分`, `～半`, `～枚` (contadores de tiempo y hojas).
-- **Estructuras Gramaticales:**
-  1. Petición cortés y coloquial: `V-てください` / `V-て` / `V-てくれる？`.
-  2. Confirmación de cifras o datos: `Nですね`.
-  3. Fórmulas para pedir prestado: `N、貸してください` / `借りてもいいですか？` / `N、いいですか？`.
-- **Consejos de vida en Japón:** Términos de *wasei-eigo* (inglés inventado en Japón: hotchkiss, consent, cooler); cargar el móvil en lugares públicos; reloj de 24 horas.
-- **Estado en App:** `[ ]` Faltante.
-
----
-
-#### 🎮 TÓPICO 6: 私の好きなこと (Mis Aficiones e Intereses)
-
-##### Lección 11: どんなマンガが好きですか？ (¿Qué manga te gusta?) — Págs. 285-310
-- **Objetivos Can-Do del libro:**
-  - `Can-do 44`: Responder de forma sencilla sobre los pasatiempos e intereses personales.
-  - `Can-do 45`: Preguntar y detallar gustos sobre autores, obras o géneros favoritos (「ドラゴンボール」が大好きです).
-  - `Can-do 46`: Describir qué se suele hacer los días libres y de descanso (うちでゆっくりします).
-  - `Can-do 47`: Leer el perfil de un usuario en redes sociales y comprender sus gustos y estilo de vida.
-- **Kanjis Objetivo:** `読みます` (leer), `聞きます` (escuchar), `見ます` (ver), `本` (libro), `友だち` (amigo), `何` (qué).
-- **Estructuras Gramaticales:**
-  1. Pregunta por afición: `Nは何ですか？` (趣味は、何ですか？).
-  2. Pregunta por tipo o categoría: `どんな N が好きですか？`.
-  3. Atenuación de desagrado o poco entusiasmo: `あまり ナA-じゃないです` / `イA-くないです`.
-  4. Frecuencia de actividades: `いつも / たいてい / よく / ときどき V-ます` vs `あまり / ぜんぜん V-ません`.
-  5. Compañía y lugar de recreación: `【Persona】と【Lugar】で V-ます`.
-- **Consejos de vida en Japón:** El mundo del manga y anime; videojuegos japoneses; la literatura contemporánea nipona; deportes populares (fútbol, rugby, béisbol); el fenómeno del pachinko.
-- **Estado en App:** `[ ]` Faltante.
-
-##### Lección 12: いっしょに飲みに行きませんか？ (¿Vamos a tomar algo juntos?) — Págs. 311-335
-- **Objetivos Can-Do del libro:**
-  - `Can-do 48`: Leer el folleto de un evento público e identificar fecha, hora y ubicación.
-  - `Can-do 49`: Preguntar y confirmar si alguien acudirá a un festival o fiesta (来週、夏祭りがありますね).
-  - `Can-do 50`: Proponer planes, invitar a otros o aceptar una invitación con entusiasmo (いっしょに行きましょう).
-  - `Can-do 51`: Redactar una respuesta escrita por mensaje aceptando o declinando una invitación.
-- **Kanjis Objetivo:** `～年`, `～月`, `～日`, `今日` (hoy), `今週` (esta semana), `今度` (la próxima vez).
-- **Estructuras Gramaticales:**
-  1. Acontecimiento en fecha y lugar: `【Fecha】に【Lugar】で【Evento】があります`.
-  2. Asistencia a citas: `Nに行きます` (忘年会に行きます).
-  3. Invitar formalmente: `V-ませんか？` (いっしょに行きませんか？).
-  4. Aceptar o acordar conjuntamente: `V-ましょう` (また今度行きましょう).
-  5. Verbo de propósito: `V-に行きます` (焼肉を食べに行きます).
-- **Consejos de vida en Japón:** Los festivales de verano (*matsuri*); las montañas japonesas y senderismo; la saga cinematográfica "Tora-san"; el arte marcial Karate.
-- **Estado en App:** `[ ]` Faltante.
+| Lecc. | Título en Japonés y Romaji | Foco Gramatical / Estructura | Módulo Maestro Consolidado | Ejercicios Interactivos Registrados | Estado |
+| :---: | :--- | :--- | :---: | :---: | :---: |
+| **1** | はじめまして。私はアンナです。<br>*(WATASHI WA ANNA DESU)* | Cópula です, partícula temática は | **Módulo 1** | `conv_ex_1_1`, `conv_ex_1_2`, `conv_ex_1_3` | ✅ Completo |
+| **2** | これは何ですか。<br>*(KORE WA NAN DESU KA)* | Demostrativos de objetos これ, それ, あれ | **Módulo 1** | `conv_ex_2_1`, `conv_ex_2_2`, `conv_ex_2_3` | ✅ Completo |
+| **3** | トイレはどこですか。<br>*(TOIRE WA DOKO DESU KA)* | Demostrativos de lugar ここ, そこ, あそこ, どこ | **Módulo 7** | `conv_ex_3_1`, `conv_ex_3_2`, `conv_ex_3_3` | ✅ Completo |
+| **4** | ただいま。<br>*(TADAIMA)* | Negación de identidad ではありません / じゃありません | **Módulo 3** | `conv_ex_4_1`, `conv_ex_4_2`, `conv_ex_4_3` | ✅ Completo |
+| **5** | それは私の宝物です。<br>*(SORE WA WATASHI NO TAKARAMONO DESU)* | Partícula conectiva y posesiva の (N1 + の + N2) | **Módulo 3** | `conv_ex_5_1`, `conv_ex_5_2`, `conv_ex_5_3` | ✅ Completo |
+| **6** | 電話番号は何番ですか。<br>*(DENWABANGÔ WA NANBAN DESU KA)* | Interrogativo 何番 y números de teléfono | **Módulo 3** | `conv_ex_6_1`, `conv_ex_6_2`, `conv_ex_6_3` | ✅ Completo |
+| **7** | シュークリームはありますか。<br>*(SHÛKURÎMU WA ARIMASU KA)* | Existencia de cosas inanimadas (ありますか) y peticiones (をください) | **Módulo 5** | `conv_ex_7_1`, `conv_ex_7_2`, `conv_ex_7_3` | ✅ Completo |
+| **8** | もう一度お願いします。<br>*(MÔICHIDO ONEGAI SHIMASU)* | Peticiones con 〜てください / 〜お願いします | **Módulo 2** | `conv_ex_8_1`, `conv_ex_8_2`, `conv_ex_8_3` | ✅ Completo |
+| **9** | 何時からですか。<br>*(NANJI KARA DESU KA)* | Horas con 何時 e intervalos con から y まで | **Módulo 8** | `conv_ex_9_1`, `conv_ex_9_2`, `conv_ex_9_3` | ✅ Completo |
+| **10** | 全員いますか。<br>*(ZEN-IN IMASU KA)* | Existencia de seres animados con います / いません | **Módulo 7** | `conv_ex_10_1`, `conv_ex_10_2`, `conv_ex_10_3` | ✅ Completo |
+| **11** | ぜひ来てください。<br>*(ZEHI KITE KUDASAI)* | Adverbio de convite ぜひ + petición 〜てください | **Módulo 10** | `conv_ex_11_1`, `conv_ex_11_2`, `conv_ex_11_3` | ✅ Completo |
+| **12** | いつ日本に来ましたか。<br>*(ITSU NIHON NI KIMASHITA KA)* | Pasado verbal 〜ました e interrogativo temporal いつ | **Módulo 12** | `conv_ex_12_1`, `conv_ex_12_2`, `conv_ex_12_3` | ✅ Completo |
+| **13** | 小説が好きです。<br>*(SHÔSETSU GA SUKI DESU)* | Expresión de gustos con [Objeto] が 好きです | **Módulo 4** | `conv_ex_13_1`, `conv_ex_13_2`, `conv_ex_13_3` | ✅ Completo |
+| **14** | ここにゴミを捨ててもいいですか。<br>*(KOKO NI GOMI O SUTETE MO II DESU KA)* | Pedir permiso con la forma 〜てもいいですか | **Módulo 6** | `conv_ex_14_1`, `conv_ex_14_2`, `conv_ex_14_3` | ✅ Completo |
+| **15** | 寝ています。<br>*(NETE IMASU)* | Acción continua / progresiva con 〜ています | **Módulo 3** | `conv_ex_15_1`, `conv_ex_15_2`, `conv_ex_15_3` | ✅ Completo |
+| **16** | 階段を上がって、右に行ってください。<br>*(KAIDAN O AGATTE, MIGI NI ITTE KUDASAI)* | Conexión de verbos en secuencia con forma て | **Módulo 12** | `conv_ex_16_1`, `conv_ex_16_2`, `conv_ex_16_3` | ✅ Completo |
+| **17** | おすすめは何ですか。<br>*(OSUSUME WA NAN DESU KA)* | Preguntar por recomendaciones culinarias | **Módulo 5** | `conv_ex_17_1`, `conv_ex_17_2`, `conv_ex_17_3` | ✅ Completo |
+| **18** | 道に迷ってしまいました。<br>*(MICHI NI MAYOTTE SHIMAIMASHITA)* | Acción involuntaria con 〜てしまいました | **Módulo 13** | `conv_ex_18_1`, `conv_ex_18_2`, `conv_ex_18_3` | ✅ Completo |
+| **19** | よかった。<br>*(YOKATTA)* | Pasado de adjetivos-い (いい → よかった) | **Módulo 18** | `conv_ex_19_1`, `conv_ex_19_2`, `conv_ex_19_3` | ✅ Completo |
+| **20** | 日本の歌を歌ったことがありますか。<br>*(NIHON NO UTA O UTATTA KOTO GA ARIMASU KA)* | Experiencia pasada con [Verbo た] + ことがある | **Módulo 10** | `conv_ex_20_1`, `conv_ex_20_2`, `conv_ex_20_3` | ✅ Completo |
+| **21** | いいえ、それほどでも。<br>*(IIE, SOREHODODEMO)* | Fórmulas de modestia japonesa ante elogios | **Módulo 19** | `conv_ex_21_1`, `conv_ex_21_2`, `conv_ex_21_3` | ✅ Completo |
+| **22** | 遅くなりました。<br>*(OSOKU NARIMASHITA)* | Cambio de estado con adjetivos: 〜く なりました | **Módulo 18** | `conv_ex_22_1`, `conv_ex_22_2`, `conv_ex_22_3` | ✅ Completo |
+| **23** | お母さんに叱られました。<br>*(OKÂSAN NI SHIKARAREMASHITA)* | **Voz Pasiva:** [Sujeto] に [Verbo pasivo 〜られました] | **Módulo 9** | `conv_ex_23_1`, `conv_ex_23_2`, `conv_ex_23_3` | ✅ Completo |
+| **24** | 使わないでください。<br>*(TSUKAWANAIDE KUDASAI)* | **Petición Negativa:** [Verbo ない] + でください | **Módulo 9** | `conv_ex_24_1`, `conv_ex_24_2`, `conv_ex_24_3` | ✅ Completo |
+| **25** | 机の下に入れ。<br>*(TSUKUE NO SHITA NI HAIRE)* | **Modo Imperativo directo:** Órdenes (入れ, 逃げろ) | **Módulo 7** | `conv_ex_25_1`, `conv_ex_25_2`, `conv_ex_25_3` | ✅ Completo |
+| **26** | 次はがんばろう。<br>*(TSUGI WA GANBARÔ)* | **Modo Volitivo informal:** 〜おう / 〜よう | **Módulo 19** | `conv_ex_26_1`, `conv_ex_26_2`, `conv_ex_26_3` | ✅ Completo |
+| **27** | 誰が結婚するんですか。<br>*(DARE GA KEKKON SURU N DESU KA)* | **Construcción explicativa:** 〜んですか | **Módulo 11** | `conv_ex_27_1`, `conv_ex_27_2`, `conv_ex_27_3` | ✅ Completo |
+| **28** | 静岡へようこそ。<br>*(SHIZUOKA E YÔKOSO)* | Bienvenida y partícula de dirección へ | **Módulo 12** | `conv_ex_28_1`, `conv_ex_28_2`, `conv_ex_28_3` | ✅ Completo |
+| **29** | 近くで見ると、大きいですね。<br>*(CHIKAKU DE MIRU TO, ÔKII DESU NE)* | **Condicional natural con 〜と:** Causa-efecto inmediata | **Módulo 17** | `conv_ex_29_1`, `conv_ex_29_2`, `conv_ex_29_3` | ✅ Completo |
+| **30** | もう少し写真を撮りたいです。<br>*(MÔ SUKOSHI SHASHIN O TORITAI DESU)* | **Deseo de acción:** [Verbo raíz] + 〜たいです | **Módulo 17** | `conv_ex_30_1`, `conv_ex_30_2`, `conv_ex_30_3` | ✅ Completo |
+| **31** | もう82歳ですよ。<br>*(MÔ HACHIJÛNI SAI DESU YO)* | Partícula informativa よ y adverbio もう | **Módulo 3** | `conv_ex_31_1`, `conv_ex_31_2`, `conv_ex_31_3` | ✅ Completo |
+| **32** | 布団のほうが好きです。<br>*(FUTON NO HÔ GA SUKI DESU)* | **Comparación de preferencia:** A のほうが (B より) 好き | **Módulo 6** | `conv_ex_32_1`, `conv_ex_32_2`, `conv_ex_32_3` | ✅ Completo |
+| **33** | アンナさんにあげます。<br>*(ANNA-SAN NI AGEMASU)* | **Verbos de entrega y recepción:** あげる, くれる, もらう | **Módulo 17** | `conv_ex_33_1`, `conv_ex_33_2`, `conv_ex_33_3` | ✅ Completo |
+| **34** | 柔らかくておいしいです。<br>*(YAWARAKAKUTE OISHII DESU)* | **Unión de Adjetivos-い:** Reemplazo por 〜くて | **Módulo 5** | `conv_ex_34_1`, `conv_ex_34_2`, `conv_ex_34_3` | ✅ Completo |
+| **35** | クレジットカードは使えますか。<br>*(KUREJITTO KÂDO WA TSUKAEMASU KA)* | **Forma Potencial:** Capacidad de hacer algo (使えます) | **Módulo 14** | `conv_ex_35_1`, `conv_ex_35_2`, `conv_ex_35_3` | ✅ Completo |
+| **36** | 勉強しなければなりません。<br>*(BENKYÔ SHINAKEREBA NARIMASEN)* | **Obligación ineludible:** Forma 〜なければなりません | **Módulo 18** | `conv_ex_36_1`, `conv_ex_36_2`, `conv_ex_36_3` | ✅ Completo |
+| **37** | 富士山を見たり、お寿司を食べたりしました。<br>*(FUJISAN O MITARI, OSUSHI O TABETARI SHIMASHITA)* | **Acciones no exhaustivas:** Forma 〜たり 〜たりします | **Módulo 17** | `conv_ex_37_1`, `conv_ex_37_2`, `conv_ex_37_3` | ✅ Completo |
+| **38** | かしこまりました。<br>*(KASHIKOMARIMASHITA)* | **Lenguaje formal de servicio / Keigo básico** | **Módulo 13** | `conv_ex_38_1`, `conv_ex_38_2`, `conv_ex_38_3` | ✅ Completo |
+| **39** | 風邪だと思います。<br>*(KAZE DA TO OMOIMASU)* | **Expresión de opinión:** Estilo informal + と思います | **Módulo 18** | `conv_ex_39_1`, `conv_ex_39_2`, `conv_ex_39_3` | ✅ Completo |
+| **40** | 頭がずきずきします。<br>*(ATAMA GA ZUKIZUKI SHIMASU)* | **Onomatopeyas físicas de síntomas:** ずきずき, ぺこぺこ | **Módulo 18** | `conv_ex_40_1`, `conv_ex_40_2`, `conv_ex_40_3` | ✅ Completo |
+| **41** | 学園祭に行くことができて、楽しかったです。<br>*(GAKUEN-SAI NI IKU KOTO GA DEKITE, TANOSHIKATTA DESU)* | Nominalización con ことができる y conector causal en -て | **Módulo 11** | `conv_ex_41_1`, `conv_ex_41_2`, `conv_ex_41_3` | ✅ Completo |
+| **42** | どれが一番おいしいかな。<br>*(DORE GA ICHIBAN OISHII KANA)* | Superlativo con 一番 y partícula reflexiva かな | **Módulo 15** | `conv_ex_42_1`, `conv_ex_42_2`, `conv_ex_42_3` | ✅ Completo |
+| **43** | どうしてでしょうか。<br>*(DÔSHITE DESHÔ KA)* | Pregunta formal atenuada de conjetura con でしょうか | **Módulo 19** | `conv_ex_43_1`, `conv_ex_43_2`, `conv_ex_43_3` | ✅ Completo |
+| **44** | 和菓子を食べてから、抹茶を飲みます。<br>*(WAGASHI O TABETE KARA, MACCHA O NOMIMASU)* | **Secuencia temporal:** Forma 〜てから (Después de...) | **Módulo 5** | `conv_ex_44_1`, `conv_ex_44_2`, `conv_ex_44_3` | ✅ Completo |
+| **45** | お誕生日おめでとう。<br>*(OTANJÔBI OMEDETÔ)* | Felicitaciones y cortesía en celebraciones | **Módulo 10** | `conv_ex_45_1`, `conv_ex_45_2`, `conv_ex_45_3` | ✅ Completo |
+| **46** | 帰国する前に、雪を見ることができて幸せです。<br>*(KIKOKU SURU MAE NI...)* | Construcción temporal: Forma diccionario + 前に | **Módulo 12** | `conv_ex_46_1`, `conv_ex_46_2`, `conv_ex_46_3` | ✅ Completo |
+| **47** | 日本語教師になるのが夢です。<br>*(NIHONGO-KYÔSHI NI NARU NO GA YUME DESU)* | Nominalización de acciones con の / こと | **Módulo 19** | `conv_ex_47_1`, `conv_ex_47_2`, `conv_ex_47_3` | ✅ Completo |
+| **48** | いろいろお世話になりました。<br>*(IROIRO OSEWA NI NARIMASHITA)* | Expresión canónica japonesa de agradecimiento final | **Módulo 19** | `conv_ex_48_1`, `conv_ex_48_2`, `conv_ex_48_3` | ✅ Completo |
 
 ---
 
-#### 🚶 TÓPICO 7: 街を歩く (Caminando por la Ciudad)
+## 4. Seguimiento Detallado: Irodori Elementary 1 (18 Lecciones y 79 Can-Dos)
 
-##### Lección 13: このバスは空港に行きますか？ (¿Este autobús va al aeropuerto?) — Págs. 336-368
-- **Objetivos Can-Do del libro:**
-  - `Can-do 52`: Preguntar si un autobús o tren se dirige a nuestro destino y entender la indicación del andén.
-  - `Can-do 53`: Escuchar el anuncio de la próxima estación en el tren y pedir ayuda a un pasajero si hay dudas.
-  - `Can-do 54`: Explicar el medio de transporte usado para ir al trabajo y cuánto tiempo demora el trayecto.
-  - `Can-do 55`: Preguntar cómo llegar a un edificio público (ayuntamiento, banco) y comprender las instrucciones.
-  - `Can-do 56`: Identificar e interpretar los letreros y pictogramas comunes de una estación ferroviaria.
-- **Kanjis Objetivo:** `東` (este), `西` (oeste), `南` (sur), `北` (norte), `会社` (empresa), `来ます` (venir), `行きます` (ir), `乗ります` (subir a transporte).
-- **Estructuras Gramaticales:**
-  1. Consulta de ruta: `この【transporte】は【destino】に行きますか？`.
-  2. Localización actual: `ここは【lugar】ですか？` / `ここは、どこですか？`.
-  3. Medio de locomoción con partícula `で`: `【transporte】で来ます / 行きます`.
-  4. Duración temporal: `【tiempo】かかります` (1時間半かかります).
-  5. Subir y bajar de vehículos: `【lugar】で【transporte】に乗ります` / `降ります`.
-  6. Origen y destino: `【punto A】から【punto B】まで`.
-- **Consejos de vida en Japón:** Desplazamientos diarios al trabajo (*tsukin*); reglas de etiqueta en el transporte público.
-- **Estado en App:** `[ ]` Faltante.
+El manual oficial de la Fundación Japón enfocado en la integración laboral y comunitaria en Japón. **Estado global: 100% de los 79 Can-Dos integrados en los 19 Módulos Maestros con audio y ejercicios**.
 
-##### Lección 14: 大きな建物ですね (Es un edificio enorme, ¿verdad?) — Págs. 369-394
-- **Objetivos Can-Do del libro:**
-  - `Can-do 57`: Preguntar dónde se encuentran los servicios o un cajero automático en la calle o estación.
-  - `Can-do 58`: Describir por teléfono la propia ubicación exacta a alguien con quien hemos quedado (今、改札の前にいます).
-  - `Can-do 59`: Expresar impresiones y asombro cuando nos muestran una zona urbana o calle comercial.
-  - `Can-do 60`: Leer carteles de establecimientos y comprender horarios de atención o si están abiertos/cerrados (営業中, 準備中).
-- **Kanjis Objetivo:** `大きい` (grande), `小さい` (pequeño), `高い` (alto/caro), `低い` (bajo), `前` (delante), `後ろ` (detrás), `横` (al lado).
-- **Estructuras Gramaticales:**
-  1. Preguntar por existencia en la zona: `【Lugar】に N（は）ありますか？` (この近くに、コンビニはありますか？).
-  2. Ubicación de personas con respecto a puntos de referencia: `Nの【posición】にいます`.
-  3. Modificación nominal con adjetivos y partícula exclamativa: `ナA-な Nですね` / `イA-い Nですね` (にぎやかな通りですね).
-- **Consejos de vida en Japón:** Las consignas de monedas (*coin lockers*); máquinas expendedoras automáticas; cajeros ATM; los rascacielos de Tokio; el concepto estético del *Wabi-sabi*.
-- **Estado en App:** `[ ]` Faltante.
+### Distribución por Tópicos y Can-Dos:
+
+```
+Tópico 1: はじめての日本語 (L1, L2)            --> Can-Dos 01 a 07 (7 Can-Dos)  --> Módulos 1 y 2
+Tópico 2: 私のこと (L3, L4)                   --> Can-Dos 08 a 15 (8 Can-Dos)  --> Módulos 1 y 3
+Tópico 3: 好きな食べ物 (L5, L6)                --> Can-Dos 16 a 25 (10 Can-Dos) --> Módulos 4 y 5
+Tópico 4: 家と職場 (L7, L8)                   --> Can-Dos 26 a 34 (9 Can-Dos)  --> Módulos 6 y 7
+Tópico 5: 毎日の生活 (L9, L10)                 --> Can-Dos 35 a 43 (9 Can-Dos)  --> Módulos 8 y 9
+Tópico 6: 私の好きなこと (L11, L12)            --> Can-Dos 44 a 51 (8 Can-Dos)  --> Módulos 10 y 11
+Tópico 7: 街を歩く (L13, L14)                  --> Can-Dos 52 a 60 (9 Can-Dos)  --> Módulos 12 y 13
+Tópico 8: 店で (L15, L16)                     --> Can-Dos 61 a 70 (10 Can-Dos) --> Módulos 14 y 15
+Tópico 9: 休みの日に (L17, L18)                --> Can-Dos 71 a 79 (9 Can-Dos)  --> Módulos 16 y 17
+NHK Complementario: Salud y Metas             --> Can-Dos 80 a 87 (8 Can-Dos)  --> Módulos 18 y 19
+------------------------------------------------------------------------------------------------------
+TOTAL CAN-DOS INTEGRADOS EN NIHONGO MASTER    --> 87 CAN-DOS ACTIVOS
+```
+
+#### Catálogo Completo de Can-Dos Oficiales:
+
+| Código | Tarea Comunicativa Observable (Can-Do) | Expresión Japonesa de Muestra | Módulo Asignado |
+| :---: | :--- | :--- | :---: |
+| **CD-01** | Saludar al encontrarse con alguien según el momento del día | おはようございます / こんにちは / こんばんは | **Módulo 1** |
+| **CD-02** | Despedirse al retirarse o terminar la jornada laboral | お先に失礼します / お疲れさまでした / 失礼します | **Módulo 1** |
+| **CD-03** | Agradecer y pedir disculpas en situaciones concretas | ありがとうございます / すみません | **Módulo 1** |
+| **CD-04** | Comprender sellos y stickers de mensajería digital | よろしくお願いします / 了解です | **Módulo 1** |
+| **CD-05** | Pedir que repitan o hablen más despacio cuando no se comprende | すみません、もう一度ゆっくりお願いします | **Módulo 2** |
+| **CD-06** | Indicar qué idiomas se hablan y preguntar a otros | 英語ができます / 日本語は少しできます | **Módulo 2** |
+| **CD-07** | Preguntar cómo se dice un objeto o palabra en japonés | これは日本語で何と言いますか？ | **Módulo 2** |
+| **CD-08** | Presentarse brevemente indicando nombre, país y ocupación | はじめまして。アンナです。タイから来ました。 | **Módulo 1** |
+| **CD-09** | Escribir nombre y procedencia en tarjetas de identificación | 名前：アンナ / 国：タイ | **Módulo 1** |
+| **CD-10** | Preguntar y responder sobre el lugar de procedencia | ご出身はどちらですか？ / バンコクです。 | **Módulo 1** |
+| **CD-11** | Rellenar formularios de registro oficial (nombre, fecha nacimiento) | 氏名、生年月日、国籍の記入 | **Módulo 1** |
+| **CD-12** | Comprender la presentación de los miembros de una familia | 父と母と弟の4人家族です。 | **Módulo 3** |
+| **CD-13** | Preguntar y decir el lugar de residencia actual y la edad | 東京に住んでいます。22歳です。 | **Módulo 3** |
+| **CD-14** | Comentar y hacer preguntas sobre fotos familiares o de mascotas | これは私の母です。犬のポチです。 | **Módulo 3** |
+| **CD-15** | Leer publicaciones breves de amigos en redes sociales con imágenes | 友だちと遊びました。楽しかったです！ | **Módulo 3** |
+| **CD-16** | Responder preguntas sobre preferencias culinarias | うどんが好きです。野菜もよく食べます。 | **Módulo 4** |
+| **CD-17** | Expresar educadamente qué comidas o ingredientes no se pueden tomar | わさびは、ちょっと苦手です… | **Módulo 4** |
+| **CD-18** | Ofrecer o aceptar bebidas amablemente | お茶を飲みますか？ / いただきます。 | **Módulo 4** |
+| **CD-19** | Describir los hábitos cotidianos del desayuno | 毎朝パンとコーヒーを飲みます。 | **Módulo 4** |
+| **CD-20** | Escribir un pie de foto sencillo sobre comida para redes | 今日のランチはラーメンです。 | **Módulo 4** |
+| **CD-21** | Leer un menú con imágenes en un local de comida rápida | チーズバーガー、ポテト、コーラ | **Módulo 5** |
+| **CD-22** | Hacer un pedido para consumir en el local o para llevar | 店内でお召し上がりですか？ / 持ち帰りで。 | **Módulo 5** |
+| **CD-23** | Decidir qué pedir en grupo y consensuar la comanda | 私はこれにします。みんなでピザを食べよう。 | **Módulo 5** |
+| **CD-24** | Pedir cantidades exactas de platos o bebidas en una izakaya | 枝豆をひとつと、ビールを2つください。 | **Módulo 5** |
+| **CD-25** | Reconocer rótulos y carteles callejeros de locales de restauración | 居酒屋、ラーメン屋、喫茶店、定食 | **Módulo 5** |
+| **CD-26** | Comprender explicaciones sobre la distribución de un apartamento | 部屋が4つあります。キッチンは広いです。 | **Módulo 6** |
+| **CD-27** | Preguntar si una vivienda cuenta con electrodomésticos clave | エアコンや洗濯機はありますか？ | **Módulo 6** |
+| **CD-28** | Describir características y comodidades de la casa | 静かで日当たりがいい部屋です。 | **Módulo 6** |
+| **CD-29** | Hablar sobre el tipo de vivienda en el que se habita | アパートの一人暮らしです。社宅です。 | **Módulo 6** |
+| **CD-30** | Leer los botones esenciales de electrodomésticos japoneses | 冷房、暖房、除湿、停止、スタート | **Módulo 6** |
+| **CD-31** | Entender un recorrido guiado por las instalaciones de la empresa | ここが会議室で、あそこが食堂です。 | **Módulo 7** |
+| **CD-32** | Preguntar y responder sobre la ubicación de compañeros de trabajo | 山田さんはどこにいますか？ / 2階の事務室です。 | **Módulo 7** |
+| **CD-33** | Preguntar y responder dónde están almacenados los materiales | はさみはあの引き出しの中にあります。 | **Módulo 7** |
+| **CD-34** | Leer carteles y placas en las puertas de oficinas y salas | 休憩室、給湯室、倉庫、非常口 | **Módulo 7** |
+| **CD-35** | Preguntar y decir a qué hora nos levantamos, comemos o descansamos | 毎朝7時に起きます。12時に昼ご飯を食べます。 | **Módulo 8** |
+| **CD-36** | Comprender la explicación de los turnos y el horario laboral | 9時から18時まで勤務です。土日は休みです。 | **Módulo 8** |
+| **CD-37** | Leer el tablero de planificación y turnos del equipo | ホワイトボードの予定表を読む | **Módulo 8** |
+| **CD-38** | Proponer y acordar días u horas convenientes para una reunión | 金曜日の午後3時はどうですか？ / いいですね。 | **Módulo 8** |
+| **CD-39** | Escuchar instrucciones de trabajo y comprender la tarea requerida | この書類を5枚コピーしてください。 | **Módulo 9** |
+| **CD-40** | Confirmar datos y pedir que repitan un punto laboral | すみません、いくつ必要ですか？ | **Módulo 9** |
+| **CD-41** | Leer notas breves manuscritas dejadas por compañeros | 「田中さんへ：電話がありました」を読む | **Módulo 9** |
+| **CD-42** | Pedir prestadas herramientas u objetos a compañeros de trabajo | ホチキスを貸してください。 / 充電器ありますか？ | **Módulo 9** |
+| **CD-43** | Cotejar un checklist de materiales y verificar que no falte nada | 点検リストをチェックして確認する | **Módulo 9** |
+| **CD-44** | Hablar sobre aficiones personales e intereses en el tiempo libre | 趣味は音楽を聴くことです。サッカーをします。 | **Módulo 10** |
+| **CD-45** | Preguntar por géneros, autores u obras predilectas | どんなマンガが好きですか？ / アニメも見ます。 | **Módulo 10** |
+| **CD-46** | Describir qué se suele hacer los fines de semana libres | 家でゆっくり映画を見たりします。 | **Módulo 10** |
+| **CD-47** | Leer perfiles breves de amigos en redes sociales | プロフィール文の趣味や自己紹介を読む | **Módulo 10** |
+| **CD-48** | Leer folletos de eventos públicos (fecha, hora y lugar) | 夏祭りのチラシを読む（日時・場所） | **Módulo 11** |
+| **CD-49** | Preguntar si alguien asistirá a un festival o salida | 今週末の花火大会に行きますか？ | **Módulo 11** |
+| **CD-50** | Invitar cordialmente a planes de ocio y aceptar con entusiasmo | いっしょに行きませんか？ / ぜひ行きましょう！ | **Módulo 11** |
+| **CD-51** | Escribir mensajes aceptando o declinando invitaciones con tacto | その日はちょっと用事があって…また誘ってください。 | **Módulo 11** |
+| **CD-52** | Preguntar si un autobús o tren se dirige a nuestro destino | このバスは空港に行きますか？ / 3番乗り場です。 | **Módulo 12** |
+| **CD-53** | Entender anuncios de megafonía de próximas paradas en el tren | 「次は新宿、新宿です。お出口は右側です」 | **Módulo 12** |
+| **CD-54** | Explicar el medio de transporte usado y el tiempo de traslado | 電車で通っています。40分くらいかかります。 | **Módulo 12** |
+| **CD-55** | Preguntar cómo llegar a un edificio público o estación | 市役所へはどう行けばいいですか？ | **Módulo 12** |
+| **CD-56** | Interpretar señalización y pictogramas de estaciones | 改札口、切符売り場、乗り換え、東口、西口 | **Módulo 12** |
+| **CD-57** | Preguntar por cajeros ATM o aseos en la calle | この近くにATMはありますか？ | **Módulo 13** |
+| **CD-58** | Describir por teléfono la propia ubicación exacta al quedar | 今、ハチ公前の交差点の近くにいます。 | **Módulo 13** |
+| **CD-59** | Expresar asombro e impresiones al recorrer una zona urbana | 大きなビルですね！人がたくさんいますね。 | **Módulo 13** |
+| **CD-60** | Leer carteles de comercios para saber si están abiertos o cerrados | 営業中、準備中、定休日、本日休業 | **Módulo 13** |
+| **CD-61** | Preguntar en qué tienda o sección encontrar un producto | 電池がほしいんですが、どこで買えますか？ | **Módulo 14** |
+| **CD-62** | Interpretar directorios de plantas (*floor guides*) de tiendas | 3階：家電・文房具、地下1階：食料品 | **Módulo 14** |
+| **CD-63** | Preguntar al dependiente en qué planta está un departamento | 文房具は何階ですか？ / 5階にございます。 | **Módulo 14** |
+| **CD-64** | Comentar artículos con amigos de compras de forma espontánea | わあ、これかわいい！ちょっと高そうですね。 | **Módulo 14** |
+| **CD-65** | Comprender la señalización de puertas comerciales | 押す（PUSH）、引く（PULL）、自動ドア | **Módulo 14** |
+| **CD-66** | Comprender con precisión el precio total anunciado por el cajero | お会計は3,450円になります。 | **Módulo 15** |
+| **CD-67** | Preguntar al dependiente por el precio de una mercancía | これ、いくらですか？ / 税込みで1,000円です。 | **Módulo 15** |
+| **CD-68** | Solicitar cantidades de peso o unidades al pedir comida al corte | ひき肉を300グラムとコロッケを2つください。 | **Módulo 15** |
+| **CD-69** | Responder a preguntas rutinarias en la caja del combini | 袋はいりません。温めをお願いします。 | **Módulo 15** |
+| **CD-70** | Interpretar etiquetas de rebaja y promociones comerciales | 半額（50% OFF）、2割引（20% OFF）、セール | **Módulo 15** |
+| **CD-71** | Responder de forma concisa qué se hizo durante el fin de semana | 映画を見に行きました。友だちとご飯を食べました。 | **Módulo 16** |
+| **CD-72** | Preguntar y compartir impresiones sobre vivencias pasadas | 週末はどうでしたか？ / とても楽しかったです！ | **Módulo 16** |
+| **CD-73** | Leer publicaciones en redes sobre salidas y actividades de ocio | 写真付きの週末の投稿を読んで理解する | **Módulo 16** |
+| **CD-74** | Interpretar tablas de tarifas y precios en recintos recreativos | 入場料：大人1,500円、子ども800円 | **Módulo 16** |
+| **CD-75** | Enviar mensajes breves de agradecimiento tras una salida compartida | 今日はありがとうございました。楽しかったです！ | **Módulo 16** |
+| **CD-76** | Preguntar y compartir planes para vacaciones largas (Golden Week) | 次の休みに何をしますか？ / 旅行を計画しています。 | **Módulo 17** |
+| **CD-77** | Responder qué actividades se desearía experimentar en Japón | 温泉に入りたいです。富士山に登ってみたいです。 | **Módulo 17** |
+| **CD-78** | Publicar en redes sociales un resumen ameno de una excursión | 日帰り温泉に行きました。景色が最高でした。 | **Módulo 17** |
+| **CD-79** | Narrar un viaje estructurando ideas cronológicas y contrastes | 新幹線で行きました。混んでいましたが、良かったです。 | **Módulo 17** |
+| **CD-80** | Describir síntomas corporales y dolencias físicas al médico o compañeros | 頭が痛くて、熱が38度あります。喉も痛いです。 | **Módulo 18** |
+| **CD-81** | Comprar medicamentos en farmacias explicando el malestar | 総合風邪薬と胃腸薬をください。 | **Módulo 18** |
+| **CD-82** | Comprender indicaciones médicas de posología y reposo | 1日3回、食後に飲んで安静にしてください。 | **Módulo 18** |
+| **CD-83** | Solicitar auxilio urgente y contactar con emergencias (119 / 110) | 助けてください！救急車を呼んでください！ | **Módulo 18** |
+| **CD-84** | Expresar metas personales de aprendizaje y superación en japonés | 日本語がもっと上手になりたいです。JLPTに合格したい。 | **Módulo 19** |
+| **CD-85** | Agradecer formalmente la acogida y enseñanzas al terminar una etapa | 大変お世話になりました。心から感謝しております。 | **Módulo 19** |
+| **CD-86** | Despedirse con calidez y desear mutuo bienestar y salud | 先生もお元気で。またいつか会いましょう！ | **Módulo 19** |
+| **CD-87** | Proponer mantener el contacto a través de mensajería o redes | 連絡先を教えてください。またメッセージを送ります。 | **Módulo 19** |
 
 ---
 
-#### 🛍️ TÓPICO 8: 店で (En las Tiendas y Comercios)
+## 5. Seguimiento del Catálogo de Kanjis y Vocabulario Maestro
 
-##### Lección 15: 電池がほしいんですが… (Quisiera unas pilas...) — Págs. 395-421
-- **Objetivos Can-Do del libro:**
-  - `Can-do 61`: Preguntar en qué establecimiento o sección se puede comprar determinado producto.
-  - `Can-do 62`: Interpretar la guía de pisos (*floor guide*) de un centro comercial para localizar el artículo buscado.
-  - `Can-do 63`: Preguntar al personal de la tienda en qué planta se encuentra una sección concreta (カメラは何階ですか？).
-  - `Can-do 64`: Intercambiar comentarios espontáneos sobre artículos con amigos mientras se compra (わあ、かっこいいですね).
-  - `Can-do 65`: Comprender la señalización estándar de tiendas departamentales (entrada, salida, empujar, tirar).
-- **Kanjis Objetivo:** `入口` (entrada), `出口` (salida), `～階` (planta/piso), `押す` (empujar), `引く` (tirar), `安い` (barato).
-- **Estructuras Gramaticales:**
-  1. Planteamiento de deseo o necesidad con atenuación: `Nがほしいんですが…` (電池がほしいんですが、どこで買えますか？).
-  2. Exclamaciones y valoraciones: `ナA / イAですね` vs `ナA！ / イA-い！` (このコート、おしゃれですね！ / かわいい！).
-- **Consejos de vida en Japón:** Tipos de comercios japoneses (conbini, supermercados, 100-yen shops, farmacias); botones de ascensores; cómo contar plantas de edificios; paraguas transparentes; términos para el aseo.
-- **Estado en App:** `[ ]` Faltante.
+### 5.1. Kanjis Auditados (159 Kanjis en `data/kanji.json`)
+Los 24 kanjis elementales introducidos en Irodori fueron dados de alta exitosamente, completando la cobertura de los manuales de estudio:
 
-##### Lección 16: これ、いくらですか？ (¿Cuánto cuesta esto?) — Págs. 422-451
-- **Objetivos Can-Do del libro:**
-  - `Can-do 66`: Escuchar y comprender con precisión el precio total anunciado por el cajero.
-  - `Can-do 67`: Preguntar al empleado de la tienda por el precio de una prenda u objeto (あのTシャツ、いくらですか？).
-  - `Can-do 68`: Solicitar cantidades exactas de peso o unidades al pedir comida al corte (ひき肉200gください).
-  - `Can-do 69`: Responder a las preguntas habituales en la caja del combini (¿desea calentar la comida?, ¿necesita cubiertos o bolsa?).
-  - `Can-do 70`: Interpretar etiquetas y carteles de descuento promocional (半額, 20%引き).
-- **Kanjis Objetivo:** `一`, `二`, `三`, `四`, `五`, `六`, `七`, `八`, `九`, `十` (Números del 1 al 10 en kanji).
-- **Estructuras Gramaticales:**
-  1. Consulta de precio: `【これ／それ／あれ】(は）いくらですか？`.
-  2. Demostrativo dependiente + Sustantivo: `【この／その／あの】N`.
-  3. Distribución equitativa: `【cantidad】ずつ` (2個ずつお願いします).
-- **Consejos de vida en Japón:** Billetes y monedas en circulación; el amuleto *Maneki-neko*; dulces tradicionales (Taiyaki, Dorayaki); frituras *korokke*; métodos de pago electrónico (Suica, Pasmo, PayPay).
-- **Estado en App:** `[ ]` Faltante.
-
----
-
-#### ✈️ TÓPICO 9: 休みの日に (Días Libres y Vacaciones)
-
-##### Lección 17: 映画を見に行きました (Fui a ver una película) — Págs. 452-477
-- **Objetivos Can-Do del libro:**
-  - `Can-do 71`: Responder de forma concisa qué se hizo durante el fin de semana o día libre.
-  - `Can-do 72`: Preguntar y compartir impresiones sobre las actividades realizadas (週末は何をしましたか？ / 楽しかったです).
-  - `Can-do 73`: Leer publicaciones en redes sociales sobre salidas familiares o con amigos ayudándose de fotos.
-  - `Can-do 74`: Interpretar la lista de tarifas y precios de una instalación pública o de ocio.
-  - `Can-do 75`: Enviar un mensaje breve de agradecimiento e impresiones tras haber salido juntos.
-- **Kanjis Objetivo:** `百`, `千`, `万`, `～円`, `休み` (descanso), `映画` (película), `日本語`, `勉強します` (estudiar), `買います` (comprar).
-- **Estructuras Gramaticales:**
-  1. Pasado afirmativo y negativo de verbos: `V-ました` / `V-ませんでした`.
-  2. Negación total enfática: `何も V-ませんでした` / `どこにも V-ませんでした`.
-  3. Pasado afirmativo de adjetivos: `ナA-でした` / `イA-かったです`.
-  4. Pasado de sustantivos: `Nでした` (とてもいい天気でした).
-  5. Pasado negativo de sustantivos y adjetivos: `N / ナA じゃなかったです` / `イA-くなかったです`.
-- **Consejos de vida en Japón:** El fenómeno cultural de Godzilla; acuarios japoneses; los cafés de manga e internet (*manga-kissa*).
-- **Estado en App:** `[ ]` Faltante.
-
-##### Lección 18: 温泉に入りたいです (Quiero bañarme en aguas termales) — Págs. 478-505
-- **Objetivos Can-Do del libro:**
-  - `Can-do 76`: Preguntar y compartir planes o aspiraciones para periodos vacacionales largos (Golden Week).
-  - `Can-do 77`: Responder de forma sencilla qué actividades se desearía experimentar en Japón.
-  - `Can-do 78`: Publicar en redes sociales un resumen sencillo de lo realizado en una excursión.
-  - `Can-do 79`: Narrar un viaje e impresiones de forma estructurada conectando ideas cronológicas y contrastes.
-- **Kanjis Objetivo:** `温泉` (aguas termales/onsen), `予定` (planes), `来週` (la próxima semana), `会います` (encontrarse), `入ります` (entrar), `旅行します` (viajar).
-- **Estructuras Gramaticales:**
-  1. Deseo personal: `V-たいです` (炊飯器が買いたいです / 温泉に入りたいです).
-  2. Indefinidos afirmativos: `どこか V-ます` (どこか旅行したいです).
-  3. Adición de ideas: `Oración 1。あと、Oración 2。`.
-  4. Partícula de dirección: `【Lugar】へ行きます`.
-  5. Conector cronológico: `Oración 1。それから、Oración 2。`.
-  6. Conectores de suma y contraste: `それに` (además) / `でも` (sin embargo).
-- **Consejos de vida en Japón:** La *Golden Week*; Tokyo Disney Resort; el tren bala *Shinkansen*; ascender al monte Fuji; la animación japonesa (Makoto Shinkai, Doraemon); la ciudad de Yokohama; etiqueta y reglas del Onsen.
-- **Estado en App:** `[ ]` Faltante.
-
----
-
-### 3.3. Auditoría de Kanjis de Irodori faltantes en `data/kanji.json`
-
-Al contrastar los 93 kanjis introducidos a lo largo de las 18 lecciones de Irodori Elementary con los kanjis registrados en `data/kanji.json`, se detectan **24 kanjis indispensables que aún no existen en el catálogo**:
-
-| # | Kanji Faltante | Significado | Pronunciación On/Kun | Lección de Irodori | Palabras clave asociadas |
+| # | Kanji | Significado | Lecturas On/Kun | Módulo | Palabras Sincronizadas en `words` |
 | :-: | :---: | :--- | :--- | :---: | :--- |
-| 1 | **私** | Yo, privado | シ / わたし, わたくし | Lección 3 | 私 (わたし), 私立 (しりつ) |
-| 2 | **肉** | Carne | ニク | Lección 6 | 肉 (にく), 牛肉 (ぎゅうにく), 豚肉 (ぶたにく) |
-| 3 | **好** | Gustar, agradable | コウ / す・く, この・む | Lección 6 | 好き (すき), 大好物 (だいこうぶつ) |
-| 4 | **家** | Casa, familia | カ, ケ / いえ, や | Lección 7 | 家 (いえ), 家族 (かぞく), 家賃 (やちん) |
-| 5 | **広** | Amplio, espacioso | コウ / ひろ・い | Lección 7 | 広い (ひろい), 広場 (ひろば) |
-| 6 | **朝** | Mañana | チョウ / あさ | Lección 10 | 朝 (あさ), 朝ご飯 (あさごはん), 今朝 (けさ) |
-| 7 | **昼** | Mediodía, día | チュウ / ひる | Lección 10 | 昼 (ひる), 昼休み (ひるやすみ), 昼ご飯 (ひるごはん) |
-| 8 | **夜** | Noche | ヤ / よる, よ | Lección 10 | 夜 (よる), 今夜 (こんや), 夜中 (よなか) |
-| 9 | **枚** | Contador de cosas planas | マイ | Lección 10 | 1枚 (いちまい), 30枚 (さんじゅうまい) |
-| 10 | **乗** | Subir, montar a vehículo | ジョウ / の・る | Lección 13 | 乗ります (のります), 乗り場 (のりば) |
-| 11 | **低** | Bajo | テイ / ひく・い | Lección 14 | 低い (ひくい), 最低 (さいてい) |
-| 12 | **横** | Lado, horizontal | オウ / よこ | Lección 14 | 横 (よこ), 横断歩道 (おうだんほどう) |
-| 13 | **口** | Boca, entrada/apertura | コウ, ク / くち, ぐち | Lección 15 | 口 (くち), 入口 (いりぐち), 出口 (でぐち) |
-| 14 | **押** | Empujar, presionar | オウ / お・す | Lección 15 | 押す (おす), 押入れ (おしいれ) |
-| 15 | **引** | Tirar, jalar | イン / ひ・く | Lección 15 | 引く (ひく), 引き出し (ひきだし), 割引 (わりびき) |
-| 16 | **映** | Proyectar, reflejar | エイ / うつ・る | Lección 17 | 映画 (えいが), 映る (うつる) |
-| 17 | **画** | Imagen, trazo, pintura | ガ, カク | Lección 17 | 映画 (えいが), 画面 (がめん), 画家 (がか) |
-| 18 | **勉** | Esforzarse | ベン | Lección 17 | 勉強 (べんきょう) |
-| 19 | **強** | Fuerte | キョウ, ゴウ / つよ・い | Lección 17 | 勉強 (べんきょう), 強い (つよい) |
-| 20 | **温** | Templado, cálido | オン / あたた・かい | Lección 18 | 温泉 (おんせん), 温度 (おんど) |
-| 21 | **泉** | Manantial, fuente | セン / いずみ | Lección 18 | 温泉 (おんせん) |
-| 22 | **予** | Previo, de antemano | ヨ | Lección 18 | 予定 (よてい), 予約 (よやく) |
-| 23 | **定** | Determinar, fijar | テイ, ジョウ / さだ・める | Lección 18 | 予定 (よてい), 定休日 (ていきゅうび) |
-| 24 | **旅** | Viaje | リョ / たび | Lección 18 | 旅行 (りょこう), 一人旅 (ひとりたび) |
+| 1 | **私** | Yo, privado | シ / わたし | **M1** | 私 (わたし), 私立 (しりつ) |
+| 2 | **肉** | Carne | ニク | **M4** | 肉 (にく), 牛肉 (ぎゅうにく), 豚肉 (ぶたにく) |
+| 3 | **好** | Gustar, agradable | コウ / す・き | **M4** | 好き (すき), 大好物 (だいこうぶつ) |
+| 4 | **家** | Casa, familia | カ, ケ / いえ, や | **M6** | 家 (いえ), 家族 (かぞく), 家賃 (やちん) |
+| 5 | **広** | Amplio, espacioso | コウ / ひろ・い | **M6** | 広い (ひろい), 広場 (ひろば) |
+| 6 | **朝** | Mañana | チョウ / あさ | **M8** | 朝 (あさ), 朝ご飯 (あさごはん), 今朝 (けさ) |
+| 7 | **昼** | Mediodía, día | チュウ / ひる | **M8** | 昼 (ひる), 昼休み (ひるやすみ), 昼ご飯 (ひるごはん) |
+| 8 | **夜** | Noche | ヤ / よる, よ | **M8** | 夜 (よる), 今夜 (こんや), 夜中 (よなか) |
+| 9 | **枚** | Contador planos | マイ | **M9** | 1枚 (いちまい), 30枚 (さんじゅうまい) |
+| 10 | **乗** | Subir/montar | ジョウ / の・る | **M12** | 乗ります (のります), 乗り場 (のりば) |
+| 11 | **低** | Bajo | テイ / ひく・い | **M13** | 低い (ひくい), 最低 (さいてい) |
+| 12 | **横** | Lado, horizontal | オウ / よこ | **M13** | 横 (よこ), 横断歩道 (おうだんほどう) |
+| 13 | **口** | Boca, entrada | コウ, ク / くち, ぐち | **M14** | 口 (くち), 入口 (いりぐち), 出口 (でぐち) |
+| 14 | **押** | Empujar | オウ / お・す | **M14** | 押す (おす), 押入れ (おしいれ) |
+| 15 | **引** | Tirar, jalar | イン / ひ・く | **M15** | 引く (ひく), 引き出し (ひきだし), 割引 (わりびき) |
+| 16 | **映** | Proyectar | エイ / うつ・る | **M16** | 映画 (えいが), 映る (うつる) |
+| 17 | **画** | Imagen, trazo | ガ, カク | **M16** | 映画 (えいが), 画面 (がめん), 画家 (がか) |
+| 18 | **勉** | Esforzarse | ベン | **M16** | 勉強 (べんきょう) |
+| 19 | **強** | Fuerte | キョウ, ゴウ / つよ・い | **M16** | 勉強 (べんきょう), 強い (つよい) |
+| 20 | **温** | Templado, tibio | オン / あたた・かい | **M17** | 温泉 (おんせん), 温度 (おんど) |
+| 21 | **泉** | Manantial | セン / いずみ | **M17** | 温泉 (おんせん) |
+| 22 | **予** | Previo | ヨ | **M17** | 予定 (よてい), 予約 (よやく) |
+| 23 | **定** | Fijar, fijado | テイ, ジョウ / さだ・める | **M17** | 予定 (よてい), 定休日 (ていきゅうび) |
+| 24 | **旅** | Viaje | リョ / たび | **M17** | 旅行 (りょこう), 一人旅 (ひとりたび) |
 
 ---
 
-## 4. Matriz Comparativa de Cobertura en la Aplicación Actual
-
-Tras la ejecución de las fases de integración y consolidación curricular, la cobertura en `Nihongo Master` es la siguiente:
-
-| Componente de la App | Archivo de Origen / Datos | Libro 1 (NHK) | Libro 2 (Irodori) | Estado Actual y Diagnóstico |
-| :--- | :--- | :---: | :---: | :--- |
-| **Conversaciones (`ConversationTab`)** | `data/nhk_lessons.json`<br>`data/conversation_exercises.json` | ✅ **100% (48/48)** | ✅ Integrado | 48 lecciones completas de NHK con diálogos bilingües, notas gramaticales y **144 ejercicios interactivos** (3 por lección). |
-| **Currículum Consolidado (`CurriculumTab`)** | `data/curriculum.json` | ✅ **100%** | ✅ **100% (79/79)** | **19 Módulos Maestros Unificados** sin duplicidades temáticas, integrando los 79 Can-Dos de Irodori + 8 complementarios (87 en total), ejercicios, guías y enlaces directos a temas relacionados. |
-| **Gramática y Partículas (`GrammarTab`)** | `data/particles.json` | ✅ 100% | ✅ 100% | Partículas N5/N4 y estructuras clave (cópula, existencia, movimiento, transitividad, peticiones 〜てください, 〜たい, 〜なければなりません). |
-| **Diccionario Kanji (`KanjiTab`)** | `data/kanji.json` | ✅ 100% | ✅ 100% | **159 kanjis catalogados**, incluyendo los 24 kanjis elementales de Irodori con trazos, lecturas On/Kun y palabras sincronizadas. |
-| **Vocabulario Maestro (`VocabTab`)** | `data/vocabulary.json` | ✅ 100% | ✅ 100% | **208 entradas** con registro estricto en sus tres formas (Kanji, Hiragana, Katakana), español y nivel JLPT sincronizado con los kanjis. |
-| **Biblioteca de PDFs (`MaterialLibraryTab`)** | `data/pdf_catalog.json` | ✅ 100% | ✅ 100% | Ambos manuales originales indexados con visor integrado, conteo de páginas y descarga directa. |
+### 5.2. Vocabulario Maestro (208 Palabras en `data/vocabulary.json`)
+Cada entrada contiene rigurosamente:
+1. `kanji`: Ortografía canónica.
+2. `hiragana`: Lectura fonética nativa.
+3. `katakana`: Transcripción en katakana (obligatoria).
+4. `meaning_es`: Significado en español.
+5. `level`: Nivel JLPT correspondiente (`N5`, `N4`).
 
 ---
 
-## 5. Arquitectura del Currículum Consolidado (19 Módulos Maestros)
+## 6. Inventario Global de Ejercicios y Tipologías Activas
 
-Para erradicar la fragmentación pedagógica y las lecciones repetidas entre distintas rutas (JLPT, Irodori y NHK), se han unificado todos los contenidos temáticamente afines en **19 Módulos Maestros Cohesivos**, cada uno dotado de navegación bidireccional mediante **Temas Relacionados**:
-
-| Módulo | Título Central y Enfoque | Nivel | Can-Dos | Fuentes Consolidadas | Temas Relacionados Enlazados |
-| :---: | :--- | :---: | :---: | :--- | :--- |
-| **M1** | **Saludos, Cortesía y Presentación Personal**<br>*(はじめまして。私はアンナです)* | A1 / N5 | 8 (CD 1-4, 8-11) | Irodori L1, L3 · NHK L1-2 · JLPT Nivel 1 | 🔗 M2 (Estrategias de Comunicación), M3 (Familia y Residencia), M19 (Metas y Despedida) |
-| **M2** | **Estrategias de Comunicación y Gestión de Idiomas**<br>*(すみません、もう一度ゆっくりお願いします)* | A1 / N5 | 3 (CD 5-7) | Irodori L2 · NHK L8 | 🔗 M1 (Saludos y Presentación), M9 (Instrucciones Laborales) |
-| **M3** | **Identidad, Familia, Residencia y Contacto**<br>*(東京に住んでいます。家族は3人です)* | A1 / N5 | 4 (CD 12-15) | Irodori L4 · NHK L4-6, L31 · JLPT Nivel 2 | 🔗 M1 (Presentación), M6 (El Hogar), M8 (Horarios y Números) |
-| **M4** | **Gustos, Preferencias Culinarias y Hábitos Diarios**<br>*(うどんが好きです。毎朝コーヒーを飲みます)* | A1 / N5 | 5 (CD 16-20) | Irodori L5 · JLPT Nivel 4 · NHK L13 | 🔗 M5 (Restaurantes y Pedidos), M8 (Rutinas Diarias) |
-| **M5** | **Restaurantes, Menús, Pedidos y Contadores**<br>*(これを2つとウーロン茶をください)* | A1 / N5 | 5 (CD 21-25) | Irodori L6 · NHK L7, L17, L34, L42 | 🔗 M4 (Gustos Culinarios), M14 (Tiendas y Compras), M15 (Precios y Caja) |
-| **M6** | **El Hogar, Vivienda, Distribución y Electrodomésticos**<br>*(部屋が4つあります。エアコンと洗濯機があります)* | A1 / N5 | 5 (CD 26-30) | Irodori L7 · NHK L5, L14, L32 | 🔗 M3 (Residencia), M7 (Existencia y Ubicación ある/いる) |
-| **M7** | **El Lugar de Trabajo, Orientación y Existencia (ある／いる)**<br>*(山田さんは2階の会議室にいます)* | A1 / N5 | 4 (CD 31-34) | Irodori L8 · JLPT Nivel 3 · NHK L3, L10, L25 | 🔗 M6 (El Hogar), M9 (Instrucciones Laborales), M13 (Orientación Urbana) |
-| **M8** | **Rutinas, Horarios, Días de la Semana e Intervalos**<br>*(9時から5時まで働きます。水曜日は休みです)* | A1 / N5 | 4 (CD 35-38) | Irodori L9 · JLPT Nivel 2 · NHK L9 | 🔗 M4 (Hábitos Diarios), M9 (Horarios Laborales), M16 (Fin de Semana y Pasado) |
-| **M9** | **Instrucciones de Trabajo, Peticiones y Reglas Laborales**<br>*(ホチキスを貸してください。ここでタバコを吸わないで)* | A1 / N5 | 5 (CD 39-43) | Irodori L10 · NHK L8, L23, L24 | 🔗 M2 (Estrategias de Comunicación), M7 (Lugar de Trabajo), M18 (Salud y Ausencias) |
-| **M10** | **Aficiones, Tiempo Libre, Ocio y Redes Sociales**<br>*(休みの日は何をしますか？マンガを読んだりします)* | A1 / N5 | 4 (CD 44-47) | Irodori L11 · NHK L11, L20 | 🔗 M4 (Gustos y Preferencias), M11 (Eventos e Invitaciones), M16 (Experiencias Pasadas) |
-| **M11** | **Eventos, Festivales, Invitaciones y Propuestas**<br>*(今週の土曜日、いっしょにお祭りに行きませんか？)* | A1 / N5 | 4 (CD 48-51) | Irodori L12 · NHK L26, L27, L41 | 🔗 M10 (Aficiones), M12 (Transporte a Eventos), M13 (Puntos de Encuentro) |
-| **M12** | **Movilidad, Transporte Público y Estaciones**<br>*(この電車は新宿に行きますか？何番線ですか？)* | A1 / N5 | 5 (CD 52-56) | Irodori L13 · JLPT Nivel 5 · NHK L12, L16, L28 | 🔗 M11 (Eventos y Salidas), M13 (Orientación Urbana), M17 (Viajes y Excursiones) |
-| **M13** | **Orientación Urbana, Puntos de Encuentro y Señalización**<br>*(交差点を右に曲がってください。大きなビルの前です)* | A1 / N5 | 4 (CD 57-60) | Irodori L14 · NHK L18, L38 | 🔗 M7 (Demostrativos de Lugar), M12 (Estaciones y Metro), M14 (Comercios) |
-| **M14** | **Tiendas, Grandes Almacenes y Búsqueda de Productos**<br>*(電池がほしいんですが、何階にありますか？)* | A1 / N5 | 5 (CD 61-65) | Irodori L15 · NHK L35 | 🔗 M5 (Restaurantes y Pedidos), M13 (Orientación Urbana), M15 (Precios y Caja) |
-| **M15** | **Precios, Descuentos y Caja del Combini**<br>*(これ、いくらですか？袋はいりません)* | A1 / N5 | 5 (CD 66-70) | Irodori L16 · NHK L35, L42 | 🔗 M8 (Sistema Numérico), M14 (Tiendas y Búsqueda de Productos) |
-| **M16** | **Fin de Semana, Relatar el Pasado y Experiencias de Ocio**<br>*(週末はどうでしたか？映画を見ました)* | A1 / N5 | 5 (CD 71-75) | Irodori L17 · JLPT Nivel 6, 7 | 🔗 M8 (Rutinas y Horarios), M10 (Aficiones y Ocio), M17 (Planes Vacacionales) |
-| **M17** | **Planes Vacacionales, Deseos y Cultura Onsen**<br>*(次の休みに温泉に行きたいです。富士山に登りたい)* | A1 / N5-N4 | 4 (CD 76-79) | Irodori L18 · NHK L29, L30, L33, L37 · JLPT Nivel 8 | 🔗 M12 (Transporte y Viajes), M16 (Relatar el Pasado), M19 (Metas Personales) |
-| **M18** | **Salud, Síntomas Corporales y Deberes Ineludibles**<br>*(頭が痛いです。病院へ行かなければなりません)* | N5 - N4 | 4 (CD 80-83) | NHK L19, L22, L36, L39-40 · JLPT Nivel 9 | 🔗 M9 (Instrucciones Laborales y Bajas), M14 (Compras en Farmacia) |
-| **M19** | **Metas Personales, Despedidas y Expresiones de Gratitud**<br>*(日本語が上手になりたいです。大変お世話になりました)* | N5 - N4 | 4 (CD 84-87) | NHK L21, L26, L43, L47-48 · JLPT Nivel 8-9 | 🔗 M1 (Saludos y Presentación Inicial), M17 (Deseos y Futuro con 〜たい) |
+| Categoría de Ejercicio | Archivo Fuente | Cantidad Total | Tipología / Mecánica | Puntos XP |
+| :--- | :--- | :---: | :--- | :---: |
+| **Conversación y Diálogo Situacional** | `data/conversation_exercises.json` | **144 ejercicios** (3 por lección NHK) | `reply` (seleccionar réplica adecuada), `missing_word` (rellenar hueco), `missing_kanji` (ortografía correcta) | +10 XP |
+| **Quizzes de Módulo Curricular** | `data/curriculum.json` | **53 ejercicios** | Selección múltiple contextual basada en los Can-Dos y gramática del módulo | +5 XP |
+| **Drills Gramaticales y Partículas** | `data/exercises.json` | **9 ejercicios** | Rellenado de partículas y conjugaciones adjetivales/adverbiales | +5 XP |
+| **TOTAL EJERCICIOS ACTIVOS** | — | **206 ejercicios** | — | — |
 
 ---
 
-## 6. Reglas Obligatorias para la Incorporación de Nuevos Módulos
+## 7. Checklist de Verificación Rápida para Desarrolladores y Agentes
 
-Para preservar la arquitectura limpia y libre de redundancias en el tiempo, cualquier nuevo material o módulo debe ajustarse a las siguientes pautas estrictas:
+Antes de proponer o implementar cualquier cambio en el temario, responde a estas preguntas:
 
-1. **Auditoría Previa de No Duplicidad:**
-   - Antes de dar de alta un módulo nuevo en `data/curriculum.json`, se debe revisar exhaustivamente si la temática central ya está cubierta en los 19 módulos maestros existentes.
-2. **Complementación vs. Descarte:**
-   - **Si el tema ya existe:** Extraer los ejemplos útiles, competencias Can-Do adicionales o diálogos auténticos e **incorporarlos directamente al módulo existente**. Si la información es redundante o idéntica, se descarta.
-   - **Si el tema es nuevo:** Se da de alta asignándole un número secuencial único, objetivos Can-Do, nivel pedagógico y fuentes bibliográficas.
-3. **Enlace Obligatorio con Temas Relacionados (`related_topics`):**
-   - Todo módulo debe enlazar bidireccionalmente con sus módulos precedentes, consecutivos o complementarios, detallando `step`, `title`, `relationship` y `reason`.
-4. **Verificación Técnica:**
-   - Ejecutar `npm run build` sin errores, sincronizar con el repositorio Git y validar el despliegue en producción en Vercel.
+- [ ] **1. No Duplicidad:** ¿Revisaste la **Sección 2** de este documento y confirmaste que la temática no está ya cubierta en los Módulos 1 al 19?
+- [ ] **2. Complementación:** Si el tema ya existe, ¿agregaste los nuevos ejemplos, Can-Dos o ejercicios directamente dentro del módulo correspondiente de `data/curriculum.json` en lugar de crear un módulo nuevo?
+- [ ] **3. Enlaces Temáticos:** ¿Configuraste o actualizaste el bloque `related_topics` de los módulos vinculados con `step`, `title`, `relationship` y `reason`?
+- [ ] **4. Vocabulario Completo:** Si agregaste palabras nuevas, ¿las registraste con sus 3 escrituras (**Kanji**, **Hiragana**, **Katakana**) y su nivel JLPT en `data/vocabulary.json`?
+- [ ] **5. Sincronización Kanji:** ¿Añadiste la referencia de cada palabra al array `words` de **todos los kanjis que la componen** en `data/kanji.json`?
+- [ ] **6. Build Check:** ¿Ejecutaste `npm run build` y verificaste que compile con 0 errores?
+- [ ] **7. Registro de Seguimiento:** ¿Actualizaste las tablas de este documento (`ANALISIS_TEMARIOS_LIBROS.md`) para reflejar las nuevas adiciones?
+- [ ] **8. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
