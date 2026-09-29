@@ -18,6 +18,7 @@ import {
   katakanaToHiragana, 
   extractKanjis 
 } from '../lib/japaneseUtils';
+import { useApp } from '../lib/AppContext';
 
 export default function EditWordModal({
   isOpen,
@@ -27,6 +28,13 @@ export default function EditWordModal({
   onReset,     // Callback (wordIdOrKanji) => void to restore default
   isCustomized = false
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+  const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
+  const showAlert = contextApp?.showAlert || ((opts) => console.log(opts));
+
   const [kanji, setKanji] = useState('');
   const [hiragana, setHiragana] = useState('');
   const [katakana, setKatakana] = useState('');
@@ -94,8 +102,14 @@ export default function EditWordModal({
     }, 900);
   };
 
-  const handleResetToDefault = () => {
-    if (window.confirm('¿Deseas restaurar esta palabra a su valor original de fábrica?')) {
+  const handleResetToDefault = async () => {
+    const ok = await showConfirm({
+      title: '¿Restaurar Palabra?',
+      message: '¿Deseas restaurar esta palabra a su valor original de fábrica?',
+      confirmText: 'Restaurar',
+      isDestructive: false
+    });
+    if (ok) {
       if (onReset) {
         onReset(word.id || word.kanji);
       }

@@ -6,6 +6,7 @@ import audioManager from '../lib/audioManager';
 import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
+import { useApp } from '../lib/AppContext';
 
 export default function StoryTab({ 
   userState, 
@@ -20,6 +21,11 @@ export default function StoryTab({
   initialMode = null,
   onParamsChange
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+  const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
   const allStories = useMemo(() => {
     const defaultStories = dataStore?.stories || [];
     const customStories = appState?.savedStories || [];
@@ -249,8 +255,14 @@ export default function StoryTab({
           <button 
             className="btn btn-outline btn-sm" 
             style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
-            onClick={() => {
-              if (window.confirm("¿Estás seguro de eliminar esta historia generada?")) {
+            onClick={async () => {
+              const ok = await showConfirm({
+                title: '¿Eliminar historia?',
+                message: '¿Estás seguro de que deseas eliminar esta historia generada de tu biblioteca?',
+                confirmText: 'Eliminar',
+                isDestructive: true
+              });
+              if (ok) {
                 const updatedStories = (appState?.savedStories || []).filter(s => s.id !== story.id);
                 onUpdateState({ ...appState, savedStories: updatedStories });
                 setSelectedStoryId(allStories[0]?.id || null);
