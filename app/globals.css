@@ -50,17 +50,26 @@
   padding: 0;
 }
 
-html, body {
+html {
   max-width: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom;
 }
 
 body {
+  max-width: 100%;
   font-family: var(--font-sans);
   background-color: var(--bg-main);
   color: var(--text-main);
   line-height: 1.6;
   min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: visible;
+  touch-action: pan-y pinch-zoom;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
@@ -739,7 +748,8 @@ body {
   margin: 0 auto;
   padding: 24px;
   width: 100%;
-  flex: 1;
+  flex: 1 0 auto;
+  min-height: auto;
 }
 
 .section-panel {
@@ -6159,8 +6169,16 @@ rt {
 
 /* Standalone Mode Enhancements (iOS / Android installed PWA) */
 @media (display-mode: standalone) {
+  html {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y pinch-zoom !important;
+  }
+  
   body {
-    overscroll-behavior-y: contain;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y pinch-zoom !important;
   }
   
   .app-header {

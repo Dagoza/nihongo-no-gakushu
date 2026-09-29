@@ -1,5 +1,5 @@
 // Nihongo Master Service Worker
-const CACHE_NAME = 'nihongo-master-v1';
+const CACHE_NAME = 'nihongo-master-v2';
 const OFFLINE_URL = '/offline';
 
 const PRECACHE_ASSETS = [
