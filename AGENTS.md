@@ -15,3 +15,4 @@ Consulta detallada en [INSTRUCCIONES.md](file:///Users/danielgomez/Documents/Nih
 1. **Vocabulario completo**: Cada nueva palabra debe registrarse en **Kanji**, **Hiragana** y **Katakana**, junto con su traducción en español y nivel.
 2. **Sincronización con Kanjis**: Siempre que se agregue una palabra con kanjis, debe añadirse al listado `words` de CADA kanji que la contiene en `data/kanji.json`.
 3. **Flujo de Despliegue en Vercel**: Cada vez que se realicen cambios o adiciones, se debe compilar (`npm run build`), hacer commit, push a `main` y verificar el deploy en Vercel.
+4. **No Duplicidad y Enlace de Temas en Currículum**: Antes de agregar un nuevo módulo, verificar minuciosamente que el tema central no esté ya repetido. Si ya existe, complementarlo si aporta información o ejemplos útiles, o descartar si ya se encuentra cubierto. Todo módulo debe incorporar obligatoriamente enlaces a sus 'Temas Relacionados'.

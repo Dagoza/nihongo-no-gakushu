@@ -30,8 +30,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   // State for active module detailed view
   const [selectedStepNum, setSelectedStepNum] = useState(initialStep);
   
-  // Track and Level filter state
-  const [selectedTrack, setSelectedTrack] = useState('all'); // 'all' | 'irodori' | 'nhk' | 'jlpt'
+  // Theme and Level filter state
+  const [selectedTheme, setSelectedTheme] = useState('all'); // 'all' | 'vida' | 'trabajo' | 'ciudad' | 'ocio'
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'A1' | 'N5' | 'N4'
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -47,25 +47,33 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
   const selectedStep = steps.find(s => s.step === selectedStepNum) || null;
 
+  // Theme step mapping
+  const themeSteps = {
+    vida: [1, 2, 3, 4, 6],
+    trabajo: [7, 8, 9],
+    ciudad: [5, 12, 13, 14, 15],
+    ocio: [10, 11, 16, 17, 18, 19]
+  };
+
   // Filtered steps
   const filteredSteps = steps.filter(step => {
-    if (selectedTrack !== 'all' && step.track !== selectedTrack) return false;
-    if (selectedLevel !== 'all' && step.level !== selectedLevel) return false;
+    if (selectedTheme !== 'all') {
+      const allowed = themeSteps[selectedTheme] || [];
+      if (!allowed.includes(step.step)) return false;
+    }
+    if (selectedLevel !== 'all' && !(step.level || '').includes(selectedLevel)) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchTitle = (step.title || '').toLowerCase().includes(q);
       const matchSubtitle = (step.subtitle || '').toLowerCase().includes(q);
       const matchGuide = (step.detailed_guide || '').toLowerCase().includes(q);
-      const matchModule = (step.module || '').toLowerCase().includes(q);
+      const matchGrammar = (step.grammar_focus || []).some(g => g.toLowerCase().includes(q));
       const matchVocab = (step.included_vocab || []).some(v => v.toLowerCase().includes(q));
-      if (!matchTitle && !matchSubtitle && !matchGuide && !matchModule && !matchVocab) return false;
+      const matchCanDos = (step.can_dos || []).some(cd => (cd.task || '').toLowerCase().includes(q) || (cd.sample || '').toLowerCase().includes(q));
+      if (!matchTitle && !matchSubtitle && !matchGuide && !matchGrammar && !matchVocab && !matchCanDos) return false;
     }
     return true;
   });
-
-  const irodoriCount = steps.filter(s => s.track === 'irodori').length;
-  const nhkCount = steps.filter(s => s.track === 'nhk').length;
-  const jlptCount = steps.filter(s => s.track === 'jlpt').length;
 
   const handleOpenModule = (stepNum) => {
     setSelectedStepNum(stepNum);
@@ -254,23 +262,49 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
         {/* Can-Do Objectives for Irodori */}
         {selectedStep.can_dos && selectedStep.can_dos.length > 0 && (
-          <div className="card" style={{ marginBottom: 24, borderLeft: '4px solid #ec4899' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span>🎯</span>
-              <span>Competencias Can-Do (Fundación Japón / MCER A1)</span>
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+          <div className="card cando-section" style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <span>🎯</span>
+                  <span>Competencias Can-Do (Fundación Japón / MCER A1)</span>
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  Objetivos prácticos de comunicación: lo que serás capaz de realizar en situaciones reales cotidianas y laborales.
+                </p>
+              </div>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '4px 10px', borderRadius: 'var(--radius-full)', background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', border: '1px solid rgba(236, 72, 153, 0.3)' }}>
+                {selectedStep.can_dos.length} {selectedStep.can_dos.length === 1 ? 'competencia' : 'competencias'}
+              </span>
+            </div>
+
+            <div className="cando-grid">
               {selectedStep.can_dos.map((cd, idx) => (
-                <div key={idx} style={{ background: 'var(--bg-surface)', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, background: '#ec4899', color: '#fff', padding: '2px 6px', borderRadius: 4 }}>
+                <div key={idx} className="cando-card">
+                  <div className="cando-card-header">
+                    <span className="cando-badge">
+                      <Target size={13} />
                       {cd.id}
                     </span>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>{cd.task}</span>
+                    <span className="cando-tag">Irodori A1</span>
                   </div>
+
+                  <h4 className="cando-task">{cd.task}</h4>
+
                   {cd.sample && (
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                      💬 Expresión: <span className="jp-text" style={{ fontWeight: 600, color: 'var(--primary)' }}>{cd.sample}</span>
+                    <div className="cando-expression-box">
+                      <div className="cando-expression-content">
+                        <span className="cando-expression-label">💬 Frase clave</span>
+                        <div className="cando-expression-text jp-text">{cd.sample}</div>
+                      </div>
+                      <button 
+                        className="cando-audio-btn" 
+                        onClick={() => audioManager.speak(cd.sample.replace(/\//g, '、'))}
+                        title="Escuchar pronunciación"
+                        aria-label="Escuchar pronunciación"
+                      >
+                        <Volume2 size={14} />
+                      </button>
                     </div>
                   )}
                 </div>
@@ -535,6 +569,88 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           </div>
         )}
 
+        {/* Temas y Módulos Relacionados Section */}
+        {selectedStep.related_topics && selectedStep.related_topics.length > 0 && (
+          <div className="card" style={{ marginBottom: 28, background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: '1.4rem' }}>🔗</span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>
+                  Temas y Módulos Relacionados
+                </h3>
+              </div>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                Avanza o refuerza tu aprendizaje explorando los módulos consecutivos, precedentes o temáticamente afines:
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+              {selectedStep.related_topics.map((rel, rIdx) => (
+                <div
+                  key={rIdx}
+                  style={{
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+                      <span style={{ 
+                        fontSize: '0.72rem', 
+                        fontWeight: 700, 
+                        padding: '3px 8px', 
+                        borderRadius: 4, 
+                        background: 'rgba(99, 102, 241, 0.12)', 
+                        color: 'var(--primary)' 
+                      }}>
+                        {rel.relationship || 'Tema Relacionado'}
+                      </span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)' }}>
+                        Módulo {rel.step}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <span style={{ fontSize: '1.3rem' }}>{rel.icon || '📌'}</span>
+                      <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0, lineHeight: 1.3 }}>
+                        {rel.title}
+                      </h4>
+                    </div>
+
+                    <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
+                      {rel.reason}
+                    </p>
+                  </div>
+
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => handleOpenModule(rel.step)}
+                    style={{ 
+                      width: '100%', 
+                      justifyContent: 'center', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 6,
+                      fontWeight: 600,
+                      marginTop: 4
+                    }}
+                  >
+                    <span>Ir al Módulo {rel.step}</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Bottom Navigation controls */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--border)' }}>
           {selectedStep.step > 1 ? (
@@ -544,7 +660,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               style={{ display: 'flex', alignItems: 'center', gap: 8 }}
             >
               <ArrowLeft size={16} />
-              <span>Nivel Anterior (L{selectedStep.step - 1})</span>
+              <span>Módulo Anterior (M{selectedStep.step - 1})</span>
             </button>
           ) : <div />}
 
@@ -559,7 +675,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             }}
             style={{ display: 'flex', alignItems: 'center', gap: 8 }}
           >
-            <span>{selectedStep.step < steps.length ? `Siguiente Nivel (L${selectedStep.step + 1})` : 'Volver a la Ruta Principal'}</span>
+            <span>{selectedStep.step < steps.length ? `Siguiente Módulo (M${selectedStep.step + 1})` : 'Volver a la Ruta Principal'}</span>
             <ChevronRight size={16} />
           </button>
         </div>
@@ -572,44 +688,51 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     <div>
       <div className="section-header">
         <h2 className="section-title">
-          <span>🗺️</span> Rutas y Módulos de Aprendizaje
+          <span>🗺️</span> Módulos Consolidados de Aprendizaje
         </h2>
         <p className="section-desc">
-          Temario integral organizado por <strong>Rutas oficiales</strong> extraídas de tus libros: <strong>Irodori A1 (Fundación Japón)</strong> con sus 79 competencias Can-Do para la vida diaria y laboral, los <strong>7 Bloques de Conversación NHK</strong> (48 lecciones) y los <strong>Niveles Progresivos JLPT</strong>.
+          Temario unificado y sin redundancias que consolida los <strong>79 Can-Dos de Irodori A1 (Fundación Japón)</strong>, las <strong>48 lecciones conversacionales de NHK World</strong> y la <strong>gramática progresiva JLPT N5/N4</strong>, interconectados mediante temas relacionados directos.
         </p>
       </div>
 
-      {/* Track & Level Filter Controls */}
+      {/* Theme & Level Filter Controls */}
       <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
-        {/* Track Pills */}
+        {/* Theme Pills */}
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
           <button
-            className={`btn btn-sm ${selectedTrack === 'all' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTrack('all')}
+            className={`btn btn-sm ${selectedTheme === 'all' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTheme('all')}
             style={{ fontWeight: 600, padding: '7px 14px' }}
           >
-            🌐 Todas las Rutas ({steps.length})
+            🌐 Todos los Módulos ({steps.length})
           </button>
           <button
-            className={`btn btn-sm ${selectedTrack === 'irodori' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTrack('irodori')}
+            className={`btn btn-sm ${selectedTheme === 'vida' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTheme('vida')}
             style={{ fontWeight: 600, padding: '7px 14px' }}
           >
-            🌸 Ruta Irodori Can-Do A1 ({irodoriCount})
+            🏠 Vida Cotidiana y Familia (5)
           </button>
           <button
-            className={`btn btn-sm ${selectedTrack === 'nhk' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTrack('nhk')}
+            className={`btn btn-sm ${selectedTheme === 'trabajo' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTheme('trabajo')}
             style={{ fontWeight: 600, padding: '7px 14px' }}
           >
-            📻 Ruta Conversación NHK ({nhkCount})
+            🏢 Trabajo, Horarios y Reglas (3)
           </button>
           <button
-            className={`btn btn-sm ${selectedTrack === 'jlpt' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTrack('jlpt')}
+            className={`btn btn-sm ${selectedTheme === 'ciudad' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTheme('ciudad')}
             style={{ fontWeight: 600, padding: '7px 14px' }}
           >
-            ⛩️ Ruta JLPT Progresiva ({jlptCount})
+            🛍️ Ciudad, Tiendas y Transporte (5)
+          </button>
+          <button
+            className={`btn btn-sm ${selectedTheme === 'ocio' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTheme('ocio')}
+            style={{ fontWeight: 600, padding: '7px 14px' }}
+          >
+            🎮 Ocio, Cultura, Salud y Metas (6)
           </button>
         </div>
 
@@ -634,7 +757,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             <input
               type="text"
               className="search-input"
-              placeholder="Buscar tema, kanji o vocabulario..."
+              placeholder="Buscar tema, kanji, gramática o Can-Do..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -662,7 +785,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         {filteredSteps.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
             <p style={{ fontSize: '1.1rem', marginBottom: 12 }}>No se encontraron módulos con los filtros seleccionados.</p>
-            <button className="btn btn-outline btn-sm" onClick={() => { setSelectedTrack('all'); setSelectedLevel('all'); setSearchQuery(''); }}>
+            <button className="btn btn-outline btn-sm" onClick={() => { setSelectedTheme('all'); setSelectedLevel('all'); setSearchQuery(''); }}>
               Restablecer filtros
             </button>
           </div>
@@ -675,7 +798,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                 <div className="step-number-badge">
                   <span>{step.icon}</span>
                   <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
-                    {step.step >= 200 ? `NHK-${step.step - 200}` : step.step >= 100 ? `Iro-${step.step - 100}` : `L${step.step}`}
+                    M{step.step}
                   </span>
                 </div>
 
@@ -683,24 +806,42 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
                     <div>
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6, alignItems: 'center' }}>
-                        {step.track_label && (
+                        <span className="step-target-tag">{step.stage}</span>
+                        <span style={{ 
+                          fontSize: '0.72rem', 
+                          fontWeight: 700, 
+                          padding: '2px 8px', 
+                          borderRadius: 4, 
+                          background: 'rgba(99, 102, 241, 0.12)', 
+                          color: 'var(--primary)' 
+                        }}>
+                          {step.level}
+                        </span>
+                        {step.can_dos && step.can_dos.length > 0 && (
                           <span style={{ 
                             fontSize: '0.72rem', 
                             fontWeight: 700, 
                             padding: '2px 8px', 
                             borderRadius: 4, 
-                            background: step.track === 'irodori' ? 'rgba(236, 72, 153, 0.15)' : step.track === 'nhk' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(99, 102, 241, 0.15)', 
-                            color: step.track === 'irodori' ? '#db2777' : step.track === 'nhk' ? '#2563eb' : '#4f46e5' 
+                            background: 'rgba(236, 72, 153, 0.12)', 
+                            color: '#db2777' 
                           }}>
-                            {step.track_label}
+                            🎯 {step.can_dos.length} Can-Dos
                           </span>
                         )}
-                        {step.module && (
-                          <span style={{ fontSize: '0.72rem', fontWeight: 600, padding: '2px 8px', borderRadius: 4, background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
-                            {step.module}
+                        {step.related_topics && step.related_topics.length > 0 && (
+                          <span style={{ 
+                            fontSize: '0.72rem', 
+                            fontWeight: 600, 
+                            padding: '2px 8px', 
+                            borderRadius: 4, 
+                            background: 'var(--bg-surface)', 
+                            border: '1px solid var(--border)', 
+                            color: 'var(--text-muted)' 
+                          }}>
+                            🔗 {step.related_topics.length} temas relacionados
                           </span>
                         )}
-                        <span className="step-target-tag">{step.stage}</span>
                       </div>
                       <h3 className="step-title">{step.title}</h3>
                       <p className="step-subtitle">{step.subtitle}</p>
@@ -711,7 +852,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                     <button 
                       className="btn btn-primary btn-sm"
                       onClick={() => handleOpenModule(step.step)}
-                      title="Ver guía completa, ejercicios, vocabulario con audio y notas culturales"
+                      title="Ver guía completa, ejercicios, vocabulario con audio y temas relacionados"
                       style={{ display: 'flex', alignItems: 'center', gap: 6 }}
                     >
                       <span>Ir al Módulo</span>

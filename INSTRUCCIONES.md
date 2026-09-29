@@ -153,3 +153,38 @@ Si la compilación es exitosa (`Compiled successfully`), procede con el flujo de
 - [ ] ¿Se ejecutó `npm run build` sin errores?
 - [ ] ¿Se realizó `git add`, `git commit` y `git push origin main`?
 - [ ] ¿Se verificó en Vercel que el estado sea **Ready / Deployed**?
+
+---
+
+## 4. Reglas para la Incorporación y Mantenimiento de Módulos del Currículum
+
+Para garantizar un itinerario pedagógico cohesivo, limpio y sin fragmentación entre cursos o libros, rige la **Regla de Oro de Consolidación, No Redundancia y Enlace Temático**:
+
+### 4.1. Verificación Previa de No Duplicidad
+Antes de agregar cualquier módulo o temática al currículum (`data/curriculum.json`), **se debe auditar minuciosamente que el tema central no exista ya en el catálogo**:
+- **Si ya existe el tema**:
+  - **Complementar:** Si la nueva fuente o lección aporta ejemplos reales, objetivos Can-Do, diálogos contextuales o vocabulario enriquecedor, **se integran directamente dentro del módulo existente**.
+  - **Saltar / Omitir:** Si la información es redundante o repite explicaciones ya cubiertas, **se omite y nunca se crea un módulo paralelo**.
+- **Si es un tema enteramente nuevo**:
+  - Se da de alta asignando el número de módulo correspondiente, nivel oficial (A1/N5/N4), Can-Dos pedagógicos y fuentes bibliográficas.
+
+### 4.2. Enlace Obligatorio con Temas Relacionados (`related_topics`)
+Todo módulo en `data/curriculum.json` **debe incorporar obligatoriamente el array `"related_topics"`** con enlaces directos hacia módulos precedentes, consecutivos o complementarios:
+- **Estructura requerida de cada tema relacionado:**
+  ```json
+  {
+    "step": 2,
+    "title": "Estrategias de Comunicación y Gestión de Idiomas",
+    "icon": "💬",
+    "relationship": "Consecutivo Natural",
+    "reason": "Permite resolver dudas y pedir aclaraciones cuando no entiendes al interlocutor tras presentarte."
+  }
+  ```
+- **Navegación interactiva:** La interfaz de usuario (`components/CurriculumTab.jsx`) debe presentar estos enlaces mediante tarjetas interactivas con botones de salto directo al módulo enlazado.
+
+### 4.3. Checklist para Nuevos Módulos del Currículum
+- [ ] ¿Se auditó que el tema no esté ya presente en los 19 módulos consolidados?
+- [ ] Si ya existía, ¿se complementó el módulo existente en vez de duplicarlo?
+- [ ] ¿Se definieron los objetivos Can-Do prácticos de comunicación?
+- [ ] ¿Se añadieron ejemplos con transcripción completa (Kanji, Kana, Romaji, Español) y audio?
+- [ ] ¿Se configuró el bloque `"related_topics"` con enlaces y justificaciones pedagógicas claras?
