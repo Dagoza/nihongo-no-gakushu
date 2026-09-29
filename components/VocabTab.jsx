@@ -23,6 +23,7 @@ import * as wanakana from 'wanakana';
 import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import SpeechPractice from './SpeechPractice';
+import PitchAccent from './PitchAccent';
 import { getVocabularyFromSupabase } from '../lib/supabaseData';
 import { useApp } from '../lib/AppContext';
 import { getAuthSession } from '../lib/supabaseSync';
@@ -740,6 +741,16 @@ export default function VocabTab({
                         </span>
                       )}
                     </div>
+
+                    {/* Curva Visual SVG de Pitch Accent */}
+                    <div style={{ marginTop: 8, marginBottom: 4 }}>
+                      <PitchAccent 
+                        word={item.kanji} 
+                        reading={item.kana || item.hiragana} 
+                        mode="full" 
+                        size="sm" 
+                      />
+                    </div>
                   </div>
 
                   <div className="vocab-meanings">
@@ -888,6 +899,14 @@ export default function VocabTab({
                     {typingFeedback.target}
                   </div>
                 )}
+                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+                  <PitchAccent 
+                    word={currentTypingItem.kanji} 
+                    reading={currentTypingItem.kana} 
+                    mode="compact" 
+                    size="sm" 
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -931,9 +950,21 @@ export default function VocabTab({
           )}
           renderBack={(item) => (
             <>
-              <div className="vocab-kana jp-text" style={{ fontSize: '1.5rem', marginBottom: 12, color: 'var(--primary)' }}>
+              <div className="vocab-kana jp-text" style={{ fontSize: '1.5rem', marginBottom: 8, color: 'var(--primary)' }}>
                 {item.kana || ''}
               </div>
+
+              {/* Pitch Accent Visual Curve en SRS */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                <PitchAccent 
+                  word={item.kanji} 
+                  reading={item.kana || item.hiragana} 
+                  mode="full" 
+                  size="md" 
+                  showAudio={true} 
+                />
+              </div>
+
               <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-main)' }}>
                 🇪🇸 {item.meaning_es}
               </div>

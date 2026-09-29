@@ -297,17 +297,23 @@ Para ofrecer máxima claridad sin saturar la interfaz de estudio, se implementar
    - `[② 中高]` (Ámbar Dorado `#fbbf24` / `bg-amber-500/20 text-amber-400`): Subida intermedia y descenso.
    - `[㊵ 尾高]` (Violeta Púrpura `#c084fc` / `bg-purple-500/20 text-purple-400`): Pico final, caída en la partícula.
 
-##### E. Base de Datos e Integración Técnica
-- **Dataset Abierto Kanjium + Wadoku Pitch:** Base de datos curada en formato JSON indexado con más de 45,000 entradas de pronunciación estándar del dialecto de Tokio.
-- **Estructura en `data/pitch_accents.json`:**
-  ```json
-  {
-    "日本": { "reading": "にほん", "pattern": 0, "type": "heiban", "moras": ["L", "H", "H"], "particle": "H" },
-    "雨": { "reading": "あめ", "pattern": 1, "type": "atamadaka", "moras": ["H", "L"], "particle": "L" },
-    "心": { "reading": "こころ", "pattern": 2, "type": "nakadaka", "moras": ["L", "H", "L"], "particle": "L" },
-    "花": { "reading": "はな", "pattern": 2, "type": "odaka", "moras": ["L", "H"], "particle": "L" }
-  }
-  ```
+##### E. Base de Datos e Integración Técnica (Completado en Producción)
+- **Dataset Abierto Kanjium + Curación Exclusiva (`data/pitch_accents.json`):**
+  - Base de datos indexada y optimizada en JSON (~132 KB) con **100% de cobertura** sobre todas las palabras del catálogo de vocabulario (`data/vocabulary.json`) y el 100% de las palabras compuestas de kanji (`data/kanji.json`).
+  - Mapeo unificado de patrones: `pattern` numérico, `type` canónico (*heiban*, *atamadaka*, *nakadaka*, *odaka*) y conteo moraico.
+- **Módulo Fonológico (`lib/pitchAccent.js`):**
+  - Tokenizador moraico `getMoras(kana)` que procesa correctamente combinaciones diacríticas (拗音: *kya*, *shu*, *cho*), pausas sordas (*sokuon* っ) y sonidos nasales (*hatsuon* ん).
+  - Cálculo de trayectorias tonales `calculatePitchLevels` con altura de partículas (ej. が) y ubicación del downstep (下がり目).
+- **Componente React SVG (`components/PitchAccent.jsx`):**
+  - Renderizado vectorial SVG puro estilo OJAD / Diccionario NHK con líneas de tono continuo, nodos circulares moraicos, indicador de caída acentuada y mora fantasma para la partícula.
+  - Modos de presentación: `'full'` (badge + curva SVG completa con etiquetas moraicas), `'compact'` (badge + mini curva) y `'badge'` (pill con código de color accesible).
+- **Despliegue Transversal en la Interfaz:**
+  1. *Fichas de Vocabulario (`components/VocabTab.jsx`):* Cada tarjeta incluye la curva SVG y badge debajo de la lectura kana.
+  2. *Repaso SRS de Vocabulario:* La cara posterior de las tarjetas SRS despliega la curva SVG a tamaño medio con botón para escuchar con entonación de Tokio.
+  3. *Mecanografía IME de Vocabulario:* El cuadro de feedback muestra la curva tonal instantánea tras responder.
+  4. *Fichas de Kanjis (`components/KanjiTab.jsx`):* Cada palabra compuesta del ideograma incorpora su mini curva SVG de acento tonal.
+  5. *Repaso SRS de Kanjis:* Muestra la curva tonal de la lectura principal al voltear la tarjeta.
+  6. *Guardado de Palabras (`components/SaveVocabModal.jsx`):* Previsualización interactiva en tiempo real del acento tonal mientras el usuario escribe o edita un término.
 
 ---
 

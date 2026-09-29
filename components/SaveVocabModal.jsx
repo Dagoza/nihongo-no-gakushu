@@ -23,6 +23,7 @@ import {
 } from '../lib/japaneseUtils';
 import { dataStore } from '../lib/data';
 import { useApp } from '../lib/AppContext';
+import PitchAccent from './PitchAccent';
 
 export default function SaveVocabModal({
   isOpen,
@@ -336,6 +337,16 @@ export default function SaveVocabModal({
                 </select>
               </div>
             </div>
+
+            {/* Previsualización en vivo de Acento Tonal (Pitch Accent) */}
+            {(kanji || hiragana) && (
+              <div style={{ marginBottom: 16 }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: 4, fontWeight: 600 }}>
+                  Acento Tonal (Pitch Accent de Tokio):
+                </span>
+                <PitchAccent word={kanji} reading={hiragana} mode="full" size="sm" showAudio={true} />
+              </div>
+            )}
 
             <div className="form-group">
               <label className="form-label">Significado en Español (meaning_es)</label>

@@ -1,0 +1,7472 @@
+{
+  "こんにちは": {
+    "reading": "こんにちは",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "おはよう": {
+    "reading": "おはよう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "おはようございます": {
+    "reading": "おはようございます",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 9
+  },
+  "こんばんは": {
+    "reading": "こんばんは",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "ありがとう": {
+    "reading": "ありがとう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "ありがとうございます": {
+    "reading": "ありがとうございます",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 9
+  },
+  "さようなら": {
+    "reading": "さようなら",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "はじめまして": {
+    "reading": "はじめまして",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "よろしく": {
+    "reading": "よろしく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "よろしくおねがいします": {
+    "reading": "よろしくおねがいします",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 10
+  },
+  "おねがいします": {
+    "reading": "おねがいします",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 7
+  },
+  "お願い": {
+    "reading": "おねがい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "おねがい": {
+    "reading": "おねがい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "すみません": {
+    "reading": "すみません",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "ごめんなさい": {
+    "reading": "ごめんなさい",
+    "pattern": 5,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "はい": {
+    "reading": "はい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "いいえ": {
+    "reading": "いいえ",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "わかりません": {
+    "reading": "わかりません",
+    "pattern": 5,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "分かります": {
+    "reading": "わかります",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "勉強する": {
+    "reading": "べんきょうする",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 6
+  },
+  "べんきょうする": {
+    "reading": "べんきょうする",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 6
+  },
+  "始めに": {
+    "reading": "はじめに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "はじめに": {
+    "reading": "はじめに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "できるだけ": {
+    "reading": "できるだけ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "十分に": {
+    "reading": "じゅうぶんに",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "じゅうぶんに": {
+    "reading": "じゅうぶんに",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "絶対に": {
+    "reading": "ぜったいに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "ぜったいに": {
+    "reading": "ぜったいに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "普通は": {
+    "reading": "ふつうは",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ふつうは": {
+    "reading": "ふつうは",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "七時": {
+    "reading": "しちじ",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "しちじ": {
+    "reading": "しちじ",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "百円": {
+    "reading": "ひゃくえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ひゃくえん": {
+    "reading": "ひゃくえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "一万円": {
+    "reading": "いちまんえん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "いちまんえん": {
+    "reading": "いちまんえん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "二時半": {
+    "reading": "にじはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "にじはん": {
+    "reading": "にじはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "一時": {
+    "reading": "いちじ",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "二時": {
+    "reading": "にじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "三時": {
+    "reading": "さんじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "四時": {
+    "reading": "よじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "五時": {
+    "reading": "ごじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "六時": {
+    "reading": "ろくじ",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "八時": {
+    "reading": "はちじ",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "九時": {
+    "reading": "くじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "十時": {
+    "reading": "じゅうじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "十一時": {
+    "reading": "じゅういちじ",
+    "pattern": 5,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "十二時": {
+    "reading": "じゅうにじ",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "雨": {
+    "reading": "あめ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "飴": {
+    "reading": "あめ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "箸": {
+    "reading": "はし",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "橋": {
+    "reading": "はし",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "端": {
+    "reading": "はし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "花": {
+    "reading": "はな",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "鼻": {
+    "reading": "はな",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "神": {
+    "reading": "かみ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "紙": {
+    "reading": "かみ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "髪": {
+    "reading": "かみ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "先生": {
+    "reading": "せんせい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "経験": {
+    "reading": "けいけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "一": {
+    "reading": "いち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "二": {
+    "reading": "に",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "三": {
+    "reading": "サン",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "四": {
+    "reading": "し",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "五": {
+    "reading": "いつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "六": {
+    "reading": "む",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "七": {
+    "reading": "しち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "八": {
+    "reading": "はち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "九": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "十": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "百": {
+    "reading": "ひゃく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "千": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "万": {
+    "reading": "ばん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "卵": {
+    "reading": "たまご",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "水": {
+    "reading": "すい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "魚": {
+    "reading": "うお",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "お茶": {
+    "reading": "おちゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "肉": {
+    "reading": "しし",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "林檎": {
+    "reading": "りんきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ご飯": {
+    "reading": "ごはん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "野菜": {
+    "reading": "やさい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "家": {
+    "reading": "いえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "部屋": {
+    "reading": "へや",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "店": {
+    "reading": "たな",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "駅": {
+    "reading": "えき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "学校": {
+    "reading": "がっこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "公園": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "山": {
+    "reading": "むれ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "川": {
+    "reading": "かわ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "海": {
+    "reading": "うみ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "日本": {
+    "reading": "にっぽん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "赤": {
+    "reading": "あか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "青": {
+    "reading": "あお",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "黒": {
+    "reading": "くろ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "白": {
+    "reading": "しら",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "緑": {
+    "reading": "みどり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "紫": {
+    "reading": "むらさき",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "黄色": {
+    "reading": "おうしょく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "食べる": {
+    "reading": "たべる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "飲む": {
+    "reading": "のむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "見る": {
+    "reading": "みる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "聞く": {
+    "reading": "きく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "読む": {
+    "reading": "よむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "書く": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "話す": {
+    "reading": "はなす",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "行く": {
+    "reading": "いく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "来る": {
+    "reading": "きたる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "帰る": {
+    "reading": "かえる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "起きる": {
+    "reading": "おきる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "寝る": {
+    "reading": "ねる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "会う": {
+    "reading": "あう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "買う": {
+    "reading": "かう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "洗う": {
+    "reading": "あらう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "待つ": {
+    "reading": "まつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "持つ": {
+    "reading": "もつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "入る": {
+    "reading": "いる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "出る": {
+    "reading": "でる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "乗る": {
+    "reading": "のる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "立つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "座る": {
+    "reading": "すわる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "教える": {
+    "reading": "おしえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "する": {
+    "reading": "する",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "ある": {
+    "reading": "ある",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "いる": {
+    "reading": "いる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "大きい": {
+    "reading": "おおきい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "小さい": {
+    "reading": "ちいさい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "高い": {
+    "reading": "たかい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "安い": {
+    "reading": "やすい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "低い": {
+    "reading": "ひくい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "新しい": {
+    "reading": "あたらしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "古い": {
+    "reading": "ふるい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "良い": {
+    "reading": "いい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "悪い": {
+    "reading": "にくい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "近い": {
+    "reading": "ちかい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "遠い": {
+    "reading": "とおい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "早い": {
+    "reading": "はやい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "速い": {
+    "reading": "はやい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "遅い": {
+    "reading": "おそい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "暑い": {
+    "reading": "あつい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "寒い": {
+    "reading": "さぶい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "冷たい": {
+    "reading": "つべたい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "美味しい": {
+    "reading": "おいしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "楽しい": {
+    "reading": "たのしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "難しい": {
+    "reading": "むずかしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "易しい": {
+    "reading": "やさしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "面白い": {
+    "reading": "おもしろい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "つまらない": {
+    "reading": "つまらない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "忙しい": {
+    "reading": "いそがしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "静か": {
+    "reading": "しずか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "元気": {
+    "reading": "げんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "便利": {
+    "reading": "べんり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "有名": {
+    "reading": "ゆうめい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "親切": {
+    "reading": "しんせつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "好き": {
+    "reading": "すき",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "とても": {
+    "reading": "とても",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "少し": {
+    "reading": "すこし",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "ちょっと": {
+    "reading": "ちょっと",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "たくさん": {
+    "reading": "たくさん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "いつも": {
+    "reading": "いつも",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "だいたい": {
+    "reading": "だいたい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "早く": {
+    "reading": "はやく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "よく": {
+    "reading": "よく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "もう": {
+    "reading": "",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 0
+  },
+  "まだ": {
+    "reading": "まだ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "もちろん": {
+    "reading": "もちろん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "大勢": {
+    "reading": "おおぜい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "素晴らしい": {
+    "reading": "すばらしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "上手": {
+    "reading": "うわて",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "得意": {
+    "reading": "とくい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "危ない": {
+    "reading": "あぶない",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "危険": {
+    "reading": "きけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "安全": {
+    "reading": "あんぜん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "深い": {
+    "reading": "ふかい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "浅い": {
+    "reading": "あさい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "怖い": {
+    "reading": "こわい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "寂しい": {
+    "reading": "さびしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "厳しい": {
+    "reading": "いかめしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "熱心": {
+    "reading": "ねっしん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "悲しい": {
+    "reading": "かなしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "特別": {
+    "reading": "とくべつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "苦い": {
+    "reading": "にがい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "煩い": {
+    "reading": "うるさい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "適切": {
+    "reading": "てきせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "すると": {
+    "reading": "",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 0
+  },
+  "そろそろ": {
+    "reading": "",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 0
+  },
+  "今にも": {
+    "reading": "いまにも",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "先に": {
+    "reading": "さきに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "たまに": {
+    "reading": "たまに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "しっかり": {
+    "reading": "しっかり",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "必ず": {
+    "reading": "かならず",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "だから": {
+    "reading": "",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 0
+  },
+  "とうとう": {
+    "reading": "とうとう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "例えば": {
+    "reading": "たとえば",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "直接": {
+    "reading": "ちょくせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "別に": {
+    "reading": "べつに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "きちんと": {
+    "reading": "",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 0
+  },
+  "はっきり": {
+    "reading": "",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 0
+  },
+  "かなり": {
+    "reading": "かなり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "随分": {
+    "reading": "ずいぶん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "非常に": {
+    "reading": "ひじょうに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ちっとも": {
+    "reading": "ちっとも",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "決して": {
+    "reading": "けして",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "急に": {
+    "reading": "きゅうに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "すっかり": {
+    "reading": "",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 0
+  },
+  "どんどん": {
+    "reading": "",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 0
+  },
+  "しばらく": {
+    "reading": "しばらく",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "ほとんど": {
+    "reading": "ほとんど",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "さっき": {
+    "reading": "さっき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "最近": {
+    "reading": "さいきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "アニメ": {
+    "reading": "",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 0
+  },
+  "君": {
+    "reading": "きみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "土産": {
+    "reading": "とさん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "教室": {
+    "reading": "きょうしつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "図書館": {
+    "reading": "としょかん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "留学生": {
+    "reading": "りゅうがくせい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "宝物": {
+    "reading": "たからもの",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "電話番号": {
+    "reading": "でんわばんごう",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 7
+  },
+  "二つ": {
+    "reading": "ふたつ",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "試験": {
+    "reading": "しけん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "一度": {
+    "reading": "いちど",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "健康": {
+    "reading": "けんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "午前": {
+    "reading": "ごぜん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "全員": {
+    "reading": "ぜんいん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "土曜日": {
+    "reading": "どようび",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "読書": {
+    "reading": "とくしょ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "小説": {
+    "reading": "しょうせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "階段": {
+    "reading": "かいだん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "郵便局": {
+    "reading": "ゆうびんきょく",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "心配": {
+    "reading": "しんぱい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "遅刻": {
+    "reading": "ちこく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "約束": {
+    "reading": "やくそく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "明後日": {
+    "reading": "あさって",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "私": {
+    "reading": "あたい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "広い": {
+    "reading": "ひろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "朝": {
+    "reading": "あさ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "昼": {
+    "reading": "ひる",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "夜": {
+    "reading": "よ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "横": {
+    "reading": "よこ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "入口": {
+    "reading": "いりぐち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "出口": {
+    "reading": "でぐち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "押す": {
+    "reading": "おす",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "引く": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "映画": {
+    "reading": "えいが",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "勉強": {
+    "reading": "べんきょう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "強い": {
+    "reading": "こわい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "温泉": {
+    "reading": "おんせん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "予定": {
+    "reading": "よてい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "旅行": {
+    "reading": "りょこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "朝ご飯": {
+    "reading": "あさごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "昼休み": {
+    "reading": "ひるやすみ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "改札口": {
+    "reading": "かいさつぐち",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "一人": {
+    "reading": "いちにん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "四人": {
+    "reading": "よたり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "人": {
+    "reading": "じん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "日本人": {
+    "reading": "にっぽんじん",
+    "pattern": 5,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "何": {
+    "reading": "なに",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "何時": {
+    "reading": "いつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "今": {
+    "reading": "いま",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "今週": {
+    "reading": "こんしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "入": {
+    "reading": "いり",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "出": {
+    "reading": "しゅつ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "上": {
+    "reading": "うえ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "下": {
+    "reading": "げ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "中": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "中学校": {
+    "reading": "ちゅうがっこう",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "右": {
+    "reading": "みぎ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "左": {
+    "reading": "さ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "道": {
+    "reading": "どう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "北": {
+    "reading": "きた",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "南": {
+    "reading": "みなみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "東": {
+    "reading": "あずま",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "東京": {
+    "reading": "とうきょう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "西": {
+    "reading": "にし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "大": {
+    "reading": "おおい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "大学": {
+    "reading": "だいがく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "小": {
+    "reading": "さざ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "少ない": {
+    "reading": "すくない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "古": {
+    "reading": "いにしえ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "新": {
+    "reading": "あら",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "週": {
+    "reading": "しゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "来週": {
+    "reading": "らいしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "月": {
+    "reading": "げつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "来月": {
+    "reading": "らいげつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "一月": {
+    "reading": "いちがつ",
+    "pattern": 4,
+    "type": "odaka",
+    "moraCount": 4
+  },
+  "年": {
+    "reading": "とし",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "今年": {
+    "reading": "ことし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "来年": {
+    "reading": "らいねん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "来": {
+    "reading": "らい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "食": {
+    "reading": "しょく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "日": {
+    "reading": "にち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "本": {
+    "reading": "ほん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "木": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "車": {
+    "reading": "くるま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "土": {
+    "reading": "つち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "天": {
+    "reading": "あめ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "天気": {
+    "reading": "てんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "見": {
+    "reading": "けん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "言": {
+    "reading": "げん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "言う": {
+    "reading": "いう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "話": {
+    "reading": "はなし",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "語": {
+    "reading": "かたり",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "日本語": {
+    "reading": "にっぽんご",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "書": {
+    "reading": "しょ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "新聞": {
+    "reading": "しんぶん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "飲": {
+    "reading": "いん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "前": {
+    "reading": "さき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "後": {
+    "reading": "あと",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "後ろ": {
+    "reading": "うしろ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "午後": {
+    "reading": "ごご",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "午": {
+    "reading": "うま",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "間": {
+    "reading": "あいだ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "時間": {
+    "reading": "じかん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "毎": {
+    "reading": "まい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "毎日": {
+    "reading": "まいにち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "白い": {
+    "reading": "しろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "高": {
+    "reading": "こう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "長": {
+    "reading": "おさ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "長い": {
+    "reading": "ながい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "多": {
+    "reading": "た",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "多い": {
+    "reading": "おおい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "父": {
+    "reading": "かそ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "お父さん": {
+    "reading": "おとうさん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "母": {
+    "reading": "いろは",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "お母さん": {
+    "reading": "おかあさん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "男": {
+    "reading": "お",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "男の子": {
+    "reading": "おとこのこ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "女": {
+    "reading": "おうな",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "女の子": {
+    "reading": "おんなのこ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "子": {
+    "reading": "こ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "子ども": {
+    "reading": "こども",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "千円": {
+    "reading": "せんえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "円": {
+    "reading": "えん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "金": {
+    "reading": "かな",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "お金": {
+    "reading": "おかね",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "電": {
+    "reading": "いなずま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "電車": {
+    "reading": "でんしゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "電気": {
+    "reading": "でんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "気": {
+    "reading": "き",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "火": {
+    "reading": "か",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "学": {
+    "reading": "がく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "学生": {
+    "reading": "がくしょう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "校": {
+    "reading": "こう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "先": {
+    "reading": "さき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "生": {
+    "reading": "いく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "生まれる": {
+    "reading": "うまれる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "友": {
+    "reading": "とも",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "友だち": {
+    "reading": "ともだち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "名": {
+    "reading": "な",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "名前": {
+    "reading": "なまえ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "社": {
+    "reading": "しゃ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "会社": {
+    "reading": "かいしゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "会": {
+    "reading": "かい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "行": {
+    "reading": "ぎょう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "休み": {
+    "reading": "やすみ",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "時": {
+    "reading": "じ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "分": {
+    "reading": "ふん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "分かる": {
+    "reading": "わかる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "五分": {
+    "reading": "ごふん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "半": {
+    "reading": "はん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "無": {
+    "reading": "む",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "文": {
+    "reading": "あや",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "外": {
+    "reading": "そと",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "国": {
+    "reading": "くに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "発": {
+    "reading": "はつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "思う": {
+    "reading": "おもう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "思い出す": {
+    "reading": "おもいだす",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "思い出": {
+    "reading": "おもいで",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "美": {
+    "reading": "び",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "美しい": {
+    "reading": "うつくしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "美人": {
+    "reading": "びじん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "美術": {
+    "reading": "びじゅつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "君たち": {
+    "reading": "きみたち",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "産": {
+    "reading": "うぶ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "室": {
+    "reading": "しつ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "図": {
+    "reading": "ず",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "館": {
+    "reading": "かん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "宝": {
+    "reading": "たから",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "物": {
+    "reading": "ぶつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "番": {
+    "reading": "つがい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "号": {
+    "reading": "ごう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "験": {
+    "reading": "げん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "度": {
+    "reading": "たび",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "全": {
+    "reading": "ぜん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "員": {
+    "reading": "いん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "説": {
+    "reading": "せつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "階": {
+    "reading": "かい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "段": {
+    "reading": "たん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "便": {
+    "reading": "びん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "局": {
+    "reading": "きょく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "心": {
+    "reading": "こころ",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "刻": {
+    "reading": "きざ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "約": {
+    "reading": "やく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "束": {
+    "reading": "そく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "経": {
+    "reading": "きょう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "明": {
+    "reading": "みょう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "明日": {
+    "reading": "あした",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "明るい": {
+    "reading": "あかるい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "私たち": {
+    "reading": "わたくしたち",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "私立": {
+    "reading": "しりつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "牛肉": {
+    "reading": "ぎゅうにく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "豚肉": {
+    "reading": "とんにく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "鳥肉": {
+    "reading": "とりにく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "好": {
+    "reading": "よしみ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "大好き": {
+    "reading": "だいすき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "好物": {
+    "reading": "こうぶつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "家族": {
+    "reading": "かぞく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "家賃": {
+    "reading": "やちん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "広場": {
+    "reading": "ひろば",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "広島": {
+    "reading": "ひろしま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "今朝": {
+    "reading": "けさ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "昼ご飯": {
+    "reading": "ひるごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "今夜": {
+    "reading": "こんや",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "夜中": {
+    "reading": "やちゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "枚": {
+    "reading": "ビラ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "一枚": {
+    "reading": "いちまい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "何枚": {
+    "reading": "なんまい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "乗": {
+    "reading": "じょう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "乗り場": {
+    "reading": "のりば",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "乗客": {
+    "reading": "じょうかく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "最低": {
+    "reading": "さいてい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "横浜": {
+    "reading": "よこはま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "横断歩道": {
+    "reading": "おうだんほどう",
+    "pattern": 5,
+    "type": "nakadaka",
+    "moraCount": 7
+  },
+  "口": {
+    "reading": "く",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "押入れ": {
+    "reading": "おしいれ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "引き出し": {
+    "reading": "ひきだし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "割引": {
+    "reading": "わりびき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "映る": {
+    "reading": "うつる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "画": {
+    "reading": "かく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "計画": {
+    "reading": "けいかく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "画面": {
+    "reading": "がめん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "強": {
+    "reading": "きょう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "温": {
+    "reading": "ぬく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "温かい": {
+    "reading": "あたたかい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "温度": {
+    "reading": "おんど",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "泉": {
+    "reading": "いずみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "予": {
+    "reading": "よ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "予約": {
+    "reading": "よやく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "定休日": {
+    "reading": "ていきゅうび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "旅": {
+    "reading": "たび",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "旅館": {
+    "reading": "りょかん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "せんせい": {
+    "reading": "せんせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "けいけん": {
+    "reading": "けいけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "いち": {
+    "reading": "いち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "に": {
+    "reading": "に",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "さん": {
+    "reading": "さん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "よん": {
+    "reading": "よん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "ご": {
+    "reading": "ご",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "ろく": {
+    "reading": "ろく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "なな": {
+    "reading": "なな",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "はち": {
+    "reading": "はち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "きゅう": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "じゅう": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "ひゃく": {
+    "reading": "ひゃく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "せん": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "まん": {
+    "reading": "まん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "たまご": {
+    "reading": "たまご",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "みず": {
+    "reading": "みず",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "さかな": {
+    "reading": "さかな",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "おちゃ": {
+    "reading": "おちゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "にく": {
+    "reading": "にく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "りんご": {
+    "reading": "りんご",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "ごはん": {
+    "reading": "ごはん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "やさい": {
+    "reading": "やさい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "いえ": {
+    "reading": "いえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "へや": {
+    "reading": "へや",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "みせ": {
+    "reading": "みせ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "えき": {
+    "reading": "えき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "がっこう": {
+    "reading": "がっこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "こうえん": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "やま": {
+    "reading": "やま",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "かわ": {
+    "reading": "かわ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "うみ": {
+    "reading": "うみ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "にほん": {
+    "reading": "にほん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "あか": {
+    "reading": "あか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "あお": {
+    "reading": "あお",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "くろ": {
+    "reading": "くろ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "しろ": {
+    "reading": "しろ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "みどり": {
+    "reading": "みどり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "むらさき": {
+    "reading": "むらさき",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "きいろ": {
+    "reading": "きいろ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "たべる": {
+    "reading": "たべる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "のむ": {
+    "reading": "のむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "みる": {
+    "reading": "みる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "きく": {
+    "reading": "きく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "よむ": {
+    "reading": "よむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "かく": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "はなす": {
+    "reading": "はなす",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "いく": {
+    "reading": "いく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "くる": {
+    "reading": "くる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "かえる": {
+    "reading": "かえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "おきる": {
+    "reading": "おきる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "ねる": {
+    "reading": "ねる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "あう": {
+    "reading": "あう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "かう": {
+    "reading": "かう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "あらう": {
+    "reading": "あらう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "まつ": {
+    "reading": "まつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "もつ": {
+    "reading": "",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 0
+  },
+  "はいる": {
+    "reading": "はいる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "でる": {
+    "reading": "でる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "のる": {
+    "reading": "のる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "たつ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "すわる": {
+    "reading": "すわる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "おしえる": {
+    "reading": "おしえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "おおきい": {
+    "reading": "おおきい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "ちいさい": {
+    "reading": "ちいさい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "たかい": {
+    "reading": "たかい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "やすい": {
+    "reading": "やすい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "ひくい": {
+    "reading": "ひくい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "あたらしい": {
+    "reading": "あたらしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "ふるい": {
+    "reading": "ふるい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "わるい": {
+    "reading": "わるい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "ちかい": {
+    "reading": "ちかい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "とおい": {
+    "reading": "とおい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "はやい": {
+    "reading": "はやい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "おそい": {
+    "reading": "おそい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "あつい": {
+    "reading": "あつい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "さむい": {
+    "reading": "さむい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "つめたい": {
+    "reading": "つめたい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "おいしい": {
+    "reading": "おいしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "たのしい": {
+    "reading": "たのしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "むずかしい": {
+    "reading": "むずかしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "やさしい": {
+    "reading": "やさしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "おもしろい": {
+    "reading": "おもしろい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "いそがしい": {
+    "reading": "いそがしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "しずか": {
+    "reading": "しずか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "げんき": {
+    "reading": "げんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "べんり": {
+    "reading": "べんり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "ゆうめい": {
+    "reading": "ゆうめい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "しんせつ": {
+    "reading": "しんせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "すき": {
+    "reading": "すき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "すこし": {
+    "reading": "すこし",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "はやく": {
+    "reading": "はやく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "おおぜい": {
+    "reading": "おおぜい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "すばらしい": {
+    "reading": "すばらしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "じょうず": {
+    "reading": "じょうず",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "とくい": {
+    "reading": "とくい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "あぶない": {
+    "reading": "あぶない",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "きけん": {
+    "reading": "きけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "あんぜん": {
+    "reading": "あんぜん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ふかい": {
+    "reading": "ふかい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "あさい": {
+    "reading": "あさい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "こわい": {
+    "reading": "こわい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "さびしい": {
+    "reading": "さびしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "きびしい": {
+    "reading": "きびしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "ねっしん": {
+    "reading": "ねっしん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "かなしい": {
+    "reading": "かなしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "とくべつ": {
+    "reading": "とくべつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "にがい": {
+    "reading": "にがい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "うるさい": {
+    "reading": "うるさい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "てきせつ": {
+    "reading": "てきせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "いまにも": {
+    "reading": "いまにも",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "さきに": {
+    "reading": "さきに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "かならず": {
+    "reading": "かならず",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "たとえば": {
+    "reading": "たとえば",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "ちょくせつ": {
+    "reading": "ちょくせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "べつに": {
+    "reading": "べつに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "ずいぶん": {
+    "reading": "ずいぶん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "ひじょうに": {
+    "reading": "ひじょうに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "けっして": {
+    "reading": "けっして",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "きゅうに": {
+    "reading": "きゅうに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "さいきん": {
+    "reading": "さいきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "きみ": {
+    "reading": "きみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "みやげ": {
+    "reading": "みやげ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "きょうしつ": {
+    "reading": "きょうしつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "としょかん": {
+    "reading": "としょかん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "りゅうがくせい": {
+    "reading": "りゅうがくせい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "たからもの": {
+    "reading": "たからもの",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 5
+  },
+  "でんわばんごう": {
+    "reading": "でんわばんごう",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 7
+  },
+  "ふたつ": {
+    "reading": "ふたつ",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "しけん": {
+    "reading": "しけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "いちど": {
+    "reading": "いちど",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "けんこう": {
+    "reading": "けんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ごぜん": {
+    "reading": "ごぜん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "ぜんいん": {
+    "reading": "ぜんいん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "どようび": {
+    "reading": "どようび",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "どくしょ": {
+    "reading": "どくしょ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "しょうせつ": {
+    "reading": "しょうせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "かいだん": {
+    "reading": "かいだん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ゆうびんきょく": {
+    "reading": "ゆうびんきょく",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "しんぱい": {
+    "reading": "しんぱい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ちこく": {
+    "reading": "ちこく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "やくそく": {
+    "reading": "やくそく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "たぶん": {
+    "reading": "たぶん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "あさって": {
+    "reading": "あさって",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "わたし": {
+    "reading": "わたし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "ひろい": {
+    "reading": "ひろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "あさ": {
+    "reading": "あさ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "ひる": {
+    "reading": "ひる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "よる": {
+    "reading": "よる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "よこ": {
+    "reading": "よこ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "いりぐち": {
+    "reading": "いりぐち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "でぐち": {
+    "reading": "でぐち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "おす": {
+    "reading": "",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 0
+  },
+  "ひく": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "えいが": {
+    "reading": "えいが",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "べんきょう": {
+    "reading": "べんきょう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "つよい": {
+    "reading": "つよい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "おんせん": {
+    "reading": "おんせん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "よてい": {
+    "reading": "よてい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "りょこう": {
+    "reading": "りょこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "あさごはん": {
+    "reading": "あさごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "ひるやすみ": {
+    "reading": "ひるやすみ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "かいさつぐち": {
+    "reading": "かいさつぐち",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "ひとり": {
+    "reading": "ひとり",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "よにん": {
+    "reading": "よにん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "くじ": {
+    "reading": "くじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "ひと": {
+    "reading": "ひと",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "にほんじん": {
+    "reading": "にほんじん",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "なに": {
+    "reading": "なに",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "なんじ": {
+    "reading": "なんじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "いま": {
+    "reading": "いま",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "こんしゅう": {
+    "reading": "こんしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "うえ": {
+    "reading": "うえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "した": {
+    "reading": "した",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "なか": {
+    "reading": "なか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "ちゅうがっこう": {
+    "reading": "ちゅうがっこう",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 6
+  },
+  "みぎ": {
+    "reading": "みぎ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "ひだり": {
+    "reading": "ひだり",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "みち": {
+    "reading": "みち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "きた": {
+    "reading": "きた",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "みなみ": {
+    "reading": "みなみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "ひがし": {
+    "reading": "ひがし",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "とうきょう": {
+    "reading": "とうきょう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "にし": {
+    "reading": "にし",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "だいがく": {
+    "reading": "だいがく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "すくない": {
+    "reading": "すくない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "らいしゅう": {
+    "reading": "らいしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "らいげつ": {
+    "reading": "らいげつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "いちがつ": {
+    "reading": "いちがつ",
+    "pattern": 4,
+    "type": "odaka",
+    "moraCount": 4
+  },
+  "ことし": {
+    "reading": "ことし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "らいねん": {
+    "reading": "らいねん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "にちようび": {
+    "reading": "にちようび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "ほん": {
+    "reading": "ほん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "き": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "くるま": {
+    "reading": "くるま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "あめ": {
+    "reading": "あめ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "てんき": {
+    "reading": "てんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "いう": {
+    "reading": "いう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "にほんご": {
+    "reading": "にほんご",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "しんぶん": {
+    "reading": "しんぶん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "まえ": {
+    "reading": "まえ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "うしろ": {
+    "reading": "うしろ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "ごご": {
+    "reading": "ごご",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "あいだ": {
+    "reading": "あいだ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "じかん": {
+    "reading": "じかん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "まいにち": {
+    "reading": "まいにち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "しろい": {
+    "reading": "しろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "ながい": {
+    "reading": "ながい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "おおい": {
+    "reading": "",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 0
+  },
+  "ちち": {
+    "reading": "ちち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "おとうさん": {
+    "reading": "おとうさん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "はは": {
+    "reading": "はは",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "おかあさん": {
+    "reading": "おかあさん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "おとこのこ": {
+    "reading": "おとこのこ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "おんなのこ": {
+    "reading": "おんなのこ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "こども": {
+    "reading": "こども",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "せんえん": {
+    "reading": "せんえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "おかね": {
+    "reading": "おかね",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "きんようび": {
+    "reading": "きんようび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "でんしゃ": {
+    "reading": "でんしゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "でんき": {
+    "reading": "でんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "はな": {
+    "reading": "はな",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "すいようび": {
+    "reading": "すいようび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "かようび": {
+    "reading": "かようび",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "がくせい": {
+    "reading": "がくせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "うまれる": {
+    "reading": "うまれる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ともだち": {
+    "reading": "ともだち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "なまえ": {
+    "reading": "なまえ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "かいしゃ": {
+    "reading": "かいしゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "ぎんこう": {
+    "reading": "ぎんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "やすみ": {
+    "reading": "やすみ",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "わかる": {
+    "reading": "わかる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "ごふん": {
+    "reading": "ごふん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "おもう": {
+    "reading": "おもう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "おもいだす": {
+    "reading": "おもいだす",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "おもいで": {
+    "reading": "おもいで",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "うつくしい": {
+    "reading": "うつくしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "びじん": {
+    "reading": "びじん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "びじゅつ": {
+    "reading": "びじゅつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "きみたち": {
+    "reading": "きみたち",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "あした": {
+    "reading": "あした",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "あかるい": {
+    "reading": "あかるい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "わたしたち": {
+    "reading": "わたしたち",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "しりつ": {
+    "reading": "しりつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "ぎゅうにく": {
+    "reading": "ぎゅうにく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ぶたにく": {
+    "reading": "ぶたにく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "とりにく": {
+    "reading": "とりにく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "だいすき": {
+    "reading": "だいすき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "こうぶつ": {
+    "reading": "こうぶつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "かぞく": {
+    "reading": "かぞく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "やちん": {
+    "reading": "やちん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "ひろば": {
+    "reading": "ひろば",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "ひろしま": {
+    "reading": "ひろしま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "けさ": {
+    "reading": "けさ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "ひるごはん": {
+    "reading": "ひるごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "こんや": {
+    "reading": "こんや",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "よなか": {
+    "reading": "よなか",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "いちまい": {
+    "reading": "いちまい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "なんまい": {
+    "reading": "なんまい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "のりば": {
+    "reading": "のりば",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "じょうきゃく": {
+    "reading": "じょうきゃく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "さいてい": {
+    "reading": "さいてい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "よこはま": {
+    "reading": "よこはま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "おうだんほどう": {
+    "reading": "おうだんほどう",
+    "pattern": 5,
+    "type": "nakadaka",
+    "moraCount": 7
+  },
+  "くち": {
+    "reading": "くち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "おしいれ": {
+    "reading": "おしいれ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ひきだし": {
+    "reading": "ひきだし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "わりびき": {
+    "reading": "わりびき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "うつる": {
+    "reading": "うつる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "けいかく": {
+    "reading": "けいかく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "がめん": {
+    "reading": "がめん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "あたたかい": {
+    "reading": "あたたかい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "おんど": {
+    "reading": "おんど",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "いずみ": {
+    "reading": "いずみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "よやく": {
+    "reading": "よやく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "ていきゅうび": {
+    "reading": "ていきゅうび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "たび": {
+    "reading": "たび",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "りょかん": {
+    "reading": "りょかん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "１": {
+    "reading": "いち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "１０００円": {
+    "reading": "せんえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "１月": {
+    "reading": "いちがつ",
+    "pattern": 4,
+    "type": "odaka",
+    "moraCount": 4
+  },
+  "１枚": {
+    "reading": "いちまい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "２": {
+    "reading": "に",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "３": {
+    "reading": "さん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "５": {
+    "reading": "ご",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "６": {
+    "reading": "ろく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "８": {
+    "reading": "はち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "９": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "おもい出す": {
+    "reading": "おもいだす",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "お早う": {
+    "reading": "おはよう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "ずい分": {
+    "reading": "ずいぶん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "亜科": {
+    "reading": "あか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "哀しい": {
+    "reading": "かなしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "逢う": {
+    "reading": "あう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "圧す": {
+    "reading": "おす",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "或": {
+    "reading": "ある",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "或る": {
+    "reading": "ある",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "暗然": {
+    "reading": "あんぜん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "闇然": {
+    "reading": "あんぜん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "位地": {
+    "reading": "いち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "位置": {
+    "reading": "いち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "依る": {
+    "reading": "よる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "惟う": {
+    "reading": "おもう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "易い": {
+    "reading": "やすい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "為る": {
+    "reading": "する",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "畏懼": {
+    "reading": "いく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "移る": {
+    "reading": "うつる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "謂う": {
+    "reading": "いう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "壱": {
+    "reading": "いち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "因る": {
+    "reading": "よる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "引出し": {
+    "reading": "ひきだし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "云う": {
+    "reading": "いう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "曳く": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "栄華": {
+    "reading": "えいが",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "永い": {
+    "reading": "ながい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "詠む": {
+    "reading": "よむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "液": {
+    "reading": "えき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "益": {
+    "reading": "えき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "掩い": {
+    "reading": "おおい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "往く": {
+    "reading": "いく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "押し入れ": {
+    "reading": "おしいれ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "押入": {
+    "reading": "おしいれ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "襖": {
+    "reading": "あお",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "黄": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "黄み": {
+    "reading": "きみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "黄身": {
+    "reading": "きみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "憶う": {
+    "reading": "おもう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "音栓": {
+    "reading": "おんせん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "音頭": {
+    "reading": "おんど",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "何時も": {
+    "reading": "いつも",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "佳句": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "佳話": {
+    "reading": "かわ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "可成": {
+    "reading": "かなり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "可也": {
+    "reading": "かなり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "寡い": {
+    "reading": "すくない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "河": {
+    "reading": "かわ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "火取": {
+    "reading": "ひとり",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "火曜日": {
+    "reading": "かようび",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "荷": {
+    "reading": "に",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "華": {
+    "reading": "はな",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "華族": {
+    "reading": "かぞく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "餓え": {
+    "reading": "うえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "会談": {
+    "reading": "かいだん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "解る": {
+    "reading": "わかる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "解団": {
+    "reading": "かいだん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "怪談": {
+    "reading": "かいだん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "懐う": {
+    "reading": "おもう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "戒壇": {
+    "reading": "かいだん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "海松": {
+    "reading": "みる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "蛙": {
+    "reading": "かえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "劃": {
+    "reading": "かく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "格": {
+    "reading": "かく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "核": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "殻": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "確": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "確り": {
+    "reading": "しっかり",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "角": {
+    "reading": "かく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "郭": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "革": {
+    "reading": "かわ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "学制": {
+    "reading": "がくせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "楽聖": {
+    "reading": "がくせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "割り引": {
+    "reading": "わりびき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "割り引き": {
+    "reading": "わりびき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "割引き": {
+    "reading": "わりびき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "活く": {
+    "reading": "いく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "寛い": {
+    "reading": "ひろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "干る": {
+    "reading": "ひる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "干菓子": {
+    "reading": "ひがし",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "換える": {
+    "reading": "かえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "還る": {
+    "reading": "かえる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "閑か": {
+    "reading": "しずか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "危": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "危懼": {
+    "reading": "きく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "基": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "奇": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "寄る": {
+    "reading": "よる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "幾": {
+    "reading": "いく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "期": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "棋": {
+    "reading": "ご",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "棄権": {
+    "reading": "きけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "機": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "気圏": {
+    "reading": "きけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "季": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "紀": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "規矩": {
+    "reading": "きく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "記": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "貴顕": {
+    "reading": "きけん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "起句": {
+    "reading": "きく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "飢え": {
+    "reading": "うえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "菊": {
+    "reading": "きく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "喫む": {
+    "reading": "のむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "詰まらない": {
+    "reading": "つまらない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "詰らない": {
+    "reading": "つまらない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "客": {
+    "reading": "かく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "宮": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "弓": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "急": {
+    "reading": "きゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "灸": {
+    "reading": "きゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "球": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "級": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "旧": {
+    "reading": "きゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "旧い": {
+    "reading": "ふるい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "居る": {
+    "reading": "いる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "居間": {
+    "reading": "いま",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "拠る": {
+    "reading": "よる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "恐い": {
+    "reading": "こわい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "玉子": {
+    "reading": "たまご",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "金曜日": {
+    "reading": "きんようび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "銀行": {
+    "reading": "ぎんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "銀鉱": {
+    "reading": "ぎんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "喰べる": {
+    "reading": "たべる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "偶に": {
+    "reading": "たまに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "繰る": {
+    "reading": "くる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "君達": {
+    "reading": "きみたち",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "訓える": {
+    "reading": "おしえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "訓む": {
+    "reading": "よむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "袈裟": {
+    "reading": "けさ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "敬虔": {
+    "reading": "けいけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "経つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "欠く": {
+    "reading": "かく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "結う": {
+    "reading": "いう",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "兼行": {
+    "reading": "けんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "剣光": {
+    "reading": "けんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "建つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "権衡": {
+    "reading": "けんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "牽く": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "見世": {
+    "reading": "みせ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "軒昂": {
+    "reading": "けんこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "元亀": {
+    "reading": "げんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "原器": {
+    "reading": "げんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "胡粉": {
+    "reading": "ごふん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "五月蝿い": {
+    "reading": "うるさい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "五月蠅い": {
+    "reading": "うるさい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "伍": {
+    "reading": "ご",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "午后": {
+    "reading": "ごご",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "午飯": {
+    "reading": "ごはん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "娯しい": {
+    "reading": "たのしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "後援": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "御金": {
+    "reading": "おかね",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "御膳": {
+    "reading": "ごぜん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "御早う": {
+    "reading": "おはよう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "御茶": {
+    "reading": "おちゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "御父さん": {
+    "reading": "おとうさん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "御母さん": {
+    "reading": "おかあさん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "碁": {
+    "reading": "ご",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "誤判": {
+    "reading": "ごはん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "交う": {
+    "reading": "かう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "光炎": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "光焔": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "公演": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "公事": {
+    "reading": "くじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "効く": {
+    "reading": "きく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "厚い": {
+    "reading": "あつい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "口演": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "口炎": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "垢": {
+    "reading": "あか",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "好演": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "宏い": {
+    "reading": "ひろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "宏遠": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "広遠": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "弘い": {
+    "reading": "ひろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "紅炎": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "紅焔": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "講演": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "鉱物": {
+    "reading": "こうぶつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "香煙": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "高遠": {
+    "reading": "こうえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "合う": {
+    "reading": "あう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "酷しい": {
+    "reading": "きびしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "今秋": {
+    "reading": "こんしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "今晩は": {
+    "reading": "こんばんは",
+    "pattern": 5,
+    "type": "odaka",
+    "moraCount": 5
+  },
+  "些とも": {
+    "reading": "ちっとも",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "左様なら": {
+    "reading": "さようなら",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "坐る": {
+    "reading": "すわる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "再訂": {
+    "reading": "さいてい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "採金": {
+    "reading": "さいきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "済みません": {
+    "reading": "すみません",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "細菌": {
+    "reading": "さいきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "細謹": {
+    "reading": "さいきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "細金": {
+    "reading": "さいきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "裁つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "裁定": {
+    "reading": "さいてい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "載る": {
+    "reading": "のる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "在る": {
+    "reading": "ある",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "肴": {
+    "reading": "さかな",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "刷る": {
+    "reading": "する",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "殺気": {
+    "reading": "さっき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "参": {
+    "reading": "さん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "燦": {
+    "reading": "さん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "産まれる": {
+    "reading": "うまれる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "産み": {
+    "reading": "うみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "産れる": {
+    "reading": "うまれる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "算": {
+    "reading": "さん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "讃": {
+    "reading": "さん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "賛": {
+    "reading": "さん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "酸": {
+    "reading": "さん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "暫く": {
+    "reading": "しばらく",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "暫らく": {
+    "reading": "しばらく",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "子供": {
+    "reading": "こども",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "市": {
+    "reading": "いち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "思いだす": {
+    "reading": "おもいだす",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "思いで": {
+    "reading": "おもいで",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "思出": {
+    "reading": "おもいで",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "思出す": {
+    "reading": "おもいだす",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "支う": {
+    "reading": "かう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "斯く": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "私権": {
+    "reading": "しけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "私見": {
+    "reading": "しけん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "飼う": {
+    "reading": "かう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "字間": {
+    "reading": "じかん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "時艱": {
+    "reading": "じかん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "次官": {
+    "reading": "じかん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "治国": {
+    "reading": "ちこく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "耳管": {
+    "reading": "じかん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "写る": {
+    "reading": "うつる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "射る": {
+    "reading": "いる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "煮": {
+    "reading": "に",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "惹く": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "樹": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "拾": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "住": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "従": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "柔": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "銃": {
+    "reading": "じゅう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "女の児": {
+    "reading": "おんなのこ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "鋤": {
+    "reading": "すき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "勝絶": {
+    "reading": "しょうせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "小供": {
+    "reading": "こども",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "小人": {
+    "reading": "こども",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "少い": {
+    "reading": "すくない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "松": {
+    "reading": "まつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "消雪": {
+    "reading": "しょうせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "章節": {
+    "reading": "しょうせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "詳説": {
+    "reading": "しょうせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "上客": {
+    "reading": "じょうきゃく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "上図": {
+    "reading": "じょうず",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "乗場": {
+    "reading": "のりば",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "城": {
+    "reading": "しろ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "常客": {
+    "reading": "じょうきゃく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "心肺": {
+    "reading": "しんぱい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "新らしい": {
+    "reading": "あたらしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "新設": {
+    "reading": "しんせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "新説": {
+    "reading": "しんせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "新雪": {
+    "reading": "しんせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "深切": {
+    "reading": "しんせつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "深雪": {
+    "reading": "しんせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "真説": {
+    "reading": "しんせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "臣節": {
+    "reading": "しんせつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "親拝": {
+    "reading": "しんぱい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "診る": {
+    "reading": "みる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "針眼": {
+    "reading": "みず",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "震い": {
+    "reading": "ふるい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "須臾": {
+    "reading": "しばらく",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "推す": {
+    "reading": "おす",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "水曜日": {
+    "reading": "すいようび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "翠": {
+    "reading": "みどり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "数奇": {
+    "reading": "さっき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "数寄": {
+    "reading": "すき",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "据る": {
+    "reading": "すわる",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "据わる": {
+    "reading": "すわる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "摺る": {
+    "reading": "する",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "生く": {
+    "reading": "いく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "生み": {
+    "reading": "うみ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "生れる": {
+    "reading": "うまれる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "誓い": {
+    "reading": "ちかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "逝く": {
+    "reading": "いく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "絶つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "舌": {
+    "reading": "した",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "先制": {
+    "reading": "せんせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "先聖": {
+    "reading": "せんせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "宣誓": {
+    "reading": "せんせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "専": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "専制": {
+    "reading": "せんせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "撰": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "栓": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "潜性": {
+    "reading": "せんせい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "煎": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "煎る": {
+    "reading": "いる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "線": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "繊": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "腺": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "選": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "遷る": {
+    "reading": "うつる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "遷延": {
+    "reading": "せんえん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "銭": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "善く": {
+    "reading": "よく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "善因": {
+    "reading": "ぜんいん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "禅院": {
+    "reading": "ぜんいん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "素晴しい": {
+    "reading": "すばらしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "想いで": {
+    "reading": "おもいで",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "想い出": {
+    "reading": "おもいで",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "想う": {
+    "reading": "おもう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "掻く": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "蒼": {
+    "reading": "あお",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "遭う": {
+    "reading": "あう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "足袋": {
+    "reading": "たび",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "速く": {
+    "reading": "はやく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "他界": {
+    "reading": "たかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "他聞": {
+    "reading": "たぶん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "替える": {
+    "reading": "かえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "代": {
+    "reading": "しろ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "代える": {
+    "reading": "かえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "大い": {
+    "reading": "おおい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "大ぜい": {
+    "reading": "おおぜい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "大腿": {
+    "reading": "だいたい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "大隊": {
+    "reading": "だいたい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "大學": {
+    "reading": "だいがく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "沢山": {
+    "reading": "たくさん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "辰": {
+    "reading": "たつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "丹": {
+    "reading": "に",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "単皮": {
+    "reading": "たび",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "端役": {
+    "reading": "はやく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "断つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "暖い": {
+    "reading": "あたたかい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "暖かい": {
+    "reading": "あたたかい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "男の児": {
+    "reading": "おとこのこ",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "知解": {
+    "reading": "ちかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "地塊": {
+    "reading": "ちかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "地界": {
+    "reading": "ちかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "地階": {
+    "reading": "ちかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "智解": {
+    "reading": "ちかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "遅々": {
+    "reading": "ちち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "遅遅": {
+    "reading": "ちち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "仲": {
+    "reading": "なか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "抽き出し": {
+    "reading": "ひきだし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "抽出し": {
+    "reading": "ひきだし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "抽斗": {
+    "reading": "ひきだし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "抽匣": {
+    "reading": "ひきだし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "昼ごはん": {
+    "reading": "ひるごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "昼御飯": {
+    "reading": "ひるごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "鋳る": {
+    "reading": "いる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "朝ごはん": {
+    "reading": "あさごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "朝御飯": {
+    "reading": "あさごはん",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "聴く": {
+    "reading": "きく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "長居": {
+    "reading": "ながい",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "鳥渡": {
+    "reading": "ちょっと",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "剃る": {
+    "reading": "する",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "適に": {
+    "reading": "たまに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "天機": {
+    "reading": "てんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "転機": {
+    "reading": "てんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "転記": {
+    "reading": "てんき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "伝奇": {
+    "reading": "でんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "伝記": {
+    "reading": "でんき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "伝写": {
+    "reading": "でんしゃ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "殿舎": {
+    "reading": "でんしゃ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "電器": {
+    "reading": "でんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "電機": {
+    "reading": "でんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "渡し": {
+    "reading": "わたし",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "到頭": {
+    "reading": "とうとう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "蕩々": {
+    "reading": "とうとう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "蕩蕩": {
+    "reading": "とうとう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "透き": {
+    "reading": "すき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "特異": {
+    "reading": "とくい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "篤い": {
+    "reading": "あつい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "独り": {
+    "reading": "ひとり",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "呑む": {
+    "reading": "のむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "鈍い": {
+    "reading": "おそい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "難事": {
+    "reading": "なんじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "難字": {
+    "reading": "なんじ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "難治": {
+    "reading": "なんじ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "二九": {
+    "reading": "にく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "二死": {
+    "reading": "にし",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "二至": {
+    "reading": "にし",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "二本": {
+    "reading": "にほん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "弐": {
+    "reading": "に",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "日曜日": {
+    "reading": "にちようび",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "入り口": {
+    "reading": "いりぐち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "熱い": {
+    "reading": "あつい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "念う": {
+    "reading": "おもう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "能く": {
+    "reading": "よく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "膿": {
+    "reading": "うみ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "破約": {
+    "reading": "はやく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "配流": {
+    "reading": "はいる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "這入る": {
+    "reading": "はいる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "鉢": {
+    "reading": "はち",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "発つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "判る": {
+    "reading": "わかる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "反る": {
+    "reading": "かえる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "煩さい": {
+    "reading": "うるさい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "挽く": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "晩い": {
+    "reading": "おそい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "匪徒": {
+    "reading": "ひと",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "否": {
+    "reading": "いえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "皮": {
+    "reading": "かわ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "被い": {
+    "reading": "おおい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "費途": {
+    "reading": "ひと",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "非と": {
+    "reading": "ひと",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "蛭": {
+    "reading": "ひる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "不快": {
+    "reading": "ふかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "不達": {
+    "reading": "ふたつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "付会": {
+    "reading": "ふかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "布達": {
+    "reading": "ふたつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "附会": {
+    "reading": "ふかい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "服む": {
+    "reading": "のむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "覆い": {
+    "reading": "おおい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "分る": {
+    "reading": "わかる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "蔽い": {
+    "reading": "おおい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "碧": {
+    "reading": "あお",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "変える": {
+    "reading": "かえる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "返る": {
+    "reading": "かえる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "弁理": {
+    "reading": "べんり",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "放す": {
+    "reading": "はなす",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "放る": {
+    "reading": "ひる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "蜂": {
+    "reading": "はち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "忙がしい": {
+    "reading": "いそがしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "殆ど": {
+    "reading": "ほとんど",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "殆んど": {
+    "reading": "ほとんど",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "磨る": {
+    "reading": "する",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "麻": {
+    "reading": "あさ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "満": {
+    "reading": "まん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "未知": {
+    "reading": "みち",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "名まえ": {
+    "reading": "なまえ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "明い": {
+    "reading": "あかるい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "猛": {
+    "reading": "もう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "蒙": {
+    "reading": "もう",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "勿論": {
+    "reading": "もちろん",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "夜なか": {
+    "reading": "よなか",
+    "pattern": 3,
+    "type": "odaka",
+    "moraCount": 3
+  },
+  "役": {
+    "reading": "えき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "愉しい": {
+    "reading": "たのしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "優しい": {
+    "reading": "やさしい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "勇名": {
+    "reading": "ゆうめい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "友達": {
+    "reading": "ともだち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "幽冥": {
+    "reading": "ゆうめい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "幽明": {
+    "reading": "ゆうめい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "有り難う": {
+    "reading": "ありがとう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "有る": {
+    "reading": "ある",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "有難う": {
+    "reading": "ありがとう",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "由る": {
+    "reading": "よる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "輿丁": {
+    "reading": "よてい",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "要る": {
+    "reading": "いる",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "慾": {
+    "reading": "よく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "欲": {
+    "reading": "よく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "翌": {
+    "reading": "よく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "来秋": {
+    "reading": "らいしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "来襲": {
+    "reading": "らいしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "来集": {
+    "reading": "らいしゅう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "利く": {
+    "reading": "きく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "離す": {
+    "reading": "はなす",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "竜": {
+    "reading": "たつ",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "良く": {
+    "reading": "よく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "淋しい": {
+    "reading": "さびしい",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "煉る": {
+    "reading": "ねる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "練る": {
+    "reading": "ねる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "路": {
+    "reading": "みち",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "六ヶ敷い": {
+    "reading": "むずかしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "六借しい": {
+    "reading": "むずかしい",
+    "pattern": 4,
+    "type": "nakadaka",
+    "moraCount": 5
+  },
+  "禄": {
+    "reading": "ろく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "乘る": {
+    "reading": "のる",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "仟": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "佝僂": {
+    "reading": "くる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "佰": {
+    "reading": "ひゃく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "俟つ": {
+    "reading": "まつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "俥": {
+    "reading": "くるま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "倩": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "咄す": {
+    "reading": "はなす",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "孵る": {
+    "reading": "かえる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "學校": {
+    "reading": "がっこう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "尠い": {
+    "reading": "すくない",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "廣い": {
+    "reading": "ひろい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "惡い": {
+    "reading": "わるい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "惡るい": {
+    "reading": "わるい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "截つ": {
+    "reading": "たつ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "截金": {
+    "reading": "さいきん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "掏る": {
+    "reading": "する",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "揆": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "擂る": {
+    "reading": "する",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "晏然": {
+    "reading": "あんぜん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "曩に": {
+    "reading": "さきに",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "柝": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "棊": {
+    "reading": "ご",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 1
+  },
+  "飮む": {
+    "reading": "のむ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "洟": {
+    "reading": "はな",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "淦": {
+    "reading": "あか",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "滔々": {
+    "reading": "とうとう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "滔滔": {
+    "reading": "とうとう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "炒る": {
+    "reading": "いる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "熬る": {
+    "reading": "いる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "熾きる": {
+    "reading": "おきる",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 3
+  },
+  "癸": {
+    "reading": "き",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 1
+  },
+  "碌": {
+    "reading": "ろく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "碾く": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "筌": {
+    "reading": "うえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "箋": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "篩": {
+    "reading": "ふるい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "簧": {
+    "reading": "した",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "籤": {
+    "reading": "くじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "縒る": {
+    "reading": "よる",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "聢り": {
+    "reading": "しっかり",
+    "pattern": 3,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "膈": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "膾炙": {
+    "reading": "かいしゃ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "舁く": {
+    "reading": "かく",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "衒気": {
+    "reading": "げんき",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 3
+  },
+  "轢く": {
+    "reading": "ひく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "迚も": {
+    "reading": "とても",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "隨分": {
+    "reading": "ずいぶん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 4
+  },
+  "遲い": {
+    "reading": "おそい",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "閼伽": {
+    "reading": "あか",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "闕く": {
+    "reading": "かく",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "阡": {
+    "reading": "せん",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "陌": {
+    "reading": "ひゃく",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "饑え": {
+    "reading": "うえ",
+    "pattern": 2,
+    "type": "odaka",
+    "moraCount": 2
+  },
+  "鬮": {
+    "reading": "くじ",
+    "pattern": 1,
+    "type": "atamadaka",
+    "moraCount": 2
+  },
+  "黯然": {
+    "reading": "あんぜん",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  },
+  "鼕鼕": {
+    "reading": "とうとう",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 4
+  }
+}

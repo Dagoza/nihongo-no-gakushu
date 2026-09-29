@@ -8,6 +8,7 @@ import * as wanakana from 'wanakana';
 import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import KanjiDraw from './KanjiDraw';
+import PitchAccent from './PitchAccent';
 import { getKanjiFromSupabase } from '../lib/supabaseData';
 import { useApp } from '../lib/AppContext';
 
@@ -537,19 +538,25 @@ export default function KanjiTab({
                         Palabras Compuestas:
                       </div>
                       {k.words.map((w, idx) => (
-                        <div key={idx} className="kanji-word-item">
-                          <span className="jp-text" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                            {w.word} <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
-                          </span>
-                          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1 }}>{w.meaning}</span>
-                          <button 
-                            className="audio-btn" 
-                            style={{ width: 26, height: 26 }}
-                            onClick={() => audioManager.speak(w.reading || w.word)}
-                            title="Escuchar palabra"
-                          >
-                            <Volume2 size={13} />
-                          </button>
+                        <div key={idx} className="kanji-word-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6, padding: '8px 10px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                            <span className="jp-text" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                              {w.word} <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
+                            </span>
+                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1, marginLeft: 8 }}>{w.meaning}</span>
+                            <button 
+                              className="audio-btn" 
+                              style={{ width: 26, height: 26, flexShrink: 0 }}
+                              onClick={() => audioManager.speak(w.reading || w.word)}
+                              title="Escuchar palabra"
+                            >
+                              <Volume2 size={13} />
+                            </button>
+                          </div>
+                          {/* Curva visual de Pitch Accent */}
+                          <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-start' }}>
+                            <PitchAccent word={w.word} reading={w.reading} mode="compact" size="sm" />
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -593,6 +600,17 @@ export default function KanjiTab({
                   💡 {item.mnemonic}
                 </div>
               )}
+
+              {/* Curva de Pitch Accent para lectura o palabra principal del Kanji */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                <PitchAccent 
+                  word={item.words?.[0]?.word || item.kanji} 
+                  reading={item.words?.[0]?.reading || (item.pronunciation ? item.pronunciation.split(',')[0].trim() : '')} 
+                  mode="full" 
+                  size="md" 
+                  showAudio={true} 
+                />
+              </div>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
                 <button 
                   className="btn btn-outline btn-sm" 
