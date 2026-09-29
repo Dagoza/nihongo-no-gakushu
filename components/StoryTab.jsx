@@ -367,17 +367,18 @@ export default function StoryTab({
 
         {activeSentence && (
           <div className="breakdown-card" style={{ borderLeft: '5px solid var(--primary)' }}>
-            <div className="breakdown-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="breakdown-header">
               <div className="breakdown-jp jp-text">
                 {activeSentence.japanese}
               </div>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div className="breakdown-actions">
                 <button 
                   className="audio-btn"
                   onClick={() => audioManager.speak(activeSentence.japanese)}
                   title="Escuchar oración"
                 >
                   <Volume2 size={16} />
+                  <span className="breakdown-audio-label">Escuchar</span>
                 </button>
                 <SpeechPractice 
                   targetText={activeSentence.japanese} 
@@ -391,7 +392,7 @@ export default function StoryTab({
 
             <div className="breakdown-translations">
               <div className="trans-item">
-                <strong>🇬🇧 Significado:</strong> {activeSentence.english}
+                <strong>{activeSentence.translation_es ? '🇪🇸 Traducción:' : '🌐 Significado:'}</strong> {activeSentence.translation_es || activeSentence.spanish || activeSentence.english}
               </div>
             </div>
 
@@ -431,12 +432,14 @@ export default function StoryTab({
                   autoCapitalize="off"
                   spellCheck="false"
                 />
-                <button className="btn btn-primary" onClick={handleCheckTyping}>
-                  Verificar
-                </button>
-                <button className="btn btn-outline" onClick={handleHint}>
-                  Pista
-                </button>
+                <div className="typing-btn-group">
+                  <button className="btn btn-primary" onClick={handleCheckTyping}>
+                    Verificar
+                  </button>
+                  <button className="btn btn-outline" onClick={handleHint}>
+                    Pista
+                  </button>
+                </div>
               </div>
 
               {typingFeedback && (
@@ -470,16 +473,16 @@ export default function StoryTab({
                   }}
                   onClick={() => handleSentenceClick(s)}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <div className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '2px', wordBreak: 'break-word' }}>
                         {idx + 1}. {s.japanese}
                       </div>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                        {s.english}
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', wordBreak: 'break-word' }}>
+                        {s.translation_es || s.spanish || s.english}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                       {isDone && (
                         <span style={{ color: 'var(--success)', fontWeight: 'bold', fontSize: '0.85rem' }}>
                           ✓ Dominada

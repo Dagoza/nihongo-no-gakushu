@@ -994,10 +994,10 @@ rt {
 
 .breakdown-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 12px;
-  gap: 12px;
+  margin-bottom: 14px;
+  gap: 16px;
 }
 
 .breakdown-jp {
@@ -1005,7 +1005,21 @@ rt {
   font-family: var(--font-jp);
   font-weight: 700;
   color: var(--text-main);
-  line-height: 1.8;
+  line-height: 1.6;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.breakdown-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.breakdown-audio-label {
+  display: none;
 }
 
 .breakdown-translations {
@@ -1076,6 +1090,13 @@ rt {
 .typing-input-row {
   display: flex;
   gap: 10px;
+  align-items: center;
+}
+
+.typing-btn-group {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .japanese-input {
@@ -5975,6 +5996,98 @@ rt {
   }
 
   .grammar-quiz-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Story Breakdown Card Mobile Polish */
+  .breakdown-card {
+    padding: 14px 12px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .breakdown-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .breakdown-jp {
+    font-size: 1.3rem !important;
+    line-height: 1.6 !important;
+    width: 100% !important;
+    word-break: break-word !important;
+  }
+
+  .breakdown-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  .breakdown-audio-label {
+    display: inline !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+  }
+
+  .breakdown-actions .audio-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 12px !important;
+    border-radius: var(--radius-full) !important;
+    height: auto !important;
+    width: auto !important;
+  }
+
+  .breakdown-translations {
+    padding: 10px 12px !important;
+    font-size: 0.88rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .grammar-note-box {
+    padding: 10px 12px !important;
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .typing-box {
+    padding: 12px 10px !important;
+  }
+
+  .typing-prompt {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .typing-input-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .japanese-input {
+    width: 100% !important;
+    font-size: 1.1rem !important;
+    padding: 8px 12px !important;
+  }
+
+  .typing-btn-group {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .typing-btn-group .btn {
     width: 100% !important;
     justify-content: center !important;
   }
