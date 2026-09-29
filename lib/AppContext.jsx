@@ -248,6 +248,7 @@ export function AppProvider({ children }) {
   const navigate = useCallback((tabOrPath, extraParam = null) => {
     let target = tabOrPath;
     if (target === 'particles') target = 'grammar';
+    if (target === 'stories') target = 'story';
     if (!target.startsWith('/')) {
       target = '/' + target;
     }

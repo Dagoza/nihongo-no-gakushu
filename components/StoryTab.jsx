@@ -57,6 +57,27 @@ export default function StoryTab({
     }
   }, [initialMode]);
 
+  // Handle browser Back/Forward navigation smoothly
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window === 'undefined') return;
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const chapter = params.get('chapter');
+      const mode = params.get('mode');
+      if (id && allStories.some(s => s.id === id)) setSelectedStoryId(id);
+      if (chapter) {
+        const ch = parseInt(chapter, 10);
+        if (ch) setCurrentChapter(ch);
+      }
+      if (mode && ['natural', 'hiragana', 'kanji_only'].includes(mode)) {
+        setReadingMode(mode);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [allStories]);
+
   const story = useMemo(() => {
     return allStories.find(s => s.id === selectedStoryId) || allStories[0] || dataStore.stories?.[0] || {};
   }, [allStories, selectedStoryId]);

@@ -2,6 +2,7 @@
 
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import PageLoader from '../../components/PageLoader';
 
 function ParticlesRedirect() {
   const router = useRouter();
@@ -12,12 +13,12 @@ function ParticlesRedirect() {
     router.replace(query ? `/grammar?${query}` : '/grammar');
   }, [router, searchParams]);
 
-  return <div className="section-panel active"><p>Redirigiendo a Gramática...</p></div>;
+  return <PageLoader text="Redirigiendo a Gramática..." />;
 }
 
 export default function ParticlesPage() {
   return (
-    <Suspense fallback={<div className="section-panel active"><p>Cargando...</p></div>}>
+    <Suspense fallback={<PageLoader text="Cargando..." />}>
       <ParticlesRedirect />
     </Suspense>
   );

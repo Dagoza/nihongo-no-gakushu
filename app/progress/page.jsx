@@ -3,6 +3,7 @@
 import React, { Suspense } from 'react';
 import { useApp } from '../../lib/AppContext';
 import ProgressTab from '../../components/ProgressTab';
+import PageLoader from '../../components/PageLoader';
 
 function ProgressPageContent() {
   const { 
@@ -32,7 +33,7 @@ function ProgressPageContent() {
 
 export default function ProgressPage() {
   return (
-    <Suspense fallback={<div className="section-panel active"><p>Cargando progreso y estadísticas...</p></div>}>
+    <Suspense fallback={<PageLoader text="Cargando progreso y estadísticas..." />}>
       <ProgressPageContent />
     </Suspense>
   );

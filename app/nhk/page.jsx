@@ -1,14 +1,14 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
 import ConversationTab from '../../components/ConversationTab';
+import PageLoader from '../../components/PageLoader';
 
 function NhkPageContent() {
   const { appState, handleUpdateState } = useApp();
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const lessonParam = searchParams.get('lesson');
   const tabParam = searchParams.get('tab'); // 'dialogue' | 'practice'
@@ -16,6 +16,7 @@ function NhkPageContent() {
   const typeParam = searchParams.get('type'); // 'all' | 'reply' | 'missing_word' | 'missing_kanji'
 
   const handleParamsChange = ({ lesson, tab, status, type }) => {
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams();
     if (lesson && lesson !== 1) params.set('lesson', lesson);
     if (tab && tab !== 'dialogue') params.set('tab', tab);
@@ -23,7 +24,11 @@ function NhkPageContent() {
     if (type && type !== 'all') params.set('type', type);
 
     const query = params.toString();
-    router.replace(query ? `/nhk?${query}` : '/nhk', { scroll: false });
+    const targetUrl = query ? `/nhk?${query}` : '/nhk';
+    const currentUrl = window.location.pathname + window.location.search;
+    if (currentUrl !== targetUrl) {
+      window.history.replaceState(null, '', targetUrl);
+    }
   };
 
   return (
@@ -41,7 +46,7 @@ function NhkPageContent() {
 
 export default function NhkPage() {
   return (
-    <Suspense fallback={<div className="section-panel active"><p>Cargando lecciones NHK...</p></div>}>
+    <Suspense fallback={<PageLoader text="Cargando diálogos y lecciones NHK..." />}>
       <NhkPageContent />
     </Suspense>
   );

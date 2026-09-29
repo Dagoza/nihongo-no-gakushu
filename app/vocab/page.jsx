@@ -1,14 +1,14 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
 import VocabTab from '../../components/VocabTab';
+import PageLoader from '../../components/PageLoader';
 
 function VocabPageContent() {
   const { appState, handleUpdateState, authUser } = useApp();
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const modeParam = searchParams.get('mode');
   const levelParam = searchParams.get('level');
@@ -16,6 +16,7 @@ function VocabPageContent() {
   const searchParam = searchParams.get('search');
 
   const handleParamsChange = ({ mode, level, category, search }) => {
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams();
     if (mode && mode !== 'cards') params.set('mode', mode);
     if (level && level !== 'all') params.set('level', level);
@@ -23,7 +24,11 @@ function VocabPageContent() {
     if (search && search.trim()) params.set('search', search.trim());
 
     const query = params.toString();
-    router.replace(query ? `/vocab?${query}` : '/vocab', { scroll: false });
+    const targetUrl = query ? `/vocab?${query}` : '/vocab';
+    const currentUrl = window.location.pathname + window.location.search;
+    if (currentUrl !== targetUrl) {
+      window.history.replaceState(null, '', targetUrl);
+    }
   };
 
   return (
@@ -42,7 +47,7 @@ function VocabPageContent() {
 
 export default function VocabPage() {
   return (
-    <Suspense fallback={<div className="section-panel active"><p>Cargando vocabulario...</p></div>}>
+    <Suspense fallback={<PageLoader text="Cargando banco de vocabulario..." />}>
       <VocabPageContent />
     </Suspense>
   );

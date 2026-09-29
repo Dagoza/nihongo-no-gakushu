@@ -1,14 +1,14 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
 import SavedTab from '../../components/SavedTab';
+import PageLoader from '../../components/PageLoader';
 
 function SavedPageContent() {
   const { appState, handleUpdateState, navigate, authUser, setIsAuthModalOpen } = useApp();
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const viewParam = searchParams.get('view');
   const searchParam = searchParams.get('search');
@@ -16,6 +16,7 @@ function SavedPageContent() {
   const catParam = searchParams.get('cat');
 
   const handleParamsChange = ({ view, search, level, category }) => {
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams();
     if (view && view !== 'all') params.set('view', view);
     if (search && search.trim()) params.set('search', search.trim());
@@ -23,7 +24,11 @@ function SavedPageContent() {
     if (category && category !== 'all') params.set('cat', category);
 
     const query = params.toString();
-    router.replace(query ? `/saved?${query}` : '/saved', { scroll: false });
+    const targetUrl = query ? `/saved?${query}` : '/saved';
+    const currentUrl = window.location.pathname + window.location.search;
+    if (currentUrl !== targetUrl) {
+      window.history.replaceState(null, '', targetUrl);
+    }
   };
 
   return (
@@ -44,7 +49,7 @@ function SavedPageContent() {
 
 export default function SavedPage() {
   return (
-    <Suspense fallback={<div className="section-panel active"><p>Cargando elementos guardados...</p></div>}>
+    <Suspense fallback={<PageLoader text="Cargando elementos guardados..." />}>
       <SavedPageContent />
     </Suspense>
   );

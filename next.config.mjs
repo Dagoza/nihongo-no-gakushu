@@ -23,6 +23,15 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/stories',
+        destination: '/story',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
