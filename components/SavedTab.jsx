@@ -54,6 +54,7 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
   const [copiedMarkdown, setCopiedMarkdown] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // New Story Creator form state
   const [storyTitleJp, setStoryTitleJp] = useState('');
@@ -209,6 +210,55 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
       theme: storyTheme
     });
   }, [selectedWordsList, selectedPhrasesList, storyLevel, storyTheme]);
+
+  const handleGenerateAIStory = async () => {
+    setIsGenerating(true);
+    try {
+      const vocabList = selectedWordsList.map(w => w.kanji || w.hiragana);
+      if (vocabList.length === 0) {
+        alert("Selecciona al menos una palabra para generar la historia.");
+        setIsGenerating(false);
+        return;
+      }
+
+      const response = await fetch('/api/stories/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vocabList,
+          level: storyLevel,
+          theme: storyTheme,
+          provider: 'groq'
+        })
+      });
+
+      const data = await response.json();
+      if (data.error) {
+        alert("Error de la IA: " + data.error);
+        setIsGenerating(false);
+        return;
+      }
+
+      const storyObj = data.story;
+      // Añadir meta datos
+      storyObj.id = `custom_${Date.now()}`;
+      storyObj.isCustom = true;
+      storyObj.wordsUsed = vocabList;
+      
+      const newStoriesList = [...(appState.customStories || []), storyObj];
+      onUpdateState({ customStories: newStoriesList });
+      
+      setIsExportModalOpen(false);
+      setStorySavedSuccess(true);
+      setTimeout(() => setStorySavedSuccess(false), 3000);
+      alert("¡Historia generada y guardada con éxito!");
+
+    } catch (error) {
+      console.error(error);
+      alert("Ocurrió un error al generar la historia.");
+    }
+    setIsGenerating(false);
+  };
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(generatedPrompt);
@@ -961,17 +1011,26 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
                   />
                 </div>
 
-                <div className="generator-footer-help">
+                <div className="generator-footer-help" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <p>
-                    💡 <strong>Flujo recomendado:</strong> Copia el prompt, pégalo en tu IA favorita (como Claude o ChatGPT) y una vez que te responda con la historia, ve a la pestaña <strong>&quot;Guardar Historia en App&quot;</strong> para leerla aquí mismo con audio nativo y furigana.
+                    💡 <strong>Nueva IA Integrada:</strong> Haz clic en el botón de abajo para que Nihongo Master genere automáticamente esta historia usando <strong>Groq Llama-3</strong>, y la guarde en tu biblioteca de historias.
                   </p>
-                  <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => setModalMode('create_story')}
-                  >
-                    <span>Ir a Guardar Historia en Nihongo Master</span>
-                    <ArrowRight size={15} />
-                  </button>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <button
+                      className="btn btn-primary"
+                      style={{ flex: 1, padding: '12px' }}
+                      onClick={handleGenerateAIStory}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? 'Generando Historia...' : '✨ Auto-Generar con IA (Groq)'}
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      onClick={() => setModalMode('create_story')}
+                    >
+                      Manual <ArrowRight size={15} />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

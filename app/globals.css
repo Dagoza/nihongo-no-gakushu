@@ -5600,7 +5600,8 @@ rt {
   .header-container {
     padding: 8px 12px;
     gap: 8px;
-    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .brand-wrapper {
