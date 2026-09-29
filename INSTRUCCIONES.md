@@ -188,3 +188,49 @@ Todo módulo en `data/curriculum.json` **debe incorporar obligatoriamente el arr
 - [ ] ¿Se definieron los objetivos Can-Do prácticos de comunicación?
 - [ ] ¿Se añadieron ejemplos con transcripción completa (Kanji, Kana, Romaji, Español) y audio?
 - [ ] ¿Se configuró el bloque `"related_topics"` con enlaces y justificaciones pedagógicas claras?
+
+---
+
+## 5. Reglas para la Integración de Libros, Temarios y Recursos de Audio MP3
+
+Para garantizar que Nihongo Master ofrezca la máxima fidelidad sonora y que ningún material quede huérfano de audio, **es estrictamente obligatorio seguir este protocolo cada vez que se integren nuevos libros, cursos o temarios** (ej. *Irodori*, *Genki*, *Minna no Nihongo*, *Tobira*, *Marugoto*, *NHK World*, etc.):
+
+### 5.1. Búsqueda y Verificación de Audios Oficiales
+Antes de estructurar los datos del temario en JSON:
+1. **Revisar fuentes oficiales:** Identificar si la editorial o institución ofrece descargas abiertas de audio MP3 (ej. *Japan Foundation* para Irodori/Marugoto, *The Japan Times* para Genki, *NHK World* para lecciones de radio).
+2. **Determinar el método de acceso:**
+   - **Streaming directo con CORS abierto:** Si el CDN oficial soporta CORS (`access-control-allow-origin: *`) como en NHK World, mapear directamente la URL en `audio_url`.
+   - **Archivos locales descargados:** Si el material requiere descarga o empaquetado, alojar los archivos en `public/audio/{curso}/` y mapear la ruta relativa en `audio_local` (ej. `/audio/nhk/lesson_01.mp3`).
+   - **Scripts de automatización:** Crear un script en `scripts/` (ej. `download_all_{curso}_audio.js`) para permitir la descarga masiva controlada.
+
+### 5.2. Esquema de Datos Requerido en JSON
+Todo diálogo, lección o frase de un curso estructurado debe contener los campos de audio:
+```json
+{
+  "lesson": 1,
+  "title_jp": "...",
+  "audio_url": "https://url-remota-oficial.mp3",
+  "audio_local": "/audio/curso/lesson_01.mp3",
+  "dialogue": [
+    {
+      "speaker": "...",
+      "jp": "...",
+      "es": "...",
+      "audio_url": "https://url-remota-clip.mp3"
+    }
+  ]
+}
+```
+
+### 5.3. Cascada de Audio con AudioManager
+1. **Prioridad 1 (Audio Humano Nativo):** Si `audio_local` o `audio_url` está presente, `audioManager.playAudioUrl(...)` reproduce la grabación nativa.
+2. **Prioridad 2 (TTS Neuronal Serverless):** Para vocabulario individual, kanjis, desgloses o frases sin clip MP3 específico, `audioManager.speak(...)` invoca `/api/tts` (voces `ja-JP-NanamiNeural` y `ja-JP-KeitaNeural`) con entonación estándar de Tokio.
+3. **Prioridad 3 (Fallback Offline):** Si el usuario pierde conexión, conmuta automáticamente a `window.speechSynthesis`.
+
+### 5.4. Checklist para Nuevos Libros y Temarios con Audio
+- [ ] ¿Se verificó si el curso cuenta con audios MP3 oficiales o de libre acceso?
+- [ ] ¿Se mapearon los enlaces `audio_url` y/o se colocaron los archivos en `public/audio/...`?
+- [ ] ¿Se registraron los campos de audio en los esquemas JSON (`nhk_lessons.json`, `curriculum.json`, etc.)?
+- [ ] ¿Se conectaron los botones de la interfaz a `audioManager` para permitir la reproducción individual y del diálogo completo?
+- [ ] ¿Se probó que las palabras y frases complementarias se sinteticen con la voz neuronal de `/api/tts`?
+

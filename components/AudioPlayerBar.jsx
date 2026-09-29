@@ -107,10 +107,21 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                 <Volume2 size={20} className={audioState.state === 'playing' ? 'text-primary animate-pulse' : 'text-muted'} />
               </div>
               <div className="audio-text-wrapper">
-                <div className="audio-status-label">
-                  {audioState.state === 'playing' && '🔊 Reproduciendo audio en japonés:'}
-                  {audioState.state === 'paused' && '⏸️ En pausa:'}
-                  {audioState.state === 'idle' && (audioState.selectedText ? 'Selección lista para reproducir:' : (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en cualquier palabra u oración para escucharla'))}
+                <div className="audio-status-label" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <span>
+                    {audioState.state === 'playing' && '🔊 Reproduciendo:'}
+                    {audioState.state === 'paused' && '⏸️ En pausa:'}
+                    {audioState.state === 'idle' && (audioState.selectedText ? 'Selección lista:' : (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en cualquier palabra para escuchar'))}
+                  </span>
+                  {audioState.currentAudioUrl ? (
+                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', fontWeight: 700 }}>
+                      MP3 Humano Nativo
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', fontWeight: 700 }}>
+                      TTS Neuronal ({audioState.voiceName?.includes('Nanami') ? 'Nanami ♀' : 'Keita ♂'})
+                    </span>
+                  )}
                 </div>
                 <div className="audio-current-sentence jp-text" title={audioState.selectedText || audioState.currentText || ''}>
                   {audioState.selectedText ? `"${audioState.selectedText}"` : (audioState.currentText || 'Selecciona texto en pantalla o toca cualquier palabra con furigana')}
@@ -187,6 +198,29 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                 <span>Guardadas ({totalSaved})</span>
               </button>
 
+              {/* Voice selector (Nanami / Keita) */}
+              <div className="speed-selector">
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <Sparkles size={13} color="var(--primary)" /> Voz:
+                </span>
+                <button
+                  className={`speed-pill ${audioState.voiceName === 'ja-JP-NanamiNeural' ? 'active' : ''}`}
+                  onClick={() => audioManager.setVoice('ja-JP-NanamiNeural')}
+                  title="Voz femenina neuronal de Tokio (Nanami)"
+                  type="button"
+                >
+                  Nanami ♀
+                </button>
+                <button
+                  className={`speed-pill ${audioState.voiceName === 'ja-JP-KeitaNeural' ? 'active' : ''}`}
+                  onClick={() => audioManager.setVoice('ja-JP-KeitaNeural')}
+                  title="Voz masculina neuronal de Tokio (Keita)"
+                  type="button"
+                >
+                  Keita ♂
+                </button>
+              </div>
+
               {/* Speed rates */}
               <div className="speed-selector">
                 <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
@@ -197,6 +231,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                     key={speed}
                     className={`speed-pill ${audioState.rate === speed ? 'active' : ''}`}
                     onClick={() => handleRateChange(speed)}
+                    type="button"
                   >
                     {speed}x
                   </button>

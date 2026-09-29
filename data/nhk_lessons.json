@@ -31,7 +31,9 @@
       "は (wa): Se pronuncia 'wa' cuando funciona como partícula de tema.",
       "です (desu): Cópula equivalente a 'ser' en español en tono formal y respetuoso.",
       "はじめまして (Hajimemashite): Saludo usado la primera vez que conoces a alguien."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/01-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_01.mp3"
   },
   {
     "lesson": 2,
@@ -71,7 +73,9 @@
       "それ (sore): 'Eso' (cerca del oyente).",
       "あれ (are): 'Aquello' (lejos de ambos).",
       "か (ka): Partícula final que convierte cualquier oración afirmativa en pregunta."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/02-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_02.mp3"
   },
   {
     "lesson": 3,
@@ -110,7 +114,9 @@
       "どこ (doko): Interrogativo para 'dónde'.",
       "ここ / そこ / あそこ: Aquí, Ahí, Allí.",
       "Estructura [Lugar] + はどこですか = ¿Dónde está [Lugar]?"
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/03-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_03.mp3"
   },
   {
     "lesson": 4,
@@ -149,7 +155,9 @@
       "ただいま / おかえりなさい: Saludos tradicionales japoneses al entrar a casa.",
       "も (mo): 'También'. Reemplaza a la partícula は.",
       "ではありません (dewa arimasen): Forma negativa formal de です."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/04-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_04.mp3"
   },
   {
     "lesson": 5,
@@ -177,7 +185,9 @@
     "grammar_notes": [
       "A の B: Posesión o relación de A con B (mi tesoro = 私の宝物).",
       "を (o): Partícula que marca el objeto directo del verbo (マンガを読みます = leer manga)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/05-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_05.mp3"
   },
   {
     "lesson": 6,
@@ -206,7 +216,9 @@
       "何番 (nanban): Pregunta por números específicos o posiciones.",
       "El guión en números de teléfono se pronuncia como の (no).",
       "電話をします (denwa o shimasu): Hacer una llamada telefónica."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/06-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_06.mp3"
   },
   {
     "lesson": 7,
@@ -240,7 +252,9 @@
       "ありますか (arimasu ka): Pregunta si hay algo inanimado.",
       "ひとつ (hitotsu), ふたつ (futatsu): Contadores nativos japoneses de objetos.",
       "[Cosa] を [Cantidad] ください: Fórmula educada para pedir artículos en una tienda o restaurante."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/07-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_07.mp3"
   },
   {
     "lesson": 8,
@@ -269,7 +283,9 @@
       "〜てください (-te kudasai): Petición educada (覚えてください = por favor memoricen).",
       "もう一度 (mô ichido): Una vez más.",
       "お願いします (onegaishimasu): Por favor / Solicito su amabilidad."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/08-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_08.mp3"
   },
   {
     "lesson": 9,
@@ -298,7 +314,9 @@
       "何時 (nanji): ¿Qué hora?",
       "〜から 〜まで (-kara -made): Desde ... hasta ... (expresa límites de tiempo o espacio).",
       "半 (han): Y media (ocho y media = 八時半)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/09-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_09.mp3"
   },
   {
     "lesson": 10,
@@ -327,7 +345,9 @@
       "います / いません: Verbo existir para seres animados (personas y animales).",
       "全員 (zen-in): Todos los miembros presentes.",
       "遅れました (okuremashita): Forma pasada formal del verbo 遅れる (llegar tarde)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/10-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_10.mp3"
   },
   {
     "lesson": 11,
@@ -351,7 +371,9 @@
       "ぜひ (zehi): Sin falta / por todos los medios (se usa para reforzar una invitación).",
       "土曜日 (doyôbi): Sábado.",
       "寮 (ryô): Residencia de estudiantes / dormitorio común."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/11-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_11.mp3"
   },
   {
     "lesson": 12,
@@ -385,7 +407,9 @@
       "いつ (itsu): Interrogativo para tiempo o fecha (¿Cuándo?).",
       "三月 (sangatsu): Mes de marzo (número + 月).",
       "生活に慣れる (seikatsu ni nareru): Acostumbrarse a la vida cotidiana."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/12-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_12.mp3"
   },
   {
     "lesson": 13,
@@ -414,7 +438,9 @@
       "趣味 (shumi): Pasatiempo o hobby.",
       "[Cosa] が好きです (ga suki desu): Me gusta [Cosa]. Se usa が y no を.",
       "〜ませんか (-masen ka): ¿Por qué no...? Invitación educada a realizar una acción juntos."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/13-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_13.mp3"
   },
   {
     "lesson": 14,
@@ -443,7 +469,9 @@
       "〜てもいいですか (-te mo ii desu ka): ¿Puedo hacer...? Estructura para pedir permiso.",
       "〜から (kara al final de oración): Indica causa o justificación (porque...).",
       "ゴミを捨てる (gomi o suteru): Tirar la basura."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/14-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_14.mp3"
   },
   {
     "lesson": 15,
@@ -477,7 +505,9 @@
       "〜ています (-te imasu): Indica una acción continua en progreso (estar haciendo algo).",
       "〜ましょう (-mashô): Sugerencia formal entusiasta (hagamos / bajemos).",
       "ほら (hora): Interjección equivalente a mira o fíjate."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/15-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_15.mp3"
   },
   {
     "lesson": 16,
@@ -506,7 +536,9 @@
       "Forma 〜て para conectar verbos: 上がって (suba y...) 行ってください (vaya por favor).",
       "売り場 (uriba): Sección de ventas o mostrador.",
       "右 / 左 (migi / hidari): Derecha / Izquierda."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/16-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_16.mp3"
   },
   {
     "lesson": 17,
@@ -535,7 +567,9 @@
       "〜そう (sô): Sufijo de apariencia (面白そう = parece interesante).",
       "おすすめ (osusume): Recomendación o sugerencia personal.",
       "ちょっと… (chotto): Forma cortés y diplomática de rechazar o mostrar duda sin decir un no rotundo."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/17-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_17.mp3"
   },
   {
     "lesson": 18,
@@ -569,7 +603,9 @@
       "〜てしまう / 〜てしまいました: Indica la conclusión involuntaria de una acción con matiz de pesar o error.",
       "もしもし (moshi moshi): Saludo telefónico japonés (Hola / Aló).",
       "目の前 (me no mae): Justo delante de los ojos o en frente."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/18-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_18.mp3"
   },
   {
     "lesson": 19,
@@ -603,7 +639,9 @@
       "〜ので (-node): Expresa razón o causa de manera cortés y natural (porque...).",
       "つい (tsui): Involuntariamente, sin darse cuenta, por impulso.",
       "よかった (yokatta): Pasado de いい (bien/bueno), usado como alivio (¡Menos mal!)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/19-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_19.mp3"
   },
   {
     "lesson": 20,
@@ -637,7 +675,9 @@
       "Verbo en pasado informal (た) + ことがある: Expresa la experiencia de haber hecho algo alguna vez en la vida.",
       "得意 (tokui): Ser bueno o habilidoso en algo (se usa para uno mismo o con personas de confianza).",
       "どんな (donna): ¿Qué tipo de...?"
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/20-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_20.mp3"
   },
   {
     "lesson": 21,
@@ -671,7 +711,9 @@
       "それほどでも (sorehodo demo): Expresión típica de modestia ante un cumplido.",
       "門限 (mongen): Toque de queda u hora de cierre del edificio.",
       "間に合わない (maniawanai): Forma negativa informal de 間に合う (llegar a tiempo)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/21-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_21.mp3"
   },
   {
     "lesson": 22,
@@ -700,7 +742,9 @@
       "〜てはいけません (-te wa ikemasen): Expresa prohibición estricta (no debes / no se puede).",
       "遅刻 (chikoku): Llegar tarde / retraso.",
       "気をつける (ki o tsukeru): Tener cuidado / prestar atención."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/22-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_22.mp3"
   },
   {
     "lesson": 23,
@@ -729,7 +773,9 @@
       "Voz Pasiva (受身形 - Ukemikei): Sujeto + に + Verbo Pasivo. 叱る (regañar) -> 叱られる (ser regañado). お母さんに叱られました significa 'Fui regañada por la encargada'.",
       "それで (sorede): Conector de consecuencia lógica que significa 'por esa razón / por ello'.",
       "間に合う (maniau): Llegar a tiempo a un compromiso o límite horario (門限 - mongen: toque de queda/cierre)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/23-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_23.mp3"
   },
   {
     "lesson": 24,
@@ -758,7 +804,9 @@
       "Petición Negativa con 〜ないでください: Se forma agregando でください a la forma -nai del verbo (使う -> 使わない -> 使わないでください).",
       "Permiso con 〜てもいいですか: 辞書を使ってもいいですか ('¿Puedo usar diccionario?').",
       "だめです (dame desu): Prohibición directa que indica que algo no está permitido."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/24-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_24.mp3"
   },
   {
     "lesson": 25,
@@ -782,7 +830,9 @@
       "Modo Imperativo directo (命令形 - Meireikei): 入る -> 入れ ('¡Entra / métete!'). Es utilizado comúnmente en situaciones de emergencia y simulacros.",
       "落ち着いて (ochitsuite): Forma -te de 落ち着く utilizada como petición suave ('cálmense').",
       "〜ようだ (you da): Expresa conjetura o apariencia basada en la observación sensorial ('parece que...')."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/25-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_25.mp3"
   },
   {
     "lesson": 26,
@@ -811,7 +861,9 @@
       "Modo Volitivo informal (意向形): がんばる -> がんばろう ('¡Esforcémonos!'). Es la variante coloquial de 〜ましょう.",
       "Forma explicativa 〜んです: Expresa confidencia o justificación de un estado anímico ante el interlocutor.",
       "元気がない (genki ga nai): Locución para denotar falta de ánimo o abatimiento."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/26-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_26.mp3"
   },
   {
     "lesson": 27,
@@ -845,7 +897,9 @@
       "Construcción explicativa 〜んですか: Se utiliza para indagar con curiosidad o pedir más información sobre una noticia.",
       "20日 (はつか - hatsuka): Lectura irregular tradicional para el día 20 del mes.",
       "Invitación informal: Verbo negativo informal con entonación de pregunta (行かない？ - ¿No vas/vienes?)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/27-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_27.mp3"
   },
   {
     "lesson": 28,
@@ -884,7 +938,9 @@
       "〜へようこそ (e youkoso): Fórmula estándar de bienvenida a una localidad o región con la partícula de dirección へ.",
       "〜に詳しい (ni kuwashii): Tener amplios conocimientos o ser entendido en una materia.",
       "〜から (kara): Conector causal que significa 'porque / dado que'."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/28-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_28.mp3"
   },
   {
     "lesson": 29,
@@ -908,7 +964,9 @@
       "Condicional natural con 〜と: Verbo en forma diccionario + と ('cuando ocurre A, siempre o naturalmente pasa B'). 見ると (al mirar).",
       "〜みたいです (mitai desu): Expresa similitud o apariencia analógica ('es como... / parece un...'). 帽子みたい (parece un sombrero).",
       "雨が降る (ame ga furu): Llover (literalmente: la lluvia cae)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/29-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_29.mp3"
   },
   {
     "lesson": 30,
@@ -937,7 +995,9 @@
       "Deseo personal con 〜たいです: Raíz verbal en forma -masu + たいです (撮る -> 撮ります -> 撮りたいです).",
       "もう少し (mou sukoshi): Adverbio que denota 'un poco más'.",
       "Condicional con 〜たら: 濡れたら (si te mojas)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/30-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_30.mp3"
   },
   {
     "lesson": 31,
@@ -966,7 +1026,9 @@
       "Adverbio もう (mou): Indica que se ha alcanzado ya un número, edad o momento temporal.",
       "Partícula final よ (yo): Comunica un dato con seguridad y certeza al interlocutor.",
       "Adjetivo-な como modificador: きれいな緑色 (bonito color verde)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/31-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_31.mp3"
   },
   {
     "lesson": 32,
@@ -995,7 +1057,9 @@
       "Estructura comparativa: A のほうが B より 〜 (A es más ... que B).",
       "Pregunta entre dos opciones: A と B と どちらが〜 (¿cuál de los dos...?).",
       "おやすみなさい (formal) vs おやすみ (informal): Fórmulas de despedida antes de dormir."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/32-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_32.mp3"
   },
   {
     "lesson": 33,
@@ -1029,7 +1093,9 @@
       "Verbos de dar: あげる (yo doy a otro) vs くれる (alguien me da a mí).",
       "Modificación nominal con oración relativa: 僕が富士山で撮った写真 (la foto que tomé en el monte Fuji).",
       "うれしい (ureshii): Adjetivo-い que denota alegría o satisfacción."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/33-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_33.mp3"
   },
   {
     "lesson": 34,
@@ -1063,7 +1129,9 @@
       "Unión de Adjetivos-い: Se cambia 〜い por 〜くて (柔らかい -> 柔らかくておいしい).",
       "Partícula coloquial de cita 〜って: Equivale a というのは ('lo que llaman...').",
       "いただきます (itadakimasu): Expresión indispensable antes de empezar a comer."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/34-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_34.mp3"
   },
   {
     "lesson": 35,
@@ -1097,7 +1165,9 @@
       "Forma Potencial (可能形): 使う (usar) -> 使える (poder usar) -> 使えます.",
       "全部で (zenbu de): La partícula で indica suma o totalización.",
       "お勘定 (okanjou): Término de cortesía comercial para pedir la cuenta en restaurantes."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/35-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_35.mp3"
   },
   {
     "lesson": 36,
@@ -1126,7 +1196,9 @@
       "Obligación con 〜なければなりません: Se forma a partir de la raíz negativa -nai (勉強しない -> 勉強しなければなりません). Significa 'tener que / deber'.",
       "Cambio de estado con adjetivos: 寂しい -> 寂しくなります (empezar a sentirse triste/solitario).",
       "春休み (haruyasumi): Vacaciones de primavera entre ciclos lectivos japoneses."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/36-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_36.mp3"
   },
   {
     "lesson": 37,
@@ -1155,7 +1227,9 @@
       "Enumeración no exhaustiva: Forma-ta + り (見たり、食べたりしました). Presenta ejemplos de acciones representativas.",
       "Pasado de adjetivo-い: 楽しい -> 楽しかったです.",
       "それはよかった (sore wa yokatta): 'Qué bueno / Me alegro de escucharlo'."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/37-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_37.mp3"
   },
   {
     "lesson": 38,
@@ -1184,7 +1258,9 @@
       "かしこまりました (kashikomarimashita): Expresión máxima de cortesía comercial y respeto de servicio (Kenjougo).",
       "Sufijo de orden 〜目 (me): ３つ目 (mittsu-me: el tercero).",
       "Dirección con に: 左に曲がる (girar a la izquierda)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/38-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_38.mp3"
   },
   {
     "lesson": 39,
@@ -1218,7 +1294,9 @@
       "Opinión subjetiva con 〜と思います: Frase informal + と思います (風邪だ + と思います - 'Creo que es un resfriado').",
       "Expresiones corporales de salud: 咳が出る (toser), 熱がある (tener fiebre).",
       "Puntos decimales: 37.8度 (さんじゅうなな てん はち ど)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/39-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_39.mp3"
   },
   {
     "lesson": 40,
@@ -1247,7 +1325,9 @@
       "Onomatopeyas físicas: ずきずき (zukizuki) describe dolor punzante y palpitante.",
       "Condicional con 〜たら: あったら (si hay / si tienes).",
       "おかゆ (okayu): Papilla de arroz japonesa para personas enfermas."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/40-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_40.mp3"
   },
   {
     "lesson": 41,
@@ -1266,7 +1346,9 @@
       "Capacidad y consecuencia: Verbo dicc. + ことができる -> ことができて (poder hacer algo y, como resultado...).",
       "Honorífico epistolar 〜様 (sama): Utilizado en correspondencia formal.",
       "学園祭 (gakuensai): Festival cultural universitario."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/41-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_41.mp3"
   },
   {
     "lesson": 42,
@@ -1300,7 +1382,9 @@
       "Superlativo con 一番 (ichiban): 一番おいしい (el más delicioso de todos).",
       "Partícula de reflexión interna かな (kana): Expresa duda personal ('me pregunto si...').",
       "Pagar por separado: 別々にお願いします (betsubetsu ni onegai shimasu)."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/42-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_42.mp3"
   },
   {
     "lesson": 43,
@@ -1329,7 +1413,9 @@
       "Pregunta formal atenuada con でしょうか: どうしてでしょうか ('¿Por qué razón creen que sea?').",
       "Explicación de causa con からです: 'Es debido a que...'.",
       "さすが (sasuga): Expresión canónica de reconocimiento y admiración ante las habilidades de alguien."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/43-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_43.mp3"
   },
   {
     "lesson": 44,
@@ -1358,7 +1444,9 @@
       "Secuencia temporal con 〜てから: Verbo en forma -te + から ('solo tras concluir la acción A se procede a B').",
       "Posibilidad con 〜かもしれません: 'Puede que / tal vez...'.",
       "足が痺れる (ashi ga shibireru): Entumecimiento de extremidades por postura formal seiza."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/44-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_44.mp3"
   },
   {
     "lesson": 45,
@@ -1397,7 +1485,9 @@
       "お誕生日おめでとう (otanjoubi omedetou): Felicitación afectuosa de cumpleaños.",
       "ほんの気持ちです (hon no kimochi desu): Fórmula educada de humildad al entregar un presente.",
       "Interrogación informal con の: 何をもらったの？ ('¿qué recibiste?')."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/45-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_45.mp3"
   },
   {
     "lesson": 46,
@@ -1426,7 +1516,9 @@
       "Temporalidad anterior con 〜前に: Verbo en forma diccionario + 前に ('antes de hacer A'). 帰国する前に (antes de regresar a la patria).",
       "Onomatopeya de textura さらさら (sarasara): Fluido, liviano y seco como el polvo.",
       "幸せ (shiawase): Felicidad profunda y gratitud."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/46-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_46.mp3"
   },
   {
     "lesson": 47,
@@ -1455,7 +1547,9 @@
       "Nominalización con の: Verbo dicc. + の transforma la acción en sustantivo ('el hecho de llegar a ser...').",
       "Verbo de cambio なる (naru): Sustantivo + になる (convertirse en).",
       "一周する (isshuu suru): Dar una vuelta completa alrededor de un circuito o nación."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/47-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_47.mp3"
   },
   {
     "lesson": 48,
@@ -1484,6 +1578,8 @@
       "いろいろお世話になりました: La fórmula canónica de mayor gratitud al cerrar una etapa en Japón.",
       "体に気をつけて (karada ni ki o tsukete): Expresión cálida de despedida ('cuida tu salud').",
       "お元気で (ogenki de): Despedida deseando buena salud a largo plazo ('que te vaya bien y estés sano')."
-    ]
+    ],
+    "audio_url": "https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/48-es-le_01.mp3",
+    "audio_local": "/audio/nhk/lesson_48.mp3"
   }
 ]

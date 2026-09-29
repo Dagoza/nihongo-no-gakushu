@@ -16,7 +16,8 @@ import {
   Award,
   Check,
   CheckCheck,
-  ChevronRight
+  ChevronRight,
+  Radio
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -123,6 +124,9 @@ export default function ConversationTab({
       desc: `${d.speaker}: ${d.es}`
     }));
     audioManager.setPlaylist(playlist, 0);
+    if (playlist.length > 0) {
+      audioManager.speak(playlist[0].text, { autoAdvance: true });
+    }
   };
 
   const handleSelectOption = (option) => {
@@ -413,9 +417,28 @@ export default function ConversationTab({
                     className="btn btn-primary"
                     onClick={handlePlayFullDialogue}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+                    title="Reproducir los diálogos línea por línea con voz neuronal japonesa de Tokio"
                   >
-                    <Play size={16} /> Escuchar Diálogo Completo
+                    <Play size={16} /> Diálogo Línea a Línea
                   </button>
+
+                  {(lesson.audio_url || lesson.audio_local) && (
+                    <button 
+                      className="btn btn-outline"
+                      onClick={() => audioManager.playAudioUrl(lesson.audio_local || lesson.audio_url, `Radio NHK · Lección ${lesson.lesson}: ${lesson.title_jp}`)}
+                      style={{ 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        gap: 8, 
+                        borderColor: '#ec4899', 
+                        color: '#ec4899',
+                        fontWeight: 600
+                      }}
+                      title="Escuchar la transmisión de radio original completa emitida por NHK World (Audio humano oficial)"
+                    >
+                      <Radio size={16} /> Radio NHK Oficial (MP3 Humano)
+                    </button>
+                  )}
                 </div>
               </div>
 

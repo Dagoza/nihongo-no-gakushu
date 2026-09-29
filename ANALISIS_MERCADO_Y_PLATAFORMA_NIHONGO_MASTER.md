@@ -424,6 +424,34 @@ flowchart TD
 4. **Nivel 4 — Fallback Offline PWA (Web Speech API):**
    - Si el alumno está desconectado en un vuelo o sin cobertura móvil, el reproductor conmuta de forma transparente al motor nativo del dispositivo (`window.speechSynthesis`) para que el estudio de tarjetas nunca se interrumpa.
 
+##### D. Estado de Implementación Técnica de Audio (Completado en Producción)
+1. **Endpoint Serverless Neuronal (`app/api/tts/route.js`):**
+   - Implementado con `msedge-tts` usando la voz de referencia `ja-JP-NanamiNeural` (femenina de Tokio) y `ja-JP-KeitaNeural` (masculina).
+   - Generación de streaming MP3 a 24kHz / 48kbps mono con control de velocidad (`rate`), sanitización de etiquetas `<rt>` y encabezados de caché inmutables (`Cache-Control: public, max-age=31536000, immutable`).
+   - Caché en memoria LRU (`memoryCache`) en el servidor para entrega instantánea (0 ms) de vocabulario frecuente.
+2. **Conexión de Audios MP3 Nativos de NHK World:**
+   - Mapeo completo de las 48 lecciones en `data/nhk_lessons.json` y `data/nhk_lessons.js` con sus URLs oficiales de streaming con CORS abierto (`audio_url: https://www3.nhk.or.jp/nhkworld/lesson/spanish/learn/mp3/...`).
+   - Soporte para archivos locales en `public/audio/nhk/lesson_XX.mp3` y script de descarga masiva automatizada `scripts/download_all_nhk_audio.js`.
+3. **Gestor de Audio en Cascada (`lib/audioManager.js`):**
+   - Soporte integrado de audio nativo MP3 mediante `HTMLAudioElement`, reproducción neuronal vía `/api/tts` y fallback suave a `window.speechSynthesis`.
+   - Modos de avance automático en listas de reproducción (`autoAdvance`), control de volumen, velocidad variable (0.75x a 1.25x) y gestión de estados reactivos.
+4. **Interfaz de Usuario Enriquecida:**
+   - En `components/ConversationTab.jsx`: Botón destacado «Radio NHK Oficial (MP3 Humano)» para escuchar la transmisión completa de radio y botón «Diálogo Línea a Línea» para reproducción secuencial con voz neuronal.
+   - En `components/AudioPlayerBar.jsx`: Indicador visual en tiempo real de la fuente activa (*MP3 Humano Nativo* vs *TTS Neuronal*) y selector rápido de voz (*Nanami ♀* / *Keita ♂*).
+
+##### E. Protocolo Obligatorio para la Integración de Nuevos Libros y Temarios
+**Regla de Producto y Desarrollo:** Cada vez que se incorpore un nuevo temario, libro de texto o curso a la plataforma (ej. *Irodori*, *Genki*, *Minna no Nihongo*, *Tobira*, *Marugoto*, etc.), **es un requisito obligatorio e ineludible ejecutar los siguientes 4 pasos**:
+1. **Auditoría y Búsqueda de Audios Oficiales:**
+   - Comprobar exhaustivamente si el curso cuenta con pistas de audio MP3 oficiales proporcionadas por las instituciones editoras (ej. Japan Foundation para Irodori/Marugoto, The Japan Times para Genki, 3A Corporation para Minna no Nihongo).
+2. **Ingesta y Mapeo en el Modelo de Datos:**
+   - Si los audios están disponibles con CORS en CDNs institucionales, mapear sus URLs en el campo `audio_url`.
+   - Descargar los clips correspondientes a la estructura de la aplicación (`public/audio/{nombre_curso}/...`) y registrar la ruta local en `audio_local`.
+   - Si no se cuenta con MP3 humano nativo, el sistema debe registrar las cadenas fonéticas limpias en hiragana/kanji para su síntesis automática mediante `/api/tts`.
+3. **Integración con `audioManager` en la UI:**
+   - Conectar los componentes de lectura, tarjetas o diálogos para invocar `audioManager.playAudioUrl(...)` o `audioManager.speak(texto, { audioUrl })`.
+4. **Validación Auditiva y de Compilación:**
+   - Verificar que al pulsar los botones de audio se escuche el clip nativo o la voz neuronal de Tokio sin retrasos perceptibles y ejecutar `npm run build` sin errores.
+
 ---
 
 #### 3. Digitalización Interactiva del Curso Irodori A1 (18 Lecciones / 79 Can-dos) — [✅ Implementado]
