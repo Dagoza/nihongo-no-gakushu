@@ -326,11 +326,26 @@ export default function SavedTab({
       const session = await getAuthSession();
       const token = session?.access_token;
 
+      if (!token) {
+        showAlert({
+          type: 'lock',
+          title: 'Sesión Requerida',
+          message: 'Tu sesión no está activa o ha expirado. Por favor vuelve a iniciar sesión.',
+          actionLabel: 'Iniciar Sesión',
+          onAction: () => {
+            setIsExportModalOpen(false);
+            if (onOpenAuth) onOpenAuth();
+          }
+        });
+        setIsGenerating(false);
+        return;
+      }
+
       const response = await fetch('/api/stories/generate', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           vocabList,

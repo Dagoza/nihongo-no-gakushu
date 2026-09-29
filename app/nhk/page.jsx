@@ -7,7 +7,7 @@ import ConversationTab from '../../components/ConversationTab';
 import PageLoader from '../../components/PageLoader';
 
 function NhkPageContent() {
-  const { appState, handleUpdateState } = useApp();
+  const { appState, handleUpdateState, authUser } = useApp();
   const searchParams = useSearchParams();
 
   const lessonParam = searchParams.get('lesson');
@@ -35,6 +35,7 @@ function NhkPageContent() {
     <ConversationTab 
       appState={appState} 
       onUpdateState={handleUpdateState} 
+      authUser={authUser}
       initialLesson={lessonParam}
       initialTab={tabParam || 'dialogue'}
       initialStatus={statusParam || 'all'}
