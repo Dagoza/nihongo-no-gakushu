@@ -71,7 +71,11 @@ export default function EditWordModal({
   const handleSave = (e) => {
     e.preventDefault();
     if (!kanji.trim() || !hiragana.trim() || !meaningEs.trim()) {
-      alert('Por favor completa al menos el Kanji/palabra, la lectura en Hiragana y su significado en español.');
+      showAlert({
+        type: 'warning',
+        title: 'Campos Incompletos',
+        message: 'Por favor completa al menos el Kanji/palabra, la lectura en Hiragana y su significado en español.'
+      });
       return;
     }
 
