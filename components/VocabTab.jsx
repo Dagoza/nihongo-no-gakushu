@@ -79,12 +79,34 @@ export default function VocabTab({
   // SRS state
   const [srsQueue, setSrsQueue] = useState([]);
 
+  const isMassive = Boolean(authUser && appState?.useMassiveDictionary);
   const [vocabularyList, setVocabularyList] = useState(dataStore.vocabulary || []);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleToggleSource = (enableMassive) => {
+    if (enableMassive) {
+      if (!authUser) {
+        if (contextApp?.setIsAuthModalOpen) {
+          contextApp.setIsAuthModalOpen(true);
+        }
+        alert("Inicia sesión con tu cuenta de Google o correo para acceder al catálogo masivo en la nube.");
+        return;
+      }
+      onUpdateState({
+        ...appState,
+        useMassiveDictionary: true
+      });
+    } else {
+      onUpdateState({
+        ...appState,
+        useMassiveDictionary: false
+      });
+    }
+  };
+
   useEffect(() => {
-    // Si no ha iniciado sesión, mostrar exclusivamente los datos locales guardados sin consultar la BD
-    if (!authUser) {
+    // Si está apagado el catálogo masivo o no hay sesión activa, usar estrictamente los recursos propios
+    if (!authUser || !appState?.useMassiveDictionary) {
       setVocabularyList(dataStore.vocabulary || []);
       setIsLoading(false);
       return;
@@ -98,12 +120,12 @@ export default function VocabTab({
           setVocabularyList(data);
         }
       })
-      .catch(err => console.error("Error cargando vocabulario:", err))
+      .catch(err => console.error("Error cargando vocabulario masivo:", err))
       .finally(() => {
         if (isMounted) setIsLoading(false);
       });
     return () => { isMounted = false; };
-  }, [level, authUser]);
+  }, [level, authUser, appState?.useMassiveDictionary]);
 
   const n4Exercises = dataStore.exercises || [];
 
@@ -255,6 +277,102 @@ export default function VocabTab({
         <p className="section-desc">
           Plataforma de vocabulario japonés organizada temáticamente. Explora tarjetas interactivas, practica la digitación con tu teclado en japonés (IME) y resuelve ejercicios de contexto real.
         </p>
+      </div>
+
+      {/* Selector de Fuente: Recursos Propios vs Catálogo Masivo API */}
+      <div className="source-selector-bar" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: '12px',
+        padding: '12px 18px',
+        marginBottom: '20px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            Fuente del Diccionario:
+          </span>
+          <div style={{
+            display: 'inline-flex',
+            background: 'var(--background)',
+            padding: '3px',
+            borderRadius: '10px',
+            border: '1px solid var(--border)'
+          }}>
+            <button
+              type="button"
+              onClick={() => handleToggleSource(false)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: !isMassive ? 700 : 500,
+                background: !isMassive ? 'var(--primary)' : 'transparent',
+                color: !isMassive ? '#fff' : 'var(--text-muted)',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>📖 Mis Recursos Propios</span>
+              <span style={{
+                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
+                color: !isMassive ? '#fff' : 'var(--text-secondary)',
+                padding: '2px 8px',
+                borderRadius: '10px',
+                fontSize: '0.75rem',
+                fontWeight: 700
+              }}>
+                187 palabras
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleToggleSource(true)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: isMassive ? 700 : 500,
+                background: isMassive ? 'var(--primary)' : 'transparent',
+                color: isMassive ? '#fff' : 'var(--text-muted)',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>{authUser ? '🌐 Catálogo Masivo (API)' : '🔒 Catálogo Masivo (API)'}</span>
+              <span style={{
+                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
+                color: isMassive ? '#fff' : 'var(--text-secondary)',
+                padding: '2px 8px',
+                borderRadius: '10px',
+                fontSize: '0.75rem',
+                fontWeight: 700
+              }}>
+                +2,000 palabras
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {!isMassive ? (
+            <span>✨ Mostrando vocabulario curado de libros y cuadernos propios de estudio.</span>
+          ) : (
+            <span>🚀 Mostrando base de datos masiva poblada en Supabase ({vocabularyList.length} palabras).</span>
+          )}
+        </div>
       </div>
 
       {/* Main Mode Selector & Level Filter */}

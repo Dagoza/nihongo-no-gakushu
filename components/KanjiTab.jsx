@@ -76,13 +76,35 @@ export default function KanjiTab({
     }
   }, [initialDraw]);
 
+  const isMassive = Boolean(authUser && appState?.useMassiveKanji);
   const [level, setLevel] = useState('all');
   const [kanjiList, setKanjiList] = useState(dataStore.kanji || []);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleToggleSource = (enableMassive) => {
+    if (enableMassive) {
+      if (!authUser) {
+        if (contextApp?.setIsAuthModalOpen) {
+          contextApp.setIsAuthModalOpen(true);
+        }
+        alert("Inicia sesión con tu cuenta de Google o correo para acceder al catálogo masivo de kanjis en la nube.");
+        return;
+      }
+      onUpdateState({
+        ...appState,
+        useMassiveKanji: true
+      });
+    } else {
+      onUpdateState({
+        ...appState,
+        useMassiveKanji: false
+      });
+    }
+  };
+
   useEffect(() => {
-    // Si no ha iniciado sesión, mostrar exclusivamente los datos locales guardados sin consultar la BD
-    if (!authUser) {
+    // Si está apagado el catálogo masivo o no hay sesión activa, usar estrictamente los kanjis propios
+    if (!authUser || !appState?.useMassiveKanji) {
       setKanjiList(dataStore.kanji || []);
       setIsLoading(false);
       return;
@@ -96,12 +118,12 @@ export default function KanjiTab({
           setKanjiList(data);
         }
       })
-      .catch(err => console.error("Error cargando kanjis:", err))
+      .catch(err => console.error("Error cargando kanjis masivos:", err))
       .finally(() => {
         if (isMounted) setIsLoading(false);
       });
     return () => { isMounted = false; };
-  }, [level, authUser]);
+  }, [level, authUser, appState?.useMassiveKanji]);
 
   // Filter kanji
   const filteredKanji = kanjiList.filter(k => {
@@ -243,8 +265,104 @@ export default function KanjiTab({
           <span>漢</span> Biblioteca de Kanji Interactiva
         </h2>
         <p className="section-desc">
-          {kanjiList.length} caracteres kanji extraídos de tus libros de estudio y fichas mnemotécnicas con orden de trazos, lecturas On'yomi, Kun'yomi, vocabulario compuesto y práctica de lectura en Hiragana.
+          {kanjiList.length} caracteres kanji con orden de trazos, lecturas On'yomi, Kun'yomi, vocabulario compuesto y práctica de lectura en Hiragana.
         </p>
+      </div>
+
+      {/* Selector de Fuente: Kanjis Propios vs Catálogo Masivo API */}
+      <div className="source-selector-bar" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: '12px',
+        padding: '12px 18px',
+        marginBottom: '20px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            Fuente de Kanjis:
+          </span>
+          <div style={{
+            display: 'inline-flex',
+            background: 'var(--background)',
+            padding: '3px',
+            borderRadius: '10px',
+            border: '1px solid var(--border)'
+          }}>
+            <button
+              type="button"
+              onClick={() => handleToggleSource(false)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: !isMassive ? 700 : 500,
+                background: !isMassive ? 'var(--primary)' : 'transparent',
+                color: !isMassive ? '#fff' : 'var(--text-muted)',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>📖 Mis Kanjis Propios</span>
+              <span style={{
+                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
+                color: !isMassive ? '#fff' : 'var(--text-secondary)',
+                padding: '2px 8px',
+                borderRadius: '10px',
+                fontSize: '0.75rem',
+                fontWeight: 700
+              }}>
+                134 kanjis
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleToggleSource(true)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: isMassive ? 700 : 500,
+                background: isMassive ? 'var(--primary)' : 'transparent',
+                color: isMassive ? '#fff' : 'var(--text-muted)',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>{authUser ? '🌐 Catálogo Masivo (API)' : '🔒 Catálogo Masivo (API)'}</span>
+              <span style={{
+                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
+                color: isMassive ? '#fff' : 'var(--text-secondary)',
+                padding: '2px 8px',
+                borderRadius: '10px',
+                fontSize: '0.75rem',
+                fontWeight: 700
+              }}>
+                +2,100 kanjis
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {!isMassive ? (
+            <span>✨ Mostrando kanjis propios curados de libros con mnemotécnicas.</span>
+          ) : (
+            <span>🚀 Mostrando base de datos masiva poblada en Supabase ({kanjiList.length} kanjis).</span>
+          )}
+        </div>
       </div>
 
       {!quizActive && !srsActive ? (
