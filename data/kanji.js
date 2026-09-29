@@ -1,20 +1,25 @@
+// Auto-generated dataset for Nihongo Master
 window.KANJI_DATA = [
   {
     "kanji": "一",
     "level": "N5",
-    "meaning_en": "one 一",
-    "meaning_es": "one 一",
+    "meaning_es": "uno",
+    "meaning_en": "one",
     "pronunciation": "いち, ひと",
+    "strokes": 1,
+    "onyomi": "ICHI, ITSU [いち, いつ]",
+    "kunyomi": "hito, hito(tsu) [ひと, ひと(つ)]",
+    "mnemonic": "Un solo trazo horizontal representa el número uno o una sola línea en el horizonte.",
     "words": [
       {
         "word": "一",
         "reading": "いち",
-        "meaning": "one"
+        "meaning": "uno"
       },
       {
         "word": "一人",
         "reading": "ひとり",
-        "meaning": "one person"
+        "meaning": "una persona"
       },
       {
         "word": "一度",
@@ -27,14 +32,18 @@ window.KANJI_DATA = [
   {
     "kanji": "二",
     "level": "N5",
-    "meaning_en": "two 二",
-    "meaning_es": "two 二",
-    "pronunciation": "に",
+    "meaning_es": "dos",
+    "meaning_en": "two",
+    "pronunciation": "に, ふた",
+    "strokes": 2,
+    "onyomi": "NI, JI [に, じ]",
+    "kunyomi": "futa, futa(tsu) [ふた, ふた(つ)]",
+    "mnemonic": "Dos trazos horizontales paralelos representan el número dos.",
     "words": [
       {
         "word": "二",
         "reading": "に",
-        "meaning": "two"
+        "meaning": "dos"
       },
       {
         "word": "二つ",
@@ -47,14 +56,18 @@ window.KANJI_DATA = [
   {
     "kanji": "三",
     "level": "N5",
-    "meaning_en": "three 三",
-    "meaning_es": "three 三",
-    "pronunciation": "さん",
+    "meaning_es": "tres",
+    "meaning_en": "three",
+    "pronunciation": "さん, み",
+    "strokes": 3,
+    "onyomi": "SAN [さん]",
+    "kunyomi": "mi, mi(tsu), mit(tsu) [み, み(つ), みっ(つ)]",
+    "mnemonic": "Tres líneas horizontales apiladas forman el número tres.",
     "words": [
       {
         "word": "三",
         "reading": "さん",
-        "meaning": "three"
+        "meaning": "tres"
       }
     ],
     "source": "Kanji Book"
@@ -62,14 +75,18 @@ window.KANJI_DATA = [
   {
     "kanji": "四",
     "level": "N5",
-    "meaning_en": "four 四",
-    "meaning_es": "four 四",
-    "pronunciation": "よん、 よ",
+    "meaning_es": "cuatro",
+    "meaning_en": "four",
+    "pronunciation": "よん, よ, し",
+    "strokes": 5,
+    "onyomi": "SHI [し]",
+    "kunyomi": "yo, yo(tsu), yot(tsu), yon [よ, よ(つ), よっ(つ), よん]",
+    "mnemonic": "Una ventana o caja con cortinas abiertas mostrando sus cuatro esquinas.",
     "words": [
       {
         "word": "四",
         "reading": "よん",
-        "meaning": "four"
+        "meaning": "cuatro"
       },
       {
         "word": "四人",
@@ -82,14 +99,18 @@ window.KANJI_DATA = [
   {
     "kanji": "五",
     "level": "N5",
-    "meaning_en": "five 五",
-    "meaning_es": "five 五",
-    "pronunciation": "ご",
+    "meaning_es": "cinco",
+    "meaning_en": "five",
+    "pronunciation": "ご, いつ",
+    "strokes": 4,
+    "onyomi": "GO [ご]",
+    "kunyomi": "itsu, itsu(tsu) [いつ, いつ(つ)]",
+    "mnemonic": "Cinco trazos entrelazados formando una figura de cinco puntos de apoyo.",
     "words": [
       {
         "word": "五",
         "reading": "ご",
-        "meaning": "five"
+        "meaning": "cinco"
       }
     ],
     "source": "Kanji Book"
@@ -97,14 +118,18 @@ window.KANJI_DATA = [
   {
     "kanji": "六",
     "level": "N5",
-    "meaning_en": "six 六",
-    "meaning_es": "six 六",
-    "pronunciation": "ろく",
+    "meaning_es": "seis",
+    "meaning_en": "six",
+    "pronunciation": "ろく, む",
+    "strokes": 4,
+    "onyomi": "ROKU [ろく]",
+    "kunyomi": "mu, mu(tsu), mut(tsu), mui [む, む(つ), むっ(つ), むい]",
+    "mnemonic": "Una persona con sombrero y piernas abiertas contando seis pasos.",
     "words": [
       {
         "word": "六",
         "reading": "ろく",
-        "meaning": "six"
+        "meaning": "seis"
       }
     ],
     "source": "Kanji Book"
@@ -112,14 +137,18 @@ window.KANJI_DATA = [
   {
     "kanji": "七",
     "level": "N5",
-    "meaning_en": "seven 七",
-    "meaning_es": "seven 七",
-    "pronunciation": "なな、 しち",
+    "meaning_es": "siete",
+    "meaning_en": "seven",
+    "pronunciation": "なな, しち",
+    "strokes": 2,
+    "onyomi": "SHICHI [しち]",
+    "kunyomi": "nana, nana(tsu), nano [なな, なな(つ), なの]",
+    "mnemonic": "Un número 7 invertido que parece una espada cortando hacia arriba.",
     "words": [
       {
         "word": "七",
         "reading": "なな",
-        "meaning": "seven"
+        "meaning": "siete"
       },
       {
         "word": "七時",
@@ -132,14 +161,18 @@ window.KANJI_DATA = [
   {
     "kanji": "八",
     "level": "N5",
-    "meaning_en": "eight 八",
-    "meaning_es": "eight 八",
-    "pronunciation": "はち",
+    "meaning_es": "ocho",
+    "meaning_en": "eight",
+    "pronunciation": "はち, や",
+    "strokes": 2,
+    "onyomi": "HACHI [はち]",
+    "kunyomi": "ya, ya(tsu), yat(tsu), yō [や, や(つ), やっ(つ), よう]",
+    "mnemonic": "Dos trazos que se abren hacia abajo como las laderas simétricas del Monte Fuji.",
     "words": [
       {
         "word": "八",
         "reading": "はち",
-        "meaning": "eight"
+        "meaning": "ocho"
       }
     ],
     "source": "Kanji Book"
@@ -147,14 +180,18 @@ window.KANJI_DATA = [
   {
     "kanji": "九",
     "level": "N5",
-    "meaning_en": "nine 九",
-    "meaning_es": "nine 九",
-    "pronunciation": "きゅう、 く",
+    "meaning_es": "nueve",
+    "meaning_en": "nine",
+    "pronunciation": "きゅう, く, ここの",
+    "strokes": 2,
+    "onyomi": "KYUU, KU [きゅう, く]",
+    "kunyomi": "kokono, kokono(tsu) [ここの, ここの(つ)]",
+    "mnemonic": "Un brazo doblando el codo y flexionando el músculo con fuerza para llegar al nueve.",
     "words": [
       {
         "word": "九",
         "reading": "きゅう",
-        "meaning": "nine"
+        "meaning": "nueve"
       },
       {
         "word": "九時",
@@ -167,14 +204,23 @@ window.KANJI_DATA = [
   {
     "kanji": "十",
     "level": "N5",
-    "meaning_en": "ten 十",
-    "meaning_es": "ten 十",
-    "pronunciation": "じゅう",
+    "meaning_es": "diez",
+    "meaning_en": "ten",
+    "pronunciation": "じゅう, とお",
+    "strokes": 2,
+    "onyomi": "JUU, JITSU [じゅう, じつ]",
+    "kunyomi": "tō, to [とお, と]",
+    "mnemonic": "Una cruz perfecta que une lo vertical y horizontal completando la decena.",
     "words": [
       {
         "word": "十",
         "reading": "じゅう",
-        "meaning": "ten"
+        "meaning": "diez"
+      },
+      {
+        "word": "十分に",
+        "reading": "じゅうぶんに",
+        "meaning": "suficientemente"
       }
     ],
     "source": "Kanji Book"
@@ -182,9 +228,13 @@ window.KANJI_DATA = [
   {
     "kanji": "人",
     "level": "N5",
-    "meaning_en": "person 人",
-    "meaning_es": "person 人",
-    "pronunciation": "ひと、 じん",
+    "meaning_es": "persona",
+    "meaning_en": "person",
+    "pronunciation": "ひと, じん, にん",
+    "strokes": 2,
+    "onyomi": "JIN, NIN [じん, にん]",
+    "kunyomi": "hito, -to [ひと, と]",
+    "mnemonic": "Dos piernas de un ser humano caminando erguido y apoyándose mutuamente.",
     "words": [
       {
         "word": "人",
@@ -202,9 +252,13 @@ window.KANJI_DATA = [
   {
     "kanji": "何",
     "level": "N5",
-    "meaning_en": "what, how, which 何",
-    "meaning_es": "what, how, which 何",
-    "pronunciation": "なに",
+    "meaning_es": "qué, cuál",
+    "meaning_en": "what, which",
+    "pronunciation": "なに, なん",
+    "strokes": 7,
+    "onyomi": "KA [か]",
+    "kunyomi": "nani, nan [なに, なん]",
+    "mnemonic": "¿Qué lleva una persona (亻) cargando en el hombro (可)?",
     "words": [
       {
         "word": "何",
@@ -214,50 +268,55 @@ window.KANJI_DATA = [
       {
         "word": "何時",
         "reading": "なんじ",
-        "meaning": "what time"
+        "meaning": "qué hora"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 7,
-    "onyomi": "Ka [か]",
-    "kunyomi": "Nani [なに]",
-    "mnemonic": "What exactly can (可) a person (人) do ?"
+    "source": "Kanji Book"
   },
   {
     "kanji": "今",
     "level": "N5",
-    "meaning_en": "now 今",
-    "meaning_es": "now 今",
-    "pronunciation": "いま、 こん",
+    "meaning_es": "ahora, presente",
+    "meaning_en": "now, present",
+    "pronunciation": "いま, こん",
+    "strokes": 4,
+    "onyomi": "KON, KIN [こん, きん]",
+    "kunyomi": "ima [いま]",
+    "mnemonic": "Un reloj o techo que atrapa el momento presente: ahora.",
     "words": [
       {
         "word": "今",
         "reading": "いま",
-        "meaning": "now"
+        "meaning": "ahora"
       },
       {
         "word": "今週",
         "reading": "こんしゅう",
-        "meaning": "this week"
+        "meaning": "esta semana"
+      },
+      {
+        "word": "今にも",
+        "reading": "いまにも",
+        "meaning": "en cualquier momento / a punto de"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 4,
-    "onyomi": "Kon/Kin [こん/きん]",
-    "kunyomi": "Ima [いま]",
-    "mnemonic": "The bottom stokes looks like the hands of a clock that indicates what time it is Now."
+    "source": "Kanji Book"
   },
   {
     "kanji": "入",
     "level": "N5",
-    "meaning_en": "to enter, to insert 入る",
-    "meaning_es": "to enter, to insert 入る",
-    "pronunciation": "はい",
+    "meaning_es": "entrar, meter",
+    "meaning_en": "to enter, insert",
+    "pronunciation": "はい, い, にゅう",
+    "strokes": 2,
+    "onyomi": "NYUU [にゅう]",
+    "kunyomi": "hai(ru), i(ru), i(reru) [はい(る), い(る), い(れる)]",
+    "mnemonic": "Una persona inclinándose para entrar por una puerta baja.",
     "words": [
       {
         "word": "入る",
         "reading": "はいる",
-        "meaning": "to enter"
+        "meaning": "entrar"
       }
     ],
     "source": "Kanji Book"
@@ -265,14 +324,18 @@ window.KANJI_DATA = [
   {
     "kanji": "出",
     "level": "N5",
-    "meaning_en": "to leave, to get out 出る",
-    "meaning_es": "to leave, to get out 出る",
-    "pronunciation": "で",
+    "meaning_es": "salir, sacar",
+    "meaning_en": "to exit, leave",
+    "pronunciation": "で, だ, しゅつ",
+    "strokes": 5,
+    "onyomi": "SHUTSU, SUI [しゅつ, すい]",
+    "kunyomi": "de(ru), da(su) [で(る), だ(す)]",
+    "mnemonic": "Dos montañas (山) apiladas, una brotando y saliendo de la otra.",
     "words": [
       {
         "word": "出る",
         "reading": "でる",
-        "meaning": "to leave"
+        "meaning": "salir"
       }
     ],
     "source": "Kanji Book"
@@ -280,14 +343,23 @@ window.KANJI_DATA = [
   {
     "kanji": "上",
     "level": "N5",
-    "meaning_en": "on, above, upper 上",
-    "meaning_es": "on, above, upper 上",
-    "pronunciation": "うえ",
+    "meaning_es": "arriba, encima",
+    "meaning_en": "above, up",
+    "pronunciation": "うえ, じょう, あ",
+    "strokes": 3,
+    "onyomi": "JOU, SHOU [じょう, しょう]",
+    "kunyomi": "ue, uwa-, a(garu), nobo(ru) [うえ, うわ, あ(がる), のぼ(る)]",
+    "mnemonic": "Una línea horizontal de base con un trazo vertical apuntando hacia arriba.",
     "words": [
       {
         "word": "上",
         "reading": "うえ",
         "meaning": "on, above"
+      },
+      {
+        "word": "上手",
+        "reading": "じょうず",
+        "meaning": "habilidoso / bueno para"
       }
     ],
     "source": "Kanji Book"
@@ -295,9 +367,13 @@ window.KANJI_DATA = [
   {
     "kanji": "下",
     "level": "N5",
-    "meaning_en": "under, below, down 下",
-    "meaning_es": "under, below, down 下",
-    "pronunciation": "した",
+    "meaning_es": "abajo, debajo",
+    "meaning_en": "below, down",
+    "pronunciation": "した, か, げ, さ",
+    "strokes": 3,
+    "onyomi": "KA, GE [か, げ]",
+    "kunyomi": "shita, shimo, sa(garu), kuda(ru) [した, しも, さ(がる), くだ(る)]",
+    "mnemonic": "Una línea horizontal de referencia con una marca que cuelga hacia abajo.",
     "words": [
       {
         "word": "下",
@@ -310,9 +386,13 @@ window.KANJI_DATA = [
   {
     "kanji": "中",
     "level": "N5",
-    "meaning_en": "inside, inner, between 中",
-    "meaning_es": "inside, inner, between 中",
-    "pronunciation": "なか、ちゅう",
+    "meaning_es": "dentro, en medio, centro",
+    "meaning_en": "inside, middle, center",
+    "pronunciation": "なか, ちゅう",
+    "strokes": 4,
+    "onyomi": "CHUU [ちゅう]",
+    "kunyomi": "naka [なか]",
+    "mnemonic": "Una línea vertical que atraviesa justo por el centro un círculo o rectángulo.",
     "words": [
       {
         "word": "中",
@@ -325,18 +405,18 @@ window.KANJI_DATA = [
         "meaning": "junior high school"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 5,
-    "onyomi": "Ko [こ]",
-    "kunyomi": "Furu(i) [ふ(い)]",
-    "mnemonic": "When you say (口) something ten (十) times it becomes Old"
+    "source": "Kanji Book"
   },
   {
     "kanji": "右",
     "level": "N5",
-    "meaning_en": "right 右",
-    "meaning_es": "right 右",
-    "pronunciation": "みぎ",
+    "meaning_es": "derecha",
+    "meaning_en": "right",
+    "pronunciation": "みぎ, う, ゆう",
+    "strokes": 5,
+    "onyomi": "U, YUU [う, ゆう]",
+    "kunyomi": "migi [みぎ]",
+    "mnemonic": "La mano (𠂇) que llevas a la boca (口) para comer: la mano derecha.",
     "words": [
       {
         "word": "右",
@@ -349,9 +429,13 @@ window.KANJI_DATA = [
   {
     "kanji": "左",
     "level": "N5",
-    "meaning_en": "left 左",
-    "meaning_es": "left 左",
-    "pronunciation": "ひだり",
+    "meaning_es": "izquierda",
+    "meaning_en": "left",
+    "pronunciation": "ひだり, さ",
+    "strokes": 5,
+    "onyomi": "SA [さ]",
+    "kunyomi": "hidari [ひだり]",
+    "mnemonic": "La mano (𠂇) que sostiene una regla de trabajo (工): la mano izquierda.",
     "words": [
       {
         "word": "左",
@@ -364,9 +448,13 @@ window.KANJI_DATA = [
   {
     "kanji": "道",
     "level": "N5",
-    "meaning_en": "street 道",
-    "meaning_es": "street 道",
-    "pronunciation": "みち",
+    "meaning_es": "camino, vía, sendero",
+    "meaning_en": "street, road, path",
+    "pronunciation": "みち, どう",
+    "strokes": 12,
+    "onyomi": "DOU, TOU [どう, とう]",
+    "kunyomi": "michi [みち]",
+    "mnemonic": "Guiar la cabeza y la mente (首) a lo largo del sendero del movimiento (辶): el camino.",
     "words": [
       {
         "word": "道",
@@ -379,9 +467,13 @@ window.KANJI_DATA = [
   {
     "kanji": "北",
     "level": "N5",
-    "meaning_en": "north 北",
-    "meaning_es": "north 北",
-    "pronunciation": "きた",
+    "meaning_es": "norte",
+    "meaning_en": "north",
+    "pronunciation": "きた, ほく",
+    "strokes": 5,
+    "onyomi": "HOKU [ほく]",
+    "kunyomi": "kita [きた]",
+    "mnemonic": "Dos personas dándose la espalda para protegerse del viento frío del norte.",
     "words": [
       {
         "word": "北",
@@ -389,18 +481,18 @@ window.KANJI_DATA = [
         "meaning": "north"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 5,
-    "onyomi": "Hoku [ほく]",
-    "kunyomi": "Kita [きた]",
-    "mnemonic": "When putting it together it looks like a ladder to go up NORTH"
+    "source": "Kanji Book"
   },
   {
     "kanji": "南",
     "level": "N5",
-    "meaning_en": "south 南",
-    "meaning_es": "south 南",
-    "pronunciation": "みなみ",
+    "meaning_es": "sur",
+    "meaning_en": "south",
+    "pronunciation": "みなみ, なん",
+    "strokes": 9,
+    "onyomi": "NAN, NA [なん, な]",
+    "kunyomi": "minami [みなみ]",
+    "mnemonic": "Una cabaña protegida con vegetación donde brilla el cálido sol del sur.",
     "words": [
       {
         "word": "南",
@@ -408,18 +500,18 @@ window.KANJI_DATA = [
         "meaning": "south"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 9,
-    "onyomi": "Nan [なん]",
-    "kunyomi": "Minami [な]",
-    "mnemonic": "In the South there are many believers who give lots of money(¥) to the churches"
+    "source": "Kanji Book"
   },
   {
     "kanji": "東",
     "level": "N5",
-    "meaning_en": "east 東",
-    "meaning_es": "east 東",
-    "pronunciation": "ひがし、とう",
+    "meaning_es": "este, oriente",
+    "meaning_en": "east",
+    "pronunciation": "ひがし, とう",
+    "strokes": 8,
+    "onyomi": "TOU [とう]",
+    "kunyomi": "higashi [ひがし]",
+    "mnemonic": "El sol (日) asomando por detrás de un árbol (木) en el este al amanecer.",
     "words": [
       {
         "word": "東",
@@ -437,9 +529,13 @@ window.KANJI_DATA = [
   {
     "kanji": "西",
     "level": "N5",
-    "meaning_en": "west 西",
-    "meaning_es": "west 西",
-    "pronunciation": "にし",
+    "meaning_es": "oeste, occidente",
+    "meaning_en": "west",
+    "pronunciation": "にし, せい, さい",
+    "strokes": 6,
+    "onyomi": "SEI, SAI [せい, さい]",
+    "kunyomi": "nishi [にし]",
+    "mnemonic": "Un pájaro posándose en su nido al caer el sol por el oeste.",
     "words": [
       {
         "word": "西",
@@ -447,18 +543,18 @@ window.KANJI_DATA = [
         "meaning": "west"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 6,
-    "onyomi": "Sei /Sai [せい/さい]",
-    "kunyomi": "Nishi [にし]",
-    "mnemonic": "The  upper  part  looks  like  the  Greek  symbol  π (Pi). Greek is a western country"
+    "source": "Kanji Book"
   },
   {
     "kanji": "大",
     "level": "N5",
-    "meaning_en": "big, grand 大きい",
-    "meaning_es": "big, grand 大きい",
-    "pronunciation": "おお、 だい",
+    "meaning_es": "grande",
+    "meaning_en": "big, large",
+    "pronunciation": "おお, だい, たい",
+    "strokes": 3,
+    "onyomi": "DAI, TAI [だい, たい]",
+    "kunyomi": "oo, oo(kii) [おお, おお(きい)]",
+    "mnemonic": "Una persona extendiendo sus brazos y piernas para mostrar cuán grande es algo.",
     "words": [
       {
         "word": "大きい",
@@ -469,6 +565,11 @@ window.KANJI_DATA = [
         "word": "大学",
         "reading": "だいがく",
         "meaning": "University"
+      },
+      {
+        "word": "大勢",
+        "reading": "おおぜい",
+        "meaning": "mucha gente / en multitud"
       }
     ],
     "source": "Kanji Book"
@@ -476,9 +577,13 @@ window.KANJI_DATA = [
   {
     "kanji": "小",
     "level": "N5",
-    "meaning_en": "small 小さい",
-    "meaning_es": "small 小さい",
-    "pronunciation": "ちい",
+    "meaning_es": "pequeño",
+    "meaning_en": "small, little",
+    "pronunciation": "ちい, しょう",
+    "strokes": 3,
+    "onyomi": "SHOU [しょう]",
+    "kunyomi": "chii(sai), ko-, o- [ちい(さい), こ, お]",
+    "mnemonic": "Dividir algo por el medio en tres pequeñas gotas o partículas.",
     "words": [
       {
         "word": "小さい",
@@ -496,33 +601,42 @@ window.KANJI_DATA = [
   {
     "kanji": "少",
     "level": "N5",
-    "meaning_en": "few , a littre",
-    "meaning_es": "few , a littre",
-    "pronunciation": "すく",
+    "meaning_es": "poco, escaso",
+    "meaning_en": "few, little",
+    "pronunciation": "すこ, すく, しょう",
+    "strokes": 4,
+    "onyomi": "SHOU [しょう]",
+    "kunyomi": "suko(shi), suku(nai) [すこ(し), すく(ない)]",
+    "mnemonic": "El kanji de pequeño (小) cortado por un trazo diagonal: queda poco.",
     "words": [
       {
         "word": "少ない",
         "reading": "すくない",
         "meaning": "few, a little"
+      },
+      {
+        "word": "少し",
+        "reading": "すこし",
+        "meaning": "un poco"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 4,
-    "onyomi": "Shou [しょう]",
-    "kunyomi": "Suko(shi)/Suku(nai) [すこ(し",
-    "mnemonic": "Something small (小) slashed ( even smaller. ) to make it"
+    "source": "Kanji Book"
   },
   {
     "kanji": "古",
     "level": "N5",
-    "meaning_en": "old 古い",
-    "meaning_es": "old 古い",
-    "pronunciation": "ふる",
+    "meaning_es": "viejo, antiguo",
+    "meaning_en": "old",
+    "pronunciation": "ふる, こ",
+    "strokes": 5,
+    "onyomi": "KO [こ]",
+    "kunyomi": "furu(i) [ふる(い)]",
+    "mnemonic": "Una historia que ha pasado por diez (十) bocas (口) es muy vieja y antigua.",
     "words": [
       {
         "word": "古い",
         "reading": "ふるい",
-        "meaning": "old"
+        "meaning": "viejo / antiguo"
       }
     ],
     "source": "Kanji Book"
@@ -530,33 +644,37 @@ window.KANJI_DATA = [
   {
     "kanji": "新",
     "level": "N5",
+    "meaning_es": "nuevo",
     "meaning_en": "new",
-    "meaning_es": "new",
-    "pronunciation": "あたら",
+    "pronunciation": "あたら, しん",
+    "strokes": 13,
+    "onyomi": "SHIN [しん]",
+    "kunyomi": "atara(shii), ara(ta) [あたら(しい), あら(た)]",
+    "mnemonic": "Cortar un árbol (木) en pie (立) con un hacha (斤) para construir algo nuevo.",
     "words": [
       {
         "word": "新しい",
         "reading": "あたらしい",
-        "meaning": "new"
+        "meaning": "nuevo"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 13,
-    "onyomi": "Shin [しん]",
-    "kunyomi": "Atara(shii)/ Ara(ta)[あた(し",
-    "mnemonic": "When you cut ( ) the links with your relatives ( ) you can start a New life."
+    "source": "Kanji Book"
   },
   {
     "kanji": "週",
     "level": "N5",
-    "meaning_en": "week 来週",
-    "meaning_es": "week 来週",
+    "meaning_es": "semana",
+    "meaning_en": "week",
     "pronunciation": "しゅう",
+    "strokes": 11,
+    "onyomi": "SHUU [しゅう]",
+    "kunyomi": "shuuri [しゅうり]",
+    "mnemonic": "Un ciclo completo (周) de siete días que avanza por el camino del tiempo (辶): una semana.",
     "words": [
       {
         "word": "来週",
         "reading": "らいしゅう",
-        "meaning": "next week"
+        "meaning": "la próxima semana"
       }
     ],
     "source": "Kanji Book"
@@ -564,14 +682,18 @@ window.KANJI_DATA = [
   {
     "kanji": "月",
     "level": "N5",
-    "meaning_en": "month, moon 来月",
-    "meaning_es": "month, moon 来月",
-    "pronunciation": "げつ、がつ",
+    "meaning_es": "luna, mes, lunes",
+    "meaning_en": "moon, month",
+    "pronunciation": "つき, げつ, がつ",
+    "strokes": 4,
+    "onyomi": "GETSU, GATSU [げつ, がつ]",
+    "kunyomi": "tsuki [つき]",
+    "mnemonic": "La silueta de una luna creciente cruzada por dos suaves nubes nocturnas.",
     "words": [
       {
         "word": "来月",
         "reading": "らいげつ",
-        "meaning": "next month"
+        "meaning": "el próximo mes"
       },
       {
         "word": "一月",
@@ -584,19 +706,23 @@ window.KANJI_DATA = [
   {
     "kanji": "年",
     "level": "N5",
-    "meaning_en": "year 今年",
-    "meaning_es": "year 今年",
-    "pronunciation": "とし、 ねん",
+    "meaning_es": "año",
+    "meaning_en": "year",
+    "pronunciation": "とし, ねん",
+    "strokes": 6,
+    "onyomi": "NEN [ねん]",
+    "kunyomi": "toshi [とし]",
+    "mnemonic": "Cosechar las gavillas de grano que tardan las cuatro estaciones de un año en madurar.",
     "words": [
       {
         "word": "今年",
         "reading": "ことし",
-        "meaning": "this year"
+        "meaning": "este año"
       },
       {
         "word": "来年",
         "reading": "らいねん",
-        "meaning": "next year"
+        "meaning": "el próximo año"
       }
     ],
     "source": "Kanji Book"
@@ -604,52 +730,56 @@ window.KANJI_DATA = [
   {
     "kanji": "来",
     "level": "N5",
-    "meaning_en": "to come 来る",
-    "meaning_es": "to come 来る",
-    "pronunciation": "く、 らい",
+    "meaning_es": "venir, llegar",
+    "meaning_en": "to come, next",
+    "pronunciation": "く, らい",
+    "strokes": 7,
+    "onyomi": "RAI, TAI [らい, たい]",
+    "kunyomi": "ku(ru), kita(ru) [く(る), きた(る)]",
+    "mnemonic": "Una espiga de trigo que crece hacia arriba anunciando la cosecha que viene.",
     "words": [
       {
         "word": "来る",
         "reading": "くる",
-        "meaning": "to come"
+        "meaning": "venir"
       },
       {
         "word": "来年",
         "reading": "らいねん",
-        "meaning": "next year"
+        "meaning": "el próximo año"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 6,
-    "onyomi": "Rai [い]",
-    "kunyomi": "Ku(ru)/Kita(ru)/Kita(su) [く(",
-    "mnemonic": "From rice (米) Comes at least ten (十) benefits"
+    "source": "Kanji Book"
   },
   {
     "kanji": "食",
     "level": "N5",
-    "meaning_en": "to eat 食べる",
-    "meaning_es": "to eat 食べる",
-    "pronunciation": "た",
+    "meaning_es": "comer, comida",
+    "meaning_en": "to eat, food",
+    "pronunciation": "た, しょく",
+    "strokes": 9,
+    "onyomi": "SHOKU, JIKI [しょく, じき]",
+    "kunyomi": "ta(beru), ku(u) [た(べる), く(う)]",
+    "mnemonic": "Personas reunidas bajo un techo (𠆢) compartiendo un plato de comida apetitosa (良).",
     "words": [
       {
         "word": "食べる",
         "reading": "たべる",
-        "meaning": "to eat"
+        "meaning": "comer"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 9,
-    "onyomi": "Shoku [しく]",
-    "kunyomi": "Ta(beru)/ Ku(u)/ Ku(rau) [たべ",
-    "mnemonic": "It is the character for good under what looks like a roof: there is nothing better than"
+    "source": "Kanji Book"
   },
   {
     "kanji": "日",
     "level": "N5",
-    "meaning_en": "sun, day 日本",
-    "meaning_es": "sun, day 日本",
-    "pronunciation": "に、にち、ひ、び",
+    "meaning_es": "sol, día, domingo",
+    "meaning_en": "sun, day",
+    "pronunciation": "に, にち, ひ, び",
+    "strokes": 4,
+    "onyomi": "NICHI, JITSU [にち, じつ]",
+    "kunyomi": "hi, -bi, -ka [ひ, -び, -か]",
+    "mnemonic": "El disco solar en el cielo con un rayo de luz en su interior.",
     "words": [
       {
         "word": "日本",
@@ -667,23 +797,28 @@ window.KANJI_DATA = [
         "meaning": "Sábado"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 14,
-    "onyomi": "Go [ご]",
-    "kunyomi": "Kata(ru)/Kata(rau) [かた( )/",
-    "mnemonic": "Word ( ) + 5 ( ) + Mouth ( word spoken is already a language. ) = Five"
+    "source": "Kanji Book"
   },
   {
     "kanji": "本",
     "level": "N5",
-    "meaning_en": "book, origin, source 本",
-    "meaning_es": "book, origin, source 本",
-    "pronunciation": "ほん、ぽん、ぼん",
+    "meaning_es": "libro, origen, base",
+    "meaning_en": "book, origin",
+    "pronunciation": "ほん, ぽん, ぼん, もと",
+    "strokes": 5,
+    "onyomi": "HON [ほん]",
+    "kunyomi": "moto [もと]",
+    "mnemonic": "Un árbol (木) con una marca en sus raíces: la base u origen del que se saca pulpa para libros.",
     "words": [
       {
         "word": "本",
         "reading": "ほん",
-        "meaning": "book"
+        "meaning": "libro"
+      },
+      {
+        "word": "日本",
+        "reading": "にほん",
+        "meaning": "Japón"
       }
     ],
     "source": "Kanji Book"
@@ -691,14 +826,18 @@ window.KANJI_DATA = [
   {
     "kanji": "木",
     "level": "N5",
-    "meaning_en": "tree 木",
-    "meaning_es": "tree 木",
-    "pronunciation": "き",
+    "meaning_es": "árbol, madera, jueves",
+    "meaning_en": "tree, wood",
+    "pronunciation": "き, もく, ぼく",
+    "strokes": 4,
+    "onyomi": "BOKU, MOKU [ぼく, もく]",
+    "kunyomi": "ki, ko- [き, こ]",
+    "mnemonic": "Un árbol con su tronco vertical, ramas frondosas y raíces firmes en la tierra.",
     "words": [
       {
         "word": "木",
         "reading": "き",
-        "meaning": "tree"
+        "meaning": "árbol"
       }
     ],
     "source": "Kanji Book"
@@ -706,14 +845,18 @@ window.KANJI_DATA = [
   {
     "kanji": "車",
     "level": "N5",
-    "meaning_en": "car 車",
-    "meaning_es": "car 車",
-    "pronunciation": "くるま、しゃ",
+    "meaning_es": "coche, auto, vehículo",
+    "meaning_en": "car, vehicle",
+    "pronunciation": "くるま, しゃ",
+    "strokes": 7,
+    "onyomi": "SHA [しゃ]",
+    "kunyomi": "kuruma [くるま]",
+    "mnemonic": "Vista aérea de un carro tradicional con dos ruedas, eje central y cabina.",
     "words": [
       {
         "word": "車",
         "reading": "くるま",
-        "meaning": "car"
+        "meaning": "auto / coche"
       }
     ],
     "source": "Kanji Book"
@@ -721,33 +864,37 @@ window.KANJI_DATA = [
   {
     "kanji": "魚",
     "level": "N5",
-    "meaning_en": "fish 魚",
-    "meaning_es": "fish 魚",
-    "pronunciation": "さかな",
+    "meaning_es": "pez, pescado",
+    "meaning_en": "fish",
+    "pronunciation": "さかな, ぎょ",
+    "strokes": 11,
+    "onyomi": "GYO [ぎょ]",
+    "kunyomi": "sakana, uo [さかな, うお]",
+    "mnemonic": "La cabeza de un pez (𠂊), su cuerpo con escamas (田) y sus aletas inferiores (灬).",
     "words": [
       {
         "word": "魚",
         "reading": "さかな",
-        "meaning": "fish"
+        "meaning": "pez / pescado"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 10,
-    "onyomi": "Gyo [ぎ]",
-    "kunyomi": "Sakana / Uo [さかな/うお]",
-    "mnemonic": "It looks like a fish swimming upward."
+    "source": "Kanji Book"
   },
   {
     "kanji": "山",
     "level": "N5",
-    "meaning_en": "mountain 山",
-    "meaning_es": "mountain 山",
-    "pronunciation": "やま",
+    "meaning_es": "montaña",
+    "meaning_en": "mountain",
+    "pronunciation": "やま, さん",
+    "strokes": 3,
+    "onyomi": "SAN, ZAN [さん, ざん]",
+    "kunyomi": "yama [やま]",
+    "mnemonic": "Tres picos montañosos escarpados que se elevan juntos en el horizonte.",
     "words": [
       {
         "word": "山",
         "reading": "やま",
-        "meaning": "mountain"
+        "meaning": "montaña"
       }
     ],
     "source": "Kanji Book"
@@ -755,14 +902,18 @@ window.KANJI_DATA = [
   {
     "kanji": "川",
     "level": "N5",
-    "meaning_en": "river 川",
-    "meaning_es": "river 川",
-    "pronunciation": "かわ",
+    "meaning_es": "río",
+    "meaning_en": "river",
+    "pronunciation": "かわ, がわ, せん",
+    "strokes": 3,
+    "onyomi": "SEN [せん]",
+    "kunyomi": "kawa [かわ]",
+    "mnemonic": "Tres corrientes de agua que fluyen paralelas por el cauce de un río.",
     "words": [
       {
         "word": "川",
         "reading": "かわ",
-        "meaning": "river"
+        "meaning": "río"
       }
     ],
     "source": "Kanji Book"
@@ -770,14 +921,18 @@ window.KANJI_DATA = [
   {
     "kanji": "雨",
     "level": "N5",
-    "meaning_en": "rain 雨",
-    "meaning_es": "rain 雨",
-    "pronunciation": "あめ",
+    "meaning_es": "lluvia",
+    "meaning_en": "rain",
+    "pronunciation": "あめ, う",
+    "strokes": 8,
+    "onyomi": "U [う]",
+    "kunyomi": "ame, ama- [あめ, あま]",
+    "mnemonic": "Nubes cargadas en el cielo bajo las cuales caen cuatro gotas de lluvia.",
     "words": [
       {
         "word": "雨",
         "reading": "あめ",
-        "meaning": "rain"
+        "meaning": "lluvia"
       }
     ],
     "source": "Kanji Book"
@@ -785,9 +940,13 @@ window.KANJI_DATA = [
   {
     "kanji": "土",
     "level": "N5",
-    "meaning_en": "earth, ground 土よう日",
-    "meaning_es": "earth, ground 土よう日",
-    "pronunciation": "ど",
+    "meaning_es": "tierra, suelo, sábado",
+    "meaning_en": "earth, soil, Saturday",
+    "pronunciation": "つち, ど, と",
+    "strokes": 3,
+    "onyomi": "DO, TO [ど, と]",
+    "kunyomi": "tsuchi [つち]",
+    "mnemonic": "Un brote de una planta emergiendo de la tierra fértil.",
     "words": [
       {
         "word": "土よう日",
@@ -810,9 +969,13 @@ window.KANJI_DATA = [
   {
     "kanji": "天",
     "level": "N5",
-    "meaning_en": "sky, heaven 天気",
-    "meaning_es": "sky, heaven 天気",
-    "pronunciation": "てん",
+    "meaning_es": "cielo, celestial",
+    "meaning_en": "heaven, sky",
+    "pronunciation": "てん, あめ",
+    "strokes": 4,
+    "onyomi": "TEN [てん]",
+    "kunyomi": "ame, ama- [あめ, あま]",
+    "mnemonic": "Una línea que se extiende por encima de una persona (大): la inmensidad del cielo.",
     "words": [
       {
         "word": "天気",
@@ -825,14 +988,18 @@ window.KANJI_DATA = [
   {
     "kanji": "見",
     "level": "N5",
-    "meaning_en": "to see, to be visible, to show 見る",
-    "meaning_es": "to see, to be visible, to show 見る",
-    "pronunciation": "み",
+    "meaning_es": "ver, mirar, mostrar",
+    "meaning_en": "to see, look, show",
+    "pronunciation": "み, けん",
+    "strokes": 7,
+    "onyomi": "KEN [けん]",
+    "kunyomi": "mi(ru), mi(eru), mi(seru) [み(る), み(える), み(せる)]",
+    "mnemonic": "Un gran ojo (目) sostenido sobre dos piernas humanas (儿) que camina observando todo.",
     "words": [
       {
         "word": "見る",
         "reading": "みる",
-        "meaning": "to see"
+        "meaning": "ver"
       }
     ],
     "source": "Kanji Book"
@@ -840,9 +1007,13 @@ window.KANJI_DATA = [
   {
     "kanji": "言",
     "level": "N5",
-    "meaning_en": "to say, to talk 言う",
-    "meaning_es": "to say, to talk 言う",
-    "pronunciation": "い",
+    "meaning_es": "decir, palabra",
+    "meaning_en": "to say, word",
+    "pronunciation": "い, げん, ごん",
+    "strokes": 7,
+    "onyomi": "GEN, GON [げん, ごん]",
+    "kunyomi": "i(u), koto [い(う), こと]",
+    "mnemonic": "Líneas de sonido y palabras brotando de una boca abierta (口).",
     "words": [
       {
         "word": "言う",
@@ -855,14 +1026,18 @@ window.KANJI_DATA = [
   {
     "kanji": "話",
     "level": "N5",
-    "meaning_en": "to talk, to speak, story 話す",
-    "meaning_es": "to talk, to speak, story 話す",
-    "pronunciation": "はな",
+    "meaning_es": "hablar, conversación, historia",
+    "meaning_en": "to talk, story",
+    "pronunciation": "はな, わ",
+    "strokes": 13,
+    "onyomi": "WA [わ]",
+    "kunyomi": "hana(su), hanashi [はな(す), はなし]",
+    "mnemonic": "Palabras (言) pronunciadas con la lengua (舌) para crear una conversación animada.",
     "words": [
       {
         "word": "話す",
         "reading": "はなす",
-        "meaning": "to speak"
+        "meaning": "hablar"
       },
       {
         "word": "電話番号",
@@ -875,9 +1050,13 @@ window.KANJI_DATA = [
   {
     "kanji": "語",
     "level": "N5",
-    "meaning_en": "language",
-    "meaning_es": "language",
-    "pronunciation": "ご",
+    "meaning_es": "idioma, lengua, relatar",
+    "meaning_en": "language, word",
+    "pronunciation": "ご, かた",
+    "strokes": 14,
+    "onyomi": "GO [ご]",
+    "kunyomi": "kata(ru) [かた(る)]",
+    "mnemonic": "Palabras (言) que yo (吾) utilizo para expresar mi pensamiento en un idioma.",
     "words": [
       {
         "word": "日本語",
@@ -890,14 +1069,18 @@ window.KANJI_DATA = [
   {
     "kanji": "読",
     "level": "N5",
-    "meaning_en": "to read 読む",
-    "meaning_es": "to read 読む",
-    "pronunciation": "よ",
+    "meaning_es": "leer",
+    "meaning_en": "to read",
+    "pronunciation": "よ, どく",
+    "strokes": 14,
+    "onyomi": "DOKU, TOKU [どく, とく]",
+    "kunyomi": "yo(mu) [よ(む)]",
+    "mnemonic": "Palabras (言) impresas que se transmiten o venden (売) al lector en un libro.",
     "words": [
       {
         "word": "読む",
         "reading": "よむ",
-        "meaning": "to read"
+        "meaning": "leer"
       },
       {
         "word": "読書",
@@ -905,23 +1088,23 @@ window.KANJI_DATA = [
         "meaning": "Lectura de libros"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 14,
-    "onyomi": "Doku/Toku [どく/とく]",
-    "kunyomi": "Yo(mu) [ ( )]",
-    "mnemonic": "Composed of say (言) and sell (売) = books are sold for people to Read what others say"
+    "source": "Kanji Book"
   },
   {
     "kanji": "書",
     "level": "N5",
-    "meaning_en": "to write 書く",
-    "meaning_es": "to write 書く",
-    "pronunciation": "か",
+    "meaning_es": "escribir, documento, libro",
+    "meaning_en": "to write, book",
+    "pronunciation": "か, しょ",
+    "strokes": 10,
+    "onyomi": "SHO [しょ]",
+    "kunyomi": "ka(ku) [か(く)]",
+    "mnemonic": "Una mano sosteniendo un pincel (聿) sobre el papel a la luz del sol (日) para escribir.",
     "words": [
       {
         "word": "書く",
         "reading": "かく",
-        "meaning": "to write"
+        "meaning": "escribir"
       },
       {
         "word": "図書館",
@@ -939,14 +1122,18 @@ window.KANJI_DATA = [
   {
     "kanji": "聞",
     "level": "N5",
-    "meaning_en": "to listen, hear 聞く",
-    "meaning_es": "to listen, hear 聞く",
-    "pronunciation": "き、 ぶん",
+    "meaning_es": "escuchar, oír, preguntar",
+    "meaning_en": "to hear, listen",
+    "pronunciation": "き, ぶん, もん",
+    "strokes": 14,
+    "onyomi": "BUN, MON [ぶん, もん]",
+    "kunyomi": "ki(ku), ki(koeru) [き(く), き(こえる)]",
+    "mnemonic": "Acercar la oreja (耳) a la rendija de la puerta (門) para escuchar lo que dicen.",
     "words": [
       {
         "word": "聞く",
         "reading": "きく",
-        "meaning": "to listen"
+        "meaning": "escuchar"
       },
       {
         "word": "新聞",
@@ -959,33 +1146,37 @@ window.KANJI_DATA = [
   {
     "kanji": "飲",
     "level": "N5",
-    "meaning_en": "to drink 飲む",
-    "meaning_es": "to drink 飲む",
-    "pronunciation": "の",
+    "meaning_es": "beber, tomar",
+    "meaning_en": "to drink",
+    "pronunciation": "の, いん",
+    "strokes": 12,
+    "onyomi": "IN [いん]",
+    "kunyomi": "no(mu) [の(む)]",
+    "mnemonic": "Estar frente a un vaso o comida (飠) y abrir la boca con sed (欠) para beber.",
     "words": [
       {
         "word": "飲む",
         "reading": "のむ",
-        "meaning": "to drink"
+        "meaning": "beber"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 12,
-    "onyomi": "In [いん]",
-    "kunyomi": "No(mu) [の( )]",
-    "mnemonic": "Drinking is like eating (食) but lacking (欠) the 12 strokes"
+    "source": "Kanji Book"
   },
   {
     "kanji": "立",
     "level": "N5",
-    "meaning_en": "to stand 立つ",
-    "meaning_es": "to stand 立つ",
-    "pronunciation": "た",
+    "meaning_es": "levantarse, estar de pie",
+    "meaning_en": "to stand",
+    "pronunciation": "た, りつ",
+    "strokes": 5,
+    "onyomi": "RITSU, RYUU [りつ, りゅう]",
+    "kunyomi": "ta(tsu), ta(teru) [た(つ), た(てる)]",
+    "mnemonic": "Una persona de pie con los brazos abiertos firme sobre la línea del suelo.",
     "words": [
       {
         "word": "立つ",
         "reading": "たつ",
-        "meaning": "to stand"
+        "meaning": "levantarse / estar de pie"
       }
     ],
     "source": "Kanji Book"
@@ -993,28 +1184,32 @@ window.KANJI_DATA = [
   {
     "kanji": "買",
     "level": "N5",
-    "meaning_en": "to buy 買う",
-    "meaning_es": "to buy 買う",
-    "pronunciation": "か",
+    "meaning_es": "comprar",
+    "meaning_en": "to buy",
+    "pronunciation": "か, ばい",
+    "strokes": 12,
+    "onyomi": "BAI [ばい]",
+    "kunyomi": "ka(u) [か(う)]",
+    "mnemonic": "Una red o cesta (罒) sobre conchas de cauri (貝 - moneda antigua) que se usan para comprar.",
     "words": [
       {
         "word": "買う",
         "reading": "かう",
-        "meaning": "to buy"
+        "meaning": "comprar"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 12,
-    "onyomi": "Bai [ばい]",
-    "kunyomi": "Ka(u) [か(う)]",
-    "mnemonic": "When catching a shell ( ) with a net ( ) then  you  don’t  have  to  Buy  (ばい) it"
+    "source": "Kanji Book"
   },
   {
     "kanji": "前",
     "level": "N5",
-    "meaning_en": "before, in front of 前",
-    "meaning_es": "before, in front of 前",
-    "pronunciation": "まえ、 ぜん",
+    "meaning_es": "delante, antes",
+    "meaning_en": "before, in front",
+    "pronunciation": "まえ, ぜん",
+    "strokes": 9,
+    "onyomi": "ZEN [ぜん]",
+    "kunyomi": "mae [まえ]",
+    "mnemonic": "Avanzar con decisión y cortar el camino por delante hacia el frente.",
     "words": [
       {
         "word": "前",
@@ -1032,9 +1227,13 @@ window.KANJI_DATA = [
   {
     "kanji": "後",
     "level": "N5",
-    "meaning_en": "after, behind 後ろ",
-    "meaning_es": "after, behind 後ろ",
-    "pronunciation": "うし、 ご",
+    "meaning_es": "detrás, después, tarde",
+    "meaning_en": "behind, after, later",
+    "pronunciation": "うし, ご, あと",
+    "strokes": 9,
+    "onyomi": "GO, KOU [ご, こう]",
+    "kunyomi": "ushi(ro), ato, nochi [うし(ろ), あと, のち]",
+    "mnemonic": "Caminar paso a paso (彳) siguiendo un hilo (幺) que va rezagado detrás.",
     "words": [
       {
         "word": "後ろ",
@@ -1052,9 +1251,13 @@ window.KANJI_DATA = [
   {
     "kanji": "午",
     "level": "N5",
-    "meaning_en": "noon 午前",
-    "meaning_es": "noon 午前",
+    "meaning_es": "mediodía",
+    "meaning_en": "noon",
     "pronunciation": "ご",
+    "strokes": 4,
+    "onyomi": "GO [ご]",
+    "kunyomi": "uma [うま]",
+    "mnemonic": "La aguja de un reloj de sol apuntando exactamente a las doce del mediodía.",
     "words": [
       {
         "word": "午前",
@@ -1067,18 +1270,18 @@ window.KANJI_DATA = [
         "meaning": "afternoon, P.M"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 4,
-    "onyomi": "Go [ご]",
-    "kunyomi": "/",
-    "mnemonic": "You may think of the kanji for ten (十) plus two strokes which gives 12 like in 12:00 or noon"
+    "source": "Kanji Book"
   },
   {
     "kanji": "間",
     "level": "N5",
-    "meaning_en": "between, span 間",
-    "meaning_es": "between, span 間",
-    "pronunciation": "あいだ、 かん",
+    "meaning_es": "entre, intervalo, espacio",
+    "meaning_en": "between, interval, space",
+    "pronunciation": "あいだ, かん, ま",
+    "strokes": 12,
+    "onyomi": "KAN, KEN [かん, けん]",
+    "kunyomi": "aida, ma [あいだ, ま]",
+    "mnemonic": "El sol (日) colándose por el espacio entre las dos hojas de una puerta (門).",
     "words": [
       {
         "word": "間",
@@ -1088,7 +1291,7 @@ window.KANJI_DATA = [
       {
         "word": "時間",
         "reading": "じかん",
-        "meaning": "time"
+        "meaning": "tiempo / hora"
       }
     ],
     "source": "Kanji Book"
@@ -1096,9 +1299,13 @@ window.KANJI_DATA = [
   {
     "kanji": "毎",
     "level": "N5",
-    "meaning_en": "every, each 毎日",
-    "meaning_es": "every, each 毎日",
+    "meaning_es": "cada, todos",
+    "meaning_en": "every, each",
     "pronunciation": "まい",
+    "strokes": 6,
+    "onyomi": "MAI [まい]",
+    "kunyomi": "goto(ni) [ごと(に)]",
+    "mnemonic": "Una madre (母) con un tocado (𠂉) cuidando a su familia cada uno de los días.",
     "words": [
       {
         "word": "毎日",
@@ -1106,23 +1313,28 @@ window.KANJI_DATA = [
         "meaning": "every day"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 6,
-    "onyomi": "Mai [まい]",
-    "kunyomi": "/",
-    "mnemonic": "Each and Every one of us (人) has a mother ( 母)"
+    "source": "Kanji Book"
   },
   {
     "kanji": "白",
     "level": "N5",
-    "meaning_en": "white 白い",
-    "meaning_es": "white 白い",
-    "pronunciation": "しろ",
+    "meaning_es": "blanco, puro",
+    "meaning_en": "white",
+    "pronunciation": "しろ, はく",
+    "strokes": 5,
+    "onyomi": "HAKU, BYAKU [はく, びゃく]",
+    "kunyomi": "shiro, shiro(i) [しろ, しろ(い)]",
+    "mnemonic": "Un rayo de sol puro (日 con una gota arriba) resplandeciendo de color blanco.",
     "words": [
       {
         "word": "白い",
         "reading": "しろい",
-        "meaning": "white"
+        "meaning": "blanco"
+      },
+      {
+        "word": "面白い",
+        "reading": "おもしろい",
+        "meaning": "interesante"
       }
     ],
     "source": "Kanji Book"
@@ -1130,47 +1342,56 @@ window.KANJI_DATA = [
   {
     "kanji": "高",
     "level": "N5",
-    "meaning_en": "high, expensive 高い",
-    "meaning_es": "high, expensive 高い",
-    "pronunciation": "たか",
+    "meaning_es": "alto, caro",
+    "meaning_en": "high, expensive",
+    "pronunciation": "たか, こう",
+    "strokes": 10,
+    "onyomi": "KOU [こう]",
+    "kunyomi": "taka(i) [たか(い)]",
+    "mnemonic": "Una pagoda o castillo tradicional elevado con múltiples plantas y torre alta.",
     "words": [
       {
         "word": "高い",
         "reading": "たかい",
-        "meaning": "high, expensive"
+        "meaning": "alto / caro"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 10,
-    "onyomi": "Kou [こう]",
-    "kunyomi": "Taka(i)/Taka(maru)/Taka(meru)",
-    "mnemonic": "It looks like a High Japanese temple"
+    "source": "Kanji Book"
   },
   {
     "kanji": "安",
     "level": "N5",
-    "meaning_en": "cheap 安い",
-    "meaning_es": "cheap 安い",
-    "pronunciation": "やす",
+    "meaning_es": "barato, tranquilo, paz",
+    "meaning_en": "cheap, peaceful, safe",
+    "pronunciation": "やす, あん",
+    "strokes": 6,
+    "onyomi": "AN [あん]",
+    "kunyomi": "yasu(i) [やす(い)]",
+    "mnemonic": "Una mujer (女) descansando en paz y seguridad bajo el techo de su hogar (宀).",
     "words": [
       {
         "word": "安い",
         "reading": "やすい",
-        "meaning": "cheap"
+        "meaning": "barato"
+      },
+      {
+        "word": "安全",
+        "reading": "あんぜん",
+        "meaning": "seguro"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 6,
-    "onyomi": "An [あん]",
-    "kunyomi": "Yasu(i) [す(i)]",
-    "mnemonic": "Buying a woman (女)  a  crown  (                )  isn’t Cheap but brings Peace"
+    "source": "Kanji Book"
   },
   {
     "kanji": "長",
     "level": "N5",
-    "meaning_en": "long 長い",
-    "meaning_es": "long 長い",
-    "pronunciation": "なが",
+    "meaning_es": "largo, líder, jefe",
+    "meaning_en": "long, leader",
+    "pronunciation": "なが, ちょう",
+    "strokes": 8,
+    "onyomi": "CHOU [ちょう]",
+    "kunyomi": "naga(i), osa [なが(い), おさ]",
+    "mnemonic": "La larga cabellera de un anciano respetado o líder de una comunidad.",
     "words": [
       {
         "word": "長い",
@@ -1183,9 +1404,13 @@ window.KANJI_DATA = [
   {
     "kanji": "多",
     "level": "N5",
-    "meaning_en": "many 多い",
-    "meaning_es": "many 多い",
-    "pronunciation": "おお",
+    "meaning_es": "mucho, numeroso",
+    "meaning_en": "many, much",
+    "pronunciation": "おお, た",
+    "strokes": 6,
+    "onyomi": "TA [た]",
+    "kunyomi": "oo(i) [おお(い)]",
+    "mnemonic": "Dos lunas (夕) apiladas representando el paso de muchas noches: abundancia.",
     "words": [
       {
         "word": "多い",
@@ -1193,18 +1418,18 @@ window.KANJI_DATA = [
         "meaning": "many, a lot"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 6,
-    "onyomi": "Ta [た]",
-    "kunyomi": "Oo(i) [おお(い)]",
-    "mnemonic": "One evening (夕) out is good but two (多) is too Many"
+    "source": "Kanji Book"
   },
   {
     "kanji": "父",
     "level": "N5",
-    "meaning_en": "father 父",
-    "meaning_es": "father 父",
-    "pronunciation": "ちち、 とう",
+    "meaning_es": "padre",
+    "meaning_en": "father",
+    "pronunciation": "ちち, とう, ふ",
+    "strokes": 4,
+    "onyomi": "FU [ふ]",
+    "kunyomi": "chichi, tou [ちち, とう]",
+    "mnemonic": "Dos manos cruzadas sosteniendo un báculo con autoridad paterna en el hogar.",
     "words": [
       {
         "word": "父",
@@ -1214,21 +1439,21 @@ window.KANJI_DATA = [
       {
         "word": "お父さん",
         "reading": "おとうさん",
-        "meaning": "father"
+        "meaning": "padre"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 4,
-    "onyomi": "Fu [ふ]",
-    "kunyomi": "Chichi [ちち]",
-    "mnemonic": "It looks like the shape of a man with his hands up because he became a Father."
+    "source": "Kanji Book"
   },
   {
     "kanji": "母",
     "level": "N5",
-    "meaning_en": "mother 母",
-    "meaning_es": "mother 母",
-    "pronunciation": "はは、 かあ",
+    "meaning_es": "madre",
+    "meaning_en": "mother",
+    "pronunciation": "はは, かあ, ぼ",
+    "strokes": 5,
+    "onyomi": "BO [ぼ]",
+    "kunyomi": "haha, kaa [はは, かあ]",
+    "mnemonic": "Una madre abrazando con ternura y amamantando a su pequeño bebé.",
     "words": [
       {
         "word": "母",
@@ -1238,21 +1463,21 @@ window.KANJI_DATA = [
       {
         "word": "お母さん",
         "reading": "おかあさん",
-        "meaning": "mother"
+        "meaning": "madre"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 5,
-    "onyomi": "Bo [ぼ]",
-    "kunyomi": "Haha [はは]",
-    "mnemonic": "It  is  suppose  to  represent  a  Mother’s  breast."
+    "source": "Kanji Book"
   },
   {
     "kanji": "男",
     "level": "N5",
-    "meaning_en": "man, male 男の子",
-    "meaning_es": "man, male 男の子",
-    "pronunciation": "おとこ",
+    "meaning_es": "hombre, varón",
+    "meaning_en": "man, male",
+    "pronunciation": "おとこ, だん, なん",
+    "strokes": 7,
+    "onyomi": "DAN, NAN [だん, なん]",
+    "kunyomi": "otoko [おとこ]",
+    "mnemonic": "La fuerza muscular (力) que trabaja laboriosamente en los campos de arroz (田): el hombre.",
     "words": [
       {
         "word": "男の子",
@@ -1265,9 +1490,13 @@ window.KANJI_DATA = [
   {
     "kanji": "女",
     "level": "N5",
-    "meaning_en": "woman. female 女の子",
-    "meaning_es": "woman. female 女の子",
-    "pronunciation": "おんな",
+    "meaning_es": "mujer, femenino",
+    "meaning_en": "woman, female",
+    "pronunciation": "おんな, じょ",
+    "strokes": 3,
+    "onyomi": "JO, NYO [じょ, にょ]",
+    "kunyomi": "onna, me [おんな, め]",
+    "mnemonic": "Una figura femenina grácil sentada o arrodillada con brazos cruzados con elegancia.",
     "words": [
       {
         "word": "女の子",
@@ -1280,9 +1509,13 @@ window.KANJI_DATA = [
   {
     "kanji": "子",
     "level": "N5",
-    "meaning_en": "child, kid 子ども",
-    "meaning_es": "child, kid 子ども",
-    "pronunciation": "こ",
+    "meaning_es": "niño, hijo",
+    "meaning_en": "child, kid",
+    "pronunciation": "こ, し",
+    "strokes": 3,
+    "onyomi": "SHI, SU [し, す]",
+    "kunyomi": "ko [こ]",
+    "mnemonic": "Un niño pequeño con los brazos extendidos pidiendo que lo abracen.",
     "words": [
       {
         "word": "子ども",
@@ -1295,9 +1528,13 @@ window.KANJI_DATA = [
   {
     "kanji": "百",
     "level": "N5",
+    "meaning_es": "cien",
     "meaning_en": "hundred",
-    "meaning_es": "hundred",
-    "pronunciation": "ひゃく、 びゃく、 ぴゃく",
+    "pronunciation": "ひゃく, びゃく, ぴゃく",
+    "strokes": 6,
+    "onyomi": "HYAKU, BYAKU [ひゃく, びゃく]",
+    "kunyomi": "momo [もも]",
+    "mnemonic": "Un trazo (一) sobre el color blanco (白): un centenar de elementos resplandecientes.",
     "words": [
       {
         "word": "百円",
@@ -1310,9 +1547,13 @@ window.KANJI_DATA = [
   {
     "kanji": "千",
     "level": "N5",
+    "meaning_es": "mil",
     "meaning_en": "thousand",
-    "meaning_es": "thousand",
-    "pronunciation": "せん",
+    "pronunciation": "せん, ぜん",
+    "strokes": 3,
+    "onyomi": "SEN [せん]",
+    "kunyomi": "chi [ち]",
+    "mnemonic": "Una figura humana (亻) con una banda en el pecho representando un batallón de mil guerreros.",
     "words": [
       {
         "word": "千円",
@@ -1325,9 +1566,13 @@ window.KANJI_DATA = [
   {
     "kanji": "万",
     "level": "N5",
+    "meaning_es": "diez mil, multitud",
     "meaning_en": "ten thousand",
-    "meaning_es": "ten thousand",
-    "pronunciation": "まん",
+    "pronunciation": "まん, ばん",
+    "strokes": 3,
+    "onyomi": "MAN, BAN [まん, ばん]",
+    "kunyomi": "yorozu [よろず]",
+    "mnemonic": "Un número diez mil gigantesco que simboliza una multitud incontable.",
     "words": [
       {
         "word": "一万円",
@@ -1340,9 +1585,13 @@ window.KANJI_DATA = [
   {
     "kanji": "円",
     "level": "N5",
-    "meaning_en": "Yen, circle",
-    "meaning_es": "Yen, circle",
+    "meaning_es": "yen, círculo",
+    "meaning_en": "yen, circle",
     "pronunciation": "えん",
+    "strokes": 4,
+    "onyomi": "EN [えん]",
+    "kunyomi": "maru(i) [まる(い)]",
+    "mnemonic": "Una moneda redonda resguardada dentro del marco de una hucha o caja.",
     "words": [
       {
         "word": "一万円",
@@ -1355,9 +1604,13 @@ window.KANJI_DATA = [
   {
     "kanji": "金",
     "level": "N5",
-    "meaning_en": "money, gold お金",
-    "meaning_es": "money, gold お金",
-    "pronunciation": "かね、 きん",
+    "meaning_es": "oro, dinero, viernes",
+    "meaning_en": "gold, money, Friday",
+    "pronunciation": "かね, きん",
+    "strokes": 8,
+    "onyomi": "KIN, KON [きん, こん]",
+    "kunyomi": "kane, kana- [かね, かな]",
+    "mnemonic": "Pepitas de oro brillante encontradas bajo la tierra dentro de una mina.",
     "words": [
       {
         "word": "お金",
@@ -1375,19 +1628,23 @@ window.KANJI_DATA = [
   {
     "kanji": "電",
     "level": "N5",
-    "meaning_en": "electricity 電車",
-    "meaning_es": "electricity 電車",
+    "meaning_es": "electricidad",
+    "meaning_en": "electricity",
     "pronunciation": "でん",
+    "strokes": 13,
+    "onyomi": "DEN [でん]",
+    "kunyomi": "inazuma [いなずま]",
+    "mnemonic": "Lluvia tormentosa (雨) acompañada de relámpagos con potente energía eléctrica.",
     "words": [
       {
         "word": "電車",
         "reading": "でんしゃ",
-        "meaning": "train"
+        "meaning": "tren"
       },
       {
         "word": "電気",
         "reading": "でんき",
-        "meaning": "electricity"
+        "meaning": "electricidad"
       },
       {
         "word": "電話番号",
@@ -1395,23 +1652,28 @@ window.KANJI_DATA = [
         "meaning": "Número de teléfono"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 13,
-    "onyomi": "Den [でん]",
-    "kunyomi": "/",
-    "mnemonic": "During rain (雨) storms the air is filled with Electricity and lightning"
+    "source": "Kanji Book"
   },
   {
     "kanji": "気",
     "level": "N5",
-    "meaning_en": "spirit, power 天気",
-    "meaning_es": "spirit, power 天気",
-    "pronunciation": "き",
+    "meaning_es": "espíritu, energía, ánimo",
+    "meaning_en": "spirit, energy, mind",
+    "pronunciation": "き, け",
+    "strokes": 6,
+    "onyomi": "KI, KE [き, け]",
+    "kunyomi": "iki [いき]",
+    "mnemonic": "El vapor y la energía vital que ascienden de una olla de arroz recién cocido.",
     "words": [
       {
         "word": "天気",
         "reading": "てんき",
         "meaning": "weather"
+      },
+      {
+        "word": "元気",
+        "reading": "げんき",
+        "meaning": "con energía / sano / bien"
       }
     ],
     "source": "Kanji Book"
@@ -1419,9 +1681,13 @@ window.KANJI_DATA = [
   {
     "kanji": "花",
     "level": "N5",
-    "meaning_en": "flower 花",
-    "meaning_es": "flower 花",
-    "pronunciation": "はな",
+    "meaning_es": "flor",
+    "meaning_en": "flower",
+    "pronunciation": "はな, か",
+    "strokes": 7,
+    "onyomi": "KA, KE [か, け]",
+    "kunyomi": "hana [はな]",
+    "mnemonic": "Brotes vegetales (艹) que se transforman (化) mágicamente en una hermosa flor.",
     "words": [
       {
         "word": "花",
@@ -1434,14 +1700,18 @@ window.KANJI_DATA = [
   {
     "kanji": "水",
     "level": "N5",
-    "meaning_en": "water 水",
-    "meaning_es": "water 水",
-    "pronunciation": "みず、 すい",
+    "meaning_es": "agua, miércoles",
+    "meaning_en": "water, Wednesday",
+    "pronunciation": "みず, すい",
+    "strokes": 4,
+    "onyomi": "SUI [すい]",
+    "kunyomi": "mizu [みず]",
+    "mnemonic": "Un torrente central de agua pura que salpica gotas cristalinas a los costados.",
     "words": [
       {
         "word": "水",
         "reading": "みず",
-        "meaning": "water"
+        "meaning": "agua"
       },
       {
         "word": "水よう日",
@@ -1454,9 +1724,13 @@ window.KANJI_DATA = [
   {
     "kanji": "火",
     "level": "N5",
-    "meaning_en": "fire",
-    "meaning_es": "fire",
-    "pronunciation": "か",
+    "meaning_es": "fuego, martes",
+    "meaning_en": "fire, Tuesday",
+    "pronunciation": "ひ, か",
+    "strokes": 4,
+    "onyomi": "KA [か]",
+    "kunyomi": "hi, -bi [ひ, -び]",
+    "mnemonic": "Las llamas vivas de una fogata que chisporrotean y despiden chispas al aire.",
     "words": [
       {
         "word": "火よう日",
@@ -1469,19 +1743,23 @@ window.KANJI_DATA = [
   {
     "kanji": "学",
     "level": "N5",
-    "meaning_en": "to learn 学生",
-    "meaning_es": "to learn 学生",
-    "pronunciation": "まな、 がく、 がっ",
+    "meaning_es": "estudiar, aprender",
+    "meaning_en": "to study, learn",
+    "pronunciation": "まな, がく, がっ",
+    "strokes": 8,
+    "onyomi": "GAKU [がく]",
+    "kunyomi": "mana(bu) [まな(ぶ)]",
+    "mnemonic": "Un niño (子) bajo el techo del colegio recibiendo chispas de sabiduría.",
     "words": [
       {
         "word": "学生",
         "reading": "がくせい",
-        "meaning": "student"
+        "meaning": "estudiante"
       },
       {
         "word": "学校",
         "reading": "がっこう",
-        "meaning": "school"
+        "meaning": "escuela"
       },
       {
         "word": "留学生",
@@ -1494,14 +1772,18 @@ window.KANJI_DATA = [
   {
     "kanji": "校",
     "level": "N5",
-    "meaning_en": "school 学校",
-    "meaning_es": "school 学校",
+    "meaning_es": "escuela, colegio",
+    "meaning_en": "school",
     "pronunciation": "こう",
+    "strokes": 10,
+    "onyomi": "KOU [こう]",
+    "kunyomi": "kase [かせ]",
+    "mnemonic": "Un edificio de madera (木) donde los estudiantes intercambian (交) ideas: la escuela.",
     "words": [
       {
         "word": "学校",
         "reading": "がっこう",
-        "meaning": "school"
+        "meaning": "escuela"
       }
     ],
     "source": "Kanji Book"
@@ -1509,14 +1791,23 @@ window.KANJI_DATA = [
   {
     "kanji": "先",
     "level": "N5",
-    "meaning_en": "before, future 先生",
-    "meaning_es": "before, future 先生",
-    "pronunciation": "せん",
+    "meaning_es": "anterior, previo, delante",
+    "meaning_en": "previous, ahead",
+    "pronunciation": "さき, せん",
+    "strokes": 6,
+    "onyomi": "SEN [せん]",
+    "kunyomi": "saki, ma(zu) [さき, ま(ず)]",
+    "mnemonic": "Una persona que avanza a paso rápido con sus piernas (儿) marchando delante de los demás.",
     "words": [
       {
         "word": "先生",
         "reading": "せんせい",
-        "meaning": "teacher"
+        "meaning": "profesor / maestro"
+      },
+      {
+        "word": "先に",
+        "reading": "さきに",
+        "meaning": "antes / por adelantado"
       }
     ],
     "source": "Kanji Book"
@@ -1524,9 +1815,13 @@ window.KANJI_DATA = [
   {
     "kanji": "生",
     "level": "N5",
-    "meaning_en": "to be born, to live 生まれる",
-    "meaning_es": "to be born, to live 生まれる",
-    "pronunciation": "う、 せい",
+    "meaning_es": "nacer, vivir, crudo, vida",
+    "meaning_en": "to be born, life, raw",
+    "pronunciation": "う, せい, しょう, なま",
+    "strokes": 5,
+    "onyomi": "SEI, SHOU [せい, しょう]",
+    "kunyomi": "i(kiru), u(mareru), nama [い(きる), う(まれる), なま]",
+    "mnemonic": "Una pequeña planta verde brotando con energía de la tierra viva.",
     "words": [
       {
         "word": "生まれる",
@@ -1536,7 +1831,7 @@ window.KANJI_DATA = [
       {
         "word": "学生",
         "reading": "がくせい",
-        "meaning": "student"
+        "meaning": "estudiante"
       },
       {
         "word": "留学生",
@@ -1554,33 +1849,42 @@ window.KANJI_DATA = [
   {
     "kanji": "友",
     "level": "N5",
-    "meaning_en": "friend 友だち",
-    "meaning_es": "friend 友だち",
-    "pronunciation": "とも",
+    "meaning_es": "amigo",
+    "meaning_en": "friend",
+    "pronunciation": "とも, ゆう",
+    "strokes": 4,
+    "onyomi": "YUU [ゆう]",
+    "kunyomi": "tomo [とも]",
+    "mnemonic": "Dos manos (𠂇 y 又) que se estrechan calurosamente sellando un lazo de amistad.",
     "words": [
       {
         "word": "友だち",
         "reading": "ともだち",
-        "meaning": "friend"
+        "meaning": "amigo"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 4,
-    "onyomi": "Yuu [ゆう]",
-    "kunyomi": "Tomo [とも]",
-    "mnemonic": "It looks like two human (人) one is falling (ナ) and the other one is helping him stands, friends"
+    "source": "Kanji Book"
   },
   {
     "kanji": "名",
     "level": "N5",
-    "meaning_en": "name 名前",
-    "meaning_es": "name 名前",
-    "pronunciation": "な",
+    "meaning_es": "nombre, fama",
+    "meaning_en": "name, reputation",
+    "pronunciation": "な, めい, みょう",
+    "strokes": 6,
+    "onyomi": "MEI, MYOU [めい, みょう]",
+    "kunyomi": "na [な]",
+    "mnemonic": "En la noche oscura (夕), debes identificarte diciendo tu nombre con la boca (口).",
     "words": [
       {
         "word": "名前",
         "reading": "なまえ",
-        "meaning": "name"
+        "meaning": "nombre"
+      },
+      {
+        "word": "有名",
+        "reading": "ゆうめい",
+        "meaning": "famoso"
       }
     ],
     "source": "Kanji Book"
@@ -1588,14 +1892,18 @@ window.KANJI_DATA = [
   {
     "kanji": "社",
     "level": "N5",
-    "meaning_en": "society 会社",
-    "meaning_es": "society 会社",
-    "pronunciation": "しゃ",
+    "meaning_es": "compañía, empresa, sociedad",
+    "meaning_en": "company, society, shrine",
+    "pronunciation": "しゃ, やしろ",
+    "strokes": 7,
+    "onyomi": "SHA [しゃ]",
+    "kunyomi": "yashiro [やしろ]",
+    "mnemonic": "Un altar sagrado (礻) construido sobre la tierra (土) donde la comunidad se organiza.",
     "words": [
       {
         "word": "会社",
         "reading": "かいしゃ",
-        "meaning": "company"
+        "meaning": "empresa / compañía"
       }
     ],
     "source": "Kanji Book"
@@ -1603,9 +1911,13 @@ window.KANJI_DATA = [
   {
     "kanji": "会",
     "level": "N5",
-    "meaning_en": "to meet, meeting 会う",
-    "meaning_es": "to meet, meeting 会う",
-    "pronunciation": "あ、 かい",
+    "meaning_es": "reunirse, encuentro, reunión",
+    "meaning_en": "to meet, meeting",
+    "pronunciation": "あ, かい",
+    "strokes": 6,
+    "onyomi": "KAI, E [かい, え]",
+    "kunyomi": "a(u) [あ(う)]",
+    "mnemonic": "Varias personas reuniéndose bajo un mismo techo para encontrarse y colaborar.",
     "words": [
       {
         "word": "会う",
@@ -1615,26 +1927,26 @@ window.KANJI_DATA = [
       {
         "word": "会社",
         "reading": "かいしゃ",
-        "meaning": "company"
+        "meaning": "empresa / compañía"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 13,
-    "onyomi": "Wa [わ]",
-    "kunyomi": "hanashi/Hana(su) [はなし/は",
-    "mnemonic": "Radical for say, word (言) and the one for tongue (舌)"
+    "source": "Kanji Book"
   },
   {
     "kanji": "行",
     "level": "N5",
-    "meaning_en": "to go, to carry out 行く",
-    "meaning_es": "to go, to carry out 行く",
-    "pronunciation": "い、 こう",
+    "meaning_es": "ir, realizar, fila",
+    "meaning_en": "to go, conduct",
+    "pronunciation": "い, こう, ぎょう",
+    "strokes": 6,
+    "onyomi": "KOU, GYOU [こう, ぎょう]",
+    "kunyomi": "i(ku), okona(u) [い(く), おこな(う)]",
+    "mnemonic": "Una encrucijada de cuatro caminos por donde las personas viajan y avanzan.",
     "words": [
       {
         "word": "行く",
         "reading": "いく",
-        "meaning": "to go"
+        "meaning": "ir"
       },
       {
         "word": "ぎん行",
@@ -1647,9 +1959,13 @@ window.KANJI_DATA = [
   {
     "kanji": "休",
     "level": "N5",
-    "meaning_en": "rest",
-    "meaning_es": "rest",
-    "pronunciation": "やす",
+    "meaning_es": "descansar, descanso",
+    "meaning_en": "to rest, day off",
+    "pronunciation": "やす, きゅう",
+    "strokes": 6,
+    "onyomi": "KYUU [きゅう]",
+    "kunyomi": "yasu(mu) [やす(む)]",
+    "mnemonic": "Una persona (亻) descansando plácidamente recostada a la sombra de un árbol (木).",
     "words": [
       {
         "word": "休み",
@@ -1662,14 +1978,18 @@ window.KANJI_DATA = [
   {
     "kanji": "時",
     "level": "N5",
-    "meaning_en": "hour, time 時間",
-    "meaning_es": "hour, time 時間",
-    "pronunciation": "じ",
+    "meaning_es": "hora, tiempo, momento",
+    "meaning_en": "time, hour",
+    "pronunciation": "とき, じ",
+    "strokes": 10,
+    "onyomi": "JI [じ]",
+    "kunyomi": "toki [とき]",
+    "mnemonic": "El paso del sol (日) marcado por las campanadas rítmicas del templo (寺).",
     "words": [
       {
         "word": "時間",
         "reading": "じかん",
-        "meaning": "time"
+        "meaning": "tiempo / hora"
       }
     ],
     "source": "Kanji Book"
@@ -1677,9 +1997,13 @@ window.KANJI_DATA = [
   {
     "kanji": "分",
     "level": "N5",
-    "meaning_en": "to understand, minute 分かる",
-    "meaning_es": "to understand, minute 分かる",
-    "pronunciation": "わ、 ふん、 ぷん",
+    "meaning_es": "minuto, parte, entender",
+    "meaning_en": "minute, part, understand",
+    "pronunciation": "わ, ふん, ぶん, ぷん",
+    "strokes": 4,
+    "onyomi": "BUN, FUN [ぶん, ふん]",
+    "kunyomi": "wa(karu), wa(keru) [わ(かる), わ(ける)]",
+    "mnemonic": "Un cuchillo (刀) dividiendo en partes (八) para comprender cada detalle.",
     "words": [
       {
         "word": "分かる",
@@ -1690,6 +2014,16 @@ window.KANJI_DATA = [
         "word": "五分",
         "reading": "ごふん",
         "meaning": "five minutes"
+      },
+      {
+        "word": "十分に",
+        "reading": "じゅうぶんに",
+        "meaning": "suficientemente"
+      },
+      {
+        "word": "随分",
+        "reading": "ずいぶん",
+        "meaning": "bastante / mucho"
       }
     ],
     "source": "Kanji Book"
@@ -1697,9 +2031,13 @@ window.KANJI_DATA = [
   {
     "kanji": "半",
     "level": "N5",
+    "meaning_es": "mitad, medio",
     "meaning_en": "half",
-    "meaning_es": "half",
-    "pronunciation": "はん",
+    "pronunciation": "はん, なかば",
+    "strokes": 5,
+    "onyomi": "HAN [はん]",
+    "kunyomi": "naka(ba) [なか(ば)]",
+    "mnemonic": "Una línea vertical que corta una figura simétrica exactamente por la mitad.",
     "words": [
       {
         "word": "二時半",
@@ -1707,100 +2045,96 @@ window.KANJI_DATA = [
         "meaning": "at half past two"
       }
     ],
-    "source": "Kanji Book",
-    "strokes": 5,
-    "onyomi": "Han [はん]",
-    "kunyomi": "Naka(ba)[なか(ば)]",
-    "mnemonic": "The vertical stroke cut the = sign in Half and pass in the middle of the Two dots."
+    "source": "Kanji Book"
   },
   {
     "kanji": "無",
     "level": "N5",
-    "meaning_en": "Word, to talk",
-    "meaning_es": "Word, to talk",
-    "pronunciation": "I(u) [い(う)]",
+    "meaning_es": "nada, sin, inexistente",
+    "meaning_en": "nothing, without",
+    "pronunciation": "む, ぶ, な",
+    "strokes": 12,
+    "onyomi": "MU, BU [む, ぶ]",
+    "kunyomi": "na(i) [な(い)]",
+    "mnemonic": "Un bosque que se consume en las llamas (灬) hasta que no queda absolutamente nada.",
     "words": [],
-    "source": "Kanji to Print",
-    "strokes": 7,
-    "onyomi": "Gen/Gon [げん/ごん]",
-    "kunyomi": "I(u) [い(う)]",
-    "mnemonic": "The lower character means mouth so it is like lines  of  Words  going  off  one’s  mouth"
+    "source": "Kanji to Print"
   },
   {
     "kanji": "文",
     "level": "N5",
-    "meaning_en": "To write",
-    "meaning_es": "To write",
-    "pronunciation": "Ka(ku) [か(く)]",
+    "meaning_es": "texto, frase, literatura, cultura",
+    "meaning_en": "sentence, literature, text",
+    "pronunciation": "ぶん, もん, ふみ",
+    "strokes": 4,
+    "onyomi": "BUN, MON [ぶん, もん]",
+    "kunyomi": "fumi, aya [ふみ, あや]",
+    "mnemonic": "Un pergamino con trazos entrecruzados que representan la escritura y las bellas letras.",
     "words": [],
-    "source": "Kanji to Print",
-    "strokes": 10,
-    "onyomi": "Sho [し]",
-    "kunyomi": "Ka(ku) [か(く)]",
-    "mnemonic": "To Write you need a brush ( from the sun (日) ) and light"
+    "source": "Kanji to Print"
   },
   {
     "kanji": "店",
     "level": "N5",
-    "meaning_en": "Shop",
-    "meaning_es": "Shop",
-    "pronunciation": "Mise [みせ]",
-    "words": [],
-    "source": "Kanji to Print",
+    "meaning_es": "tienda, negocio, local",
+    "meaning_en": "shop, store",
+    "pronunciation": "みせ, てん",
     "strokes": 8,
-    "onyomi": "Ten [てん]",
-    "kunyomi": "Mise [みせ]",
-    "mnemonic": "The  fortune  teller’s  Shop  (占) is in a mysterious cave ( )"
+    "onyomi": "TEN [てん]",
+    "kunyomi": "mise [みせ]",
+    "mnemonic": "Un puesto bajo un cobertizo (广) donde se expende mercancía y se atiende (占) al cliente.",
+    "words": [],
+    "source": "Kanji to Print"
   },
   {
     "kanji": "外",
     "level": "N5",
-    "meaning_en": "Outside/Other/Foreign",
-    "meaning_es": "Outside/Other/Foreign",
-    "pronunciation": "Soto/Hoka [そと/ほか]",
-    "words": [],
-    "source": "Kanji to Print",
+    "meaning_es": "fuera, exterior, extranjero",
+    "meaning_en": "outside, foreign",
+    "pronunciation": "そと, がい, げ",
     "strokes": 5,
-    "onyomi": "Gai/Ge[がい/げ]",
-    "kunyomi": "Soto/Hoka [そと/ほか]",
-    "mnemonic": "It looks like the katakana タ and ト that with the Other Katakana are usually use for Foreign"
+    "onyomi": "GAI, GE [がい, げ]",
+    "kunyomi": "soto, hoka [そと, ほか]",
+    "mnemonic": "Al anochecer (夕), la adivinación con huesos (卜) se efectúa afuera al aire libre.",
+    "words": [],
+    "source": "Kanji to Print"
   },
   {
     "kanji": "国",
     "level": "N5",
-    "meaning_en": "Street, path, way",
-    "meaning_es": "Street, path, way",
-    "pronunciation": "Michi [ち]",
+    "meaning_es": "país, nación",
+    "meaning_en": "country, nation",
+    "pronunciation": "くに, こく",
+    "strokes": 8,
+    "onyomi": "KOKU [こく]",
+    "kunyomi": "kuni [くに]",
+    "mnemonic": "Una joya o tesoro precioso (玉) protegido dentro de las fronteras cuadradas (囗) de un país.",
     "words": [],
-    "source": "Kanji to Print",
-    "strokes": 12,
-    "onyomi": "Dou [どう]",
-    "kunyomi": "Michi [ち]",
-    "mnemonic": "I twisted my neck (首) while searching for signs indicating the right Way"
+    "source": "Kanji to Print"
   },
   {
     "kanji": "発",
     "level": "N5",
-    "meaning_en": "Station",
-    "meaning_es": "Station",
-    "pronunciation": "/",
+    "meaning_es": "salida, emisión, partida",
+    "meaning_en": "departure, discharge, emit",
+    "pronunciation": "はつ, ほつ",
+    "strokes": 9,
+    "onyomi": "HATSU, HOTSU [はつ, ほつ]",
+    "kunyomi": "ta(tsu) [た(つ)]",
+    "mnemonic": "Pies listos que tensan la cuerda de un arco para salir disparados a toda velocidad.",
     "words": [],
-    "source": "Kanji to Print",
-    "strokes": 14,
-    "onyomi": "Eki [えき]",
-    "kunyomi": "/",
-    "mnemonic": "Before taking the train you have to go to the Station by horse (馬)"
+    "source": "Kanji to Print"
   },
   {
     "kanji": "思",
     "level": "N4",
-    "meaning_en": "to think, to feel",
     "meaning_es": "pensar, sentir, recordar",
-    "pronunciation": "おもう, し",
-    "onyomi": "SHI [し]",
-    "kunyomi": "omo-u [おもう]",
+    "meaning_en": "to think, feel",
+    "pronunciation": "おも, し",
     "strokes": 9,
-    "mnemonic": "Un campo de arroz (田) encima de un corazón (心). Pensar con la mente y el corazón.",
+    "onyomi": "SHI [し]",
+    "kunyomi": "omo(u) [おも(う)]",
+    "mnemonic": "Un campo de arroz (田) fértil sobre un corazón (心): cultivar pensamientos con el corazón.",
     "words": [
       {
         "word": "思う",
@@ -1823,13 +2157,13 @@ window.KANJI_DATA = [
   {
     "kanji": "美",
     "level": "N4",
-    "meaning_en": "beauty, beautiful",
     "meaning_es": "belleza, hermoso",
-    "pronunciation": "うつくしい, び",
-    "onyomi": "BI [び], MI [み]",
-    "kunyomi": "utsuku-shii [うつくしい]",
+    "meaning_en": "beauty, beautiful",
+    "pronunciation": "うつく, び, み",
     "strokes": 9,
-    "mnemonic": "Una oveja grande (羊 + 大). En la antigüedad, una oveja grande y saludable representaba la belleza y prosperidad.",
+    "onyomi": "BI, MI [び, み]",
+    "kunyomi": "utsuku(shii) [うつく(しい)]",
+    "mnemonic": "Una oveja grande y saludable (羊 + 大): antiguo símbolo oriental de máxima hermosura.",
     "words": [
       {
         "word": "美しい",
@@ -1845,6 +2179,11 @@ window.KANJI_DATA = [
         "word": "美術",
         "reading": "びじゅつ",
         "meaning": "bellas artes"
+      },
+      {
+        "word": "美味しい",
+        "reading": "おいしい",
+        "meaning": "delicioso / rico"
       }
     ],
     "source": "美 Practice Sheet"
@@ -1852,13 +2191,13 @@ window.KANJI_DATA = [
   {
     "kanji": "君",
     "level": "N5",
-    "meaning_en": "you, monarch",
-    "meaning_es": "tú, gobernante",
+    "meaning_es": "tú, sufijo de cortesía, gobernante",
+    "meaning_en": "you, ruler",
     "pronunciation": "きみ, くん",
+    "strokes": 7,
     "onyomi": "KUN [くん]",
     "kunyomi": "kimi [きみ]",
-    "strokes": 7,
-    "mnemonic": "Una mano con un bastón (尹) dando órdenes por la boca (口). Originalmente el gobernante o noble que manda; hoy en día se usa como 'tú' informal o sufijo cariñoso.",
+    "mnemonic": "Una mano sosteniendo un cetro con autoridad y dictando directivas con la boca (口).",
     "words": [
       {
         "word": "君",
@@ -1876,9 +2215,13 @@ window.KANJI_DATA = [
   {
     "kanji": "産",
     "level": "N4",
-    "meaning_en": "produce / birth",
-    "meaning_es": "dar a luz / producto",
-    "pronunciation": "さん, う・む",
+    "meaning_es": "dar a luz, producir, producto",
+    "meaning_en": "give birth, produce",
+    "pronunciation": "う, さん",
+    "strokes": 11,
+    "onyomi": "SAN [さん]",
+    "kunyomi": "u(mu), u(mareru) [う(む), う(まれる)]",
+    "mnemonic": "Dar a luz y hacer brotar vida nueva (生) sobre un pedestal seguro (立 + 厂).",
     "words": [
       {
         "word": "土産",
@@ -1891,14 +2234,23 @@ window.KANJI_DATA = [
   {
     "kanji": "教",
     "level": "N5",
-    "meaning_en": "teach / faith",
-    "meaning_es": "enseñar / fe",
-    "pronunciation": "きょう, おし・える",
+    "meaning_es": "enseñar, doctrina, fe",
+    "meaning_en": "to teach, faith",
+    "pronunciation": "おし, きょう",
+    "strokes": 11,
+    "onyomi": "KYOU [きょう]",
+    "kunyomi": "oshi(eru), oso(waru) [おし(える), おそ(わる)]",
+    "mnemonic": "Un niño (子) aprendiendo con atención las lecciones que un profesor señala con su puntero (攵).",
     "words": [
       {
         "word": "教室",
         "reading": "きょうしつ",
         "meaning": "Aula / Salón de clases"
+      },
+      {
+        "word": "教える",
+        "reading": "おしえる",
+        "meaning": "enseñar"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -1906,9 +2258,13 @@ window.KANJI_DATA = [
   {
     "kanji": "室",
     "level": "N4",
+    "meaning_es": "habitación, sala, cuarto",
     "meaning_en": "room",
-    "meaning_es": "habitación / sala",
     "pronunciation": "しつ, むろ",
+    "strokes": 9,
+    "onyomi": "SHITSU [しつ]",
+    "kunyomi": "muro [むろ]",
+    "mnemonic": "Un cuarto bajo techo (宀) donde una flecha llega (至) a posarse en reposo.",
     "words": [
       {
         "word": "教室",
@@ -1921,9 +2277,13 @@ window.KANJI_DATA = [
   {
     "kanji": "図",
     "level": "N4",
-    "meaning_en": "drawing / diagram",
-    "meaning_es": "dibujo / diagrama / mapa",
-    "pronunciation": "ず, と, はか・る",
+    "meaning_es": "dibujo, mapa, plan, diagrama",
+    "meaning_en": "map, drawing, plan",
+    "pronunciation": "ず, と, はか",
+    "strokes": 7,
+    "onyomi": "ZU, TO [ず, と]",
+    "kunyomi": "haka(ru) [はか(る)]",
+    "mnemonic": "Un plano esquemático o mapa trazado con precisión dentro de un marco cuadrado (囗).",
     "words": [
       {
         "word": "図書館",
@@ -1936,9 +2296,13 @@ window.KANJI_DATA = [
   {
     "kanji": "館",
     "level": "N4",
-    "meaning_en": "building / mansion",
-    "meaning_es": "edificio público / palacio",
+    "meaning_es": "edificio público, palacio, mansión",
+    "meaning_en": "public building, hall",
     "pronunciation": "かん, やかた",
+    "strokes": 16,
+    "onyomi": "KAN [かん]",
+    "kunyomi": "yakata [やかた]",
+    "mnemonic": "Un gran palacio público donde se sirve comida (食) a los visitantes en salones oficiales (官).",
     "words": [
       {
         "word": "図書館",
@@ -1951,9 +2315,13 @@ window.KANJI_DATA = [
   {
     "kanji": "留",
     "level": "N4",
-    "meaning_en": "stay / detain",
-    "meaning_es": "detener / quedarse",
-    "pronunciation": "りゅう, と・める",
+    "meaning_es": "detenerse, quedarse, retener",
+    "meaning_en": "to stay, detain",
+    "pronunciation": "と, りゅう",
+    "strokes": 10,
+    "onyomi": "RYUU, RU [りゅう, る]",
+    "kunyomi": "to(maru), to(meru) [と(まる), と(める)]",
+    "mnemonic": "Permanecer trabajando en el campo de cultivo (田) sin apartarse del lugar.",
     "words": [
       {
         "word": "留学生",
@@ -1966,9 +2334,13 @@ window.KANJI_DATA = [
   {
     "kanji": "宝",
     "level": "N4",
+    "meaning_es": "tesoro, joya valiosa",
     "meaning_en": "treasure",
-    "meaning_es": "tesoro",
-    "pronunciation": "ほう, たから",
+    "pronunciation": "たから, ほう",
+    "strokes": 8,
+    "onyomi": "HOU [ほう]",
+    "kunyomi": "takara [たから]",
+    "mnemonic": "Bajo el techo seguro del palacio (宀) se guardan resplandecientes gemas de jade (玉): un tesoro.",
     "words": [
       {
         "word": "宝物",
@@ -1981,9 +2353,13 @@ window.KANJI_DATA = [
   {
     "kanji": "物",
     "level": "N5",
-    "meaning_en": "thing / object",
-    "meaning_es": "cosa / objeto",
-    "pronunciation": "ぶつ, もの",
+    "meaning_es": "cosa, objeto, materia",
+    "meaning_en": "thing, object",
+    "pronunciation": "もの, ぶつ, もつ",
+    "strokes": 8,
+    "onyomi": "BUTSU, MOTSU [ぶつ, もつ]",
+    "kunyomi": "mono [もの]",
+    "mnemonic": "Un buey (牛) rodeado de cosas de todas las formas y colores (勿): las cosas del mundo.",
     "words": [
       {
         "word": "宝物",
@@ -1996,9 +2372,13 @@ window.KANJI_DATA = [
   {
     "kanji": "番",
     "level": "N5",
-    "meaning_en": "number / turn",
-    "meaning_es": "número / turno",
+    "meaning_es": "número, turno, orden",
+    "meaning_en": "number, turn",
     "pronunciation": "ばん",
+    "strokes": 12,
+    "onyomi": "BAN [ばん]",
+    "kunyomi": "tsugai [つがい]",
+    "mnemonic": "Semillas o huellas (釆) contadas en orden por turnos a través del campo (田).",
     "words": [
       {
         "word": "電話番号",
@@ -2011,9 +2391,13 @@ window.KANJI_DATA = [
   {
     "kanji": "号",
     "level": "N4",
-    "meaning_en": "number / item",
-    "meaning_es": "número / señal",
+    "meaning_es": "número, señal, código",
+    "meaning_en": "number, signal",
     "pronunciation": "ごう",
+    "strokes": 5,
+    "onyomi": "GOU [ごう]",
+    "kunyomi": "sake(bu) [さけ(ぶ)]",
+    "mnemonic": "Una voz que grita con la boca (口) el número o código identificativo.",
     "words": [
       {
         "word": "電話番号",
@@ -2026,9 +2410,13 @@ window.KANJI_DATA = [
   {
     "kanji": "試",
     "level": "N4",
-    "meaning_en": "test / try",
-    "meaning_es": "probar / intentar",
-    "pronunciation": "し, こころ・みる",
+    "meaning_es": "probar, intentar, examen",
+    "meaning_en": "test, try",
+    "pronunciation": "こころ, ため, し",
+    "strokes": 13,
+    "onyomi": "SHI [し]",
+    "kunyomi": "kokoro(miru), tame(su) [こころ(みる), ため(す)]",
+    "mnemonic": "Utilizar palabras (言) para ensayar y probar una regla o estilo (式).",
     "words": [
       {
         "word": "試験",
@@ -2041,9 +2429,13 @@ window.KANJI_DATA = [
   {
     "kanji": "験",
     "level": "N4",
-    "meaning_en": "verification / test",
-    "meaning_es": "probar / efecto / examen",
-    "pronunciation": "けん, ため・す",
+    "meaning_es": "prueba, efecto, examen",
+    "meaning_en": "examination, test",
+    "pronunciation": "けん, げん",
+    "strokes": 18,
+    "onyomi": "KEN, GEN [けん, げん]",
+    "kunyomi": "tameshi [ためし]",
+    "mnemonic": "Examinar de cerca las condiciones de un caballo purasangre (馬) para verificar su rendimiento.",
     "words": [
       {
         "word": "試験",
@@ -2061,9 +2453,13 @@ window.KANJI_DATA = [
   {
     "kanji": "度",
     "level": "N4",
-    "meaning_en": "degree / occurrence",
-    "meaning_es": "grado / vez",
+    "meaning_es": "grado, vez, ocasión, medida",
+    "meaning_en": "degree, time, occasion",
     "pronunciation": "ど, たび",
+    "strokes": 9,
+    "onyomi": "DO, TO [ど, と]",
+    "kunyomi": "tabi [たび]",
+    "mnemonic": "Bajo el alero de una casa (广), una mano mide las dimensiones paso a paso.",
     "words": [
       {
         "word": "一度",
@@ -2076,9 +2472,13 @@ window.KANJI_DATA = [
   {
     "kanji": "健",
     "level": "N4",
-    "meaning_en": "healthy / strength",
-    "meaning_es": "salud / saludable",
-    "pronunciation": "けん, すこ・やか",
+    "meaning_es": "sano, saludable, robusto",
+    "meaning_en": "healthy, robust",
+    "pronunciation": "すこ, けん",
+    "strokes": 11,
+    "onyomi": "KEN [けん]",
+    "kunyomi": "suko(yaka) [すこ(やか)]",
+    "mnemonic": "Una persona (亻) que construye (建) hábitos firmes para mantenerse fuerte y sana.",
     "words": [
       {
         "word": "健康",
@@ -2091,9 +2491,13 @@ window.KANJI_DATA = [
   {
     "kanji": "康",
     "level": "N4",
-    "meaning_en": "ease / health",
-    "meaning_es": "paz / salud",
+    "meaning_es": "salud, paz, tranquilidad",
+    "meaning_en": "health, peace",
     "pronunciation": "こう",
+    "strokes": 11,
+    "onyomi": "KOU [こう]",
+    "kunyomi": "yasuraka [やすらか]",
+    "mnemonic": "Un hogar colmado de cosechas de grano donde reina la paz, la serenidad y la buena salud.",
     "words": [
       {
         "word": "健康",
@@ -2106,14 +2510,23 @@ window.KANJI_DATA = [
   {
     "kanji": "全",
     "level": "N4",
-    "meaning_en": "all / whole",
-    "meaning_es": "todo / entero",
-    "pronunciation": "ぜん, すべ・て",
+    "meaning_es": "todo, entero, completo",
+    "meaning_en": "all, whole",
+    "pronunciation": "ぜん, すべて",
+    "strokes": 6,
+    "onyomi": "ZEN [ぜん]",
+    "kunyomi": "sube(te), matta(ku) [すべ(て), まった(く)]",
+    "mnemonic": "Una joya perfecta de jade (王) completamente cubierta y protegida por un domo (𠆢).",
     "words": [
       {
         "word": "全員",
         "reading": "ぜんいん",
         "meaning": "Todos los miembros / Todos"
+      },
+      {
+        "word": "安全",
+        "reading": "あんぜん",
+        "meaning": "seguro"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2121,9 +2534,13 @@ window.KANJI_DATA = [
   {
     "kanji": "員",
     "level": "N4",
-    "meaning_en": "member / employee",
-    "meaning_es": "miembro / empleado",
+    "meaning_es": "miembro, empleado, personal",
+    "meaning_en": "member, staff",
     "pronunciation": "いん",
+    "strokes": 10,
+    "onyomi": "IN [いん]",
+    "kunyomi": "kazu [かず]",
+    "mnemonic": "Bocas (口) a las que se les paga con conchas/dinero (貝): los empleados de la organización.",
     "words": [
       {
         "word": "全員",
@@ -2136,9 +2553,13 @@ window.KANJI_DATA = [
   {
     "kanji": "曜",
     "level": "N5",
-    "meaning_en": "day of the week",
-    "meaning_es": "día de la semana",
+    "meaning_es": "día de la semana, astro brillante",
+    "meaning_en": "day of week",
     "pronunciation": "よう",
+    "strokes": 18,
+    "onyomi": "YOU [よう]",
+    "kunyomi": "hikari [ひかり]",
+    "mnemonic": "El sol (日) y las plumas de las aves (羽) brillando intensamente (隹) cada día de la semana.",
     "words": [
       {
         "word": "土曜日",
@@ -2151,9 +2572,13 @@ window.KANJI_DATA = [
   {
     "kanji": "説",
     "level": "N4",
-    "meaning_en": "theory / explanation",
-    "meaning_es": "explicar / teoría",
-    "pronunciation": "せつ, と・く",
+    "meaning_es": "explicar, teoría, opinar",
+    "meaning_en": "to explain, theory",
+    "pronunciation": "せつ, と",
+    "strokes": 14,
+    "onyomi": "SETSU, ZEI [せつ, ぜい]",
+    "kunyomi": "to(ku) [と(く)]",
+    "mnemonic": "Palabras (言) que brindan alivio y comprensión luminosa (兑) al ser explicadas con claridad.",
     "words": [
       {
         "word": "小説",
@@ -2166,9 +2591,13 @@ window.KANJI_DATA = [
   {
     "kanji": "階",
     "level": "N4",
-    "meaning_en": "floor / stairs",
-    "meaning_es": "piso / planta / escalera",
+    "meaning_es": "piso, planta, escalera, nivel",
+    "meaning_en": "floor, storey",
     "pronunciation": "かい",
+    "strokes": 12,
+    "onyomi": "KAI [かい]",
+    "kunyomi": "kizahashi [きざはし]",
+    "mnemonic": "Una colina o escalera (阝) donde las personas suben juntas al mismo nivel (皆).",
     "words": [
       {
         "word": "階段",
@@ -2181,9 +2610,13 @@ window.KANJI_DATA = [
   {
     "kanji": "段",
     "level": "N4",
-    "meaning_en": "step / grade",
-    "meaning_es": "escalón / nivel",
+    "meaning_es": "escalón, nivel, peldaño",
+    "meaning_en": "step, rank",
     "pronunciation": "だん",
+    "strokes": 9,
+    "onyomi": "DAN, TAN [だん, たん]",
+    "kunyomi": "kizahashi [きざはし]",
+    "mnemonic": "Dar pasos firmes con un báculo (殳) ascendiendo de escalón en escalón.",
     "words": [
       {
         "word": "階段",
@@ -2196,9 +2629,13 @@ window.KANJI_DATA = [
   {
     "kanji": "郵",
     "level": "N4",
-    "meaning_en": "mail",
-    "meaning_es": "correo / correo postal",
+    "meaning_es": "correo, servicio postal",
+    "meaning_en": "mail, postal",
     "pronunciation": "ゆう",
+    "strokes": 11,
+    "onyomi": "YUU [ゆう]",
+    "kunyomi": "post [ぽすと]",
+    "mnemonic": "Un puesto fronterizo oficial (垂) en un poblado (阝) que recibe y distribuye el correo.",
     "words": [
       {
         "word": "郵便局",
@@ -2211,14 +2648,23 @@ window.KANJI_DATA = [
   {
     "kanji": "便",
     "level": "N4",
-    "meaning_en": "convenience / mail",
-    "meaning_es": "correo / conveniencia",
-    "pronunciation": "べん, びん, たよ・り",
+    "meaning_es": "correo, conveniencia, vuelo",
+    "meaning_en": "convenience, mail",
+    "pronunciation": "べん, びん, たより",
+    "strokes": 9,
+    "onyomi": "BEN, BIN [べん, びん]",
+    "kunyomi": "tayo(ri) [たよ(り)]",
+    "mnemonic": "Una persona (亻) que adapta las situaciones (更) para hacerlas cómodas y convenientes.",
     "words": [
       {
         "word": "郵便局",
         "reading": "ゆうびんきょく",
         "meaning": "Oficina de correos"
+      },
+      {
+        "word": "便利",
+        "reading": "べんり",
+        "meaning": "conveniente / práctico"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2226,9 +2672,13 @@ window.KANJI_DATA = [
   {
     "kanji": "局",
     "level": "N4",
-    "meaning_en": "bureau / office",
-    "meaning_es": "oficina / departamento",
+    "meaning_es": "oficina, departamento, estación",
+    "meaning_en": "bureau, department",
     "pronunciation": "きょく",
+    "strokes": 7,
+    "onyomi": "KYOKU [きょく]",
+    "kunyomi": "tsubone [つぼね]",
+    "mnemonic": "Un compartimento oficial o ventanilla administrativa donde se tramitan asuntos públicos.",
     "words": [
       {
         "word": "郵便局",
@@ -2241,14 +2691,23 @@ window.KANJI_DATA = [
   {
     "kanji": "心",
     "level": "N4",
-    "meaning_en": "heart / mind",
-    "meaning_es": "corazón / mente",
-    "pronunciation": "しん, こころ",
+    "meaning_es": "corazón, mente, alma",
+    "meaning_en": "heart, mind",
+    "pronunciation": "こころ, しん",
+    "strokes": 4,
+    "onyomi": "SHIN [しん]",
+    "kunyomi": "kokoro [こころ]",
+    "mnemonic": "Las cuatro cámaras y ventrículos de un corazón humano latiendo con emoción y sentimientos.",
     "words": [
       {
         "word": "心配",
         "reading": "しんぱい",
         "meaning": "Preocupación"
+      },
+      {
+        "word": "熱心",
+        "reading": "ねっしん",
+        "meaning": "entusiasta / apasionado"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2256,9 +2715,13 @@ window.KANJI_DATA = [
   {
     "kanji": "配",
     "level": "N4",
-    "meaning_en": "distribute / deliver",
-    "meaning_es": "distribuir / repartir",
-    "pronunciation": "はい, くば・る",
+    "meaning_es": "distribuir, repartir, preocuparse",
+    "meaning_en": "distribute, deliver",
+    "pronunciation": "はい, くば",
+    "strokes": 10,
+    "onyomi": "HAI [はい]",
+    "kunyomi": "kuba(ru) [くば(る)]",
+    "mnemonic": "Una jarra de vino (酉) repartida equitativamente entre las personas arrodilladas (己).",
     "words": [
       {
         "word": "心配",
@@ -2271,14 +2734,23 @@ window.KANJI_DATA = [
   {
     "kanji": "遅",
     "level": "N4",
-    "meaning_en": "late / slow",
-    "meaning_es": "tarde / retraso / lento",
-    "pronunciation": "ち, おそ・い, おく・れる",
+    "meaning_es": "tarde, lento, retrasarse",
+    "meaning_en": "late, slow",
+    "pronunciation": "おそ, おく, ち",
+    "strokes": 12,
+    "onyomi": "CHI [ち]",
+    "kunyomi": "oso(i), oku(reru) [おそ(い), おく(れる)]",
+    "mnemonic": "Un cordero cansado (羊) caminando lentamente por el sendero (辶): llegar tarde.",
     "words": [
       {
         "word": "遅刻",
         "reading": "ちこく",
         "meaning": "Llegada tarde / Retraso"
+      },
+      {
+        "word": "遅い",
+        "reading": "おそい",
+        "meaning": "lento / tarde"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2286,9 +2758,13 @@ window.KANJI_DATA = [
   {
     "kanji": "刻",
     "level": "N4",
-    "meaning_en": "engrave / time",
-    "meaning_es": "grabar / tiempo / tictac",
-    "pronunciation": "こく, きざ・む",
+    "meaning_es": "grabar, hora, tiempo, tictac",
+    "meaning_en": "engrave, time",
+    "pronunciation": "きざ, こく",
+    "strokes": 8,
+    "onyomi": "KOKU [こく]",
+    "kunyomi": "kiza(mu) [きざ(む)]",
+    "mnemonic": "Un cuchillo afilado (刂) grabando incisiones en el reloj de sol para marcar las horas.",
     "words": [
       {
         "word": "遅刻",
@@ -2301,9 +2777,13 @@ window.KANJI_DATA = [
   {
     "kanji": "約",
     "level": "N4",
-    "meaning_en": "promise / approximately",
-    "meaning_es": "promesa / aproximadamente",
+    "meaning_es": "promesa, compromiso, aproximadamente",
+    "meaning_en": "promise, approximate",
     "pronunciation": "やく",
+    "strokes": 9,
+    "onyomi": "YAKU [やく]",
+    "kunyomi": "tsume(ru) [つめ(る)]",
+    "mnemonic": "Un hilo o cinta (糸) que ata con firmeza un acuerdo sellado (勺): una promesa formal.",
     "words": [
       {
         "word": "約束",
@@ -2316,9 +2796,13 @@ window.KANJI_DATA = [
   {
     "kanji": "束",
     "level": "N4",
-    "meaning_en": "bundle / tie",
-    "meaning_es": "atado / haz / fardo",
-    "pronunciation": "そく, たば",
+    "meaning_es": "manojo, fardo, atado",
+    "meaning_en": "bundle, sheaf",
+    "pronunciation": "たば, そく",
+    "strokes": 7,
+    "onyomi": "SOKU [そく]",
+    "kunyomi": "taba [たば]",
+    "mnemonic": "Una soga atada fuertemente alrededor de un manojo de leña o maderos (木 + 口).",
     "words": [
       {
         "word": "約束",
@@ -2329,20 +2813,41 @@ window.KANJI_DATA = [
     "source": "NHK Spanish Lessons / Material de Estudio"
   },
   {
-    "id": "k_kei",
     "kanji": "経",
-    "meaning_es": "Pasar, transcurrir, gestionar",
-    "meaning_en": "Pass through, experience, manage",
-    "onyomi": "ケイ",
-    "kunyomi": "へ.る",
-    "strokes": 11,
     "level": "N3",
+    "meaning_es": "pasar, transcurrir, gestionar, experiencia",
+    "meaning_en": "pass through, experience, manage",
+    "pronunciation": "へ, けい",
+    "strokes": 11,
+    "onyomi": "KEI, KYOU [けい, きょう]",
+    "kunyomi": "he(ru) [へ(る)]",
+    "mnemonic": "Los hilos de urdimbre (糸) que transcurren longitudinalmente a través del telar.",
     "words": [
       {
         "word": "経験",
         "reading": "けいけん",
         "meaning": "Experiencia"
       }
-    ]
+    ],
+    "source": "Kanji Book"
+  },
+  {
+    "kanji": "駅",
+    "level": "N5",
+    "meaning_es": "estación de tren",
+    "meaning_en": "train station",
+    "pronunciation": "えき",
+    "strokes": 14,
+    "onyomi": "EKI [えき]",
+    "kunyomi": "eki [えき]",
+    "mnemonic": "Un caballo veloz (馬) detenido en el terminal o estación de parada (尺) para el intercambio de viajeros.",
+    "words": [
+      {
+        "word": "駅",
+        "reading": "えき",
+        "meaning": "estación"
+      }
+    ],
+    "source": "Vocabulario N5"
   }
 ];

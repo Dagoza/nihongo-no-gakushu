@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { 
   Compass, 
   BookOpen, 
@@ -31,6 +33,7 @@ export const NAV_CATEGORIES = [
 export const TABS = [
   {
     id: 'curriculum',
+    path: '/curriculum',
     category: 'learn',
     categoryName: 'Aprender',
     shortLabel: 'Ruta',
@@ -41,6 +44,7 @@ export const TABS = [
   },
   {
     id: 'story',
+    path: '/story',
     category: 'learn',
     categoryName: 'Aprender',
     shortLabel: 'Historia',
@@ -51,6 +55,7 @@ export const TABS = [
   },
   {
     id: 'nhk',
+    path: '/nhk',
     category: 'learn',
     categoryName: 'Aprender',
     shortLabel: 'Conversación',
@@ -61,6 +66,7 @@ export const TABS = [
   },
   {
     id: 'youtube',
+    path: '/youtube',
     category: 'learn',
     categoryName: 'Aprender',
     shortLabel: 'Inmersión',
@@ -71,6 +77,7 @@ export const TABS = [
   },
   {
     id: 'vocab',
+    path: '/vocab',
     category: 'practice',
     categoryName: 'Recursos & Práctica',
     shortLabel: 'Vocabulario',
@@ -81,6 +88,7 @@ export const TABS = [
   },
   {
     id: 'particles',
+    path: '/grammar',
     category: 'practice',
     categoryName: 'Recursos & Práctica',
     shortLabel: 'Gramática',
@@ -91,6 +99,7 @@ export const TABS = [
   },
   {
     id: 'kanji',
+    path: '/kanji',
     category: 'practice',
     categoryName: 'Recursos & Práctica',
     shortLabel: 'Kanji',
@@ -101,6 +110,7 @@ export const TABS = [
   },
   {
     id: 'pdf',
+    path: '/pdf',
     category: 'practice',
     categoryName: 'Recursos & Práctica',
     shortLabel: 'PDFs',
@@ -111,6 +121,7 @@ export const TABS = [
   },
   {
     id: 'saved',
+    path: '/saved',
     category: 'practice',
     categoryName: 'Recursos & Práctica',
     shortLabel: 'Guardados',
@@ -121,6 +132,7 @@ export const TABS = [
   },
   {
     id: 'progress',
+    path: '/progress',
     category: 'progress',
     categoryName: 'Progreso',
     shortLabel: 'Mi Progreso',
@@ -132,6 +144,25 @@ export const TABS = [
 ];
 
 export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const activeTabId = (() => {
+    if (currentTab) return currentTab;
+    if (!pathname) return 'curriculum';
+    if (pathname.startsWith('/story')) return 'story';
+    if (pathname.startsWith('/nhk')) return 'nhk';
+    if (pathname.startsWith('/youtube')) return 'youtube';
+    if (pathname.startsWith('/vocab')) return 'vocab';
+    if (pathname.startsWith('/grammar') || pathname.startsWith('/particles')) return 'particles';
+    if (pathname.startsWith('/kanji')) return 'kanji';
+    if (pathname.startsWith('/pdf')) return 'pdf';
+    if (pathname.startsWith('/saved')) return 'saved';
+    if (pathname.startsWith('/progress')) return 'progress';
+    if (pathname.startsWith('/curriculum')) return 'curriculum';
+    return 'curriculum';
+  })();
+
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -142,11 +173,11 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
 
   // Sync category if active tab changed from an external source (e.g. logo or curriculum)
   useEffect(() => {
-    const currentTabObj = TABS.find((t) => t.id === currentTab);
+    const currentTabObj = TABS.find((t) => t.id === activeTabId);
     if (currentTabObj && selectedCategory !== 'all' && currentTabObj.category !== selectedCategory) {
       setSelectedCategory(currentTabObj.category);
     }
-  }, [currentTab, selectedCategory]);
+  }, [activeTabId, selectedCategory]);
 
   // Check scroll capability
   const checkScroll = useCallback(() => {
@@ -177,7 +208,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     const el = scrollContainerRef.current;
     if (!el) return;
 
-    const activeBtn = el.querySelector('.nav-tab-pill.active');
+    const activeBtn = el.querySelector(`.nav-tab-pill[data-tab-id="${activeTabId}"]`) || el.querySelector('.nav-tab-pill.active');
     if (activeBtn) {
       activeBtn.scrollIntoView({
         behavior: 'smooth',
@@ -188,7 +219,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     // Re-check scroll positions after animation
     const timer = setTimeout(checkScroll, 350);
     return () => clearTimeout(timer);
-  }, [currentTab, checkScroll]);
+  }, [activeTabId, checkScroll]);
 
   // Close menu on click outside or Escape
   useEffect(() => {
@@ -235,15 +266,20 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     if (categoryId !== 'all') {
       const categoryTabs = TABS.filter((t) => t.category === categoryId);
       // If current tab is not in the chosen category, navigate to the first tab of that category
-      if (!categoryTabs.some((t) => t.id === currentTab)) {
-        onTabChange(categoryTabs[0].id);
+      if (!categoryTabs.some((t) => t.id === activeTabId)) {
+        handleTabClick(categoryTabs[0].id);
       }
     }
   };
 
   const handleTabClick = (tabId) => {
-    onTabChange(tabId);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const tabObj = TABS.find((t) => t.id === tabId);
+    const targetPath = tabObj ? tabObj.path : `/${tabId}`;
+    router.push(targetPath);
+    if (onTabChange) onTabChange(tabId);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const visibleTabs = selectedCategory === 'all' 

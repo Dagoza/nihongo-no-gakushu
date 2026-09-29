@@ -248,7 +248,7 @@ export default function KanjiTab({ appState, onUpdateState }) {
 
                     <div className="kanji-meta">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <span className="vocab-tag">{k.strokes ? `${k.strokes} trazos` : 'General'}</span>
+                        <span className="vocab-tag">{k.strokes ? `${k.strokes} trazo${k.strokes === 1 ? '' : 's'}` : 'General'}</span>
                         <label style={{ cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 5 }}>
                           <input 
                             type="checkbox"
@@ -493,10 +493,22 @@ export default function KanjiTab({ appState, onUpdateState }) {
             >
               ✕
             </button>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 16 }}>Práctica de Trazos</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 20 }}>
-              Dibuja los trazos en el orden y dirección correctos.
-            </p>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 4 }}>Práctica de Trazos</h3>
+            {(() => {
+              const currentK = kanjiList.find(k => k.kanji === drawingKanji);
+              return (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--primary)' }}>
+                    {drawingKanji} {currentK?.meaning_es ? `— ${currentK.meaning_es}` : ''}
+                  </div>
+                  {currentK?.strokes && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      {currentK.strokes} trazo{currentK.strokes === 1 ? '' : 's'} • Dibuja los trazos en el orden y dirección correctos.
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
             
             <KanjiDraw 
               character={drawingKanji} 

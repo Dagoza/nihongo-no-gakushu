@@ -1,4 +1,5 @@
 import './globals.css';
+import AppShell from '../components/AppShell';
 
 export const metadata = {
   title: '日本語マスター · Nihongo Master (Aprende Japonés)',
@@ -14,7 +15,9 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
       </head>
       <body>
-        {children}
+        <AppShell>
+          {children}
+        </AppShell>
       </body>
     </html>
   );
