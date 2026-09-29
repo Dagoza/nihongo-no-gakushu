@@ -30,9 +30,10 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   // State for active module detailed view
   const [selectedStepNum, setSelectedStepNum] = useState(initialStep);
   
-  // Theme and Level filter state
+  // Theme, Level and Status filter state
   const [selectedTheme, setSelectedTheme] = useState('all'); // 'all' | 'vida' | 'trabajo' | 'ciudad' | 'ocio'
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'A1' | 'N5' | 'N4'
+  const [selectedStatus, setSelectedStatus] = useState('all'); // 'all' | 'pending' | 'completed'
   const [searchQuery, setSearchQuery] = useState('');
   
   // Quiz interaction state for module view
@@ -62,6 +63,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
       if (!allowed.includes(step.step)) return false;
     }
     if (selectedLevel !== 'all' && !(step.level || '').includes(selectedLevel)) return false;
+    if (selectedStatus === 'completed' && !userState?.completedSteps?.[step.step]) return false;
+    if (selectedStatus === 'pending' && !!userState?.completedSteps?.[step.step]) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchTitle = (step.title || '').toLowerCase().includes(q);
@@ -107,11 +110,16 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     }));
 
     if (isCorrect && userState && onUpdateState) {
-      // Award XP
-      const currentXp = userState.xp || 0;
+      // Award XP once and record exercise completion
+      const alreadyDone = !!userState.completedExercises?.[exercise.id];
+      const updatedExercises = {
+        ...(userState.completedExercises || {}),
+        [exercise.id]: true
+      };
       onUpdateState({
         ...userState,
-        xp: currentXp + 5
+        completedExercises: updatedExercises,
+        xp: (userState.xp || 0) + (!alreadyDone ? 5 : 0)
       });
     }
   };
@@ -520,41 +528,82 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         )}
 
         {/* Practical Interactive Exercises */}
-        {selectedStep.exercises && selectedStep.exercises.length > 0 && (
-          <div className="card" style={{ marginBottom: 30 }}>
-            <div style={{ marginBottom: 16 }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <HelpCircle size={20} color="var(--warning)" />
-                <span>Ejercicios Prácticos del Módulo</span>
-              </h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                Pon a prueba lo aprendido. Selecciona la opción correcta para ganar puntos de experiencia (+5 XP por acierto).
-              </p>
-            </div>
+        {selectedStep.exercises && selectedStep.exercises.length > 0 && (() => {
+          const completedExCount = selectedStep.exercises.filter(ex => userState?.completedExercises?.[ex.id]).length;
+          const allCompleted = completedExCount === selectedStep.exercises.length;
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {selectedStep.exercises.map((ex, idx) => {
-                const selected = quizAnswers[ex.id];
-                const feedback = quizFeedback[ex.id];
+          return (
+            <div className="card" style={{ marginBottom: 30 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+                <div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <HelpCircle size={20} color="var(--warning)" />
+                    <span>Ejercicios Prácticos del Módulo</span>
+                  </h3>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                    Pon a prueba lo aprendido. Selecciona la opción correcta para ganar puntos de experiencia (+5 XP por acierto).
+                  </p>
+                </div>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '6px 12px',
+                  borderRadius: 'var(--radius-sm)',
+                  background: allCompleted ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-main)',
+                  border: allCompleted ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border)',
+                  fontSize: '0.82rem',
+                  fontWeight: 700
+                }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Progreso:</span>
+                  <span style={{ color: allCompleted ? 'var(--success)' : 'var(--primary)' }}>
+                    {completedExCount} / {selectedStep.exercises.length} {allCompleted ? '✓ Completados' : 'superados'}
+                  </span>
+                </div>
+              </div>
 
-                return (
-                  <div 
-                    key={ex.id || idx}
-                    style={{
-                      padding: 18,
-                      borderRadius: 'var(--radius-md)',
-                      background: 'var(--bg-main)',
-                      border: '1px solid var(--border)'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '2px 8px', background: 'var(--primary-bg)', color: 'var(--primary)', borderRadius: 4 }}>
-                        Pregunta {idx + 1}
-                      </span>
-                      <span style={{ fontSize: '0.95rem', fontWeight: 600 }}>
-                        {ex.question}
-                      </span>
-                    </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                {selectedStep.exercises.map((ex, idx) => {
+                  const selected = quizAnswers[ex.id];
+                  const feedback = quizFeedback[ex.id];
+                  const isAlreadySolved = !!userState?.completedExercises?.[ex.id];
+
+                  return (
+                    <div 
+                      key={ex.id || idx}
+                      style={{
+                        padding: 18,
+                        borderRadius: 'var(--radius-md)',
+                        background: 'var(--bg-main)',
+                        border: isAlreadySolved ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border)'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '2px 8px', background: 'var(--primary-bg)', color: 'var(--primary)', borderRadius: 4 }}>
+                            Pregunta {idx + 1}
+                          </span>
+                          <span style={{ fontSize: '0.95rem', fontWeight: 600 }}>
+                            {ex.question}
+                          </span>
+                        </div>
+                        {isAlreadySolved && (
+                          <span style={{
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            padding: '3px 8px',
+                            background: 'rgba(16, 185, 129, 0.15)',
+                            color: 'var(--success)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            borderRadius: 999,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}>
+                            <Check size={12} /> Superado (+5 XP)
+                          </span>
+                        )}
+                      </div>
 
                     <div className="jp-text" style={{ fontSize: '1.3rem', fontWeight: 700, margin: '10px 0 14px', color: 'var(--text-main)' }}>
                       {ex.sentence}
@@ -629,7 +678,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               })}
             </div>
           </div>
-        )}
+        );
+      })()}
 
         {/* Temas y Módulos Relacionados Section */}
         {selectedStep.related_topics && selectedStep.related_topics.length > 0 && (
@@ -864,20 +914,40 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           </button>
         </div>
 
-        {/* Secondary filters: Level and Search */}
+        {/* Secondary filters: Level, Status and Search */}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel:</span>
-            {['all', 'A1', 'N5', 'N4'].map(lvl => (
-              <button
-                key={lvl}
-                className={`btn btn-sm ${selectedLevel === lvl ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setSelectedLevel(lvl)}
-                style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
-              >
-                {lvl === 'all' ? 'Todos' : lvl}
-              </button>
-            ))}
+          <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel:</span>
+              {['all', 'A1', 'N5', 'N4'].map(lvl => (
+                <button
+                  key={lvl}
+                  className={`btn btn-sm ${selectedLevel === lvl ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setSelectedLevel(lvl)}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                >
+                  {lvl === 'all' ? 'Todos' : lvl}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
+              {[
+                { id: 'all', label: 'Todos' },
+                { id: 'pending', label: 'Pendientes' },
+                { id: 'completed', label: 'Completados' }
+              ].map(st => (
+                <button
+                  key={st.id}
+                  className={`btn btn-sm ${selectedStatus === st.id ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setSelectedStatus(st.id)}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                >
+                  {st.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div style={{ position: 'relative', minWidth: 260, flex: '1 1 260px', maxWidth: 380 }}>
@@ -913,7 +983,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         {filteredSteps.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
             <p style={{ fontSize: '1.1rem', marginBottom: 12 }}>No se encontraron módulos con los filtros seleccionados.</p>
-            <button className="btn btn-outline btn-sm" onClick={() => { setSelectedTheme('all'); setSelectedLevel('all'); setSearchQuery(''); }}>
+            <button className="btn btn-outline btn-sm" onClick={() => { setSelectedTheme('all'); setSelectedLevel('all'); setSelectedStatus('all'); setSearchQuery(''); }}>
               Restablecer filtros
             </button>
           </div>
