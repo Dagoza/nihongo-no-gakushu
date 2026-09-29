@@ -316,6 +316,11 @@
         "word": "入る",
         "reading": "はいる",
         "meaning": "entrar"
+      },
+      {
+        "word": "入口",
+        "reading": "いりぐち",
+        "meaning": "Entrada"
       }
     ],
     "source": "Kanji Book"
@@ -335,6 +340,11 @@
         "word": "出る",
         "reading": "でる",
         "meaning": "salir"
+      },
+      {
+        "word": "出口",
+        "reading": "でぐち",
+        "meaning": "Salida"
       }
     ],
     "source": "Kanji Book"
@@ -1344,6 +1354,11 @@
         "word": "面白い",
         "reading": "おもしろい",
         "meaning": "interesante"
+      },
+      {
+        "word": "白",
+        "reading": "しろ",
+        "meaning": "blanco"
       }
     ],
     "source": "Kanji Book"
@@ -1554,6 +1569,11 @@
         "word": "百円",
         "reading": "ひゃくえん",
         "meaning": "one hundred Yen"
+      },
+      {
+        "word": "百",
+        "reading": "ひゃく",
+        "meaning": "cien"
       }
     ],
     "source": "Kanji Book"
@@ -1573,6 +1593,11 @@
         "word": "千円",
         "reading": "せんえん",
         "meaning": "one thousand Yen"
+      },
+      {
+        "word": "千",
+        "reading": "せん",
+        "meaning": "mil"
       }
     ],
     "source": "Kanji Book"
@@ -1592,6 +1617,11 @@
         "word": "一万円",
         "reading": "いちまんえん",
         "meaning": "ten thousand Yen"
+      },
+      {
+        "word": "万",
+        "reading": "まん",
+        "meaning": "diez mil"
       }
     ],
     "source": "Kanji Book"
@@ -1966,6 +1996,11 @@
         "word": "ぎん行",
         "reading": "ぎんこう",
         "meaning": "bank"
+      },
+      {
+        "word": "旅行",
+        "reading": "りょこう",
+        "meaning": "Viaje / Viajar"
       }
     ],
     "source": "Kanji Book"
@@ -1985,6 +2020,11 @@
         "word": "休み",
         "reading": "やすみ",
         "meaning": "day off, vacation"
+      },
+      {
+        "word": "昼休み",
+        "reading": "ひるやすみ",
+        "meaning": "Descanso de mediodía / Pausa de almuerzo"
       }
     ],
     "source": "Kanji Book"
@@ -2102,7 +2142,13 @@
     "onyomi": "TEN [てん]",
     "kunyomi": "mise [みせ]",
     "mnemonic": "Un puesto bajo un cobertizo (广) donde se expende mercancía y se atiende (占) al cliente.",
-    "words": [],
+    "words": [
+      {
+        "word": "店",
+        "reading": "みせ",
+        "meaning": "tienda"
+      }
+    ],
     "source": "Kanji to Print"
   },
   {
@@ -2897,5 +2943,671 @@
       }
     ],
     "source": "Kanji Book"
+  },
+  {
+    "kanji": "私",
+    "level": "N5",
+    "meaning_es": "yo / privado",
+    "meaning_en": "I / private / self",
+    "pronunciation": "わたし, わたくし, し",
+    "strokes": 7,
+    "onyomi": "SHI [し]",
+    "kunyomi": "watashi, watakushi [わたし, わたくし]",
+    "mnemonic": "Un grano de trigo (禾) al lado de un signo personal (厶) representa lo propio, la propia cosecha o uno mismo.",
+    "words": [
+      {
+        "word": "私",
+        "reading": "わたし",
+        "meaning": "yo"
+      },
+      {
+        "word": "私たち",
+        "reading": "わたしたち",
+        "meaning": "nosotros"
+      },
+      {
+        "word": "私立",
+        "reading": "しりつ",
+        "meaning": "privado (colegio/universidad)"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "肉",
+    "level": "N5",
+    "meaning_es": "carne",
+    "meaning_en": "meat",
+    "pronunciation": "にく",
+    "strokes": 6,
+    "onyomi": "NIKU [にく]",
+    "kunyomi": "shishi [しし]",
+    "mnemonic": "Muestra un corte de costillar con las vetas y fibras musculares de la carne.",
+    "words": [
+      {
+        "word": "肉",
+        "reading": "にく",
+        "meaning": "carne"
+      },
+      {
+        "word": "牛肉",
+        "reading": "ぎゅうにく",
+        "meaning": "carne de vacuno"
+      },
+      {
+        "word": "豚肉",
+        "reading": "ぶたにく",
+        "meaning": "carne de cerdo"
+      },
+      {
+        "word": "鳥肉",
+        "reading": "とりにく",
+        "meaning": "carne de pollo"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "好",
+    "level": "N5",
+    "meaning_es": "gustar / agradable",
+    "meaning_en": "like / fond of / pleasant",
+    "pronunciation": "す, こう, この",
+    "strokes": 6,
+    "onyomi": "KOU [こう]",
+    "kunyomi": "su(ki), kono(mu) [す(き), この(む)]",
+    "mnemonic": "Una mujer (女) abrazando a su hijo pequeño (子), representando el afecto, el agrado y el amor incondicional.",
+    "words": [
+      {
+        "word": "好き",
+        "reading": "すき",
+        "meaning": "gustar / preferido"
+      },
+      {
+        "word": "大好き",
+        "reading": "だいすき",
+        "meaning": "encantar / gustar mucho"
+      },
+      {
+        "word": "好物",
+        "reading": "こうぶつ",
+        "meaning": "plato favorito"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "家",
+    "level": "N5",
+    "meaning_es": "casa / hogar / familia",
+    "meaning_en": "house / home / family",
+    "pronunciation": "いえ, や, か, け",
+    "strokes": 10,
+    "onyomi": "KA, KE [か, け]",
+    "kunyomi": "ie, ya [いえ, や]",
+    "mnemonic": "Bajo el techo de una vivienda (宀) se resguarda el cerdo doméstico (豕), símbolo tradicional de sustento del hogar.",
+    "words": [
+      {
+        "word": "家",
+        "reading": "いえ",
+        "meaning": "casa / hogar"
+      },
+      {
+        "word": "家族",
+        "reading": "かぞく",
+        "meaning": "familia"
+      },
+      {
+        "word": "家賃",
+        "reading": "やちん",
+        "meaning": "alquiler de vivienda"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "広",
+    "level": "N5",
+    "meaning_es": "amplio / espacioso",
+    "meaning_en": "spacious / wide",
+    "pronunciation": "ひろ, こう",
+    "strokes": 5,
+    "onyomi": "KOU [こう]",
+    "kunyomi": "hiro(i) [ひろ(い)]",
+    "mnemonic": "Un edificio sobre una ladera (广) con espacio despejado (厶) en su interior.",
+    "words": [
+      {
+        "word": "広い",
+        "reading": "ひろい",
+        "meaning": "amplio / espacioso"
+      },
+      {
+        "word": "広場",
+        "reading": "ひろば",
+        "meaning": "plaza pública"
+      },
+      {
+        "word": "広島",
+        "reading": "ひろしま",
+        "meaning": "Hiroshima"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "朝",
+    "level": "N5",
+    "meaning_es": "mañana / alba",
+    "meaning_en": "morning",
+    "pronunciation": "あさ, ちょう",
+    "strokes": 12,
+    "onyomi": "CHOU [ちょう]",
+    "kunyomi": "asa [あさ]",
+    "mnemonic": "El sol que se alza entre la hierba alta por la mañana mientras la luna (月) aún se desvanece.",
+    "words": [
+      {
+        "word": "朝",
+        "reading": "あさ",
+        "meaning": "mañana / alba"
+      },
+      {
+        "word": "朝ご飯",
+        "reading": "あさごはん",
+        "meaning": "desayuno"
+      },
+      {
+        "word": "今朝",
+        "reading": "けさ",
+        "meaning": "esta mañana"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "昼",
+    "level": "N5",
+    "meaning_es": "mediodía / día",
+    "meaning_en": "noon / daytime",
+    "pronunciation": "ひる, ちゅう",
+    "strokes": 9,
+    "onyomi": "CHUU [ちゅう]",
+    "kunyomi": "hiru [ひる]",
+    "mnemonic": "La luz solar (日) marcando las horas más brillantes del día bajo el cielo.",
+    "words": [
+      {
+        "word": "昼",
+        "reading": "ひる",
+        "meaning": "mediodía"
+      },
+      {
+        "word": "昼休み",
+        "reading": "ひるやすみ",
+        "meaning": "descanso de mediodía"
+      },
+      {
+        "word": "昼ご飯",
+        "reading": "ひるごはん",
+        "meaning": "almuerzo"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "夜",
+    "level": "N5",
+    "meaning_es": "noche",
+    "meaning_en": "night / evening",
+    "pronunciation": "よる, よ, や",
+    "strokes": 8,
+    "onyomi": "YA [や]",
+    "kunyomi": "yoru, yo [よる, よ]",
+    "mnemonic": "Una persona descansando bajo el dosel de la noche con la luna oculta.",
+    "words": [
+      {
+        "word": "夜",
+        "reading": "よる",
+        "meaning": "noche"
+      },
+      {
+        "word": "今夜",
+        "reading": "こんや",
+        "meaning": "esta noche"
+      },
+      {
+        "word": "夜中",
+        "reading": "よなか",
+        "meaning": "medianoche"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "枚",
+    "level": "N5",
+    "meaning_es": "contador de hojas o cosas planas",
+    "meaning_en": "counter for flat objects/sheets",
+    "pronunciation": "まい",
+    "strokes": 8,
+    "onyomi": "MAI [まい]",
+    "kunyomi": "",
+    "mnemonic": "Un árbol (木) del que se extraen finas tablas o láminas de madera para escribir (攵).",
+    "words": [
+      {
+        "word": "一枚",
+        "reading": "いちまい",
+        "meaning": "una hoja / una lámina"
+      },
+      {
+        "word": "何枚",
+        "reading": "なんまい",
+        "meaning": "¿cuántas hojas?"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "乗",
+    "level": "N5",
+    "meaning_es": "subir a vehículo / montar",
+    "meaning_en": "ride / get on",
+    "pronunciation": "の, じょう",
+    "strokes": 9,
+    "onyomi": "JOU [じょう]",
+    "kunyomi": "no(ru) [の(る)]",
+    "mnemonic": "Una persona sentada en lo alto de un árbol o carruaje para desplazarse.",
+    "words": [
+      {
+        "word": "乗る",
+        "reading": "のる",
+        "meaning": "subir a un vehículo"
+      },
+      {
+        "word": "乗り場",
+        "reading": "のりば",
+        "meaning": "andén / parada de transporte"
+      },
+      {
+        "word": "乗客",
+        "reading": "じょうきゃく",
+        "meaning": "pasajero"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "低",
+    "level": "N5",
+    "meaning_es": "bajo (altura / nivel)",
+    "meaning_en": "low",
+    "pronunciation": "ひく, てい",
+    "strokes": 7,
+    "onyomi": "TEI [てい]",
+    "kunyomi": "hiku(i) [ひく(い)]",
+    "mnemonic": "Una persona (亻) que se inclina hacia el suelo para tocar la base (氐).",
+    "words": [
+      {
+        "word": "低い",
+        "reading": "ひくい",
+        "meaning": "bajo de estatura o altura"
+      },
+      {
+        "word": "最低",
+        "reading": "さいてい",
+        "meaning": "lo más bajo / pésimo"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "横",
+    "level": "N5",
+    "meaning_es": "lado / costado / horizontal",
+    "meaning_en": "side / horizontal / beside",
+    "pronunciation": "よこ, おう",
+    "strokes": 15,
+    "onyomi": "OU [おう]",
+    "kunyomi": "yoko [よこ]",
+    "mnemonic": "Madera (木) colocada horizontalmente o a lo ancho con color amarillo brillante (黄).",
+    "words": [
+      {
+        "word": "横",
+        "reading": "よこ",
+        "meaning": "lado / costado"
+      },
+      {
+        "word": "横浜",
+        "reading": "よこはま",
+        "meaning": "Yokohama"
+      },
+      {
+        "word": "横断歩道",
+        "reading": "おうだんほどう",
+        "meaning": "paso de peatones"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "口",
+    "level": "N5",
+    "meaning_es": "boca / abertura / entrada",
+    "meaning_en": "mouth / entrance",
+    "pronunciation": "くち, ぐち, こう",
+    "strokes": 3,
+    "onyomi": "KOU, KU [こう, く]",
+    "kunyomi": "kuchi, guchi [くち, ぐち]",
+    "mnemonic": "Dibujo pictográfico de una boca abierta o una abertura de entrada.",
+    "words": [
+      {
+        "word": "口",
+        "reading": "くち",
+        "meaning": "boca"
+      },
+      {
+        "word": "入口",
+        "reading": "いりぐち",
+        "meaning": "entrada"
+      },
+      {
+        "word": "出口",
+        "reading": "でぐち",
+        "meaning": "salida"
+      },
+      {
+        "word": "改札口",
+        "reading": "かいさつぐち",
+        "meaning": "torno de billetes / barrera"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "押",
+    "level": "N5",
+    "meaning_es": "empujar / presionar",
+    "meaning_en": "push / press",
+    "pronunciation": "お, おう",
+    "strokes": 8,
+    "onyomi": "OU [おう]",
+    "kunyomi": "o(su) [お(す)]",
+    "mnemonic": "Una mano (扌) empujando con fuerza hacia adelante (甲).",
+    "words": [
+      {
+        "word": "押す",
+        "reading": "おす",
+        "meaning": "empujar / pulsar botón"
+      },
+      {
+        "word": "押入れ",
+        "reading": "おしいれ",
+        "meaning": "armario empotrado tradicional"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "引",
+    "level": "N5",
+    "meaning_es": "tirar / jalar / descontar",
+    "meaning_en": "pull / draw / subtract",
+    "pronunciation": "ひ, いん",
+    "strokes": 4,
+    "onyomi": "IN [いん]",
+    "kunyomi": "hi(ku) [ひ(く)]",
+    "mnemonic": "Tensar la cuerda de un arco (弓) jalándola hacia atrás con una línea (丨).",
+    "words": [
+      {
+        "word": "引く",
+        "reading": "ひく",
+        "meaning": "tirar / jalar"
+      },
+      {
+        "word": "引き出し",
+        "reading": "ひきだし",
+        "meaning": "cajón"
+      },
+      {
+        "word": "割引",
+        "reading": "わりびき",
+        "meaning": "descuento comercial"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "映",
+    "level": "N5",
+    "meaning_es": "reflejar / proyectar",
+    "meaning_en": "reflect / project",
+    "pronunciation": "うつ, えい",
+    "strokes": 9,
+    "onyomi": "EI [えい]",
+    "kunyomi": "utsu(ru) [うつ(る)]",
+    "mnemonic": "La luz solar (日) proyectando el reflejo central (央) sobre una superficie.",
+    "words": [
+      {
+        "word": "映画",
+        "reading": "えいが",
+        "meaning": "película / cine"
+      },
+      {
+        "word": "映る",
+        "reading": "うつる",
+        "meaning": "reflejarse"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "画",
+    "level": "N5",
+    "meaning_es": "dibujo / imagen / pintura",
+    "meaning_en": "picture / painting / stroke",
+    "pronunciation": "が, かく",
+    "strokes": 8,
+    "onyomi": "GA, KAKU [が, かく]",
+    "kunyomi": "ega(ku) [えが(く)]",
+    "mnemonic": "Un pincel delimitando con trazos el perímetro de los campos de cultivo.",
+    "words": [
+      {
+        "word": "映画",
+        "reading": "えいが",
+        "meaning": "película / cine"
+      },
+      {
+        "word": "計画",
+        "reading": "けいかく",
+        "meaning": "plan / proyecto"
+      },
+      {
+        "word": "画面",
+        "reading": "がめん",
+        "meaning": "pantalla"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "勉",
+    "level": "N5",
+    "meaning_es": "esforzarse / empeñarse",
+    "meaning_en": "endeavor / exert",
+    "pronunciation": "べん",
+    "strokes": 10,
+    "onyomi": "BEN [べん]",
+    "kunyomi": "tsuto(meru) [つと(める)]",
+    "mnemonic": "Aplicar la propia fuerza (力) para superar un desafío intelectual o físico.",
+    "words": [
+      {
+        "word": "勉強",
+        "reading": "べんきょう",
+        "meaning": "estudio"
+      },
+      {
+        "word": "勉強する",
+        "reading": "べんきょうする",
+        "meaning": "estudiar"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "強",
+    "level": "N5",
+    "meaning_es": "fuerte / potente",
+    "meaning_en": "strong / powerful",
+    "pronunciation": "つよ, きょう, ごう",
+    "strokes": 11,
+    "onyomi": "KYOU, GOU [きょう, ごう]",
+    "kunyomi": "tsuyo(i) [つよ(い)]",
+    "mnemonic": "Un arco elástico (弓) que impulsa con fuerza a un insecto acorazado (虫).",
+    "words": [
+      {
+        "word": "強い",
+        "reading": "つよい",
+        "meaning": "fuerte"
+      },
+      {
+        "word": "勉強",
+        "reading": "べんきょう",
+        "meaning": "estudio"
+      },
+      {
+        "word": "勉強する",
+        "reading": "べんきょうする",
+        "meaning": "estudiar"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "温",
+    "level": "N5",
+    "meaning_es": "cálido / tibio / templado",
+    "meaning_en": "warm / temperate",
+    "pronunciation": "あたた, おん",
+    "strokes": 12,
+    "onyomi": "ON [おん]",
+    "kunyomi": "atata(kai) [あたた(かい)]",
+    "mnemonic": "Agua (氵) tibia contenida en un cuenco o recipiente para templarse bajo el sol.",
+    "words": [
+      {
+        "word": "温泉",
+        "reading": "おんせん",
+        "meaning": "aguas termales / onsen"
+      },
+      {
+        "word": "温かい",
+        "reading": "あたたかい",
+        "meaning": "cálido (al tacto o bebida)"
+      },
+      {
+        "word": "温度",
+        "reading": "おんど",
+        "meaning": "temperatura"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "泉",
+    "level": "N5",
+    "meaning_es": "manantial / fuente natural",
+    "meaning_en": "spring / fountain",
+    "pronunciation": "いずみ, せん",
+    "strokes": 9,
+    "onyomi": "SEN [せん]",
+    "kunyomi": "izumi [いずみ]",
+    "mnemonic": "Agua pura y transparente (白) brotando directamente de una corriente fluvial (水).",
+    "words": [
+      {
+        "word": "温泉",
+        "reading": "おんせん",
+        "meaning": "aguas termales / onsen"
+      },
+      {
+        "word": "泉",
+        "reading": "いずみ",
+        "meaning": "manantial natural"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "予",
+    "level": "N5",
+    "meaning_es": "previo / con antelación",
+    "meaning_en": "beforehand / previous",
+    "pronunciation": "よ",
+    "strokes": 4,
+    "onyomi": "YO [よ]",
+    "kunyomi": "arakaji(me) [あらかじ(め)]",
+    "mnemonic": "Preparar con anticipación una lanzadera de tejer antes de iniciar la labor.",
+    "words": [
+      {
+        "word": "予定",
+        "reading": "よてい",
+        "meaning": "plan / programa"
+      },
+      {
+        "word": "予約",
+        "reading": "よやく",
+        "meaning": "reserva"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "定",
+    "level": "N5",
+    "meaning_es": "determinar / fijar / estable",
+    "meaning_en": "determine / fix / establish",
+    "pronunciation": "さだ, てい, じょう",
+    "strokes": 8,
+    "onyomi": "TEI, JOU [てい, じょう]",
+    "kunyomi": "sada(meru) [さだ(める)]",
+    "mnemonic": "Bajo un techo seguro (宀), una persona apoya el pie firmemente en el suelo (疋).",
+    "words": [
+      {
+        "word": "予定",
+        "reading": "よてい",
+        "meaning": "plan / programa previsto"
+      },
+      {
+        "word": "定休日",
+        "reading": "ていきゅうび",
+        "meaning": "día de cierre regular"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "旅",
+    "level": "N5",
+    "meaning_es": "viaje / viajar",
+    "meaning_en": "trip / travel",
+    "pronunciation": "たび, りょ",
+    "strokes": 10,
+    "onyomi": "RYO [りょ]",
+    "kunyomi": "tabi [たび]",
+    "mnemonic": "Personas congregadas bajo un estandarte o bandera (方) para emprender una expedición o viaje.",
+    "words": [
+      {
+        "word": "旅行",
+        "reading": "りょこう",
+        "meaning": "viaje / viajar"
+      },
+      {
+        "word": "旅",
+        "reading": "たび",
+        "meaning": "viaje / periplo"
+      },
+      {
+        "word": "旅館",
+        "reading": "りょかん",
+        "meaning": "posada tradicional japonesa"
+      }
+    ],
+    "source": "Irodori Elementary / JLPT N5"
   }
 ]

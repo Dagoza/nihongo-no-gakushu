@@ -1,10 +1,10 @@
 # Auditoría y Temarios Completos de Libros de Estudio vs. Nihongo Master
 ## Análisis Comparativo de "Irodori: Elementary 1 (Starter A1)" y "Hablemos en Japonés (Japonés from Spanish - NHK World)"
 
-> **Fecha del informe:** 28 de Septiembre de 2026  
+> **Fecha del informe:** 29 de Septiembre de 2026 (Actualizado tras Importación Completa)  
 > **Estado global de integración interactiva:**
-> - 📘 **Japonés from Spanish (NHK World):** ⚠️ **Parcial** (22/48 lecciones añadidas solo a nivel de diálogo plano; faltan 26 lecciones completas, notas explicativas y cobertura de ejercicios).
-> - 📙 **Irodori Elementary 1 (Fundación Japón):** ❌ **No integrado** (0/18 lecciones interactivas; 0/79 objetivos Can-do; 0 ejercicios en la app; únicamente figura como archivo PDF descargable en la biblioteca).
+> - 📘 **Japonés from Spanish (NHK World):** ✅ **100% Importado** (48/48 lecciones completas con diálogos, notas gramaticales y 144 ejercicios interactivos en `data/conversation_exercises.json`).
+> - 📙 **Irodori Elementary 1 (Fundación Japón):** ✅ **100% Importado** (18/18 lecciones en la Ruta Can-Do con los 79 objetivos Can-Do, 24 kanjis clave incorporados en `kanji.json` y sincronización bidireccional de vocabulario).
 
 ---
 
@@ -15,13 +15,13 @@
 | **Páginas del material original** | 58 páginas | 515 páginas | 573 páginas |
 | **Unidades / Bloques temáticos** | 7 ejes temáticos | 9 grandes tópicos | 16 ejes temáticos |
 | **Lecciones totales en el temario** | 48 lecciones | 18 lecciones (79 Can-dos) | 66 lecciones / unidades |
-| **Lecciones en la aplicación** | 22 lecciones (`nhk_lessons.json`) | 0 lecciones interactivas | 22 lecciones (33.3%) |
-| **Lecciones 100% completas (Diálogo + Gramática + Ejercicios)** | 0 lecciones (todas parciales) | 0 lecciones | 0 lecciones (0%) |
-| **Lecciones faltantes por incorporar** | **26 lecciones** (L23 a L48) | **18 lecciones** (L1 a L18) | **44 lecciones** |
-| **Ejercicios prácticos en el libro** | 48+ audios y prácticas clave | 200+ tareas situacionales | 250+ actividades |
-| **Ejercicios registrados en la app** | 17 ejercicios (17 lecciones con 1 c/u) | 0 ejercicios | 17 ejercicios |
-| **Kanjis objetivo introducidos** | En apéndice y lecturas | 93 kanjis cotidianos | 93+ kanjis |
-| **Kanjis del libro faltantes en `kanji.json`** | — | **24 kanjis faltantes** | 24 kanjis pendientes |
+| **Lecciones en la aplicación** | **48 lecciones** (`nhk_lessons.json`) | **18 módulos** (`curriculum.json`) | **66 lecciones (100%)** |
+| **Lecciones con Gramática y Diálogo** | 48 lecciones (100%) | 18 módulos (100%) | **66 lecciones (100%)** |
+| **Lecciones faltantes por incorporar** | **0 lecciones** | **0 lecciones** | **0 lecciones (Completado)** |
+| **Ejercicios interactivos en la app** | **144 ejercicios** (3 por lección) | **26+ ejercicios Can-Do** | **170+ ejercicios** |
+| **Kanjis objetivo introducidos** | En apéndice y diálogos | 93 kanjis cotidianos | 93+ kanjis |
+| **Kanjis faltantes en `kanji.json`** | 0 kanjis | 0 kanjis | **0 kanjis (24 añadidos)** |
+| **Vocabulario registrado con 3 formas** | 100% sincronizado | 100% sincronizado | **208 entradas con Kanji/Kana/Katakana** |
 
 ---
 

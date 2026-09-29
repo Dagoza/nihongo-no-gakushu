@@ -17,7 +17,10 @@ import {
   Check,
   X,
   Layers,
-  GraduationCap
+  GraduationCap,
+  Search,
+  Filter,
+  Target
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 
@@ -26,6 +29,11 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   
   // State for active module detailed view
   const [selectedStepNum, setSelectedStepNum] = useState(initialStep);
+  
+  // Track and Level filter state
+  const [selectedTrack, setSelectedTrack] = useState('all'); // 'all' | 'irodori' | 'nhk' | 'jlpt'
+  const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'A1' | 'N5' | 'N4'
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Quiz interaction state for module view
   const [quizAnswers, setQuizAnswers] = useState({}); // { [exerciseId]: selectedOption }
@@ -38,6 +46,26 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   }, [initialStep]);
 
   const selectedStep = steps.find(s => s.step === selectedStepNum) || null;
+
+  // Filtered steps
+  const filteredSteps = steps.filter(step => {
+    if (selectedTrack !== 'all' && step.track !== selectedTrack) return false;
+    if (selectedLevel !== 'all' && step.level !== selectedLevel) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchTitle = (step.title || '').toLowerCase().includes(q);
+      const matchSubtitle = (step.subtitle || '').toLowerCase().includes(q);
+      const matchGuide = (step.detailed_guide || '').toLowerCase().includes(q);
+      const matchModule = (step.module || '').toLowerCase().includes(q);
+      const matchVocab = (step.included_vocab || []).some(v => v.toLowerCase().includes(q));
+      if (!matchTitle && !matchSubtitle && !matchGuide && !matchModule && !matchVocab) return false;
+    }
+    return true;
+  });
+
+  const irodoriCount = steps.filter(s => s.track === 'irodori').length;
+  const nhkCount = steps.filter(s => s.track === 'nhk').length;
+  const jlptCount = steps.filter(s => s.track === 'jlpt').length;
 
   const handleOpenModule = (stepNum) => {
     setSelectedStepNum(stepNum);
@@ -223,6 +251,33 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             </div>
           </div>
         </div>
+
+        {/* Can-Do Objectives for Irodori */}
+        {selectedStep.can_dos && selectedStep.can_dos.length > 0 && (
+          <div className="card" style={{ marginBottom: 24, borderLeft: '4px solid #ec4899' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>🎯</span>
+              <span>Competencias Can-Do (Fundación Japón / MCER A1)</span>
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+              {selectedStep.can_dos.map((cd, idx) => (
+                <div key={idx} style={{ background: 'var(--bg-surface)', padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, background: '#ec4899', color: '#fff', padding: '2px 6px', borderRadius: 4 }}>
+                      {cd.id}
+                    </span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>{cd.task}</span>
+                  </div>
+                  {cd.sample && (
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      💬 Expresión: <span className="jp-text" style={{ fontWeight: 600, color: 'var(--primary)' }}>{cd.sample}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Integrated Vocabulary Section */}
         {selectedStep.vocab_details && selectedStep.vocab_details.length > 0 && (
@@ -517,31 +572,132 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     <div>
       <div className="section-header">
         <h2 className="section-title">
-          <span>🗺️</span> Ruta de Aprendizaje Incremental
+          <span>🗺️</span> Rutas y Módulos de Aprendizaje
         </h2>
         <p className="section-desc">
-          Plan de estudio progresivo estructurado paso a paso con datos extraídos de tus PDFs oficiales. Cada módulo cuenta con explicaciones detalladas, vocabulario con audio nativo, ejemplos en contexto y ejercicios interactivos para evaluar tu avance.
+          Temario integral organizado por <strong>Rutas oficiales</strong> extraídas de tus libros: <strong>Irodori A1 (Fundación Japón)</strong> con sus 79 competencias Can-Do para la vida diaria y laboral, los <strong>7 Bloques de Conversación NHK</strong> (48 lecciones) y los <strong>Niveles Progresivos JLPT</strong>.
         </p>
       </div>
 
+      {/* Track & Level Filter Controls */}
+      <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {/* Track Pills */}
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            className={`btn btn-sm ${selectedTrack === 'all' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTrack('all')}
+            style={{ fontWeight: 600, padding: '7px 14px' }}
+          >
+            🌐 Todas las Rutas ({steps.length})
+          </button>
+          <button
+            className={`btn btn-sm ${selectedTrack === 'irodori' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTrack('irodori')}
+            style={{ fontWeight: 600, padding: '7px 14px' }}
+          >
+            🌸 Ruta Irodori Can-Do A1 ({irodoriCount})
+          </button>
+          <button
+            className={`btn btn-sm ${selectedTrack === 'nhk' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTrack('nhk')}
+            style={{ fontWeight: 600, padding: '7px 14px' }}
+          >
+            📻 Ruta Conversación NHK ({nhkCount})
+          </button>
+          <button
+            className={`btn btn-sm ${selectedTrack === 'jlpt' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedTrack('jlpt')}
+            style={{ fontWeight: 600, padding: '7px 14px' }}
+          >
+            ⛩️ Ruta JLPT Progresiva ({jlptCount})
+          </button>
+        </div>
+
+        {/* Secondary filters: Level and Search */}
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel:</span>
+            {['all', 'A1', 'N5', 'N4'].map(lvl => (
+              <button
+                key={lvl}
+                className={`btn btn-sm ${selectedLevel === lvl ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setSelectedLevel(lvl)}
+                style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+              >
+                {lvl === 'all' ? 'Todos' : lvl}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ position: 'relative', minWidth: 260 }}>
+            <Search size={16} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              className="input input-sm"
+              placeholder="Buscar tema, kanji o vocabulario..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ paddingLeft: 34, width: '100%' }}
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="curriculum-list">
-        {steps.map((step) => {
-          const isDone = userState?.completedSteps?.[step.step];
+        {filteredSteps.length === 0 ? (
+          <div className="card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: '1.1rem', marginBottom: 12 }}>No se encontraron módulos con los filtros seleccionados.</p>
+            <button className="btn btn-outline btn-sm" onClick={() => { setSelectedTrack('all'); setSelectedLevel('all'); setSearchQuery(''); }}>
+              Restablecer filtros
+            </button>
+          </div>
+        ) : (
+          filteredSteps.map((step) => {
+            const isDone = userState?.completedSteps?.[step.step];
 
-          return (
-            <div key={step.step} className={`curriculum-step-card ${isDone ? 'completed' : ''}`}>
-              <div className="step-number-badge">
-                <span>{step.icon}</span>
-                <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>L{step.step}</span>
-              </div>
+            return (
+              <div key={step.step} className={`curriculum-step-card ${isDone ? 'completed' : ''}`}>
+                <div className="step-number-badge">
+                  <span>{step.icon}</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
+                    {step.step >= 200 ? `NHK-${step.step - 200}` : step.step >= 100 ? `Iro-${step.step - 100}` : `L${step.step}`}
+                  </span>
+                </div>
 
-              <div className="step-content">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
-                  <div>
-                    <span className="step-target-tag">{step.stage}</span>
-                    <h3 className="step-title">{step.title}</h3>
-                    <p className="step-subtitle">{step.subtitle}</p>
-                  </div>
+                <div className="step-content">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+                    <div>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6, alignItems: 'center' }}>
+                        {step.track_label && (
+                          <span style={{ 
+                            fontSize: '0.72rem', 
+                            fontWeight: 700, 
+                            padding: '2px 8px', 
+                            borderRadius: 4, 
+                            background: step.track === 'irodori' ? 'rgba(236, 72, 153, 0.15)' : step.track === 'nhk' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(99, 102, 241, 0.15)', 
+                            color: step.track === 'irodori' ? '#db2777' : step.track === 'nhk' ? '#2563eb' : '#4f46e5' 
+                          }}>
+                            {step.track_label}
+                          </span>
+                        )}
+                        {step.module && (
+                          <span style={{ fontSize: '0.72rem', fontWeight: 600, padding: '2px 8px', borderRadius: 4, background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                            {step.module}
+                          </span>
+                        )}
+                        <span className="step-target-tag">{step.stage}</span>
+                      </div>
+                      <h3 className="step-title">{step.title}</h3>
+                      <p className="step-subtitle">{step.subtitle}</p>
+                    </div>
 
                   <div>
                     {/* Primary action: Open deep module view */}
@@ -590,7 +746,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   );

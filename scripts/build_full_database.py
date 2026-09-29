@@ -930,6 +930,15 @@ def extract_nhk_lessons():
         }
     ]
 
+    nhk_path = os.path.join(DATA_DIR, "nhk_lessons.json")
+    if os.path.exists(nhk_path):
+        with open(nhk_path, "r", encoding="utf-8") as f:
+            existing = json.load(f)
+            if len(existing) >= 48:
+                print(f"Loaded all {len(existing)} NHK Spanish course lessons from json")
+                save_json("nhk_lessons", existing)
+                return existing
+
     print(f"Compiled {len(key_lessons)} NHK Spanish course lessons")
     save_json("nhk_lessons", key_lessons)
     return key_lessons

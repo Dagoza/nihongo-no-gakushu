@@ -1,6 +1,6 @@
 [
   {
-    "id": "conv_ex_1",
+    "id": "conv_ex_1_1",
     "lesson": 1,
     "type": "reply",
     "type_label": "¿Qué responder?",
@@ -16,60 +16,1116 @@
     "explanation": "「こちらこそ」 significa 'El gusto es mío / Igualmente', la fórmula estándar y educada ante una presentación personal."
   },
   {
-    "id": "conv_ex_2",
+    "id": "conv_ex_1_2",
+    "lesson": 1,
+    "type": "missing_word",
+    "type_label": "Completar partícula",
+    "prompt_es": "¿Qué partícula marca el tema en 'Watashi wa Anna desu'?",
+    "context": "私 【 ？ 】 アンナです。",
+    "correct": "は",
+    "options": [
+      "は",
+      "を",
+      "に",
+      "が"
+    ],
+    "explanation": "La partícula は (wa) marca el tema del que se habla."
+  },
+  {
+    "id": "conv_ex_1_3",
+    "lesson": 1,
+    "type": "missing_kanji",
+    "type_label": "Kanji en contexto",
+    "prompt_es": "¿Cómo se escribe en kanji 'Watashi' (Yo)?",
+    "context": "【 ？ 】 はアンナです。",
+    "correct": "私",
+    "options": [
+      "私",
+      "人",
+      "本",
+      "日"
+    ],
+    "explanation": "私 (わたし) es el kanji de 'yo' o 'primera persona'."
+  },
+  {
+    "id": "conv_ex_2_1",
+    "lesson": 2,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 2 (¿Qué es esto?), si Anna dice: 「さくらさん。はい、どうぞ。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: さくらさん。はい、どうぞ。\nTú: 【 ？ 】",
+    "correct": "これは何ですか。",
+    "options": [
+      "これは何ですか。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 2, la respuesta adecuada es: 'これは何ですか。' (¿Qué es esto?)."
+  },
+  {
+    "id": "conv_ex_2_2",
     "lesson": 2,
     "type": "missing_word",
-    "type_label": "¿Qué palabra falta?",
-    "prompt_es": "Sakura señala el recuerdo que Anna sostiene en la mano y pregunta qué es. ¿Qué demostrativo debe utilizar?",
-    "context": "Sakura: 【 ？ 】 は何ですか。\nAnna: それはタイのお土産です。",
-    "correct": "これ",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'これは何ですか。'",
+    "context": "これ【 ？ 】何ですか。",
+    "correct": "は",
     "options": [
-      "これ",
-      "それ",
-      "あれ",
-      "どれ"
+      "は",
+      "が",
+      "を",
+      "に"
     ],
-    "explanation": "Sakura pregunta por un objeto cercano al hablante ('esto'), por lo que usa これ. Anna responde con それ ('eso')."
+    "explanation": "Foco de la lección: これ (kore): 'Esto' (cerca del que habla)."
   },
   {
-    "id": "conv_ex_3",
+    "id": "conv_ex_2_3",
+    "lesson": 2,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 2: 「これは何ですか。」?",
+    "context": "Título: これは何ですか。",
+    "correct": "¿Qué es esto?",
+    "options": [
+      "¿Qué es esto?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「これは何ですか。」 se traduce como: '¿Qué es esto?'."
+  },
+  {
+    "id": "conv_ex_3_1",
+    "lesson": 3,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 3 (¿Dónde está el baño?), si Sakura dice: 「ここは教室です。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: ここは教室です。\nTú: 【 ？ 】",
+    "correct": "わあ、広い。",
+    "options": [
+      "わあ、広い。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 3, la respuesta adecuada es: 'わあ、広い。' (¡Guau, qué espaciosa!)."
+  },
+  {
+    "id": "conv_ex_3_2",
+    "lesson": 3,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'わあ、広い。'",
+    "context": "わあ、広い。",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: どこ (doko): Interrogativo para 'dónde'."
+  },
+  {
+    "id": "conv_ex_3_3",
     "lesson": 3,
     "type": "missing_kanji",
-    "type_label": "¿Qué kanji falta?",
-    "prompt_es": "Sakura indica el aula de clases. ¿Cuál es el kanji correcto para 'aula' (きょうしつ)?",
-    "context": "ここは【 ？ 】です。(きょうしつ)",
-    "correct": "教室",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 3: 「トイレはどこですか。」?",
+    "context": "Título: トイレはどこですか。",
+    "correct": "¿Dónde está el baño?",
     "options": [
-      "教室",
-      "教員",
-      "室外",
-      "学校"
+      "¿Dónde está el baño?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
     ],
-    "explanation": "きょうしつ se escribe 教室 (教 enseñar + 室 sala/habitación)."
+    "explanation": "「トイレはどこですか。」 se traduce como: '¿Dónde está el baño?'."
   },
   {
-    "id": "conv_ex_4",
+    "id": "conv_ex_4_1",
     "lesson": 4,
     "type": "reply",
     "type_label": "¿Qué responder?",
-    "prompt_es": "Al llegar a casa o a la residencia dices: 「ただいま！」 (¡Ya llegué!). ¿Cómo responde la encargada?",
-    "context": "Anna: ただいま！\nEncargada: 【 ？ 】",
+    "prompt_es": "En la situación de la Lección 4 (¡Ya llegué!), si Anna dice: 「ただいま。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: ただいま。\nTú: 【 ？ 】",
     "correct": "おかえりなさい。",
     "options": [
       "おかえりなさい。",
-      "いってきます。",
-      "いってらっしゃい。",
-      "おやすみなさい。"
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
     ],
-    "explanation": "Ante 「ただいま」(estoy en casa), el saludo de bienvenida de vuelta es siempre 「おかえりなさい」."
+    "explanation": "En el diálogo de la Lección 4, la respuesta adecuada es: 'おかえりなさい。' (Bienvenida de vuelta.)."
   },
   {
-    "id": "conv_ex_5",
+    "id": "conv_ex_4_2",
+    "lesson": 4,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'おかえりなさい。'",
+    "context": "おかえりなさい。",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: ただいま / おかえりなさい: Saludos tradicionales japoneses al entrar a casa."
+  },
+  {
+    "id": "conv_ex_4_3",
+    "lesson": 4,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 4: 「ただいま。」?",
+    "context": "Título: ただいま。",
+    "correct": "¡Ya llegué!",
+    "options": [
+      "¡Ya llegué!",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「ただいま。」 se traduce como: '¡Ya llegué!'."
+  },
+  {
+    "id": "conv_ex_5_1",
+    "lesson": 5,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 5 (Ese es mi tesoro.), si Anna dice: 「私の部屋はこちらです。どうぞ。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: 私の部屋はこちらです。どうぞ。\nTú: 【 ？ 】",
+    "correct": "すごい！これは全部マンガ？",
+    "options": [
+      "すごい！これは全部マンガ？",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 5, la respuesta adecuada es: 'すごい！これは全部マンガ？' (¡Increíble! ¿Estas son todas manga?)."
+  },
+  {
+    "id": "conv_ex_5_2",
     "lesson": 5,
     "type": "missing_word",
-    "type_label": "¿Qué partícula falta?",
-    "prompt_es": "Anna expresa que lee mangas todos los días. ¿Qué partícula marca el objeto directo 'manga'?",
-    "context": "私は毎日マンガ【 ？ 】読みます。",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'すごい！これは全部マンガ？'",
+    "context": "すごい！これ【 ？ 】全部マンガ？",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: A の B: Posesión o relación de A con B (mi tesoro = 私の宝物)."
+  },
+  {
+    "id": "conv_ex_5_3",
+    "lesson": 5,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 5: 「それは私の宝物です。」?",
+    "context": "Título: それは私の宝物です。",
+    "correct": "Ese es mi tesoro.",
+    "options": [
+      "Ese es mi tesoro.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「それは私の宝物です。」 se traduce como: 'Ese es mi tesoro.'."
+  },
+  {
+    "id": "conv_ex_6_1",
+    "lesson": 6,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 6 (¿Cuál es tu número de teléfono?), si Sakura dice: 「ところでアンナさん。電話番号は何番ですか。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: ところでアンナさん。電話番号は何番ですか。\nTú: 【 ？ 】",
+    "correct": "えーと。080-1234-...です。",
+    "options": [
+      "えーと。080-1234-...です。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 6, la respuesta adecuada es: 'えーと。080-1234-...です。' (Eh... Déjame ver... Es el 080-1234-...)."
+  },
+  {
+    "id": "conv_ex_6_2",
+    "lesson": 6,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'えーと。080-1234-...です。'",
+    "context": "えーと。080-1234-...【 ？ 】す。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: 何番 (nanban): Pregunta por números específicos o posiciones."
+  },
+  {
+    "id": "conv_ex_6_3",
+    "lesson": 6,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 6: 「電話番号は何番ですか。」?",
+    "context": "Título: 電話番号は何番ですか。",
+    "correct": "¿Cuál es tu número de teléfono?",
+    "options": [
+      "¿Cuál es tu número de teléfono?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「電話番号は何番ですか。」 se traduce como: '¿Cuál es tu número de teléfono?'."
+  },
+  {
+    "id": "conv_ex_7_1",
+    "lesson": 7,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 7 (¿Hay bollos de crema?), si Anna dice: 「ケーキがいっぱいありますね。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: ケーキがいっぱいありますね。\nTú: 【 ？ 】",
+    "correct": "すみません、シュークリームはありますか。",
+    "options": [
+      "すみません、シュークリームはありますか。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 7, la respuesta adecuada es: 'すみません、シュークリームはありますか。' (Perdón, ¿hay bollos de crema?)."
+  },
+  {
+    "id": "conv_ex_7_2",
+    "lesson": 7,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'すみません、シュークリームはありますか。'",
+    "context": "すみません、シュークリーム【 ？ 】ありますか。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: ありますか (arimasu ka): Pregunta si hay algo inanimado."
+  },
+  {
+    "id": "conv_ex_7_3",
+    "lesson": 7,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 7: 「シュークリームはありますか。」?",
+    "context": "Título: シュークリームはありますか。",
+    "correct": "¿Hay bollos de crema?",
+    "options": [
+      "¿Hay bollos de crema?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「シュークリームはありますか。」 se traduce como: '¿Hay bollos de crema?'."
+  },
+  {
+    "id": "conv_ex_8_1",
+    "lesson": 8,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 8 (¿Podría repetirlo una vez más?), si Profesor dice: 「皆さん、これを覚えてください。試験によく出ます。」, ¿cuál es la respuesta más natural?",
+    "context": "Profesor: 皆さん、これを覚えてください。試験によく出ます。\nTú: 【 ？ 】",
+    "correct": "えーっ。",
+    "options": [
+      "えーっ。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 8, la respuesta adecuada es: 'えーっ。' (¡Ehh! (expresión de sorpresa/queja))."
+  },
+  {
+    "id": "conv_ex_8_2",
+    "lesson": 8,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'えーっ。'",
+    "context": "えーっ。",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: 〜てください (-te kudasai): Petición educada (覚えてください = por favor memoricen)."
+  },
+  {
+    "id": "conv_ex_8_3",
+    "lesson": 8,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 8: 「もう一度お願いします。」?",
+    "context": "Título: もう一度お願いします。",
+    "correct": "¿Podría repetirlo una vez más?",
+    "options": [
+      "¿Podría repetirlo una vez más?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「もう一度お願いします。」 se traduce como: '¿Podría repetirlo una vez más?'."
+  },
+  {
+    "id": "conv_ex_9_1",
+    "lesson": 9,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 9 (¿Desde qué hora es?), si Profesor dice: 「明日、健康診断があります。」, ¿cuál es la respuesta más natural?",
+    "context": "Profesor: 明日、健康診断があります。\nTú: 【 ？ 】",
+    "correct": "何時からですか。",
+    "options": [
+      "何時からですか。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 9, la respuesta adecuada es: '何時からですか。' (¿Desde qué hora es?)."
+  },
+  {
+    "id": "conv_ex_9_2",
+    "lesson": 9,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '何時からですか。'",
+    "context": "何時から【 ？ 】すか。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: 何時 (nanji): ¿Qué hora?"
+  },
+  {
+    "id": "conv_ex_9_3",
+    "lesson": 9,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 9: 「何時からですか。」?",
+    "context": "Título: 何時からですか。",
+    "correct": "¿Desde qué hora es?",
+    "options": [
+      "¿Desde qué hora es?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「何時からですか。」 se traduce como: '¿Desde qué hora es?'."
+  },
+  {
+    "id": "conv_ex_10_1",
+    "lesson": 10,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 10 (¿Están todos?), si Profesor dice: 「初めに身長と体重を測ります。全員いますか。」, ¿cuál es la respuesta más natural?",
+    "context": "Profesor: 初めに身長と体重を測ります。全員いますか。\nTú: 【 ？ 】",
+    "correct": "アンナさんがいません。",
+    "options": [
+      "アンナさんがいません。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 10, la respuesta adecuada es: 'アンナさんがいません。' (Anna no está.)."
+  },
+  {
+    "id": "conv_ex_10_2",
+    "lesson": 10,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'アンナさんがいません。'",
+    "context": "アンナさん【 ？ 】いません。",
+    "correct": "が",
+    "options": [
+      "が",
+      "は",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: います / いません: Verbo existir para seres animados (personas y animales)."
+  },
+  {
+    "id": "conv_ex_10_3",
+    "lesson": 10,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 10: 「全員いますか。」?",
+    "context": "Título: 全員いますか。",
+    "correct": "¿Están todos?",
+    "options": [
+      "¿Están todos?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「全員いますか。」 se traduce como: '¿Están todos?'."
+  },
+  {
+    "id": "conv_ex_11_1",
+    "lesson": 11,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 11 (Por favor no dejes de venir.), si Anna dice: 「今週の土曜日に寮でパーティーを開きます。さくらさん、ぜひ来てください。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: 今週の土曜日に寮でパーティーを開きます。さくらさん、ぜひ来てください。\nTú: 【 ？ 】",
+    "correct": "わあ、行く行く。今度の土曜日ね。",
+    "options": [
+      "わあ、行く行く。今度の土曜日ね。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 11, la respuesta adecuada es: 'わあ、行く行く。今度の土曜日ね。' (¡Guau, voy seguro! Este sábado, ¿verdad?)."
+  },
+  {
+    "id": "conv_ex_11_2",
+    "lesson": 11,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'わあ、行く行く。今度の土曜日ね。'",
+    "context": "わあ、行く行く。今度の土曜日ね。",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: ぜひ (zehi): Sin falta / por todos los medios (se usa para reforzar una invitación)."
+  },
+  {
+    "id": "conv_ex_11_3",
+    "lesson": 11,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 11: 「ぜひ来てください。」?",
+    "context": "Título: ぜひ来てください。",
+    "correct": "Por favor no dejes de venir.",
+    "options": [
+      "Por favor no dejes de venir.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「ぜひ来てください。」 se traduce como: 'Por favor no dejes de venir.'."
+  },
+  {
+    "id": "conv_ex_12_1",
+    "lesson": 12,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 12 (¿Cuándo viniste a Japón?), si Sakura dice: 「ロドリゴさんはいつ日本に来ましたか。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: ロドリゴさんはいつ日本に来ましたか。\nTú: 【 ？ 】",
+    "correct": "三月に来ました。",
+    "options": [
+      "三月に来ました。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 12, la respuesta adecuada es: '三月に来ました。' (Vine en marzo.)."
+  },
+  {
+    "id": "conv_ex_12_2",
+    "lesson": 12,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '三月に来ました。'",
+    "context": "三月【 ？ 】来ました。",
+    "correct": "に",
+    "options": [
+      "に",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: いつ (itsu): Interrogativo para tiempo o fecha (¿Cuándo?)."
+  },
+  {
+    "id": "conv_ex_12_3",
+    "lesson": 12,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 12: 「いつ日本に来ましたか。」?",
+    "context": "Título: いつ日本に来ましたか。",
+    "correct": "¿Cuándo viniste a Japón?",
+    "options": [
+      "¿Cuándo viniste a Japón?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「いつ日本に来ましたか。」 se traduce como: '¿Cuándo viniste a Japón?'."
+  },
+  {
+    "id": "conv_ex_13_1",
+    "lesson": 13,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 13 (Me gustan las novelas.), si Sakura dice: 「ロドリゴさんの趣味は何ですか。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: ロドリゴさんの趣味は何ですか。\nTú: 【 ？ 】",
+    "correct": "読書です。特に歴史小説が好きです。",
+    "options": [
+      "読書です。特に歴史小説が好きです。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 13, la respuesta adecuada es: '読書です。特に歴史小説が好きです。' (Leer libros. Me gustan especialmente las novelas históricas.)."
+  },
+  {
+    "id": "conv_ex_13_2",
+    "lesson": 13,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '読書です。特に歴史小説が好きです。'",
+    "context": "読書です。特に歴史小説【 ？ 】好きです。",
+    "correct": "が",
+    "options": [
+      "が",
+      "は",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: 趣味 (shumi): Pasatiempo o hobby."
+  },
+  {
+    "id": "conv_ex_13_3",
+    "lesson": 13,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 13: 「小説が好きです。」?",
+    "context": "Título: 小説が好きです。",
+    "correct": "Me gustan las novelas.",
+    "options": [
+      "Me gustan las novelas.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「小説が好きです。」 se traduce como: 'Me gustan las novelas.'."
+  },
+  {
+    "id": "conv_ex_14_1",
+    "lesson": 14,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 14 (¿Puedo tirar la basura aquí?), si Anna dice: 「お母さん、ここにゴミを捨ててもいいですか。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: お母さん、ここにゴミを捨ててもいいですか。\nTú: 【 ？ 】",
+    "correct": "そうねえ。缶は別の袋に入れてください。資源ですから。",
+    "options": [
+      "そうねえ。缶は別の袋に入れてください。資源ですから。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 14, la respuesta adecuada es: 'そうねえ。缶は別の袋に入れてください。資源ですから。' (A ver... Mete las latas en otra bolsa, porque son recursos reciclables.)."
+  },
+  {
+    "id": "conv_ex_14_2",
+    "lesson": 14,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'そうねえ。缶は別の袋に入れてください。資源ですから。'",
+    "context": "そうねえ。缶【 ？ 】別の袋に入れてください。資源ですから。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: 〜てもいいですか (-te mo ii desu ka): ¿Puedo hacer...? Estructura para pedir permiso."
+  },
+  {
+    "id": "conv_ex_14_3",
+    "lesson": 14,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 14: 「ここにゴミを捨ててもいいですか。」?",
+    "context": "Título: ここにゴミを捨ててもいいですか。",
+    "correct": "¿Puedo tirar la basura aquí?",
+    "options": [
+      "¿Puedo tirar la basura aquí?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「ここにゴミを捨ててもいいですか。」 se traduce como: '¿Puedo tirar la basura aquí?'."
+  },
+  {
+    "id": "conv_ex_15_1",
+    "lesson": 15,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 15 (Están durmiendo.), si Sakura dice: 「次は新宿駅です。さあ、降りましょう。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: 次は新宿駅です。さあ、降りましょう。\nTú: 【 ？ 】",
+    "correct": "あれ。あの人たち、寝ています。",
+    "options": [
+      "あれ。あの人たち、寝ています。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 15, la respuesta adecuada es: 'あれ。あの人たち、寝ています。' (Vaya, aquellas personas están durmiendo.)."
+  },
+  {
+    "id": "conv_ex_15_2",
+    "lesson": 15,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'あれ。あの人たち、寝ています。'",
+    "context": "あれ。あの人たち、寝てい【 ？ 】。",
+    "correct": "ます",
+    "options": [
+      "ます",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: 〜ています (-te imasu): Indica una acción continua en progreso (estar haciendo algo)."
+  },
+  {
+    "id": "conv_ex_15_3",
+    "lesson": 15,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 15: 「寝ています。」?",
+    "context": "Título: 寝ています。",
+    "correct": "Están durmiendo.",
+    "options": [
+      "Están durmiendo.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「寝ています。」 se traduce como: 'Están durmiendo.'."
+  },
+  {
+    "id": "conv_ex_16_1",
+    "lesson": 16,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 16 (Suba la escalera y vaya a la derecha.), si Vendedor dice: 「いらっしゃいませ。」, ¿cuál es la respuesta más natural?",
+    "context": "Vendedor: いらっしゃいませ。\nTú: 【 ？ 】",
+    "correct": "あのう、マンガ売り場はどこですか。",
+    "options": [
+      "あのう、マンガ売り場はどこですか。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 16, la respuesta adecuada es: 'あのう、マンガ売り場はどこですか。' (Perdón, ¿dónde está la sección de manga?)."
+  },
+  {
+    "id": "conv_ex_16_2",
+    "lesson": 16,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'あのう、マンガ売り場はどこですか。'",
+    "context": "あのう、マンガ売り場【 ？ 】どこですか。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Forma 〜て para conectar verbos: 上がって (suba y...) 行ってください (vaya por favor)."
+  },
+  {
+    "id": "conv_ex_16_3",
+    "lesson": 16,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 16: 「階段を上がって、右に行ってください。」?",
+    "context": "Título: 階段を上がって、右に行ってください。",
+    "correct": "Suba la escalera y vaya a la derecha.",
+    "options": [
+      "Suba la escalera y vaya a la derecha.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「階段を上がって、右に行ってください。」 se traduce como: 'Suba la escalera y vaya a la derecha.'."
+  },
+  {
+    "id": "conv_ex_17_1",
+    "lesson": 17,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 17 (¿Cuál me recomiendas?), si Anna dice: 「あ、この本いいなあ。あれも面白そう。さくらさんのおすすめは何ですか。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: あ、この本いいなあ。あれも面白そう。さくらさんのおすすめは何ですか。\nTú: 【 ？ 】",
+    "correct": "これはどう？",
+    "options": [
+      "これはどう？",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 17, la respuesta adecuada es: 'これはどう？' (¿Qué tal este?)."
+  },
+  {
+    "id": "conv_ex_17_2",
+    "lesson": 17,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'これはどう？'",
+    "context": "これ【 ？ 】どう？",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: 〜そう (sô): Sufijo de apariencia (面白そう = parece interesante)."
+  },
+  {
+    "id": "conv_ex_17_3",
+    "lesson": 17,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 17: 「おすすめは何ですか。」?",
+    "context": "Título: おすすめは何ですか。",
+    "correct": "¿Cuál me recomiendas?",
+    "options": [
+      "¿Cuál me recomiendas?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「おすすめは何ですか。」 se traduce como: '¿Cuál me recomiendas?'."
+  },
+  {
+    "id": "conv_ex_18_1",
+    "lesson": 18,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 18 (Me he perdido.), si Anna dice: 「もしもし、さくらさん。助けてください。道に迷ってしまいました。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: もしもし、さくらさん。助けてください。道に迷ってしまいました。\nTú: 【 ？ 】",
+    "correct": "今、どこ？",
+    "options": [
+      "今、どこ？",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 18, la respuesta adecuada es: '今、どこ？' (¿Dónde estás ahora?)."
+  },
+  {
+    "id": "conv_ex_18_2",
+    "lesson": 18,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '今、どこ？'",
+    "context": "今、どこ？",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: 〜てしまう / 〜てしまいました: Indica la conclusión involuntaria de una acción con matiz de pesar o error."
+  },
+  {
+    "id": "conv_ex_18_3",
+    "lesson": 18,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 18: 「道に迷ってしまいました。」?",
+    "context": "Título: 道に迷ってしまいました。",
+    "correct": "Me he perdido.",
+    "options": [
+      "Me he perdido.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「道に迷ってしまいました。」 se traduce como: 'Me he perdido.'."
+  },
+  {
+    "id": "conv_ex_19_1",
+    "lesson": 19,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 19 (Menos mal. Me preocupé.), si Rodrigo dice: 「おーい、アンナさん。」, ¿cuál es la respuesta más natural?",
+    "context": "Rodrigo: おーい、アンナさん。\nTú: 【 ？ 】",
+    "correct": "みんな。",
+    "options": [
+      "みんな。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 19, la respuesta adecuada es: 'みんな。' (¡Amigos! (Todos).)."
+  },
+  {
+    "id": "conv_ex_19_2",
+    "lesson": 19,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'みんな。'",
+    "context": "みんな。",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: 〜ので (-node): Expresa razón o causa de manera cortés y natural (porque...)."
+  },
+  {
+    "id": "conv_ex_19_3",
+    "lesson": 19,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 19: 「よかった。心配したよ。」?",
+    "context": "Título: よかった。心配したよ。",
+    "correct": "Menos mal. Me preocupé.",
+    "options": [
+      "Menos mal. Me preocupé.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「よかった。心配したよ。」 se traduce como: 'Menos mal. Me preocupé.'."
+  },
+  {
+    "id": "conv_ex_20_1",
+    "lesson": 20,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 20 (¿Has cantado canciones japonesas alguna vez?), si Rodrigo dice: 「アンナさんは日本の歌を歌ったことがありますか。」, ¿cuál es la respuesta más natural?",
+    "context": "Rodrigo: アンナさんは日本の歌を歌ったことがありますか。\nTú: 【 ？ 】",
+    "correct": "はい、あります。",
+    "options": [
+      "はい、あります。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 20, la respuesta adecuada es: 'はい、あります。' (Sí, alguna vez.)."
+  },
+  {
+    "id": "conv_ex_20_2",
+    "lesson": 20,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'はい、あります。'",
+    "context": "【 ？ 】い、あります。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Verbo en pasado informal (た) + ことがある: Expresa la experiencia de haber hecho algo alguna vez en la vida."
+  },
+  {
+    "id": "conv_ex_20_3",
+    "lesson": 20,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 20: 「日本の歌を歌ったことがありますか。」?",
+    "context": "Título: 日本の歌を歌ったことがありますか。",
+    "correct": "¿Has cantado canciones japonesas alguna vez?",
+    "options": [
+      "¿Has cantado canciones japonesas alguna vez?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「日本の歌を歌ったことがありますか。」 se traduce como: '¿Has cantado canciones japonesas alguna vez?'."
+  },
+  {
+    "id": "conv_ex_21_1",
+    "lesson": 21,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 21 (No, no es para tanto.), si Sakura dice: 「アンナ、上手だね。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: アンナ、上手だね。\nTú: 【 ？ 】",
+    "correct": "いいえ、それほどでも。",
+    "options": [
+      "いいえ、それほどでも。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 21, la respuesta adecuada es: 'いいえ、それほどでも。' (No, no es para tanto (modestia).)."
+  },
+  {
+    "id": "conv_ex_21_2",
+    "lesson": 21,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'いいえ、それほどでも。'",
+    "context": "いいえ、それほど【 ？ 】も。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: それほどでも (sorehodo demo): Expresión típica de modestia ante un cumplido."
+  },
+  {
+    "id": "conv_ex_21_3",
+    "lesson": 21,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 21: 「いいえ、それほどでも。」?",
+    "context": "Título: いいえ、それほどでも。",
+    "correct": "No, no es para tanto.",
+    "options": [
+      "No, no es para tanto.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「いいえ、それほどでも。」 se traduce como: 'No, no es para tanto.'."
+  },
+  {
+    "id": "conv_ex_22_1",
+    "lesson": 22,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 22 (Llegué tarde.), si Anna dice: 「お母さん、ごめんなさい。遅くなりました。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: お母さん、ごめんなさい。遅くなりました。\nTú: 【 ？ 】",
+    "correct": "アンナさん、十分も遅刻です。約束を破ってはいけません。",
+    "options": [
+      "アンナさん、十分も遅刻です。約束を破ってはいけません。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 22, la respuesta adecuada es: 'アンナさん、十分も遅刻です。約束を破ってはいけません。' (Anna, llegas diez minutos tarde. No debes romper las promesas.)."
+  },
+  {
+    "id": "conv_ex_22_2",
+    "lesson": 22,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'アンナさん、十分も遅刻です。約束を破ってはいけません。'",
+    "context": "アンナさん、十分も遅刻です。約束を破って【 ？ 】いけません。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: 〜てはいけません (-te wa ikemasen): Expresa prohibición estricta (no debes / no se puede)."
+  },
+  {
+    "id": "conv_ex_22_3",
+    "lesson": 22,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 22: 「遅くなりました。」?",
+    "context": "Título: 遅くなりました。",
+    "correct": "Llegué tarde.",
+    "options": [
+      "Llegué tarde.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「遅くなりました。」 se traduce como: 'Llegué tarde.'."
+  },
+  {
+    "id": "conv_ex_23_1",
+    "lesson": 23,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 23 (Mi madre me regañó / Me regañó la encargada.), si Sakura dice: 「この間は門限に間に合った？」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: この間は門限に間に合った？\nTú: 【 ？ 】",
+    "correct": "いいえ。間に合いませんでした。それで、お母さんに叱られました。掃除当番が３回増えました。",
+    "options": [
+      "いいえ。間に合いませんでした。それで、お母さんに叱られました。掃除当番が３回増えました。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 23, la respuesta adecuada es: 'いいえ。間に合いませんでした。それで、お母さんに叱られました。掃除当番が３回増えました。' (No. No llegué a tiempo. Por eso me regañó la encargada. Mis turnos de limpieza aumentaron a tres veces más.)."
+  },
+  {
+    "id": "conv_ex_23_2",
+    "lesson": 23,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'いいえ。間に合いませんでした。それで、お母さんに叱られました。掃除当番が３回増えました。'",
+    "context": "いいえ。間に合いませんでした。それで、お母さんに叱られました。掃除当番【 ？ 】３回増えました。",
+    "correct": "が",
+    "options": [
+      "が",
+      "は",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Voz Pasiva (受身形 - Ukemikei): Sujeto + に + Verbo Pasivo. 叱る (regañar) -> 叱られる (ser regañado). お母さんに叱られました significa 'Fui regañada por la encargada'."
+  },
+  {
+    "id": "conv_ex_23_3",
+    "lesson": 23,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 23: 「お母さんに叱られました。」?",
+    "context": "Título: お母さんに叱られました。",
+    "correct": "Mi madre me regañó / Me regañó la encargada.",
+    "options": [
+      "Mi madre me regañó / Me regañó la encargada.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「お母さんに叱られました。」 se traduce como: 'Mi madre me regañó / Me regañó la encargada.'."
+  },
+  {
+    "id": "conv_ex_24_1",
+    "lesson": 24,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 24 (Por favor no los usen.), si Profesor dice: 「はい、今日はここまでです。来週の月曜日に試験をします。」, ¿cuál es la respuesta más natural?",
+    "context": "Profesor: はい、今日はここまでです。来週の月曜日に試験をします。\nTú: 【 ？ 】",
+    "correct": "先生、辞書を使ってもいいですか。",
+    "options": [
+      "先生、辞書を使ってもいいですか。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 24, la respuesta adecuada es: '先生、辞書を使ってもいいですか。' (Profesor, ¿podemos usar diccionarios?)."
+  },
+  {
+    "id": "conv_ex_24_2",
+    "lesson": 24,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '先生、辞書を使ってもいいですか。'",
+    "context": "先生、辞書【 ？ 】使ってもいいですか。",
     "correct": "を",
     "options": [
       "を",
@@ -77,198 +1133,1174 @@
       "が",
       "に"
     ],
-    "explanation": "La partícula を (o) marca el complemento u objeto directo del verbo de acción transitiva (leer manga = マンガを読む)."
+    "explanation": "Foco de la lección: Petición Negativa con 〜ないでください: Se forma agregando でください a la forma -nai del verbo (使う -> 使わない -> 使わないでください)."
   },
   {
-    "id": "conv_ex_6",
-    "lesson": 7,
-    "type": "missing_word",
-    "type_label": "¿Qué palabra falta?",
-    "prompt_es": "En la panadería quieres pedir dos bollos de crema. ¿Qué contador nativo corresponde a 'dos unidades' (ふたつ)?",
-    "context": "シュークリームを【 ？ 】ください。",
-    "correct": "二つ (ふたつ)",
-    "options": [
-      "二つ (ふたつ)",
-      "一つ (ひとつ)",
-      "三つ (みっつ)",
-      "二人 (ふたり)"
-    ],
-    "explanation": "Para pedir dos cosas en comercios se utiliza el contador nativo ふたつ (二つ). 二人 (ふたり) es para dos personas."
-  },
-  {
-    "id": "conv_ex_7",
-    "lesson": 8,
-    "type": "reply",
-    "type_label": "¿Qué responder?",
-    "prompt_es": "El profesor explicó un punto importante pero no lo escuchaste bien. ¿Cómo pides cortésmente que lo repita?",
-    "context": "Profesor: ... (explicó rápido)\nEstudiante: 【 ？ 】",
-    "correct": "先生、もう一度お願いします。",
-    "options": [
-      "先生、もう一度お願いします。",
-      "先生、もういいです。",
-      "先生、早くしてください。",
-      "先生、何もしません。"
-    ],
-    "explanation": "「もう一度お願いします」(mô ichido onegaishimasu) es la fórmula educada universal en japonés para pedir una repetición."
-  },
-  {
-    "id": "conv_ex_8",
-    "lesson": 9,
-    "type": "missing_word",
-    "type_label": "¿Qué palabra/partícula falta?",
-    "prompt_es": "Quieres preguntar el horario de inicio del reconocimiento médico: '¿Desde qué hora es?'.",
-    "context": "健康診断は何時【 ？ 】ですか。",
-    "correct": "から",
-    "options": [
-      "から",
-      "まで",
-      "より",
-      "ほど"
-    ],
-    "explanation": "〜から indica el punto de origen o partida temporal ('desde')."
-  },
-  {
-    "id": "conv_ex_9",
-    "lesson": 10,
-    "type": "missing_word",
-    "type_label": "¿Qué palabra falta?",
-    "prompt_es": "El profesor pasa lista preguntando si están todos los alumnos presentes. ¿Qué palabra significa 'todos los integrantes'?",
-    "context": "初めに身長を測ります。【 ？ 】いますか。",
-    "correct": "全員 (ぜんいん)",
-    "options": [
-      "全員 (ぜんいん)",
-      "全国 (ぜんこく)",
-      "全角 (ぜんかく)",
-      "全然 (ぜんぜん)"
-    ],
-    "explanation": "全員 (ぜんいん) significa todos los miembros del grupo o personas presentes."
-  },
-  {
-    "id": "conv_ex_10",
-    "lesson": 11,
-    "type": "missing_word",
-    "type_label": "¿Qué palabra falta?",
-    "prompt_es": "Anna invita a Sakura a la fiesta y quiere enfatizar 'por favor no dejes de venir / sin falta'. ¿Qué adverbio usa?",
-    "context": "さくらさん、【 ？ 】来てください。",
-    "correct": "ぜひ",
-    "options": [
-      "ぜひ",
-      "たぶん",
-      "ぜんぜん",
-      "あまり"
-    ],
-    "explanation": "ぜひ (zehi) se coloca antes de una petición o invitación para darle un sentido sincero y entusiasta de 'sin falta'."
-  },
-  {
-    "id": "conv_ex_11",
-    "lesson": 13,
-    "type": "reply",
-    "type_label": "¿Qué responder?",
-    "prompt_es": "Sakura te pregunta: 「趣味は何ですか。」 (¿Cuál es tu pasatiempo?). ¿Cómo respondes que te gusta leer novelas?",
-    "context": "Sakura: 趣味は何ですか。\nRodrigo: 【 ？ 】",
-    "correct": "読書です。歴史小説が好きです。",
-    "options": [
-      "読書です。歴史小説が好きです。",
-      "読書です。小説を食べます。",
-      "読書ではありません。小説に行きます。",
-      "小説は高くありません。"
-    ],
-    "explanation": "読書 (dokusho - leer) y [Cosa] が好きです (me gusta...) es la construcción idiomática natural para hablar de aficiones."
-  },
-  {
-    "id": "conv_ex_12",
-    "lesson": 14,
-    "type": "missing_word",
-    "type_label": "¿Qué estructura verbal falta?",
-    "prompt_es": "Pides permiso para tirar la basura en un recipiente: '¿Puedo tirar la basura aquí?'.",
-    "context": "ここにゴミを【 ？ 】いいですか。",
-    "correct": "捨てても",
-    "options": [
-      "捨てても",
-      "捨てないで",
-      "捨てたら",
-      "捨てれば"
-    ],
-    "explanation": "Pedir permiso se formula con el verbo en forma 〜て + もいいですか: 捨ててもいいですか."
-  },
-  {
-    "id": "conv_ex_13",
-    "lesson": 16,
+    "id": "conv_ex_24_3",
+    "lesson": 24,
     "type": "missing_kanji",
-    "type_label": "¿Qué kanji falta?",
-    "prompt_es": "En la tienda te indican: 'Suba la escalera y vaya a la derecha'. ¿Qué kanji corresponde a 'escalera' (かいだん)?",
-    "context": "二階です。【 ？ 】を上がって、右に行ってください。(かいだん)",
-    "correct": "階段",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 24: 「使わないでください。」?",
+    "context": "Título: 使わないでください。",
+    "correct": "Por favor no los usen.",
     "options": [
-      "階段",
-      "教室",
-      "図書館",
-      "郵便局"
+      "Por favor no los usen.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
     ],
-    "explanation": "かいだん se escribe 階段 (階 piso + 段 escalón)."
+    "explanation": "「使わないでください。」 se traduce como: 'Por favor no los usen.'."
   },
   {
-    "id": "conv_ex_14",
-    "lesson": 18,
-    "type": "missing_kanji",
-    "type_label": "¿Qué kanji falta?",
-    "prompt_es": "Llamas a tu amiga diciendo que te perdiste y ves enfrente una 'oficina de correos' (ゆうびんきょく). ¿Cuál es?",
-    "context": "目の前に【 ？ 】があります。(ゆうびんきょく)",
-    "correct": "郵便局",
-    "options": [
-      "郵便局",
-      "博物館",
-      "美術館",
-      "大使館"
-    ],
-    "explanation": "ゆうびんきょく se escribe 郵便局 (oficina postal / correos)."
-  },
-  {
-    "id": "conv_ex_15",
-    "lesson": 20,
-    "type": "missing_word",
-    "type_label": "¿Qué forma verbal falta?",
-    "prompt_es": "Preguntas a alguien si alguna vez ha cantado canciones japonesas. ¿Cómo se expresa 'has cantado alguna vez'?",
-    "context": "日本の歌を【 ？ 】ことがありますか。",
-    "correct": "歌った",
-    "options": [
-      "歌った",
-      "歌う",
-      "歌って",
-      "歌わない"
-    ],
-    "explanation": "La experiencia pasada se forma con verbo en pasado llano (forma た) + ことがある: 歌ったことがある."
-  },
-  {
-    "id": "conv_ex_16",
-    "lesson": 21,
+    "id": "conv_ex_25_1",
+    "lesson": 25,
     "type": "reply",
     "type_label": "¿Qué responder?",
-    "prompt_es": "Sakura te dice con admiración: 「アンナ、上手だね！」 (¡Anna, qué bien lo haces!). ¿Cuál es la respuesta japonesa más humilde y natural?",
-    "context": "Sakura: 上手だね！\nAnna: 【 ？ 】",
-    "correct": "いいえ、それほどでも。",
+    "prompt_es": "En la situación de la Lección 25 (Pónganse bajo el pupitre / ¡Métanse debajo de la mesa!), si Profesor dice: 「地震だ。みんな、落ち着いて。机の下に入れ。揺れは収まったようだ。」, ¿cuál es la respuesta más natural?",
+    "context": "Profesor: 地震だ。みんな、落ち着いて。机の下に入れ。揺れは収まったようだ。\nTú: 【 ？ 】",
+    "correct": "びっくりした。日本は本当に地震が多いですね。",
     "options": [
-      "いいえ、それほどでも。",
-      "はい、天才ですから。",
-      "全然できませんよ、バカ。",
-      "お疲れ様でした。"
+      "びっくりした。日本は本当に地震が多いですね。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
     ],
-    "explanation": "「いいえ、それほどでも」(No, no es para tanto) demuestra humildad ante un elogio, pilar fundamental de la cortesía en Japón."
+    "explanation": "En el diálogo de la Lección 25, la respuesta adecuada es: 'びっくりした。日本は本当に地震が多いですね。' (Me asusté. Japón realmente tiene muchos terremotos, ¿verdad?)."
   },
   {
-    "id": "conv_ex_17",
-    "lesson": 22,
+    "id": "conv_ex_25_2",
+    "lesson": 25,
     "type": "missing_word",
-    "type_label": "¿Qué estructura de prohibición falta?",
-    "prompt_es": "La encargada advierte con firmeza: 'No debes romper las promesas'. ¿Qué forma prohibitiva completa la frase?",
-    "context": "約束を【 ？ 】いけません。",
-    "correct": "破っては",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'びっくりした。日本は本当に地震が多いですね。'",
+    "context": "びっくりした。日本【 ？ 】本当に地震が多いですね。",
+    "correct": "は",
     "options": [
-      "破っては",
-      "破っても",
-      "破るなら",
-      "破ると"
+      "は",
+      "が",
+      "を",
+      "に"
     ],
-    "explanation": "La prohibición formal estricta se construye con la forma en 〜て + はいけません: 破ってはいけません."
+    "explanation": "Foco de la lección: Modo Imperativo directo (命令形 - Meireikei): 入る -> 入れ ('¡Entra / métete!'). Es utilizado comúnmente en situaciones de emergencia y simulacros."
+  },
+  {
+    "id": "conv_ex_25_3",
+    "lesson": 25,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 25: 「机の下に入れ。」?",
+    "context": "Título: 机の下に入れ。",
+    "correct": "Pónganse bajo el pupitre / ¡Métanse debajo de la mesa!",
+    "options": [
+      "Pónganse bajo el pupitre / ¡Métanse debajo de la mesa!",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「机の下に入れ。」 se traduce como: 'Pónganse bajo el pupitre / ¡Métanse debajo de la mesa!'."
+  },
+  {
+    "id": "conv_ex_26_1",
+    "lesson": 26,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 26 (Esforcémonos la próxima vez.), si Anna dice: 「ロドリゴ、元気がないね。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: ロドリゴ、元気がないね。\nTú: 【 ？ 】",
+    "correct": "試験ができなかったんです。",
+    "options": [
+      "試験ができなかったんです。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 26, la respuesta adecuada es: '試験ができなかったんです。' (No me fue bien en el examen.)."
+  },
+  {
+    "id": "conv_ex_26_2",
+    "lesson": 26,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '試験ができなかったんです。'",
+    "context": "試験【 ？ 】できなかったんです。",
+    "correct": "が",
+    "options": [
+      "が",
+      "は",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Modo Volitivo informal (意向形): がんばる -> がんばろう ('¡Esforcémonos!'). Es la variante coloquial de 〜ましょう."
+  },
+  {
+    "id": "conv_ex_26_3",
+    "lesson": 26,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 26: 「次はがんばろう。」?",
+    "context": "Título: 次はがんばろう。",
+    "correct": "Esforcémonos la próxima vez.",
+    "options": [
+      "Esforcémonos la próxima vez.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「次はがんばろう。」 se traduce como: 'Esforcémonos la próxima vez.'."
+  },
+  {
+    "id": "conv_ex_27_1",
+    "lesson": 27,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 27 (¿Quién es el que se casa?), si Anna dice: 「誰が結婚するんですか。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: 誰が結婚するんですか。\nTú: 【 ？ 】",
+    "correct": "静岡の友だち。",
+    "options": [
+      "静岡の友だち。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 27, la respuesta adecuada es: '静岡の友だち。' (Una amiga en Shizuoka.)."
+  },
+  {
+    "id": "conv_ex_27_2",
+    "lesson": 27,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '静岡の友だち。'",
+    "context": "静岡の友だち。",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: Construcción explicativa 〜んですか: Se utiliza para indagar con curiosidad o pedir más información sobre una noticia."
+  },
+  {
+    "id": "conv_ex_27_3",
+    "lesson": 27,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 27: 「誰が結婚するんですか。」?",
+    "context": "Título: 誰が結婚するんですか。",
+    "correct": "¿Quién es el que se casa?",
+    "options": [
+      "¿Quién es el que se casa?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「誰が結婚するんですか。」 se traduce como: '¿Quién es el que se casa?'."
+  },
+  {
+    "id": "conv_ex_28_1",
+    "lesson": 28,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 28 (Bienvenida a Shizuoka.), si Sakura dice: 「こちらは、いとこの健太くん。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: こちらは、いとこの健太くん。\nTú: 【 ？ 】",
+    "correct": "静岡へようこそ。",
+    "options": [
+      "静岡へようこそ。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 28, la respuesta adecuada es: '静岡へようこそ。' (Bienvenida a Shizuoka.)."
+  },
+  {
+    "id": "conv_ex_28_2",
+    "lesson": 28,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '静岡へようこそ。'",
+    "context": "静岡【 ？ 】ようこそ。",
+    "correct": "へ",
+    "options": [
+      "へ",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: 〜へようこそ (e youkoso): Fórmula estándar de bienvenida a una localidad o región con la partícula de dirección へ."
+  },
+  {
+    "id": "conv_ex_28_3",
+    "lesson": 28,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 28: 「静岡へようこそ。」?",
+    "context": "Título: 静岡へようこそ。",
+    "correct": "Bienvenida a Shizuoka.",
+    "options": [
+      "Bienvenida a Shizuoka.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「静岡へようこそ。」 se traduce como: 'Bienvenida a Shizuoka.'."
+  },
+  {
+    "id": "conv_ex_29_1",
+    "lesson": 29,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 29 (Visto de cerca es grande, ¿eh?), si Anna dice: 「富士山だ。近くで見ると、大きいですね。あれ。雲の形が帽子みたいです。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: 富士山だ。近くで見ると、大きいですね。あれ。雲の形が帽子みたいです。\nTú: 【 ？ 】",
+    "correct": "あの雲が見えると、雨が降るんだよ。",
+    "options": [
+      "あの雲が見えると、雨が降るんだよ。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 29, la respuesta adecuada es: 'あの雲が見えると、雨が降るんだよ。' (Cuando se ve esa nube, quiere decir que va a llover.)."
+  },
+  {
+    "id": "conv_ex_29_2",
+    "lesson": 29,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'あの雲が見えると、雨が降るんだよ。'",
+    "context": "あの雲【 ？ 】見えると、雨が降るんだよ。",
+    "correct": "が",
+    "options": [
+      "が",
+      "は",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Condicional natural con 〜と: Verbo en forma diccionario + と ('cuando ocurre A, siempre o naturalmente pasa B'). 見ると (al mirar)."
+  },
+  {
+    "id": "conv_ex_29_3",
+    "lesson": 29,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 29: 「近くで見ると、大きいですね。」?",
+    "context": "Título: 近くで見ると、大きいですね。",
+    "correct": "Visto de cerca es grande, ¿eh?",
+    "options": [
+      "Visto de cerca es grande, ¿eh?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「近くで見ると、大きいですね。」 se traduce como: 'Visto de cerca es grande, ¿eh?'."
+  },
+  {
+    "id": "conv_ex_30_1",
+    "lesson": 30,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 30 (Quiero tomar un poco más de fotos.), si Sakura dice: 「あ、雨だ。急いで帰りましょう。」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: あ、雨だ。急いで帰りましょう。\nTú: 【 ？ 】",
+    "correct": "ちょっと待ってください。もう少し写真を撮りたいです。",
+    "options": [
+      "ちょっと待ってください。もう少し写真を撮りたいです。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 30, la respuesta adecuada es: 'ちょっと待ってください。もう少し写真を撮りたいです。' (Espera un momento. Quiero sacar fotos un poco más.)."
+  },
+  {
+    "id": "conv_ex_30_2",
+    "lesson": 30,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'ちょっと待ってください。もう少し写真を撮りたいです。'",
+    "context": "ちょっと待ってください。もう少し写真【 ？ 】撮りたいです。",
+    "correct": "を",
+    "options": [
+      "を",
+      "は",
+      "が",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Deseo personal con 〜たいです: Raíz verbal en forma -masu + たいです (撮る -> 撮ります -> 撮りたいです)."
+  },
+  {
+    "id": "conv_ex_30_3",
+    "lesson": 30,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 30: 「もう少し写真を撮りたいです。」?",
+    "context": "Título: もう少し写真を撮りたいです。",
+    "correct": "Quiero tomar un poco más de fotos.",
+    "options": [
+      "Quiero tomar un poco más de fotos.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「もう少し写真を撮りたいです。」 se traduce como: 'Quiero tomar un poco más de fotos.'."
+  },
+  {
+    "id": "conv_ex_31_1",
+    "lesson": 31,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 31 (¡Ya tengo 82 años!), si Anna dice: 「おばあさん、お元気ですね。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: おばあさん、お元気ですね。\nTú: 【 ？ 】",
+    "correct": "もう82歳ですよ。さあ、お茶をどうぞ。",
+    "options": [
+      "もう82歳ですよ。さあ、お茶をどうぞ。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 31, la respuesta adecuada es: 'もう82歳ですよ。さあ、お茶をどうぞ。' (¡Ya tengo 82 años! Vamos, tómate el té.)."
+  },
+  {
+    "id": "conv_ex_31_2",
+    "lesson": 31,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'もう82歳ですよ。さあ、お茶をどうぞ。'",
+    "context": "もう82歳ですよ。さあ、お茶【 ？ 】どうぞ。",
+    "correct": "を",
+    "options": [
+      "を",
+      "は",
+      "が",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Adverbio もう (mou): Indica que se ha alcanzado ya un número, edad o momento temporal."
+  },
+  {
+    "id": "conv_ex_31_3",
+    "lesson": 31,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 31: 「もう82歳ですよ。」?",
+    "context": "Título: もう82歳ですよ。",
+    "correct": "¡Ya tengo 82 años!",
+    "options": [
+      "¡Ya tengo 82 años!",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「もう82歳ですよ。」 se traduce como: '¡Ya tengo 82 años!'."
+  },
+  {
+    "id": "conv_ex_32_1",
+    "lesson": 32,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 32 (Prefiero el futón.), si Sakura dice: 「布団とベッドとどちらが好き？」, ¿cuál es la respuesta más natural?",
+    "context": "Sakura: 布団とベッドとどちらが好き？\nTú: 【 ？ 】",
+    "correct": "布団のほうが好きです。この布団はベッドより柔らかいです。それじゃ、おやすみなさい。",
+    "options": [
+      "布団のほうが好きです。この布団はベッドより柔らかいです。それじゃ、おやすみなさい。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 32, la respuesta adecuada es: '布団のほうが好きです。この布団はベッドより柔らかいです。それじゃ、おやすみなさい。' (Prefiero el futón. Este futón es más mullido que una cama. Bueno, que descanses.)."
+  },
+  {
+    "id": "conv_ex_32_2",
+    "lesson": 32,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '布団のほうが好きです。この布団はベッドより柔らかいです。それじゃ、おやすみなさい。'",
+    "context": "布団のほうが好きです。この布団【 ？ 】ベッドより柔らかいです。それじゃ、おやすみなさい。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Estructura comparativa: A のほうが B より 〜 (A es más ... que B)."
+  },
+  {
+    "id": "conv_ex_32_3",
+    "lesson": 32,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 32: 「布団のほうが好きです。」?",
+    "context": "Título: 布団のほうが好きです。",
+    "correct": "Prefiero el futón.",
+    "options": [
+      "Prefiero el futón.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「布団のほうが好きです。」 se traduce como: 'Prefiero el futón.'."
+  },
+  {
+    "id": "conv_ex_33_1",
+    "lesson": 33,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 33 (Se lo doy a Anna.), si Kenta dice: 「これは、僕が富士山で撮った写真です。」, ¿cuál es la respuesta más natural?",
+    "context": "Kenta: これは、僕が富士山で撮った写真です。\nTú: 【 ？ 】",
+    "correct": "あ、私だ。",
+    "options": [
+      "あ、私だ。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 33, la respuesta adecuada es: 'あ、私だ。' (Ah, soy yo.)."
+  },
+  {
+    "id": "conv_ex_33_2",
+    "lesson": 33,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'あ、私だ。'",
+    "context": "あ、私だ。",
+    "correct": "です",
+    "options": [
+      "です",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: Verbos de dar: あげる (yo doy a otro) vs くれる (alguien me da a mí)."
+  },
+  {
+    "id": "conv_ex_33_3",
+    "lesson": 33,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 33: 「アンナさんにあげます。」?",
+    "context": "Título: アンナさんにあげます。",
+    "correct": "Se lo doy a Anna.",
+    "options": [
+      "Se lo doy a Anna.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「アンナさんにあげます。」 se traduce como: 'Se lo doy a Anna.'."
+  },
+  {
+    "id": "conv_ex_34_1",
+    "lesson": 34,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 34 (Es tierno y sabroso.), si Kenta dice: 「あ、トロが来た。」, ¿cuál es la respuesta más natural?",
+    "context": "Kenta: あ、トロが来た。\nTú: 【 ？ 】",
+    "correct": "トロって何ですか。",
+    "options": [
+      "トロって何ですか。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 34, la respuesta adecuada es: 'トロって何ですか。' (¿Qué es 'toro'?)."
+  },
+  {
+    "id": "conv_ex_34_2",
+    "lesson": 34,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'トロって何ですか。'",
+    "context": "トロって何【 ？ 】すか。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: Unión de Adjetivos-い: Se cambia 〜い por 〜くて (柔らかい -> 柔らかくておいしい)."
+  },
+  {
+    "id": "conv_ex_34_3",
+    "lesson": 34,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 34: 「柔らかくておいしいです。」?",
+    "context": "Título: 柔らかくておいしいです。",
+    "correct": "Es tierno y sabroso.",
+    "options": [
+      "Es tierno y sabroso.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「柔らかくておいしいです。」 se traduce como: 'Es tierno y sabroso.'."
+  },
+  {
+    "id": "conv_ex_35_1",
+    "lesson": 35,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 35 (¿Se puede usar tarjeta de crédito?), si Kenta dice: 「お勘定をお願いします。」, ¿cuál es la respuesta más natural?",
+    "context": "Kenta: お勘定をお願いします。\nTú: 【 ？ 】",
+    "correct": "全部で5,200円です。",
+    "options": [
+      "全部で5,200円です。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 35, la respuesta adecuada es: '全部で5,200円です。' (Son 5.200 yenes en total.)."
+  },
+  {
+    "id": "conv_ex_35_2",
+    "lesson": 35,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '全部で5,200円です。'",
+    "context": "全部【 ？ 】5,200円です。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: Forma Potencial (可能形): 使う (usar) -> 使える (poder usar) -> 使えます."
+  },
+  {
+    "id": "conv_ex_35_3",
+    "lesson": 35,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 35: 「クレジットカードは使えますか。」?",
+    "context": "Título: クレジットカードは使えますか。",
+    "correct": "¿Se puede usar tarjeta de crédito?",
+    "options": [
+      "¿Se puede usar tarjeta de crédito?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「クレジットカードは使えますか。」 se traduce como: '¿Se puede usar tarjeta de crédito?'."
+  },
+  {
+    "id": "conv_ex_36_1",
+    "lesson": 36,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 36 (Tengo que estudiar.), si Kenta dice: 「寂しくなります。」, ¿cuál es la respuesta más natural?",
+    "context": "Kenta: 寂しくなります。\nTú: 【 ？ 】",
+    "correct": "私もです。でも、大学で勉強しなければなりません。",
+    "options": [
+      "私もです。でも、大学で勉強しなければなりません。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 36, la respuesta adecuada es: '私もです。でも、大学で勉強しなければなりません。' (Yo también. Pero tengo que estudiar en la universidad.)."
+  },
+  {
+    "id": "conv_ex_36_2",
+    "lesson": 36,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '私もです。でも、大学で勉強しなければなりません。'",
+    "context": "私も【 ？ 】す。でも、大学で勉強しなければなりません。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: Obligación con 〜なければなりません: Se forma a partir de la raíz negativa -nai (勉強しない -> 勉強しなければなりません). Significa 'tener que / deber'."
+  },
+  {
+    "id": "conv_ex_36_3",
+    "lesson": 36,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 36: 「勉強しなければなりません。」?",
+    "context": "Título: 勉強しなければなりません。",
+    "correct": "Tengo que estudiar.",
+    "options": [
+      "Tengo que estudiar.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「勉強しなければなりません。」 se traduce como: 'Tengo que estudiar.'."
+  },
+  {
+    "id": "conv_ex_37_1",
+    "lesson": 37,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 37 (Vi el monte Fuji, comí sushi, entre otras cosas.), si Encargada dice: 「旅行はどうだった？」, ¿cuál es la respuesta más natural?",
+    "context": "Encargada: 旅行はどうだった？\nTú: 【 ？ 】",
+    "correct": "富士山を見たり、お寿司を食べたりしました。楽しかったです。",
+    "options": [
+      "富士山を見たり、お寿司を食べたりしました。楽しかったです。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 37, la respuesta adecuada es: '富士山を見たり、お寿司を食べたりしました。楽しかったです。' (Vi el monte Fuji y comí sushi, entre otras cosas. Fue muy divertido.)."
+  },
+  {
+    "id": "conv_ex_37_2",
+    "lesson": 37,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '富士山を見たり、お寿司を食べたりしました。楽しかったです。'",
+    "context": "富士山【 ？ 】見たり、お寿司を食べたりしました。楽しかったです。",
+    "correct": "を",
+    "options": [
+      "を",
+      "は",
+      "が",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Enumeración no exhaustiva: Forma-ta + り (見たり、食べたりしました). Presenta ejemplos de acciones representativas."
+  },
+  {
+    "id": "conv_ex_37_3",
+    "lesson": 37,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 37: 「富士山を見たり、お寿司を食べたりしました。」?",
+    "context": "Título: 富士山を見たり、お寿司を食べたりしました。",
+    "correct": "Vi el monte Fuji, comí sushi, entre otras cosas.",
+    "options": [
+      "Vi el monte Fuji, comí sushi, entre otras cosas.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「富士山を見たり、お寿司を食べたりしました。」 se traduce como: 'Vi el monte Fuji, comí sushi, entre otras cosas.'."
+  },
+  {
+    "id": "conv_ex_38_1",
+    "lesson": 38,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 38 (Entendido con mucho gusto / A su servicio.), si Encargada dice: 「市民病院までお願いします。」, ¿cuál es la respuesta más natural?",
+    "context": "Encargada: 市民病院までお願いします。\nTú: 【 ？ 】",
+    "correct": "かしこまりました。",
+    "options": [
+      "かしこまりました。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 38, la respuesta adecuada es: 'かしこまりました。' (A su servicio / Con mucho gusto.)."
+  },
+  {
+    "id": "conv_ex_38_2",
+    "lesson": 38,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'かしこまりました。'",
+    "context": "かしこまり【 ？ 】。",
+    "correct": "ました",
+    "options": [
+      "ました",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: かしこまりました (kashikomarimashita): Expresión máxima de cortesía comercial y respeto de servicio (Kenjougo)."
+  },
+  {
+    "id": "conv_ex_38_3",
+    "lesson": 38,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 38: 「かしこまりました。」?",
+    "context": "Título: かしこまりました。",
+    "correct": "Entendido con mucho gusto / A su servicio.",
+    "options": [
+      "Entendido con mucho gusto / A su servicio.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「かしこまりました。」 se traduce como: 'Entendido con mucho gusto / A su servicio.'."
+  },
+  {
+    "id": "conv_ex_39_1",
+    "lesson": 39,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 39 (Creo que es un resfriado.), si Médico dice: 「どうしましたか。」, ¿cuál es la respuesta más natural?",
+    "context": "Médico: どうしましたか。\nTú: 【 ？ 】",
+    "correct": "咳が出ます。",
+    "options": [
+      "咳が出ます。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 39, la respuesta adecuada es: '咳が出ます。' (Tengo tos.)."
+  },
+  {
+    "id": "conv_ex_39_2",
+    "lesson": 39,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '咳が出ます。'",
+    "context": "咳【 ？ 】出ます。",
+    "correct": "が",
+    "options": [
+      "が",
+      "は",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Opinión subjetiva con 〜と思います: Frase informal + と思います (風邪だ + と思います - 'Creo que es un resfriado')."
+  },
+  {
+    "id": "conv_ex_39_3",
+    "lesson": 39,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 39: 「風邪だと思います。」?",
+    "context": "Título: 風邪だと思います。",
+    "correct": "Creo que es un resfriado.",
+    "options": [
+      "Creo que es un resfriado.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「風邪だと思います。」 se traduce como: 'Creo que es un resfriado.'."
+  },
+  {
+    "id": "conv_ex_40_1",
+    "lesson": 40,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 40 (Me palpita intensamente la cabeza.), si Encargada dice: 「おかゆですよ。体調は、どう？」, ¿cuál es la respuesta más natural?",
+    "context": "Encargada: おかゆですよ。体調は、どう？\nTú: 【 ？ 】",
+    "correct": "頭がずきずきします。",
+    "options": [
+      "頭がずきずきします。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 40, la respuesta adecuada es: '頭がずきずきします。' (Me palpita la cabeza con dolor punzante.)."
+  },
+  {
+    "id": "conv_ex_40_2",
+    "lesson": 40,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '頭がずきずきします。'",
+    "context": "頭【 ？ 】ずきずきします。",
+    "correct": "が",
+    "options": [
+      "が",
+      "は",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Onomatopeyas físicas: ずきずき (zukizuki) describe dolor punzante y palpitante."
+  },
+  {
+    "id": "conv_ex_40_3",
+    "lesson": 40,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 40: 「頭がずきずきします。」?",
+    "context": "Título: 頭がずきずきします。",
+    "correct": "Me palpita intensamente la cabeza.",
+    "options": [
+      "Me palpita intensamente la cabeza.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「頭がずきずきします。」 se traduce como: 'Me palpita intensamente la cabeza.'."
+  },
+  {
+    "id": "conv_ex_41_1",
+    "lesson": 41,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 41 (Pude ir al festival universitario y fue divertido.), si Anna dice: 「健太様、お元気ですか。この間はありがとうございました。学園祭に行くことができて、楽しかったです。次は東京で会いましょう。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: 健太様、お元気ですか。この間はありがとうございました。学園祭に行くことができて、楽しかったです。次は東京で会いましょう。\nTú: 【 ？ 】",
+    "correct": "健太様、お元気ですか。この間はありがとうございました。学園祭に行くことができて、楽しかったです。次は東京で会いましょう。",
+    "options": [
+      "健太様、お元気ですか。この間はありがとうございました。学園祭に行くことができて、楽しかったです。次は東京で会いましょう。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 41, la respuesta adecuada es: '健太様、お元気ですか。この間はありがとうございました。学園祭に行くことができて、楽しかったです。次は東京で会いましょう。' (Estimado Kenta: ¿Cómo estás? Muchas gracias por lo del otro día. Pude ir al festival de la universidad y fue muy divertido. Reunámonos en Tokio la próxima vez.)."
+  },
+  {
+    "id": "conv_ex_41_2",
+    "lesson": 41,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '健太様、お元気ですか。この間はありがとうございました。学園祭に行くことができて、楽しかったです。次は東京で会いましょう。'",
+    "context": "健太様、お元気ですか。この間【 ？ 】ありがとうございました。学園祭に行くことができて、楽しかったです。次は東京で会いましょう。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Capacidad y consecuencia: Verbo dicc. + ことができる -> ことができて (poder hacer algo y, como resultado...)."
+  },
+  {
+    "id": "conv_ex_41_3",
+    "lesson": 41,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 41: 「学園祭に行くことができて、楽しかったです。」?",
+    "context": "Título: 学園祭に行くことができて、楽しかったです。",
+    "correct": "Pude ir al festival universitario y fue divertido.",
+    "options": [
+      "Pude ir al festival universitario y fue divertido.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「学園祭に行くことができて、楽しかったです。」 se traduce como: 'Pude ir al festival universitario y fue divertido.'."
+  },
+  {
+    "id": "conv_ex_42_1",
+    "lesson": 42,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 42 (¿Cuál será el más delicioso?), si Anna dice: 「どれが一番おいしいかな。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: どれが一番おいしいかな。\nTú: 【 ？ 】",
+    "correct": "幕の内弁当は人気がありますよ。",
+    "options": [
+      "幕の内弁当は人気がありますよ。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 42, la respuesta adecuada es: '幕の内弁当は人気がありますよ。' (El bento Makunouchi es muy popular.)."
+  },
+  {
+    "id": "conv_ex_42_2",
+    "lesson": 42,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '幕の内弁当は人気がありますよ。'",
+    "context": "幕の内弁当【 ？ 】人気がありますよ。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Superlativo con 一番 (ichiban): 一番おいしい (el más delicioso de todos)."
+  },
+  {
+    "id": "conv_ex_42_3",
+    "lesson": 42,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 42: 「どれが一番おいしいかな。」?",
+    "context": "Título: どれが一番おいしいかな。",
+    "correct": "¿Cuál será el más delicioso?",
+    "options": [
+      "¿Cuál será el más delicioso?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「どれが一番おいしいかな。」 se traduce como: '¿Cuál será el más delicioso?'."
+  },
+  {
+    "id": "conv_ex_43_1",
+    "lesson": 43,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 43 (¿Por qué será?), si Profesor dice: 「姫路城は奇跡の城と言われています。どうしてでしょうか。」, ¿cuál es la respuesta más natural?",
+    "context": "Profesor: 姫路城は奇跡の城と言われています。どうしてでしょうか。\nTú: 【 ？ 】",
+    "correct": "戦争でも焼けなかったからです。",
+    "options": [
+      "戦争でも焼けなかったからです。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 43, la respuesta adecuada es: '戦争でも焼けなかったからです。' (Porque nunca ardió ni fue consumido por el fuego, ni siquiera durante la guerra.)."
+  },
+  {
+    "id": "conv_ex_43_2",
+    "lesson": 43,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '戦争でも焼けなかったからです。'",
+    "context": "戦争【 ？ 】も焼けなかったからです。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: Pregunta formal atenuada con でしょうか: どうしてでしょうか ('¿Por qué razón creen que sea?')."
+  },
+  {
+    "id": "conv_ex_43_3",
+    "lesson": 43,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 43: 「どうしてでしょうか。」?",
+    "context": "Título: どうしてでしょうか。",
+    "correct": "¿Por qué será?",
+    "options": [
+      "¿Por qué será?",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「どうしてでしょうか。」 se traduce como: '¿Por qué será?'."
+  },
+  {
+    "id": "conv_ex_44_1",
+    "lesson": 44,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 44 (Tras comer el dulce japonés, se toma el té verde.), si Anna dice: 「和菓子はとても甘いですね。」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: 和菓子はとても甘いですね。\nTú: 【 ？ 】",
+    "correct": "和菓子を食べてから、抹茶を飲みます。抹茶は苦いかもしれません。",
+    "options": [
+      "和菓子を食べてから、抹茶を飲みます。抹茶は苦いかもしれません。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 44, la respuesta adecuada es: '和菓子を食べてから、抹茶を飲みます。抹茶は苦いかもしれません。' (Después de comer el dulce japonés, se toma el té verde. El té verde en polvo quizá te resulte amargo.)."
+  },
+  {
+    "id": "conv_ex_44_2",
+    "lesson": 44,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '和菓子を食べてから、抹茶を飲みます。抹茶は苦いかもしれません。'",
+    "context": "和菓子を食べてから、抹茶を飲みます。抹茶【 ？ 】苦いかもしれません。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Secuencia temporal con 〜てから: Verbo en forma -te + から ('solo tras concluir la acción A se procede a B')."
+  },
+  {
+    "id": "conv_ex_44_3",
+    "lesson": 44,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 44: 「和菓子を食べてから、抹茶を飲みます。」?",
+    "context": "Título: 和菓子を食べてから、抹茶を飲みます。",
+    "correct": "Tras comer el dulce japonés, se toma el té verde.",
+    "options": [
+      "Tras comer el dulce japonés, se toma el té verde.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「和菓子を食べてから、抹茶を飲みます。」 se traduce como: 'Tras comer el dulce japonés, se toma el té verde.'."
+  },
+  {
+    "id": "conv_ex_45_1",
+    "lesson": 45,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 45 (¡Feliz cumpleaños!), si Amigos dice: 「アンナ、お誕生日おめでとう！」, ¿cuál es la respuesta más natural?",
+    "context": "Amigos: アンナ、お誕生日おめでとう！\nTú: 【 ？ 】",
+    "correct": "これ、ほんの気持ちです。",
+    "options": [
+      "これ、ほんの気持ちです。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 45, la respuesta adecuada es: 'これ、ほんの気持ちです。' (Esto es solo un pequeño detalle para ti.)."
+  },
+  {
+    "id": "conv_ex_45_2",
+    "lesson": 45,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'これ、ほんの気持ちです。'",
+    "context": "これ、ほんの気持ち【 ？ 】す。",
+    "correct": "で",
+    "options": [
+      "で",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: お誕生日おめでとう (otanjoubi omedetou): Felicitación afectuosa de cumpleaños."
+  },
+  {
+    "id": "conv_ex_45_3",
+    "lesson": 45,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 45: 「お誕生日おめでとう。」?",
+    "context": "Título: お誕生日おめでとう。",
+    "correct": "¡Feliz cumpleaños!",
+    "options": [
+      "¡Feliz cumpleaños!",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「お誕生日おめでとう。」 se traduce como: '¡Feliz cumpleaños!'."
+  },
+  {
+    "id": "conv_ex_46_1",
+    "lesson": 46,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 46 (Estoy feliz de ver la nieve antes de regresar a mi país.), si Anna dice: 「もしかして、雪？」, ¿cuál es la respuesta más natural?",
+    "context": "Anna: もしかして、雪？\nTú: 【 ？ 】",
+    "correct": "これは、粉雪。粉のようにさらさらしているでしょう。",
+    "options": [
+      "これは、粉雪。粉のようにさらさらしているでしょう。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 46, la respuesta adecuada es: 'これは、粉雪。粉のようにさらさらしているでしょう。' (Es nieve en polvo. Es liviana, seca y suave como el polvo, ¿a que sí?)."
+  },
+  {
+    "id": "conv_ex_46_2",
+    "lesson": 46,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'これは、粉雪。粉のようにさらさらしているでしょう。'",
+    "context": "これ【 ？ 】、粉雪。粉のようにさらさらしているでしょう。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Temporalidad anterior con 〜前に: Verbo en forma diccionario + 前に ('antes de hacer A'). 帰国する前に (antes de regresar a la patria)."
+  },
+  {
+    "id": "conv_ex_46_3",
+    "lesson": 46,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 46: 「帰国する前に、雪を見ることができて幸せです。」?",
+    "context": "Título: 帰国する前に、雪を見ることができて幸せです。",
+    "correct": "Estoy feliz de ver la nieve antes de regresar a mi país.",
+    "options": [
+      "Estoy feliz de ver la nieve antes de regresar a mi país.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「帰国する前に、雪を見ることができて幸せです。」 se traduce como: 'Estoy feliz de ver la nieve antes de regresar a mi país.'."
+  },
+  {
+    "id": "conv_ex_47_1",
+    "lesson": 47,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 47 (Mi sueño es ser profesora de japonés.), si Profesor dice: 「最後に、みなさんの夢を教えてください。」, ¿cuál es la respuesta más natural?",
+    "context": "Profesor: 最後に、みなさんの夢を教えてください。\nTú: 【 ？ 】",
+    "correct": "僕は日本を一周したいです。",
+    "options": [
+      "僕は日本を一周したいです。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 47, la respuesta adecuada es: '僕は日本を一周したいです。' (Yo quiero recorrer todo Japón de punta a punta.)."
+  },
+  {
+    "id": "conv_ex_47_2",
+    "lesson": 47,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: '僕は日本を一周したいです。'",
+    "context": "僕【 ？ 】日本を一周したいです。",
+    "correct": "は",
+    "options": [
+      "は",
+      "が",
+      "を",
+      "に"
+    ],
+    "explanation": "Foco de la lección: Nominalización con の: Verbo dicc. + の transforma la acción en sustantivo ('el hecho de llegar a ser...')."
+  },
+  {
+    "id": "conv_ex_47_3",
+    "lesson": 47,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 47: 「日本語教師になるのが夢です。」?",
+    "context": "Título: 日本語教師になるのが夢です。",
+    "correct": "Mi sueño es ser profesora de japonés.",
+    "options": [
+      "Mi sueño es ser profesora de japonés.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「日本語教師になるのが夢です。」 se traduce como: 'Mi sueño es ser profesora de japonés.'."
+  },
+  {
+    "id": "conv_ex_48_1",
+    "lesson": 48,
+    "type": "reply",
+    "type_label": "¿Qué responder?",
+    "prompt_es": "En la situación de la Lección 48 (Muchísimas gracias por todas sus atenciones.), si Kenta dice: 「体に気をつけて。」, ¿cuál es la respuesta más natural?",
+    "context": "Kenta: 体に気をつけて。\nTú: 【 ？ 】",
+    "correct": "タイに着いたら、連絡してね。",
+    "options": [
+      "タイに着いたら、連絡してね。",
+      "いいえ、わかりません。",
+      "どういたしまして。",
+      "失礼します。"
+    ],
+    "explanation": "En el diálogo de la Lección 48, la respuesta adecuada es: 'タイに着いたら、連絡してね。' (Cuando llegues a Tailandia, avísanos.)."
+  },
+  {
+    "id": "conv_ex_48_2",
+    "lesson": 48,
+    "type": "missing_word",
+    "type_label": "Completar hueco",
+    "prompt_es": "Completa la frase clave de la lección: 'タイに着いたら、連絡してね。'",
+    "context": "タイ【 ？ 】着いたら、連絡してね。",
+    "correct": "に",
+    "options": [
+      "に",
+      "は",
+      "が",
+      "を"
+    ],
+    "explanation": "Foco de la lección: いろいろお世話になりました: La fórmula canónica de mayor gratitud al cerrar una etapa en Japón."
+  },
+  {
+    "id": "conv_ex_48_3",
+    "lesson": 48,
+    "type": "missing_kanji",
+    "type_label": "Comprensión y Kanji",
+    "prompt_es": "¿Qué significa la expresión central de la Lección 48: 「いろいろお世話になりました。」?",
+    "context": "Título: いろいろお世話になりました。",
+    "correct": "Muchísimas gracias por todas sus atenciones.",
+    "options": [
+      "Muchísimas gracias por todas sus atenciones.",
+      "¿Podría hablar más despacio?",
+      "Hasta mañana en la universidad.",
+      "Disculpe las molestias causadas."
+    ],
+    "explanation": "「いろいろお世話になりました。」 se traduce como: 'Muchísimas gracias por todas sus atenciones.'."
   }
 ]
