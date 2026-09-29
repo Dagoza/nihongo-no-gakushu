@@ -5705,3 +5705,57 @@ rt {
     padding: 16px !important;
   }
 }
+
+.header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-header-toggle {
+  display: none;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+@media (max-width: 640px) {
+  .mobile-header-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.audio-minimize-btn {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 32px;
+  height: 24px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+}
+
+.audio-player-bar.minimized {
+  padding: 8px 20px !important;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding-bottom: 80px; /* Reduced since we can minimize it */
+  }
+}

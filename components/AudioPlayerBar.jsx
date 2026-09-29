@@ -12,7 +12,9 @@ import {
   Gauge, 
   BookmarkPlus, 
   BookmarkCheck,
-  Bookmark 
+  Bookmark,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import SaveVocabModal from './SaveVocabModal';
@@ -29,6 +31,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
+  const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
     const unsubscribe = audioManager.subscribe((newState) => {
@@ -85,40 +88,50 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
 
   return (
     <>
-      <div className="audio-player-bar">
+      <div className={`audio-player-bar ${isMinimized ? 'minimized' : ''}`}>
+        <button 
+          className="audio-minimize-btn" 
+          onClick={() => setIsMinimized(!isMinimized)}
+          title={isMinimized ? 'Expandir reproductor' : 'Minimizar reproductor'}
+        >
+          {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
+
         <div className="audio-player-container">
           {/* Currently Playing / Audio Info */}
-          <div className="audio-info">
-            <div className="audio-icon-pulse">
-              <Volume2 size={20} className={audioState.state === 'playing' ? 'text-primary animate-pulse' : 'text-muted'} />
-            </div>
-            <div className="audio-text-wrapper">
-              <div className="audio-status-label">
-                {audioState.state === 'playing' && '🔊 Reproduciendo audio en japonés:'}
-                {audioState.state === 'paused' && '⏸️ En pausa:'}
-                {audioState.state === 'idle' && (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en cualquier palabra u oración para escucharla')}
+          {!isMinimized && (
+            <div className="audio-info">
+              <div className="audio-icon-pulse">
+                <Volume2 size={20} className={audioState.state === 'playing' ? 'text-primary animate-pulse' : 'text-muted'} />
               </div>
-              <div className="audio-current-sentence jp-text" title={audioState.currentText || ''}>
-                {audioState.currentText || 'Selecciona texto en pantalla o toca cualquier palabra con furigana'}
+              <div className="audio-text-wrapper">
+                <div className="audio-status-label">
+                  {audioState.state === 'playing' && '🔊 Reproduciendo audio en japonés:'}
+                  {audioState.state === 'paused' && '⏸️ En pausa:'}
+                  {audioState.state === 'idle' && (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en cualquier palabra u oración para escucharla')}
+                </div>
+                <div className="audio-current-sentence jp-text" title={audioState.currentText || ''}>
+                  {audioState.currentText || 'Selecciona texto en pantalla o toca cualquier palabra con furigana'}
+                </div>
               </div>
-            </div>
 
-            {/* Quick save button for active sentence if present */}
-            {audioState.currentText && (
-              <button
-                className="audio-save-inline-btn"
-                title="Guardar esta frase u oración en tu cuaderno para crear historias"
-                onClick={handleSaveCurrent}
-                type="button"
-              >
-                <BookmarkPlus size={14} />
-                <span className="hidden-xs">Guardar</span>
-              </button>
-            )}
-          </div>
+              {/* Quick save button for active sentence if present */}
+              {audioState.currentText && (
+                <button
+                  className="audio-save-inline-btn"
+                  title="Guardar esta frase u oración en tu cuaderno para crear historias"
+                  onClick={handleSaveCurrent}
+                  type="button"
+                >
+                  <BookmarkPlus size={14} />
+                  <span className="hidden-xs">Guardar</span>
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Controls: Prev, Play/Pause, Next, Stop */}
-          <div className="audio-controls">
+          <div className="audio-controls" style={isMinimized ? { margin: '0 auto' } : {}}>
             <button 
               className="audio-ctrl-btn" 
               title="Retroceder oración / palabra anterior"
@@ -157,60 +170,62 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
           </div>
 
           {/* Actions: Play Selection, Save Selection, Saved Link & Speed */}
-          <div className="audio-actions">
-            {audioState.selectedText && (
-              <div className="audio-selection-group">
-                <button 
-                  className="btn btn-accent btn-sm audio-selection-btn"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onTouchStart={(e) => e.preventDefault()}
-                  onClick={handlePlaySelection}
-                  title={`Reproducir: "${audioState.selectedText}"`}
-                >
-                  <Sparkles size={14} />
-                  <span>Escuchar ({audioState.selectedText.slice(0, 8)}...)</span>
-                </button>
+          {!isMinimized && (
+            <div className="audio-actions">
+              {audioState.selectedText && (
+                <div className="audio-selection-group">
+                  <button 
+                    className="btn btn-accent btn-sm audio-selection-btn"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onTouchStart={(e) => e.preventDefault()}
+                    onClick={handlePlaySelection}
+                    title={`Reproducir: "${audioState.selectedText}"`}
+                  >
+                    <Sparkles size={14} />
+                    <span>Escuchar ({audioState.selectedText.slice(0, 8)}...)</span>
+                  </button>
 
-                <button 
-                  className="btn btn-primary btn-sm audio-save-sel-btn"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onTouchStart={(e) => e.preventDefault()}
-                  onClick={handleSaveSelection}
-                  title={`Guardar selección "${audioState.selectedText}" en tu cuaderno`}
-                >
-                  <BookmarkPlus size={14} />
-                  <span>Guardar Selección</span>
-                </button>
+                  <button 
+                    className="btn btn-primary btn-sm audio-save-sel-btn"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onTouchStart={(e) => e.preventDefault()}
+                    onClick={handleSaveSelection}
+                    title={`Guardar selección "${audioState.selectedText}" en tu cuaderno`}
+                  >
+                    <BookmarkPlus size={14} />
+                    <span>Guardar Selección</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Quick Link to Saved Words Tab */}
+              <button
+                className="audio-saved-tab-link"
+                onClick={() => onNavigate && onNavigate('saved')}
+                title="Ver palabras y frases guardadas para exportar y crear historias"
+                type="button"
+              >
+                <BookmarkCheck size={14} />
+                <span>Guardadas ({totalSaved})</span>
+              </button>
+
+              {/* Speed rates */}
+              <div className="speed-selector">
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <Gauge size={13} /> Velocidad:
+                </span>
+                {[0.75, 0.9, 1.0, 1.25].map(speed => (
+                  <button
+                    key={speed}
+                    className={`speed-pill ${audioState.rate === speed ? 'active' : ''}`}
+                    onClick={() => handleRateChange(speed)}
+                  >
+                    {speed}x
+                  </button>
+                ))}
               </div>
-            )}
-
-            {/* Quick Link to Saved Words Tab */}
-            <button
-              className="audio-saved-tab-link"
-              onClick={() => onNavigate && onNavigate('saved')}
-              title="Ver palabras y frases guardadas para exportar y crear historias"
-              type="button"
-            >
-              <BookmarkCheck size={14} />
-              <span>Guardadas ({totalSaved})</span>
-            </button>
-
-            {/* Speed rates */}
-            <div className="speed-selector">
-              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <Gauge size={13} /> Velocidad:
-              </span>
-              {[0.75, 0.9, 1.0, 1.25].map(speed => (
-                <button
-                  key={speed}
-                  className={`speed-pill ${audioState.rate === speed ? 'active' : ''}`}
-                  onClick={() => handleRateChange(speed)}
-                >
-                  {speed}x
-                </button>
-              ))}
             </div>
-          </div>
+          )}
         </div>
       </div>
 
