@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Bookmark, 
   BookmarkCheck, 
@@ -36,12 +36,48 @@ import {
   formatTimestamp 
 } from '../lib/japaneseUtils';
 
-export default function SavedTab({ appState, onUpdateState, onNavigate }) {
+export default function SavedTab({ 
+  appState, 
+  onUpdateState, 
+  onNavigate,
+  initialView = 'all',
+  initialSearch = '',
+  initialLevel = 'all',
+  initialCategory = 'all',
+  onParamsChange
+}) {
   // Subview tabs: 'all' | 'words' | 'phrases' | 'stories'
-  const [subView, setSubView] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [subView, setSubView] = useState(initialView || 'all');
+  const [searchQuery, setSearchQuery] = useState(initialSearch || '');
+  const [selectedLevel, setSelectedLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | 'N3'
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'all');
+
+  const updateParams = (newView, newSearch, newLevel, newCat) => {
+    if (onParamsChange) {
+      onParamsChange({
+        view: newView !== undefined ? newView : subView,
+        search: newSearch !== undefined ? newSearch : searchQuery,
+        level: newLevel !== undefined ? newLevel : selectedLevel,
+        category: newCat !== undefined ? newCat : selectedCategory
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (initialView && initialView !== subView) setSubView(initialView);
+  }, [initialView]);
+
+  useEffect(() => {
+    if (initialSearch !== undefined && initialSearch !== searchQuery) setSearchQuery(initialSearch);
+  }, [initialSearch]);
+
+  useEffect(() => {
+    if (initialLevel && initialLevel !== selectedLevel) setSelectedLevel(initialLevel);
+  }, [initialLevel]);
+
+  useEffect(() => {
+    if (initialCategory && initialCategory !== selectedCategory) setSelectedCategory(initialCategory);
+  }, [initialCategory]);
   
   // Selection state for batch actions
   const [selectedWordIds, setSelectedWordIds] = useState(new Set());
@@ -450,7 +486,10 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
         <div className="saved-subviews-tabs">
           <button
             className={`saved-subview-btn ${subView === 'all' ? 'active' : ''}`}
-            onClick={() => setSubView('all')}
+            onClick={() => {
+              setSubView('all');
+              updateParams('all', searchQuery, selectedLevel, selectedCategory);
+            }}
           >
             <Bookmark size={15} />
             <span>Todo ({savedWords.length + savedPhrases.length})</span>
@@ -458,7 +497,10 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
 
           <button
             className={`saved-subview-btn ${subView === 'words' ? 'active' : ''}`}
-            onClick={() => setSubView('words')}
+            onClick={() => {
+              setSubView('words');
+              updateParams('words', searchQuery, selectedLevel, selectedCategory);
+            }}
           >
             <Layers size={15} />
             <span>Palabras ({savedWords.length})</span>
@@ -466,7 +508,10 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
 
           <button
             className={`saved-subview-btn ${subView === 'phrases' ? 'active' : ''}`}
-            onClick={() => setSubView('phrases')}
+            onClick={() => {
+              setSubView('phrases');
+              updateParams('phrases', searchQuery, selectedLevel, selectedCategory);
+            }}
           >
             <MessageSquare size={15} />
             <span>Frases ({savedPhrases.length})</span>
@@ -474,7 +519,10 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
 
           <button
             className={`saved-subview-btn ${subView === 'stories' ? 'active' : ''}`}
-            onClick={() => setSubView('stories')}
+            onClick={() => {
+              setSubView('stories');
+              updateParams('stories', searchQuery, selectedLevel, selectedCategory);
+            }}
           >
             <BookOpen size={15} />
             <span>Mis Historias ({customStories.length})</span>
@@ -490,13 +538,19 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
                 type="text"
                 placeholder="Buscar por Kanji, Kana o significado..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  updateParams(subView, e.target.value, selectedLevel, selectedCategory);
+                }}
                 className="saved-search-input"
               />
               {searchQuery && (
                 <button
                   className="clear-search-btn"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('');
+                    updateParams(subView, '', selectedLevel, selectedCategory);
+                  }}
                   aria-label="Limpiar búsqueda"
                 >
                   <X size={14} />
@@ -510,7 +564,10 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
                 <button
                   key={lvl}
                   className={`level-filter-pill ${selectedLevel === lvl ? 'active' : ''}`}
-                  onClick={() => setSelectedLevel(lvl)}
+                  onClick={() => {
+                    setSelectedLevel(lvl);
+                    updateParams(subView, searchQuery, lvl, selectedCategory);
+                  }}
                 >
                   {lvl === 'all' ? 'Todos' : lvl}
                 </button>
@@ -520,7 +577,10 @@ export default function SavedTab({ appState, onUpdateState, onNavigate }) {
                 className="form-select" 
                 style={{ width: 'auto', padding: '4px 8px', fontSize: '0.85rem' }}
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                  updateParams(subView, searchQuery, selectedLevel, e.target.value);
+                }}
               >
                 <option value="all">Todas las Categorías</option>
                 {allCategories.map(cat => (

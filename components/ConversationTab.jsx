@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Volume2, 
   Play, 
@@ -21,16 +21,56 @@ import {
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 
-export default function ConversationTab({ appState, onUpdateState }) {
-  const [currentLessonNum, setCurrentLessonNum] = useState(1);
-  const [activeSubTab, setActiveSubTab] = useState('dialogue'); // 'dialogue' | 'practice'
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'completed' | 'pending'
+export default function ConversationTab({ 
+  appState, 
+  onUpdateState,
+  initialLesson = null,
+  initialTab = 'dialogue',
+  initialStatus = 'all',
+  initialType = 'all',
+  onParamsChange
+}) {
+  const [currentLessonNum, setCurrentLessonNum] = useState(initialLesson ? parseInt(initialLesson, 10) : 1);
+  const [activeSubTab, setActiveSubTab] = useState(initialTab || 'dialogue'); // 'dialogue' | 'practice'
+  const [statusFilter, setStatusFilter] = useState(initialStatus || 'all'); // 'all' | 'completed' | 'pending'
   
   // Exercise practice state
-  const [filterType, setFilterType] = useState('all'); // 'all' | 'reply' | 'missing_word' | 'missing_kanji'
+  const [filterType, setFilterType] = useState(initialType || 'all'); // 'all' | 'reply' | 'missing_word' | 'missing_kanji'
   const [currentExIndex, setCurrentExIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState({ correct: 0, total: 0 });
+
+  const updateParams = (newLesson, newTab, newStatus, newType) => {
+    if (onParamsChange) {
+      onParamsChange({
+        lesson: newLesson !== undefined ? newLesson : currentLessonNum,
+        tab: newTab !== undefined ? newTab : activeSubTab,
+        status: newStatus !== undefined ? newStatus : statusFilter,
+        type: newType !== undefined ? newType : filterType
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (initialLesson) {
+      const parsed = parseInt(initialLesson, 10);
+      if (!isNaN(parsed) && parsed !== currentLessonNum) setCurrentLessonNum(parsed);
+    }
+  }, [initialLesson]);
+
+  useEffect(() => {
+    if (initialTab && (initialTab === 'dialogue' || initialTab === 'practice')) {
+      setActiveSubTab(initialTab);
+    }
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (initialStatus) setStatusFilter(initialStatus);
+  }, [initialStatus]);
+
+  useEffect(() => {
+    if (initialType) setFilterType(initialType);
+  }, [initialType]);
 
   const lessons = dataStore.nhkLessons || [];
   const allExercises = dataStore.conversationExercises || [];
@@ -126,6 +166,7 @@ export default function ConversationTab({ appState, onUpdateState }) {
     const nextPending = lessons.find(l => !completedConversations[l.lesson]);
     if (nextPending) {
       setCurrentLessonNum(nextPending.lesson);
+      updateParams(nextPending.lesson, activeSubTab, statusFilter, filterType);
     }
   };
 
@@ -145,7 +186,10 @@ export default function ConversationTab({ appState, onUpdateState }) {
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, borderBottom: '1px solid var(--border)', paddingBottom: 12, flexWrap: 'wrap' }}>
         <button
           className={`btn ${activeSubTab === 'dialogue' ? 'btn-primary' : 'btn-outline'}`}
-          onClick={() => setActiveSubTab('dialogue')}
+          onClick={() => {
+            setActiveSubTab('dialogue');
+            updateParams(currentLessonNum, 'dialogue', statusFilter, filterType);
+          }}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px', fontWeight: 700 }}
         >
           <MessageSquare size={18} /> Diálogos y Lecciones ({lessons.length})
@@ -153,7 +197,10 @@ export default function ConversationTab({ appState, onUpdateState }) {
 
         <button
           className={`btn ${activeSubTab === 'practice' ? 'btn-primary' : 'btn-outline'}`}
-          onClick={() => setActiveSubTab('practice')}
+          onClick={() => {
+            setActiveSubTab('practice');
+            updateParams(currentLessonNum, 'practice', statusFilter, filterType);
+          }}
           style={{ 
             display: 'inline-flex', 
             alignItems: 'center', 
@@ -191,21 +238,30 @@ export default function ConversationTab({ appState, onUpdateState }) {
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                 <button
                   className={`btn btn-sm ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setStatusFilter('all')}
+                  onClick={() => {
+                    setStatusFilter('all');
+                    updateParams(currentLessonNum, activeSubTab, 'all', filterType);
+                  }}
                   style={{ fontSize: '0.8rem', padding: '4px 10px' }}
                 >
                   Todas ({lessons.length})
                 </button>
                 <button
                   className={`btn btn-sm ${statusFilter === 'completed' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setStatusFilter('completed')}
+                  onClick={() => {
+                    setStatusFilter('completed');
+                    updateParams(currentLessonNum, activeSubTab, 'completed', filterType);
+                  }}
                   style={{ fontSize: '0.8rem', padding: '4px 10px' }}
                 >
                   ✓ Estudiadas ({completedCount})
                 </button>
                 <button
                   className={`btn btn-sm ${statusFilter === 'pending' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setStatusFilter('pending')}
+                  onClick={() => {
+                    setStatusFilter('pending');
+                    updateParams(currentLessonNum, activeSubTab, 'pending', filterType);
+                  }}
                   style={{ fontSize: '0.8rem', padding: '4px 10px' }}
                 >
                   Pendientes ({lessons.length - completedCount})
@@ -248,7 +304,10 @@ export default function ConversationTab({ appState, onUpdateState }) {
                 <button
                   key={l.lesson}
                   className={btnClass}
-                  onClick={() => setCurrentLessonNum(l.lesson)}
+                  onClick={() => {
+                    setCurrentLessonNum(l.lesson);
+                    updateParams(l.lesson, activeSubTab, statusFilter, filterType);
+                  }}
                   style={{ 
                     fontSize: '0.85rem', 
                     whiteSpace: 'nowrap',
@@ -496,25 +555,45 @@ export default function ConversationTab({ appState, onUpdateState }) {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button
                 className={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => { setFilterType('all'); setCurrentExIndex(0); setSelectedAnswer(null); }}
+                onClick={() => { 
+                  setFilterType('all'); 
+                  setCurrentExIndex(0); 
+                  setSelectedAnswer(null); 
+                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'all');
+                }}
               >
                 Todos ({allExercises.length})
               </button>
               <button
                 className={`btn btn-sm ${filterType === 'reply' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => { setFilterType('reply'); setCurrentExIndex(0); setSelectedAnswer(null); }}
+                onClick={() => { 
+                  setFilterType('reply'); 
+                  setCurrentExIndex(0); 
+                  setSelectedAnswer(null); 
+                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'reply');
+                }}
               >
                 💬 ¿Qué responder?
               </button>
               <button
                 className={`btn btn-sm ${filterType === 'missing_word' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => { setFilterType('missing_word'); setCurrentExIndex(0); setSelectedAnswer(null); }}
+                onClick={() => { 
+                  setFilterType('missing_word'); 
+                  setCurrentExIndex(0); 
+                  setSelectedAnswer(null); 
+                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'missing_word');
+                }}
               >
                 🧩 ¿Qué palabra falta?
               </button>
               <button
                 className={`btn btn-sm ${filterType === 'missing_kanji' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => { setFilterType('missing_kanji'); setCurrentExIndex(0); setSelectedAnswer(null); }}
+                onClick={() => { 
+                  setFilterType('missing_kanji'); 
+                  setCurrentExIndex(0); 
+                  setSelectedAnswer(null); 
+                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'missing_kanji');
+                }}
               >
                 ㊗️ ¿Qué kanji corresponde?
               </button>

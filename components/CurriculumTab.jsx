@@ -21,20 +21,27 @@ import {
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 
-export default function CurriculumTab({ onNavigate, userState, onUpdateState }) {
+export default function CurriculumTab({ onNavigate, userState, onUpdateState, initialStep = null, onStepChange }) {
   const steps = dataStore.curriculum || [];
   
   // State for active module detailed view
-  const [selectedStepNum, setSelectedStepNum] = useState(null);
+  const [selectedStepNum, setSelectedStepNum] = useState(initialStep);
   
   // Quiz interaction state for module view
   const [quizAnswers, setQuizAnswers] = useState({}); // { [exerciseId]: selectedOption }
   const [quizFeedback, setQuizFeedback] = useState({}); // { [exerciseId]: { isCorrect, explanation } }
 
+  React.useEffect(() => {
+    if (initialStep !== undefined) {
+      setSelectedStepNum(initialStep);
+    }
+  }, [initialStep]);
+
   const selectedStep = steps.find(s => s.step === selectedStepNum) || null;
 
   const handleOpenModule = (stepNum) => {
     setSelectedStepNum(stepNum);
+    if (onStepChange) onStepChange(stepNum);
     setQuizAnswers({});
     setQuizFeedback({});
     // Scroll smoothly to top
@@ -45,6 +52,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState }) 
 
   const handleCloseModule = () => {
     setSelectedStepNum(null);
+    if (onStepChange) onStepChange(null);
   };
 
   const handlePlayAudio = (text, desc = '') => {

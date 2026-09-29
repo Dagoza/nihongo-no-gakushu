@@ -89,7 +89,7 @@ export default function Header({
             className="stat-badge" 
             style={{ cursor: 'pointer' }}
             onClick={() => onNavigate('progress')}
-            title={syncInfo || (syncStatus === 'synced' ? 'Nube sincronizada (Haz clic para ver)' : 'Haz clic para configurar sincronización multi-dispositivo')}
+            title={syncInfo || (authUser ? 'Progreso sincronizado en la nube (Haz clic para ver)' : 'Modo local. Inicia sesión con Google o correo para sincronizar')}
           >
             {syncStatus === 'syncing' ? (
               <CloudSync size={16} style={{ color: 'var(--accent, #f59e0b)' }} />

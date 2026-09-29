@@ -1,15 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, ExternalLink, Eye, X, FileText, BookOpen, FileSpreadsheet } from 'lucide-react';
 import { dataStore } from '../lib/data';
 
-export default function MaterialLibraryTab() {
-  const [currentCategory, setCurrentCategory] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+export default function MaterialLibraryTab({
+  initialCategory = 'all',
+  initialSearch = '',
+  initialDoc = null,
+  onParamsChange
+}) {
+  const [currentCategory, setCurrentCategory] = useState(initialCategory || 'all');
+  const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [activeModal, setActiveModal] = useState(null); // { title, url }
 
   const catalog = dataStore.pdfCatalog || [];
+
+  const updateParams = (newCat, newSearch, newDoc) => {
+    if (onParamsChange) {
+      onParamsChange({
+        category: newCat !== undefined ? newCat : currentCategory,
+        search: newSearch !== undefined ? newSearch : searchTerm,
+        doc: newDoc !== undefined ? newDoc : (activeModal?.filename || null)
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (initialCategory && initialCategory !== currentCategory) {
+      setCurrentCategory(initialCategory);
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialSearch !== undefined && initialSearch !== searchTerm) {
+      setSearchTerm(initialSearch);
+    }
+  }, [initialSearch]);
+
+  useEffect(() => {
+    if (initialDoc) {
+      const found = catalog.find(p => p.filename === initialDoc || p.path?.includes(initialDoc));
+      if (found) {
+        setActiveModal({
+          title: found.title,
+          url: found.path,
+          externalUrl: found.external_url,
+          filename: found.filename
+        });
+      }
+    }
+  }, [initialDoc, catalog]);
 
   const categories = [
     { id: 'all', name: 'Todos los Materiales' },
@@ -58,7 +99,10 @@ export default function MaterialLibraryTab() {
             style={{ paddingLeft: 38 }}
             placeholder="Buscar por nombre de archivo o tema..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              updateParams(currentCategory, e.target.value, activeModal?.filename);
+            }}
           />
         </div>
 
@@ -67,7 +111,10 @@ export default function MaterialLibraryTab() {
             <button
               key={cat.id}
               className={`btn ${currentCategory === cat.id ? 'btn-primary' : 'btn-outline'} btn-sm`}
-              onClick={() => setCurrentCategory(cat.id)}
+              onClick={() => {
+                setCurrentCategory(cat.id);
+                updateParams(cat.id, searchTerm, activeModal?.filename);
+              }}
             >
               {cat.name}
             </button>
@@ -115,7 +162,10 @@ export default function MaterialLibraryTab() {
                 {isViewablePdf && (
                   <button 
                     className="btn btn-primary btn-sm"
-                    onClick={() => setActiveModal({ title: pdf.title, url: pdf.path, externalUrl: pdf.external_url })}
+                    onClick={() => {
+                      setActiveModal({ title: pdf.title, url: pdf.path, externalUrl: pdf.external_url, filename: pdf.filename });
+                      updateParams(currentCategory, searchTerm, pdf.filename);
+                    }}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
                   >
                     <Eye size={14} /> Ver en la App
@@ -168,7 +218,10 @@ export default function MaterialLibraryTab() {
                 </a>
                 <button 
                   className="modal-close-btn"
-                  onClick={() => setActiveModal(null)}
+                  onClick={() => {
+                    setActiveModal(null);
+                    updateParams(currentCategory, searchTerm, null);
+                  }}
                   title="Cerrar visor"
                 >
                   <X size={18} />

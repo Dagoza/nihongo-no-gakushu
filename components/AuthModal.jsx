@@ -26,7 +26,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
     } catch (err) {
       let msg = err.message || 'Error al conectar con Google.';
       if (msg.includes('provider is not enabled') || msg.includes('Unsupported provider') || msg.includes('disabled')) {
-        msg = 'El proveedor de Google aún no está activado en tu panel de Supabase (Authentication -> Providers -> Google).';
+        msg = 'El inicio de sesión con Google no está disponible en este momento. Puedes usar tu correo y contraseña.';
       }
       setErrorMessage(msg);
       setGoogleLoading(false);
@@ -87,7 +87,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       } else if (msg.includes('User already registered')) {
         msg = 'Ya existe una cuenta registrada con este correo. Prueba iniciar sesión.';
       } else if (msg.includes('Email not confirmed')) {
-        msg = 'Correo no confirmado. Revisa tu bandeja de entrada o desactiva la confirmación en Supabase Auth.';
+        msg = 'Correo no confirmado. Por favor revisa tu bandeja de entrada para verificar tu cuenta.';
       } else if (msg.includes('Password should be at least 6')) {
         msg = 'La contraseña debe tener un mínimo de 6 caracteres.';
       }
@@ -427,7 +427,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           }}>
             <ShieldCheck size={18} style={{ color: 'var(--success, #10b981)', flexShrink: 0, marginTop: 1 }} />
             <div>
-              <strong>Seguridad Row Level Security (RLS)</strong>: Tu progreso queda cifrado y ligado a tu ID de Google o correo. Ninguna otra persona puede acceder a tus estadísticas de estudio.
+              <strong>Privacidad y Seguridad Garantizada</strong>: Tu progreso queda protegido y ligado exclusivamente a tu cuenta de Google o correo. Nadie más tiene acceso a tus datos de estudio.
             </div>
           </div>
         </div>

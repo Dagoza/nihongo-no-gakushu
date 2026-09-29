@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -9,20 +9,64 @@ import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import KanjiDraw from './KanjiDraw';
 
-export default function KanjiTab({ appState, onUpdateState }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [quizActive, setQuizActive] = useState(false);
+export default function KanjiTab({ 
+  appState, 
+  onUpdateState,
+  initialSearch = '',
+  initialMode = 'list',
+  initialDraw = null,
+  onParamsChange
+}) {
+  const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+  const [quizActive, setQuizActive] = useState(initialMode === 'quiz');
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizInput, setQuizInput] = useState('');
   const [quizFeedback, setQuizFeedback] = useState(null); // { type: 'correct'|'wrong', msg, reading }
   const isComposingRef = useRef(false);
 
   // SRS State
-  const [srsActive, setSrsActive] = useState(false);
+  const [srsActive, setSrsActive] = useState(initialMode === 'srs');
   const [srsQueue, setSrsQueue] = useState([]);
 
   // Drawing Mode
-  const [drawingKanji, setDrawingKanji] = useState(null);
+  const [drawingKanji, setDrawingKanji] = useState(initialDraw || null);
+
+  const updateParams = (newSearch, newMode, newDraw) => {
+    if (onParamsChange) {
+      const activeMode = newMode !== undefined 
+        ? newMode 
+        : (quizActive ? 'quiz' : (srsActive ? 'srs' : 'list'));
+      onParamsChange({
+        search: newSearch !== undefined ? newSearch : searchTerm,
+        mode: activeMode,
+        draw: newDraw !== undefined ? newDraw : drawingKanji
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (initialSearch !== undefined && initialSearch !== searchTerm) {
+      setSearchTerm(initialSearch || '');
+    }
+  }, [initialSearch]);
+
+  useEffect(() => {
+    if (initialMode === 'quiz') {
+      setQuizActive(true);
+      setSrsActive(false);
+    } else if (initialMode === 'srs') {
+      startSrsSession();
+    } else if (initialMode === 'list') {
+      setQuizActive(false);
+      setSrsActive(false);
+    }
+  }, [initialMode]);
+
+  useEffect(() => {
+    if (initialDraw !== undefined && initialDraw !== drawingKanji) {
+      setDrawingKanji(initialDraw);
+    }
+  }, [initialDraw]);
 
   const kanjiList = dataStore.kanji || [];
 
@@ -66,6 +110,7 @@ export default function KanjiTab({ appState, onUpdateState }) {
     setSrsQueue(queue);
     setSrsActive(true);
     setQuizActive(false);
+    updateParams(searchTerm, 'srs', drawingKanji);
   };
 
   const handleSrsReview = (item, rating) => {
@@ -197,6 +242,8 @@ export default function KanjiTab({ appState, onUpdateState }) {
                   setQuizFeedback(null);
                   setQuizInput('');
                   setQuizActive(true);
+                  setSrsActive(false);
+                  updateParams(searchTerm, 'quiz', drawingKanji);
                 }}
               >
                 ✍️ Practicar Lecturas
@@ -214,7 +261,10 @@ export default function KanjiTab({ appState, onUpdateState }) {
                 style={{ paddingLeft: 38 }}
                 placeholder="Buscar kanji por carácter, lectura (いち, に) o significado (persona, norte, agua)..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  updateParams(e.target.value, undefined, drawingKanji);
+                }}
               />
             </div>
             <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
@@ -239,7 +289,10 @@ export default function KanjiTab({ appState, onUpdateState }) {
                       </div>
                       <button 
                         className="btn btn-outline btn-xs" 
-                        onClick={() => setDrawingKanji(k.kanji)}
+                        onClick={() => {
+                          setDrawingKanji(k.kanji);
+                          updateParams(searchTerm, undefined, k.kanji);
+                        }}
                         title="Practicar orden de trazos"
                       >
                         ✍️ Trazos
@@ -326,7 +379,10 @@ export default function KanjiTab({ appState, onUpdateState }) {
         <SrsReview 
           queue={srsQueue}
           onRate={handleSrsReview}
-          onExit={() => setSrsActive(false)}
+          onExit={() => {
+            setSrsActive(false);
+            updateParams(searchTerm, 'list', drawingKanji);
+          }}
           renderFront={(item) => (
             <div className="kanji-big-char jp-text" style={{ fontSize: '5rem', marginBottom: 16 }}>
               {item.kanji}
@@ -370,7 +426,10 @@ export default function KanjiTab({ appState, onUpdateState }) {
           {currentQuizItem ? (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <button className="btn btn-outline btn-sm" onClick={() => setQuizActive(false)}>
+                <button className="btn btn-outline btn-sm" onClick={() => {
+                  setQuizActive(false);
+                  updateParams(searchTerm, 'list', drawingKanji);
+                }}>
                   <ArrowLeft size={16} /> Volver a Kanjis
                 </button>
                 <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>
@@ -469,7 +528,10 @@ export default function KanjiTab({ appState, onUpdateState }) {
                 <button className="btn btn-primary" onClick={() => { setQuizIndex(0); setQuizFeedback(null); }}>
                   <RotateCcw size={16} /> Repetir Práctica
                 </button>
-                <button className="btn btn-outline" onClick={() => setQuizActive(false)}>
+                <button className="btn btn-outline" onClick={() => {
+                  setQuizActive(false);
+                  updateParams(searchTerm, 'list', drawingKanji);
+                }}>
                   Volver a la Biblioteca
                 </button>
               </div>
@@ -489,7 +551,10 @@ export default function KanjiTab({ appState, onUpdateState }) {
             <button 
               className="btn btn-outline btn-sm"
               style={{ position: 'absolute', top: 12, right: 12, borderRadius: '50%', width: 32, height: 32, padding: 0 }}
-              onClick={() => setDrawingKanji(null)}
+              onClick={() => {
+                setDrawingKanji(null);
+                updateParams(searchTerm, undefined, null);
+              }}
             >
               ✕
             </button>

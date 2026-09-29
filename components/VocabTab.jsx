@@ -9,11 +9,54 @@ import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
 import SrsReview from './SrsReview';
 import SpeechPractice from './SpeechPractice';
 
-export default function VocabTab({ appState, onUpdateState }) {
-  const [mode, setMode] = useState('cards'); // 'cards' | 'typing' | 'n4_exercises' | 'srs'
-  const [level, setLevel] = useState('all'); // 'all' | 'N5' | 'N4'
-  const [category, setCategory] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+export default function VocabTab({ 
+  appState, 
+  onUpdateState,
+  initialMode = null,
+  initialLevel = null,
+  initialCategory = null,
+  initialSearch = null,
+  onParamsChange
+}) {
+  const [mode, setMode] = useState(initialMode || 'cards'); // 'cards' | 'typing' | 'n4_exercises' | 'srs'
+  const [level, setLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4'
+  const [category, setCategory] = useState(initialCategory || 'all');
+  const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+
+  useEffect(() => {
+    if (initialMode && ['cards', 'typing', 'n4_exercises', 'srs'].includes(initialMode)) {
+      setMode(initialMode);
+    }
+  }, [initialMode]);
+
+  useEffect(() => {
+    if (initialLevel && ['all', 'N5', 'N4'].includes(initialLevel)) {
+      setLevel(initialLevel);
+    }
+  }, [initialLevel]);
+
+  useEffect(() => {
+    if (initialCategory) {
+      setCategory(initialCategory);
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialSearch !== null && initialSearch !== undefined) {
+      setSearchTerm(initialSearch);
+    }
+  }, [initialSearch]);
+
+  const updateParams = (newMode, newLevel, newCat, newSearch) => {
+    if (onParamsChange) {
+      onParamsChange({
+        mode: newMode !== undefined ? newMode : mode,
+        level: newLevel !== undefined ? newLevel : level,
+        category: newCat !== undefined ? newCat : category,
+        search: newSearch !== undefined ? newSearch : searchTerm
+      });
+    }
+  };
 
   // Typing practice state
   const [typingIndex, setTypingIndex] = useState(0);
@@ -186,7 +229,10 @@ export default function VocabTab({ appState, onUpdateState }) {
         <div className="reading-mode-selector">
           <button 
             className={`mode-btn ${mode === 'cards' ? 'active' : ''}`}
-            onClick={() => setMode('cards')}
+            onClick={() => {
+              setMode('cards');
+              updateParams('cards', level, category, searchTerm);
+            }}
           >
             <Layers size={16} /> 🗂️ Tarjetas ({filteredVocab.length})
           </button>
@@ -196,13 +242,17 @@ export default function VocabTab({ appState, onUpdateState }) {
               setMode('typing');
               setTypingFeedback(null);
               setTypingInput('');
+              updateParams('typing', level, category, searchTerm);
             }}
           >
             <Keyboard size={16} /> ⌨️ Práctica Teclado IME
           </button>
           <button 
             className={`mode-btn ${mode === 'srs' ? 'active' : ''}`}
-            onClick={startSrsSession}
+            onClick={() => {
+              startSrsSession();
+              updateParams('srs', level, category, searchTerm);
+            }}
           >
             🧠 Repaso Espaciado (SRS)
           </button>
@@ -211,6 +261,7 @@ export default function VocabTab({ appState, onUpdateState }) {
             onClick={() => {
               setMode('n4_exercises');
               setExerciseAnswer(null);
+              updateParams('n4_exercises', level, category, searchTerm);
             }}
           >
             <BookOpen size={16} /> 📝 Ejercicios de Contexto ({n4Exercises.length})
@@ -222,19 +273,31 @@ export default function VocabTab({ appState, onUpdateState }) {
           <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Nivel:</span>
           <button 
             className={`btn ${level === 'all' ? 'btn-primary' : 'btn-outline'} btn-sm`}
-            onClick={() => { setLevel('all'); setCategory('all'); }}
+            onClick={() => { 
+              setLevel('all'); 
+              setCategory('all'); 
+              updateParams(mode, 'all', 'all', searchTerm);
+            }}
           >
             Todos
           </button>
           <button 
             className={`btn ${level === 'N5' ? 'btn-primary' : 'btn-outline'} btn-sm`}
-            onClick={() => { setLevel('N5'); setCategory('all'); }}
+            onClick={() => { 
+              setLevel('N5'); 
+              setCategory('all'); 
+              updateParams(mode, 'N5', 'all', searchTerm);
+            }}
           >
             N5
           </button>
           <button 
             className={`btn ${level === 'N4' ? 'btn-primary' : 'btn-outline'} btn-sm`}
-            onClick={() => { setLevel('N4'); setCategory('all'); }}
+            onClick={() => { 
+              setLevel('N4'); 
+              setCategory('all'); 
+              updateParams(mode, 'N4', 'all', searchTerm);
+            }}
           >
             N4
           </button>
@@ -254,14 +317,20 @@ export default function VocabTab({ appState, onUpdateState }) {
                 style={{ paddingLeft: 38 }}
                 placeholder="Buscar por kanji, kana, español o inglés..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  updateParams(mode, level, category, e.target.value);
+                }}
               />
             </div>
 
             <select 
               className="filter-select"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                updateParams(mode, level, e.target.value, searchTerm);
+              }}
             >
               {availableCategories.map(cat => (
                 <option key={cat} value={cat}>

@@ -7,24 +7,49 @@ import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle } fro
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
 
-export default function StoryTab({ userState, onRecordActivity, appState, onUpdateState, activeStoryId, onSelectStory, onNavigate }) {
+export default function StoryTab({ 
+  userState, 
+  onRecordActivity, 
+  appState, 
+  onUpdateState, 
+  activeStoryId, 
+  onSelectStory, 
+  onNavigate,
+  initialStoryId = null,
+  initialChapter = null,
+  initialMode = null,
+  onParamsChange
+}) {
   const allStories = useMemo(() => {
     const defaultStories = dataStore.stories || [];
     const customStories = appState?.savedStories || [];
     return [...defaultStories, ...customStories];
   }, [appState?.savedStories]);
 
-  const [selectedStoryId, setSelectedStoryId] = useState(activeStoryId || allStories[0]?.id || 'story_1');
+  const [selectedStoryId, setSelectedStoryId] = useState(initialStoryId || activeStoryId || allStories[0]?.id || 'story_1');
+  const [currentChapter, setCurrentChapter] = useState(initialChapter ? parseInt(initialChapter, 10) : 1);
+  const [readingMode, setReadingMode] = useState(initialMode || 'natural'); // 'natural', 'hiragana', 'kanji_only'
 
   useEffect(() => {
-    if (activeStoryId && allStories.some(s => s.id === activeStoryId)) {
+    if (initialStoryId && allStories.some(s => s.id === initialStoryId)) {
+      setSelectedStoryId(initialStoryId);
+    } else if (activeStoryId && allStories.some(s => s.id === activeStoryId)) {
       setSelectedStoryId(activeStoryId);
     }
-  }, [activeStoryId, allStories]);
+  }, [initialStoryId, activeStoryId, allStories]);
 
-  const story = allStories.find(s => s.id === selectedStoryId) || allStories[0] || dataStore.stories[0];
-  const [currentChapter, setCurrentChapter] = useState(1);
-  const [readingMode, setReadingMode] = useState('natural'); // 'natural', 'hiragana', 'kanji_only'
+  useEffect(() => {
+    if (initialChapter !== null && initialChapter !== undefined) {
+      const ch = parseInt(initialChapter, 10);
+      if (ch) setCurrentChapter(ch);
+    }
+  }, [initialChapter]);
+
+  useEffect(() => {
+    if (initialMode && ['natural', 'hiragana', 'kanji_only'].includes(initialMode)) {
+      setReadingMode(initialMode);
+    }
+  }, [initialMode]);
   const [selectedSentenceId, setSelectedSentenceId] = useState('sent_1');
   const [typingInput, setTypingInput] = useState('');
   const [typingFeedback, setTypingFeedback] = useState(null);
@@ -187,6 +212,7 @@ export default function StoryTab({ userState, onRecordActivity, appState, onUpda
                 setSelectedStoryId(s.id);
                 setCurrentChapter(1);
                 if (onSelectStory) onSelectStory(s.id);
+                if (onParamsChange) onParamsChange({ id: s.id, chapter: 1, mode: readingMode });
               }}
             >
               <span>{s.title}</span>
@@ -243,19 +269,28 @@ export default function StoryTab({ userState, onRecordActivity, appState, onUpda
         <div className="reading-mode-selector">
           <button 
             className={`mode-btn ${readingMode === 'natural' ? 'active' : ''}`}
-            onClick={() => setReadingMode('natural')}
+            onClick={() => {
+              setReadingMode('natural');
+              if (onParamsChange) onParamsChange({ id: selectedStoryId, chapter: currentChapter, mode: 'natural' });
+            }}
           >
             🎌 Kanji + Furigana
           </button>
           <button 
             className={`mode-btn ${readingMode === 'hiragana' ? 'active' : ''}`}
-            onClick={() => setReadingMode('hiragana')}
+            onClick={() => {
+              setReadingMode('hiragana');
+              if (onParamsChange) onParamsChange({ id: selectedStoryId, chapter: currentChapter, mode: 'hiragana' });
+            }}
           >
             あ Solo Hiragana
           </button>
           <button 
             className={`mode-btn ${readingMode === 'kanji_only' ? 'active' : ''}`}
-            onClick={() => setReadingMode('kanji_only')}
+            onClick={() => {
+              setReadingMode('kanji_only');
+              if (onParamsChange) onParamsChange({ id: selectedStoryId, chapter: currentChapter, mode: 'kanji_only' });
+            }}
           >
             漢 Solo Kanji
           </button>
@@ -276,6 +311,7 @@ export default function StoryTab({ userState, onRecordActivity, appState, onUpda
             onClick={() => {
               setCurrentChapter(p.chapter);
               setTypingFeedback(null);
+              if (onParamsChange) onParamsChange({ id: selectedStoryId, chapter: p.chapter, mode: readingMode });
             }}
           >
             Capítulo {p.chapter}: {p.title.split(' ')[0]}

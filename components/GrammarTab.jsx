@@ -1,20 +1,49 @@
 'use client';
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
 
-export default function GrammarTab({ appState, onUpdateState }) {
-  const [filterParticle, setFilterParticle] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [quizActive, setQuizActive] = useState(false);
+export default function GrammarTab({ 
+  appState, 
+  onUpdateState,
+  initialParticle = null,
+  initialSearch = null,
+  initialQuiz = false,
+  onParamsChange
+}) {
+  const [filterParticle, setFilterParticle] = useState(initialParticle || 'all');
+  const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+  const [quizActive, setQuizActive] = useState(!!initialQuiz);
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizFeedback, setQuizFeedback] = useState(null); // { selected, isCorrect, correct, sentence, role }
   const [imeInput, setImeInput] = useState('');
   const isComposingRef = useRef(false);
+
+  useEffect(() => {
+    if (initialParticle) setFilterParticle(initialParticle);
+  }, [initialParticle]);
+
+  useEffect(() => {
+    if (initialSearch !== null && initialSearch !== undefined) setSearchTerm(initialSearch);
+  }, [initialSearch]);
+
+  useEffect(() => {
+    if (initialQuiz !== undefined) setQuizActive(!!initialQuiz);
+  }, [initialQuiz]);
+
+  const updateParams = (newP, newSearch, newQuiz) => {
+    if (onParamsChange) {
+      onParamsChange({
+        particle: newP !== undefined ? newP : filterParticle,
+        search: newSearch !== undefined ? newSearch : searchTerm,
+        quiz: newQuiz !== undefined ? newQuiz : quizActive
+      });
+    }
+  };
 
   const particlesData = dataStore.particles || [];
 
@@ -155,6 +184,7 @@ export default function GrammarTab({ appState, onUpdateState }) {
                 setQuizIndex(0);
                 setQuizFeedback(null);
                 setQuizActive(true);
+                updateParams(filterParticle, searchTerm, true);
               }}
             >
               ⚡ Iniciar Quiz de Partículas
@@ -171,7 +201,10 @@ export default function GrammarTab({ appState, onUpdateState }) {
                 style={{ paddingLeft: 38 }}
                 placeholder="Buscar función, fórmula, ejemplo o traducción..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  updateParams(filterParticle, e.target.value, quizActive);
+                }}
               />
             </div>
 
@@ -180,7 +213,10 @@ export default function GrammarTab({ appState, onUpdateState }) {
                 <button
                   key={p}
                   className={`btn ${filterParticle === p ? 'btn-primary' : 'btn-outline'} btn-sm jp-text`}
-                  onClick={() => setFilterParticle(p)}
+                  onClick={() => {
+                    setFilterParticle(p);
+                    updateParams(p, searchTerm, quizActive);
+                  }}
                 >
                   {p === 'all' ? 'Todas' : p}
                 </button>
@@ -303,7 +339,10 @@ export default function GrammarTab({ appState, onUpdateState }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <button 
                   className="btn btn-outline btn-sm"
-                  onClick={() => setQuizActive(false)}
+                  onClick={() => {
+                    setQuizActive(false);
+                    updateParams(filterParticle, searchTerm, false);
+                  }}
                 >
                   <ArrowLeft size={16} /> Volver al Checklist
                 </button>
@@ -426,7 +465,10 @@ export default function GrammarTab({ appState, onUpdateState }) {
                 </button>
                 <button 
                   className="btn btn-outline"
-                  onClick={() => setQuizActive(false)}
+                  onClick={() => {
+                    setQuizActive(false);
+                    updateParams(filterParticle, searchTerm, false);
+                  }}
                 >
                   Volver al Checklist
                 </button>

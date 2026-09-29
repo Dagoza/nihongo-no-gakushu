@@ -355,13 +355,14 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                     <div className="mega-items-grid">
                       {TABS.filter((t) => t.category === 'learn').map((t) => {
                         const Icon = t.icon;
-                        const isActive = currentTab === t.id;
+                        const isActive = activeTabId === t.id;
                         return (
-                          <button
+                          <Link
                             key={t.id}
+                            href={t.path}
                             className={`mega-item-btn ${isActive ? 'active' : ''}`}
                             onClick={() => {
-                              handleTabClick(t.id);
+                              if (onTabChange) onTabChange(t.id);
                               setIsMenuOpen(false);
                             }}
                             role="menuitem"
@@ -376,7 +377,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                               </div>
                               <span className="mega-item-desc">{t.desc}</span>
                             </div>
-                          </button>
+                          </Link>
                         );
                       })}
                     </div>
@@ -391,13 +392,14 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                     <div className="mega-items-grid">
                       {TABS.filter((t) => t.category === 'practice').map((t) => {
                         const Icon = t.icon;
-                        const isActive = currentTab === t.id;
+                        const isActive = activeTabId === t.id;
                         return (
-                          <button
+                          <Link
                             key={t.id}
+                            href={t.path}
                             className={`mega-item-btn ${isActive ? 'active' : ''}`}
                             onClick={() => {
-                              handleTabClick(t.id);
+                              if (onTabChange) onTabChange(t.id);
                               setIsMenuOpen(false);
                             }}
                             role="menuitem"
@@ -412,7 +414,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                               </div>
                               <span className="mega-item-desc">{t.desc}</span>
                             </div>
-                          </button>
+                          </Link>
                         );
                       })}
                     </div>
@@ -427,13 +429,14 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                     <div className="mega-items-grid">
                       {TABS.filter((t) => t.category === 'progress').map((t) => {
                         const Icon = t.icon;
-                        const isActive = currentTab === t.id;
+                        const isActive = activeTabId === t.id;
                         return (
-                          <button
+                          <Link
                             key={t.id}
+                            href={t.path}
                             className={`mega-item-btn ${isActive ? 'active' : ''}`}
                             onClick={() => {
-                              handleTabClick(t.id);
+                              if (onTabChange) onTabChange(t.id);
                               setIsMenuOpen(false);
                             }}
                             role="menuitem"
@@ -448,7 +451,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                               </div>
                               <span className="mega-item-desc">{t.desc}</span>
                             </div>
-                          </button>
+                          </Link>
                         );
                       })}
                     </div>
@@ -485,7 +488,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
           >
             {visibleTabs.map((tab, idx) => {
               const Icon = tab.icon;
-              const isActive = currentTab === tab.id;
+              const isActive = activeTabId === tab.id;
 
               // Insert subtle category dividers when showing all tabs
               const prevTab = idx > 0 ? visibleTabs[idx - 1] : null;
@@ -496,10 +499,15 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                   {isDifferentCategory && (
                     <div className="nav-tab-divider" aria-hidden="true" />
                   )}
-                  <button
+                  <Link
+                    href={tab.path}
                     className={`nav-tab-pill ${isActive ? 'active' : ''}`}
-                    onClick={() => handleTabClick(tab.id)}
-                    type="button"
+                    onClick={() => {
+                      if (onTabChange) onTabChange(tab.id);
+                      if (typeof window !== 'undefined') {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
                     title={`${tab.fullLabel}: ${tab.desc}`}
                     data-tab-id={tab.id}
                   >
@@ -511,7 +519,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                       <span className="tab-pill-badge">{savedCount}</span>
                     )}
                     {isActive && <div className="tab-pill-glow" />}
-                  </button>
+                  </Link>
                 </React.Fragment>
               );
             })}

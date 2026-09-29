@@ -33,16 +33,16 @@ export function AppProvider({ children }) {
   // Supabase Auth and Sync State
   const [authUser, setAuthUser] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [syncStatus, setSyncStatus] = useState('unconfigured'); // 'unconfigured' | 'synced' | 'syncing' | 'error'
-  const [syncInfo, setSyncInfo] = useState('');
+  const [syncStatus, setSyncStatus] = useState('local'); // 'local' | 'synced' | 'syncing' | 'error'
+  const [syncInfo, setSyncInfo] = useState('Modo local (Sin cuenta)');
   
   const appStateRef = useRef(appState);
   appStateRef.current = appState;
 
-  const handleTriggerSync = useCallback(async (stateToSync = null, targetCode = null) => {
+  const handleTriggerSync = useCallback(async (stateToSync = null) => {
     if (!isSupabaseConfigured()) {
-      setSyncStatus('unconfigured');
-      setSyncInfo('Modo Local (Supabase sin configurar)');
+      setSyncStatus('local');
+      setSyncInfo('Modo local');
       return;
     }
 
@@ -51,7 +51,7 @@ export function AppProvider({ children }) {
 
     try {
       const baseState = stateToSync || appStateRef.current;
-      const res = await executeFullSync(baseState, targetCode);
+      const res = await executeFullSync(baseState);
 
       if (res.success) {
         setAppState(res.mergedState);
@@ -59,6 +59,9 @@ export function AppProvider({ children }) {
         setSyncStatus('synced');
         const now = new Date();
         setSyncInfo(res.message || `Sincronizado a las ${now.toLocaleTimeString()}`);
+      } else if (res.reason === 'unauthenticated') {
+        setSyncStatus('local');
+        setSyncInfo('Modo local (Inicia sesión para sincronizar)');
       } else {
         setSyncStatus('error');
         setSyncInfo(res.message || 'Error al sincronizar');
@@ -82,16 +85,12 @@ export function AppProvider({ children }) {
       if (user) {
         const profile = extractUserProfile(user);
         setAuthUser(profile);
+        handleTriggerSync(saved);
+      } else {
+        setSyncStatus('local');
+        setSyncInfo('Modo local (Sin cuenta)');
       }
     });
-
-    // Initial sync
-    if (isSupabaseConfigured()) {
-      handleTriggerSync(saved);
-    } else {
-      setSyncStatus('unconfigured');
-      setSyncInfo('Modo local');
-    }
 
     // Subscribe to auth state changes
     const { data: { subscription } } = subscribeToAuthChanges(async (event, session) => {
@@ -103,21 +102,23 @@ export function AppProvider({ children }) {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         handleTriggerSync();
       } else if (event === 'SIGNED_OUT') {
-        setSyncStatus('unconfigured');
+        setSyncStatus('local');
         setSyncInfo('Modo local (Sesión cerrada)');
       }
     });
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && isSupabaseConfigured()) {
-        handleTriggerSync();
+      if (document.visibilityState === 'visible') {
+        getAuthUser().then((user) => {
+          if (user) handleTriggerSync();
+        });
       }
     };
 
     const handleOnline = () => {
-      if (isSupabaseConfigured()) {
-        handleTriggerSync();
-      }
+      getAuthUser().then((user) => {
+        if (user) handleTriggerSync();
+      });
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);

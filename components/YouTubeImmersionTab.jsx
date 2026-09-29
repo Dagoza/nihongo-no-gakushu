@@ -55,15 +55,40 @@ const TOPIC_PRESETS = [
   { id: 'interview', label: '🎙️ Entrevistas Reales', query: 'Japanese street interview Tokyo', desc: 'Japonés real y coloquial hablado por personas en las calles de Tokio' }
 ];
 
-export default function YouTubeImmersionTab({ appState, onUpdateState, authUser = null, onOpenAuth = null }) {
-  // Navigation internal views: 'catalog' | 'player' | 'saved' | 'channels'
-  const [activeView, setActiveView] = useState('catalog');
+export default function YouTubeImmersionTab({ 
+  appState, 
+  onUpdateState, 
+  authUser = null, 
+  onOpenAuth = null,
+  initialView = 'catalog',
+  initialVideoId = null,
+  initialCategory = 'all',
+  initialLevel = 'all',
+  initialSearch = '',
+  initialTopic = null,
+  onParamsChange
+}) {
+  // Navigation internal views: 'catalog' | 'player' | 'saved' | 'channels' | 'search'
+  const [activeView, setActiveView] = useState(initialView || (initialVideoId ? 'player' : 'catalog'));
 
   // Filters
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all' | 'anime' | 'daily_life' | 'food_travel' | 'stories' | 'custom'
-  const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'all'); // 'all' | 'anime' | 'daily_life' | 'food_travel' | 'stories' | 'custom'
+  const [selectedLevel, setSelectedLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | 'N3'
+  const [searchQuery, setSearchQuery] = useState(initialSearch || '');
   const [onlyVerified, setOnlyVerified] = useState(false); // Opcional para filtrar solo verificados
+
+  const updateParams = (newView, newVid, newCat, newLvl, newSearch, newTopic) => {
+    if (onParamsChange) {
+      onParamsChange({
+        view: newView !== undefined ? newView : activeView,
+        v: newVid !== undefined ? newVid : (currentVideo?.youtubeId || null),
+        category: newCat !== undefined ? newCat : selectedCategory,
+        level: newLvl !== undefined ? newLvl : selectedLevel,
+        search: newSearch !== undefined ? newSearch : searchQuery,
+        topic: newTopic !== undefined ? newTopic : (activeTopicPreset?.id || null)
+      });
+    }
+  };
   
   // Custom video input
   const [customUrl, setCustomUrl] = useState('');
@@ -204,6 +229,45 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
     }
   }, [activeCueIndex]);
 
+  useEffect(() => {
+    if (initialVideoId && currentVideo?.youtubeId !== initialVideoId) {
+      const allAvailable = [
+        ...(catalogData.videos || []),
+        ...(appState?.savedCustomVideos || [])
+      ];
+      const found = allAvailable.find(v => v.youtubeId === initialVideoId);
+      if (found) {
+        handleSelectVideo(found);
+      } else {
+        handleLoadCustomUrl(null, `https://www.youtube.com/watch?v=${initialVideoId}`);
+      }
+    }
+  }, [initialVideoId]);
+
+  useEffect(() => {
+    if (initialView && initialView !== activeView) {
+      setActiveView(initialView);
+    }
+  }, [initialView]);
+
+  useEffect(() => {
+    if (initialCategory && initialCategory !== selectedCategory) {
+      setSelectedCategory(initialCategory);
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialLevel && initialLevel !== selectedLevel) {
+      setSelectedLevel(initialLevel);
+    }
+  }, [initialLevel]);
+
+  useEffect(() => {
+    if (initialSearch !== undefined && initialSearch !== searchQuery) {
+      setSearchQuery(initialSearch);
+    }
+  }, [initialSearch]);
+
   // Manejar selección de video (con carga dinámica de transcripción si no está en memoria)
   const handleSelectVideo = async (video) => {
     if (!video) return;
@@ -215,6 +279,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
       setPlayerError(null);
       setActiveTrackLang(video.spokenLanguage || 'ja');
       setActiveView('player');
+      updateParams('player', video.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
       if (playerRef.current) {
         playerRef.current.seekTo(0, true);
       }
@@ -242,6 +307,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
       setPlayerError(null);
       setActiveTrackLang(data.spokenLanguage || video.spokenLanguage || 'ja');
       setActiveView('player');
+      updateParams('player', video.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
       if (playerRef.current) {
         playerRef.current.seekTo(0, true);
       }
@@ -249,6 +315,7 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
       console.error('Error al cargar transcripción para el video:', err);
       setCurrentVideo(video);
       setActiveView('player');
+      updateParams('player', video.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
     } finally {
       setLoadingTranscriptVid(null);
     }
@@ -681,14 +748,20 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
         <div className="immersion-nav-tabs">
           <button
             className={`immersion-tab-btn ${activeView === 'catalog' ? 'active' : ''}`}
-            onClick={() => setActiveView('catalog')}
+            onClick={() => {
+              setActiveView('catalog');
+              updateParams('catalog', currentVideo?.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
+            }}
           >
             <BookOpen size={16} />
             <span>Videoteca ({allVideos.length})</span>
           </button>
           <button
             className={`immersion-tab-btn ${activeView === 'search' ? 'active' : ''}`}
-            onClick={() => setActiveView('search')}
+            onClick={() => {
+              setActiveView('search');
+              updateParams('search', currentVideo?.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
+            }}
           >
             <Search size={16} />
             <span>Buscar por Temas</span>
@@ -696,14 +769,20 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
           </button>
           <button
             className={`immersion-tab-btn ${activeView === 'player' ? 'active' : ''}`}
-            onClick={() => setActiveView('player')}
+            onClick={() => {
+              setActiveView('player');
+              updateParams('player', currentVideo?.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
+            }}
           >
             <Play size={16} />
             <span>Reproductor & Subtítulos</span>
           </button>
           <button
             className={`immersion-tab-btn ${activeView === 'saved' ? 'active' : ''}`}
-            onClick={() => setActiveView('saved')}
+            onClick={() => {
+              setActiveView('saved');
+              updateParams('saved', currentVideo?.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
+            }}
           >
             <Bookmark size={16} />
             <span>
@@ -714,7 +793,10 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
           </button>
           <button
             className={`immersion-tab-btn ${activeView === 'channels' ? 'active' : ''}`}
-            onClick={() => setActiveView('channels')}
+            onClick={() => {
+              setActiveView('channels');
+              updateParams('channels', currentVideo?.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
+            }}
           >
             <Tv size={16} />
             <span>Canales Recomendados ({catalogData.channels?.length || 0})</span>
@@ -1263,7 +1345,13 @@ export default function YouTubeImmersionTab({ appState, onUpdateState, authUser 
         <div className="player-view-section">
           {/* Header del Video Activo */}
           <div className="player-top-action-bar">
-            <button className="btn-back-catalog" onClick={() => setActiveView('catalog')}>
+            <button 
+              className="btn-back-catalog" 
+              onClick={() => {
+                setActiveView('catalog');
+                updateParams('catalog', currentVideo?.youtubeId, selectedCategory, selectedLevel, searchQuery, activeTopicPreset?.id);
+              }}
+            >
               <ArrowLeft size={16} />
               <span>Volver a la Videoteca</span>
             </button>
