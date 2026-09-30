@@ -96,6 +96,47 @@ export default function ProductTour({
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [audioSpeed, setAudioSpeed] = useState('1.0x');
 
+  // Mobile segmented view ('explanation' | 'demo')
+  const [mobileTab, setMobileTab] = useState('explanation');
+  const contentRef = useRef(null);
+
+  // Always restart tour from the beginning when opened/reactivated
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentStepIndex(0);
+      setSlideDirection('next');
+      setMobileTab('explanation');
+      // Reset interactive states of all widgets
+      setWelcomePillar(0);
+      setSelectedBadge('bell');
+      setImeInput('');
+      setImeOutput('');
+      setCanDoChecked(false);
+      setCurriculumQuizAnswered(false);
+      setFuriganaVisible(true);
+      setSavedWordDemo(false);
+      setMicActive(false);
+      setMicScore(null);
+      setSubWordClicked(null);
+      setPitchPattern('heiban');
+      setParticleSelected(null);
+      setKanjiAnimating(false);
+      setSelectedBook(0);
+      setSrsFlipped(false);
+      setSrsInterval(null);
+      setAudioPlaying(false);
+      setAudioSpeed('1.0x');
+    }
+  }, [isOpen]);
+
+  // Scroll to top of content on step change and reset mobile view tab
+  useEffect(() => {
+    setMobileTab('explanation');
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [currentStepIndex]);
+
   // Keyboard navigation & body scroll lock
   useEffect(() => {
     if (!isOpen) return;
@@ -356,36 +397,43 @@ export default function ProductTour({
       >
         {/* Top Header Row with Progress and Skip */}
         <div className="tour-modal-header">
-          <div className="tour-step-badge" style={{ backgroundColor: `${currentStep.categoryColor}18`, color: currentStep.categoryColor }}>
-            {React.createElement(currentStep.icon, { size: 14, style: { marginRight: 6 } })}
-            <span>{currentStep.category}</span>
-          </div>
+          <div className="tour-header-main-row">
+            <div className="tour-step-badge" style={{ backgroundColor: `${currentStep.categoryColor}18`, color: currentStep.categoryColor }}>
+              {React.createElement(currentStep.icon, { size: 14, style: { marginRight: 6 } })}
+              <span>{currentStep.category}</span>
+            </div>
 
-          <div className="tour-progress-info">
-            <span className="tour-step-counter">
-              Paso <strong>{currentStepIndex + 1}</strong> de {TOUR_STEPS.length}
-            </span>
-            <div className="tour-progress-track">
-              <div 
-                className="tour-progress-bar" 
-                style={{ width: `${progressPercent}%`, backgroundColor: currentStep.categoryColor }}
-              />
+            <div className="tour-header-right">
+              <span className="tour-step-counter">
+                Paso <strong>{currentStepIndex + 1}</strong> de {TOUR_STEPS.length}
+              </span>
+              <button 
+                type="button" 
+                className="tour-skip-btn" 
+                onClick={onSkip || onClose}
+                title="Saltar el tour"
+                aria-label="Cerrar tour"
+              >
+                <span className="tour-skip-text">Saltar</span>
+                <X size={15} />
+              </button>
             </div>
           </div>
 
-          <button 
-            type="button" 
-            className="tour-skip-btn" 
-            onClick={onSkip || onClose}
-            title="Saltar el tour y no volver a mostrar al inicio"
-          >
-            <span>Saltar tour</span>
-            <X size={15} />
-          </button>
+          <div className="tour-progress-track">
+            <div 
+              className="tour-progress-bar" 
+              style={{ width: `${progressPercent}%`, backgroundColor: currentStep.categoryColor }}
+            />
+          </div>
         </div>
 
         {/* Tour Main Content Area */}
-        <div className={`tour-modal-content slide-${slideDirection}`} key={currentStep.id}>
+        <div 
+          className={`tour-modal-content slide-${slideDirection}`} 
+          key={currentStep.id}
+          ref={contentRef}
+        >
           {/* Header Title & Subtitle */}
           <div className="tour-title-area">
             <h2 className="tour-main-title">
@@ -396,8 +444,28 @@ export default function ProductTour({
             </p>
           </div>
 
+          {/* Mobile view segmented control (Explicación / Demo) */}
+          <div className="tour-mobile-tabs">
+            <button
+              type="button"
+              className={`tour-mobile-tab-btn ${mobileTab === 'explanation' ? 'active' : ''}`}
+              onClick={() => setMobileTab('explanation')}
+            >
+              <BookOpen size={14} />
+              <span>1. Explicación & Tips</span>
+            </button>
+            <button
+              type="button"
+              className={`tour-mobile-tab-btn ${mobileTab === 'demo' ? 'active' : ''}`}
+              onClick={() => setMobileTab('demo')}
+            >
+              <Sparkles size={14} />
+              <span>2. Demo en Vivo</span>
+            </button>
+          </div>
+
           {/* Body Description & Not-so-obvious tip box */}
-          <div className="tour-body-grid">
+          <div className={`tour-body-grid mobile-view-${mobileTab}`}>
             <div className="tour-text-column">
               <p className="tour-description-text">
                 {currentStep.description}
@@ -414,6 +482,20 @@ export default function ProductTour({
                   </p>
                 </div>
               )}
+
+              {/* Call to action for mobile to jump directly into the interactive widget */}
+              <div className="tour-mobile-demo-cta">
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm tour-go-to-demo-btn"
+                  onClick={() => setMobileTab('demo')}
+                  style={{ borderColor: currentStep.categoryColor, color: currentStep.categoryColor }}
+                >
+                  <Sparkles size={14} />
+                  <span>Probar demostración interactiva en vivo</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
 
               {currentStep.tab && (
                 <div className="tour-tab-shortcut">
@@ -432,6 +514,18 @@ export default function ProductTour({
             {/* Interactive Widget Column */}
             <div className="tour-interactive-column">
               <div className="tour-interactive-card">
+                {/* Back button for mobile */}
+                <div className="tour-mobile-back-to-exp">
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm tour-back-exp-btn"
+                    onClick={() => setMobileTab('explanation')}
+                  >
+                    <BookOpen size={13} />
+                    <span>← Volver a la explicación</span>
+                  </button>
+                </div>
+
                 <div className="tour-widget-header">
                   <span className="tour-widget-tag">🎮 Demostración interactiva en vivo</span>
                 </div>
@@ -440,7 +534,7 @@ export default function ProductTour({
                 {currentStep.id === 'welcome' && (
                   <div className="tour-widget-inner welcome-widget">
                     <div className="welcome-pillars-nav">
-                      {['1. Inmersión', '2. Práctica Activa', '3. Repaso SRS'].map((pill, idx) => (
+                      {['1. Inmersión', '2. Práctica', '3. SRS'].map((pill, idx) => (
                         <button
                           key={pill}
                           type="button"
@@ -886,9 +980,9 @@ export default function ProductTour({
                     <div className="pitch-tabs-row">
                       {[
                         { id: 'heiban', name: 'Heiban (Plano)', word: 'さくら', romaji: 'sakura', meaning: 'Cerezo', wave: [1, 2, 2] },
-                        { id: 'atamadaka', name: 'Atamadaka (Alto inicial)', word: 'あめ', romaji: 'áme', meaning: 'Lluvia', wave: [2, 1] },
+                        { id: 'atamadaka', name: 'Atamadaka (Alto)', word: 'あめ', romaji: 'áme', meaning: 'Lluvia', wave: [2, 1] },
                         { id: 'nakadaka', name: 'Nakadaka (Medio)', word: 'あなた', romaji: 'anáta', meaning: 'Tú', wave: [1, 2, 1] },
-                        { id: 'odaka', name: 'Odaka (Caída en part.)', word: 'おとこ', romaji: 'otokó', meaning: 'Hombre', wave: [1, 2, 2] }
+                        { id: 'odaka', name: 'Odaka (Final)', word: 'おとこ', romaji: 'otokó', meaning: 'Hombre', wave: [1, 2, 2] }
                       ].map((item) => (
                         <button
                           key={item.id}

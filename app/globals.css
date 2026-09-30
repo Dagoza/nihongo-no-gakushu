@@ -7543,12 +7543,26 @@ html {
 
 .tour-modal-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 24px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 24px 10px;
   border-bottom: 1px solid var(--border);
   background-color: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+.tour-header-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.tour-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .tour-step-badge {
@@ -7561,12 +7575,6 @@ html {
   letter-spacing: 0.3px;
 }
 
-.tour-progress-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .tour-step-counter {
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -7574,8 +7582,8 @@ html {
 }
 
 .tour-progress-track {
-  width: 110px;
-  height: 6px;
+  width: 100%;
+  height: 5px;
   background-color: var(--border);
   border-radius: var(--radius-full, 9999px);
   overflow: hidden;
@@ -7605,6 +7613,18 @@ html {
 .tour-skip-btn:hover {
   background: var(--bg-main);
   color: var(--text-main);
+}
+
+.tour-mobile-tabs {
+  display: none;
+}
+
+.tour-mobile-demo-cta {
+  display: none;
+}
+
+.tour-mobile-back-to-exp {
+  display: none;
 }
 
 .tour-modal-content {
@@ -8384,48 +8404,278 @@ html {
 
 /* Tour Responsive queries */
 @media (max-width: 768px) {
+  .tour-modal-backdrop {
+    padding: 8px;
+    align-items: center;
+  }
+
   .tour-modal-container {
-    max-height: 94vh;
-    border-radius: 16px;
+    height: 94dvh;
+    max-height: 94dvh;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   }
 
   .tour-modal-header {
-    padding: 12px 16px;
+    padding: 10px 14px 8px;
+    gap: 8px;
+  }
+
+  .tour-step-badge {
+    font-size: 0.74rem;
+    padding: 3px 8px;
+  }
+
+  .tour-step-counter {
+    font-size: 0.75rem;
+  }
+
+  .tour-skip-btn {
+    padding: 4px 6px;
+    font-size: 0.78rem;
+    gap: 4px;
   }
 
   .tour-modal-content {
-    padding: 16px;
+    padding: 12px 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+  }
+
+  .tour-title-area {
+    margin-bottom: 10px;
+  }
+
+  .tour-main-title {
+    font-size: 1.15rem;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .tour-main-subtitle {
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
+  .tour-mobile-tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--bg-main);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 12px;
+    position: sticky;
+    top: -12px;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .tour-mobile-tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .tour-mobile-tab-btn.active {
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
   }
 
   .tour-body-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tour-body-grid.mobile-view-explanation .tour-interactive-column {
+    display: none;
+  }
+
+  .tour-body-grid.mobile-view-demo .tour-text-column {
+    display: none;
+  }
+
+  .tour-body-grid.mobile-view-demo .tour-interactive-column {
+    display: flex;
+    width: 100%;
+  }
+
+  .tour-mobile-demo-cta {
+    display: block;
+    margin-top: 10px;
+  }
+
+  .tour-go-to-demo-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    border-radius: 10px;
+    background: var(--bg-surface);
+  }
+
+  .tour-mobile-back-to-exp {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .tour-back-exp-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 12px;
+    font-size: 0.78rem;
+  }
+
+  .tour-description-text {
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .tour-hidden-tip-card {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .tour-tip-header {
+    font-size: 0.78rem;
+  }
+
+  .tour-tip-body {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    margin-top: 4px;
   }
 
   .tour-interactive-card {
+    padding: 12px;
+    border-radius: 12px;
     min-height: auto;
   }
 
+  /* Footer on mobile */
   .tour-modal-footer {
-    padding: 12px 16px;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
   }
 
   .tour-dots-row {
-    order: 2;
-    width: 100%;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    gap: 4px;
+    width: 100%;
+    order: 1;
+    margin-bottom: 2px;
+  }
+
+  .tour-dot-btn {
+    width: 6px;
+    height: 6px;
+  }
+
+  .tour-dot-btn.active {
+    width: 16px;
+    height: 6px;
   }
 
   .tour-footer-buttons {
-    order: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
-    justify-content: space-between;
+    order: 2;
   }
 
-  .tour-progress-track {
-    width: 70px;
+  .tour-nav-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    min-height: 42px;
+  }
+
+  /* Widget fixes for mobile */
+  .welcome-pillars-nav {
+    gap: 4px;
+  }
+  .welcome-pillar-btn {
+    padding: 6px 4px;
+    font-size: 0.72rem;
+  }
+
+  .tour-badges-preview {
+    gap: 6px;
+  }
+  .tour-badges-preview .stat-badge {
+    padding: 3px 6px;
+    font-size: 0.74rem;
+  }
+
+  .pitch-tabs-row {
+    gap: 4px;
+  }
+  .pitch-tabs-row .btn {
+    padding: 4px 6px !important;
+    font-size: 0.7rem !important;
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+  }
+
+  .srs-actions-row {
+    gap: 4px;
+  }
+  .srs-actions-row .btn {
+    flex: 1;
+    padding: 6px 4px;
+    font-size: 0.72rem;
+  }
+
+  .video-screen-mockup {
+    min-height: 110px;
+    padding: 16px 12px 10px;
+  }
+  .sub-jp {
+    font-size: 0.92rem;
+  }
+  .sub-es {
+    font-size: 0.72rem;
+  }
+
+  .selection-test-phrase {
+    font-size: 0.92rem;
+    word-break: break-word;
   }
 }
 
