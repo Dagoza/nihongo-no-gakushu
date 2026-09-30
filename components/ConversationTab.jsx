@@ -37,6 +37,7 @@ import { dataStore } from '../lib/data';
 import RoleplayChat from './RoleplayChat';
 import ConversationGeneratorModal from './ConversationGeneratorModal';
 import SpeechPractice from './SpeechPractice';
+import ComprehensionQuiz from './ComprehensionQuiz';
 import { useApp } from '../lib/AppContext';
 
 export default function ConversationTab({ 
@@ -1328,6 +1329,17 @@ export default function ConversationTab({
                         ))}
                       </ul>
                     </div>
+                  )}
+
+                  {/* Reading Comprehension Quiz for saved conversation */}
+                  {selectedSavedConv.comprehension_questions && selectedSavedConv.comprehension_questions.length > 0 && (
+                    <ComprehensionQuiz
+                      questions={selectedSavedConv.comprehension_questions}
+                      appState={appState}
+                      onUpdateState={onUpdateState}
+                      title="Preguntas de Comprensión del Diálogo"
+                      subtitle="Demuestra tu comprensión respondiendo estas 3 preguntas generadas por IA sobre la conversación:"
+                    />
                   )}
                 </div>
               )}

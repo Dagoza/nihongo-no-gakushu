@@ -6,6 +6,7 @@ import audioManager from '../lib/audioManager';
 import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
+import ComprehensionQuiz from './ComprehensionQuiz';
 import { useApp } from '../lib/AppContext';
 
 export default function StoryTab({ 
@@ -538,6 +539,17 @@ export default function StoryTab({
           </div>
         </div>
       </div>
+
+      {/* Reading Comprehension Questions */}
+      {story?.comprehension_questions && story.comprehension_questions.length > 0 && (
+        <ComprehensionQuiz
+          questions={story.comprehension_questions}
+          appState={appState || userState}
+          onUpdateState={onUpdateState}
+          title="Preguntas de Comprensión de la Historia"
+          subtitle="Demuestra tu comprensión del relato respondiendo estas 3 preguntas de opción múltiple:"
+        />
+      )}
     </div>
   );
 }

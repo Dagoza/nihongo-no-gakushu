@@ -22,6 +22,7 @@ import audioManager from '../lib/audioManager';
 import { getAuthSession } from '../lib/supabaseSync';
 import { useApp } from '../lib/AppContext';
 import { useRouter } from 'next/navigation';
+import ComprehensionQuiz from './ComprehensionQuiz';
 
 export const THEME_PRESETS = [
   { id: 'daily', label: 'Vida Cotidiana', icon: '🏠', prompt: 'Vida cotidiana, rutinas en el hogar y compras' },
@@ -58,13 +59,14 @@ export default function AIGeneratorModal({
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
 
   // Configuration state
-  const [contentType, setContentType] = useState(initialType); // 'story' | 'sentences'
+  const [contentType, setContentType] = useState(initialType); // 'story' | 'sentences' | 'conversation'
   const [selectedItems, setSelectedItems] = useState([]);
   const [newItemInput, setNewItemInput] = useState('');
   const [level, setLevel] = useState(defaultLevel === 'all' ? 'N5' : defaultLevel);
   const [selectedThemeId, setSelectedThemeId] = useState('daily');
   const [customThemeText, setCustomThemeText] = useState('');
   const [sentenceCount, setSentenceCount] = useState(5);
+  const [dialogueTurns, setDialogueTurns] = useState(8);
   const [storyLength, setStoryLength] = useState('medium'); // 'short' | 'medium' | 'long'
 
   // Generation & Results state
@@ -72,6 +74,7 @@ export default function AIGeneratorModal({
   const [loadingStep, setLoadingStep] = useState(0);
   const [resultStory, setResultStory] = useState(null);
   const [resultSentences, setResultSentences] = useState(null);
+  const [resultConversation, setResultConversation] = useState(null);
   const [copiedSuccess, setCopiedSuccess] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [savedSentenceIds, setSavedSentenceIds] = useState(new Set());
@@ -103,6 +106,7 @@ export default function AIGeneratorModal({
       }
       setResultStory(null);
       setResultSentences(null);
+      setResultConversation(null);
       setSavedSuccess(false);
       setSavedSentenceIds(new Set());
     }
@@ -178,6 +182,7 @@ export default function AIGeneratorModal({
     setLoadingStep(0);
     setResultStory(null);
     setResultSentences(null);
+    setResultConversation(null);
     setSavedSuccess(false);
 
     try {
@@ -209,7 +214,7 @@ export default function AIGeneratorModal({
         level,
         theme: effectiveTheme,
         length: storyLength,
-        count: sentenceCount,
+        count: contentType === 'conversation' ? dialogueTurns : sentenceCount,
         provider: 'groq'
       };
 
@@ -243,6 +248,8 @@ export default function AIGeneratorModal({
 
       if (contentType === 'story' && data.story) {
         setResultStory(data.story);
+      } else if (contentType === 'conversation' && data.conversation) {
+        setResultConversation(data.conversation);
       } else if (contentType === 'sentences' && data.sentences) {
         setResultSentences(data.sentences);
       }
@@ -272,6 +279,7 @@ export default function AIGeneratorModal({
       wordsUsed: resultStory.wordsUsed || selectedItems.map(i => i.text),
       paragraphs: resultStory.paragraphs || [],
       sentences: resultStory.sentences || [],
+      comprehension_questions: resultStory.comprehension_questions || [],
       createdAt: new Date().toISOString(),
       isCustom: true
     };
@@ -299,6 +307,54 @@ export default function AIGeneratorModal({
         onNavigate('story');
       } else {
         router.push(`/story?id=${newStory.id}`);
+      }
+    }
+  };
+
+  // Save generated conversation to library and Supabase
+  const handleSaveConversation = (autoOpen = false) => {
+    if (!resultConversation) return;
+
+    const newConv = {
+      id: `conv_custom_${Date.now()}`,
+      title_jp: resultConversation.title_jp || '会話 (Diálogo con IA)',
+      title_es: resultConversation.title_es || effectiveTheme,
+      level: resultConversation.level || level,
+      topic: resultConversation.topic || effectiveTheme,
+      characters: resultConversation.characters || ['Persona A', 'Persona B'],
+      dialogue: resultConversation.dialogue || [],
+      grammar_notes: resultConversation.grammar_notes || [],
+      comprehension_questions: resultConversation.comprehension_questions || [],
+      words_used: resultConversation.vocabulary_used || selectedItems.map(i => i.text),
+      createdAt: new Date().toISOString(),
+      date: new Date().toISOString(),
+      isCustom: true,
+      source: 'Generador IA'
+    };
+
+    const updatedConversations = [newConv, ...(appState?.savedConversations || [])];
+    const newXp = (appState?.xp || 0) + 50;
+
+    onUpdateState({
+      ...appState,
+      savedConversations: updatedConversations,
+      xp: newXp
+    });
+
+    setSavedSuccess(true);
+
+    showAlert({
+      type: 'success',
+      title: '¡Conversación Guardada! (+50 XP)',
+      message: 'El diálogo y sus 3 preguntas de comprensión se han guardado en tu cuenta y sincronizado en Supabase.'
+    });
+
+    if (autoOpen) {
+      onClose();
+      if (onNavigate) {
+        onNavigate('nhk');
+      } else {
+        router.push('/nhk?tab=saved');
       }
     }
   };
@@ -513,15 +569,15 @@ export default function AIGeneratorModal({
           )}
 
           {/* If NOT generated yet */}
-          {!resultStory && !resultSentences && !isGenerating && (
+          {!resultStory && !resultSentences && !resultConversation && !isGenerating && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               
-              {/* Type Selector (Story vs Sentences) */}
+              {/* Type Selector (Story vs Conversation vs Sentences) */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
                   1. ¿Qué deseas generar?
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 12 }}>
                   <button
                     type="button"
                     onClick={() => setContentType('story')}
@@ -543,7 +599,32 @@ export default function AIGeneratorModal({
                       <span>📖 Historia Interactiva</span>
                     </div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                      Un relato inmersivo con furigana, audio, traducciones completas y notas gramaticales por oración.
+                      Relato con furigana, audio, desglose y 3 preguntas de comprensión.
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setContentType('conversation')}
+                    style={{
+                      padding: '14px 16px',
+                      borderRadius: 12,
+                      border: contentType === 'conversation' ? '2px solid var(--primary)' : '1px solid var(--border)',
+                      background: contentType === 'conversation' ? 'var(--primary-bg, rgba(99, 102, 241, 0.08))' : 'var(--surface)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, color: contentType === 'conversation' ? 'var(--primary)' : 'var(--text-main)', fontSize: '0.95rem', marginBottom: 4 }}>
+                      <MessageSquare size={18} />
+                      <span>💬 Diálogo Cotidiano</span>
+                    </div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                      Conversación entre 2 personajes con audio, notas y 3 preguntas de comprensión.
                     </span>
                   </button>
 
@@ -564,11 +645,11 @@ export default function AIGeneratorModal({
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, color: contentType === 'sentences' ? 'var(--primary)' : 'var(--text-main)', fontSize: '0.95rem', marginBottom: 4 }}>
-                      <MessageSquare size={18} />
+                      <Tag size={18} />
                       <span>✍️ Oraciones de Ejemplo</span>
                     </div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                      Oraciones prácticas y contextuales con audio, transcripción en kana y explicación gramatical.
+                      Oraciones contextuales con audio, transcripción en kana y notas.
                     </span>
                   </button>
                 </div>
@@ -730,10 +811,10 @@ export default function AIGeneratorModal({
                 )}
               </div>
 
-              {/* Length / Sentence Count */}
+              {/* Length / Turn / Sentence Count */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
-                  5. {contentType === 'story' ? 'Extensión de la historia:' : 'Cantidad de oraciones:'}
+                  5. {contentType === 'story' ? 'Extensión de la historia:' : contentType === 'conversation' ? 'Longitud del diálogo:' : 'Cantidad de oraciones:'}
                 </label>
                 {contentType === 'story' ? (
                   <div style={{ display: 'flex', gap: 10 }}>
@@ -750,6 +831,20 @@ export default function AIGeneratorModal({
                         style={{ padding: '6px 12px' }}
                       >
                         {len.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : contentType === 'conversation' ? (
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    {[6, 8, 10, 12].map((turns) => (
+                      <button
+                        key={turns}
+                        type="button"
+                        className={`btn ${dialogueTurns === turns ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                        onClick={() => setDialogueTurns(turns)}
+                        style={{ minWidth: 60, padding: '6px 14px' }}
+                      >
+                        {turns} turnos
                       </button>
                     ))}
                   </div>
@@ -944,6 +1039,144 @@ export default function AIGeneratorModal({
                   </div>
                 </div>
               )}
+
+              {/* 3 Reading Comprehension Questions for Story */}
+              {resultStory.comprehension_questions && resultStory.comprehension_questions.length > 0 && (
+                <ComprehensionQuiz
+                  questions={resultStory.comprehension_questions}
+                  appState={appState}
+                  onUpdateState={onUpdateState}
+                  title="Preguntas de Comprensión de la Historia"
+                  subtitle="Comprueba tu nivel de lectura y comprensión del relato respondiendo estas 3 preguntas:"
+                />
+              )}
+            </div>
+          )}
+
+          {/* RESULT: CONVERSATION VIEW */}
+          {resultConversation && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 6 }}>
+                    <span className="vocab-tag">{resultConversation.level || level}</span>
+                    <span className="vocab-tag" style={{ background: 'var(--primary-bg, rgba(99, 102, 241, 0.1))', color: 'var(--primary)' }}>
+                      {effectiveTheme.slice(0, 25)}
+                    </span>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      {resultConversation.dialogue?.length || 0} turnos de diálogo
+                    </span>
+                  </div>
+                  <h3 className="jp-text" style={{ fontSize: '1.6rem', fontWeight: 800, margin: '0 0 4px', color: 'var(--text-main)' }}>
+                    {resultConversation.title_jp}
+                  </h3>
+                  <div style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>
+                    {resultConversation.title_es}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={() => {
+                      const playlist = (resultConversation.dialogue || []).map(d => ({
+                        text: d.jp,
+                        desc: `${d.speaker}: ${d.es}`
+                      }));
+                      audioManager.setPlaylist(playlist, 0);
+                      if (playlist.length > 0) audioManager.speak(playlist[0].text, { autoAdvance: true });
+                    }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <Volume2 size={16} />
+                    <span>Reproducir Diálogo</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Target Words chips */}
+              {selectedItems.length > 0 && (
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Elementos incluidos:</span>
+                  {selectedItems.map((item, idx) => (
+                    <span key={idx} className="vocab-tag" style={{ fontSize: '0.75rem' }}>
+                      {item.text}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Dialogue Lines Presentation */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+                {(resultConversation.dialogue || []).map((line, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      background: 'var(--surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 12,
+                      padding: '14px 16px',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 12
+                    }}
+                  >
+                    <div style={{ minWidth: 80, fontWeight: 700, color: 'var(--accent)', paddingTop: 2, fontSize: '0.9rem' }}>
+                      {line.speaker}:
+                    </div>
+
+                    <div style={{ flex: 1 }}>
+                      <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 2 }}>
+                        {line.jp}
+                      </div>
+                      {line.kana && line.kana !== line.jp && (
+                        <div className="jp-text" style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 4 }}>
+                          {line.kana}
+                        </div>
+                      )}
+                      <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                        🇪🇸 {line.es}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="audio-btn"
+                      style={{ width: 32, height: 32, flexShrink: 0 }}
+                      onClick={() => audioManager.speak(line.jp)}
+                      title="Escuchar réplica"
+                    >
+                      <Volume2 size={15} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Grammar Notes */}
+              {resultConversation.grammar_notes && resultConversation.grammar_notes.length > 0 && (
+                <div style={{ background: 'var(--primary-bg, rgba(99, 102, 241, 0.08))', borderLeft: '4px solid var(--primary)', padding: '16px 18px', borderRadius: '0 12px 12px 0', marginBottom: 20 }}>
+                  <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <BookOpen size={16} /> Notas Gramaticales del Diálogo:
+                  </h4>
+                  <ul style={{ listStyleType: 'disc', paddingLeft: 20, margin: 0, fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--text-main)' }}>
+                    {resultConversation.grammar_notes.map((note, idx) => (
+                      <li key={idx} style={{ marginBottom: 4 }}>{note}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* 3 Reading Comprehension Questions for Conversation */}
+              {resultConversation.comprehension_questions && resultConversation.comprehension_questions.length > 0 && (
+                <ComprehensionQuiz
+                  questions={resultConversation.comprehension_questions}
+                  appState={appState}
+                  onUpdateState={onUpdateState}
+                  title="Preguntas de Comprensión del Diálogo"
+                  subtitle="Verifica tu comprensión auditiva y lectora respondiendo estas 3 preguntas sobre la conversación:"
+                />
+              )}
             </div>
           )}
 
@@ -1089,13 +1322,14 @@ export default function AIGeneratorModal({
         <div className="modal-footer" style={{ padding: '14px 24px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
           {/* Left info or reset */}
           <div>
-            {(resultStory || resultSentences) ? (
+            {(resultStory || resultSentences || resultConversation) ? (
               <button
                 type="button"
                 className="btn btn-ghost btn-sm"
                 onClick={() => {
                   setResultStory(null);
                   setResultSentences(null);
+                  setResultConversation(null);
                 }}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'var(--text-muted)' }}
               >
@@ -1119,7 +1353,7 @@ export default function AIGeneratorModal({
               Cerrar
             </button>
 
-            {!resultStory && !resultSentences && (
+            {!resultStory && !resultSentences && !resultConversation && (
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
@@ -1135,8 +1369,40 @@ export default function AIGeneratorModal({
                 }}
               >
                 <Sparkles size={16} />
-                <span>{!authUser ? '🔒 Inicia sesión para Generar' : (contentType === 'story' ? 'Generar Historia con IA' : 'Generar Oraciones con IA')}</span>
+                <span>{!authUser ? '🔒 Inicia sesión para Generar' : (contentType === 'story' ? 'Generar Historia con IA' : contentType === 'conversation' ? 'Generar Diálogo con IA' : 'Generar Oraciones con IA')}</span>
               </button>
+            )}
+
+            {resultConversation && (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={handleCopyText}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                >
+                  {copiedSuccess ? <Check size={14} className="text-success" /> : <Copy size={14} />}
+                  <span>{copiedSuccess ? 'Copiado' : 'Copiar'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => handleSaveConversation(false)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#10b981', borderColor: '#10b981' }}
+                >
+                  <BookmarkCheck size={15} />
+                  <span>{savedSuccess ? 'Guardada' : 'Guardar en Diálogos (+50 XP)'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => handleSaveConversation(true)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, background: '#10b981', borderColor: '#10b981' }}
+                >
+                  <PlayCircle size={16} />
+                  <span>Abrir en Diálogos</span>
+                </button>
+              </>
             )}
 
             {resultStory && (

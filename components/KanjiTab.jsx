@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check } from 'lucide-react';
+import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check, MessageSquare } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -123,6 +123,7 @@ export default function KanjiTab({
   // AI Content Generator & Kanji Selection State
   const [selectedKanjiChars, setSelectedKanjiChars] = useState(new Set());
   const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
+  const [aiGenType, setAiGenType] = useState('story');
 
   const handleToggleSource = (enableMassive) => {
     if (enableMassive) {
@@ -1053,12 +1054,29 @@ export default function KanjiTab({
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
             <button
               type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => {
+                setAiGenType('conversation');
+                setIsAIGeneratorOpen(true);
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+              title="Generar un diálogo personalizado con los kanjis seleccionados"
+            >
+              <MessageSquare size={14} />
+              <span>Diálogo</span>
+            </button>
+            <button
+              type="button"
               className="btn btn-primary btn-sm"
-              onClick={() => setIsAIGeneratorOpen(true)}
+              onClick={() => {
+                setAiGenType('story');
+                setIsAIGeneratorOpen(true);
+              }}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+              title="Generar historia con los kanjis seleccionados"
             >
               <Sparkles size={15} />
-              <span>Generar con IA</span>
+              <span>Historia</span>
             </button>
             <button
               type="button"
@@ -1076,7 +1094,7 @@ export default function KanjiTab({
       <AIGeneratorModal
         isOpen={isAIGeneratorOpen}
         onClose={() => setIsAIGeneratorOpen(false)}
-        initialType="story"
+        initialType={aiGenType}
         initialItems={selectedKanjisForAI}
         itemType="kanji"
         defaultLevel={level}

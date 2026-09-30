@@ -19,6 +19,7 @@ import {
 import audioManager from '../lib/audioManager';
 import { getAuthSession } from '../lib/supabaseSync';
 import { useApp } from '../lib/AppContext';
+import ComprehensionQuiz from './ComprehensionQuiz';
 
 export const CONVERSATION_CATEGORIES = [
   { id: 'food', label: 'Comida & Restaurantes', icon: '🍱', prompt: 'Pidiendo en un restaurante japonés, preguntando por platos e ingredientes' },
@@ -200,6 +201,7 @@ export default function ConversationGeneratorModal({
       characters: generatedConv.characters || [characterA, characterB],
       dialogue: generatedConv.dialogue || [],
       grammar_notes: generatedConv.grammar_notes || [],
+      comprehension_questions: generatedConv.comprehension_questions || [],
       words_used: generatedConv.vocabulary_used || selectedWords,
       createdAt: new Date().toISOString(),
       isCustom: true,
@@ -632,6 +634,17 @@ export default function ConversationGeneratorModal({
                     ))}
                   </ul>
                 </div>
+              )}
+
+              {/* 3 Reading Comprehension Questions for Conversation */}
+              {generatedConv.comprehension_questions && generatedConv.comprehension_questions.length > 0 && (
+                <ComprehensionQuiz
+                  questions={generatedConv.comprehension_questions}
+                  appState={appState}
+                  onUpdateState={onUpdateState}
+                  title="Preguntas de Comprensión del Diálogo"
+                  subtitle="Verifica tu comprensión auditiva y lectora respondiendo estas 3 preguntas sobre la conversación:"
+                />
               )}
             </div>
           )}

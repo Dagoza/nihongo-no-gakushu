@@ -15,7 +15,8 @@ import {
   StickyNote,
   Plus,
   RotateCcw,
-  Sparkles
+  Sparkles,
+  MessageSquare
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -108,6 +109,7 @@ export default function VocabTab({
   // AI Content Generator & Multi-selection State
   const [selectedWordIds, setSelectedWordIds] = useState(new Set());
   const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
+  const [aiGenType, setAiGenType] = useState('story');
 
   const isMassive = Boolean(authUser && appState?.useMassiveDictionary);
   const [vocabularyList, setVocabularyList] = useState(dataStore.vocabulary || []);
@@ -1381,12 +1383,29 @@ export default function VocabTab({
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
             <button
               type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => {
+                setAiGenType('conversation');
+                setIsAIGeneratorOpen(true);
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+              title="Generar un diálogo personalizado con las palabras seleccionadas"
+            >
+              <MessageSquare size={14} />
+              <span>Diálogo</span>
+            </button>
+            <button
+              type="button"
               className="btn btn-primary btn-sm"
-              onClick={() => setIsAIGeneratorOpen(true)}
+              onClick={() => {
+                setAiGenType('story');
+                setIsAIGeneratorOpen(true);
+              }}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+              title="Generar historia con las palabras seleccionadas"
             >
               <Sparkles size={15} />
-              <span>Generar con IA</span>
+              <span>Historia</span>
             </button>
             <button
               type="button"
@@ -1404,7 +1423,7 @@ export default function VocabTab({
       <AIGeneratorModal
         isOpen={isAIGeneratorOpen}
         onClose={() => setIsAIGeneratorOpen(false)}
-        initialType="story"
+        initialType={aiGenType}
         initialItems={selectedWordsForAI}
         itemType="vocab"
         defaultLevel={level}
