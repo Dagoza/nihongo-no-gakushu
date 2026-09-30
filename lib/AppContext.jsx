@@ -36,6 +36,9 @@ export function AppProvider({ children }) {
   const [syncStatus, setSyncStatus] = useState('local'); // 'local' | 'synced' | 'syncing' | 'error'
   const [syncInfo, setSyncInfo] = useState('Modo local (Sin cuenta)');
 
+  const authUserRef = useRef(authUser);
+  authUserRef.current = authUser;
+
   // Onboarding Tour / Product Tour
   const [isTourOpen, setIsTourOpen] = useState(false);
 
@@ -51,6 +54,11 @@ export function AppProvider({ children }) {
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem('nihongo_tour_seen_v1', 'true');
+        localStorage.setItem('nihongo_tour_seen_v2', 'true');
+        const user = authUserRef.current;
+        if (user?.id || user?.email) {
+          localStorage.setItem(`nihongo_tour_seen_${user.id || user.email}_v2`, 'true');
+        }
       } catch (e) {}
     }
     setIsTourOpen(false);
@@ -60,9 +68,31 @@ export function AppProvider({ children }) {
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem('nihongo_tour_seen_v1', 'true');
+        localStorage.setItem('nihongo_tour_seen_v2', 'true');
+        const user = authUserRef.current;
+        if (user?.id || user?.email) {
+          localStorage.setItem(`nihongo_tour_seen_${user.id || user.email}_v2`, 'true');
+        }
       } catch (e) {}
     }
     setIsTourOpen(false);
+  }, []);
+
+  const triggerAutoTourIfNeeded = useCallback((profile = null) => {
+    if (typeof window === 'undefined') return;
+    try {
+      const userKey = (profile?.id || profile?.email)
+        ? `nihongo_tour_seen_${profile.id || profile.email}_v2`
+        : null;
+      
+      const userSeen = userKey ? (localStorage.getItem(userKey) === 'true') : false;
+      const globalSeen = localStorage.getItem('nihongo_tour_seen_v2') === 'true';
+
+      const shouldShow = userKey ? !userSeen : !globalSeen;
+      if (shouldShow) {
+        setIsTourOpen(true);
+      }
+    } catch (e) {}
   }, []);
   
   // Modal amigable para alertas, avisos y confirmaciones (Reemplazo total de alert() y confirm())
@@ -180,16 +210,35 @@ export function AppProvider({ children }) {
     }
     setMounted(true);
 
+    // Global manual tour triggers (fallback for any child component or event)
+    const handleCustomOpenTour = () => setIsTourOpen(true);
+    if (typeof window !== 'undefined') {
+      window.__nihongoOpenTour = () => setIsTourOpen(true);
+      window.addEventListener('nihongo-open-tour', handleCustomOpenTour);
+    }
+
+    let tourTimer = null;
+
     // Initial auth check
     getAuthUser().then((user) => {
       if (user) {
         const profile = extractUserProfile(user);
         setAuthUser(profile);
         handleTriggerSync(saved);
+        tourTimer = setTimeout(() => {
+          triggerAutoTourIfNeeded(profile);
+        }, 1000);
       } else {
         setSyncStatus('local');
         setSyncInfo('Modo local (Sin cuenta)');
+        tourTimer = setTimeout(() => {
+          triggerAutoTourIfNeeded(null);
+        }, 1000);
       }
+    }).catch(() => {
+      tourTimer = setTimeout(() => {
+        triggerAutoTourIfNeeded(null);
+      }, 1000);
     });
 
     // Subscribe to auth state changes
@@ -201,6 +250,11 @@ export function AppProvider({ children }) {
       }
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         handleTriggerSync();
+        if (event === 'SIGNED_IN' && profile) {
+          setTimeout(() => {
+            triggerAutoTourIfNeeded(profile);
+          }, 1200);
+        }
       } else if (event === 'SIGNED_OUT') {
         setSyncStatus('local');
         setSyncInfo('Modo local (Sesión cerrada)');
@@ -224,26 +278,21 @@ export function AppProvider({ children }) {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('online', handleOnline);
 
-    // Check if onboarding tour has been viewed, if not, trigger smoothly
-    let tourTimer = null;
-    try {
-      const tourSeen = localStorage.getItem('nihongo_tour_seen_v1');
-      if (!tourSeen) {
-        tourTimer = setTimeout(() => {
-          setIsTourOpen(true);
-        }, 900);
-      }
-    } catch (e) {}
-
     return () => {
       if (tourTimer) clearTimeout(tourTimer);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('nihongo-open-tour', handleCustomOpenTour);
+        try {
+          delete window.__nihongoOpenTour;
+        } catch (e) {}
+      }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('online', handleOnline);
       if (subscription?.unsubscribe) {
         subscription.unsubscribe();
       }
     };
-  }, [handleTriggerSync]);
+  }, [handleTriggerSync, triggerAutoTourIfNeeded]);
 
   const handleUpdateState = useCallback((newState) => {
     setAppState(newState);

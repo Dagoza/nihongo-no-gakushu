@@ -38,14 +38,32 @@ export default function ProgressTab({
   onTriggerSync = null,
   authUser = null,
   onOpenAuth = null,
-  onSignOut = null
+  onSignOut = null,
+  onOpenTour = null
 }) {
   let contextApp = null;
   try {
     contextApp = useApp();
   } catch (e) {}
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
-  const openTour = contextApp?.openTour || (() => {});
+
+  const handleOpenTour = () => {
+    if (typeof onOpenTour === 'function') {
+      onOpenTour();
+      return;
+    }
+    if (typeof contextApp?.openTour === 'function') {
+      contextApp.openTour();
+      return;
+    }
+    if (typeof window !== 'undefined') {
+      if (typeof window.__nihongoOpenTour === 'function') {
+        window.__nihongoOpenTour();
+        return;
+      }
+      window.dispatchEvent(new CustomEvent('nihongo-open-tour'));
+    }
+  };
 
   const fileInputRef = useRef(null);
 
@@ -515,7 +533,7 @@ export default function ProgressTab({
           <button 
             type="button"
             className="btn btn-primary"
-            onClick={openTour}
+            onClick={handleOpenTour}
             style={{ 
               display: 'inline-flex', 
               alignItems: 'center', 

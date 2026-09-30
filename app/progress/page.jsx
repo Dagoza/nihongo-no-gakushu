@@ -14,7 +14,8 @@ function ProgressPageContent() {
     handleTriggerSync, 
     authUser, 
     setIsAuthModalOpen, 
-    handleSignOut 
+    handleSignOut,
+    openTour 
   } = useApp();
 
   return (
@@ -27,6 +28,7 @@ function ProgressPageContent() {
       authUser={authUser}
       onOpenAuth={() => setIsAuthModalOpen(true)}
       onSignOut={handleSignOut}
+      onOpenTour={openTour}
     />
   );
 }
