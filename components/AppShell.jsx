@@ -7,6 +7,7 @@ import NavigationTabs from './NavigationTabs';
 import AudioPlayerBar from './AudioPlayerBar';
 import AuthModal from './AuthModal';
 import UIModal from './UIModal';
+import ProductTour from './ProductTour';
 
 function AppShellContent({ children }) {
   const {
@@ -26,7 +27,12 @@ function AppShellContent({ children }) {
     handleTriggerSync,
     savedCount,
     uiModal,
-    closeUiModal
+    closeUiModal,
+    isTourOpen,
+    openTour,
+    closeTour,
+    handleSkipTour,
+    handleCompleteTour
   } = useApp();
 
   return (
@@ -50,6 +56,7 @@ function AppShellContent({ children }) {
         onSignOut={handleSignOut}
         onTriggerSync={handleTriggerSync}
         userState={appState}
+        onOpenTour={openTour}
       />
 
       {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}
@@ -89,6 +96,15 @@ function AppShellContent({ children }) {
         isDestructive={uiModal?.isDestructive}
         actionLabel={uiModal?.actionLabel}
         onAction={uiModal?.onAction}
+      />
+
+      {/* Onboarding Tour / Product Tour Interactivo y Animado */}
+      <ProductTour 
+        isOpen={isTourOpen}
+        onClose={closeTour}
+        onSkip={handleSkipTour}
+        onComplete={handleCompleteTour}
+        onNavigate={navigate}
       />
     </>
   );

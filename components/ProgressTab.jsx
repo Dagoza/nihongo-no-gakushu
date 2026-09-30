@@ -18,7 +18,9 @@ import {
   CloudSync,
   RefreshCw,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  Compass
 } from 'lucide-react';
 import { exportData, parseImportData, getInitialState } from '../lib/storage';
 import { 
@@ -43,6 +45,7 @@ export default function ProgressTab({
     contextApp = useApp();
   } catch (e) {}
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
+  const openTour = contextApp?.openTour || (() => {});
 
   const fileInputRef = useRef(null);
 
@@ -460,6 +463,72 @@ export default function ProgressTab({
               </>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Product Tour & Interactive Walkthrough Card */}
+      <div className="card" style={{ 
+        marginBottom: 24, 
+        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%)',
+        border: '1px solid rgba(99, 102, 241, 0.25)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{
+              width: 48,
+              height: 48,
+              borderRadius: 14,
+              background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+            }}>
+              <Sparkles size={24} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
+                  Tour Guiado & Recorrido de la Aplicación
+                </h3>
+                <span style={{
+                  fontSize: '0.72rem',
+                  padding: '2px 8px',
+                  borderRadius: 12,
+                  fontWeight: 700,
+                  background: 'rgba(99, 102, 241, 0.15)',
+                  color: 'var(--primary)'
+                }}>
+                  Interactivo & Animado
+                </span>
+              </div>
+              <p style={{ margin: '4px 0 0', fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
+                ¿Quieres repasar las herramientas de la plataforma, los badges del header o descubrir funciones ocultas como pronunciación por selección, Furigana interactivo y repaso espaciado?
+              </p>
+            </div>
+          </div>
+
+          <button 
+            type="button"
+            className="btn btn-primary"
+            onClick={openTour}
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: 8,
+              background: 'linear-gradient(135deg, #4338ca 0%, #6366f1 100%)',
+              boxShadow: '0 4px 14px rgba(67, 56, 202, 0.3)',
+              padding: '10px 20px',
+              fontWeight: 700
+            }}
+          >
+            <Compass size={17} />
+            <span>Iniciar Tour Interactivo</span>
+          </button>
         </div>
       </div>
 

@@ -35,6 +35,35 @@ export function AppProvider({ children }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState('local'); // 'local' | 'synced' | 'syncing' | 'error'
   const [syncInfo, setSyncInfo] = useState('Modo local (Sin cuenta)');
+
+  // Onboarding Tour / Product Tour
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  const openTour = useCallback(() => {
+    setIsTourOpen(true);
+  }, []);
+
+  const closeTour = useCallback(() => {
+    setIsTourOpen(false);
+  }, []);
+
+  const handleSkipTour = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('nihongo_tour_seen_v1', 'true');
+      } catch (e) {}
+    }
+    setIsTourOpen(false);
+  }, []);
+
+  const handleCompleteTour = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('nihongo_tour_seen_v1', 'true');
+      } catch (e) {}
+    }
+    setIsTourOpen(false);
+  }, []);
   
   // Modal amigable para alertas, avisos y confirmaciones (Reemplazo total de alert() y confirm())
   const [uiModal, setUiModal] = useState({
@@ -195,7 +224,19 @@ export function AppProvider({ children }) {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('online', handleOnline);
 
+    // Check if onboarding tour has been viewed, if not, trigger smoothly
+    let tourTimer = null;
+    try {
+      const tourSeen = localStorage.getItem('nihongo_tour_seen_v1');
+      if (!tourSeen) {
+        tourTimer = setTimeout(() => {
+          setIsTourOpen(true);
+        }, 900);
+      }
+    } catch (e) {}
+
     return () => {
+      if (tourTimer) clearTimeout(tourTimer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('online', handleOnline);
       if (subscription?.unsubscribe) {
@@ -314,6 +355,12 @@ export function AppProvider({ children }) {
     handleAuthSuccess,
     savedCount,
     mounted,
+    // Onboarding Tour / Product Tour
+    isTourOpen,
+    openTour,
+    closeTour,
+    handleSkipTour,
+    handleCompleteTour,
     // Sistema global de alertas y confirmaciones amigables
     showAlert,
     showConfirm,

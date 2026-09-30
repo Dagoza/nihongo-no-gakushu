@@ -22,7 +22,8 @@ import {
   Bell,
   AlertCircle,
   ArrowRight,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 import { dataStore } from '../lib/data';
 
@@ -48,7 +49,8 @@ export default function Header({
   onOpenAuth = null,
   onSignOut = null,
   onTriggerSync = null,
-  userState = null
+  userState = null,
+  onOpenTour = null
 }) {
   const [isMinimized, setIsMinimized] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -476,6 +478,19 @@ export default function Header({
                         <User size={15} />
                         <span>Mi Progreso & Cuenta</span>
                       </button>
+                      {onOpenTour && (
+                        <button
+                          type="button"
+                          className="session-action-item"
+                          onClick={() => {
+                            setIsDropdownOpen(false);
+                            onOpenTour();
+                          }}
+                        >
+                          <Sparkles size={15} style={{ color: 'var(--primary)' }} />
+                          <span>Tour de la Aplicación</span>
+                        </button>
+                      )}
                       {onSignOut && (
                         <button
                           type="button"
