@@ -47,22 +47,30 @@ export default function ProgressTab({
   } catch (e) {}
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
 
-  const handleOpenTour = () => {
-    if (typeof onOpenTour === 'function') {
-      onOpenTour();
-      return;
-    }
-    if (typeof contextApp?.openTour === 'function') {
-      contextApp.openTour();
-      return;
-    }
-    if (typeof window !== 'undefined') {
-      if (typeof window.__nihongoOpenTour === 'function') {
-        window.__nihongoOpenTour();
-        return;
+  const handleOpenTour = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (e && e.stopPropagation) e.stopPropagation();
+
+    // 1. Direct callback prop
+    try {
+      if (typeof onOpenTour === 'function') onOpenTour();
+    } catch (err) {}
+
+    // 2. AppContext methods
+    try {
+      if (typeof contextApp?.openTour === 'function') contextApp.openTour();
+      if (typeof contextApp?.setIsTourOpen === 'function') contextApp.setIsTourOpen(true);
+    } catch (err) {}
+
+    // 3. Global window handlers & events
+    try {
+      if (typeof window !== 'undefined') {
+        if (typeof window.__nihongoOpenTour === 'function') {
+          window.__nihongoOpenTour();
+        }
+        window.dispatchEvent(new CustomEvent('nihongo-open-tour'));
       }
-      window.dispatchEvent(new CustomEvent('nihongo-open-tour'));
-    }
+    } catch (err) {}
   };
 
   const fileInputRef = useRef(null);

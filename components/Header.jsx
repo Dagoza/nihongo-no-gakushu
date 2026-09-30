@@ -23,7 +23,8 @@ import {
   AlertCircle,
   ArrowRight,
   X,
-  Sparkles
+  Sparkles,
+  Compass
 } from 'lucide-react';
 import { dataStore } from '../lib/data';
 
@@ -336,6 +337,36 @@ export default function Header({
               title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            {/* Quick Tour Button in Header */}
+            <button
+              type="button"
+              className="theme-toggle-btn"
+              onClick={() => {
+                if (typeof onOpenTour === 'function') onOpenTour();
+                if (typeof window !== 'undefined') {
+                  if (typeof window.__nihongoOpenTour === 'function') window.__nihongoOpenTour();
+                  window.dispatchEvent(new CustomEvent('nihongo-open-tour'));
+                }
+              }}
+              title="Tour interactivo de la aplicación"
+              aria-label="Abrir Tour de la aplicación"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                background: 'rgba(99, 102, 241, 0.12)',
+                color: 'var(--primary)',
+                borderColor: 'rgba(99, 102, 241, 0.25)',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                padding: '0 10px',
+                borderRadius: 'var(--radius-full, 9999px)'
+              }}
+            >
+              <Compass size={15} />
+              <span className="hidden-sm">Tour</span>
             </button>
 
             {/* Mobile Stats Toggle */}

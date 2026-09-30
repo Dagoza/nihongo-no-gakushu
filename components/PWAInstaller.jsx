@@ -10,18 +10,26 @@ export default function PWAInstaller() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // 1. Register Service Worker
+    // 1. Register Service Worker & check for updates immediately
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
+      const handleRegister = () => {
         navigator.serviceWorker
           .register('/sw.js', { scope: '/' })
           .then((registration) => {
             console.log('[PWA] Service Worker registrado exitosamente con scope:', registration.scope);
+            // Check for updates immediately so stale client caches are replaced
+            registration.update();
           })
           .catch((err) => {
             console.error('[PWA] Error al registrar Service Worker:', err);
           });
-      });
+      };
+
+      if (document.readyState === 'complete') {
+        handleRegister();
+      } else {
+        window.addEventListener('load', handleRegister);
+      }
     }
 
     // 2. Check if already running in standalone mode (installed)

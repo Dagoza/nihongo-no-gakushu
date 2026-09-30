@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Sparkles, 
   Flame, 
@@ -46,6 +47,25 @@ export default function ProductTour({
   onComplete, 
   onNavigate 
 }) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const handleGlobalOpen = () => {
+      setInternalOpen(true);
+    };
+    if (typeof window !== 'undefined') {
+      window.__nihongoOpenTour = handleGlobalOpen;
+      window.addEventListener('nihongo-open-tour', handleGlobalOpen);
+      return () => {
+        window.removeEventListener('nihongo-open-tour', handleGlobalOpen);
+      };
+    }
+  }, []);
+
+  const effectiveOpen = Boolean(isOpen || internalOpen);
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState('next'); // 'next' | 'prev'
   const cardRef = useRef(null);
@@ -102,7 +122,7 @@ export default function ProductTour({
 
   // Always restart tour from the beginning when opened/reactivated
   useEffect(() => {
-    if (isOpen) {
+    if (effectiveOpen) {
       setCurrentStepIndex(0);
       setSlideDirection('next');
       setMobileTab('explanation');
@@ -127,7 +147,7 @@ export default function ProductTour({
       setAudioPlaying(false);
       setAudioSpeed('1.0x');
     }
-  }, [isOpen]);
+  }, [effectiveOpen]);
 
   // Scroll to top of content on step change and reset mobile view tab
   useEffect(() => {
@@ -136,30 +156,6 @@ export default function ProductTour({
       contentRef.current.scrollTop = 0;
     }
   }, [currentStepIndex]);
-
-  // Keyboard navigation & body scroll lock
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        if (onSkip) onSkip();
-        else if (onClose) onClose();
-      } else if (e.key === 'ArrowRight') {
-        goToNextStep();
-      } else if (e.key === 'ArrowLeft') {
-        goToPrevStep();
-      }
-    };
-
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = '';
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, currentStepIndex]);
 
   // Audio helper
   const handlePlayAudio = (text) => {
@@ -349,15 +345,31 @@ export default function ProductTour({
   const isLastStep = currentStepIndex === TOUR_STEPS.length - 1;
   const progressPercent = Math.round(((currentStepIndex + 1) / TOUR_STEPS.length) * 100);
 
+  const handleClose = useCallback(() => {
+    setInternalOpen(false);
+    if (onClose) onClose();
+  }, [onClose]);
+
+  const handleSkip = useCallback(() => {
+    setInternalOpen(false);
+    if (onSkip) onSkip();
+    else if (onClose) onClose();
+  }, [onSkip, onClose]);
+
+  const handleComplete = useCallback(() => {
+    setInternalOpen(false);
+    if (onComplete) onComplete();
+    else if (onClose) onClose();
+  }, [onComplete, onClose]);
+
   const goToNextStep = useCallback(() => {
     if (isLastStep) {
-      if (onComplete) onComplete();
-      else if (onClose) onClose();
+      handleComplete();
     } else {
       setSlideDirection('next');
       setCurrentStepIndex(prev => prev + 1);
     }
-  }, [isLastStep, onComplete, onClose]);
+  }, [isLastStep, handleComplete]);
 
   const goToPrevStep = useCallback(() => {
     if (!isFirstStep) {
@@ -365,6 +377,29 @@ export default function ProductTour({
       setCurrentStepIndex(prev => prev - 1);
     }
   }, [isFirstStep]);
+
+  // Keyboard navigation & body scroll lock
+  useEffect(() => {
+    if (!effectiveOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleSkip();
+      } else if (e.key === 'ArrowRight') {
+        goToNextStep();
+      } else if (e.key === 'ArrowLeft') {
+        goToPrevStep();
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [effectiveOpen, currentStepIndex, goToNextStep, goToPrevStep, handleSkip]);
 
   const handleStepDotClick = (index) => {
     setSlideDirection(index > currentStepIndex ? 'next' : 'prev');
@@ -374,17 +409,19 @@ export default function ProductTour({
   const handleExploreTab = (tabId) => {
     if (onNavigate && tabId) {
       onNavigate(tabId);
-      if (onClose) onClose();
+      handleClose();
     }
   };
 
-  if (!isOpen) return null;
+  if (!effectiveOpen || !mounted) return null;
 
-  return (
+  const modalMarkup = (
     <div 
       className="tour-modal-backdrop" 
-      onClick={() => {
-        // Backdrop click does not accidentally dismiss, skip button is preferred
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          handleSkip();
+        }
       }}
     >
       <div 
@@ -410,7 +447,7 @@ export default function ProductTour({
               <button 
                 type="button" 
                 className="tour-skip-btn" 
-                onClick={onSkip || onClose}
+                onClick={handleSkip}
                 title="Saltar el tour"
                 aria-label="Cerrar tour"
               >
@@ -1368,4 +1405,9 @@ export default function ProductTour({
       </div>
     </div>
   );
+
+  if (typeof document !== 'undefined' && document.body) {
+    return createPortal(modalMarkup, document.body);
+  }
+  return modalMarkup;
 }

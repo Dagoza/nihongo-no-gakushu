@@ -406,6 +406,7 @@ export function AppProvider({ children }) {
     mounted,
     // Onboarding Tour / Product Tour
     isTourOpen,
+    setIsTourOpen,
     openTour,
     closeTour,
     handleSkipTour,
