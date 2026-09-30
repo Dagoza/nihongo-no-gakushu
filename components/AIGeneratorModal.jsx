@@ -23,6 +23,7 @@ import { getAuthSession } from '../lib/supabaseSync';
 import { useApp } from '../lib/AppContext';
 import { useRouter } from 'next/navigation';
 import ComprehensionQuiz from './ComprehensionQuiz';
+import * as wanakana from 'wanakana';
 
 export const THEME_PRESETS = [
   { id: 'daily', label: 'Vida Cotidiana', icon: '🏠', prompt: 'Vida cotidiana, rutinas en el hogar y compras' },
@@ -713,10 +714,22 @@ export default function AIGeneratorModal({
                 <div style={{ display: 'flex', gap: 8 }}>
                   <input
                     type="text"
-                    className="search-input"
-                    placeholder={`Escribir ${itemType === 'kanji' ? 'un kanji (ej: 食)' : 'una palabra (ej: 食べる)'} y presionar Enter...`}
+                    className="search-input jp-text"
+                    placeholder={`Escribir o pegar ${itemType === 'kanji' ? 'kanji (ej: 食)' : 'palabra (ej: taberu → 食べる)'} y Enter...`}
                     value={newItemInput}
-                    onChange={(e) => setNewItemInput(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const converted = wanakana.toKana(val, { IMEMode: true });
+                      setNewItemInput(converted);
+                    }}
+                    onPaste={(e) => {
+                      const pasted = e.clipboardData?.getData('text');
+                      if (pasted && /[a-zA-Z]/.test(pasted)) {
+                        e.preventDefault();
+                        const converted = wanakana.toKana(pasted);
+                        setNewItemInput(prev => prev + converted);
+                      }
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();

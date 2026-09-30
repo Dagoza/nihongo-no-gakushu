@@ -23,6 +23,7 @@ import {
 import audioManager from '../lib/audioManager';
 import { getAuthSession } from '../lib/supabaseSync';
 import { useApp } from '../lib/AppContext';
+import * as wanakana from 'wanakana';
 
 export const ROLEPLAY_SCENARIOS = [
   {
@@ -122,6 +123,8 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
   
   // Student input draft state (review before sending)
   const [inputDraft, setInputDraft] = useState('');
+  const [useIme, setUseIme] = useState(true);
+  const isComposingRef = useRef(false);
   const [isDictating, setIsDictating] = useState(false);
   const [dictationSupported, setDictationSupported] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -735,11 +738,29 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)' }}>
               ✍️ Tu borrador de respuesta (Revisar antes de enviar):
             </span>
+            {/* IME toggle badge */}
+            <button
+              type="button"
+              onClick={() => setUseIme(prev => !prev)}
+              className={`btn btn-xs ${useIme ? 'btn-primary' : 'btn-outline'}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontSize: '0.76rem',
+                padding: '2px 8px',
+                borderRadius: 12,
+                fontWeight: 700
+              }}
+              title="Alternar conversión automática de Romaji a Hiragana/Katakana al escribir o pegar"
+            >
+              <span>🇯🇵 IME: {useIme ? 'ON (Romaji → Kana)' : 'OFF'}</span>
+            </button>
             {isDictating && (
               <span style={{ 
                 fontSize: '0.78rem', 
@@ -773,19 +794,51 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
           )}
         </div>
 
-        {/* Text Area */}
+        {/* Text Area with IME & Paste Support */}
         <textarea
           className="search-input jp-text"
           rows={3}
-          placeholder="Escribe o dicta tu respuesta en japonés... (ej: 'はい、ホットコーヒーを一つください。')"
+          placeholder={useIme ? "Escribe o pega en romaji o japonés (ej: 'hai, ko-hi- o hitotsu kudasai' → はい、コーヒーをひとつください)..." : "Escribe o dicta tu respuesta en japonés... (ej: 'はい、ホットコーヒーを一つください。')"}
           value={inputDraft}
-          onChange={(e) => setInputDraft(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (useIme && !isComposingRef.current) {
+              const converted = wanakana.toKana(val, { IMEMode: true });
+              setInputDraft(converted);
+            } else {
+              setInputDraft(val);
+            }
+          }}
+          onPaste={(e) => {
+            if (!useIme) return;
+            const pastedText = e.clipboardData?.getData('text');
+            if (!pastedText) return;
+            // Si contiene caracteres latinos (romaji), convertir automáticamente a kana
+            if (/[a-zA-Z]/.test(pastedText)) {
+              e.preventDefault();
+              const target = e.target;
+              const start = target.selectionStart ?? inputDraft.length;
+              const end = target.selectionEnd ?? inputDraft.length;
+              const convertedPaste = wanakana.toKana(pastedText);
+              const newVal = inputDraft.slice(0, start) + convertedPaste + inputDraft.slice(end);
+              setInputDraft(newVal);
+              requestAnimationFrame(() => {
+                target.selectionStart = target.selectionEnd = start + convertedPaste.length;
+              });
+            }
+          }}
+          onCompositionStart={() => { isComposingRef.current = true; }}
+          onCompositionEnd={() => { isComposingRef.current = false; }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            if (e.key === 'Enter' && !e.shiftKey && !isComposingRef.current) {
               e.preventDefault();
               handleSendDraft();
             }
           }}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
           style={{
             width: '100%',
             fontSize: '1.15rem',
@@ -828,6 +881,27 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
                 style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}
               >
                 Limpiar borrador
+              </button>
+            )}
+
+            {/* Convert to kana button if romaji detected */}
+            {inputDraft && /[a-zA-Z]/.test(inputDraft) && (
+              <button
+                type="button"
+                className="btn btn-outline btn-xs"
+                onClick={() => setInputDraft(wanakana.toKana(inputDraft))}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  color: 'var(--primary)',
+                  borderColor: 'var(--primary)',
+                  fontSize: '0.78rem',
+                  padding: '3px 8px'
+                }}
+                title="Convertir las letras romaji a caracteres japoneses kana"
+              >
+                <span>🇯🇵 Pasar a Kana</span>
               </button>
             )}
           </div>

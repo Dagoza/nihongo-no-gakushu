@@ -20,6 +20,7 @@ import audioManager from '../lib/audioManager';
 import { getAuthSession } from '../lib/supabaseSync';
 import { useApp } from '../lib/AppContext';
 import ComprehensionQuiz from './ComprehensionQuiz';
+import * as wanakana from 'wanakana';
 
 export const CONVERSATION_CATEGORIES = [
   { id: 'food', label: 'Comida & Restaurantes', icon: '🍱', prompt: 'Pidiendo en un restaurante japonés, preguntando por platos e ingredientes' },
@@ -384,10 +385,22 @@ export default function ConversationGeneratorModal({
                 <div style={{ display: 'flex', gap: 8 }}>
                   <input
                     type="text"
-                    className="search-input"
-                    placeholder="Escribir palabra o kanji (ej: 切符, 食べる)..."
+                    className="search-input jp-text"
+                    placeholder="Escribir o pegar palabra/kanji (ej: taberu → 食べる / 切符)..."
                     value={newWordInput}
-                    onChange={(e) => setNewWordInput(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const converted = wanakana.toKana(val, { IMEMode: true });
+                      setNewWordInput(converted);
+                    }}
+                    onPaste={(e) => {
+                      const pasted = e.clipboardData?.getData('text');
+                      if (pasted && /[a-zA-Z]/.test(pasted)) {
+                        e.preventDefault();
+                        const converted = wanakana.toKana(pasted);
+                        setNewWordInput(prev => prev + converted);
+                      }
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
