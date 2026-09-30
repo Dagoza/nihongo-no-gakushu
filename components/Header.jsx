@@ -345,7 +345,7 @@ export default function Header({
               aria-expanded={!isMinimized}
             >
               <Flame size={13} className="text-amber-500" />
-              <span>{isMinimized ? 'Stats' : '✕'}</span>
+              <span>{isMinimized ? 'Stats' : 'Ocultar'}</span>
             </button>
 
             {/* User Session Profile & Actions */}
