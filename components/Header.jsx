@@ -566,33 +566,6 @@ export default function Header({
               {syncStatus === 'synced' ? 'Nube' : syncStatus === 'syncing' ? 'Sync...' : 'Local'}
             </span>
           </div>
-
-          {/* User Account / Session Chip in Badges */}
-          {authUser ? (
-            <div 
-              className="stat-badge user-stat-badge" 
-              style={{ cursor: 'pointer', borderColor: 'rgba(99, 102, 241, 0.35)', background: 'rgba(99, 102, 241, 0.08)' }}
-              onClick={() => setIsDropdownOpen(prev => !prev)}
-              title={`Sesión activa: ${displayName} (${authUser.email}). Toca para ver cuenta y sincronización.`}
-            >
-              <User size={15} className="text-indigo-500" />
-              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {displayName}
-              </span>
-            </div>
-          ) : (
-            <div 
-              className="stat-badge user-stat-badge" 
-              style={{ cursor: 'pointer', borderColor: 'rgba(99, 102, 241, 0.35)', background: 'rgba(99, 102, 241, 0.08)' }}
-              onClick={onOpenAuth}
-              title="Iniciar sesión para guardar tu progreso"
-            >
-              <LogIn size={15} className="text-indigo-500" />
-              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)' }}>
-                Iniciar Sesión
-              </span>
-            </div>
-          )}
         </div>
       </div>
     </header>
