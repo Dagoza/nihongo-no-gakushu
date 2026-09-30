@@ -158,10 +158,10 @@ export default function Header({
   return (
     <header className="app-header">
       <div className="header-container">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '12px' }}>
+        <div className="header-top-row">
           <div className="brand-wrapper" onClick={() => onNavigate('curriculum')}>
             <div className="brand-logo">日</div>
-            <div>
+            <div className="brand-info">
               <div className="brand-title">日本語マスター</div>
               <div className="brand-subtitle">Nihongo Master · Japonés General</div>
             </div>
@@ -338,11 +338,14 @@ export default function Header({
 
             {/* Mobile Stats Toggle */}
             <button 
-              className="mobile-header-toggle"
+              className={`mobile-header-toggle ${!isMinimized ? 'active' : ''}`}
               onClick={() => setIsMinimized(!isMinimized)}
-              title={isMinimized ? 'Mostrar estadísticas' : 'Ocultar estadísticas'}
+              title={isMinimized ? 'Mostrar estadísticas de racha y progreso' : 'Ocultar estadísticas'}
+              aria-label={isMinimized ? 'Mostrar estadísticas' : 'Ocultar estadísticas'}
+              aria-expanded={!isMinimized}
             >
-              {isMinimized ? <span style={{fontSize:'0.75rem', fontWeight:'bold'}}>Stats</span> : <span style={{fontSize:'0.75rem', fontWeight:'bold'}}>Ocultar</span>}
+              <Flame size={13} className="text-amber-500" />
+              <span>{isMinimized ? 'Stats' : '✕'}</span>
             </button>
 
             {/* User Session Profile & Actions */}
@@ -559,10 +562,37 @@ export default function Header({
             ) : (
               <CloudOff size={16} style={{ color: 'var(--text-muted, #94a3b8)' }} />
             )}
-            <span className="hidden-sm" style={{ fontSize: '0.8rem' }}>
-              {syncStatus === 'synced' ? 'Nube' : syncStatus === 'syncing' ? 'Sincronizando' : 'Local'}
+            <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>
+              {syncStatus === 'synced' ? 'Nube' : syncStatus === 'syncing' ? 'Sync...' : 'Local'}
             </span>
           </div>
+
+          {/* User Account / Session Chip in Badges */}
+          {authUser ? (
+            <div 
+              className="stat-badge user-stat-badge" 
+              style={{ cursor: 'pointer', borderColor: 'rgba(99, 102, 241, 0.35)', background: 'rgba(99, 102, 241, 0.08)' }}
+              onClick={() => setIsDropdownOpen(prev => !prev)}
+              title={`Sesión activa: ${displayName} (${authUser.email}). Toca para ver cuenta y sincronización.`}
+            >
+              <User size={15} className="text-indigo-500" />
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {displayName}
+              </span>
+            </div>
+          ) : (
+            <div 
+              className="stat-badge user-stat-badge" 
+              style={{ cursor: 'pointer', borderColor: 'rgba(99, 102, 241, 0.35)', background: 'rgba(99, 102, 241, 0.08)' }}
+              onClick={onOpenAuth}
+              title="Iniciar sesión para guardar tu progreso"
+            >
+              <LogIn size={15} className="text-indigo-500" />
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)' }}>
+                Iniciar Sesión
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </header>
