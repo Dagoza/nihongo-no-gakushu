@@ -8,6 +8,7 @@ import AudioPlayerBar from './AudioPlayerBar';
 import AuthModal from './AuthModal';
 import UIModal from './UIModal';
 import ProductTour from './ProductTour';
+import PracticePadModal from './PracticePadModal';
 
 function AppShellContent({ children }) {
   const {
@@ -32,7 +33,9 @@ function AppShellContent({ children }) {
     openTour,
     closeTour,
     handleSkipTour,
-    handleCompleteTour
+    handleCompleteTour,
+    practicePadState,
+    closePracticePad
   } = useApp();
 
   return (
@@ -104,6 +107,27 @@ function AppShellContent({ children }) {
         onSkip={handleSkipTour}
         onComplete={handleCompleteTour}
         onNavigate={navigate}
+      />
+
+      {/* Cuaderno de Caligrafía, Cuadrículas y Práctica de Trazos */}
+      <PracticePadModal 
+        isOpen={practicePadState?.isOpen}
+        onClose={closePracticePad}
+        initialText={practicePadState?.text}
+        initialKana={practicePadState?.kana}
+        initialTitle={practicePadState?.title}
+        initialSource={practicePadState?.source}
+        initialChar={practicePadState?.initialChar}
+        onSaveToCloud={(sheet) => {
+          if (appState && handleUpdateState) {
+            const currentList = appState.savedPracticeSheets || [];
+            const nextList = [sheet, ...currentList.filter(s => s.id !== sheet.id)];
+            handleUpdateState({
+              ...appState,
+              savedPracticeSheets: nextList
+            });
+          }
+        }}
       />
     </>
   );

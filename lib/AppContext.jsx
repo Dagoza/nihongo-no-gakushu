@@ -95,6 +95,30 @@ export function AppProvider({ children }) {
     } catch (e) {}
   }, []);
   
+  // Cuaderno de Práctica & Caligrafía (Notepad / Cuadrícula de Trazos)
+  const [practicePadState, setPracticePadState] = useState({
+    isOpen: false,
+    text: '',
+    kana: '',
+    title: '',
+    source: 'custom',
+    initialChar: ''
+  });
+
+  const openPracticePad = useCallback(({ text = '', kana = '', title = '', source = 'custom', initialChar = '' } = {}) => {
+    setPracticePadState({
+      isOpen: true,
+      text,
+      kana,
+      title: title || (text ? `Práctica: ${text}` : 'Cuaderno de Caligrafía'),
+      source,
+      initialChar
+    });
+  }, []);
+
+  const closePracticePad = useCallback(() => {
+    setPracticePadState(prev => ({ ...prev, isOpen: false }));
+  }, []);
   // Modal amigable para alertas, avisos y confirmaciones (Reemplazo total de alert() y confirm())
   const [uiModal, setUiModal] = useState({
     isOpen: false,
@@ -215,6 +239,7 @@ export function AppProvider({ children }) {
     if (typeof window !== 'undefined') {
       window.__nihongoOpenTour = () => setIsTourOpen(true);
       window.addEventListener('nihongo-open-tour', handleCustomOpenTour);
+      window.__nihongoOpenPracticePad = openPracticePad;
     }
 
     let tourTimer = null;
@@ -284,6 +309,7 @@ export function AppProvider({ children }) {
         window.removeEventListener('nihongo-open-tour', handleCustomOpenTour);
         try {
           delete window.__nihongoOpenTour;
+          delete window.__nihongoOpenPracticePad;
         } catch (e) {}
       }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -415,7 +441,11 @@ export function AppProvider({ children }) {
     showAlert,
     showConfirm,
     uiModal,
-    closeUiModal
+    closeUiModal,
+    // Cuaderno de Práctica & Caligrafía
+    practicePadState,
+    openPracticePad,
+    closePracticePad
   };
 
   return (

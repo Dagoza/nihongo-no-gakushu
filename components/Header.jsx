@@ -23,9 +23,11 @@ import {
   AlertCircle,
   ArrowRight,
   X,
-  Sparkles
+  Sparkles,
+  PenTool
 } from 'lucide-react';
 import { dataStore } from '../lib/data';
+import { useApp } from '../lib/AppContext';
 
 function GoogleLogo({ size = 14 }) {
   return (
@@ -56,6 +58,11 @@ export default function Header({
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const dropdownRef = useRef(null);
   const notifRef = useRef(null);
+
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
 
   // Close dropdowns on click outside or escape key
   useEffect(() => {
@@ -327,6 +334,37 @@ export default function Header({
                 </div>
               )}
             </div>
+
+            {/* Cuaderno de Caligrafía & Trazos */}
+            <button
+              type="button"
+              className="header-notepad-btn"
+              onClick={() => {
+                if (contextApp?.openPracticePad) {
+                  contextApp.openPracticePad();
+                } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                  window.__nihongoOpenPracticePad();
+                }
+              }}
+              title="Abrir Cuaderno de Caligrafía & Cuadrícula de Trazos (Kanji, Vocabulario, Oraciones)"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 12px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.12))',
+                border: '1px solid rgba(99, 102, 241, 0.25)',
+                color: 'var(--text-main)',
+                cursor: 'pointer',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <PenTool size={15} style={{ color: 'var(--primary)' }} />
+              <span className="hidden-xs">Cuaderno ✍️</span>
+            </button>
 
             {/* Theme Toggle Button */}
             <button 

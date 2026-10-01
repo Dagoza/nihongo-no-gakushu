@@ -16,7 +16,8 @@ import {
   Plus,
   RotateCcw,
   Sparkles,
-  MessageSquare
+  MessageSquare,
+  PenTool
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -840,6 +841,31 @@ export default function VocabTab({
                           targetKana={item.kana || item.hiragana} 
                           compact={true} 
                         />
+                        <button
+                          type="button"
+                          className="audio-btn"
+                          style={{ width: 32, height: 32 }}
+                          onClick={() => {
+                            if (contextApp?.openPracticePad) {
+                              contextApp.openPracticePad({
+                                text: item.kanji,
+                                kana: item.kana || item.hiragana,
+                                title: `Vocabulario: ${item.kanji} (${item.meaning_es})`,
+                                source: 'vocab'
+                              });
+                            } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                              window.__nihongoOpenPracticePad({
+                                text: item.kanji,
+                                kana: item.kana || item.hiragana,
+                                title: `Vocabulario: ${item.kanji} (${item.meaning_es})`,
+                                source: 'vocab'
+                              });
+                            }
+                          }}
+                          title="Practicar caligrafía y trazos en el Cuaderno"
+                        >
+                          <PenTool size={15} />
+                        </button>
                       </div>
                     </div>
 

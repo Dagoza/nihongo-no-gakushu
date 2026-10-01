@@ -30,7 +30,8 @@ import {
   User,
   Bot,
   Calendar,
-  Tag
+  Tag,
+  PenTool
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -833,6 +834,32 @@ export default function ConversationTab({
                               }
                             }}
                           />
+                          <button
+                            type="button"
+                            className="audio-btn"
+                            style={{ width: 34, height: 34, flexShrink: 0 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (contextApp?.openPracticePad) {
+                                contextApp.openPracticePad({
+                                  text: lineJp,
+                                  kana: lineKana,
+                                  title: `Diálogo: ${d.speaker || 'Personaje'}`,
+                                  source: 'conversation'
+                                });
+                              } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                window.__nihongoOpenPracticePad({
+                                  text: lineJp,
+                                  kana: lineKana,
+                                  title: `Diálogo: ${d.speaker || 'Personaje'}`,
+                                  source: 'conversation'
+                                });
+                              }
+                            }}
+                            title="Practicar trazos y caligrafía de este diálogo en Cuaderno"
+                          >
+                            <PenTool size={15} />
+                          </button>
                         </div>
                       </div>
 
@@ -1302,6 +1329,32 @@ export default function ConversationTab({
                                   }
                                 }}
                               />
+                              <button
+                                type="button"
+                                className="audio-btn"
+                                style={{ width: 34, height: 34, flexShrink: 0 }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (contextApp?.openPracticePad) {
+                                    contextApp.openPracticePad({
+                                      text: lineJp,
+                                      kana: lineKana,
+                                      title: `Diálogo: ${d.speaker || 'Personaje'}`,
+                                      source: 'conversation'
+                                    });
+                                  } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                    window.__nihongoOpenPracticePad({
+                                      text: lineJp,
+                                      kana: lineKana,
+                                      title: `Diálogo: ${d.speaker || 'Personaje'}`,
+                                      source: 'conversation'
+                                    });
+                                  }
+                                }}
+                                title="Practicar trazos y caligrafía de este diálogo en Cuaderno"
+                              >
+                                <PenTool size={15} />
+                              </button>
                             </div>
                           </div>
 

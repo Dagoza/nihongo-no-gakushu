@@ -25,7 +25,8 @@ import {
   Share2,
   Calendar,
   Tag,
-  StickyNote
+  StickyNote,
+  PenTool
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import SaveVocabModal from './SaveVocabModal';
@@ -857,6 +858,29 @@ export default function SavedTab({
                                 <Volume2 size={16} />
                               </button>
                               <button
+                                className="tts-btn-small"
+                                onClick={() => {
+                                  if (contextApp?.openPracticePad) {
+                                    contextApp.openPracticePad({
+                                      text: w.kanji || w.hiragana,
+                                      kana: w.hiragana,
+                                      title: `Palabra Guardada: ${w.kanji || w.hiragana} (${w.meaning_es})`,
+                                      source: 'vocab'
+                                    });
+                                  } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                    window.__nihongoOpenPracticePad({
+                                      text: w.kanji || w.hiragana,
+                                      kana: w.hiragana,
+                                      title: `Palabra Guardada: ${w.kanji || w.hiragana} (${w.meaning_es})`,
+                                      source: 'vocab'
+                                    });
+                                  }
+                                }}
+                                title="Practicar caligrafía y trazos en Cuaderno"
+                              >
+                                <PenTool size={15} />
+                              </button>
+                              <button
                                 className="delete-btn-small"
                                 onClick={() => handleDeleteWord(w.id)}
                                 title="Eliminar palabra"
@@ -948,6 +972,27 @@ export default function SavedTab({
                                 title="Escuchar pronunciación de la oración"
                               >
                                 <Volume2 size={16} />
+                              </button>
+                              <button
+                                className="tts-btn-small"
+                                onClick={() => {
+                                  if (contextApp?.openPracticePad) {
+                                    contextApp.openPracticePad({
+                                      text: p.japanese,
+                                      title: `Frase Guardada: ${p.translation || ''}`,
+                                      source: 'story'
+                                    });
+                                  } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                    window.__nihongoOpenPracticePad({
+                                      text: p.japanese,
+                                      title: `Frase Guardada: ${p.translation || ''}`,
+                                      source: 'story'
+                                    });
+                                  }
+                                }}
+                                title="Practicar caligrafía y trazos de esta frase en Cuaderno"
+                              >
+                                <PenTool size={15} />
                               </button>
                               <button
                                 className="delete-btn-small"

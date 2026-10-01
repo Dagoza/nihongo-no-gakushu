@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen } from 'lucide-react';
+import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen, PenTool } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
+import { useApp } from '../lib/AppContext';
 
 export default function GrammarTab({ 
   appState, 
@@ -15,6 +16,11 @@ export default function GrammarTab({
   initialQuiz = false,
   onParamsChange
 }) {
+  let contextApp = null;
+  try {
+    contextApp = useApp();
+  } catch (e) {}
+
   const [filterParticle, setFilterParticle] = useState(initialParticle || 'all');
   const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'pending' | 'mastered'
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
@@ -341,6 +347,30 @@ export default function GrammarTab({
                                   targetKana={wanakana.toKana(exRomaji || '')}
                                   compact={true} 
                                 />
+                                <button 
+                                  type="button"
+                                  className="audio-btn" 
+                                  onClick={() => {
+                                    if (contextApp?.openPracticePad) {
+                                      contextApp.openPracticePad({
+                                        text: exJa,
+                                        kana: wanakana.toKana(exRomaji || ''),
+                                        title: `Gramática: Partícula ${p.particle}`,
+                                        source: 'grammar'
+                                      });
+                                    } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                      window.__nihongoOpenPracticePad({
+                                        text: exJa,
+                                        kana: wanakana.toKana(exRomaji || ''),
+                                        title: `Gramática: Partícula ${p.particle}`,
+                                        source: 'grammar'
+                                      });
+                                    }
+                                  }}
+                                  title="Practicar caligrafía y trazos de este ejemplo en Cuaderno"
+                                >
+                                  <PenTool size={15} />
+                                </button>
                               </div>
                             </div>
 
@@ -507,6 +537,29 @@ export default function GrammarTab({
                         targetText={quizFeedback.sentence} 
                         compact={true} 
                       />
+                      <button 
+                        type="button"
+                        className="audio-btn" 
+                        style={{ width: 28, height: 28 }}
+                        onClick={() => {
+                          if (contextApp?.openPracticePad) {
+                            contextApp.openPracticePad({
+                              text: quizFeedback.sentence,
+                              title: `Gramática: ${quizFeedback.role || 'Práctica'}`,
+                              source: 'grammar'
+                            });
+                          } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                            window.__nihongoOpenPracticePad({
+                              text: quizFeedback.sentence,
+                              title: `Gramática: ${quizFeedback.role || 'Práctica'}`,
+                              source: 'grammar'
+                            });
+                          }
+                        }}
+                        title="Practicar caligrafía y trazos de esta oración en Cuaderno"
+                      >
+                        <PenTool size={14} />
+                      </button>
                     </div>
                   </div>
                 </div>

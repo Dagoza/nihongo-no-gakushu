@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check, MessageSquare } from 'lucide-react';
+import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check, MessageSquare, PenTool } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -821,6 +821,33 @@ export default function KanjiTab({
                 >
                   ✍️ Practicar Trazos
                 </button>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm" 
+                  onClick={() => {
+                    if (contextApp?.openPracticePad) {
+                      contextApp.openPracticePad({
+                        text: item.kanji,
+                        kana: getPrimaryKanjiReading(item),
+                        title: `Kanji: ${item.kanji} (${item.meaning_es})`,
+                        source: 'kanji',
+                        initialChar: item.kanji
+                      });
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                      window.__nihongoOpenPracticePad({
+                        text: item.kanji,
+                        kana: getPrimaryKanjiReading(item),
+                        title: `Kanji: ${item.kanji} (${item.meaning_es})`,
+                        source: 'kanji',
+                        initialChar: item.kanji
+                      });
+                    }
+                  }}
+                  title="Abrir en Cuaderno de Cuadrícula y Caligrafía"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                >
+                  <PenTool size={14} /> Cuaderno
+                </button>
               </div>
             </>
           )}
@@ -1000,6 +1027,42 @@ export default function KanjiTab({
                 // Optional: add XP or mark as practiced
               }} 
             />
+
+            <div style={{ marginTop: 14, display: 'flex', justifyContent: 'center' }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  const targetK = drawingKanji;
+                  setDrawingKanji(null);
+                  if (contextApp?.openPracticePad) {
+                    contextApp.openPracticePad({
+                      text: targetK,
+                      title: `Kanji: ${targetK}`,
+                      source: 'kanji',
+                      initialChar: targetK
+                    });
+                  } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                    window.__nihongoOpenPracticePad({
+                      text: targetK,
+                      title: `Kanji: ${targetK}`,
+                      source: 'kanji',
+                      initialChar: targetK
+                    });
+                  }
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  borderColor: 'var(--primary)',
+                  color: 'var(--primary)'
+                }}
+              >
+                <PenTool size={14} />
+                <span>Abrir en Cuaderno Avanzado (Cuadrícula & Estilos)</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1052,6 +1115,31 @@ export default function KanjiTab({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => {
+                const combinedText = Array.from(selectedKanjiChars).join('');
+                if (contextApp?.openPracticePad) {
+                  contextApp.openPracticePad({
+                    text: combinedText,
+                    title: `Práctica de Kanjis Seleccionados (${selectedKanjiChars.size})`,
+                    source: 'kanji'
+                  });
+                } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                  window.__nihongoOpenPracticePad({
+                    text: combinedText,
+                    title: `Práctica de Kanjis Seleccionados (${selectedKanjiChars.size})`,
+                    source: 'kanji'
+                  });
+                }
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+              title="Abrir cuaderno con todos los kanjis seleccionados"
+            >
+              <PenTool size={14} />
+              <span>Cuaderno</span>
+            </button>
             <button
               type="button"
               className="btn btn-outline btn-sm"

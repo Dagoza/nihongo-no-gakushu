@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { dataStore } from '../lib/data';
 import audioManager from '../lib/audioManager';
-import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle } from 'lucide-react';
+import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle, PenTool } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
 import ComprehensionQuiz from './ComprehensionQuiz';
@@ -421,6 +421,32 @@ export default function StoryTab({
                     // Optional XP or celebration
                   }}
                 />
+                <button
+                  type="button"
+                  className="audio-btn"
+                  onClick={() => {
+                    if (contextApp?.openPracticePad) {
+                      contextApp.openPracticePad({
+                        text: activeSentence.japanese,
+                        kana: activeSentence.clean_target,
+                        title: `Historia: ${chapter?.title || 'Capítulo ' + chapter?.chapter}`,
+                        source: 'story'
+                      });
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                      window.__nihongoOpenPracticePad({
+                        text: activeSentence.japanese,
+                        kana: activeSentence.clean_target,
+                        title: `Historia: ${chapter?.title || 'Capítulo ' + chapter?.chapter}`,
+                        source: 'story'
+                      });
+                    }
+                  }}
+                  title="Practicar caligrafía y trazos de esta oración en Cuaderno"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  <PenTool size={16} />
+                  <span className="breakdown-audio-label">Escribir ✍️</span>
+                </button>
               </div>
             </div>
 
