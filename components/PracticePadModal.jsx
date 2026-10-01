@@ -29,7 +29,10 @@ import {
   Trash2,
   BookOpen,
   FileText,
-  Check
+  Check,
+  ZoomIn,
+  ZoomOut,
+  Hand
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { 
@@ -112,13 +115,25 @@ export default function PracticePadModal({
   const [quizLoading, setQuizLoading] = useState(false);
   const [quizError, setQuizError] = useState(false);
 
+  // Zoom & Pan state
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isPanMode, setIsPanMode] = useState(false);
+  const [isSpacePressed, setIsSpacePressed] = useState(false);
+  const [isPanning, setIsPanning] = useState(false);
+
   // Refs
+  const viewportRef = useRef(null);
+  const artboardRef = useRef(null);
   const gridCanvasRef = useRef(null);
   const drawingCanvasRef = useRef(null);
   const hanziContainerRef = useRef(null);
   const writerRef = useRef(null);
   const currentStrokeRef = useRef(null);
   const isPointerDownRef = useRef(false);
+  const isPanningRef = useRef(false);
+  const panStartRef = useRef({ clientX: 0, clientY: 0, panX: 0, panY: 0 });
+  const touchStateRef = useRef({ distance: 0, startPan: { x: 0, y: 0 }, startZoom: 1, startCenter: { x: 0, y: 0 } });
 
   // Dimensiones del área de trabajo para cálculos de cuadrícula
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 800, height: 600 });
@@ -147,6 +162,9 @@ export default function PracticePadModal({
   // Sync incoming props when modal opens with new data
   useEffect(() => {
     if (isOpen) {
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      setIsPanMode(false);
       if (initialSource === 'free') {
         // Cuaderno libre sin guía desde el header
         setText(initialText || '');
@@ -252,15 +270,13 @@ export default function PracticePadModal({
   const setupCanvases = useCallback(() => {
     const gridCanvas = gridCanvasRef.current;
     const drawCanvas = drawingCanvasRef.current;
-    if (!gridCanvas || !drawCanvas) return;
+    const viewport = viewportRef.current;
+    if (!gridCanvas || !drawCanvas || !viewport) return;
 
-    const parent = gridCanvas.parentElement;
-    if (!parent) return;
-
-    const rect = parent.getBoundingClientRect();
+    const rect = viewport.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const width = rect.width;
-    const height = rect.height;
+    const width = Math.round(rect.width);
+    const height = Math.round(rect.height);
 
     if (width === 0 || height === 0) return;
 
@@ -296,8 +312,20 @@ export default function PracticePadModal({
     setupCanvases();
     const handleResize = () => setupCanvases();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [activeTab, setupCanvases]);
+
+    let resizeObserver = null;
+    if (viewportRef.current && typeof window.ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        setupCanvases();
+      });
+      resizeObserver.observe(viewportRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeObserver) resizeObserver.disconnect();
+    };
+  }, [activeTab, setupCanvases, isFullscreen]);
 
   // Redraw strokes when strokes state changes
   useEffect(() => {
@@ -315,9 +343,23 @@ export default function PracticePadModal({
     dCtx.restore();
   }, [strokes]);
 
-  // Pointer event handlers for drawing
+  // Pointer event handlers for drawing and panning
   const handlePointerDown = (e) => {
     if (activeTab !== 'canvas') return;
+
+    const isPanAction = isPanMode || isSpacePressed || e.button === 1;
+    if (isPanAction) {
+      isPanningRef.current = true;
+      setIsPanning(true);
+      panStartRef.current = {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        panX: pan.x,
+        panY: pan.y
+      };
+      return;
+    }
+
     const drawCanvas = drawingCanvasRef.current;
     if (!drawCanvas) return;
 
@@ -326,8 +368,11 @@ export default function PracticePadModal({
     } catch (err) {}
 
     const rect = drawCanvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    if (rect.width === 0 || rect.height === 0) return;
+    const scaleX = canvasDimensions.width / rect.width;
+    const scaleY = canvasDimensions.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     isPointerDownRef.current = true;
     setIsDrawing(true);
@@ -360,13 +405,26 @@ export default function PracticePadModal({
   };
 
   const handlePointerMove = (e) => {
+    if (isPanningRef.current) {
+      const dx = e.clientX - panStartRef.current.clientX;
+      const dy = e.clientY - panStartRef.current.clientY;
+      setPan({
+        x: Math.round(panStartRef.current.panX + dx),
+        y: Math.round(panStartRef.current.panY + dy)
+      });
+      return;
+    }
+
     if (!isPointerDownRef.current || !currentStrokeRef.current) return;
     const drawCanvas = drawingCanvasRef.current;
     if (!drawCanvas) return;
 
     const rect = drawCanvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    if (rect.width === 0 || rect.height === 0) return;
+    const scaleX = canvasDimensions.width / rect.width;
+    const scaleY = canvasDimensions.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     const stroke = currentStrokeRef.current;
     if (!stroke || !Array.isArray(stroke.points) || stroke.points.length === 0) return;
@@ -395,6 +453,17 @@ export default function PracticePadModal({
   };
 
   const handlePointerUp = (e) => {
+    if (isPanningRef.current) {
+      isPanningRef.current = false;
+      setIsPanning(false);
+      try {
+        if (drawingCanvasRef.current && e?.pointerId !== undefined) {
+          drawingCanvasRef.current.releasePointerCapture(e.pointerId);
+        }
+      } catch (err) {}
+      return;
+    }
+
     if (!isPointerDownRef.current) return;
     isPointerDownRef.current = false;
     setIsDrawing(false);
@@ -419,6 +488,219 @@ export default function PracticePadModal({
       setStrokes(prev => [...(Array.isArray(prev) ? prev.filter(Boolean) : []), strokeToCommit]);
       setRedoStack([]); // Clear redo stack on new action
     }
+  };
+
+  const handleViewportPointerDown = (e) => {
+    if (e.target === drawingCanvasRef.current) return;
+    const isPanAction = isPanMode || isSpacePressed || e.button === 1 || zoom > 1;
+    if (isPanAction) {
+      isPanningRef.current = true;
+      setIsPanning(true);
+      panStartRef.current = {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        panX: pan.x,
+        panY: pan.y
+      };
+    }
+  };
+
+  // Window listeners during pan dragging
+  useEffect(() => {
+    if (!isPanning) return;
+
+    const handleWindowPointerMove = (e) => {
+      if (!isPanningRef.current) return;
+      const dx = e.clientX - panStartRef.current.clientX;
+      const dy = e.clientY - panStartRef.current.clientY;
+      setPan({
+        x: Math.round(panStartRef.current.panX + dx),
+        y: Math.round(panStartRef.current.panY + dy)
+      });
+    };
+
+    const handleWindowPointerUp = () => {
+      isPanningRef.current = false;
+      setIsPanning(false);
+    };
+
+    window.addEventListener('pointermove', handleWindowPointerMove);
+    window.addEventListener('pointerup', handleWindowPointerUp);
+    window.addEventListener('pointercancel', handleWindowPointerUp);
+
+    return () => {
+      window.removeEventListener('pointermove', handleWindowPointerMove);
+      window.removeEventListener('pointerup', handleWindowPointerUp);
+      window.removeEventListener('pointercancel', handleWindowPointerUp);
+    };
+  }, [isPanning]);
+
+  // Spacebar and Zoom Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (activeTab !== 'canvas') return;
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+
+      if (e.code === 'Space' && !e.repeat) {
+        e.preventDefault();
+        setIsSpacePressed(true);
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === '=' || e.key === '+')) {
+        e.preventDefault();
+        handleZoomStep(0.25);
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === '-' || e.key === '_')) {
+        e.preventDefault();
+        handleZoomStep(-0.25);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+        e.preventDefault();
+        handleResetZoomAndPan();
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.code === 'Space') {
+        setIsSpacePressed(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [activeTab]);
+
+  // Wheel zoom (Ctrl+wheel / pinch) and trackpad scroll
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || activeTab !== 'canvas') return;
+
+    const handleWheel = (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const rect = viewport.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left - rect.width / 2;
+        const mouseY = e.clientY - rect.top - rect.height / 2;
+
+        const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+        setZoom((prevZoom) => {
+          const nextZoom = Math.min(Math.max(Number((prevZoom * zoomFactor).toFixed(2)), 0.5), 4);
+          const scaleRatio = nextZoom / prevZoom;
+          setPan((prevPan) => ({
+            x: Math.round(mouseX - (mouseX - prevPan.x) * scaleRatio),
+            y: Math.round(mouseY - (mouseY - prevPan.y) * scaleRatio)
+          }));
+          return nextZoom;
+        });
+      } else if (e.shiftKey) {
+        e.preventDefault();
+        setPan((prevPan) => ({
+          x: prevPan.x - e.deltaY,
+          y: prevPan.y
+        }));
+      } else if (Math.abs(e.deltaX) > 0 || zoom > 1) {
+        e.preventDefault();
+        setPan((prevPan) => ({
+          x: Math.round(prevPan.x - e.deltaX),
+          y: Math.round(prevPan.y - e.deltaY)
+        }));
+      }
+    };
+
+    viewport.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      viewport.removeEventListener('wheel', handleWheel);
+    };
+  }, [activeTab, zoom]);
+
+  // Touch Pinch-to-Zoom and Touch Pan
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || activeTab !== 'canvas') return;
+
+    const onTouchStart = (e) => {
+      if (e.touches.length === 2) {
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        touchStateRef.current = {
+          distance: dist,
+          startPan: { ...pan },
+          startZoom: zoom,
+          startCenter: {
+            x: (t1.clientX + t2.clientX) / 2,
+            y: (t1.clientY + t2.clientY) / 2
+          }
+        };
+      }
+    };
+
+    const onTouchMove = (e) => {
+      if (e.touches.length === 2 && touchStateRef.current.distance > 0) {
+        e.preventDefault();
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        const center = {
+          x: (t1.clientX + t2.clientX) / 2,
+          y: (t1.clientY + t2.clientY) / 2
+        };
+
+        const factor = dist / touchStateRef.current.distance;
+        const newZoom = Math.min(Math.max(Number((touchStateRef.current.startZoom * factor).toFixed(2)), 0.5), 4);
+        setZoom(newZoom);
+
+        const dx = center.x - touchStateRef.current.startCenter.x;
+        const dy = center.y - touchStateRef.current.startCenter.y;
+        setPan({
+          x: Math.round(touchStateRef.current.startPan.x + dx),
+          y: Math.round(touchStateRef.current.startPan.y + dy)
+        });
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (e.touches.length < 2) {
+        touchStateRef.current.distance = 0;
+      }
+    };
+
+    viewport.addEventListener('touchstart', onTouchStart, { passive: true });
+    viewport.addEventListener('touchmove', onTouchMove, { passive: false });
+    viewport.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      viewport.removeEventListener('touchstart', onTouchStart);
+      viewport.removeEventListener('touchmove', onTouchMove);
+      viewport.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [activeTab, zoom, pan]);
+
+  // Zoom control helpers
+  const handleZoomChange = (newZoom) => {
+    const clamped = Math.min(Math.max(Number(newZoom.toFixed(2)), 0.5), 4);
+    setZoom(clamped);
+    if (clamped === 1) {
+      setPan({ x: 0, y: 0 });
+    }
+  };
+
+  const handleZoomStep = (delta) => {
+    setZoom(prev => {
+      const next = Math.min(Math.max(Number((prev + delta).toFixed(2)), 0.5), 4);
+      if (next === 1) {
+        setPan({ x: 0, y: 0 });
+      }
+      return next;
+    });
+  };
+
+  const handleResetZoomAndPan = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+    showNotification('Vista restablecida (100%)', 'info');
   };
 
   // Undo / Redo
@@ -470,8 +752,14 @@ export default function PracticePadModal({
 
     setIsVerifying(true);
     setTimeout(() => {
-      const rect = drawCanvas.getBoundingClientRect();
-      const res = analyzeDrawingAccuracy(drawCanvas, targetToVerify, rect.width, rect.height, gridType, 24);
+      const res = analyzeDrawingAccuracy(
+        drawCanvas, 
+        targetToVerify, 
+        canvasDimensions.width, 
+        canvasDimensions.height, 
+        gridType, 
+        24
+      );
       setVerificationResult(res);
       setIsVerifying(false);
       if (res && res.score >= 70) {
@@ -1179,20 +1467,21 @@ export default function PracticePadModal({
                           setStrokeStyle(st.id);
                           setStrokeWidth(st.defaultWidth);
                           setIsEraser(false);
+                          setIsPanMode(false);
                         }}
                         style={{
                           border: 'none',
-                          background: strokeStyle === st.id && !isEraser ? 'var(--bg-surface)' : 'transparent',
-                          color: strokeStyle === st.id && !isEraser ? 'var(--primary)' : 'var(--text-muted)',
+                          background: strokeStyle === st.id && !isEraser && !isPanMode ? 'var(--bg-surface)' : 'transparent',
+                          color: strokeStyle === st.id && !isEraser && !isPanMode ? 'var(--primary)' : 'var(--text-muted)',
                           padding: '4px 10px',
                           borderRadius: 6,
                           fontSize: '0.78rem',
-                          fontWeight: strokeStyle === st.id && !isEraser ? 700 : 500,
+                          fontWeight: strokeStyle === st.id && !isEraser && !isPanMode ? 700 : 500,
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           gap: 4,
-                          boxShadow: strokeStyle === st.id && !isEraser ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                          boxShadow: strokeStyle === st.id && !isEraser && !isPanMode ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
                         }}
                         title={st.desc}
                       >
@@ -1202,15 +1491,18 @@ export default function PracticePadModal({
                     ))}
                     <button
                       type="button"
-                      onClick={() => setIsEraser(true)}
+                      onClick={() => {
+                        setIsEraser(true);
+                        setIsPanMode(false);
+                      }}
                       style={{
                         border: 'none',
-                        background: isEraser ? 'var(--danger)' : 'transparent',
-                        color: isEraser ? '#ffffff' : 'var(--text-muted)',
+                        background: isEraser && !isPanMode ? 'var(--danger)' : 'transparent',
+                        color: isEraser && !isPanMode ? '#ffffff' : 'var(--text-muted)',
                         padding: '4px 10px',
                         borderRadius: 6,
                         fontSize: '0.78rem',
-                        fontWeight: isEraser ? 700 : 500,
+                        fontWeight: isEraser && !isPanMode ? 700 : 500,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -1220,6 +1512,27 @@ export default function PracticePadModal({
                     >
                       <Eraser size={13} />
                       <span className="hidden-xs">Goma</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsPanMode(!isPanMode)}
+                      style={{
+                        border: 'none',
+                        background: isPanMode ? 'var(--primary)' : 'transparent',
+                        color: isPanMode ? '#ffffff' : 'var(--text-muted)',
+                        padding: '4px 10px',
+                        borderRadius: 6,
+                        fontSize: '0.78rem',
+                        fontWeight: isPanMode ? 700 : 500,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4
+                      }}
+                      title="Mover lienzo (Espacio + arrastrar o botón central)"
+                    >
+                      <Hand size={13} />
+                      <span className="hidden-xs">Mover</span>
                     </button>
                   </div>
                 </div>
@@ -1358,6 +1671,8 @@ export default function PracticePadModal({
 
               {/* Central Drawing Viewport with Ghost Guide Layer */}
               <div 
+                ref={viewportRef}
+                onPointerDown={handleViewportPointerDown}
                 style={{
                   flex: 1,
                   position: 'relative',
@@ -1365,17 +1680,26 @@ export default function PracticePadModal({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: paperStyle === 'chalkboard' ? '#090d16' : '#f1f5f9'
+                  background: paperStyle === 'chalkboard' ? '#090d16' : '#f1f5f9',
+                  userSelect: 'none',
+                  cursor: (isPanMode || isSpacePressed)
+                    ? (isPanning ? 'grabbing' : 'grab')
+                    : (zoom > 1 ? 'default' : 'default')
                 }}
               >
                 <div 
+                  ref={artboardRef}
                   style={{
                     position: 'relative',
-                    width: '100%',
-                    height: '100%',
-                    maxHeight: '100%',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                    touchAction: 'none' // Prevent scrolling while drawing on touch devices
+                    width: `${canvasDimensions.width}px`,
+                    height: `${canvasDimensions.height}px`,
+                    maxWidth: 'none',
+                    maxHeight: 'none',
+                    boxShadow: '0 4px 25px rgba(0,0,0,0.15)',
+                    touchAction: 'none',
+                    transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                    transformOrigin: 'center center',
+                    transition: isPanning ? 'none' : 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
                 >
                   {/* Layer 1: Background Grid Canvas */}
@@ -1518,127 +1842,257 @@ export default function PracticePadModal({
                       width: '100%',
                       height: '100%',
                       zIndex: 3,
-                      cursor: isEraser ? 'cell' : 'crosshair',
+                      cursor: (isPanMode || isSpacePressed)
+                        ? (isPanning ? 'grabbing' : 'grab')
+                        : isEraser 
+                          ? 'cell' 
+                          : 'crosshair',
                       touchAction: 'none'
                     }}
                   />
+                </div>
 
-                  {/* Floating Ghost Opacity Slider */}
-                  <div 
+                {/* Floating Ghost Opacity Slider */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: 16,
+                    left: 16,
+                    zIndex: 10,
+                    background: 'var(--bg-surface)',
+                    padding: '6px 12px',
+                    borderRadius: 12,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    border: '1px solid var(--border)',
+                    fontSize: '0.78rem'
+                  }}
+                >
+                  <span style={{ color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {ghostOpacity > 0 ? <Eye size={13} /> : <EyeOff size={13} />}
+                    Guía Fantasma:
+                  </span>
+                  <input 
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={ghostOpacity}
+                    onChange={(e) => setGhostOpacity(Number(e.target.value))}
+                    style={{ width: 80, accentColor: 'var(--primary)' }}
+                    title="Opacidad de la silueta de ayuda para calcar (0% = oculta)"
+                  />
+                  <span style={{ minWidth: 32, fontWeight: 700 }}>{ghostOpacity}%</span>
+                </div>
+
+                {/* Floating Stroke Thickness Slider */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: 16,
+                    left: 210,
+                    zIndex: 10,
+                    background: 'var(--bg-surface)',
+                    padding: '6px 12px',
+                    borderRadius: 12,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    border: '1px solid var(--border)',
+                    fontSize: '0.78rem'
+                  }}
+                >
+                  <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Grosor:</span>
+                  <input 
+                    type="range"
+                    min="2"
+                    max="28"
+                    value={strokeWidth}
+                    onChange={(e) => setStrokeWidth(Number(e.target.value))}
+                    style={{ width: 75, accentColor: 'var(--primary)' }}
+                  />
+                  <span style={{ minWidth: 28, fontWeight: 700 }}>{strokeWidth}px</span>
+                </div>
+
+                {/* Floating Zoom & Pan Navigation Dock */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: 16,
+                    right: 16,
+                    zIndex: 10,
+                    background: 'var(--bg-surface)',
+                    padding: '4px 8px',
+                    borderRadius: 12,
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    border: '1px solid var(--border)',
+                    fontSize: '0.78rem'
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleZoomChange(zoom - 0.25)}
+                    disabled={zoom <= 0.5}
                     style={{
-                      position: 'absolute',
-                      bottom: 16,
-                      left: 16,
-                      zIndex: 10,
-                      background: 'var(--bg-surface)',
-                      padding: '6px 12px',
-                      borderRadius: 12,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      border: 'none',
+                      background: 'transparent',
+                      color: zoom <= 0.5 ? 'var(--text-muted)' : 'var(--text-main)',
+                      opacity: zoom <= 0.5 ? 0.4 : 1,
+                      cursor: zoom <= 0.5 ? 'not-allowed' : 'pointer',
+                      padding: '4px',
+                      borderRadius: 6,
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 8,
-                      border: '1px solid var(--border)',
-                      fontSize: '0.78rem'
+                      justifyContent: 'center'
                     }}
+                    title="Alejar (Zoom Out - Ctrl+-)"
                   >
-                    <span style={{ color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-                      {ghostOpacity > 0 ? <Eye size={13} /> : <EyeOff size={13} />}
-                      Guía Fantasma:
-                    </span>
-                    <input 
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="5"
-                      value={ghostOpacity}
-                      onChange={(e) => setGhostOpacity(Number(e.target.value))}
-                      style={{ width: 80, accentColor: 'var(--primary)' }}
-                      title="Opacidad de la silueta de ayuda para calcar (0% = oculta)"
-                    />
-                    <span style={{ minWidth: 32, fontWeight: 700 }}>{ghostOpacity}%</span>
-                  </div>
+                    <ZoomOut size={15} />
+                  </button>
 
-                  {/* Floating Stroke Thickness Slider */}
-                  <div 
+                  <button
+                    type="button"
+                    onClick={handleResetZoomAndPan}
                     style={{
-                      position: 'absolute',
-                      bottom: 16,
-                      left: 210,
-                      zIndex: 10,
-                      background: 'var(--bg-surface)',
-                      padding: '6px 12px',
-                      borderRadius: 12,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      border: 'none',
+                      background: 'var(--bg-main)',
+                      color: 'var(--text-main)',
+                      cursor: 'pointer',
+                      padding: '3px 8px',
+                      borderRadius: 6,
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      minWidth: 46,
+                      textAlign: 'center'
+                    }}
+                    title="Restablecer zoom al 100% y centrar (Ctrl+0)"
+                  >
+                    {Math.round(zoom * 100)}%
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleZoomChange(zoom + 0.25)}
+                    disabled={zoom >= 4}
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      color: zoom >= 4 ? 'var(--text-muted)' : 'var(--text-main)',
+                      opacity: zoom >= 4 ? 0.4 : 1,
+                      cursor: zoom >= 4 ? 'not-allowed' : 'pointer',
+                      padding: '4px',
+                      borderRadius: 6,
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 8,
-                      border: '1px solid var(--border)',
-                      fontSize: '0.78rem'
+                      justifyContent: 'center'
                     }}
+                    title="Acercar (Zoom In - Ctrl++)"
                   >
-                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Grosor:</span>
-                    <input 
-                      type="range"
-                      min="2"
-                      max="28"
-                      value={strokeWidth}
-                      onChange={(e) => setStrokeWidth(Number(e.target.value))}
-                      style={{ width: 75, accentColor: 'var(--primary)' }}
-                    />
-                    <span style={{ minWidth: 28, fontWeight: 700 }}>{strokeWidth}px</span>
-                  </div>
+                    <ZoomIn size={15} />
+                  </button>
 
-                  {/* Floating Verification Result Card */}
-                  {verificationResult && (
-                    <div 
+                  <div style={{ width: 1, height: 16, background: 'var(--border)', margin: '0 2px' }} />
+
+                  <button
+                    type="button"
+                    onClick={() => setIsPanMode(!isPanMode)}
+                    style={{
+                      border: 'none',
+                      background: isPanMode ? 'var(--primary)' : 'transparent',
+                      color: isPanMode ? '#ffffff' : 'var(--text-muted)',
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      borderRadius: 6,
+                      fontSize: '0.72rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                    title={isPanMode ? "Modo mover activo (clic para volver a dibujar)" : "Mover lienzo (Espacio + arrastrar)"}
+                  >
+                    <Hand size={13} />
+                    <span className="hidden-xs">Mover</span>
+                  </button>
+
+                  {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
+                    <button
+                      type="button"
+                      onClick={handleResetZoomAndPan}
                       style={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                        zIndex: 20,
-                        background: 'var(--bg-surface)',
-                        padding: '14px 18px',
-                        borderRadius: 14,
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-                        border: `2px solid ${verificationResult.score >= 70 ? 'var(--success, #10b981)' : 'var(--warning, #f59e0b)'}`,
-                        maxWidth: 320,
-                        animation: 'fadeIn 0.2s ease-out'
+                        border: 'none',
+                        background: 'transparent',
+                        color: 'var(--primary)',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        borderRadius: 6,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}
+                      title="Centrar y reajustar lienzo"
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: verificationResult.score >= 70 ? 'var(--success)' : 'var(--warning)' }}>
-                          {verificationResult.badge}
-                        </span>
-                        <button 
-                          type="button" 
-                          className="btn btn-ghost btn-xs"
-                          onClick={() => setVerificationResult(null)}
-                          style={{ padding: 2 }}
-                        >
-                          <X size={14} />
-                        </button>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 6 }}>
-                        <span style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1 }}>
-                          {verificationResult.score}%
-                        </span>
-                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                          precisión de silueta
-                        </span>
-                      </div>
-
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-main)', margin: '0 0 10px', lineHeight: 1.4 }}>
-                        {verificationResult.feedback}
-                      </p>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: '0.72rem', background: 'var(--bg-main)', padding: '6px 8px', borderRadius: 8 }}>
-                        <div>Cobertura: <strong>{verificationResult.coverage}%</strong></div>
-                        <div>Precisión tinta: <strong>{verificationResult.precision}%</strong></div>
-                      </div>
-                    </div>
+                      <RotateCcw size={13} />
+                    </button>
                   )}
                 </div>
+
+                {/* Floating Verification Result Card */}
+                {verificationResult && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: 16,
+                      right: 16,
+                      zIndex: 20,
+                      background: 'var(--bg-surface)',
+                      padding: '14px 18px',
+                      borderRadius: 14,
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                      border: `2px solid ${verificationResult.score >= 70 ? 'var(--success, #10b981)' : 'var(--warning, #f59e0b)'}`,
+                      maxWidth: 320,
+                      animation: 'fadeIn 0.2s ease-out'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 800, color: verificationResult.score >= 70 ? 'var(--success)' : 'var(--warning)' }}>
+                        {verificationResult.badge}
+                      </span>
+                      <button 
+                        type="button" 
+                        className="btn btn-ghost btn-xs"
+                        onClick={() => setVerificationResult(null)}
+                        style={{ padding: 2 }}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 6 }}>
+                      <span style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1 }}>
+                        {verificationResult.score}%
+                      </span>
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                        precisión de silueta
+                      </span>
+                    </div>
+
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-main)', margin: '0 0 10px', lineHeight: 1.4 }}>
+                      {verificationResult.feedback}
+                    </p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: '0.72rem', background: 'var(--bg-main)', padding: '6px 8px', borderRadius: 8 }}>
+                      <div>Cobertura: <strong>{verificationResult.coverage}%</strong></div>
+                      <div>Precisión tinta: <strong>{verificationResult.precision}%</strong></div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Bottom Reading & Verification Transcription Bar */}
