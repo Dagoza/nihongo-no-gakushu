@@ -102,17 +102,19 @@ export function AppProvider({ children }) {
     kana: '',
     title: '',
     source: 'custom',
-    initialChar: ''
+    initialChar: '',
+    ghostOpacity: undefined
   });
 
-  const openPracticePad = useCallback(({ text = '', kana = '', title = '', source = 'custom', initialChar = '' } = {}) => {
+  const openPracticePad = useCallback(({ text = '', kana = '', title = '', source = 'custom', initialChar = '', ghostOpacity = undefined } = {}) => {
     setPracticePadState({
       isOpen: true,
       text,
       kana,
-      title: title || (text ? `Práctica: ${text}` : 'Cuaderno de Caligrafía'),
+      title: title || (text ? `Práctica: ${text}` : (source === 'free' ? 'Cuaderno Libre' : 'Cuaderno de Caligrafía')),
       source,
-      initialChar
+      initialChar,
+      ghostOpacity: ghostOpacity !== undefined ? ghostOpacity : (source === 'free' ? 0 : 35)
     });
   }, []);
 

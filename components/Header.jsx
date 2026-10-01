@@ -564,13 +564,14 @@ export default function Header({
               transition: 'all 0.15s ease'
             }}
             onClick={() => {
+              const opts = { text: '', kana: '', title: 'Cuaderno Libre', source: 'free', ghostOpacity: 0 };
               if (contextApp?.openPracticePad) {
-                contextApp.openPracticePad();
+                contextApp.openPracticePad(opts);
               } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
-                window.__nihongoOpenPracticePad();
+                window.__nihongoOpenPracticePad(opts);
               }
             }}
-            title="Cuaderno: práctica libre de caligrafía, kanji y trazos"
+            title="Cuaderno libre sin guía: dibuja y escribe con total libertad"
           >
             <PenTool size={15} className="text-indigo-500" />
             <span style={{ fontWeight: 600 }}>Cuaderno ✍️</span>

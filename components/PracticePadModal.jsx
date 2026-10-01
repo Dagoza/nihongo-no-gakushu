@@ -57,8 +57,9 @@ export default function PracticePadModal({
   initialText = '',
   initialKana = '',
   initialTitle = '',
-  initialSource = 'custom', // 'kanji' | 'vocab' | 'conversation' | 'story' | 'grammar' | 'custom'
+  initialSource = 'custom', // 'kanji' | 'vocab' | 'conversation' | 'story' | 'grammar' | 'custom' | 'free'
   initialChar = '',
+  initialGhostOpacity,
   onSaveToCloud
 }) {
   // Main view modes
@@ -69,9 +70,9 @@ export default function PracticePadModal({
   const [isEditingText, setIsEditingText] = useState(false);
 
   // Target text & character navigation
-  const [text, setText] = useState(initialText || '日本語');
+  const [text, setText] = useState(initialText || '');
   const [kana, setKana] = useState(initialKana || '');
-  const [title, setTitle] = useState(initialTitle || 'Práctica de Escritura');
+  const [title, setTitle] = useState(initialTitle || (initialSource === 'free' ? 'Cuaderno Libre' : 'Práctica de Escritura'));
   const [source, setSource] = useState(initialSource || 'custom');
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
 
@@ -82,7 +83,11 @@ export default function PracticePadModal({
   const [isEraser, setIsEraser] = useState(false);
   const [gridType, setGridType] = useState('mizige'); // 'tianzige' | 'mizige' | 'genkouyoushi' | 'dot' | 'lined' | 'blank'
   const [paperStyle, setPaperStyle] = useState('washi'); // 'washi' | 'white' | 'chalkboard'
-  const [ghostOpacity, setGhostOpacity] = useState(35); // 0 to 100%
+  const [ghostOpacity, setGhostOpacity] = useState(
+    typeof initialGhostOpacity === 'number' 
+      ? initialGhostOpacity 
+      : (initialSource === 'free' || !initialText ? 0 : 35)
+  );
 
   // Canvas strokes & history for Undo/Redo
   const [strokes, setStrokes] = useState([]);
@@ -116,7 +121,10 @@ export default function PracticePadModal({
 
   // Split text into individual characters (filtering out pure whitespace)
   const characters = React.useMemo(() => {
-    return Array.from(text.trim() || '日');
+    const trimmed = (text || '').trim();
+    if (!trimmed) return ['日'];
+    const chars = Array.from(trimmed).filter(c => c && c.trim().length > 0);
+    return chars.length > 0 ? chars : ['日'];
   }, [text]);
 
   const activeChar = characters[currentCharIndex] || characters[0] || '日';
@@ -130,14 +138,37 @@ export default function PracticePadModal({
   // Sync incoming props when modal opens with new data
   useEffect(() => {
     if (isOpen) {
-      if (initialText) {
+      if (initialSource === 'free') {
+        // Cuaderno libre sin guía desde el header
+        setText(initialText || '');
+        setKana('');
+        setTitle(initialTitle || 'Cuaderno Libre');
+        setSource('free');
+        setGhostOpacity(0);
+        setCurrentCharIndex(0);
+        setVerificationResult(null);
+
+        // Si existe un borrador previo de cuaderno libre, recuperar trazos
+        const draft = loadPracticeDraft();
+        if (draft && draft.source === 'free' && Array.isArray(draft.strokes) && draft.strokes.length > 0) {
+          const validStrokes = draft.strokes.filter(s => s && typeof s === 'object' && Array.isArray(s.points) && s.points.length > 0);
+          setStrokes(validStrokes);
+          setGridType(draft.gridType || 'mizige');
+          setPaperStyle(draft.paperStyle || 'washi');
+          setStrokeStyle(draft.strokeStyle || 'shodo');
+          setStrokeWidth(draft.strokeWidth || 8);
+          setInkColor(draft.inkColor || '#18181b');
+        }
+      } else if (initialText) {
         setText(initialText);
         setKana(initialKana || '');
         setTitle(initialTitle || `Práctica: ${initialText}`);
         setSource(initialSource || 'custom');
+        setGhostOpacity(typeof initialGhostOpacity === 'number' ? initialGhostOpacity : 35);
+        setVerificationResult(null);
         
         // Find index of initialChar if passed
-        const chars = Array.from(initialText.trim());
+        const chars = Array.from(initialText.trim()).filter(c => c && c.trim().length > 0);
         if (initialChar) {
           const idx = chars.indexOf(initialChar);
           setCurrentCharIndex(idx >= 0 ? idx : 0);
@@ -149,9 +180,9 @@ export default function PracticePadModal({
         const draft = loadPracticeDraft();
         if (draft && Array.isArray(draft.strokes) && draft.strokes.length > 0) {
           const validStrokes = draft.strokes.filter(s => s && typeof s === 'object' && Array.isArray(s.points) && s.points.length > 0);
-          setText(draft.text || '日本語');
+          setText(draft.text || '');
           setKana(draft.kana || '');
-          setTitle(draft.title || 'Práctica de Escritura');
+          setTitle(draft.title || (draft.source === 'free' ? 'Cuaderno Libre' : 'Práctica de Escritura'));
           setSource(draft.source || 'custom');
           setStrokes(validStrokes);
           setGridType(draft.gridType || 'mizige');
@@ -159,14 +190,20 @@ export default function PracticePadModal({
           setStrokeStyle(draft.strokeStyle || 'shodo');
           setStrokeWidth(draft.strokeWidth || 8);
           setInkColor(draft.inkColor || '#18181b');
+          setGhostOpacity(typeof initialGhostOpacity === 'number' ? initialGhostOpacity : (draft.source === 'free' ? 0 : 35));
           setCurrentCharIndex(draft.currentCharIndex || 0);
           showNotification('Borrador previo recuperado automáticamente ✨', 'success');
+        } else {
+          setText('');
+          setGhostOpacity(0);
+          setSource('free');
+          setTitle('Cuaderno Libre');
         }
       }
 
       setSavedSheets(getSavedPracticeSheets());
     }
-  }, [isOpen, initialText, initialKana, initialTitle, initialSource, initialChar]);
+  }, [isOpen, initialText, initialKana, initialTitle, initialSource, initialChar, initialGhostOpacity]);
 
   // Adjust default ink color when chalkboard paper is picked
   useEffect(() => {
@@ -407,14 +444,23 @@ export default function PracticePadModal({
   const handleVerifyDrawing = () => {
     const drawCanvas = drawingCanvasRef.current;
     if (!drawCanvas || strokes.length === 0) {
-      showNotification('Dibuja el carácter en la cuadrícula antes de verificar', 'warning');
+      showNotification('Dibuja en la cuadrícula antes de verificar', 'warning');
+      return;
+    }
+
+    const targetToVerify = (activeTab === 'canvas' && text && text.trim().length > 1)
+      ? text.trim()
+      : (text && text.trim() ? activeChar : '');
+
+    if (!targetToVerify) {
+      showNotification('En modo cuaderno libre puedes escribir y dibujar libremente sin modelo ✨', 'info');
       return;
     }
 
     setIsVerifying(true);
     setTimeout(() => {
       const rect = drawCanvas.getBoundingClientRect();
-      const res = analyzeDrawingAccuracy(drawCanvas, activeChar, rect.width, rect.height);
+      const res = analyzeDrawingAccuracy(drawCanvas, targetToVerify, rect.width, rect.height);
       setVerificationResult(res);
       setIsVerifying(false);
       if (res && res.score >= 70) {
@@ -431,7 +477,9 @@ export default function PracticePadModal({
       setTranscriptionMatch(null);
       return;
     }
-    const isExact = cleanInput === activeChar || cleanInput === text.trim() || cleanInput === kana.trim();
+    const cleanText = (text || '').trim();
+    const cleanKana = (kana || '').trim();
+    const isExact = cleanInput === cleanText || cleanInput === cleanKana || cleanInput === activeChar;
     setTranscriptionMatch(isExact);
   };
 
@@ -902,68 +950,135 @@ export default function PracticePadModal({
             flexWrap: 'wrap'
           }}
         >
-          {/* Characters Carousel / Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflowX: 'auto', maxWidth: '70%', paddingBottom: 2 }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
-              Caracteres ({characters.length}):
-            </span>
+          {/* MODO CUADERNO (activeTab === 'canvas'): TODOS LOS CARACTERES JUNTOS, NO SEPARADOS */}
+          {activeTab === 'canvas' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 260, flexWrap: 'wrap' }}>
+              {(!text || !text.trim()) ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span 
+                    style={{ 
+                      fontSize: '0.85rem', 
+                      fontWeight: 700, 
+                      color: 'var(--text-main)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 6,
+                      background: 'var(--bg-surface)',
+                      padding: '4px 12px',
+                      borderRadius: 8,
+                      border: '1px solid var(--border)'
+                    }}
+                  >
+                    📝 Cuaderno Libre sin Guía
+                  </span>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Lienzo despejado para trazos libres, caligrafía y notas.
+                  </span>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
+                    {text.trim().length === 1 ? 'Carácter en práctica:' : 'Frase completa:'}
+                  </span>
+                  {/* TODOS LOS CARACTERES JUNTOS EN UN SOLO BLOQUE INTEGRADO */}
+                  <div 
+                    className="jp-text"
+                    style={{
+                      fontSize: text.trim().length <= 6 ? '1.25rem' : '1.1rem',
+                      fontWeight: 700,
+                      color: 'var(--text-main)',
+                      background: 'var(--bg-surface)',
+                      padding: '5px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border)',
+                      letterSpacing: '0.05em',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                    }}
+                    title="Texto completo del cuaderno (mostrado continuo y no separado)"
+                  >
+                    <span>{text.trim()}</span>
+                    {kana && (
+                      <span style={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+                        （{kana}）
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-            {characters.map((ch, idx) => {
-              const isCurrent = idx === currentCharIndex;
-              return (
-                <button
-                  key={`${ch}-${idx}`}
-                  type="button"
-                  onClick={() => setCurrentCharIndex(idx)}
-                  style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: '8px',
-                    border: isCurrent ? '2px solid var(--primary)' : '1px solid var(--border)',
-                    background: isCurrent ? 'var(--primary)' : 'var(--bg-surface)',
-                    color: isCurrent ? '#ffffff' : 'var(--text-main)',
-                    fontSize: '1.25rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: 'var(--font-jp)',
-                    boxShadow: isCurrent ? '0 2px 8px rgba(99, 102, 241, 0.35)' : 'none',
-                    transition: 'all 0.15s ease',
-                    flexShrink: 0
-                  }}
-                  title={`Seleccionar carácter ${ch}`}
-                >
-                  {ch}
-                </button>
-              );
-            })}
-          </div>
+          {/* MODO PASO A PASO (activeTab === 'stroke_quiz'): CONSERVAR LOS CARACTERES SEPARADOS */}
+          {activeTab === 'stroke_quiz' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflowX: 'auto', maxWidth: '70%', paddingBottom: 2 }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
+                Paso a paso ({characters.length}):
+              </span>
+
+              {characters.map((ch, idx) => {
+                const isCurrent = idx === currentCharIndex;
+                return (
+                  <button
+                    key={`${ch}-${idx}`}
+                    type="button"
+                    onClick={() => setCurrentCharIndex(idx)}
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: '8px',
+                      border: isCurrent ? '2px solid var(--primary)' : '1px solid var(--border)',
+                      background: isCurrent ? 'var(--primary)' : 'var(--bg-surface)',
+                      color: isCurrent ? '#ffffff' : 'var(--text-main)',
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: 'var(--font-jp)',
+                      boxShadow: isCurrent ? '0 2px 8px rgba(99, 102, 241, 0.35)' : 'none',
+                      transition: 'all 0.15s ease',
+                      flexShrink: 0
+                    }}
+                    title={`Verificar trazo del carácter ${ch}`}
+                  >
+                    {ch}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Quick Audio & Custom Text Input */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={() => audioManager.speak(activeChar)}
-              style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.8rem' }}
-              title={`Escuchar pronunciación de ${activeChar}`}
-            >
-              <Volume2 size={14} />
-              <span>Oír {activeChar}</span>
-            </button>
+            {activeTab === 'stroke_quiz' && (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => audioManager.speak(activeChar)}
+                style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.8rem' }}
+                title={`Escuchar pronunciación de ${activeChar}`}
+              >
+                <Volume2 size={14} />
+                <span>Oír {activeChar}</span>
+              </button>
+            )}
 
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={() => audioManager.speak(text)}
-              style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.8rem' }}
-              title="Escuchar toda la frase"
-            >
-              <Volume2 size={14} />
-              <span>Oír Frase Completa</span>
-            </button>
+            {text && text.trim().length > 0 && (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => audioManager.speak(text)}
+                style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.8rem' }}
+                title="Escuchar pronunciación completa"
+              >
+                <Volume2 size={14} />
+                <span>{text.trim().length === 1 ? `Oír ${text.trim()}` : 'Oír Frase Completa'}</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -1266,8 +1381,8 @@ export default function PracticePadModal({
                     }}
                   />
 
-                  {/* Layer 2: Ghost Reference Glyph Overlay (Optional Tracing Guide) */}
-                  {ghostOpacity > 0 && (
+                  {/* Layer 2: Ghost Reference Glyph Overlay (Optional Tracing Guide - Frase Completa Unificada) */}
+                  {ghostOpacity > 0 && text && text.trim().length > 0 && (
                     <div 
                       style={{
                         position: 'absolute',
@@ -1277,17 +1392,39 @@ export default function PracticePadModal({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        padding: '24px 32px',
                         opacity: ghostOpacity / 100,
                         color: paperStyle === 'chalkboard' ? '#94a3b8' : '#64748b',
                         fontFamily: 'var(--font-jp)',
-                        fontSize: 'min(55vh, 400px)',
-                        fontWeight: 700,
-                        lineHeight: 1,
                         userSelect: 'none',
                         transition: 'opacity 0.2s ease'
                       }}
                     >
-                      {activeChar}
+                      {text.trim().length === 1 ? (
+                        <span style={{ fontSize: 'min(55vh, 380px)', fontWeight: 700, lineHeight: 1 }}>
+                          {text.trim()}
+                        </span>
+                      ) : (
+                        <div 
+                          style={{
+                            maxWidth: '92%',
+                            textAlign: 'center',
+                            fontWeight: 700,
+                            lineHeight: 1.35,
+                            letterSpacing: '0.08em',
+                            fontSize: text.trim().length <= 4 
+                              ? 'min(18vh, 110px)'
+                              : text.trim().length <= 8
+                              ? 'min(13vh, 72px)'
+                              : text.trim().length <= 16
+                              ? 'min(9vh, 46px)'
+                              : 'min(6.5vh, 32px)',
+                            wordBreak: 'break-word'
+                          }}
+                        >
+                          {text.trim()}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1450,7 +1587,7 @@ export default function PracticePadModal({
                       type="text"
                       value={transcriptionInput}
                       onChange={(e) => handleVerifyTranscription(e.target.value)}
-                      placeholder={`Escribe la lectura o carácter (${activeChar})...`}
+                      placeholder={text && text.trim().length > 1 ? `Escribe la frase o lectura (${text.trim()})...` : (text && text.trim() ? `Escribe la lectura o carácter (${text.trim()})...` : 'Escribe lo que practicaste o dibujaste...')}
                       style={{
                         width: '100%',
                         padding: '6px 30px 6px 10px',
@@ -1514,11 +1651,30 @@ export default function PracticePadModal({
               >
                 <div style={{ textAlign: 'center' }}>
                   <h3 style={{ margin: '0 0 4px', fontSize: '1.25rem', fontWeight: 800 }}>
-                    Trazos Interactivos: <span style={{ color: 'var(--primary)', fontFamily: 'var(--font-jp)' }}>{activeChar}</span>
+                    Trazos Paso a Paso: <span style={{ color: 'var(--primary)', fontFamily: 'var(--font-jp)' }}>{activeChar}</span>
                   </h3>
                   <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                     Dibuja directamente sobre el recuadro respetando el orden y sentido correcto de cada trazo.
                   </p>
+                  {(!text || !text.trim()) && (
+                    <div style={{ display: 'flex', gap: 6, justifyContent: 'center', alignItems: 'center', marginTop: 8, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Probar ideograma:</span>
+                      {['日', '桜', '水', '火', '木', '金', '土'].map(k => (
+                        <button
+                          key={k}
+                          type="button"
+                          className="btn btn-outline btn-xs"
+                          onClick={() => {
+                            setText(k);
+                            setCurrentCharIndex(0);
+                          }}
+                          style={{ fontSize: '0.78rem', padding: '2px 8px' }}
+                        >
+                          {k}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* HanziWriter Canvas Mount Target */}

@@ -118,6 +118,7 @@ function AppShellContent({ children }) {
         initialTitle={practicePadState?.title}
         initialSource={practicePadState?.source}
         initialChar={practicePadState?.initialChar}
+        initialGhostOpacity={practicePadState?.ghostOpacity}
         onSaveToCloud={(sheet) => {
           if (appState && handleUpdateState) {
             const currentList = appState.savedPracticeSheets || [];
