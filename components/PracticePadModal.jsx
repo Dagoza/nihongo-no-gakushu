@@ -45,6 +45,7 @@ import {
   deletePracticeSheet,
   renderGridOnCanvas,
   renderStroke,
+  renderStrokeSegment,
   renderAllStrokes,
   analyzeDrawingAccuracy,
   exportPracticeSheetToImage
@@ -146,12 +147,13 @@ export default function PracticePadModal({
       } else {
         // Try restoring last active draft
         const draft = loadPracticeDraft();
-        if (draft && draft.strokes && draft.strokes.length > 0) {
+        if (draft && Array.isArray(draft.strokes) && draft.strokes.length > 0) {
+          const validStrokes = draft.strokes.filter(s => s && typeof s === 'object' && Array.isArray(s.points) && s.points.length > 0);
           setText(draft.text || '日本語');
           setKana(draft.kana || '');
           setTitle(draft.title || 'Práctica de Escritura');
           setSource(draft.source || 'custom');
-          setStrokes(draft.strokes || []);
+          setStrokes(validStrokes);
           setGridType(draft.gridType || 'mizige');
           setPaperStyle(draft.paperStyle || 'washi');
           setStrokeStyle(draft.strokeStyle || 'shodo');
@@ -237,7 +239,7 @@ export default function PracticePadModal({
     const dCtx = drawCanvas.getContext('2d');
     if (dCtx) {
       dCtx.scale(dpr, dpr);
-      renderAllStrokes(dCtx, strokes);
+      renderAllStrokes(dCtx, (strokes || []).filter(Boolean));
     }
   }, [gridType, paperStyle, strokes]);
 
@@ -261,7 +263,7 @@ export default function PracticePadModal({
     dCtx.setTransform(1, 0, 0, 1, 0, 0);
     dCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     dCtx.scale(dpr, dpr);
-    renderAllStrokes(dCtx, strokes);
+    renderAllStrokes(dCtx, (strokes || []).filter(Boolean));
     dCtx.restore();
   }, [strokes]);
 
@@ -318,23 +320,28 @@ export default function PracticePadModal({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    const stroke = currentStrokeRef.current;
+    if (!stroke || !Array.isArray(stroke.points) || stroke.points.length === 0) return;
+
     const pt = {
       x,
       y,
-      pressure: e.pressure || 0.5,
+      pressure: (typeof e.pressure === 'number' && e.pressure > 0) ? e.pressure : 0.5,
       time: Date.now()
     };
 
-    currentStrokeRef.current.points.push(pt);
+    const p0 = stroke.points[stroke.points.length - 1];
+    stroke.points.push(pt);
+    const p1 = pt;
 
-    // Progressive rendering: render last segment
+    // Progressive rendering: render last segment smoothly
     const dpr = window.devicePixelRatio || 1;
     const dCtx = drawCanvas.getContext('2d');
     if (dCtx) {
       dCtx.save();
       dCtx.setTransform(1, 0, 0, 1, 0, 0);
       dCtx.scale(dpr, dpr);
-      renderStroke(dCtx, currentStrokeRef.current);
+      renderStrokeSegment(dCtx, p0, p1, stroke);
       dCtx.restore();
     }
   };
@@ -344,26 +351,45 @@ export default function PracticePadModal({
     isPointerDownRef.current = false;
     setIsDrawing(false);
 
-    if (currentStrokeRef.current && currentStrokeRef.current.points.length > 0) {
-      setStrokes(prev => [...prev, currentStrokeRef.current]);
+    try {
+      if (drawingCanvasRef.current && e?.pointerId !== undefined) {
+        drawingCanvasRef.current.releasePointerCapture(e.pointerId);
+      }
+    } catch (err) {}
+
+    const completed = currentStrokeRef.current;
+    currentStrokeRef.current = null;
+
+    if (completed && Array.isArray(completed.points) && completed.points.length > 0) {
+      const strokeToCommit = {
+        points: [...completed.points],
+        style: completed.style || strokeStyle,
+        color: completed.color || inkColor,
+        width: completed.width || strokeWidth,
+        isEraser: Boolean(completed.isEraser)
+      };
+      setStrokes(prev => [...(Array.isArray(prev) ? prev.filter(Boolean) : []), strokeToCommit]);
       setRedoStack([]); // Clear redo stack on new action
     }
-    currentStrokeRef.current = null;
   };
 
   // Undo / Redo
   const handleUndo = () => {
-    if (strokes.length === 0) return;
-    const last = strokes[strokes.length - 1];
-    setStrokes(prev => prev.slice(0, -1));
-    setRedoStack(prev => [...prev, last]);
+    if (!strokes || strokes.length === 0) return;
+    const valid = strokes.filter(Boolean);
+    if (valid.length === 0) return;
+    const last = valid[valid.length - 1];
+    setStrokes(valid.slice(0, -1));
+    setRedoStack(prev => [...(Array.isArray(prev) ? prev.filter(Boolean) : []), last]);
   };
 
   const handleRedo = () => {
-    if (redoStack.length === 0) return;
-    const next = redoStack[redoStack.length - 1];
-    setRedoStack(prev => prev.slice(0, -1));
-    setStrokes(prev => [...prev, next]);
+    if (!redoStack || redoStack.length === 0) return;
+    const valid = redoStack.filter(Boolean);
+    if (valid.length === 0) return;
+    const next = valid[valid.length - 1];
+    setRedoStack(valid.slice(0, -1));
+    setStrokes(prev => [...(Array.isArray(prev) ? prev.filter(Boolean) : []), next]);
   };
 
   const handleClearCanvas = () => {

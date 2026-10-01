@@ -335,37 +335,6 @@ export default function Header({
               )}
             </div>
 
-            {/* Cuaderno de Caligrafía & Trazos */}
-            <button
-              type="button"
-              className="header-notepad-btn"
-              onClick={() => {
-                if (contextApp?.openPracticePad) {
-                  contextApp.openPracticePad();
-                } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
-                  window.__nihongoOpenPracticePad();
-                }
-              }}
-              title="Abrir Cuaderno de Caligrafía & Cuadrícula de Trazos (Kanji, Vocabulario, Oraciones)"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 12px',
-                borderRadius: '10px',
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.12))',
-                border: '1px solid rgba(99, 102, 241, 0.25)',
-                color: 'var(--text-main)',
-                cursor: 'pointer',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <PenTool size={15} style={{ color: 'var(--primary)' }} />
-              <span className="hidden-xs">Cuaderno ✍️</span>
-            </button>
-
             {/* Theme Toggle Button */}
             <button 
               className="theme-toggle-btn"
@@ -585,6 +554,26 @@ export default function Header({
           <div className="stat-badge hidden-sm" title="Teclado Japonés IME listo">
             <Keyboard size={16} className="text-rose-500" />
             <span>IME 🇯🇵</span>
+          </div>
+
+          {/* Acceso sutil a Cuaderno de Trazos */}
+          <div 
+            className="stat-badge" 
+            style={{ 
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+            onClick={() => {
+              if (contextApp?.openPracticePad) {
+                contextApp.openPracticePad();
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                window.__nihongoOpenPracticePad();
+              }
+            }}
+            title="Cuaderno: práctica libre de caligrafía, kanji y trazos"
+          >
+            <PenTool size={15} className="text-indigo-500" />
+            <span style={{ fontWeight: 600 }}>Cuaderno ✍️</span>
           </div>
 
           {/* Cloud Sync Status in Badges */}

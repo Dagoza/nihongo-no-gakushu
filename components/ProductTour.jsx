@@ -35,7 +35,8 @@ import {
   CloudCheck, 
   Bell,
   VolumeX,
-  ArrowRight
+  ArrowRight,
+  PenTool
 } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../lib/audioManager';
@@ -108,6 +109,11 @@ export default function ProductTour({
   // Paso 11: PDF
   const [selectedBook, setSelectedBook] = useState(0);
 
+  // Paso: Practice Pad (Cuaderno de Caligrafía & Trazos)
+  const [tourPracticeStyle, setTourPracticeStyle] = useState('shodo');
+  const [tourPracticeGrid, setTourPracticeGrid] = useState('mizige');
+  const [tourPracticeDrawn, setTourPracticeDrawn] = useState(false);
+
   // Paso 12: Saved / SRS
   const [srsFlipped, setSrsFlipped] = useState(false);
   const [srsInterval, setSrsInterval] = useState(null);
@@ -142,6 +148,9 @@ export default function ProductTour({
       setParticleSelected(null);
       setKanjiAnimating(false);
       setSelectedBook(0);
+      setTourPracticeStyle('shodo');
+      setTourPracticeGrid('mizige');
+      setTourPracticeDrawn(false);
       setSrsFlipped(false);
       setSrsInterval(null);
       setAudioPlaying(false);
@@ -293,6 +302,17 @@ export default function ProductTour({
       description: 'Fichas completas de kanjis con número de trazos, radicales, lecturas On\'yomi (chinas), Kun\'yomi (japonesas) y lista sincronizada de palabras compuestas que los contienen.',
       hiddenTip: '✍️ Animación de Trazos y Modo Lienzo: Puedes ver la animación trazo a trazo y activar el modo dibujo para trazar el kanji con el mouse o con el dedo en pantallas táctiles; la app califica la precisión y dirección.',
       tab: 'kanji'
+    },
+    {
+      id: 'practice_pad',
+      category: 'Caligrafía & Práctica',
+      categoryColor: '#f59e0b',
+      title: 'Cuaderno de Caligrafía, Cuadrículas & Trazos',
+      subtitle: 'Escribe a mano alzada, valida proporciones y guarda tus hojas de estudio',
+      icon: PenTool,
+      description: 'Accede a tu libreta digital en cualquier momento para practicar kanjis, vocabulario, oraciones modelo o historias completas. Elige entre cuadrículas tradicionales (田字格 Tianzige, 米字格 Mizige de 8 sectores, Genkouyoushi o Pautado) con estilos de trazo realistas y evaluación visual.',
+      hiddenTip: '✍️ 1. Estilos auténticos: Pincel Shodō (書道), rotulador redondo, pluma estilográfica, lápiz escolar y tinta gel. 2. Plantilla fantasma ajustable para calcar. 3. Exporta tus hojas a PNG de alta resolución con sello tradicional Hanko (落款印). 4. Guarda y retoma donde lo dejaste.',
+      tab: null
     },
     {
       id: 'pdf',
@@ -670,6 +690,13 @@ export default function ProductTour({
                         <span>IME 🇯🇵</span>
                       </div>
                       <div 
+                        className={`stat-badge ${selectedBadge === 'practice' ? 'active-preview' : ''}`}
+                        onClick={() => setSelectedBadge('practice')}
+                      >
+                        <PenTool size={15} style={{ color: 'var(--accent, #f59e0b)' }} />
+                        <span>Cuaderno ✍️</span>
+                      </div>
+                      <div 
                         className={`stat-badge ${selectedBadge === 'sync' ? 'active-preview' : ''}`}
                         onClick={() => setSelectedBadge('sync')}
                       >
@@ -707,6 +734,11 @@ export default function ProductTour({
                       {selectedBadge === 'ime' && (
                         <div>
                           <strong>🇯🇵 Teclado IME:</strong> Indica que el transpilador automático romaji a kana está activo en los ejercicios.
+                        </div>
+                      )}
+                      {selectedBadge === 'practice' && (
+                        <div>
+                          <strong>✍️ Cuaderno de Caligrafía & Trazos:</strong> Acceso rápido integrado en tus estadísticas para abrir tu libreta de práctica con cuadrículas y pincel Shodō sin perder de vista tu avance.
                         </div>
                       )}
                       {selectedBadge === 'sync' && (
@@ -1166,6 +1198,223 @@ export default function ProductTour({
                       >
                         ✍️ Probar lienzo de dibujo
                       </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Paso: Practice Pad (Cuaderno de Caligrafía, Cuadrículas y Trazos) */}
+                {currentStep.id === 'practice_pad' && (
+                  <div className="tour-widget-inner practice-pad-tour-widget">
+                    {/* Selectores de estilo de trazo y cuadrícula */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
+                          Estilo de trazo disponible:
+                        </div>
+                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                          {[
+                            { id: 'shodo', label: '🖌️ Shodō', tip: 'Pincel tradicional con modulación dinámica' },
+                            { id: 'marker', label: '🖊️ Rotulador', tip: 'Punta redonda de grosor homogéneo' },
+                            { id: 'fountain', label: '✒️ Pluma', tip: 'Biselado estilográfico con filo variable' },
+                            { id: 'pencil', label: '✏️ Lápiz', tip: 'Textura suave de grafito japonés' },
+                            { id: 'gel', label: '🖋️ Gel 0.5', tip: 'Trazo continuo y fluido Catmull-Rom' }
+                          ].map(st => (
+                            <button
+                              key={st.id}
+                              type="button"
+                              className={`btn btn-sm ${tourPracticeStyle === st.id ? 'btn-primary' : 'btn-outline'}`}
+                              onClick={() => setTourPracticeStyle(st.id)}
+                              style={{ fontSize: '0.72rem', padding: '3px 8px' }}
+                              title={st.tip}
+                            >
+                              {st.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
+                          Tipo de cuadrícula de aprendizaje:
+                        </div>
+                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                          {[
+                            { id: 'tianzige', label: '田字格 (Cruz)' },
+                            { id: 'mizige', label: '米字格 (Estrella 8)' },
+                            { id: 'genkouyoushi', label: '原稿用紙 (Redacción)' },
+                            { id: 'lined', label: 'Líneas pautadas' }
+                          ].map(gd => (
+                            <button
+                              key={gd.id}
+                              type="button"
+                              className={`btn btn-sm ${tourPracticeGrid === gd.id ? 'btn-primary' : 'btn-outline'}`}
+                              onClick={() => setTourPracticeGrid(gd.id)}
+                              style={{ fontSize: '0.72rem', padding: '3px 8px' }}
+                            >
+                              {gd.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Previsualizador de Papel Washi & Cuadrícula */}
+                    <div 
+                      className="practice-tour-preview-card"
+                      style={{
+                        background: '#fcfaf5',
+                        border: '2px solid rgba(217, 119, 6, 0.3)',
+                        borderRadius: 12,
+                        padding: 12,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 14,
+                        boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.04)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {/* Cuadrícula visual simulada */}
+                      <div 
+                        style={{
+                          width: 120,
+                          height: 120,
+                          flexShrink: 0,
+                          position: 'relative',
+                          border: '2px solid #b45309',
+                          background: '#fffef9',
+                          borderRadius: 6,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        {/* Líneas guía según cuadrícula */}
+                        {tourPracticeGrid === 'tianzige' && (
+                          <>
+                            <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: 1, borderLeft: '1px dashed rgba(180, 83, 9, 0.45)' }} />
+                            <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, borderTop: '1px dashed rgba(180, 83, 9, 0.45)' }} />
+                          </>
+                        )}
+                        {tourPracticeGrid === 'mizige' && (
+                          <>
+                            <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: 1, borderLeft: '1px dashed rgba(180, 83, 9, 0.45)' }} />
+                            <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, borderTop: '1px dashed rgba(180, 83, 9, 0.45)' }} />
+                            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(45deg, transparent 49.5%, rgba(180, 83, 9, 0.25) 50%, transparent 50.5%), linear-gradient(-45deg, transparent 49.5%, rgba(180, 83, 9, 0.25) 50%, transparent 50.5%)' }} />
+                          </>
+                        )}
+                        {tourPracticeGrid === 'genkouyoushi' && (
+                          <div style={{ position: 'absolute', inset: 8, border: '1px solid rgba(180, 83, 9, 0.35)', borderRadius: 2 }} />
+                        )}
+                        {tourPracticeGrid === 'lined' && (
+                          <>
+                            <div style={{ position: 'absolute', left: 0, right: 0, top: '33%', height: 1, borderTop: '1px dashed rgba(180, 83, 9, 0.4)' }} />
+                            <div style={{ position: 'absolute', left: 0, right: 0, top: '66%', height: 1, borderTop: '1px solid rgba(180, 83, 9, 0.4)' }} />
+                          </>
+                        )}
+
+                        {/* Ideograma clásico "永" (los 8 trazos de caligrafía) */}
+                        <span 
+                          className="jp-text"
+                          style={{
+                            fontSize: '4.8rem',
+                            fontWeight: 400,
+                            lineHeight: 1,
+                            color: tourPracticeDrawn ? '#111827' : 'rgba(180, 83, 9, 0.28)',
+                            transition: 'all 0.3s ease',
+                            userSelect: 'none',
+                            textShadow: tourPracticeDrawn && tourPracticeStyle === 'shodo' ? '0 0 1px rgba(0,0,0,0.8)' : 'none'
+                          }}
+                        >
+                          永
+                        </span>
+
+                        {/* Sello tradicional Hanko en miniatura */}
+                        <div 
+                          style={{
+                            position: 'absolute',
+                            bottom: 4,
+                            right: 4,
+                            width: 18,
+                            height: 18,
+                            border: '1px solid #dc2626',
+                            background: 'rgba(220, 38, 38, 0.08)',
+                            color: '#dc2626',
+                            fontSize: '9px',
+                            fontWeight: 800,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 2
+                          }}
+                        >
+                          秀
+                        </div>
+                      </div>
+
+                      {/* Explicación y controles del lienzo */}
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#92400e' }}>
+                          永 (Ei · Eternidad / 8 trazos maestros)
+                        </div>
+                        <div style={{ fontSize: '0.74rem', color: '#78350f', lineHeight: 1.4 }}>
+                          {tourPracticeDrawn ? (
+                            <span style={{ color: '#047857', fontWeight: 600 }}>
+                              ✓ ¡Proporción verificada con éxito! Balance en 4 cuadrantes: <strong>96%</strong>.
+                            </span>
+                          ) : (
+                            'Modo lienzo activo con papel Washi. Puedes calcar con la plantilla fantasma o escribir a mano alzada.'
+                          )}
+                        </div>
+
+                        <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            onClick={() => {
+                              setTourPracticeDrawn(prev => !prev);
+                              if (!tourPracticeDrawn) {
+                                handlePlayAudio('えい');
+                              }
+                            }}
+                            style={{ fontSize: '0.74rem', padding: '3px 8px' }}
+                          >
+                            {tourPracticeDrawn ? '↺ Limpiar trazo' : '✍️ Simular trazo'}
+                          </button>
+
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            onClick={() => {
+                              handleClose();
+                              if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                window.__nihongoOpenPracticePad({
+                                  text: '永',
+                                  kana: 'えい',
+                                  title: 'Práctica de Caligrafía: 永 (8 Trazos Clásicos)',
+                                  source: 'kanji'
+                                });
+                              }
+                            }}
+                            style={{
+                              fontSize: '0.74rem',
+                              padding: '3px 10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 4,
+                              background: '#b45309',
+                              borderColor: '#92400e'
+                            }}
+                          >
+                            <PenTool size={12} /> Abrir Cuaderno Ahora
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span>💡 <strong>Tip:</strong> Puedes abrir el cuaderno desde el indicador de las estadísticas o desde cualquier kanji, palabra u oración de la aplicación.</span>
                     </div>
                   </div>
                 )}
