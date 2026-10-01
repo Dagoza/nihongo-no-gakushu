@@ -22,6 +22,8 @@ export function useApp() {
   return context;
 }
 
+export const useAppContext = useApp;
+
 export function AppProvider({ children }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -41,13 +43,16 @@ export function AppProvider({ children }) {
 
   // Onboarding Tour / Product Tour
   const [isTourOpen, setIsTourOpen] = useState(false);
+  const [tourInitialStep, setTourInitialStep] = useState(null);
 
-  const openTour = useCallback(() => {
+  const openTour = useCallback((targetStep = null) => {
+    setTourInitialStep(targetStep || null);
     setIsTourOpen(true);
   }, []);
 
   const closeTour = useCallback(() => {
     setIsTourOpen(false);
+    setTourInitialStep(null);
   }, []);
 
   const handleSkipTour = useCallback(() => {
@@ -103,10 +108,11 @@ export function AppProvider({ children }) {
     title: '',
     source: 'custom',
     initialChar: '',
-    ghostOpacity: undefined
+    ghostOpacity: undefined,
+    initialTab: 'canvas'
   });
 
-  const openPracticePad = useCallback(({ text = '', kana = '', title = '', source = 'custom', initialChar = '', ghostOpacity = undefined } = {}) => {
+  const openPracticePad = useCallback(({ text = '', kana = '', title = '', source = 'custom', initialChar = '', ghostOpacity = undefined, initialTab = 'canvas' } = {}) => {
     setPracticePadState({
       isOpen: true,
       text,
@@ -114,7 +120,8 @@ export function AppProvider({ children }) {
       title: title || (text ? `Práctica: ${text}` : (source === 'free' ? 'Cuaderno Libre' : 'Cuaderno de Caligrafía')),
       source,
       initialChar,
-      ghostOpacity: ghostOpacity !== undefined ? ghostOpacity : (source === 'free' ? 0 : 35)
+      ghostOpacity: ghostOpacity !== undefined ? ghostOpacity : (source === 'free' ? 0 : 35),
+      initialTab
     });
   }, []);
 
@@ -237,9 +244,16 @@ export function AppProvider({ children }) {
     setMounted(true);
 
     // Global manual tour triggers (fallback for any child component or event)
-    const handleCustomOpenTour = () => setIsTourOpen(true);
+    const handleCustomOpenTour = (e) => {
+      const step = e?.detail?.step || null;
+      setTourInitialStep(step);
+      setIsTourOpen(true);
+    };
     if (typeof window !== 'undefined') {
-      window.__nihongoOpenTour = () => setIsTourOpen(true);
+      window.__nihongoOpenTour = (step = null) => {
+        setTourInitialStep(step || null);
+        setIsTourOpen(true);
+      };
       window.addEventListener('nihongo-open-tour', handleCustomOpenTour);
       window.__nihongoOpenPracticePad = openPracticePad;
     }
@@ -435,6 +449,7 @@ export function AppProvider({ children }) {
     // Onboarding Tour / Product Tour
     isTourOpen,
     setIsTourOpen,
+    tourInitialStep,
     openTour,
     closeTour,
     handleSkipTour,

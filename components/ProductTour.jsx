@@ -36,28 +36,43 @@ import {
   Bell,
   VolumeX,
   ArrowRight,
-  PenTool
+  PenTool,
+  Bot,
+  Wand2,
+  Zap,
+  Info
 } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../lib/audioManager';
 
 export default function ProductTour({ 
   isOpen, 
+  initialStep = null,
   onClose, 
   onSkip, 
   onComplete, 
   onNavigate 
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
+  const [internalInitialStep, setInternalInitialStep] = useState(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const handleGlobalOpen = () => {
+    const handleGlobalOpen = (e) => {
+      const step = e?.detail?.step || null;
+      if (step !== null && step !== undefined) {
+        setInternalInitialStep(step);
+      }
       setInternalOpen(true);
     };
     if (typeof window !== 'undefined') {
-      window.__nihongoOpenTour = handleGlobalOpen;
+      window.__nihongoOpenTour = (step = null) => {
+        if (step !== null && step !== undefined) {
+          setInternalInitialStep(step);
+        }
+        setInternalOpen(true);
+      };
       window.addEventListener('nihongo-open-tour', handleGlobalOpen);
       return () => {
         window.removeEventListener('nihongo-open-tour', handleGlobalOpen);
@@ -66,6 +81,7 @@ export default function ProductTour({
   }, []);
 
   const effectiveOpen = Boolean(isOpen || internalOpen);
+  const effectiveTargetStep = initialStep !== null ? initialStep : internalInitialStep;
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState('next'); // 'next' | 'prev'
@@ -86,9 +102,11 @@ export default function ProductTour({
   const [canDoChecked, setCanDoChecked] = useState(false);
   const [curriculumQuizAnswered, setCurriculumQuizAnswered] = useState(false);
 
-  // Paso 5: Furigana / Story
+  // Paso 5: Furigana / Story / AI Generators
   const [furiganaVisible, setFuriganaVisible] = useState(true);
   const [savedWordDemo, setSavedWordDemo] = useState(false);
+  const [storyTourTab, setStoryTourTab] = useState('reading'); // 'reading' | 'ai_tools'
+  const [selectedAiGen, setSelectedAiGen] = useState(0);
 
   // Paso 6: NHK / Speech
   const [micActive, setMicActive] = useState(false);
@@ -105,6 +123,8 @@ export default function ProductTour({
 
   // Paso 10: Kanji
   const [kanjiAnimating, setKanjiAnimating] = useState(false);
+  const [kanjiStrokeStep, setKanjiStrokeStep] = useState(0); // 0 = all/complete, 1, 2, 3, 4
+  const kanjiTimerRef = useRef(null);
 
   // Paso 11: PDF
   const [selectedBook, setSelectedBook] = useState(0);
@@ -126,10 +146,19 @@ export default function ProductTour({
   const [mobileTab, setMobileTab] = useState('explanation');
   const contentRef = useRef(null);
 
-  // Always restart tour from the beginning when opened/reactivated
+  // Restart or navigate to target step when tour is opened/reactivated
   useEffect(() => {
     if (effectiveOpen) {
-      setCurrentStepIndex(0);
+      let startIndex = 0;
+      if (effectiveTargetStep !== null && effectiveTargetStep !== undefined) {
+        if (typeof effectiveTargetStep === 'number') {
+          startIndex = Math.max(0, Math.min(effectiveTargetStep, TOUR_STEPS.length - 1));
+        } else if (typeof effectiveTargetStep === 'string') {
+          const idx = TOUR_STEPS.findIndex(s => s.id === effectiveTargetStep || s.tab === effectiveTargetStep);
+          if (idx !== -1) startIndex = idx;
+        }
+      }
+      setCurrentStepIndex(startIndex);
       setSlideDirection('next');
       setMobileTab('explanation');
       // Reset interactive states of all widgets
@@ -141,12 +170,16 @@ export default function ProductTour({
       setCurriculumQuizAnswered(false);
       setFuriganaVisible(true);
       setSavedWordDemo(false);
+      setStoryTourTab('reading');
+      setSelectedAiGen(0);
       setMicActive(false);
       setMicScore(null);
       setSubWordClicked(null);
       setPitchPattern('heiban');
       setParticleSelected(null);
       setKanjiAnimating(false);
+      setKanjiStrokeStep(0);
+      if (kanjiTimerRef.current) clearInterval(kanjiTimerRef.current);
       setSelectedBook(0);
       setTourPracticeStyle('shodo');
       setTourPracticeGrid('mizige');
@@ -156,7 +189,10 @@ export default function ProductTour({
       setAudioPlaying(false);
       setAudioSpeed('1.0x');
     }
-  }, [effectiveOpen]);
+    return () => {
+      if (kanjiTimerRef.current) clearInterval(kanjiTimerRef.current);
+    };
+  }, [effectiveOpen, effectiveTargetStep]);
 
   // Scroll to top of content on step change and reset mobile view tab
   useEffect(() => {
@@ -166,16 +202,28 @@ export default function ProductTour({
     }
   }, [currentStepIndex]);
 
-  // Audio helper
-  const handlePlayAudio = (text) => {
+  // Audio helper with playback rate support
+  const handlePlayAudio = (text, options = {}) => {
     if (!text) return;
     try {
       if (audioManager && typeof audioManager.speak === 'function') {
-        audioManager.speak(text);
+        const activeRate = options.rate !== undefined ? options.rate : (parseFloat(audioSpeed) || 1.0);
+        audioManager.speak(text, { rate: activeRate, ...options });
       }
     } catch (e) {
       console.warn('Audio play notice:', e);
     }
+  };
+
+  // Speed selector helper that immediately applies the rate to audioManager
+  const handleSelectAudioSpeed = (spd) => {
+    setAudioSpeed(spd);
+    const numRate = parseFloat(spd) || 1.0;
+    if (audioManager && typeof audioManager.setRate === 'function') {
+      audioManager.setRate(numRate);
+    }
+    handlePlayAudio('にほんごマスターへようこそ', { rate: numRate });
+    setAudioPlaying(true);
   };
 
   // IME live converter helper
@@ -239,13 +287,13 @@ export default function ProductTour({
     },
     {
       id: 'story',
-      category: 'Aprender',
+      category: 'Aprender & Generadores IA',
       categoryColor: '#8b5cf6',
-      title: 'Historias Interactivas & Generador IA',
-      subtitle: 'Lecturas comprensibles con audio oracional sincronizado',
+      title: 'Historias Interactivas & Ecosistema de Generadores IA',
+      subtitle: 'Inmersión comprensible, audio sincronizado y creación personalizada con IA',
       icon: BookOpen,
-      description: 'Aprende gramática y vocabulario dentro de historias entretenidas. A medida que avanza el narrador, cada oración se ilumina en pantalla para asociar la pronunciación natural con su escritura.',
-      hiddenTip: '✨ 1. Furigana conmutable: oculta o muestra las lecturas en kana sobre los kanjis. 2. Click-to-Save: haz clic en cualquier palabra para guardarla. 3. Quiz interactivo de comprensión. 4. 🤖 Generador de Historias con IA a tu gusto.',
+      description: 'Aprende gramática y vocabulario dentro de historias inmersivas con oraciones sincronizadas, furigana conmutable y Click-to-Save. Además, Nihongo Master incorpora un ecosistema integral de 4 Generadores de Inteligencia Artificial para enriquecer tu aprendizaje en cualquier momento: 1) Generador de Historias JLPT graduadas de N5 a N1 con temáticas y longitudes libres, 2) Generador de Diálogos Situacionales NHK para practicar roleplay oral con micrófono (STT), 3) Generador de Cuentos a partir de tus Palabras Guardadas (SRS) para afianzar el vocabulario que estás memorizando, y 4) Generador dinámico de Quizzes y ejercicios de comprensión.',
+      hiddenTip: '🤖 Ecosistema IA de Nihongo Master: 1. Historias JLPT adaptadas por nivel. 2. Roleplay en Conversación NHK con evaluación por voz (STT). 3. ¡Cuentos con tus Palabras Guardadas!: crea historias usando exclusivamente tus palabras en estudio para afianzar el recuerdo a largo plazo. 4. Quizzes y retos interactivos automáticos.',
       tab: 'story'
     },
     {
@@ -849,86 +897,259 @@ export default function ProductTour({
                   </div>
                 )}
 
-                {/* Paso 5: Story Widget */}
+                {/* Paso 5: Story & Ecosistema de Generadores IA Widget */}
                 {currentStep.id === 'story' && (
                   <div className="tour-widget-inner story-widget">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Frase interactiva con audio y furigana:</span>
+                    {/* Sub-tabs: Lectura interactiva vs 4 Generadores IA */}
+                    <div style={{ display: 'flex', gap: 6, marginBottom: 10, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
                       <button
                         type="button"
-                        className="btn btn-outline btn-sm"
-                        onClick={() => setFuriganaVisible(prev => !prev)}
-                        style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                        className={`btn btn-sm ${storyTourTab === 'reading' ? 'btn-primary' : 'btn-outline'}`}
+                        onClick={() => setStoryTourTab('reading')}
+                        style={{ fontSize: '0.74rem', padding: '3px 10px', display: 'flex', alignItems: 'center', gap: 4 }}
                       >
-                        {furiganaVisible ? <EyeOff size={13} /> : <Eye size={13} />}
-                        <span>Furigana: {furiganaVisible ? 'Activado' : 'Oculto'}</span>
+                        <BookOpen size={13} />
+                        <span>1. Lectura & Furigana</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn btn-sm ${storyTourTab === 'ai_tools' ? 'btn-primary' : 'btn-outline'}`}
+                        onClick={() => setStoryTourTab('ai_tools')}
+                        style={{ fontSize: '0.74rem', padding: '3px 10px', display: 'flex', alignItems: 'center', gap: 4 }}
+                      >
+                        <Sparkles size={13} />
+                        <span>2. Suite 4 Generadores IA</span>
                       </button>
                     </div>
 
-                    <div className="story-sentence-preview">
-                      <div className="jp-text story-jp-text">
-                        {furiganaVisible ? (
-                          <>
-                            <ruby>今日<rt>きょう</rt></ruby>は{' '}
-                            <ruby 
-                              style={{ cursor: 'pointer', textDecoration: 'underline dotted var(--primary)' }}
-                              onClick={() => setSavedWordDemo(true)}
-                              title="Haz clic para guardar"
-                            >
-                              天気<rt>てんき</rt>
-                            </ruby>が{' '}
-                            <ruby>良い<rt>よい</rt></ruby>です。
-                          </>
-                        ) : (
-                          <>
-                            今日 は{' '}
-                            <span 
-                              style={{ cursor: 'pointer', textDecoration: 'underline dotted var(--primary)' }}
-                              onClick={() => setSavedWordDemo(true)}
-                              title="Haz clic para guardar"
-                            >
-                              天気
-                            </span>{' '}
-                            が良いです。
-                          </>
-                        )}
-                      </div>
-
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                        &quot;Hoy hace muy buen clima.&quot;
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-sm"
-                          onClick={() => handlePlayAudio('きょうはてんきがよいです')}
-                          style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem' }}
-                        >
-                          <Play size={13} /> Escuchar pronunciación
-                        </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-outline btn-sm"
-                          onClick={() => setSavedWordDemo(true)}
-                          style={{ fontSize: '0.75rem' }}
-                        >
-                          Tocar palabra &quot;天気&quot;
-                        </button>
-                      </div>
-
-                      {savedWordDemo && (
-                        <div className="saved-word-popover">
-                          <div>
-                            <strong>天気 (てんき)</strong>: Clima / Tiempo atmosférico
-                          </div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--success)', marginTop: 4, fontWeight: 600 }}>
-                            ⭐ ¡Palabra guardada en tu banco léxico personal!
-                          </div>
+                    {storyTourTab === 'reading' ? (
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Frase interactiva con audio oracional y click-to-save:</span>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            onClick={() => setFuriganaVisible(prev => !prev)}
+                            style={{ fontSize: '0.73rem', display: 'flex', alignItems: 'center', gap: 4, padding: '2px 8px' }}
+                          >
+                            {furiganaVisible ? <EyeOff size={13} /> : <Eye size={13} />}
+                            <span>Furigana: {furiganaVisible ? 'ON' : 'OFF'}</span>
+                          </button>
                         </div>
-                      )}
-                    </div>
+
+                        <div className="story-sentence-preview">
+                          <div className="jp-text story-jp-text" style={{ fontSize: '1.15rem' }}>
+                            {furiganaVisible ? (
+                              <>
+                                <ruby>今日<rt>きょう</rt></ruby>は{' '}
+                                <ruby 
+                                  style={{ cursor: 'pointer', textDecoration: 'underline dotted var(--primary)' }}
+                                  onClick={() => setSavedWordDemo(true)}
+                                  title="Haz clic para guardar"
+                                >
+                                  天気<rt>てんき</rt>
+                                </ruby>が{' '}
+                                <ruby>良い<rt>よい</rt></ruby>です。
+                              </>
+                            ) : (
+                              <>
+                                今日 は{' '}
+                                <span 
+                                  style={{ cursor: 'pointer', textDecoration: 'underline dotted var(--primary)' }}
+                                  onClick={() => setSavedWordDemo(true)}
+                                  title="Haz clic para guardar"
+                                >
+                                  天気
+                                </span>{' '}
+                                が良いです。
+                              </>
+                            )}
+                          </div>
+
+                          <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                            &quot;Hoy hace muy buen clima.&quot;
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm"
+                              onClick={() => handlePlayAudio('きょうはてんきがよいです')}
+                              style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.74rem', padding: '3px 8px' }}
+                            >
+                              <Play size={13} /> Escuchar pronunciación
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-outline btn-sm"
+                              onClick={() => setSavedWordDemo(true)}
+                              style={{ fontSize: '0.74rem', padding: '3px 8px' }}
+                            >
+                              Tocar palabra &quot;天気&quot;
+                            </button>
+                          </div>
+
+                          {savedWordDemo && (
+                            <div className="saved-word-popover" style={{ marginTop: 8, padding: '8px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
+                              <div style={{ fontSize: '0.82rem' }}>
+                                <strong>天気 (てんき)</strong>: Clima / Tiempo atmosférico
+                              </div>
+                              <div style={{ fontSize: '0.74rem', color: 'var(--success)', marginTop: 2, fontWeight: 600 }}>
+                                ⭐ ¡Guardada en tu banco léxico personal (SRS)!
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      /* SUITE 4 GENERADORES IA */
+                      <div className="tour-ai-suite-showcase">
+                        {/* Selector de los 4 generadores */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6, marginBottom: 10 }}>
+                          {[
+                            { id: 0, title: '📖 Historias JLPT', badge: 'N5 a N1' },
+                            { id: 1, title: '🎙️ Diálogos NHK', badge: 'Roleplay' },
+                            { id: 2, title: '🪄 Con Mis Palabras', badge: 'Refuerzo SRS' },
+                            { id: 3, title: '⚡ Quizzes y Retos', badge: 'Comprensión' }
+                          ].map(gen => (
+                            <button
+                              key={gen.id}
+                              type="button"
+                              onClick={() => setSelectedAiGen(gen.id)}
+                              className={`btn btn-sm ${selectedAiGen === gen.id ? 'btn-primary' : 'btn-outline'}`}
+                              style={{
+                                fontSize: '0.72rem',
+                                padding: '4px 6px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                textAlign: 'left'
+                              }}
+                            >
+                              <span style={{ fontWeight: 600 }}>{gen.title}</span>
+                              <span style={{ fontSize: '0.64rem', opacity: 0.85, padding: '1px 4px', borderRadius: 4, background: 'rgba(0,0,0,0.1)' }}>
+                                {gen.badge}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Tarjeta de demostración del generador seleccionado */}
+                        <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: '0.8rem' }}>
+                          {selectedAiGen === 0 && (
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, color: 'var(--primary)', fontWeight: 700, fontSize: '0.82rem' }}>
+                                <BookOpen size={14} />
+                                <span>Generador de Historias JLPT Adaptativas</span>
+                              </div>
+                              <p style={{ margin: '0 0 6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                Eliges tu nivel (N5-N1), longitud y temática (viajes, misterio, vida diaria). La IA genera lectura con audio Edge TTS, furigana y glosario.
+                              </p>
+                              <div style={{ background: 'var(--bg-surface)', padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', marginBottom: 6 }}>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 2 }}>Prompt de ejemplo: &quot;Viaje en Shinkansen a Kioto (N5)&quot;</div>
+                                <div className="jp-text" style={{ fontSize: '0.92rem', fontWeight: 600 }}>
+                                  新幹線で京都へ行きます。窓から富士山が見えます。
+                                </div>
+                                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                                  &quot;Voy a Kioto en tren bala. Desde la ventana se ve el Monte Fuji.&quot;
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => handlePlayAudio('しんかんせんできょうとへいきます。まどからふじさんがみえます。')}
+                                style={{ fontSize: '0.72rem', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: 4 }}
+                              >
+                                <Volume2 size={12} /> Probar audio generado
+                              </button>
+                            </div>
+                          )}
+
+                          {selectedAiGen === 1 && (
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, color: '#ec4899', fontWeight: 700, fontSize: '0.82rem' }}>
+                                <Mic size={14} />
+                                <span>Roleplay NHK & Diálogos Situacionales</span>
+                              </div>
+                              <p style={{ margin: '0 0 6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                Genera conversaciones reales (restaurante, hotel, aeropuerto) y practica intercambiando roles hablando al micrófono con evaluación de voz (STT).
+                              </p>
+                              <div style={{ background: 'var(--bg-surface)', padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', marginBottom: 6 }}>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 2 }}>Situación: En un restaurante de ramen</div>
+                                <div style={{ fontSize: '0.78rem', marginBottom: 2 }}>
+                                  <strong>Mesero:</strong> <span className="jp-text">いらっしゃいませ！何名様ですか？</span>
+                                </div>
+                                <div style={{ fontSize: '0.78rem', color: 'var(--primary)' }}>
+                                  <strong>Tú (Voz):</strong> <span className="jp-text">一人です。豚骨ラーメンをお願いします。</span>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => handlePlayAudio('いらっしゃいませ！なんめいさまですか？')}
+                                style={{ fontSize: '0.72rem', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: 4 }}
+                              >
+                                <Volume2 size={12} /> Oír diálogo del mesero
+                              </button>
+                            </div>
+                          )}
+
+                          {selectedAiGen === 2 && (
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, color: '#10b981', fontWeight: 700, fontSize: '0.82rem' }}>
+                                <Sparkles size={14} />
+                                <span>Cuentos a Medida con Tus Palabras Guardadas</span>
+                              </div>
+                              <p style={{ margin: '0 0 6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                ¡Exclusivo de Nihongo Master! En la pestaña &quot;Guardados&quot;, la IA teje una historia usando únicamente las palabras que tienes en estudio (SRS).
+                              </p>
+                              <div style={{ background: 'var(--bg-surface)', padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', marginBottom: 6 }}>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 2 }}>
+                                  Tus palabras integradas: <span style={{ color: 'var(--primary)', fontWeight: 600 }}>天気 · 桜 · 友達</span>
+                                </div>
+                                <div className="jp-text" style={{ fontSize: '0.88rem', fontWeight: 600 }}>
+                                  今日はいい<strong>天気</strong>なので、<strong>友達</strong>とお花見に行きました。満開の<strong>桜</strong>が綺麗でした。
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => handlePlayAudio('きょうはいいてんきなので、ともだちとおはなみにいきました。まんかいのさくらがきれいです。')}
+                                style={{ fontSize: '0.72rem', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: 4 }}
+                              >
+                                <Volume2 size={12} /> Escuchar historia SRS
+                              </button>
+                            </div>
+                          )}
+
+                          {selectedAiGen === 3 && (
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, color: '#f59e0b', fontWeight: 700, fontSize: '0.82rem' }}>
+                                <CheckCircle2 size={14} />
+                                <span>Quizzes & Desafíos de Comprensión Dinámicos</span>
+                              </div>
+                              <p style={{ margin: '0 0 6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                Al finalizar cualquier lectura o lección, la IA genera preguntas interactivas de opción múltiple y retos de partículas para validar tu aprendizaje.
+                              </p>
+                              <div style={{ background: 'var(--bg-surface)', padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)' }}>
+                                <div style={{ fontSize: '0.75rem', fontWeight: 700, marginBottom: 4 }}>
+                                  ¿Por qué fueron al parque a ver los cerezos?
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                  <div style={{ fontSize: '0.72rem', padding: '3px 8px', borderRadius: 4, background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', fontWeight: 600 }}>
+                                    ✓ Porque hacía buen clima (いい天気)
+                                  </div>
+                                  <div style={{ fontSize: '0.72rem', padding: '3px 8px', borderRadius: 4, color: 'var(--text-muted)' }}>
+                                    ✕ Porque era el cumpleaños de su amigo
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1040,72 +1261,215 @@ export default function ProductTour({
                 )}
 
                 {/* Paso 8: Vocab / Pitch Accent Widget */}
-                {currentStep.id === 'vocab' && (
-                  <div className="tour-widget-inner pitch-widget">
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 6 }}>
-                      Selecciona un patrón de Pitch Accent para ver su gráfico:
-                    </div>
-                    
-                    <div className="pitch-tabs-row">
-                      {[
-                        { id: 'heiban', name: 'Heiban (Plano)', word: 'さくら', romaji: 'sakura', meaning: 'Cerezo', wave: [1, 2, 2] },
-                        { id: 'atamadaka', name: 'Atamadaka (Alto)', word: 'あめ', romaji: 'áme', meaning: 'Lluvia', wave: [2, 1] },
-                        { id: 'nakadaka', name: 'Nakadaka (Medio)', word: 'あなた', romaji: 'anáta', meaning: 'Tú', wave: [1, 2, 1] },
-                        { id: 'odaka', name: 'Odaka (Final)', word: 'おとこ', romaji: 'otokó', meaning: 'Hombre', wave: [1, 2, 2] }
-                      ].map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          className={`btn btn-sm ${pitchPattern === item.id ? 'btn-primary' : 'btn-outline'}`}
-                          onClick={() => {
-                            setPitchPattern(item.id);
-                            handlePlayAudio(item.word);
-                          }}
-                          style={{ fontSize: '0.73rem', padding: '4px 8px' }}
-                        >
-                          {item.name}
-                        </button>
-                      ))}
-                    </div>
+                {currentStep.id === 'vocab' && (() => {
+                  const pitchData = {
+                    heiban: {
+                      name: 'Heiban (Plano [0])',
+                      word: 'さくら',
+                      romaji: 'sakura',
+                      meaning: 'Flor de cerezo',
+                      typeBadge: '[0] Heiban',
+                      rule: 'Empieza bajo en la 1ª mora, sube y permanece ALTO en la palabra e incluso en la partícula [が]. No existe caída tonal.',
+                      path: 'M 70,68 L 140,26 L 210,26 L 280,26',
+                      dropMark: null,
+                      nodes: [
+                        { num: '1', kana: 'さ', pitch: 'low', x: 70, y: 68 },
+                        { num: '2', kana: 'く', pitch: 'high', x: 140, y: 26 },
+                        { num: '3', kana: 'ら', pitch: 'high', x: 210, y: 26 },
+                        { num: 'P', kana: 'が', pitch: 'high', x: 280, y: 26, isParticle: true }
+                      ]
+                    },
+                    atamadaka: {
+                      name: 'Atamadaka (Alto [1])',
+                      word: 'あめ',
+                      romaji: 'áme',
+                      meaning: 'Lluvia',
+                      typeBadge: '[1] Atamadaka',
+                      rule: 'Inicia ALTO en la 1ª mora y cae inmediatamente a BAJO. Todas las moras posteriores y la partícula [が] se pronuncian con tono bajo.',
+                      path: 'M 80,26 L 175,68 L 270,68',
+                      dropMark: { x: 128, y: 47 },
+                      nodes: [
+                        { num: '1', kana: 'あ', pitch: 'high', x: 80, y: 26 },
+                        { num: '2', kana: 'め', pitch: 'low', x: 175, y: 68 },
+                        { num: 'P', kana: 'が', pitch: 'low', x: 270, y: 68, isParticle: true }
+                      ]
+                    },
+                    nakadaka: {
+                      name: 'Nakadaka (Medio [2])',
+                      word: 'あなた',
+                      romaji: 'anáta',
+                      meaning: 'Tú',
+                      typeBadge: '[2] Nakadaka',
+                      rule: 'La 1ª mora es baja, sube a ALTO en la 2ª y cae antes de que termine la palabra. La partícula [が] se mantiene baja.',
+                      path: 'M 70,68 L 140,26 L 210,68 L 280,68',
+                      dropMark: { x: 175, y: 47 },
+                      nodes: [
+                        { num: '1', kana: 'あ', pitch: 'low', x: 70, y: 68 },
+                        { num: '2', kana: 'な', pitch: 'high', x: 140, y: 26 },
+                        { num: '3', kana: 'た', pitch: 'low', x: 210, y: 68 },
+                        { num: 'P', kana: 'が', pitch: 'low', x: 280, y: 68, isParticle: true }
+                      ]
+                    },
+                    odaka: {
+                      name: 'Odaka (Final [3])',
+                      word: 'おとこ',
+                      romaji: 'otokó',
+                      meaning: 'Hombre',
+                      typeBadge: '[3] Odaka',
+                      rule: 'Toda la palabra se pronuncia ALTA hasta el final, pero ¡cae bruscamente sobre la partícula [が]! Esta caída la distingue del Heiban.',
+                      path: 'M 70,68 L 140,26 L 210,26 L 280,68',
+                      dropMark: { x: 245, y: 47 },
+                      nodes: [
+                        { num: '1', kana: 'お', pitch: 'low', x: 70, y: 68 },
+                        { num: '2', kana: 'と', pitch: 'high', x: 140, y: 26 },
+                        { num: '3', kana: 'こ', pitch: 'high', x: 210, y: 26 },
+                        { num: 'P', kana: 'が', pitch: 'low', x: 280, y: 68, isParticle: true }
+                      ]
+                    }
+                  };
 
-                    <div className="pitch-graph-display">
-                      <div className="pitch-word-header">
-                        <span className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 700 }}>
-                          {pitchPattern === 'heiban' && 'さくら (sakura)'}
-                          {pitchPattern === 'atamadaka' && 'あめ (ame - lluvia)'}
-                          {pitchPattern === 'nakadaka' && 'あなた (anata)'}
-                          {pitchPattern === 'odaka' && 'おとこ (otoko)'}
-                        </span>
-                        <button
-                          type="button"
-                          className="btn btn-outline btn-sm"
-                          onClick={() => {
-                            const words = { heiban: 'さくら', atamadaka: 'あめ', nakadaka: 'あなた', odaka: 'おとこ' };
-                            handlePlayAudio(words[pitchPattern]);
-                          }}
-                          style={{ padding: '2px 6px' }}
-                        >
-                          <Volume2 size={13} />
-                        </button>
+                  const currentPattern = pitchData[pitchPattern] || pitchData.heiban;
+
+                  return (
+                    <div className="tour-widget-inner pitch-widget">
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 6 }}>
+                        Selecciona un patrón de Pitch Accent para ver su gráfica de entonación:
+                      </div>
+                      
+                      <div className="pitch-tabs-row" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+                        {Object.entries(pitchData).map(([key, item]) => (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`btn btn-sm ${pitchPattern === key ? 'btn-primary' : 'btn-outline'}`}
+                            onClick={() => {
+                              setPitchPattern(key);
+                              handlePlayAudio(item.word);
+                            }}
+                            style={{ fontSize: '0.73rem', padding: '3px 8px' }}
+                          >
+                            {item.name}
+                          </button>
+                        ))}
                       </div>
 
-                      <div className="pitch-curve-mockup">
-                        <div className="pitch-level-row high">
-                          <span className="pitch-label">Alto (高)</span>
-                          <div className={`pitch-bar-node ${pitchPattern === 'atamadaka' ? 'active' : ''}`}>1</div>
-                          <div className={`pitch-bar-node ${pitchPattern !== 'atamadaka' ? 'active' : ''}`}>2</div>
-                          <div className={`pitch-bar-node ${pitchPattern === 'heiban' || pitchPattern === 'odaka' ? 'active' : ''}`}>3</div>
+                      {/* Tarjeta con gráfico SVG de Pitch Accent conectado */}
+                      <div className="pitch-graph-card" style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 12, padding: '12px 14px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 800 }}>
+                              {currentPattern.word}
+                            </span>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              ({currentPattern.romaji} · {currentPattern.meaning})
+                            </span>
+                            <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: 999, background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', fontWeight: 700 }}>
+                              {currentPattern.typeBadge}
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            onClick={() => handlePlayAudio(currentPattern.word)}
+                            style={{ padding: '3px 8px', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem' }}
+                          >
+                            <Volume2 size={13} /> Escuchar
+                          </button>
                         </div>
-                        <div className="pitch-level-row low">
-                          <span className="pitch-label">Bajo (低)</span>
-                          <div className={`pitch-bar-node ${pitchPattern !== 'atamadaka' ? 'active' : ''}`}>1</div>
-                          <div className={`pitch-bar-node ${pitchPattern === 'atamadaka' ? 'active' : ''}`}>2</div>
-                          <div className={`pitch-bar-node ${pitchPattern === 'nakadaka' ? 'active' : ''}`}>3</div>
+
+                        {/* Gráfico SVG de curva de entonación conectada */}
+                        <div style={{ width: '100%', position: 'relative' }}>
+                          <svg viewBox="0 0 350 96" style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}>
+                            <defs>
+                              <linearGradient id="pitchGradTour" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#6366f1" />
+                                <stop offset="100%" stopColor="#3b82f6" />
+                              </linearGradient>
+                            </defs>
+
+                            {/* Líneas guía punteadas para Alto y Bajo */}
+                            <line x1="58" y1="26" x2="330" y2="26" stroke="var(--border)" strokeDasharray="3 3" strokeWidth="1" />
+                            <line x1="58" y1="68" x2="330" y2="68" stroke="var(--border)" strokeDasharray="3 3" strokeWidth="1" />
+
+                            {/* Etiquetas laterales de nivel de tono */}
+                            <text x="8" y="29" fill="var(--text-muted)" fontSize="9.5" fontWeight="700">Alto (高)</text>
+                            <text x="8" y="71" fill="var(--text-muted)" fontSize="9.5" fontWeight="700">Bajo (低)</text>
+
+                            {/* Línea continua conectando todas las moras */}
+                            <path
+                              d={currentPattern.path}
+                              fill="none"
+                              stroke="url(#pitchGradTour)"
+                              strokeWidth="3.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+
+                            {/* Indicador de caída tonal (Downstep / 下がり目) */}
+                            {currentPattern.dropMark && (
+                              <g transform={`translate(${currentPattern.dropMark.x}, ${currentPattern.dropMark.y})`}>
+                                <line x1="0" y1="-8" x2="0" y2="8" stroke="#ef4444" strokeWidth="2" strokeDasharray="2 2" />
+                                <polygon points="-4,-10 4,-10 0,-4" fill="#ef4444" />
+                                <text x="0" y="-14" fill="#ef4444" fontSize="8" fontWeight="800" textAnchor="middle">▼ Caída</text>
+                              </g>
+                            )}
+
+                            {/* Nodos con número de mora y sílaba kana */}
+                            {currentPattern.nodes.map((node, i) => (
+                              <g key={i}>
+                                {/* Halo exterior difuminado */}
+                                <circle
+                                  cx={node.x}
+                                  cy={node.y}
+                                  r="12"
+                                  fill={node.pitch === 'high' ? 'rgba(99, 102, 241, 0.16)' : 'rgba(100, 116, 139, 0.1)'}
+                                />
+                                {/* Círculo principal del nodo */}
+                                <circle
+                                  cx={node.x}
+                                  cy={node.y}
+                                  r="9.5"
+                                  fill={node.isParticle ? '#f59e0b' : (node.pitch === 'high' ? 'var(--primary)' : 'var(--bg-surface)')}
+                                  stroke={node.isParticle ? '#d97706' : (node.pitch === 'high' ? 'var(--primary)' : 'var(--border)')}
+                                  strokeWidth="2"
+                                />
+                                {/* Número o 'P' dentro del nodo */}
+                                <text
+                                  x={node.x}
+                                  y={node.y + 3.5}
+                                  fill={node.isParticle ? '#ffffff' : (node.pitch === 'high' ? '#ffffff' : 'var(--text-muted)')}
+                                  fontSize="9.5"
+                                  fontWeight="800"
+                                  textAnchor="middle"
+                                >
+                                  {node.num}
+                                </text>
+                                {/* Sílaba kana sobre o debajo del nodo */}
+                                <text
+                                  x={node.x}
+                                  y={node.y === 26 ? 12 : 90}
+                                  fill={node.isParticle ? '#d97706' : 'var(--text-main)'}
+                                  fontSize="12.5"
+                                  fontWeight="800"
+                                  fontFamily="var(--font-jp)"
+                                  textAnchor="middle"
+                                >
+                                  {node.isParticle ? `[${node.kana}]` : node.kana}
+                                </text>
+                              </g>
+                            ))}
+                          </svg>
+                        </div>
+
+                        {/* Explicación de la regla fonética y comportamiento de partículas */}
+                        <div style={{ marginTop: 10, fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.45, background: 'var(--bg-surface)', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border)' }}>
+                          💡 <strong>Regla fonética:</strong> {currentPattern.rule}
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Paso 9: Grammar / Particles Widget */}
                 {currentStep.id === 'particles' && (
@@ -1157,50 +1521,202 @@ export default function ProductTour({
                 )}
 
                 {/* Paso 10: Kanji Widget */}
-                {currentStep.id === 'kanji' && (
-                  <div className="tour-widget-inner kanji-widget">
-                    <div className="kanji-demo-card">
-                      <div className="kanji-character-box jp-text">
-                        <span className={`big-kanji ${kanjiAnimating ? 'animating-strokes' : ''}`}>
-                          日
-                        </span>
-                        <div className="kanji-mini-stats">
-                          <span>4 trazos</span> · <span>Radical: 日 (Sol)</span>
+                {currentStep.id === 'kanji' && (() => {
+                  const STROKE_LABELS = {
+                    1: 'Trazo 1: Línea vertical descendente (左縦)',
+                    2: 'Trazo 2: Horizontal con ángulo hacia abajo (横折)',
+                    3: 'Trazo 3: Barra horizontal media (中横)',
+                    4: 'Trazo 4: Barra horizontal base de cierre (下横)'
+                  };
+
+                  const handleTriggerStrokeAnimation = () => {
+                    if (kanjiTimerRef.current) clearInterval(kanjiTimerRef.current);
+                    setKanjiAnimating(true);
+                    setKanjiStrokeStep(1);
+                    handlePlayAudio('にち');
+
+                    let step = 1;
+                    kanjiTimerRef.current = setInterval(() => {
+                      step += 1;
+                      if (step <= 4) {
+                        setKanjiStrokeStep(step);
+                      } else {
+                        clearInterval(kanjiTimerRef.current);
+                        kanjiTimerRef.current = null;
+                        setKanjiAnimating(false);
+                        // Mantener el carácter completo visible tras finalizar
+                        setTimeout(() => setKanjiStrokeStep(0), 1200);
+                      }
+                    }, 550);
+                  };
+
+                  const handleOpenRealDrawingModal = () => {
+                    if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                      window.__nihongoOpenPracticePad({
+                        text: '日',
+                        kana: 'にち / ひ',
+                        title: 'Práctica de Trazos: 日 (Sol / Día)',
+                        source: 'kanji',
+                        initialChar: '日',
+                        initialTab: 'stroke_quiz'
+                      });
+                    }
+                  };
+
+                  return (
+                    <div className="tour-widget-inner kanji-widget">
+                      <div className="kanji-demo-card" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+                        {/* Lienzo SVG con cuadrícula tradicional y animación trazo a trazo */}
+                        <div 
+                          style={{
+                            width: 110,
+                            height: 110,
+                            background: '#fffef9',
+                            border: '2px solid #b45309',
+                            borderRadius: 8,
+                            position: 'relative',
+                            flexShrink: 0,
+                            boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.06)'
+                          }}
+                        >
+                          {/* Líneas guía de cuadrícula 米字格 Mizige */}
+                          <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: 1, borderLeft: '1px dashed rgba(180, 83, 9, 0.35)' }} />
+                          <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, borderTop: '1px dashed rgba(180, 83, 9, 0.35)' }} />
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(45deg, transparent 49.5%, rgba(180, 83, 9, 0.15) 50%, transparent 50.5%), linear-gradient(-45deg, transparent 49.5%, rgba(180, 83, 9, 0.15) 50%, transparent 50.5%)' }} />
+
+                          {/* SVG con los 4 trazos exactos de 日 */}
+                          <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
+                            {/* Silueta tenue de fondo para calcar */}
+                            <g stroke="rgba(148, 163, 184, 0.28)" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                              <path d="M 28 20 L 28 82" />
+                              <path d="M 28 20 L 74 20 L 74 82" />
+                              <path d="M 28 51 L 74 51" />
+                              <path d="M 28 82 L 74 82" />
+                            </g>
+
+                            {/* Trazo 1 (Vertical Izquierdo) */}
+                            {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 1) && (
+                              <path
+                                d="M 28 20 L 28 82"
+                                fill="none"
+                                stroke={kanjiStrokeStep === 1 ? '#3b82f6' : '#1e293b'}
+                                strokeWidth="9.5"
+                                strokeLinecap="round"
+                                style={{
+                                  strokeDasharray: 70,
+                                  strokeDashoffset: kanjiStrokeStep === 1 ? 0 : 0,
+                                  transition: 'stroke 0.2s ease'
+                                }}
+                              />
+                            )}
+
+                            {/* Trazo 2 (Horizontal Superior y Vertical Derecho) */}
+                            {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 2) && (
+                              <path
+                                d="M 28 20 L 74 20 L 74 82"
+                                fill="none"
+                                stroke={kanjiStrokeStep === 2 ? '#3b82f6' : '#1e293b'}
+                                strokeWidth="9.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                style={{
+                                  strokeDasharray: 120,
+                                  strokeDashoffset: kanjiStrokeStep === 2 ? 0 : 0,
+                                  transition: 'stroke 0.2s ease'
+                                }}
+                              />
+                            )}
+
+                            {/* Trazo 3 (Barra Central) */}
+                            {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 3) && (
+                              <path
+                                d="M 28 51 L 74 51"
+                                fill="none"
+                                stroke={kanjiStrokeStep === 3 ? '#3b82f6' : '#1e293b'}
+                                strokeWidth="9"
+                                strokeLinecap="round"
+                                style={{ transition: 'stroke 0.2s ease' }}
+                              />
+                            )}
+
+                            {/* Trazo 4 (Barra Inferior de Cierre) */}
+                            {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 4) && (
+                              <path
+                                d="M 28 82 L 74 82"
+                                fill="none"
+                                stroke={kanjiStrokeStep === 4 ? '#3b82f6' : '#1e293b'}
+                                strokeWidth="9.5"
+                                strokeLinecap="round"
+                                style={{ transition: 'stroke 0.2s ease' }}
+                              />
+                            )}
+
+                            {/* Indicador de posición del pincel en trazo activo */}
+                            {kanjiStrokeStep === 1 && <circle cx="28" cy="20" r="4.5" fill="#3b82f6" />}
+                            {kanjiStrokeStep === 2 && <circle cx="74" cy="20" r="4.5" fill="#3b82f6" />}
+                            {kanjiStrokeStep === 3 && <circle cx="28" cy="51" r="4.5" fill="#3b82f6" />}
+                            {kanjiStrokeStep === 4 && <circle cx="28" cy="82" r="4.5" fill="#3b82f6" />}
+                          </svg>
+
+                          {/* Badge de número de trazo en esquina */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              bottom: 3,
+                              right: 3,
+                              fontSize: '9px',
+                              fontWeight: 800,
+                              background: kanjiStrokeStep ? '#3b82f6' : '#10b981',
+                              color: '#fff',
+                              borderRadius: 4,
+                              padding: '1px 4px'
+                            }}
+                          >
+                            {kanjiStrokeStep ? `${kanjiStrokeStep}/4` : '4/4'}
+                          </div>
+                        </div>
+
+                        {/* Lecturas y significado */}
+                        <div className="kanji-readings-box" style={{ flex: 1, fontSize: '0.8rem' }}>
+                          <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--primary)', marginBottom: 2 }}>
+                            日 (Sol / Día / Japón)
+                          </div>
+                          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: 4 }}>
+                            Radical: 日 (Sol) · Nivel JLPT N5 · 4 trazos
+                          </div>
+                          <div><strong>On&apos;yomi:</strong> ニチ (nichi), ジツ (jitsu)</div>
+                          <div><strong>Kun&apos;yomi:</strong> ひ (hi), -び (-bi)</div>
+
+                          <div style={{ marginTop: 6, fontSize: '0.72rem', color: kanjiStrokeStep ? 'var(--primary)' : 'var(--text-muted)', fontWeight: 600 }}>
+                            ✍️ {kanjiStrokeStep ? STROKE_LABELS[kanjiStrokeStep] : 'Orden: 1) Vertical → 2) Ángulo → 3) Centro → 4) Cierre'}
+                          </div>
                         </div>
                       </div>
 
-                      <div className="kanji-readings-box">
-                        <div><strong>On&apos;yomi:</strong> ニチ (nichi), ジツ (jitsu)</div>
-                        <div><strong>Kun&apos;yomi:</strong> ひ (hi), -び (-bi)</div>
-                        <div><strong>Significado:</strong> Sol, día, Japón</div>
+                      {/* Botones interactivos */}
+                      <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-sm"
+                          onClick={handleTriggerStrokeAnimation}
+                          disabled={kanjiAnimating}
+                          style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.75rem', padding: '4px 10px' }}
+                        >
+                          <Play size={13} /> {kanjiAnimating ? `Dibujando trazo ${kanjiStrokeStep || 1}...` : 'Animar trazos 1 a 1'}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn-outline btn-sm"
+                          onClick={handleOpenRealDrawingModal}
+                          style={{ fontSize: '0.75rem', padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 5 }}
+                        >
+                          ✍️ Probar lienzo de dibujo real
+                        </button>
                       </div>
                     </div>
-
-                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                      <button
-                        type="button"
-                        className="btn btn-primary btn-sm"
-                        onClick={() => {
-                          setKanjiAnimating(true);
-                          handlePlayAudio('にち');
-                          setTimeout(() => setKanjiAnimating(false), 2000);
-                        }}
-                        style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem' }}
-                      >
-                        <Play size={13} /> {kanjiAnimating ? 'Trazando...' : 'Animar trazos'}
-                      </button>
-
-                      <button
-                        type="button"
-                        className="btn btn-outline btn-sm"
-                        onClick={() => alert('¡En la pestaña Kanji podrás dibujar con el mouse o con el dedo y la app evaluará tu trazo!')}
-                        style={{ fontSize: '0.75rem' }}
-                      >
-                        ✍️ Probar lienzo de dibujo
-                      </button>
-                    </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Paso: Practice Pad (Cuaderno de Caligrafía, Cuadrículas y Trazos) */}
                 {currentStep.id === 'practice_pad' && (
@@ -1371,14 +1887,27 @@ export default function ProductTour({
                         <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
                           <button
                             type="button"
-                            className="btn btn-outline btn-sm"
+                            className="btn btn-sm"
                             onClick={() => {
                               setTourPracticeDrawn(prev => !prev);
                               if (!tourPracticeDrawn) {
                                 handlePlayAudio('えい');
                               }
                             }}
-                            style={{ fontSize: '0.74rem', padding: '3px 8px' }}
+                            style={{
+                              fontSize: '0.75rem',
+                              padding: '4px 12px',
+                              color: '#78350f',
+                              backgroundColor: '#ffffff',
+                              border: '1.5px solid #d97706',
+                              borderRadius: '6px',
+                              fontWeight: 700,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                              cursor: 'pointer'
+                            }}
                           >
                             {tourPracticeDrawn ? '↺ Limpiar trazo' : '✍️ Simular trazo'}
                           </button>
@@ -1546,8 +2075,9 @@ export default function ProductTour({
                             key={spd}
                             type="button"
                             className={`btn btn-sm ${audioSpeed === spd ? 'btn-primary' : 'btn-outline'}`}
-                            onClick={() => setAudioSpeed(spd)}
-                            style={{ fontSize: '0.72rem', padding: '2px 8px' }}
+                            onClick={() => handleSelectAudioSpeed(spd)}
+                            style={{ fontSize: '0.74rem', padding: '3px 10px', fontWeight: 600 }}
+                            title={`Cambiar velocidad de reproducción a ${spd}`}
                           >
                             {spd}
                           </button>

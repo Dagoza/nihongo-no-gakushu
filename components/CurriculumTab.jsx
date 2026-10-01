@@ -20,11 +20,14 @@ import {
   GraduationCap,
   Search,
   Filter,
-  Target
+  Target,
+  Info
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
+import { useAppContext } from '../lib/AppContext';
 
 export default function CurriculumTab({ onNavigate, userState, onUpdateState, initialStep = null, onStepChange }) {
+  const contextApp = useAppContext();
   const steps = dataStore.curriculum || [];
   
   // State for active module detailed view
@@ -209,14 +212,33 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
       <div className="curriculum-detail-view animate-fade-in">
         {/* Navigation & Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-          <button 
-            className="btn btn-outline btn-sm"
-            onClick={handleCloseModule}
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          >
-            <ArrowLeft size={16} />
-            <span>Volver a la Ruta</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button 
+              className="btn btn-outline btn-sm"
+              onClick={handleCloseModule}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <ArrowLeft size={16} />
+              <span>Volver a la Ruta</span>
+            </button>
+
+            <button
+              type="button"
+              className="tour-info-shortcut-btn"
+              onClick={() => {
+                if (contextApp?.openTour) {
+                  contextApp.openTour('curriculum');
+                } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                  window.__nihongoOpenTour('curriculum');
+                }
+              }}
+              title="Ver guía y explicación del Currículum en el tour"
+              aria-label="Guía de la Ruta"
+            >
+              <Info size={14} />
+              <span>Guía</span>
+            </button>
+          </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button
@@ -845,13 +867,29 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   // DEFAULT VIEW: Overview of all Curriculum Steps
   return (
     <div>
-      <div className="section-header">
-        <h2 className="section-title">
-          <span>🗺️</span> Módulos Consolidados de Aprendizaje
-        </h2>
-        <p className="section-desc">
-          Temario unificado y sin redundancias que consolida los <strong>79 Can-Dos de Irodori A1 (Fundación Japón)</strong>, las <strong>48 lecciones conversacionales de NHK World</strong> y la <strong>gramática progresiva JLPT N5/N4</strong>, interconectados mediante temas relacionados directos.
-        </p>
+      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>🗺️</span>
+            <span>Ruta de Aprendizaje</span>
+          </h2>
+          <button
+            type="button"
+            className="tour-info-shortcut-btn"
+            onClick={() => {
+              if (contextApp?.openTour) {
+                contextApp.openTour('curriculum');
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                window.__nihongoOpenTour('curriculum');
+              }
+            }}
+            title="Ver guía y explicación del Currículum en el tour"
+            aria-label="Guía de la Ruta"
+          >
+            <Info size={15} />
+            <span>Guía de la Ruta</span>
+          </button>
+        </div>
       </div>
 
       {/* Overall Progress Banner */}
@@ -866,15 +904,12 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         const canDoPercent = totalCanDos > 0 ? Math.round((completedCanDosCount / totalCanDos) * 100) : 0;
 
         return (
-          <div className="card ruta-progress-banner" style={{ marginBottom: 24, padding: '18px 22px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(236, 72, 153, 0.07) 100%)', border: '1px solid var(--border)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 14 }}>
+          <div className="card ruta-progress-banner" style={{ marginBottom: 24, padding: '16px 20px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(236, 72, 153, 0.07) 100%)', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 12 }}>
               <div>
-                <h3 style={{ fontSize: '1.12rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
-                  <span>📊</span> Progreso de Ruta Consolidada y Competencias Can-Do
+                <h3 style={{ fontSize: '1.08rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+                  <span>📊</span> Progreso de Ruta y Competencias Can-Do
                 </h3>
-                <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: 4, marginBottom: 0 }}>
-                  Valida los módulos completados y autoevalúa cada competencia comunicativa con los checkbox interactivos para acumular XP.
-                </p>
               </div>
 
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

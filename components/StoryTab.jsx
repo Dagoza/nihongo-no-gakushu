@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { dataStore } from '../lib/data';
 import audioManager from '../lib/audioManager';
-import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle, PenTool } from 'lucide-react';
+import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle, PenTool, Info } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
 import ComprehensionQuiz from './ComprehensionQuiz';
@@ -296,11 +296,29 @@ export default function StoryTab({
         </div>
       )}
 
-      <div className="section-header">
-        <h2 className="section-title">
-          <span>📖</span> {story.title}
-        </h2>
-        <p className="section-desc">{story.description}</p>
+      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>📖</span>
+            <span>{story.title}</span>
+          </h2>
+          <button
+            type="button"
+            className="tour-info-shortcut-btn"
+            onClick={() => {
+              if (contextApp?.openTour) {
+                contextApp.openTour('story');
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                window.__nihongoOpenTour('story');
+              }
+            }}
+            title="Ver guía de Historias y Generador IA"
+            aria-label="Información de Historias"
+          >
+            <Info size={14} />
+            <span>Guía</span>
+          </button>
+        </div>
       </div>
 
       {/* Story Controls Bar */}

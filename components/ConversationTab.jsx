@@ -31,7 +31,8 @@ import {
   Bot,
   Calendar,
   Tag,
-  PenTool
+  PenTool,
+  Info
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -281,13 +282,29 @@ export default function ConversationTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header">
-        <h2 className="section-title">
-          <span>📻</span> Conversaciones y Diálogos Cotidianos
-        </h2>
-        <p className="section-desc">
-          Domina la comunicación oral japonesa en situaciones reales: practica con lecciones oficiales de la NHK, interactúa con el Roleplay con IA con dictado por voz, genera diálogos personalizados con guardado en Supabase y practica con el modo <strong>Ocultar Personaje</strong> para hablar en voz alta.
-        </p>
+      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>📻</span>
+            <span>Conversación NHK & Diálogos</span>
+          </h2>
+          <button
+            type="button"
+            className="tour-info-shortcut-btn"
+            onClick={() => {
+              if (contextApp?.openTour) {
+                contextApp.openTour('nhk');
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                window.__nihongoOpenTour('nhk');
+              }
+            }}
+            title="Ver guía y explicación de Conversaciones y Roleplay de Voz"
+            aria-label="Información de Conversaciones"
+          >
+            <Info size={14} />
+            <span>Guía</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Navigation Subtabs + AI Generator Button */}

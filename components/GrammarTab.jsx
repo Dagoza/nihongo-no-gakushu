@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen, PenTool } from 'lucide-react';
+import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen, PenTool, Info } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -176,13 +176,29 @@ export default function GrammarTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header">
-        <h2 className="section-title">
-          <span>🎯</span> Partículas y Gramática Japonesa
-        </h2>
-        <p className="section-desc">
-          Guía y checklist interactivo con las 25 funciones fundamentales de las partículas japonesas de nivel N5. Incluye fórmulas gramaticales, ejemplos con pronunciación nativa, lectura en romaji y traducción detallada al español.
-        </p>
+      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>🎯</span>
+            <span>Partículas y Gramática</span>
+          </h2>
+          <button
+            type="button"
+            className="tour-info-shortcut-btn"
+            onClick={() => {
+              if (contextApp?.openTour) {
+                contextApp.openTour('particles');
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                window.__nihongoOpenTour('particles');
+              }
+            }}
+            title="Ver guía y explicación de Partículas y Gramática"
+            aria-label="Información de Partículas"
+          >
+            <Info size={14} />
+            <span>Guía</span>
+          </button>
+        </div>
       </div>
 
       {!quizActive ? (

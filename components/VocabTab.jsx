@@ -17,7 +17,8 @@ import {
   RotateCcw,
   Sparkles,
   MessageSquare,
-  PenTool
+  PenTool,
+  Info
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -442,13 +443,29 @@ export default function VocabTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header">
-        <h2 className="section-title">
-          <span>📚</span> Entrenador de Vocabulario
-        </h2>
-        <p className="section-desc">
-          Plataforma de vocabulario japonés organizada temáticamente. Explora tarjetas interactivas, practica la digitación con tu teclado en japonés (IME) y resuelve ejercicios de contexto real.
-        </p>
+      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>📚</span>
+            <span>Entrenador de Vocabulario</span>
+          </h2>
+          <button
+            type="button"
+            className="tour-info-shortcut-btn"
+            onClick={() => {
+              if (contextApp?.openTour) {
+                contextApp.openTour('vocab');
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                window.__nihongoOpenTour('vocab');
+              }
+            }}
+            title="Ver guía y explicación del Banco Léxico y Pitch Accent"
+            aria-label="Información de Vocabulario"
+          >
+            <Info size={14} />
+            <span>Guía</span>
+          </button>
+        </div>
       </div>
 
       {/* Selector de Fuente: Recursos Propios vs Catálogo Masivo API */}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check, MessageSquare, PenTool } from 'lucide-react';
+import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check, MessageSquare, PenTool, Info } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
 import * as wanakana from 'wanakana';
@@ -334,13 +334,29 @@ export default function KanjiTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header">
-        <h2 className="section-title">
-          <span>漢</span> Biblioteca de Kanji Interactiva
-        </h2>
-        <p className="section-desc">
-          {kanjiList.length} caracteres kanji con orden de trazos, lecturas On'yomi, Kun'yomi, vocabulario compuesto y práctica de lectura en Hiragana.
-        </p>
+      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>漢</span>
+            <span>Biblioteca de Kanji</span>
+          </h2>
+          <button
+            type="button"
+            className="tour-info-shortcut-btn"
+            onClick={() => {
+              if (contextApp?.openTour) {
+                contextApp.openTour('kanji');
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                window.__nihongoOpenTour('kanji');
+              }
+            }}
+            title="Ver guía y explicación de Kanjis y Trazos"
+            aria-label="Información de Kanjis"
+          >
+            <Info size={14} />
+            <span>Guía</span>
+          </button>
+        </div>
       </div>
 
       {/* Selector de Fuente: Kanjis Propios vs Catálogo Masivo API */}

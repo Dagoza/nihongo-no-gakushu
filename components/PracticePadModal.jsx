@@ -64,14 +64,21 @@ export default function PracticePadModal({
   initialSource = 'custom', // 'kanji' | 'vocab' | 'conversation' | 'story' | 'grammar' | 'custom' | 'free'
   initialChar = '',
   initialGhostOpacity,
+  initialTab = 'canvas',
   onSaveToCloud
 }) {
   // Main view modes
-  const [activeTab, setActiveTab] = useState('canvas'); // 'canvas' | 'stroke_quiz'
+  const [activeTab, setActiveTab] = useState(initialTab || 'canvas'); // 'canvas' | 'stroke_quiz'
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isEditingText, setIsEditingText] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
 
   // Target text & character navigation
   const [text, setText] = useState(initialText || '');
@@ -1008,7 +1015,7 @@ export default function PracticePadModal({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 10000,
+        zIndex: 100005,
         background: 'rgba(15, 23, 42, 0.75)',
         backdropFilter: 'blur(8px)',
         display: 'flex',

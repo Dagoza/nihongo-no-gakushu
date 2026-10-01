@@ -30,6 +30,7 @@ function AppShellContent({ children }) {
     uiModal,
     closeUiModal,
     isTourOpen,
+    tourInitialStep,
     openTour,
     closeTour,
     handleSkipTour,
@@ -103,6 +104,7 @@ function AppShellContent({ children }) {
       {/* Onboarding Tour / Product Tour Interactivo y Animado */}
       <ProductTour 
         isOpen={isTourOpen}
+        initialStep={tourInitialStep}
         onClose={closeTour}
         onSkip={handleSkipTour}
         onComplete={handleCompleteTour}
@@ -119,6 +121,7 @@ function AppShellContent({ children }) {
         initialSource={practicePadState?.source}
         initialChar={practicePadState?.initialChar}
         initialGhostOpacity={practicePadState?.ghostOpacity}
+        initialTab={practicePadState?.initialTab}
         onSaveToCloud={(sheet) => {
           if (appState && handleUpdateState) {
             const currentList = appState.savedPracticeSheets || [];
