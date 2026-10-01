@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { 
   Play, 
   Pause, 
@@ -16,10 +16,12 @@ import {
   ChevronDown,
   ChevronUp,
   RotateCcw,
-  RotateCw
+  RotateCw,
+  PenTool
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import SaveVocabModal from './SaveVocabModal';
+import { AppContext } from '../lib/AppContext';
 
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds) || seconds < 0 || !isFinite(seconds)) {
@@ -38,6 +40,7 @@ function formatTime(seconds) {
 }
 
 export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) {
+  const contextApp = useContext(AppContext);
   const [audioState, setAudioState] = useState({
     state: 'idle',
     currentText: '',
@@ -113,6 +116,26 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
       source: 'Reproductor de Audio'
     });
     setIsModalOpen(true);
+  };
+
+  const handleOpenPracticePad = () => {
+    const textToPractice = (audioState.selectedText || audioState.currentText || '').trim();
+    if (!textToPractice) return;
+    const isSelection = Boolean(audioState.selectedText);
+    const opts = {
+      text: textToPractice,
+      kana: '',
+      title: isSelection 
+        ? `Práctica (Selección): ${textToPractice.length > 25 ? textToPractice.slice(0, 25) + '...' : textToPractice}` 
+        : `Práctica de Audio: ${textToPractice.length > 25 ? textToPractice.slice(0, 25) + '...' : textToPractice}`,
+      source: isSelection ? 'audio_selection' : 'audio_bar'
+    };
+
+    if (contextApp?.openPracticePad) {
+      contextApp.openPracticePad(opts);
+    } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+      window.__nihongoOpenPracticePad(opts);
+    }
   };
 
   const handleRateChange = (rate) => {
@@ -218,46 +241,63 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                 <Volume2 size={20} className={audioState.state === 'playing' ? 'text-primary animate-pulse' : 'text-muted'} />
               </div>
               <div className="audio-text-wrapper">
-                <div className="audio-status-label" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                  <span>
-                    {audioState.state === 'playing' && '🔊 Reproduciendo:'}
-                    {audioState.state === 'paused' && '⏸️ En pausa:'}
-                    {audioState.state === 'idle' && (audioState.selectedText ? 'Selección lista:' : (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en cualquier palabra para escuchar'))}
-                  </span>
-                  {audioState.currentAudioUrl ? (
-                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', fontWeight: 700 }}>
-                      MP3 Humano Nativo
+                <div className="audio-status-row">
+                  <div className="audio-status-label">
+                    <span>
+                      {audioState.state === 'playing' && '🔊 Reproduciendo:'}
+                      {audioState.state === 'paused' && '⏸️ En pausa:'}
+                      {audioState.state === 'idle' && (audioState.selectedText ? '✨ Selección:' : (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en una palabra para escuchar'))}
                     </span>
-                  ) : (
-                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', fontWeight: 700 }}>
-                      TTS Neuronal ({audioState.voiceName?.includes('Nanami') ? 'Nanami ♀' : 'Keita ♂'})
-                    </span>
-                  )}
-                  {isAudioTrack && (
-                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary)', fontWeight: 700, fontFamily: 'monospace' }}>
-                      {formatTime(effectiveTime)} / {duration > 0 ? formatTime(duration) : '--:--'}
-                    </span>
+                    {audioState.currentAudioUrl ? (
+                      <span className="audio-badge-mp3" style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        MP3 Humano Nativo
+                      </span>
+                    ) : (
+                      <span className="audio-badge-tts" style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        TTS Neuronal ({audioState.voiceName?.includes('Nanami') ? 'Nanami ♀' : 'Keita ♂'})
+                      </span>
+                    )}
+                    {isAudioTrack && (
+                      <span className="audio-badge-time" style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary)', fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
+                        {formatTime(effectiveTime)} / {duration > 0 ? formatTime(duration) : '--:--'}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Quick save and notebook buttons for active sentence or selection */}
+                  {(audioState.selectedText || audioState.currentText) && (
+                    <div className="audio-inline-actions">
+                      <button
+                        className="audio-save-inline-btn"
+                        title={audioState.selectedText ? `Guardar selección "${audioState.selectedText}" en tu vocabulario` : 'Guardar esta frase u oración en tu vocabulario'}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
+                        onClick={audioState.selectedText ? handleSaveSelection : handleSaveCurrent}
+                        type="button"
+                      >
+                        <BookmarkPlus size={13} />
+                        <span>Guardar</span>
+                      </button>
+
+                      <button
+                        className="audio-notebook-inline-btn"
+                        title={audioState.selectedText ? `Escribir "${audioState.selectedText}" en Cuaderno de Práctica` : 'Escribir en Cuaderno de Práctica'}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
+                        onClick={handleOpenPracticePad}
+                        type="button"
+                      >
+                        <PenTool size={13} />
+                        <span>Cuaderno ✍️</span>
+                      </button>
+                    </div>
                   )}
                 </div>
+
                 <div className="audio-current-sentence jp-text" title={audioState.selectedText || audioState.currentText || ''}>
                   {audioState.selectedText ? `"${audioState.selectedText}"` : (audioState.currentText || 'Selecciona texto en pantalla o toca cualquier palabra con furigana')}
                 </div>
               </div>
-
-              {/* Quick save button for active sentence if present */}
-              {(audioState.selectedText || audioState.currentText) && (
-                <button
-                  className="audio-save-inline-btn"
-                  title="Guardar esta frase u oración en tu cuaderno para crear historias"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onTouchStart={(e) => e.preventDefault()}
-                  onClick={audioState.selectedText ? handleSaveSelection : handleSaveCurrent}
-                  type="button"
-                >
-                  <BookmarkPlus size={14} />
-                  <span className="hidden-xs">Guardar</span>
-                </button>
-              )}
             </div>
           )}
 
