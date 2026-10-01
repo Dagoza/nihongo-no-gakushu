@@ -43,6 +43,7 @@ import {
   getSavedPracticeSheets,
   savePracticeSheet,
   deletePracticeSheet,
+  getGridLayout,
   renderGridOnCanvas,
   renderStroke,
   renderStrokeSegment,
@@ -119,6 +120,9 @@ export default function PracticePadModal({
   const currentStrokeRef = useRef(null);
   const isPointerDownRef = useRef(false);
 
+  // Dimensiones del área de trabajo para cálculos de cuadrícula
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 800, height: 600 });
+
   // Split text into individual characters (filtering out pure whitespace)
   const characters = React.useMemo(() => {
     const trimmed = (text || '').trim();
@@ -128,6 +132,11 @@ export default function PracticePadModal({
   }, [text]);
 
   const activeChar = characters[currentCharIndex] || characters[0] || '日';
+
+  // Layout geométrico adaptado a la cuadrícula seleccionada y al texto
+  const gridLayout = React.useMemo(() => {
+    return getGridLayout(canvasDimensions.width, canvasDimensions.height, gridType, text, 24);
+  }, [canvasDimensions.width, canvasDimensions.height, gridType, text]);
 
   // Show temporary banner / toast
   const showNotification = (msg, type = 'info') => {
@@ -255,6 +264,8 @@ export default function PracticePadModal({
 
     if (width === 0 || height === 0) return;
 
+    setCanvasDimensions(prev => (prev.width === width && prev.height === height) ? prev : { width, height });
+
     // Grid canvas
     gridCanvas.width = width * dpr;
     gridCanvas.height = height * dpr;
@@ -264,7 +275,7 @@ export default function PracticePadModal({
     const gCtx = gridCanvas.getContext('2d');
     if (gCtx) {
       gCtx.scale(dpr, dpr);
-      renderGridOnCanvas(gCtx, width, height, gridType, paperStyle, 24);
+      renderGridOnCanvas(gCtx, width, height, gridType, paperStyle, 24, { text });
     }
 
     // Drawing canvas
@@ -278,7 +289,7 @@ export default function PracticePadModal({
       dCtx.scale(dpr, dpr);
       renderAllStrokes(dCtx, (strokes || []).filter(Boolean));
     }
-  }, [gridType, paperStyle, strokes]);
+  }, [gridType, paperStyle, strokes, text]);
 
   useEffect(() => {
     if (activeTab !== 'canvas') return;
@@ -460,7 +471,7 @@ export default function PracticePadModal({
     setIsVerifying(true);
     setTimeout(() => {
       const rect = drawCanvas.getBoundingClientRect();
-      const res = analyzeDrawingAccuracy(drawCanvas, targetToVerify, rect.width, rect.height);
+      const res = analyzeDrawingAccuracy(drawCanvas, targetToVerify, rect.width, rect.height, gridType, 24);
       setVerificationResult(res);
       setIsVerifying(false);
       if (res && res.score >= 70) {
@@ -1381,7 +1392,7 @@ export default function PracticePadModal({
                     }}
                   />
 
-                  {/* Layer 2: Ghost Reference Glyph Overlay (Optional Tracing Guide - Frase Completa Unificada) */}
+                  {/* Layer 2: Ghost Reference Glyph Overlay Adaptado a la Cuadrícula */}
                   {ghostOpacity > 0 && text && text.trim().length > 0 && (
                     <div 
                       style={{
@@ -1389,10 +1400,6 @@ export default function PracticePadModal({
                         inset: 0,
                         zIndex: 2,
                         pointerEvents: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '24px 32px',
                         opacity: ghostOpacity / 100,
                         color: paperStyle === 'chalkboard' ? '#94a3b8' : '#64748b',
                         fontFamily: 'var(--font-jp)',
@@ -1400,29 +1407,98 @@ export default function PracticePadModal({
                         transition: 'opacity 0.2s ease'
                       }}
                     >
-                      {text.trim().length === 1 ? (
-                        <span style={{ fontSize: 'min(55vh, 380px)', fontWeight: 700, lineHeight: 1 }}>
-                          {text.trim()}
-                        </span>
-                      ) : (
+                      {/* Caso A: Tianzige, Mizige o Genkouyoushi - Cada carácter colocado en su celda exacta */}
+                      {(gridType === 'tianzige' || gridType === 'mizige' || gridType === 'genkouyoushi') && (
+                        (gridLayout?.cells || []).map((cell) => {
+                          if (!cell.char) return null;
+                          return (
+                            <div
+                              key={cell.index}
+                              style={{
+                                position: 'absolute',
+                                left: cell.x,
+                                top: cell.y,
+                                width: cell.width,
+                                height: cell.height,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: cell.fontSize,
+                                fontWeight: 700,
+                                lineHeight: 1,
+                                textAlign: 'center',
+                                userSelect: 'none'
+                              }}
+                            >
+                              {cell.char}
+                            </div>
+                          );
+                        })
+                      )}
+
+                      {/* Caso B: Renglones pautados (Lined) - Texto apoyado en el renglón con sangría */}
+                      {gridType === 'lined' && (
+                        (gridLayout?.lines || []).map((line) => {
+                          if (!line.text) return null;
+                          return (
+                            <div
+                              key={line.lineIndex}
+                              style={{
+                                position: 'absolute',
+                                left: (gridLayout?.meta?.marginX || 64) + 16,
+                                top: line.y,
+                                height: gridLayout?.meta?.lineSpacing || 48,
+                                display: 'flex',
+                                alignItems: 'flex-end',
+                                paddingBottom: 6,
+                                fontSize: line.fontSize,
+                                fontWeight: 700,
+                                letterSpacing: '0.12em',
+                                lineHeight: 1,
+                                whiteSpace: 'nowrap',
+                                userSelect: 'none'
+                              }}
+                            >
+                              {line.text}
+                            </div>
+                          );
+                        })
+                      )}
+
+                      {/* Caso C: Dot o Blank - Centrado armónico proporcionado */}
+                      {(gridType === 'dot' || gridType === 'blank') && (
                         <div 
                           style={{
-                            maxWidth: '92%',
-                            textAlign: 'center',
-                            fontWeight: 700,
-                            lineHeight: 1.35,
-                            letterSpacing: '0.08em',
-                            fontSize: text.trim().length <= 4 
-                              ? 'min(18vh, 110px)'
-                              : text.trim().length <= 8
-                              ? 'min(13vh, 72px)'
-                              : text.trim().length <= 16
-                              ? 'min(9vh, 46px)'
-                              : 'min(6.5vh, 32px)',
-                            wordBreak: 'break-word'
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '24px 32px'
                           }}
                         >
-                          {text.trim()}
+                          <div 
+                            style={{
+                              maxWidth: '92%',
+                              textAlign: 'center',
+                              fontWeight: 700,
+                              lineHeight: 1.35,
+                              letterSpacing: '0.08em',
+                              fontSize: text.trim().length <= 1 
+                                ? 'min(55vh, 380px)'
+                                : text.trim().length <= 4 
+                                ? 'min(18vh, 110px)'
+                                : text.trim().length <= 8
+                                ? 'min(13vh, 72px)'
+                                : text.trim().length <= 16
+                                ? 'min(9vh, 46px)'
+                                : 'min(6.5vh, 32px)',
+                              wordBreak: 'break-word',
+                              userSelect: 'none'
+                            }}
+                          >
+                            {text.trim()}
+                          </div>
                         </div>
                       )}
                     </div>
