@@ -456,24 +456,10 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                 }}
                 title={audioState.selectedText ? `Buscar significado de "${audioState.selectedText}" en el Diccionario` : 'Abrir Diccionario y Desglose Morfológico'}
                 type="button"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '6px 12px',
-                  borderRadius: 'var(--radius-sm, 8px)',
-                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15))',
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
-                  color: 'var(--primary)',
-                  fontWeight: 700,
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                  whiteSpace: 'nowrap'
-                }}
               >
-                <BookOpen size={14} />
-                <span>Diccionario</span>
+                <BookOpen size={14} className="audio-dict-main-icon" />
+                <span className="audio-dict-main-label">Diccionario</span>
+                <span className="audio-dict-kanji-badge">辞書</span>
               </button>
 
               {/* Speed rates */}
