@@ -8867,8 +8867,25 @@ html {
    PRACTICE PAD MODAL - MOBILE RESPONSIVENESS & CANVAS MAXIMIZATION
    ========================================================================= */
 
+.practice-toolbar {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap !important;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.practice-toolbar::-webkit-scrollbar {
+  height: 3px;
+}
+
+.practice-toolbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
 .practice-tool-select {
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: 8px;
   border: 1px solid var(--border);
   font-size: 0.78rem;
@@ -8878,6 +8895,7 @@ html {
   outline: none;
   font-family: inherit;
   transition: border-color 0.15s ease;
+  flex-shrink: 0;
 }
 
 .practice-tool-select:focus {
@@ -8904,23 +8922,36 @@ html {
   }
 
   .practice-toolbar {
-    padding: 4px 8px !important;
-    gap: 5px !important;
+    padding: 6px 10px !important;
+    gap: 8px !important;
   }
 
   .practice-tool-select {
     font-size: 0.74rem !important;
     padding: 3px 6px !important;
     height: 28px !important;
-    max-width: 115px !important;
+    max-width: 130px !important;
   }
 
   .practice-bottom-dock {
-    bottom: 8px !important;
-    padding: 3px 8px !important;
-    gap: 6px !important;
+    left: 8px !important;
+    right: 8px !important;
+    transform: none !important;
+    bottom: max(14px, env(safe-area-inset-bottom, 14px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    justify-content: space-around !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 4px 10px !important;
+    gap: 8px !important;
     font-size: 0.72rem !important;
-    max-width: calc(100% - 12px) !important;
+    border-radius: 24px !important;
+  }
+
+  .practice-bottom-dock input[type="range"] {
+    width: 44px !important;
   }
 }
 

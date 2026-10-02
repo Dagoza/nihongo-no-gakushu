@@ -1523,84 +1523,140 @@ export default function PracticePadModal({
                   borderBottom: '1px solid var(--border)',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
                   gap: 8,
-                  flexWrap: 'wrap'
+                  overflowX: 'auto',
+                  flexWrap: 'nowrap',
+                  scrollbarWidth: 'none',
+                  WebkitOverflowScrolling: 'touch'
                 }}
               >
-                {/* 1. Stroke Style / Tool Selector */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                {/* 1. Stroke Style Dropdown Selector */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                   <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
                     Trazo:
                   </span>
                   <select
                     className="practice-tool-select"
-                    value={isPanMode ? 'pan' : isEraser ? 'eraser' : strokeStyle}
+                    value={strokeStyle}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === 'pan') {
-                        setIsPanMode(true);
-                        setIsEraser(false);
-                      } else if (val === 'eraser') {
-                        setIsEraser(true);
-                        setIsPanMode(false);
-                      } else {
-                        const st = STROKE_STYLES.find(s => s.id === val);
-                        if (st) {
-                          setStrokeStyle(st.id);
-                          setStrokeWidth(st.defaultWidth);
-                        }
-                        setIsEraser(false);
-                        setIsPanMode(false);
+                      const st = STROKE_STYLES.find(s => s.id === e.target.value);
+                      if (st) {
+                        setStrokeStyle(st.id);
+                        setStrokeWidth(st.defaultWidth);
                       }
+                      setIsEraser(false);
+                      setIsPanMode(false);
                     }}
-                    title="Seleccionar herramienta o estilo de trazo"
-                  >
-                    <optgroup label="Trazos de Escritura">
-                      {STROKE_STYLES.map(st => (
-                        <option key={st.id} value={st.id}>
-                          {st.icon} {st.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Herramientas">
-                      <option value="eraser">🧹 Goma de Borrar</option>
-                      <option value="pan">✋ Mover / Desplazar</option>
-                    </optgroup>
-                  </select>
-                </div>
-
-                {/* 2. Ink Color Selector */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                    Tinta:
-                  </span>
-                  <select
-                    className="practice-tool-select"
-                    value={
-                      INK_PALETTES.find(ink => 
-                        (paperStyle === 'chalkboard' ? ink.lightColor : ink.color) === inkColor
-                      )?.id || 'sumi'
-                    }
-                    onChange={(e) => {
-                      const found = INK_PALETTES.find(ink => ink.id === e.target.value);
-                      if (found) {
-                        setInkColor(paperStyle === 'chalkboard' ? found.lightColor : found.color);
-                        setIsEraser(false);
-                      }
+                    style={{
+                      border: !isEraser && !isPanMode ? '1.5px solid var(--primary)' : '1px solid var(--border)',
+                      fontWeight: !isEraser && !isPanMode ? 700 : 500
                     }}
-                    title="Color de tinta caligráfica"
+                    title="Seleccionar estilo de trazo caligráfico"
                   >
-                    {INK_PALETTES.map(ink => (
-                      <option key={ink.id} value={ink.id}>
-                        🎨 {ink.name}
+                    {STROKE_STYLES.map(st => (
+                      <option key={st.id} value={st.id}>
+                        {st.icon} {st.name}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                {/* 3. Grid & Paper Types */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                {/* 2. Direct Quick-Action: Borrador (Goma) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEraser(prev => !prev);
+                    setIsPanMode(false);
+                  }}
+                  className={`btn btn-xs ${isEraser && !isPanMode ? 'btn-danger' : 'btn-outline'}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    fontSize: '0.76rem',
+                    padding: '4px 8px',
+                    flexShrink: 0,
+                    height: 28,
+                    background: isEraser && !isPanMode ? 'var(--danger, #ef4444)' : 'transparent',
+                    color: isEraser && !isPanMode ? '#ffffff' : 'var(--text-main)',
+                    borderColor: isEraser && !isPanMode ? 'var(--danger, #ef4444)' : 'var(--border)'
+                  }}
+                  title="Goma de borrar trazos (Alternar)"
+                >
+                  <Eraser size={13} />
+                  <span>Goma</span>
+                </button>
+
+                {/* 3. Direct Quick-Action: Mover (Pan) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPanMode(prev => !prev);
+                    setIsEraser(false);
+                  }}
+                  className={`btn btn-xs ${isPanMode ? 'btn-primary' : 'btn-outline'}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    fontSize: '0.76rem',
+                    padding: '4px 8px',
+                    flexShrink: 0,
+                    height: 28,
+                    background: isPanMode ? 'var(--primary)' : 'transparent',
+                    color: isPanMode ? '#ffffff' : 'var(--text-main)',
+                    borderColor: isPanMode ? 'var(--primary)' : 'var(--border)'
+                  }}
+                  title="Mover o desplazar lienzo (Alternar)"
+                >
+                  <Hand size={13} />
+                  <span>Mover</span>
+                </button>
+
+                <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
+
+                {/* 4. Ink Colors: Color Circles */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+                  <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                    Tinta:
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    {INK_PALETTES.map(ink => {
+                      const targetColor = paperStyle === 'chalkboard' ? ink.lightColor : ink.color;
+                      const isSelected = inkColor === targetColor && !isEraser;
+                      return (
+                        <button
+                          key={ink.id}
+                          type="button"
+                          onClick={() => {
+                            setInkColor(targetColor);
+                            setIsEraser(false);
+                            setIsPanMode(false);
+                          }}
+                          style={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: '50%',
+                            background: targetColor,
+                            border: isSelected ? '2px solid var(--primary)' : '2px solid rgba(0,0,0,0.12)',
+                            transform: isSelected ? 'scale(1.2)' : 'scale(1)',
+                            cursor: 'pointer',
+                            boxShadow: isSelected ? '0 0 0 2px var(--bg-surface), 0 2px 5px rgba(0,0,0,0.25)' : '0 1px 2px rgba(0,0,0,0.1)',
+                            transition: 'all 0.15s ease',
+                            flexShrink: 0,
+                            padding: 0
+                          }}
+                          title={ink.name}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
+
+                {/* 5. Grid & Paper Types */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
                       Cuadrícula:
@@ -1634,14 +1690,16 @@ export default function PracticePadModal({
                   </div>
                 </div>
 
-                {/* 4. Undo, Redo, Clear & Verify */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
+
+                {/* 6. Undo, Redo, Clear & Verify */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                   <button
                     type="button"
                     className="btn btn-ghost btn-xs"
                     onClick={handleUndo}
                     disabled={strokes.length === 0}
-                    style={{ padding: '4px 6px', opacity: strokes.length === 0 ? 0.4 : 1 }}
+                    style={{ padding: '4px 6px', opacity: strokes.length === 0 ? 0.4 : 1, height: 28 }}
                     title="Deshacer trazo (Ctrl+Z)"
                   >
                     <Undo2 size={14} />
@@ -1651,7 +1709,7 @@ export default function PracticePadModal({
                     className="btn btn-ghost btn-xs"
                     onClick={handleRedo}
                     disabled={redoStack.length === 0}
-                    style={{ padding: '4px 6px', opacity: redoStack.length === 0 ? 0.4 : 1 }}
+                    style={{ padding: '4px 6px', opacity: redoStack.length === 0 ? 0.4 : 1, height: 28 }}
                     title="Rehacer trazo"
                   >
                     <Redo2 size={14} />
@@ -1660,11 +1718,11 @@ export default function PracticePadModal({
                     type="button"
                     className="btn btn-outline btn-xs"
                     onClick={handleClearCanvas}
-                    style={{ fontSize: '0.75rem', padding: '4px 8px' }}
+                    style={{ fontSize: '0.75rem', padding: '4px 8px', height: 28 }}
                     title="Limpiar todo el lienzo"
                   >
                     <RotateCcw size={13} />
-                    <span className="practice-mobile-hide">Limpiar</span>
+                    <span>Limpiar</span>
                   </button>
 
                   <button
@@ -1675,6 +1733,7 @@ export default function PracticePadModal({
                     style={{
                       fontSize: '0.76rem',
                       padding: '4px 10px',
+                      height: 28,
                       background: 'linear-gradient(135deg, #059669, #10b981)',
                       border: 'none',
                       boxShadow: '0 2px 6px rgba(16, 185, 129, 0.3)',
@@ -1883,15 +1942,13 @@ export default function PracticePadModal({
                     transform: 'translateX(-50%)',
                     zIndex: 10,
                     background: 'var(--bg-surface)',
-                    padding: '5px 12px',
+                    padding: '5px 14px',
                     borderRadius: 24,
                     boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 10,
-                    border: '1px solid var(--border)',
-                    maxWidth: 'calc(100% - 20px)',
-                    overflowX: 'auto'
+                    border: '1px solid var(--border)'
                   }}
                 >
                   {/* Ghost Guide Opacity */}
@@ -1922,8 +1979,8 @@ export default function PracticePadModal({
                       step="5"
                       value={ghostOpacity}
                       onChange={(e) => setGhostOpacity(Number(e.target.value))}
-                      style={{ width: 60, accentColor: 'var(--primary)', cursor: 'pointer' }}
-                      title={`Opacidad de la silueta de ayuda (${ghostOpacity}%)`}
+                      style={{ width: 55, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                      title={`Opacidad de la silueta (${ghostOpacity}%)`}
                     />
                     <span style={{ minWidth: 26, fontWeight: 700, fontSize: '0.72rem' }}>{ghostOpacity}%</span>
                   </div>
@@ -1942,7 +1999,7 @@ export default function PracticePadModal({
                       max="28"
                       value={strokeWidth}
                       onChange={(e) => setStrokeWidth(Number(e.target.value))}
-                      style={{ width: 55, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                      style={{ width: 50, accentColor: 'var(--primary)', cursor: 'pointer' }}
                       title={`Grosor de trazo (${strokeWidth}px)`}
                     />
                     <span style={{ minWidth: 24, fontWeight: 700, fontSize: '0.72rem' }}>{strokeWidth}px</span>
@@ -1950,7 +2007,7 @@ export default function PracticePadModal({
 
                   <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
 
-                  {/* Zoom & Pan Controls */}
+                  {/* Zoom Controls */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                     <button
                       type="button"
@@ -1985,7 +2042,7 @@ export default function PracticePadModal({
                         borderRadius: 4,
                         fontWeight: 700,
                         fontSize: '0.72rem',
-                        minWidth: 40,
+                        minWidth: 38,
                         textAlign: 'center'
                       }}
                       title="Restablecer zoom al 100%"
@@ -2012,28 +2069,6 @@ export default function PracticePadModal({
                       title="Acercar (Zoom In)"
                     >
                       <ZoomIn size={14} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setIsPanMode(!isPanMode)}
-                      style={{
-                        border: 'none',
-                        background: isPanMode ? 'var(--primary)' : 'transparent',
-                        color: isPanMode ? '#ffffff' : 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: '3px 6px',
-                        borderRadius: 4,
-                        fontSize: '0.72rem',
-                        fontWeight: 600,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 3
-                      }}
-                      title={isPanMode ? "Modo mover activo (clic para volver a dibujar)" : "Mover lienzo"}
-                    >
-                      <Hand size={13} />
-                      <span className="practice-mobile-hide">Mover</span>
                     </button>
 
                     {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
