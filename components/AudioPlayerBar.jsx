@@ -442,26 +442,9 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
             )}
           </div>
 
-          {/* Actions: Play Selection, Save Selection, Saved Link & Speed */}
+          {/* Actions: Speed rates */}
           {!isMinimized && (
             <div className="audio-actions">
-              {/* Botón de Diccionario Rápido */}
-              <button
-                className="audio-dict-main-btn"
-                onClick={() => {
-                  const text = (audioState.selectedText || audioState.currentText || '').trim();
-                  if (contextApp?.openDictionary) {
-                    contextApp.openDictionary(text);
-                  }
-                }}
-                title={audioState.selectedText ? `Buscar significado de "${audioState.selectedText}" en el Diccionario` : 'Abrir Diccionario y Desglose Morfológico'}
-                type="button"
-              >
-                <BookOpen size={14} className="audio-dict-main-icon" />
-                <span className="audio-dict-main-label">Diccionario</span>
-                <span className="audio-dict-kanji-badge">辞書</span>
-              </button>
-
               {/* Speed rates */}
               <div className="speed-selector">
                 <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
