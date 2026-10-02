@@ -199,7 +199,7 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
     setInputDraft('');
     setSuggestedReplies([]);
     setSavedSuccess(false);
-    audioManager.speak(scenarioObj.initialAiMessage);
+    audioManager.speak(scenarioObj.initialAiMessage, { voice: getBotVoice(scenarioObj) });
   };
 
   useEffect(() => {
@@ -349,7 +349,7 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
       setSuggestedReplies(turn.suggested_replies || []);
       
       // Auto-play AI response
-      audioManager.speak(turn.reply_jp);
+      audioManager.speak(turn.reply_jp, { voice: getBotVoice(activeScenario) });
 
     } catch (err) {
       console.error('Roleplay turn error:', err);
@@ -626,7 +626,7 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
                       type="button"
                       className="audio-btn"
                       style={{ width: 28, height: 28 }}
-                      onClick={() => audioManager.speak(msg.jp)}
+                      onClick={() => audioManager.speak(msg.jp, { voice: getBotVoice(activeScenario) })}
                       title="Escuchar con voz natural"
                     >
                       <Volume2 size={15} />

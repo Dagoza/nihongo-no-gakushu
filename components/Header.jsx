@@ -516,29 +516,70 @@ export default function Header({
                 )}
               </div>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <button
-                  type="button"
-                  className="header-notif-btn"
-                  onClick={() => {
-                    if (contextApp?.setIsSettingsModalOpen) {
-                      contextApp.setIsSettingsModalOpen(true);
-                    }
-                  }}
-                  title="Configuración del sistema y selección de voz"
-                  style={{ width: 34, height: 34 }}
-                >
-                  <Settings size={16} />
-                </button>
+              <div className="header-session-wrapper" ref={dropdownRef}>
                 <button 
-                  type="button" 
-                  className="header-login-btn"
-                  onClick={onOpenAuth}
-                  title="Iniciar sesión para proteger y sincronizar tu progreso en la nube"
+                  type="button"
+                  className={`header-session-btn ${isDropdownOpen ? 'active' : ''}`}
+                  onClick={() => setIsDropdownOpen(prev => !prev)}
+                  title="Menú de usuario invitado: Opciones de configuración y cuenta"
+                  aria-haspopup="true"
+                  aria-expanded={isDropdownOpen}
                 >
-                  <LogIn size={15} />
-                  <span>Entrar</span>
+                  <div className="header-avatar-wrap">
+                    <div className="header-avatar-fallback">
+                      <User size={15} />
+                    </div>
+                  </div>
+
+                  <div className="header-session-text">
+                    <span className="header-session-name">Invitado</span>
+                    <span className="header-session-provider">Opciones</span>
+                  </div>
+
+                  <ChevronDown size={14} className={`header-chevron ${isDropdownOpen ? 'rotated' : ''}`} />
                 </button>
+
+                {isDropdownOpen && (
+                  <div className="session-dropdown-card" role="menu">
+                    <div className="session-card-header">
+                      <div className="session-card-avatar-fallback">
+                        <User size={18} />
+                      </div>
+                      <div className="session-card-info">
+                        <div className="session-card-name">Modo Invitado</div>
+                        <div className="session-card-email">Progreso guardado en navegador</div>
+                      </div>
+                    </div>
+
+                    <div className="session-card-actions">
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          if (contextApp?.setIsSettingsModalOpen) {
+                            contextApp.setIsSettingsModalOpen(true);
+                          }
+                        }}
+                      >
+                        <Settings size={15} />
+                        <span>Configuración & Voz</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          if (onOpenAuth) onOpenAuth();
+                        }}
+                      >
+                        <LogIn size={15} />
+                        <span>Iniciar Sesión / Sincronizar</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

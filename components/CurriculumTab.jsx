@@ -65,6 +65,20 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   
   // State for active module detailed view
   const [selectedStepNum, setSelectedStepNum] = useState(initialStep);
+  // Active sub-step state for the selected module
+  const [activeSubStep, setActiveSubStep] = useState(1);
+
+  // Sync activeSubStep whenever selectedStepNum or userState changes
+  React.useEffect(() => {
+    if (selectedStepNum) {
+      const savedSubStep = userState?.moduleProgress?.[selectedStepNum]?.currentSubStep;
+      if (typeof savedSubStep === 'number' && savedSubStep >= 1) {
+        setActiveSubStep(savedSubStep);
+      } else {
+        setActiveSubStep(1);
+      }
+    }
+  }, [selectedStepNum, userState?.moduleProgress]);
   
   // Theme, Level and Status filter state
   const [selectedTheme, setSelectedTheme] = useState('all'); // 'all' | 'vida' | 'trabajo' | 'ciudad' | 'ocio'
@@ -196,6 +210,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
   const handleOpenModule = (stepNum) => {
     setSelectedStepNum(stepNum);
+    const saved = userState?.moduleProgress?.[stepNum]?.currentSubStep;
+    setActiveSubStep(typeof saved === 'number' && saved >= 1 ? saved : 1);
     if (typeof window !== 'undefined') {
       window.history.pushState(null, '', `/curriculum?step=${stepNum}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -205,45 +221,52 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     setQuizFeedback({});
   };
 
-  const handleCloseModule = () => {
-    setSelectedStepNum(null);
-    if (typeof window !== 'undefined') {
-      if (window.location.search.includes('step=')) {
-        window.history.pushState(null, '', '/curriculum');
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    if (onStepChange) onStepChange(null);
-  };
-
-  const handlePlayAudio = (text, desc = '') => {
-    audioManager.speak(text, desc);
-  };
-
-  const handleSelectOption = (exercise, option) => {
-    const isCorrect = option === exercise.correct;
-    setQuizAnswers(prev => ({ ...prev, [exercise.id]: option }));
-    setQuizFeedback(prev => ({
-      ...prev,
-      [exercise.id]: {
-        isCorrect,
-        explanation: exercise.explanation
-      }
-    }));
-
-    if (isCorrect && userState && onUpdateState) {
-      // Award XP once and record exercise completion
-      const alreadyDone = !!userState.completedExercises?.[exercise.id];
-      const updatedExercises = {
-        ...(userState.completedExercises || {}),
-        [exercise.id]: true
-      };
+  const handleSelectSubStep = (substepNum) => {
+    setActiveSubStep(substepNum);
+    if (onUpdateState && userState && selectedStepNum) {
       onUpdateState({
         ...userState,
-        completedExercises: updatedExercises,
-        xp: (userState.xp || 0) + (!alreadyDone ? 5 : 0)
+        moduleProgress: {
+          ...(userState.moduleProgress || {}),
+          [selectedStepNum]: {
+            ...(userState.moduleProgress?.[selectedStepNum] || {}),
+            currentSubStep: substepNum
+          }
+        }
       });
     }
+    if (typeof window !== 'undefined') {
+      const el = document.getElementById('step-content-area');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const toggleSubStepCompleted = (stepNum, substepNum) => {
+    if (!onUpdateState || !userState) return;
+    const key = `${stepNum}_${substepNum}`;
+    const isDone = !!userState.completedSubSteps?.[key];
+    const updatedSubSteps = {
+      ...(userState.completedSubSteps || {}),
+      [key]: !isDone
+    };
+
+    const targetStep = steps.find(s => s.step === stepNum);
+    const stepSections = targetStep?.sections || [];
+    const allDone = stepSections.length > 0 && stepSections.every(s =>
+      s.substep === substepNum ? !isDone : !!updatedSubSteps[`${stepNum}_${s.substep}`]
+    );
+
+    const updatedSteps = {
+      ...(userState.completedSteps || {}),
+      ...(allDone ? { [stepNum]: true } : {})
+    };
+
+    onUpdateState({
+      ...userState,
+      completedSubSteps: updatedSubSteps,
+      completedSteps: updatedSteps,
+      xp: (userState.xp || 0) + (!isDone ? 15 : 0) + (allDone && !userState.completedSteps?.[stepNum] ? 25 : 0)
+    });
   };
 
   const toggleStepCompleted = (stepNum) => {
@@ -254,9 +277,19 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
       ...currentCompleted,
       [stepNum]: !isDone
     };
+
+    const targetStep = steps.find(s => s.step === stepNum);
+    let updatedSubSteps = { ...(userState.completedSubSteps || {}) };
+    if (!isDone && targetStep?.sections) {
+      targetStep.sections.forEach(s => {
+        updatedSubSteps[`${stepNum}_${s.substep}`] = true;
+      });
+    }
+
     onUpdateState({
       ...userState,
       completedSteps: updated,
+      completedSubSteps: updatedSubSteps,
       xp: (userState.xp || 0) + (!isDone ? 25 : 0)
     });
   };
@@ -379,302 +412,572 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           </div>
         </div>
 
-        {/* 2-Column Layout for Objectives & Grammar Focus */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, marginBottom: 24 }}>
-          {/* Objectives Card */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <GraduationCap size={20} color="var(--primary)" />
-              <span>Objetivos de Aprendizaje</span>
-            </h3>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {selectedStep.objectives?.map((obj, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: '0.95rem', lineHeight: 1.5 }}>
-                  <CheckCircle2 size={16} color="var(--success)" style={{ marginTop: 3, flexShrink: 0 }} />
-                  <span>{obj}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Grammar Points Card */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Sparkles size={20} color="var(--accent)" />
-              <span>Puntos Clave de Gramática</span>
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {selectedStep.grammar_focus?.map((point, i) => {
-                const { title, content } = parseGrammarPoint(point);
-                return (
-                  <div 
-                    key={i} 
-                    style={{ 
-                      padding: '10px 14px', 
-                      borderRadius: 'var(--radius-sm)', 
-                      background: 'var(--primary-bg)', 
-                      border: '1px solid rgba(99, 102, 241, 0.2)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 4
-                    }}
-                  >
-                    {title && (
-                      <span style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--primary)', fontWeight: 700 }}>
-                        ⚡ {title}
-                      </span>
-                    )}
-                    <span className="jp-text" style={{ fontSize: '0.96rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.45 }}>
-                      {!title && '⚡ '}{content}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Can-Do Objectives for Irodori */}
-        {selectedStep.can_dos && selectedStep.can_dos.length > 0 && (() => {
-          const completedInModule = selectedStep.can_dos.filter(cd => userState?.completedCanDos?.[cd.id]).length;
-          const totalInModule = selectedStep.can_dos.length;
-          const percentInModule = Math.round((completedInModule / totalInModule) * 100);
+        {/* Sectioned Steps Architecture */}
+        {selectedStep.sections && selectedStep.sections.length > 0 ? (() => {
+          const sections = selectedStep.sections;
+          const completedSubStepsCount = sections.filter(s => !!userState?.completedSubSteps?.[`${selectedStep.step}_${s.substep}`]).length;
+          const subStepsPercent = Math.round((completedSubStepsCount / sections.length) * 100);
+          const currentSection = sections.find(s => s.substep === activeSubStep) || sections[0];
+          const isSubStepDone = !!userState?.completedSubSteps?.[`${selectedStep.step}_${currentSection.substep}`];
 
           return (
-            <div className="card cando-section" style={{ marginBottom: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
-                <div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span>🎯</span>
-                    <span>Competencias Can-Do (Fundación Japón / MCER A1)</span>
-                  </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Autoevaluación práctica: valida las competencias comunicativas que puedas realizar en el mundo real (+10 XP cada una).
-                  </p>
+            <div>
+              {/* Stepper Navigation Bar if multiple steps */}
+              {sections.length > 1 ? (
+                <div className="curriculum-stepper-container">
+                  <div className="curriculum-stepper-header">
+                    <div>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)' }}>
+                        Ruta de Aprendizaje por Pasos
+                      </span>
+                      <h3 style={{ fontSize: '1.18rem', fontWeight: 800, margin: '2px 0 0' }}>
+                        Paso {currentSection.substep} de {sections.length}: {currentSection.title}
+                      </h3>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        padding: '4px 12px',
+                        borderRadius: 'var(--radius-full)',
+                        background: completedSubStepsCount === sections.length ? 'rgba(16, 185, 129, 0.15)' : 'rgba(99, 102, 241, 0.12)',
+                        color: completedSubStepsCount === sections.length ? 'var(--success)' : 'var(--primary)',
+                        border: `1px solid ${completedSubStepsCount === sections.length ? 'rgba(16, 185, 129, 0.3)' : 'rgba(99, 102, 241, 0.25)'}`
+                      }}>
+                        {completedSubStepsCount} / {sections.length} pasos completados ({subStepsPercent}%)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Stepper Progress Bar */}
+                  <div style={{ width: '100%', height: 6, background: 'var(--bg-main)', borderRadius: 10, overflow: 'hidden', marginBottom: 14, border: '1px solid var(--border)' }}>
+                    <div style={{
+                      height: '100%',
+                      width: `${subStepsPercent}%`,
+                      background: completedSubStepsCount === sections.length ? 'var(--success)' : 'linear-gradient(90deg, var(--primary), var(--accent))',
+                      transition: 'width 0.3s ease'
+                    }} />
+                  </div>
+
+                  {/* Stepper Step Tabs */}
+                  <div className="curriculum-stepper-tabs">
+                    {sections.map((sec) => {
+                      const secDone = !!userState?.completedSubSteps?.[`${selectedStep.step}_${sec.substep}`];
+                      const isActive = sec.substep === currentSection.substep;
+
+                      return (
+                        <button
+                          key={sec.substep}
+                          type="button"
+                          onClick={() => handleSelectSubStep(sec.substep)}
+                          className={`curriculum-step-tab ${isActive ? 'active' : ''} ${secDone ? 'completed' : ''}`}
+                          title={`Ir al Paso ${sec.substep}: ${sec.title}`}
+                        >
+                          <div className="step-tab-number">
+                            {secDone ? <Check size={16} strokeWidth={3} /> : sec.substep}
+                          </div>
+                          <div className="step-tab-info">
+                            <span className="step-tab-label">
+                              Paso {sec.substep} {secDone ? '· Dominado ✓' : ''}
+                            </span>
+                            <div className="step-tab-title">
+                              {sec.title}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ 
-                    fontSize: '0.82rem', 
-                    fontWeight: 700, 
-                    padding: '4px 12px', 
-                    borderRadius: 'var(--radius-full)', 
-                    background: completedInModule === totalInModule ? 'rgba(16, 185, 129, 0.15)' : 'rgba(236, 72, 153, 0.15)', 
-                    color: completedInModule === totalInModule ? 'var(--success)' : '#ec4899', 
-                    border: `1px solid ${completedInModule === totalInModule ? 'rgba(16, 185, 129, 0.3)' : 'rgba(236, 72, 153, 0.3)'}` 
-                  }}>
-                    {completedInModule} / {totalInModule} dominadas ({percentInModule}%)
-                  </span>
+              ) : (
+                <div className="curriculum-stepper-container" style={{ padding: '14px 18px', background: 'var(--bg-surface)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontSize: '1.25rem' }}>🎯</span>
+                      <div>
+                        <span style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)' }}>
+                          Módulo de Tema Enfocado (1 Paso)
+                        </span>
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0 }}>
+                          {currentSection.title}
+                        </h3>
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        background: isSubStepDone || isDone ? 'rgba(16, 185, 129, 0.15)' : 'var(--primary-bg)',
+                        color: isSubStepDone || isDone ? 'var(--success)' : 'var(--primary)'
+                      }}>
+                        {isSubStepDone || isDone ? 'Paso Dominado ✓' : 'Paso en Curso'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Progress Bar for Module's Can-Dos */}
-              <div style={{ width: '100%', height: 6, background: 'var(--bg-main)', borderRadius: 10, overflow: 'hidden', marginBottom: 18, border: '1px solid var(--border)' }}>
-                <div style={{ 
-                  height: '100%', 
-                  width: `${percentInModule}%`, 
-                  background: completedInModule === totalInModule ? 'var(--success)' : 'linear-gradient(90deg, #ec4899, #f43f5e)', 
-                  transition: 'width 0.3s ease' 
-                }} />
-              </div>
+              {/* Step Content Area */}
+              <div id="step-content-area">
+                {/* 1. Objetivo de este Paso */}
+                <div className="card" style={{ marginBottom: 20, background: 'var(--bg-surface)', borderLeft: '4px solid var(--primary)' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                    <Target size={22} color="var(--primary)" style={{ marginTop: 2, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', marginBottom: 2 }}>
+                        Objetivo del Paso {currentSection.substep}
+                      </div>
+                      <p style={{ fontSize: '1.02rem', fontWeight: 600, color: 'var(--text-main)', margin: 0, lineHeight: 1.5 }}>
+                        {currentSection.objective}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="cando-grid">
-                {selectedStep.can_dos.map((cd, idx) => {
-                  const isCanDoDone = !!userState?.completedCanDos?.[cd.id];
+                {/* 2. Puntos Clave de Gramática con Explicación Profunda, Fórmulas y Notas */}
+                <div className="card" style={{ marginBottom: 24 }}>
+                  <div style={{ marginBottom: 16 }}>
+                    <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <Sparkles size={20} color="var(--accent)" />
+                      <span>Puntos Clave de Gramática (Paso {currentSection.substep})</span>
+                    </h3>
+                    <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                      Estructuras explicadas con fundamentos teóricos y fórmulas extraídas de los manuales de referencia.
+                    </p>
+                  </div>
 
-                  return (
-                    <div key={idx} className={`cando-card ${isCanDoDone ? 'completed-cando' : ''}`}>
-                      <div className="cando-card-header">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span className={`cando-badge ${isCanDoDone ? 'badge-completed' : ''}`}>
-                            <Target size={13} />
-                            {cd.id}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {currentSection.grammar_points?.map((gp, gpIdx) => (
+                      <div key={gpIdx} className="grammar-deep-card">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                          <span style={{ 
+                            fontSize: '0.76rem', 
+                            fontWeight: 800, 
+                            padding: '2px 8px', 
+                            background: 'var(--primary-bg)', 
+                            color: 'var(--primary)', 
+                            borderRadius: 4 
+                          }}>
+                            {currentSection.substep}.{gpIdx + 1}
                           </span>
-                          <span className="cando-tag">Irodori A1</span>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>
+                            {gp.title}
+                          </h4>
                         </div>
 
-                        {/* Interactive Checkbox / Autoevaluación Button */}
-                        <button
-                          type="button"
-                          onClick={() => toggleCanDoCompleted(cd.id)}
-                          className={`cando-check-btn ${isCanDoDone ? 'checked' : ''}`}
-                          title={isCanDoDone ? 'Desmarcar competencia' : 'Validar competencia como dominada (+10 XP)'}
-                        >
-                          <div className={`cando-checkbox-square ${isCanDoDone ? 'checked' : ''}`}>
-                            {isCanDoDone && <Check size={12} strokeWidth={3} />}
+                        {/* Formula box */}
+                        {gp.formula && (
+                          <div className="grammar-formula-box">
+                            <span className="grammar-formula-badge">⚡ Fórmula</span>
+                            <span className="grammar-formula-text">{gp.formula}</span>
                           </div>
-                          <span>{isCanDoDone ? 'Dominada ✓' : 'Autoevaluar'}</span>
+                        )}
+
+                        {/* Theoretical Deep Explanation */}
+                        <p style={{ fontSize: '0.94rem', lineHeight: 1.65, color: 'var(--text-main)', margin: '10px 0' }}>
+                          {gp.explanation}
+                        </p>
+
+                        {/* Cultural / Usage Notes */}
+                        {gp.usage_notes && (
+                          <div className="grammar-notes-box">
+                            💡 <strong>Notas de uso y contexto:</strong> {gp.usage_notes}
+                          </div>
+                        )}
+
+                        {/* Examples for this grammar point with audio */}
+                        {gp.examples && gp.examples.length > 0 && (
+                          <div className="grammar-examples-list">
+                            <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
+                              Ejemplos con Audio:
+                            </div>
+                            {gp.examples.map((ex, exI) => (
+                              <div key={exI} className="grammar-example-row">
+                                <div>
+                                  <div className="jp-text" style={{ fontSize: '1.06rem', fontWeight: 700, color: 'var(--primary)' }}>
+                                    {ex.jp}
+                                  </div>
+                                  <div className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                    {ex.kana}
+                                  </div>
+                                  <div style={{ fontSize: '0.88rem', color: 'var(--text-main)', marginTop: 2, fontWeight: 500 }}>
+                                    🇪🇸 {ex.es}
+                                  </div>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  className="btn btn-outline btn-sm"
+                                  style={{ padding: '6px 8px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}
+                                  onClick={() => handlePlayAudio(ex.jp, ex.es)}
+                                  title="Escuchar pronunciación"
+                                >
+                                  <Volume2 size={15} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Competencias Can-Do del Paso */}
+                {currentSection.can_dos && currentSection.can_dos.length > 0 && (
+                  <div className="card cando-section" style={{ marginBottom: 24 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                      <div>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span>🎯</span>
+                          <span>Competencias Can-Do de este Paso</span>
+                        </h3>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                          Valida las competencias comunicativas prácticas que dominas en este paso (+10 XP cada una).
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="cando-grid">
+                      {currentSection.can_dos.map((cd, idx) => {
+                        const isCanDoDone = !!userState?.completedCanDos?.[cd.id];
+                        return (
+                          <div key={idx} className={`cando-card ${isCanDoDone ? 'completed-cando' : ''}`}>
+                            <div className="cando-card-header">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <span className={`cando-badge ${isCanDoDone ? 'badge-completed' : ''}`}>
+                                  <Target size={13} />
+                                  {cd.id}
+                                </span>
+                                <span className="cando-tag">Irodori / MCER</span>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => toggleCanDoCompleted(cd.id)}
+                                className={`cando-check-btn ${isCanDoDone ? 'checked' : ''}`}
+                                title={isCanDoDone ? 'Desmarcar competencia' : 'Validar competencia como dominada (+10 XP)'}
+                              >
+                                <div className={`cando-checkbox-square ${isCanDoDone ? 'checked' : ''}`}>
+                                  {isCanDoDone && <Check size={12} strokeWidth={3} />}
+                                </div>
+                                <span>{isCanDoDone ? 'Dominada ✓' : 'Autoevaluar'}</span>
+                              </button>
+                            </div>
+
+                            <h4 className="cando-task">{cd.task}</h4>
+
+                            {cd.sample && (
+                              <div className="cando-expression-box">
+                                <div className="cando-expression-content">
+                                  <span className="cando-expression-label">💬 Frase clave</span>
+                                  <div className="cando-expression-text jp-text">{cd.sample}</div>
+                                </div>
+                                <button 
+                                  type="button"
+                                  className="cando-audio-btn" 
+                                  onClick={() => handlePlayAudio(cd.sample.replace(/\//g, '、'))}
+                                  title="Escuchar pronunciación"
+                                >
+                                  <Volume2 size={14} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. Vocabulario Esencial del Paso */}
+                {(currentSection.vocab || currentSection.vocabulary) && (currentSection.vocab || currentSection.vocabulary).length > 0 && (() => {
+                  const stepVocabList = currentSection.vocab || currentSection.vocabulary;
+                  return (
+                    <div className="card" style={{ marginBottom: 24 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+                        <div>
+                          <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <BookOpen size={20} color="var(--primary)" />
+                            <span>Vocabulario del Paso {currentSection.substep}</span>
+                          </h3>
+                          <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                            Haz clic en el altavoz o en la palabra para escucharla o buscarla en el diccionario.
+                          </p>
+                        </div>
+
+                        <button 
+                          type="button"
+                          className="btn btn-outline btn-sm"
+                          onClick={() => {
+                            const playlist = stepVocabList.map(v => ({ text: v.kanji, desc: `${v.kana} - ${v.meaning}` }));
+                            audioManager.setPlaylist(playlist, 0);
+                          }}
+                        >
+                          <Volume2 size={16} />
+                          <span>Reproducir Vocabulario del Paso</span>
                         </button>
                       </div>
 
-                      <h4 className="cando-task">
-                        {cd.task}
-                      </h4>
-
-                      {cd.sample && (
-                        <div className="cando-expression-box">
-                          <div className="cando-expression-content">
-                            <span className="cando-expression-label">💬 Frase clave</span>
-                            <div className="cando-expression-text jp-text">{cd.sample}</div>
-                          </div>
-                          <button 
-                            className="cando-audio-btn" 
-                            onClick={() => audioManager.speak(cd.sample.replace(/\//g, '、'))}
-                            title="Escuchar pronunciación"
-                            aria-label="Escuchar pronunciación"
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+                        {stepVocabList.map((v, idx) => (
+                          <div 
+                            key={idx}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '12px 14px',
+                              borderRadius: 'var(--radius-sm)',
+                              background: 'var(--bg-main)',
+                              border: '1px solid var(--border)',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                            onClick={() => handlePlayAudio(v.kanji, `${v.kana} (${v.meaning})`)}
+                            title="Click para escuchar pronunciación"
                           >
-                            <Volume2 size={14} />
-                          </button>
-                        </div>
-                      )}
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                                <span className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                                  {v.kanji}
+                                </span>
+                                <span className="jp-text" style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                                  {v.kana}
+                                </span>
+                              </div>
+                              <div style={{ fontSize: '0.85rem', color: 'var(--text-main)', marginTop: 2, fontWeight: 500 }}>
+                                {v.meaning}
+                              </div>
+                              <div style={{ fontSize: '0.72rem', color: 'var(--primary)', marginTop: 2 }}>
+                                {v.type}
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              {contextApp?.openDictionary && (
+                                <button
+                                  type="button"
+                                  className="btn btn-outline btn-sm"
+                                  style={{ padding: '6px', borderRadius: '50%', flexShrink: 0 }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    contextApp.openDictionary(v.kanji);
+                                  }}
+                                  title="Buscar en diccionario"
+                                >
+                                  <Search size={14} />
+                                </button>
+                              )}
+                              <button 
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                style={{ padding: '6px', borderRadius: '50%', flexShrink: 0 }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handlePlayAudio(v.kanji, `${v.kana} (${v.meaning})`);
+                                }}
+                                title="Escuchar audio"
+                              >
+                                <Volume2 size={15} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   );
-                })}
+                })()}
+
+                {/* 5. Ejemplos Reales en Contexto del Paso */}
+                {currentSection.examples && currentSection.examples.length > 0 && (
+                  <div className="card" style={{ marginBottom: 24 }}>
+                    <div style={{ marginBottom: 16 }}>
+                      <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span>💬</span>
+                        <span>Ejemplos Reales en Contexto (Paso {currentSection.substep})</span>
+                      </h3>
+                      <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                        Diálogos y frases contextuales para interiorizar los patrones aprendidos en este paso.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                      {currentSection.examples.map((ex, i) => (
+                        <div 
+                          key={i} 
+                          style={{ 
+                            padding: 16, 
+                            borderRadius: 'var(--radius-md)', 
+                            background: 'var(--bg-surface)', 
+                            border: '1px solid var(--border)',
+                            boxShadow: 'var(--shadow-sm)'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                            <div>
+                              <div className="jp-text" style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 4 }}>
+                                {ex.jp}
+                              </div>
+                              <div className="jp-text" style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: 4 }}>
+                                {ex.kana} {ex.romaji ? `· ${ex.romaji}` : ''}
+                              </div>
+                              <div style={{ fontSize: '0.98rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
+                                🇪🇸 {ex.es}
+                              </div>
+                            </div>
+
+                            <button 
+                              type="button"
+                              className="btn btn-outline btn-sm"
+                              onClick={() => handlePlayAudio(ex.jp, ex.es)}
+                              title="Escuchar oración completa"
+                              style={{ flexShrink: 0 }}
+                            >
+                              <Volume2 size={16} />
+                              <span>Audio</span>
+                            </button>
+                          </div>
+
+                          {ex.explanation && (
+                            <div style={{ 
+                              fontSize: '0.86rem', 
+                              background: 'var(--bg-main)', 
+                              padding: '8px 12px', 
+                              borderRadius: 'var(--radius-sm)', 
+                              color: 'var(--text-muted)',
+                              borderLeft: '3px solid var(--accent)'
+                            }}>
+                              💡 <strong>Análisis:</strong> {ex.explanation}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. Barra de Acción y Avance del Paso */}
+                <div className="step-action-bar">
+                  <button 
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    disabled={activeSubStep <= 1}
+                    onClick={() => handleSelectSubStep(activeSubStep - 1)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: activeSubStep <= 1 ? 0.4 : 1 }}
+                  >
+                    <ArrowLeft size={16} />
+                    <span>Paso Anterior</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`btn ${isSubStepDone ? 'btn-outline' : 'btn-success'}`}
+                    onClick={() => toggleSubStepCompleted(selectedStep.step, currentSection.substep)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700 }}
+                  >
+                    <CheckCircle2 size={18} color={isSubStepDone ? 'var(--success)' : '#fff'} />
+                    <span>{isSubStepDone ? `Paso ${currentSection.substep} Completado ✓` : `Completar Paso ${currentSection.substep} (+15 XP)`}</span>
+                  </button>
+
+                  {activeSubStep < sections.length ? (
+                    <button 
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handleSelectSubStep(activeSubStep + 1)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+                    >
+                      <span>Siguiente Paso (Paso {activeSubStep + 1})</span>
+                      <ArrowRight size={16} />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`btn ${isDone ? 'btn-outline' : 'btn-primary'} btn-sm`}
+                      onClick={() => toggleStepCompleted(selectedStep.step)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+                    >
+                      <CheckCircle2 size={16} />
+                      <span>{isDone ? 'Módulo Completado ✓' : 'Completar Módulo Completo 🏆 (+25 XP)'}</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           );
-        })()}
-
-        {/* Integrated Vocabulary Section */}
-        {selectedStep.vocab_details && selectedStep.vocab_details.length > 0 && (
-          <div className="card" style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-              <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <BookOpen size={20} color="var(--primary)" />
-                  <span>Vocabulario Esencial del Nivel</span>
+        })() : (
+          /* Fallback layout if sections not present */
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, marginBottom: 24 }}>
+              <div className="card">
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <GraduationCap size={20} color="var(--primary)" />
+                  <span>Objetivos de Aprendizaje</span>
                 </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                  Haz clic en el altavoz o en la palabra para escuchar la pronunciación nativa.
-                </p>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {selectedStep.objectives?.map((obj, i) => (
+                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: '0.95rem', lineHeight: 1.5 }}>
+                      <CheckCircle2 size={16} color="var(--success)" style={{ marginTop: 3, flexShrink: 0 }} />
+                      <span>{obj}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <button 
-                className="btn btn-outline btn-sm"
-                onClick={() => {
-                  const playlist = selectedStep.vocab_details.map(v => ({ text: v.kanji, desc: `${v.kana} - ${v.meaning}` }));
-                  audioManager.setPlaylist(playlist, 0);
-                }}
-              >
-                <Volume2 size={16} />
-                <span>Reproducir Todo el Léxico</span>
-              </button>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
-              {selectedStep.vocab_details.map((v, idx) => (
-                <div 
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '12px 14px',
-                    borderRadius: 'var(--radius-sm)',
-                    background: 'var(--bg-main)',
-                    border: '1px solid var(--border)',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease'
-                  }}
-                  onClick={() => handlePlayAudio(v.kanji, `${v.kana} (${v.meaning})`)}
-                  title="Click para escuchar pronunciación"
-                >
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <span className="jp-text" style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                        {v.kanji}
-                      </span>
-                      <span className="jp-text" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                        {v.kana}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-main)', marginTop: 2, fontWeight: 500 }}>
-                      {v.meaning}
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--primary)', marginTop: 2 }}>
-                      {v.type}
-                    </div>
-                  </div>
-
-                  <button 
-                    className="btn btn-outline btn-sm"
-                    style={{ padding: '6px', borderRadius: '50%', flexShrink: 0 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePlayAudio(v.kanji, `${v.kana} (${v.meaning})`);
-                    }}
-                  >
-                    <Volume2 size={15} />
-                  </button>
+              <div className="card">
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Sparkles size={20} color="var(--accent)" />
+                  <span>Puntos Clave de Gramática</span>
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {selectedStep.grammar_focus?.map((point, i) => {
+                    const { title, content } = parseGrammarPoint(point);
+                    return (
+                      <div 
+                        key={i} 
+                        style={{ 
+                          padding: '10px 14px', 
+                          borderRadius: 'var(--radius-sm)', 
+                          background: 'var(--primary-bg)', 
+                          border: '1px solid rgba(99, 102, 241, 0.2)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 4
+                        }}
+                      >
+                        {title && (
+                          <span style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--primary)', fontWeight: 700 }}>
+                            ⚡ {title}
+                          </span>
+                        )}
+                        <span className="jp-text" style={{ fontSize: '0.96rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.45 }}>
+                          {!title && '⚡ '}{content}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Examples with Audio & Breakdown */}
-        {selectedStep.examples && selectedStep.examples.length > 0 && (
-          <div className="card" style={{ marginBottom: 24 }}>
-            <div style={{ marginBottom: 16 }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span>💬</span>
-                <span>Ejemplos Reales en Contexto</span>
-              </h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                Oraciones extraídas de diálogos y lecturas con traducción minuciosa y notas culturales.
-              </p>
+              </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {selectedStep.examples.map((ex, i) => (
-                <div 
-                  key={i} 
-                  style={{ 
-                    padding: 16, 
-                    borderRadius: 'var(--radius-md)', 
-                    background: 'var(--bg-surface)', 
-                    border: '1px solid var(--border)',
-                    boxShadow: 'var(--shadow-sm)'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-                    <div>
-                      <div className="jp-text" style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 4 }}>
-                        {ex.jp}
+            {selectedStep.can_dos && selectedStep.can_dos.length > 0 && (
+              <div className="card cando-section" style={{ marginBottom: 24 }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 14 }}>🎯 Competencias Can-Do</h3>
+                <div className="cando-grid">
+                  {selectedStep.can_dos.map((cd, idx) => (
+                    <div key={idx} className="cando-card">
+                      <div className="cando-card-header">
+                        <span className="cando-badge"><Target size={13} /> {cd.id}</span>
                       </div>
-                      <div className="jp-text" style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginBottom: 4 }}>
-                        {ex.kana} · <span style={{ fontStyle: 'italic', fontFamily: 'var(--font-sans)' }}>{ex.romaji}</span>
-                      </div>
-                      <div style={{ fontSize: '1.02rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
-                        🇪🇸 {ex.es}
-                      </div>
+                      <h4 className="cando-task">{cd.task}</h4>
+                      {cd.sample && <div className="cando-expression-text jp-text">{cd.sample}</div>}
                     </div>
-
-                    <button 
-                      className="btn btn-outline btn-sm"
-                      onClick={() => handlePlayAudio(ex.jp, ex.es)}
-                      title="Escuchar oración completa"
-                      style={{ flexShrink: 0 }}
-                    >
-                      <Volume2 size={16} />
-                      <span>Audio</span>
-                    </button>
-                  </div>
-
-                  {ex.explanation && (
-                    <div style={{ 
-                      fontSize: '0.86rem', 
-                      background: 'var(--bg-main)', 
-                      padding: '8px 12px', 
-                      borderRadius: 'var(--radius-sm)', 
-                      color: 'var(--text-muted)',
-                      borderLeft: '3px solid var(--accent)'
-                    }}>
-                      💡 <strong>Análisis:</strong> {ex.explanation}
-                    </div>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1258,6 +1561,26 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                         }}>
                           {step.level}
                         </span>
+                        {step.sections && step.sections.length > 0 && (() => {
+                          const totalSub = step.sections.length;
+                          const completedSub = step.sections.filter(s => !!userState?.completedSubSteps?.[`${step.step}_${s.substep}`]).length;
+                          const currentSub = userState?.moduleProgress?.[step.step]?.currentSubStep || 1;
+                          const isMulti = totalSub > 1;
+
+                          return (
+                            <span style={{ 
+                              fontSize: '0.72rem', 
+                              fontWeight: 700, 
+                              padding: '2px 8px', 
+                              borderRadius: 4, 
+                              background: completedSub === totalSub ? 'rgba(16, 185, 129, 0.15)' : 'rgba(99, 102, 241, 0.12)', 
+                              color: completedSub === totalSub ? 'var(--success)' : 'var(--primary)',
+                              border: completedSub === totalSub ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(99, 102, 241, 0.2)'
+                            }}>
+                              📑 {isMulti ? `${completedSub}/${totalSub} pasos (En Paso ${currentSub})` : '1 Paso Enfocado'}
+                            </span>
+                          );
+                        })()}
                         {step.can_dos && step.can_dos.length > 0 && (() => {
                           const mTotal = step.can_dos.length;
                           const mDone = step.can_dos.filter(cd => userState?.completedCanDos?.[cd.id]).length;

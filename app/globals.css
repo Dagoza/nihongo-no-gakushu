@@ -2799,6 +2799,212 @@ rt {
   color: #ffffff;
 }
 
+/* Curriculum Stepper & Substep Progression */
+.curriculum-stepper-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.curriculum-stepper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.curriculum-stepper-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.curriculum-step-tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-main);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  position: relative;
+}
+
+.curriculum-step-tab:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.curriculum-step-tab.active {
+  background: var(--bg-surface);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary), var(--shadow-sm);
+}
+
+.curriculum-step-tab.completed {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.curriculum-step-tab.active.completed {
+  border-color: var(--primary);
+}
+
+.step-tab-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.curriculum-step-tab.active .step-tab-number {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.curriculum-step-tab.completed .step-tab-number {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+
+.step-tab-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-tab-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: block;
+}
+
+.curriculum-step-tab.active .step-tab-label {
+  color: var(--primary);
+}
+
+.step-tab-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.3;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Deep Grammar Explanation Cards */
+.grammar-deep-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.grammar-deep-card:hover {
+  border-color: var(--primary-light);
+}
+
+.grammar-formula-box {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(236, 72, 153, 0.05) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.grammar-formula-badge {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  background: var(--primary);
+  color: #ffffff;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.grammar-formula-text {
+  font-family: var(--font-jp);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-main);
+  word-break: break-word;
+}
+
+.grammar-notes-box {
+  background: var(--bg-main);
+  border-left: 3px solid #f59e0b;
+  padding: 10px 14px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.grammar-examples-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.grammar-example-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-main);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+/* Step Action Navigation Footer */
+.step-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm);
+}
+
 .ruta-progress-banner {
   box-shadow: var(--shadow-sm);
   border-radius: var(--radius-md);
@@ -9114,7 +9320,6 @@ html {
   z-index: 20;
   background: var(--bg-surface);
   border: 1.5px solid var(--border);
-  border-radius: 28px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
   display: flex;
   align-items: center;
@@ -9122,6 +9327,17 @@ html {
   width: max-content;
   max-width: calc(100% - 24px);
   box-sizing: border-box;
+}
+
+@media (min-width: 769px) {
+  .practice-bottom-dock {
+    flex-direction: row !important;
+    padding: 6px 16px !important;
+    border-radius: 30px !important;
+  }
+  .dock-divider-desktop {
+    display: block !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -9156,17 +9372,35 @@ html {
   }
 
   .practice-bottom-dock {
-    bottom: max(22px, env(safe-area-inset-bottom, 22px)) !important;
+    bottom: max(18px, env(safe-area-inset-bottom, 18px)) !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     right: auto !important;
-    padding: 6px 12px !important;
-    gap: 8px !important;
     max-width: calc(100vw - 16px) !important;
   }
 
+  /* 2 ROWS on mobile when hasGuide is TRUE */
+  .practice-bottom-dock.has-guide {
+    flex-direction: column !important;
+    border-radius: 18px !important;
+    padding: 7px 12px !important;
+    gap: 6px !important;
+  }
+
+  .practice-bottom-dock.has-guide .dock-divider-desktop {
+    display: none !important;
+  }
+
+  /* 1 SINGLE ROW on mobile when hasGuide is FALSE (modo libre / sin guía) */
+  .practice-bottom-dock.no-guide {
+    flex-direction: row !important;
+    border-radius: 28px !important;
+    padding: 6px 14px !important;
+    gap: 8px !important;
+  }
+
   .practice-bottom-dock input[type="range"] {
-    width: 44px !important;
+    width: 46px !important;
   }
 }
 
