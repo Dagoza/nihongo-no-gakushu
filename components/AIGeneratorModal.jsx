@@ -531,7 +531,7 @@ export default function AIGeneratorModal({
         </div>
 
         {/* Modal Body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '20px 24px', boxSizing: 'border-box' }}>
           
           {/* Auth requirement notice */}
           {!authUser && (

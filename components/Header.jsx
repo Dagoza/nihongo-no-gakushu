@@ -24,7 +24,8 @@ import {
   ArrowRight,
   X,
   Sparkles,
-  PenTool
+  PenTool,
+  Settings
 } from 'lucide-react';
 import { dataStore } from '../lib/data';
 import { useApp } from '../lib/AppContext';
@@ -484,6 +485,19 @@ export default function Header({
                         <User size={15} />
                         <span>Mi Progreso & Cuenta</span>
                       </button>
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          if (contextApp?.setIsSettingsModalOpen) {
+                            contextApp.setIsSettingsModalOpen(true);
+                          }
+                        }}
+                      >
+                        <Settings size={15} />
+                        <span>Configuración & Voz</span>
+                      </button>
                       {onSignOut && (
                         <button
                           type="button"
@@ -502,15 +516,30 @@ export default function Header({
                 )}
               </div>
             ) : (
-              <button 
-                type="button"
-                className="header-login-btn"
-                onClick={onOpenAuth}
-                title="Iniciar sesión para proteger y sincronizar tu progreso en la nube"
-              >
-                <LogIn size={15} />
-                <span>Entrar</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button
+                  type="button"
+                  className="header-notif-btn"
+                  onClick={() => {
+                    if (contextApp?.setIsSettingsModalOpen) {
+                      contextApp.setIsSettingsModalOpen(true);
+                    }
+                  }}
+                  title="Configuración del sistema y selección de voz"
+                  style={{ width: 34, height: 34 }}
+                >
+                  <Settings size={16} />
+                </button>
+                <button 
+                  type="button" 
+                  className="header-login-btn"
+                  onClick={onOpenAuth}
+                  title="Iniciar sesión para proteger y sincronizar tu progreso en la nube"
+                >
+                  <LogIn size={15} />
+                  <span>Entrar</span>
+                </button>
+              </div>
             )}
           </div>
         </div>

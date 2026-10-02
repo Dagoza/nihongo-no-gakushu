@@ -59,13 +59,16 @@ export default function ComprehensionQuiz({
 
   return (
     <div 
-      className="card" 
+      className="card comprehension-quiz-card" 
       style={{ 
-        marginTop: 24, 
-        padding: '24px 26px', 
+        marginTop: 20, 
+        padding: '20px 22px', 
         borderRadius: 'var(--radius-lg, 16px)',
         border: '1.5px solid var(--border)',
-        background: 'var(--bg-card)'
+        background: 'var(--bg-card)',
+        boxSizing: 'border-box',
+        width: '100%',
+        overflow: 'hidden'
       }}
     >
       {/* Header */}
@@ -149,7 +152,7 @@ export default function ComprehensionQuiz({
               </div>
 
               {/* Multiple Choice Options Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10, marginBottom: hasAnswered ? 14 : 0 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginBottom: hasAnswered ? 14 : 0 }}>
                 {(q.options || []).map((opt, optIdx) => {
                   const isThisSelected = selectedOpt === optIdx;
                   const isThisTheCorrectAnswer = optIdx === q.correct_index;

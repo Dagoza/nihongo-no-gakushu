@@ -21,6 +21,7 @@ import { getAuthSession } from '../lib/supabaseSync';
 import { useApp } from '../lib/AppContext';
 import ComprehensionQuiz from './ComprehensionQuiz';
 import * as wanakana from 'wanakana';
+import { getSpeakerVoice } from './ConversationTab';
 
 export const CONVERSATION_CATEGORIES = [
   { id: 'food', label: 'Comida & Restaurantes', icon: '🍱', prompt: 'Pidiendo en un restaurante japonés, preguntando por platos e ingredientes' },
@@ -247,23 +248,14 @@ export default function ConversationGeneratorModal({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 1200 }}>
+    <div className="conv-modal-backdrop" onClick={onClose}>
       <div 
-        className="modal-window" 
+        className="conv-modal-window" 
         onClick={(e) => e.stopPropagation()}
-        style={{ 
-          maxWidth: 780, 
-          width: '92%', 
-          maxHeight: '90vh', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          overflow: 'hidden',
-          borderRadius: 16
-        }}
       >
         {/* Header */}
-        <div className="modal-header" style={{ padding: '18px 24px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div className="conv-modal-header">
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 0 }}>
             <div style={{
               width: 36,
               height: 36,
@@ -273,15 +265,17 @@ export default function ConversationGeneratorModal({
               alignItems: 'center',
               justifyContent: 'center',
               color: '#fff',
-              boxShadow: '0 4px 12px rgba(236, 72, 153, 0.3)'
+              boxShadow: '0 4px 12px rgba(236, 72, 153, 0.3)',
+              flexShrink: 0,
+              marginTop: 2
             }}>
               <Sparkles size={20} />
             </div>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.3 }}>
                 Generador de Diálogos con IA
               </h3>
-              <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              <p style={{ margin: '3px 0 0', fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.35 }}>
                 Crea conversaciones situacionales regulando palabras objetivo, nivel y temática.
               </p>
             </div>
@@ -290,14 +284,14 @@ export default function ConversationGeneratorModal({
             className="modal-close-btn" 
             onClick={onClose}
             aria-label="Cerrar modal"
-            style={{ width: 32, height: 32, borderRadius: '50%' }}
+            style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2 }}
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+        <div className="conv-modal-body">
           
           {/* Auth requirement notice */}
           {!authUser && (
@@ -306,17 +300,18 @@ export default function ConversationGeneratorModal({
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: 12,
+              flexWrap: 'wrap',
               background: 'rgba(236, 72, 153, 0.08)',
               border: '1px solid rgba(236, 72, 153, 0.25)',
               borderRadius: 10,
-              padding: '12px 16px',
-              fontSize: '0.86rem',
+              padding: '12px 14px',
+              fontSize: '0.85rem',
               color: 'var(--text-main)',
               marginBottom: 16
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: '1.25rem' }}>🔒</span>
-                <span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 200 }}>
+                <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>🔒</span>
+                <span style={{ lineHeight: 1.35 }}>
                   Para generar diálogos con IA debes <strong>iniciar sesión</strong> con tu cuenta.
                 </span>
               </div>
@@ -332,7 +327,8 @@ export default function ConversationGeneratorModal({
                 style={{
                   background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
                   border: 'none',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  padding: '7px 14px'
                 }}
               >
                 Iniciar Sesión
@@ -341,11 +337,11 @@ export default function ConversationGeneratorModal({
           )}
 
           {!generatedConv && !isGenerating && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', boxSizing: 'border-box' }}>
               
               {/* Words / Vocab selection */}
-              <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 14 }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
+              <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 12, boxSizing: 'border-box' }}>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
                   1. Palabras o vocabulario a incluir (opcional):
                 </label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
@@ -362,7 +358,9 @@ export default function ConversationGeneratorModal({
                         padding: '3px 9px',
                         borderRadius: 20,
                         fontSize: '0.85rem',
-                        fontWeight: 700
+                        fontWeight: 700,
+                        maxWidth: '100%',
+                        wordBreak: 'break-word'
                       }}
                     >
                       <span className="jp-text">{w}</span>
@@ -370,23 +368,24 @@ export default function ConversationGeneratorModal({
                         type="button"
                         onClick={() => handleRemoveWord(w)}
                         style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0 }}
+                        aria-label={`Eliminar palabra ${w}`}
                       >
                         <X size={13} />
                       </button>
                     </span>
                   ))}
                   {selectedWords.length === 0 && (
-                    <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                    <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.35 }}>
                       Sin palabras específicas (la IA usará vocabulario natural según el nivel).
                     </span>
                   )}
                 </div>
 
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'stretch' }}>
                   <input
                     type="text"
                     className="search-input jp-text"
-                    placeholder="Escribir o pegar palabra/kanji (ej: taberu → 食べる / 切符)..."
+                    placeholder="Palabra o kanji (ej: taberu → 食べる)..."
                     value={newWordInput}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -407,13 +406,13 @@ export default function ConversationGeneratorModal({
                         handleAddWord();
                       }
                     }}
-                    style={{ flex: 1, padding: '7px 12px', fontSize: '0.88rem' }}
+                    style={{ flex: 1, minWidth: 0, padding: '8px 12px', fontSize: '0.88rem', boxSizing: 'border-box' }}
                   />
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
                     onClick={handleAddWord}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexShrink: 0, padding: '0 14px', whiteSpace: 'nowrap' }}
                   >
                     <Plus size={15} />
                     <span>Añadir</span>
@@ -423,17 +422,25 @@ export default function ConversationGeneratorModal({
 
               {/* Level Selector */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
                   2. Nivel JLPT:
                 </label>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div className="conv-level-grid">
                   {['N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
                     <button
                       key={lvl}
                       type="button"
                       className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
                       onClick={() => setLevel(lvl)}
-                      style={{ padding: '6px 14px', borderRadius: 8, fontWeight: 700 }}
+                      style={{
+                        padding: '7px 4px',
+                        borderRadius: 8,
+                        fontWeight: 700,
+                        width: '100%',
+                        textAlign: 'center',
+                        fontSize: '0.85rem',
+                        ...(level === lvl ? { background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', borderColor: '#ec4899', color: '#fff' } : {})
+                      }}
                     >
                       {lvl}
                     </button>
@@ -443,32 +450,25 @@ export default function ConversationGeneratorModal({
 
               {/* Category & Topic */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>
                   3. Tema y contexto de la conversación:
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginBottom: 10 }}>
+                <div className="conv-categories-grid">
                   {CONVERSATION_CATEGORIES.map((cat) => (
                     <button
                       key={cat.id}
                       type="button"
                       onClick={() => setSelectedCatId(cat.id)}
+                      className="conv-category-btn"
                       style={{
-                        padding: '8px 10px',
-                        borderRadius: 8,
                         border: selectedCatId === cat.id ? '2px solid #ec4899' : '1px solid var(--border)',
-                        background: selectedCatId === cat.id ? 'rgba(236, 72, 153, 0.1)' : 'var(--surface)',
+                        background: selectedCatId === cat.id ? 'rgba(236, 72, 153, 0.12)' : 'var(--surface)',
                         color: selectedCatId === cat.id ? '#ec4899' : 'var(--text-main)',
                         fontWeight: selectedCatId === cat.id ? 700 : 500,
-                        fontSize: '0.83rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 7,
-                        textAlign: 'left'
                       }}
                     >
-                      <span style={{ fontSize: '1.1rem' }}>{cat.icon}</span>
-                      <span>{cat.label}</span>
+                      <span style={{ fontSize: '1.15rem', flexShrink: 0 }}>{cat.icon}</span>
+                      <span className="conv-category-label">{cat.label}</span>
                     </button>
                   ))}
                 </div>
@@ -478,19 +478,19 @@ export default function ConversationGeneratorModal({
                     <input
                       type="text"
                       className="search-input"
-                      placeholder="Escribe la situación que deseas (ej: 'Preguntar en el médico por un dolor de garganta')..."
+                      placeholder="Escribe la situación que deseas (ej: 'En el médico por dolor de garganta')..."
                       value={customTheme}
                       onChange={(e) => setCustomTheme(e.target.value)}
-                      style={{ width: '100%', padding: '8px 12px', fontSize: '0.88rem' }}
+                      style={{ width: '100%', minWidth: 0, padding: '8px 12px', fontSize: '0.88rem', boxSizing: 'border-box' }}
                     />
                   </div>
                 )}
               </div>
 
               {/* Characters & Length */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="conv-characters-grid">
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 5 }}>
                     Personaje 1:
                   </label>
                   <input
@@ -498,12 +498,12 @@ export default function ConversationGeneratorModal({
                     className="search-input"
                     value={characterA}
                     onChange={(e) => setCharacterA(e.target.value)}
-                    style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem' }}
+                    style={{ width: '100%', minWidth: 0, padding: '8px 10px', fontSize: '0.88rem', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 5 }}>
                     Personaje 2:
                   </label>
                   <input
@@ -511,7 +511,7 @@ export default function ConversationGeneratorModal({
                     className="search-input"
                     value={characterB}
                     onChange={(e) => setCharacterB(e.target.value)}
-                    style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem' }}
+                    style={{ width: '100%', minWidth: 0, padding: '8px 10px', fontSize: '0.88rem', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
@@ -521,11 +521,11 @@ export default function ConversationGeneratorModal({
 
           {/* Loading */}
           {isGenerating && (
-            <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <div style={{ textAlign: 'center', padding: '40px 16px' }}>
               <div style={{
-                width: 64,
-                height: 64,
-                margin: '0 auto 20px',
+                width: 60,
+                height: 60,
+                margin: '0 auto 16px',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
                 display: 'flex',
@@ -535,12 +535,12 @@ export default function ConversationGeneratorModal({
                 animation: 'pulse 1.6s infinite ease-in-out',
                 boxShadow: '0 8px 24px rgba(236, 72, 153, 0.4)'
               }}>
-                <Sparkles size={32} />
+                <Sparkles size={28} />
               </div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>
+              <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>
                 Generando Diálogo en Japonés Natural...
               </h4>
-              <p style={{ fontSize: '0.92rem', color: '#ec4899', fontWeight: 600 }}>
+              <p style={{ fontSize: '0.88rem', color: '#ec4899', fontWeight: 600, margin: 0 }}>
                 ⚡ Calibrando nivel {level} y tejiendo turnos conversacionales con audio...
               </p>
             </div>
@@ -548,35 +548,39 @@ export default function ConversationGeneratorModal({
 
           {/* Result Preview */}
           {generatedConv && (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-                <div>
-                  <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 4 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, width: '100%', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
+                <div style={{ flex: 1, minWidth: 'min(200px, 100%)' }}>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}>
                     <span className="vocab-tag">{generatedConv.level || level}</span>
-                    <span className="vocab-tag" style={{ background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899' }}>
+                    <span className="vocab-tag" style={{ background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', border: '1px solid rgba(236, 72, 153, 0.25)' }}>
                       {generatedConv.topic}
                     </span>
                     <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                       {generatedConv.dialogue?.length || 0} líneas
                     </span>
                   </div>
-                  <h3 className="jp-text" style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 4px', color: 'var(--text-main)' }}>
+                  <h3 className="jp-text" style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 4px', color: 'var(--text-main)', wordBreak: 'break-word', lineHeight: 1.3 }}>
                     {generatedConv.title_jp}
                   </h3>
-                  <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '0.92rem', color: 'var(--text-muted)', wordBreak: 'break-word' }}>
                     {generatedConv.title_es}
                   </div>
                 </div>
 
                 <button
                   type="button"
-                  className="btn btn-outline btn-xs"
+                  className="btn btn-outline btn-xs conv-play-all-btn"
                   onClick={() => {
-                    const playlist = (generatedConv.dialogue || []).map(d => ({ text: d.jp, desc: `${d.speaker}: ${d.es}` }));
+                    const playlist = (generatedConv.dialogue || []).map((d, idx) => ({ 
+                      text: d.jp, 
+                      desc: `${d.speaker}: ${d.es}`,
+                      voice: getSpeakerVoice(d.speaker, idx)
+                    }));
                     audioManager.setPlaylist(playlist, 0);
-                    if (playlist.length > 0) audioManager.speak(playlist[0].text, { autoAdvance: true });
+                    if (playlist.length > 0) audioManager.speak(playlist[0].text, { voice: playlist[0].voice, autoAdvance: true });
                   }}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#ec4899', borderColor: '#ec4899' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#ec4899', borderColor: '#ec4899', flexShrink: 0 }}
                 >
                   <Volume2 size={14} />
                   <span>Reproducir Diálogo Completo</span>
@@ -584,7 +588,7 @@ export default function ConversationGeneratorModal({
               </div>
 
               {/* Dialogue Lines */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
                 {(generatedConv.dialogue || []).map((d, idx) => (
                   <div
                     key={idx}
@@ -592,34 +596,35 @@ export default function ConversationGeneratorModal({
                       background: 'var(--surface)',
                       border: '1px solid var(--border)',
                       borderRadius: 10,
-                      padding: '12px 16px',
+                      padding: '10px 12px',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'flex-start',
-                      gap: 12
+                      gap: 10,
+                      boxSizing: 'border-box'
                     }}
                   >
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: 0, wordBreak: 'break-word' }}>
                       <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent)', marginBottom: 2 }}>
                         {d.speaker}:
                       </div>
-                      <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 2 }}>
+                      <div className="jp-text" style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 2, lineHeight: 1.45 }}>
                         {d.jp}
                       </div>
                       {d.kana && (
-                        <div className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 4 }}>
+                        <div className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 4, lineHeight: 1.4 }}>
                           {d.kana}
                         </div>
                       )}
-                      <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
                         🇪🇸 {d.es}
                       </div>
                     </div>
                     <button
                       type="button"
                       className="audio-btn"
-                      style={{ width: 32, height: 32 }}
-                      onClick={() => audioManager.speak(d.jp)}
+                      style={{ width: 34, height: 34, flexShrink: 0 }}
+                      onClick={() => audioManager.speak(d.jp, { voice: getSpeakerVoice(d.speaker, idx) })}
                       title="Escuchar línea"
                     >
                       <Volume2 size={16} />
@@ -634,14 +639,15 @@ export default function ConversationGeneratorModal({
                   background: 'rgba(236, 72, 153, 0.08)',
                   borderLeft: '4px solid #ec4899',
                   borderRadius: 8,
-                  padding: '12px 16px',
-                  marginBottom: 16
+                  padding: '12px 14px',
+                  marginBottom: 12,
+                  boxSizing: 'border-box'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#ec4899', fontWeight: 700, fontSize: '0.88rem', marginBottom: 6 }}>
                     <Lightbulb size={16} />
                     <span>Puntos Clave de Gramática:</span>
                   </div>
-                  <ul style={{ margin: 0, paddingLeft: 18, fontSize: '0.85rem', lineHeight: 1.6 }}>
+                  <ul style={{ margin: 0, paddingLeft: 18, fontSize: '0.85rem', lineHeight: 1.6, wordBreak: 'break-word' }}>
                     {generatedConv.grammar_notes.map((gn, idx) => (
                       <li key={idx} style={{ marginBottom: 3 }}>{gn}</li>
                     ))}
@@ -665,44 +671,44 @@ export default function ConversationGeneratorModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="modal-footer" style={{ padding: '14px 24px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
-          <div>
+        <div className="conv-modal-footer">
+          <div className="conv-footer-brand">
             {generatedConv ? (
               <button
                 type="button"
                 className="btn btn-ghost btn-sm"
                 onClick={() => setGeneratedConv(null)}
-                style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}
+                style={{ color: 'var(--text-muted)', fontSize: '0.82rem', padding: '6px 10px' }}
               >
-                Volver a configurar
+                ← Volver a configurar
               </button>
             ) : (
-              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                Powered by Groq AI Neuronal
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                <span>⚡</span> Powered by Groq AI Neuronal
               </span>
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <div className="conv-footer-actions">
             <button
               type="button"
-              className="btn btn-outline btn-sm"
+              className="btn btn-outline btn-sm conv-btn-close"
               onClick={onClose}
             >
               Cerrar
             </button>
 
-            {!generatedConv && (
+            {!generatedConv ? (
               <button
                 type="button"
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm conv-btn-primary"
                 onClick={handleGenerate}
                 disabled={isGenerating}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 6,
-                  padding: '8px 18px',
                   fontWeight: 700,
                   background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
                   borderColor: '#ec4899'
@@ -711,26 +717,25 @@ export default function ConversationGeneratorModal({
                 <Sparkles size={16} />
                 <span>{!authUser ? '🔒 Inicia sesión para Generar' : 'Generar Diálogo con IA'}</span>
               </button>
-            )}
-
-            {generatedConv && (
+            ) : (
               <>
                 <button
                   type="button"
-                  className="btn btn-outline btn-sm"
+                  className="btn btn-outline btn-sm conv-btn-copy"
                   onClick={handleCopy}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}
                 >
                   {copiedSuccess ? <Check size={14} className="text-success" /> : <Copy size={14} />}
                   <span>{copiedSuccess ? 'Copiado' : 'Copiar'}</span>
                 </button>
                 <button
                   type="button"
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-primary btn-sm conv-btn-save"
                   onClick={handleSaveConversation}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: 6,
                     fontWeight: 700,
                     background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',

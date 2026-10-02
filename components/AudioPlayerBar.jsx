@@ -17,7 +17,8 @@ import {
   ChevronUp,
   RotateCcw,
   RotateCw,
-  PenTool
+  PenTool,
+  BookOpen
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import SaveVocabModal from './SaveVocabModal';
@@ -268,6 +269,23 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                   {(audioState.selectedText || audioState.currentText) && (
                     <div className="audio-inline-actions">
                       <button
+                        className="audio-dict-inline-btn"
+                        title={audioState.selectedText ? `Consultar significado de "${audioState.selectedText}" en el Diccionario` : 'Consultar significado en el Diccionario'}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
+                        onClick={() => {
+                          const text = (audioState.selectedText || audioState.currentText || '').trim();
+                          if (contextApp?.openDictionary) {
+                            contextApp.openDictionary(text);
+                          }
+                        }}
+                        type="button"
+                      >
+                        <BookOpen size={13} />
+                        <span>Diccionario</span>
+                      </button>
+
+                      <button
                         className="audio-save-inline-btn"
                         title={audioState.selectedText ? `Guardar selección "${audioState.selectedText}" en tu vocabulario` : 'Guardar esta frase u oración en tu vocabulario'}
                         onMouseDown={(e) => e.preventDefault()}
@@ -427,39 +445,36 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
           {/* Actions: Play Selection, Save Selection, Saved Link & Speed */}
           {!isMinimized && (
             <div className="audio-actions">
-              {/* Quick Link to Saved Words Tab */}
+              {/* Botón de Diccionario Rápido */}
               <button
-                className="audio-saved-tab-link"
-                onClick={() => onNavigate && onNavigate('saved')}
-                title="Ver palabras y frases guardadas para exportar y crear historias"
+                className="audio-dict-main-btn"
+                onClick={() => {
+                  const text = (audioState.selectedText || audioState.currentText || '').trim();
+                  if (contextApp?.openDictionary) {
+                    contextApp.openDictionary(text);
+                  }
+                }}
+                title={audioState.selectedText ? `Buscar significado de "${audioState.selectedText}" en el Diccionario` : 'Abrir Diccionario y Desglose Morfológico'}
                 type="button"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 'var(--radius-sm, 8px)',
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15))',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  color: 'var(--primary)',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  whiteSpace: 'nowrap'
+                }}
               >
-                <BookmarkCheck size={14} />
-                <span>Guardadas ({totalSaved})</span>
+                <BookOpen size={14} />
+                <span>Diccionario</span>
               </button>
-
-              {/* Voice selector (Nanami / Keita) */}
-              <div className="speed-selector">
-                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                  <Sparkles size={13} color="var(--primary)" /> Voz:
-                </span>
-                <button
-                  className={`speed-pill ${audioState.voiceName === 'ja-JP-NanamiNeural' ? 'active' : ''}`}
-                  onClick={() => audioManager.setVoice('ja-JP-NanamiNeural')}
-                  title="Voz femenina neuronal de Tokio (Nanami)"
-                  type="button"
-                >
-                  Nanami ♀
-                </button>
-                <button
-                  className={`speed-pill ${audioState.voiceName === 'ja-JP-KeitaNeural' ? 'active' : ''}`}
-                  onClick={() => audioManager.setVoice('ja-JP-KeitaNeural')}
-                  title="Voz masculina neuronal de Tokio (Keita)"
-                  type="button"
-                >
-                  Keita ♂
-                </button>
-              </div>
 
               {/* Speed rates */}
               <div className="speed-selector">

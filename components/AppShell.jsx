@@ -9,6 +9,8 @@ import AuthModal from './AuthModal';
 import UIModal from './UIModal';
 import ProductTour from './ProductTour';
 import PracticePadModal from './PracticePadModal';
+import DictionaryModal from './DictionaryModal';
+import SettingsModal from './SettingsModal';
 
 function AppShellContent({ children }) {
   const {
@@ -36,7 +38,11 @@ function AppShellContent({ children }) {
     handleSkipTour,
     handleCompleteTour,
     practicePadState,
-    closePracticePad
+    closePracticePad,
+    dictionaryState,
+    closeDictionary,
+    isSettingsModalOpen,
+    setIsSettingsModalOpen
   } = useApp();
 
   return (
@@ -132,6 +138,19 @@ function AppShellContent({ children }) {
             });
           }
         }}
+      />
+
+      {/* Diccionario Rápido y Desarticulador Morfológico */}
+      <DictionaryModal 
+        isOpen={dictionaryState?.isOpen}
+        onClose={closeDictionary}
+        initialSearch={dictionaryState?.search}
+      />
+
+      {/* Configuración Global del Sistema (Voz TTS, velocidad, etc.) */}
+      <SettingsModal 
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
       />
     </>
   );

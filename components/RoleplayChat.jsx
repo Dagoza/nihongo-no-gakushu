@@ -100,6 +100,14 @@ export const ROLEPLAY_SCENARIOS = [
   }
 ];
 
+const getBotVoice = (scenario) => {
+  const role = (scenario?.aiRole || '').toLowerCase();
+  if (role.includes('店員') || role.includes('カフェ') || role.includes('フロント') || role.includes('案内') || role.includes('sakura') || role.includes('anna') || role.includes('camarera')) {
+    return 'ja-JP-NanamiNeural';
+  }
+  return 'ja-JP-KeitaNeural';
+};
+
 export default function RoleplayChat({ appState, onUpdateState, authUser: propAuthUser = null }) {
   let contextApp = null;
   try {

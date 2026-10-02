@@ -42,6 +42,23 @@ import SpeechPractice from './SpeechPractice';
 import ComprehensionQuiz from './ComprehensionQuiz';
 import { useApp } from '../lib/AppContext';
 
+export function getSpeakerVoice(speakerName, speakerIndex = 0) {
+  if (!speakerName) {
+    return (speakerIndex % 2 === 0) ? 'ja-JP-NanamiNeural' : 'ja-JP-KeitaNeural';
+  }
+  const s = String(speakerName).toLowerCase().trim();
+  // Personajes femeninos
+  if (/(anna|sakura|yuka|elena|maria|hanako|abuela|encargada|vendedora|camarera|mujer|madre|chica|chicas|hermana|señora|senora|\ba\b)/i.test(s)) {
+    return 'ja-JP-NanamiNeural';
+  }
+  // Personajes masculinos
+  if (/(profesor|rodrigo|kenta|ken|takeshi|tarou|yamada|vendedor|cajero|taxista|médico|medico|hombre|padre|chico|chicos|hermano|señor|senor|\bb\b)/i.test(s)) {
+    return 'ja-JP-KeitaNeural';
+  }
+  // Alternar por índice de hablante
+  return (speakerIndex % 2 === 0) ? 'ja-JP-NanamiNeural' : 'ja-JP-KeitaNeural';
+}
+
 export default function ConversationTab({ 
   appState, 
   onUpdateState,
@@ -189,9 +206,10 @@ export default function ConversationTab({
     // Si hay un personaje silenciado, solo reproducir las líneas de su contraparte
     const playlist = targetDialogueList
       .filter(d => !currentMuted || d.speaker !== currentMuted)
-      .map(d => ({
+      .map((d, idx) => ({
         text: d.jp || d.japanese,
-        desc: `${d.speaker}: ${d.es || d.spanish || ''}`
+        desc: `${d.speaker}: ${d.es || d.spanish || ''}`,
+        voice: getSpeakerVoice(d.speaker, idx)
       }));
 
     if (playlist.length === 0) {
@@ -203,7 +221,7 @@ export default function ConversationTab({
     }
 
     audioManager.setPlaylist(playlist, 0);
-    audioManager.speak(playlist[0].text, { autoAdvance: true });
+    audioManager.speak(playlist[0].text, { voice: playlist[0].voice, autoAdvance: true });
   };
 
   const handleSelectOption = (option) => {
@@ -832,7 +850,7 @@ export default function ConversationTab({
                             style={{ width: 34, height: 34, flexShrink: 0 }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              audioManager.speak(lineJp);
+                              audioManager.speak(lineJp, { voice: getSpeakerVoice(d.speaker, idx) });
                             }}
                             title={isMuted ? "Escuchar modelo de pronunciación (Tokio)" : "Escuchar audio"}
                           >
@@ -1327,7 +1345,7 @@ export default function ConversationTab({
                                 style={{ width: 34, height: 34, flexShrink: 0 }}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  audioManager.speak(lineJp);
+                                  audioManager.speak(lineJp, { voice: getSpeakerVoice(d.speaker, idx) });
                                 }}
                                 title={isMuted ? "Escuchar modelo" : "Escuchar audio"}
                               >

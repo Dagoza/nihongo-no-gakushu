@@ -128,6 +128,27 @@ export function AppProvider({ children }) {
   const closePracticePad = useCallback(() => {
     setPracticePadState(prev => ({ ...prev, isOpen: false }));
   }, []);
+
+  // Diccionario Rápido & Análisis Morfológico
+  const [dictionaryState, setDictionaryState] = useState({
+    isOpen: false,
+    search: ''
+  });
+
+  const openDictionary = useCallback((initialSearch = '') => {
+    setDictionaryState({
+      isOpen: true,
+      search: typeof initialSearch === 'string' ? initialSearch : ''
+    });
+  }, []);
+
+  const closeDictionary = useCallback(() => {
+    setDictionaryState(prev => ({ ...prev, isOpen: false }));
+  }, []);
+
+  // Modal de Configuración Global (Voz TTS, velocidad, motor)
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
   // Modal amigable para alertas, avisos y confirmaciones (Reemplazo total de alert() y confirm())
   const [uiModal, setUiModal] = useState({
     isOpen: false,
@@ -462,7 +483,14 @@ export function AppProvider({ children }) {
     // Cuaderno de Práctica & Caligrafía
     practicePadState,
     openPracticePad,
-    closePracticePad
+    closePracticePad,
+    // Diccionario Rápido & Análisis Morfológico
+    dictionaryState,
+    openDictionary,
+    closeDictionary,
+    // Modal de Configuración Global
+    isSettingsModalOpen,
+    setIsSettingsModalOpen
   };
 
   return (
