@@ -121,12 +121,20 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     };
   }, [isThemeDropdownOpen]);
 
+  // Theme step mapping for all 37 modules
+  const themeSteps = {
+    vida: [1, 2, 3, 4, 6, 20, 21, 30, 31],
+    trabajo: [7, 8, 9, 26, 27, 34, 37],
+    ciudad: [5, 12, 13, 14, 15, 22, 25, 36],
+    ocio: [10, 11, 16, 17, 18, 19, 23, 24, 28, 29, 32, 33, 35]
+  };
+
   const themesList = [
     { id: 'all', label: 'Todos los Módulos', icon: '🌐', count: steps.length },
-    { id: 'vida', label: 'Vida Cotidiana y Familia', icon: '🏠', count: 5 },
-    { id: 'trabajo', label: 'Trabajo, Horarios y Reglas', icon: '🏢', count: 3 },
-    { id: 'ciudad', label: 'Ciudad, Tiendas y Transporte', icon: '🛍️', count: 5 },
-    { id: 'ocio', label: 'Ocio, Cultura, Salud y Metas', icon: '🎮', count: 6 },
+    { id: 'vida', label: 'Vida Cotidiana y Familia', icon: '🏠', count: themeSteps.vida.length },
+    { id: 'trabajo', label: 'Trabajo, Horarios y Reglas', icon: '🏢', count: themeSteps.trabajo.length },
+    { id: 'ciudad', label: 'Ciudad, Tiendas y Transporte', icon: '🛍️', count: themeSteps.ciudad.length },
+    { id: 'ocio', label: 'Ocio, Cultura, Salud y Metas', icon: '🎮', count: themeSteps.ocio.length },
   ];
 
   // Listen for browser Back/Forward navigation to smoothly switch between list and module view
@@ -183,13 +191,6 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     });
   }, [steps, userState]);
 
-  // Theme step mapping
-  const themeSteps = {
-    vida: [1, 2, 3, 4, 6],
-    trabajo: [7, 8, 9],
-    ciudad: [5, 12, 13, 14, 15],
-    ocio: [10, 11, 16, 17, 18, 19]
-  };
 
   // Filtered steps
   const filteredSteps = steps.filter(step => {

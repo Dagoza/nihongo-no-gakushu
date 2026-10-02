@@ -1,1 +1,1 @@
-public/material_de_estudio/cursos/irodori[[:space:]]elementary.pdf filter=lfs diff=lfs merge=lfs -text
+public/material_de_estudio/cursos/irodori*.pdf filter=lfs diff=lfs merge=lfs -text

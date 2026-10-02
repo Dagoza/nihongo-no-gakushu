@@ -1029,20 +1029,20 @@ flowchart LR
 Esta matriz centraliza el estado real de desarrollo de la plataforma, reflejando las **actualizaciones completadas en producción** `[x]` y las **tareas pendientes** `[ ]`:
 
 ### 6.1. Ruta Consolidada y Competencias Can-Do
-- [x] **Consolidación de temarios:** 19 módulos unificados fusionando Irodori A1, NHK y JLPT N5/N4 sin duplicidad.
-- [x] **Banco de 87 Can-dos:** Definición de objetivos observables con tarea funcional, frase clave en japonés y botón de audio.
+- [x] **Consolidación de temarios:** 37 módulos unificados fusionando Irodori (Starter, Elementary 1, Elementary 2, Pre-Intermediate), NHK World y JLPT N5/N4/N3 sin duplicidad.
+- [x] **Banco de 145+ Can-dos:** Definición de objetivos observables con tarea funcional, frase clave en japonés y botón de audio.
 - [x] **Red de Temas Relacionados:** Enlace con justificación pedagógica (`relationship` y `reason`) y navegación interactiva entre módulos.
 - [x] **Modo Detallado de Módulo:** Vista expandida con guía cultural, puntos gramaticales, tabla léxica y micro-quizzes con XP.
 - [x] **Checkbox de Autoevaluación Can-do:** Selección individual de dominio interactiva (+10 XP) con persistencia en `completedCanDos`.
 - [x] **Métricas Can-Do en Mi Progreso:** Barra dinámica y contador de competencias logradas en `/progress`.
-- [x] **Equiparación de ejercicios:** Banco ampliado a 82 ejercicios en `exercises.json` y 35 ejercicios de contexto N4.
+- [x] **Equiparación de ejercicios:** Banco ampliado con ejercicios integrados en cada módulo como paso final obligatorio de evaluación.
 - [x] **Filtros por nivel y estado en `/curriculum`:** Selectores de `Todos`, `Completados`, `Pendientes` y badges de estado completado.
 - [ ] **Importación en bloque a FSRS:** Botón para añadir todo el vocabulario del módulo al mazo de repetición espaciada.
 - [ ] **Hipervínculo a página de PDF:** Salto automático al visor modal en `#page=X` del libro fuente.
-- [ ] **Incorporación de la Serie Oficial Completa de Materiales Irodori:**
-  - [ ] Descargar e incorporar [Elementary 1](https://www.irodori.jpf.go.jp/en/elementary01/pdf.html) (A1/A2.1) al catálogo de PDFs y visor interactivo.
-  - [ ] Descargar e incorporar [Elementary 2](https://www.irodori.jpf.go.jp/en/elementary02/pdf.html) (A2.2) para expandir los módulos hacia JLPT N4.
-  - [ ] Descargar e incorporar [Pre-Intermediate](https://www.irodori.jpf.go.jp/en/pre-intermediate/pdf.html) (A2/B1) para la transición intermedia hacia JLPT N3.
+- [x] **Incorporación de la Serie Oficial Completa de Materiales Irodori:**
+  - [x] Descargar e incorporar [Elementary 1](https://www.irodori.jpf.go.jp/en/elementary01/pdf.html) (N5) al catálogo de PDFs y visor interactivo.
+  - [x] Descargar e incorporar [Elementary 2](https://www.irodori.jpf.go.jp/en/elementary02/pdf.html) (N4) para expandir los módulos hacia JLPT N4 (Módulos 20 a 28).
+  - [x] Descargar e incorporar [Pre-Intermediate](https://www.irodori.jpf.go.jp/en/pre-intermediate/pdf.html) (N3) para la transición intermedia hacia JLPT N3 (Módulos 29 a 37).
 
 ### 6.2. Vocabulario, Pronunciación y Repaso Espaciado (SRS)
 - [x] **Motor FSRS v5:** Algoritmo matemático `ts-fsrs` integrado para programación de repasos adaptativos.

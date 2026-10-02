@@ -110,12 +110,39 @@ window.PDF_CATALOG_DATA = [
   },
   {
     "filename": "irodori elementary.pdf",
-    "title": "Irodori: Japanese for Life in Japan (Elementary)",
+    "title": "Irodori: Japanese for Life in Japan (Starter)",
+    "category": "Curso Oficial JF",
+    "level": "N5",
+    "pages": 515,
+    "size": "151 MB",
+    "description": "Curso oficial de Fundación Japón basado en objetivos Can-do para la vida diaria y laboral en Japón. Nivel Inicial (Starter)."
+  },
+  {
+    "filename": "irodori_elementary_1.pdf",
+    "title": "Irodori: Japanese for Life in Japan (Elementary 1)",
+    "category": "Curso Oficial JF",
+    "level": "N5",
+    "pages": 412,
+    "size": "71 MB",
+    "description": "Curso oficial de Fundación Japón: consolidación de comunicación práctica y vida en comunidad en Japón. Nivel Elemental 1."
+  },
+  {
+    "filename": "irodori_elementary_2.pdf",
+    "title": "Irodori: Japanese for Life in Japan (Elementary 2)",
     "category": "Curso Oficial JF",
     "level": "N4",
-    "pages": 515,
-    "size": "158 MB",
-    "description": "El aclamado curso oficial de Fundación Japón basado en objetivos Can-do para la vida diaria y laboral en Japón."
+    "pages": 506,
+    "size": "106 MB",
+    "description": "Curso oficial de Fundación Japón: interacción autónoma, resolución de imprevistos y relaciones laborales en Japón. Nivel Elemental 2."
+  },
+  {
+    "filename": "irodori_pre_intermediate.pdf",
+    "title": "Irodori: Japanese for Life in Japan (Pre-Intermediate)",
+    "category": "Curso Oficial JF",
+    "level": "N3",
+    "pages": 635,
+    "size": "128 MB",
+    "description": "Curso oficial de Fundación Japón: expresión de opiniones complejas, resolución avanzada y transición hacia el nivel intermedio N3."
   },
   {
     "filename": "思 Practice Sheet.pdf",

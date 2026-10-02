@@ -2448,5 +2448,1790 @@
     "category": "Saludos y Cortesía",
     "level": "N5",
     "romaji": "otsukaresamadesu"
+  },
+  {
+    "id": "v_iro_210",
+    "kanji": "先週",
+    "kana": "せんしゅう",
+    "meaning_es": "la semana pasada",
+    "meaning_en": "senshuu",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "せんしゅう",
+    "katakana": "センシュウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "私は先週日本に来たばかりなので、まだ電車の乗り方がよくわかりません。",
+        "es": "Como acabo de llegar a Japón la semana pasada, todavía no entiendo bien cómo usar los trenes."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_211",
+    "kanji": "慣れる",
+    "kana": "なれる",
+    "meaning_es": "acostumbrarse / habituarse",
+    "meaning_en": "nareru",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "なれる",
+    "katakana": "ナレル",
+    "tatoeba_sentences": [
+      {
+        "jp": "慣れるを使います。",
+        "es": "Uso / empleo acostumbrarse / habituarse."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_212",
+    "kanji": "真面目",
+    "kana": "まじめ",
+    "meaning_es": "serio / aplicado / formal",
+    "meaning_en": "majime",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "まじめ",
+    "katakana": "マジメ",
+    "tatoeba_sentences": [
+      {
+        "jp": "新しい課長はとても真面目そうで、話しやすそうな方ですね。",
+        "es": "El nuevo jefe de sección parece muy serio y parece una persona con la que es fácil hablar."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_213",
+    "kanji": "優しい",
+    "kana": "やさしい",
+    "meaning_es": "amable / cariñoso / bondadoso",
+    "meaning_en": "yasashii",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "やさしい",
+    "katakana": "ヤサシイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "優しいを使います。",
+        "es": "Uso / empleo amable / cariñoso / bondadoso."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_214",
+    "kanji": "性格",
+    "kana": "せいかく",
+    "meaning_es": "personalidad / carácter",
+    "meaning_en": "seikaku",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "せいかく",
+    "katakana": "セイカク",
+    "tatoeba_sentences": [
+      {
+        "jp": "性格を使います。",
+        "es": "Uso / empleo personalidad / carácter."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_215",
+    "kanji": "印象",
+    "kana": "いんしょう",
+    "meaning_es": "impresión (percepción)",
+    "meaning_en": "inshou",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "いんしょう",
+    "katakana": "インショウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "印象を使います。",
+        "es": "Uso / empleo impresión (percepción)."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_216",
+    "kanji": "小麦",
+    "kana": "こむぎ",
+    "meaning_es": "trigo (gluten)",
+    "meaning_en": "komugi",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "こむぎ",
+    "katakana": "コムギ",
+    "tatoeba_sentences": [
+      {
+        "jp": "小麦を使います。",
+        "es": "Uso / empleo trigo (gluten)."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_217",
+    "kanji": "豚肉",
+    "kana": "ぶたにく",
+    "meaning_es": "carne de cerdo",
+    "meaning_en": "butaniku",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ぶたにく",
+    "katakana": "ブタニク",
+    "tatoeba_sentences": [
+      {
+        "jp": "宗教上の理由で豚肉が食べられないので、鶏肉に変更できますか？",
+        "es": "Como no puedo comer carne de cerdo por motivos religiosos, ¿sería posible cambiarla por carne de pollo?"
+      }
+    ]
+  },
+  {
+    "id": "v_iro_218",
+    "kanji": "抜く",
+    "kana": "ぬく",
+    "meaning_es": "quitar / extraer / omitir",
+    "meaning_en": "nuku",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ぬく",
+    "katakana": "ヌク",
+    "tatoeba_sentences": [
+      {
+        "jp": "抜くを使います。",
+        "es": "Uso / empleo quitar / extraer / omitir."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_219",
+    "kanji": "混ぜる",
+    "kana": "まぜる",
+    "meaning_es": "mezclar / revolver",
+    "meaning_en": "mazeru",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "まぜる",
+    "katakana": "マゼル",
+    "tatoeba_sentences": [
+      {
+        "jp": "混ぜるを使います。",
+        "es": "Uso / empleo mezclar / revolver."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_220",
+    "kanji": "定食",
+    "kana": "ていしょく",
+    "meaning_es": "menú del día / combo cerrado",
+    "meaning_en": "teishoku",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ていしょく",
+    "katakana": "テイショク",
+    "tatoeba_sentences": [
+      {
+        "jp": "定食を使います。",
+        "es": "Uso / empleo menú del día / combo cerrado."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_221",
+    "kanji": "予約",
+    "kana": "よやく",
+    "meaning_es": "reserva",
+    "meaning_en": "yoyaku",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "よやく",
+    "katakana": "ヨヤク",
+    "tatoeba_sentences": [
+      {
+        "jp": "連休中はホテルが満室になるので、早めに予約したほうがいいですよ。",
+        "es": "Como los hoteles se llenan durante los festivos consecutivos, es mejor que reserves con bastante antelación."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_222",
+    "kanji": "観光地",
+    "kana": "かんこうち",
+    "meaning_es": "lugar turístico / destino",
+    "meaning_en": "kankouchi",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "かんこうち",
+    "katakana": "カンコウチ",
+    "tatoeba_sentences": [
+      {
+        "jp": "観光地を使います。",
+        "es": "Uso / empleo lugar turístico / destino."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_223",
+    "kanji": "景色",
+    "kana": "けしき",
+    "meaning_es": "paisaje / vista panorámica",
+    "meaning_en": "keshiki",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "けしき",
+    "katakana": "ケシキ",
+    "tatoeba_sentences": [
+      {
+        "jp": "景色を使います。",
+        "es": "Uso / empleo paisaje / vista panorámica."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_224",
+    "kanji": "切符",
+    "kana": "きっぷ",
+    "meaning_es": "billete / boleto",
+    "meaning_en": "kippu",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "きっぷ",
+    "katakana": "キップ",
+    "tatoeba_sentences": [
+      {
+        "jp": "切符を使います。",
+        "es": "Uso / empleo billete / boleto."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_225",
+    "kanji": "泊まる",
+    "kana": "とまる",
+    "meaning_es": "hospedarse / pernoctar",
+    "meaning_en": "tomaru",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "とまる",
+    "katakana": "トマル",
+    "tatoeba_sentences": [
+      {
+        "jp": "泊まるを使います。",
+        "es": "Uso / empleo hospedarse / pernoctar."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_226",
+    "kanji": "連休",
+    "kana": "れんきゅう",
+    "meaning_es": "puente festivo / días libres consecutivos",
+    "meaning_en": "renkyuu",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "れんきゅう",
+    "katakana": "レンキュウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "連休中はホテルが満室になるので、早めに予約したほうがいいですよ。",
+        "es": "Como los hoteles se llenan durante los festivos consecutivos, es mejor que reserves con bastante antelación."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_227",
+    "kanji": "祭り",
+    "kana": "まつり",
+    "meaning_es": "festival tradicional",
+    "meaning_en": "matsuri",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "まつり",
+    "katakana": "マツリ",
+    "tatoeba_sentences": [
+      {
+        "jp": "もし明日雨が降ったら、お祭りは中止になりますか？",
+        "es": "Si mañana lloviera, ¿se cancelará el festival?"
+      }
+    ]
+  },
+  {
+    "id": "v_iro_228",
+    "kanji": "屋台",
+    "kana": "やたい",
+    "meaning_es": "puesto callejero de comida o juegos",
+    "meaning_en": "yatai",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "やたい",
+    "katakana": "ヤタイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "屋台を使います。",
+        "es": "Uso / empleo puesto callejero de comida o juegos."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_229",
+    "kanji": "花火",
+    "kana": "はなび",
+    "meaning_es": "fuegos artificiales",
+    "meaning_en": "hanabi",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "はなび",
+    "katakana": "ハナビ",
+    "tatoeba_sentences": [
+      {
+        "jp": "花火を使います。",
+        "es": "Uso / empleo fuegos artificiales."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_230",
+    "kanji": "中止",
+    "kana": "ちゅうし",
+    "meaning_es": "cancelación / suspensión",
+    "meaning_en": "chuushi",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ちゅうし",
+    "katakana": "チュウシ",
+    "tatoeba_sentences": [
+      {
+        "jp": "もし明日雨が降ったら、お祭りは中止になりますか？",
+        "es": "Si mañana lloviera, ¿se cancelará el festival?"
+      }
+    ]
+  },
+  {
+    "id": "v_iro_231",
+    "kanji": "参加",
+    "kana": "さんか",
+    "meaning_es": "participación",
+    "meaning_en": "sanka",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "さんか",
+    "katakana": "サンカ",
+    "tatoeba_sentences": [
+      {
+        "jp": "参加を使います。",
+        "es": "Uso / empleo participación."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_232",
+    "kanji": "体育館",
+    "kana": "たいいくかん",
+    "meaning_es": "gimnasio / pabellón cubierto",
+    "meaning_en": "taiikukan",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "たいいくかん",
+    "katakana": "タイイクカン",
+    "tatoeba_sentences": [
+      {
+        "jp": "体育館を使います。",
+        "es": "Uso / empleo gimnasio / pabellón cubierto."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_233",
+    "kanji": "正月",
+    "kana": "しょうがつ",
+    "meaning_es": "Año Nuevo japonés",
+    "meaning_en": "shougatsu",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "しょうがつ",
+    "katakana": "ショウガツ",
+    "tatoeba_sentences": [
+      {
+        "jp": "日本では、お正月の三が日に神社やお寺へ初詣に行きます。",
+        "es": "En Japón, la gente va a santuarios o templos a hacer la primera visita del año durante los tres primeros días de Año Nuevo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_234",
+    "kanji": "成人式",
+    "kana": "せいじんしき",
+    "meaning_es": "Ceremonia de la Mayoría de Edad",
+    "meaning_en": "seijinshiki",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "せいじんしき",
+    "katakana": "セイジンシキ",
+    "tatoeba_sentences": [
+      {
+        "jp": "成人式を使います。",
+        "es": "Uso / empleo Ceremonia de la Mayoría de Edad."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_235",
+    "kanji": "着物",
+    "kana": "きもの",
+    "meaning_es": "kimono (traje tradicional)",
+    "meaning_en": "kimono",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "きもの",
+    "katakana": "キモノ",
+    "tatoeba_sentences": [
+      {
+        "jp": "着物を使います。",
+        "es": "Uso / empleo kimono (traje tradicional)."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_236",
+    "kanji": "神社",
+    "kana": "じんじゃ",
+    "meaning_es": "santuario sintoísta",
+    "meaning_en": "jinja",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "じんじゃ",
+    "katakana": "ジンジャ",
+    "tatoeba_sentences": [
+      {
+        "jp": "日本では、お正月の三が日に神社やお寺へ初詣に行きます。",
+        "es": "En Japón, la gente va a santuarios o templos a hacer la primera visita del año durante los tres primeros días de Año Nuevo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_237",
+    "kanji": "祝う",
+    "kana": "いわう",
+    "meaning_es": "celebrar / felicitar",
+    "meaning_en": "iwau",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "いわう",
+    "katakana": "イワウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "祝うを使います。",
+        "es": "Uso / empleo celebrar / felicitar."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_238",
+    "kanji": "初詣",
+    "kana": "はつもうで",
+    "meaning_es": "primera visita del año al santuario",
+    "meaning_en": "hatsumoude",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "はつもうで",
+    "katakana": "ハツモウデ",
+    "tatoeba_sentences": [
+      {
+        "jp": "日本では、お正月の三が日に神社やお寺へ初詣に行きます。",
+        "es": "En Japón, la gente va a santuarios o templos a hacer la primera visita del año durante los tres primeros días de Año Nuevo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_239",
+    "kanji": "掃除機",
+    "kana": "そうじき",
+    "meaning_es": "aspiradora",
+    "meaning_en": "soujiki",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "そうじき",
+    "katakana": "ソウジキ",
+    "tatoeba_sentences": [
+      {
+        "jp": "掃除機を使います。",
+        "es": "Uso / empleo aspiradora."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_240",
+    "kanji": "動かす",
+    "kana": "うごかす",
+    "meaning_es": "mover / accionar",
+    "meaning_en": "ugokasu",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "うごかす",
+    "katakana": "ウゴカス",
+    "tatoeba_sentences": [
+      {
+        "jp": "動かすを使います。",
+        "es": "Uso / empleo mover / accionar."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_241",
+    "kanji": "軽い",
+    "kana": "かるい",
+    "meaning_es": "ligero / poco pesado",
+    "meaning_en": "karui",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "かるい",
+    "katakana": "カルイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "軽いを使います。",
+        "es": "Uso / empleo ligero / poco pesado."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_242",
+    "kanji": "重い",
+    "kana": "おもい",
+    "meaning_es": "pesado",
+    "meaning_en": "omoi",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "おもい",
+    "katakana": "オモイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "重いを使います。",
+        "es": "Uso / empleo pesado."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_243",
+    "kanji": "忘れる",
+    "kana": "わすれる",
+    "meaning_es": "olvidar",
+    "meaning_en": "wasureru",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "わすれる",
+    "katakana": "ワスレル",
+    "tatoeba_sentences": [
+      {
+        "jp": "忘れるを使います。",
+        "es": "Uso / empleo olvidar."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_244",
+    "kanji": "割引",
+    "kana": "わりびき",
+    "meaning_es": "descuento / rebaja",
+    "meaning_en": "waribiki",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "わりびき",
+    "katakana": "ワリビキ",
+    "tatoeba_sentences": [
+      {
+        "jp": "割引を使います。",
+        "es": "Uso / empleo descuento / rebaja."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_245",
+    "kanji": "展示",
+    "kana": "てんじ",
+    "meaning_es": "exposición / muestra",
+    "meaning_en": "tenji",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "てんじ",
+    "katakana": "テンジ",
+    "tatoeba_sentences": [
+      {
+        "jp": "展示を使います。",
+        "es": "Uso / empleo exposición / muestra."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_246",
+    "kanji": "利用",
+    "kana": "りよう",
+    "meaning_es": "uso / utilización",
+    "meaning_en": "riyou",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "りよう",
+    "katakana": "リヨウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "利用を使います。",
+        "es": "Uso / empleo uso / utilización."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_247",
+    "kanji": "規則",
+    "kana": "きそく",
+    "meaning_es": "regla / normativa",
+    "meaning_en": "kisoku",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "きそく",
+    "katakana": "キソク",
+    "tatoeba_sentences": [
+      {
+        "jp": "規則を使います。",
+        "es": "Uso / empleo regla / normativa."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_248",
+    "kanji": "不在票",
+    "kana": "ふざいひょう",
+    "meaning_es": "nota de aviso de paquete no entregado",
+    "meaning_en": "fuzaihyou",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ふざいひょう",
+    "katakana": "フザイヒョウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "不在票を使います。",
+        "es": "Uso / empleo nota de aviso de paquete no entregado."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_249",
+    "kanji": "再配達",
+    "kana": "さいはいたつ",
+    "meaning_es": "reentrega de paquete",
+    "meaning_en": "saihaitatsu",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "さいはいたつ",
+    "katakana": "サイハイタツ",
+    "tatoeba_sentences": [
+      {
+        "jp": "再配達を使います。",
+        "es": "Uso / empleo reentrega de paquete."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_250",
+    "kanji": "美容院",
+    "kana": "びよういん",
+    "meaning_es": "salón de belleza / peluquería",
+    "meaning_en": "biyouin",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "びよういん",
+    "katakana": "ビヨウイン",
+    "tatoeba_sentences": [
+      {
+        "jp": "美容院を使います。",
+        "es": "Uso / empleo salón de belleza / peluquería."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_251",
+    "kanji": "地震",
+    "kana": "じしん",
+    "meaning_es": "terremoto / sismo",
+    "meaning_en": "jishin",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "じしん",
+    "katakana": "ジシン",
+    "tatoeba_sentences": [
+      {
+        "jp": "大きな地震が来ても、決して慌てて外に飛び出さないでください。",
+        "es": "Aunque ocurra un gran terremoto, nunca salgan corriendo hacia afuera con pánico."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_252",
+    "kanji": "揺れ",
+    "kana": "ゆれ",
+    "meaning_es": "temblor / sacudida",
+    "meaning_en": "yure",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ゆれ",
+    "katakana": "ユレ",
+    "tatoeba_sentences": [
+      {
+        "jp": "揺れを使います。",
+        "es": "Uso / empleo temblor / sacudida."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_253",
+    "kanji": "避難",
+    "kana": "ひなん",
+    "meaning_es": "evacuación / refugio",
+    "meaning_en": "hinan",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ひなん",
+    "katakana": "ヒナン",
+    "tatoeba_sentences": [
+      {
+        "jp": "避難を使います。",
+        "es": "Uso / empleo evacuación / refugio."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_254",
+    "kanji": "訓練",
+    "kana": "くんれん",
+    "meaning_es": "entrenamiento / simulacro",
+    "meaning_en": "kunren",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "くんれん",
+    "katakana": "クンレン",
+    "tatoeba_sentences": [
+      {
+        "jp": "訓練を使います。",
+        "es": "Uso / empleo entrenamiento / simulacro."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_255",
+    "kanji": "慌てる",
+    "kana": "あわてる",
+    "meaning_es": "entrar en pánico / precipitarse",
+    "meaning_en": "awateru",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "あわてる",
+    "katakana": "アワテル",
+    "tatoeba_sentences": [
+      {
+        "jp": "慌てるを使います。",
+        "es": "Uso / empleo entrar en pánico / precipitarse."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_256",
+    "kanji": "分ける",
+    "kana": "わける",
+    "meaning_es": "separar / clasificar",
+    "meaning_en": "wakeru",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "わける",
+    "katakana": "ワケル",
+    "tatoeba_sentences": [
+      {
+        "jp": "分けるを使います。",
+        "es": "Uso / empleo separar / clasificar."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_257",
+    "kanji": "将来",
+    "kana": "しょうらい",
+    "meaning_es": "futuro (próximo o profesional)",
+    "meaning_en": "shourai",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "しょうらい",
+    "katakana": "ショウライ",
+    "tatoeba_sentences": [
+      {
+        "jp": "将来を使います。",
+        "es": "Uso / empleo futuro (próximo o profesional)."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_258",
+    "kanji": "会社",
+    "kana": "かいしゃ",
+    "meaning_es": "empresa / compañía",
+    "meaning_en": "kaisha",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "かいしゃ",
+    "katakana": "カイシャ",
+    "tatoeba_sentences": [
+      {
+        "jp": "会社を使います。",
+        "es": "Uso / empleo empresa / compañía."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_259",
+    "kanji": "夢",
+    "kana": "ゆめ",
+    "meaning_es": "sueño / aspiración",
+    "meaning_en": "yume",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "ゆめ",
+    "katakana": "ユメ",
+    "tatoeba_sentences": [
+      {
+        "jp": "夢を使います。",
+        "es": "Uso / empleo sueño / aspiración."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_260",
+    "kanji": "職人",
+    "kana": "しょくにん",
+    "meaning_es": "artesano / maestro de oficio",
+    "meaning_en": "shokunin",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "しょくにん",
+    "katakana": "ショクニン",
+    "tatoeba_sentences": [
+      {
+        "jp": "職人を使います。",
+        "es": "Uso / empleo artesano / maestro de oficio."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_261",
+    "kanji": "苦労",
+    "kana": "くろう",
+    "meaning_es": "esfuerzo / penalidades superadas",
+    "meaning_en": "kurou",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "くろう",
+    "katakana": "クロウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "苦労を使います。",
+        "es": "Uso / empleo esfuerzo / penalidades superadas."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_262",
+    "kanji": "目標",
+    "kana": "もくひょう",
+    "meaning_es": "meta / objetivo",
+    "meaning_en": "mokuhyou",
+    "category": "Irodori Elemental 2 (N4)",
+    "level": "N4",
+    "hiragana": "もくひょう",
+    "katakana": "モクヒョウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "目標を使います。",
+        "es": "Uso / empleo meta / objetivo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_263",
+    "kanji": "試合",
+    "kana": "しあい",
+    "meaning_es": "partido / competición",
+    "meaning_en": "shiai",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "しあい",
+    "katakana": "シアイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "試合を使います。",
+        "es": "Uso / empleo partido / competición."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_264",
+    "kanji": "感動",
+    "kana": "かんどう",
+    "meaning_es": "emoción profunda / conmoverse",
+    "meaning_en": "kandou",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "かんどう",
+    "katakana": "カンドウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "あの映画、結末がすごく意外で感動的でしたよ。",
+        "es": "Esa película tuvo un final muy inesperado y conmovedor."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_265",
+    "kanji": "俳優",
+    "kana": "はいゆう",
+    "meaning_es": "actor / actriz",
+    "meaning_en": "haiyuu",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "はいゆう",
+    "katakana": "ハイユウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "俳優を使います。",
+        "es": "Uso / empleo actor / actriz."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_266",
+    "kanji": "評判",
+    "kana": "ひょうばん",
+    "meaning_es": "fama / reputación / críticas",
+    "meaning_en": "hyouban",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ひょうばん",
+    "katakana": "ヒョウバン",
+    "tatoeba_sentences": [
+      {
+        "jp": "評判を使います。",
+        "es": "Uso / empleo fama / reputación / críticas."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_267",
+    "kanji": "口コミ",
+    "kana": "くちこみ",
+    "meaning_es": "reseña de usuarios / boca a boca",
+    "meaning_en": "kuchikomi",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "くちこみ",
+    "katakana": "クチコミ",
+    "tatoeba_sentences": [
+      {
+        "jp": "口コミを使います。",
+        "es": "Uso / empleo reseña de usuarios / boca a boca."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_268",
+    "kanji": "物件",
+    "kana": "ぶっけん",
+    "meaning_es": "inmueble / propiedad inmobiliaria",
+    "meaning_en": "bukken",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ぶっけん",
+    "katakana": "ブッケン",
+    "tatoeba_sentences": [
+      {
+        "jp": "物件を使います。",
+        "es": "Uso / empleo inmueble / propiedad inmobiliaria."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_269",
+    "kanji": "家賃",
+    "kana": "やちん",
+    "meaning_es": "precio del alquiler mensual",
+    "meaning_en": "yachin",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "やちん",
+    "katakana": "ヤチン",
+    "tatoeba_sentences": [
+      {
+        "jp": "家賃を使います。",
+        "es": "Uso / empleo precio del alquiler mensual."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_270",
+    "kanji": "敷金",
+    "kana": "しききん",
+    "meaning_es": "fianza / depósito de garantía",
+    "meaning_en": "shikikin",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "しききん",
+    "katakana": "シキキン",
+    "tatoeba_sentences": [
+      {
+        "jp": "敷金を使います。",
+        "es": "Uso / empleo fianza / depósito de garantía."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_271",
+    "kanji": "礼金",
+    "kana": "れいきん",
+    "meaning_es": "gratificación al propietario (no reembolsable)",
+    "meaning_en": "reikin",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "れいきん",
+    "katakana": "レイキン",
+    "tatoeba_sentences": [
+      {
+        "jp": "礼金を使います。",
+        "es": "Uso / empleo gratificación al propietario (no reembolsable)."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_272",
+    "kanji": "修理",
+    "kana": "しゅうり",
+    "meaning_es": "reparación",
+    "meaning_en": "shuuri",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "しゅうり",
+    "katakana": "シュウリ",
+    "tatoeba_sentences": [
+      {
+        "jp": "できるだけ早く修理業者を手配していただけないでしょうか？",
+        "es": "¿No sería tan amable de enviarme a un técnico de reparaciones lo más pronto posible?"
+      }
+    ]
+  },
+  {
+    "id": "v_iro_273",
+    "kanji": "騒音",
+    "kana": "そうおん",
+    "meaning_es": "ruido molesto / contaminación acústica",
+    "meaning_en": "souon",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "そうおん",
+    "katakana": "ソウオン",
+    "tatoeba_sentences": [
+      {
+        "jp": "騒音を使います。",
+        "es": "Uso / empleo ruido molesto / contaminación acústica."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_274",
+    "kanji": "自炊",
+    "kana": "じすい",
+    "meaning_es": "cocinarse uno mismo en casa",
+    "meaning_en": "jisui",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "じすい",
+    "katakana": "ジスイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "自炊を使います。",
+        "es": "Uso / empleo cocinarse uno mismo en casa."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_275",
+    "kanji": "栄養",
+    "kana": "えいよう",
+    "meaning_es": "nutrición / nutrientes",
+    "meaning_en": "eiyou",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "えいよう",
+    "katakana": "エイヨウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "栄養を使います。",
+        "es": "Uso / empleo nutrición / nutrientes."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_276",
+    "kanji": "郷土料理",
+    "kana": "きょうどりょうり",
+    "meaning_es": "plato regional tradicional",
+    "meaning_en": "kyoudoryouri",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "きょうどりょうり",
+    "katakana": "キョウドリョウリ",
+    "tatoeba_sentences": [
+      {
+        "jp": "この鍋料理は、東北地方の寒い冬を乗り切るために生まれた郷土料理です。",
+        "es": "Este guiso en cazuela es un plato tradicional regional nacido para superar los fríos inviernos de la región de Tohoku."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_277",
+    "kanji": "調味料",
+    "kana": "ちょうみりょう",
+    "meaning_es": "condimento / aderezo",
+    "meaning_en": "choumiryou",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ちょうみりょう",
+    "katakana": "チョウミリョウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "調味料を使います。",
+        "es": "Uso / empleo condimento / aderezo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_278",
+    "kanji": "調理",
+    "kana": "ちょうり",
+    "meaning_es": "preparación culinaria",
+    "meaning_en": "chouri",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ちょうり",
+    "katakana": "チョウリ",
+    "tatoeba_sentences": [
+      {
+        "jp": "調理を使います。",
+        "es": "Uso / empleo preparación culinaria."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_279",
+    "kanji": "交流",
+    "kana": "こうりゅう",
+    "meaning_es": "intercambio cultural / socialización",
+    "meaning_en": "kouryuu",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "こうりゅう",
+    "katakana": "コウリュウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "交流を使います。",
+        "es": "Uso / empleo intercambio cultural / socialización."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_280",
+    "kanji": "連絡先",
+    "kana": "れんらくさき",
+    "meaning_es": "datos de contacto",
+    "meaning_en": "renrakusaki",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "れんらくさき",
+    "katakana": "レンラクサキ",
+    "tatoeba_sentences": [
+      {
+        "jp": "連絡先を使います。",
+        "es": "Uso / empleo datos de contacto."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_281",
+    "kanji": "交換",
+    "kana": "こうかん",
+    "meaning_es": "intercambio / trueque",
+    "meaning_en": "koukan",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "こうかん",
+    "katakana": "コウカン",
+    "tatoeba_sentences": [
+      {
+        "jp": "交換を使います。",
+        "es": "Uso / empleo intercambio / trueque."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_282",
+    "kanji": "遠慮",
+    "kana": "えんりょ",
+    "meaning_es": "reserva / contención por pudor",
+    "meaning_en": "enryo",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "えんりょ",
+    "katakana": "エンリョ",
+    "tatoeba_sentences": [
+      {
+        "jp": "遠慮を使います。",
+        "es": "Uso / empleo reserva / contención por pudor."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_283",
+    "kanji": "お互い",
+    "kana": "おたがい",
+    "meaning_es": "mutuamente / el uno al otro",
+    "meaning_en": "otagai",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "おたがい",
+    "katakana": "オタガイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "お互いを使います。",
+        "es": "Uso / empleo mutuamente / el uno al otro."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_284",
+    "kanji": "仲間",
+    "kana": "なかま",
+    "meaning_es": "compañero / camarada / colega",
+    "meaning_en": "nakama",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "なかま",
+    "katakana": "ナカマ",
+    "tatoeba_sentences": [
+      {
+        "jp": "仲間を使います。",
+        "es": "Uso / empleo compañero / camarada / colega."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_285",
+    "kanji": "興味",
+    "kana": "きょうみ",
+    "meaning_es": "interés / curiosidad",
+    "meaning_en": "kyoumi",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "きょうみ",
+    "katakana": "キョウミ",
+    "tatoeba_sentences": [
+      {
+        "jp": "興味を使います。",
+        "es": "Uso / empleo interés / curiosidad."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_286",
+    "kanji": "効率",
+    "kana": "こうりつ",
+    "meaning_es": "eficiencia / rendimiento",
+    "meaning_en": "kouritsu",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "こうりつ",
+    "katakana": "コウリツ",
+    "tatoeba_sentences": [
+      {
+        "jp": "効率を使います。",
+        "es": "Uso / empleo eficiencia / rendimiento."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_287",
+    "kanji": "継続",
+    "kana": "けいぞく",
+    "meaning_es": "continuidad / constancia",
+    "meaning_en": "keizoku",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "けいぞく",
+    "katakana": "ケイゾク",
+    "tatoeba_sentences": [
+      {
+        "jp": "継続を使います。",
+        "es": "Uso / empleo continuidad / constancia."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_288",
+    "kanji": "暗記",
+    "kana": "あんき",
+    "meaning_es": "memorización / aprender de memoria",
+    "meaning_en": "anki",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "あんき",
+    "katakana": "アンキ",
+    "tatoeba_sentences": [
+      {
+        "jp": "暗記を使います。",
+        "es": "Uso / empleo memorización / aprender de memoria."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_289",
+    "kanji": "語彙",
+    "kana": "ごい",
+    "meaning_es": "vocabulario / léxico",
+    "meaning_en": "goi",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ごい",
+    "katakana": "ゴイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "語彙を使います。",
+        "es": "Uso / empleo vocabulario / léxico."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_290",
+    "kanji": "読解",
+    "kana": "どっかい",
+    "meaning_es": "comprensión lectora",
+    "meaning_en": "dokkai",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "どっかい",
+    "katakana": "ドッカイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "読解を使います。",
+        "es": "Uso / empleo comprensión lectora."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_291",
+    "kanji": "詐欺",
+    "kana": "さぎ",
+    "meaning_es": "fraude / estafa",
+    "meaning_en": "sagi",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "さぎ",
+    "katakana": "サギ",
+    "tatoeba_sentences": [
+      {
+        "jp": "詐欺を使います。",
+        "es": "Uso / empleo fraude / estafa."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_292",
+    "kanji": "被害",
+    "kana": "ひがい",
+    "meaning_es": "daño sufrido / perjuicio",
+    "meaning_en": "higai",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ひがい",
+    "katakana": "ヒガイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "被害を使います。",
+        "es": "Uso / empleo daño sufrido / perjuicio."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_293",
+    "kanji": "不審",
+    "kana": "ふしん",
+    "meaning_es": "sospechoso / dudoso",
+    "meaning_en": "fushin",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ふしん",
+    "katakana": "フシン",
+    "tatoeba_sentences": [
+      {
+        "jp": "銀行を名乗る不審なメールが届いても、パスワードは入力しないでください。",
+        "es": "Aunque le llegue un correo sospechoso haciéndose pasar por el banco, no ingrese su contraseña."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_294",
+    "kanji": "救急車",
+    "kana": "きゅうきゅうしゃ",
+    "meaning_es": "ambulancia",
+    "meaning_en": "kyuukyuusha",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "きゅうきゅうしゃ",
+    "katakana": "キュウキュウシャ",
+    "tatoeba_sentences": [
+      {
+        "jp": "友人が倒れて意識がないので、すぐに救急車を呼んでほしいです！",
+        "es": "¡Mi amigo se desplomó y está inconsciente, necesito que llamen a una ambulancia de inmediato!"
+      }
+    ]
+  },
+  {
+    "id": "v_iro_295",
+    "kanji": "盗難",
+    "kana": "とうなん",
+    "meaning_es": "robo / sustracción",
+    "meaning_en": "tounan",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "とうなん",
+    "katakana": "トウナン",
+    "tatoeba_sentences": [
+      {
+        "jp": "盗難を使います。",
+        "es": "Uso / empleo robo / sustracción."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_296",
+    "kanji": "落とす",
+    "kana": "おとす",
+    "meaning_es": "perder / dejar caer",
+    "meaning_en": "otosu",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "おとす",
+    "katakana": "オトス",
+    "tatoeba_sentences": [
+      {
+        "jp": "落とすを使います。",
+        "es": "Uso / empleo perder / dejar caer."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_297",
+    "kanji": "結婚",
+    "kana": "けっこん",
+    "meaning_es": "matrimonio / boda",
+    "meaning_en": "kekkon",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "けっこん",
+    "katakana": "ケッコン",
+    "tatoeba_sentences": [
+      {
+        "jp": "結婚を使います。",
+        "es": "Uso / empleo matrimonio / boda."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_298",
+    "kanji": "お祝い",
+    "kana": "おいわい",
+    "meaning_es": "felicitación / celebración / regalo conmemorativo",
+    "meaning_en": "oiwai",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "おいわい",
+    "katakana": "オイワイ",
+    "tatoeba_sentences": [
+      {
+        "jp": "お祝いを使います。",
+        "es": "Uso / empleo felicitación / celebración / regalo conmemorativo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_299",
+    "kanji": "悩み",
+    "kana": "なやみ",
+    "meaning_es": "preocupación / angustia / dilema",
+    "meaning_en": "nayami",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "なやみ",
+    "katakana": "ナヤミ",
+    "tatoeba_sentences": [
+      {
+        "jp": "悩みを使います。",
+        "es": "Uso / empleo preocupación / angustia / dilema."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_300",
+    "kanji": "相談",
+    "kana": "そうだん",
+    "meaning_es": "consulta / pedir consejo",
+    "meaning_en": "soudan",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "そうだん",
+    "katakana": "ソウダン",
+    "tatoeba_sentences": [
+      {
+        "jp": "一人で抱え込まないで、一度上司に直接相談してみたらどうですか？",
+        "es": "No te guardes todo para ti solo; ¿por qué no pruebas a consultarlo directamente una vez con tu jefe?"
+      }
+    ]
+  },
+  {
+    "id": "v_iro_301",
+    "kanji": "親友",
+    "kana": "しんゆう",
+    "meaning_es": "mejor amigo / amigo íntimo",
+    "meaning_en": "shinyuu",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "しんゆう",
+    "katakana": "シンユウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "親友を使います。",
+        "es": "Uso / empleo mejor amigo / amigo íntimo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_302",
+    "kanji": "披露宴",
+    "kana": "ひろうえん",
+    "meaning_es": "banquete de bodas",
+    "meaning_en": "hirouen",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ひろうえん",
+    "katakana": "ヒロウエン",
+    "tatoeba_sentences": [
+      {
+        "jp": "披露宴を使います。",
+        "es": "Uso / empleo banquete de bodas."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_303",
+    "kanji": "地方",
+    "kana": "ちほう",
+    "meaning_es": "región / provincia / campo",
+    "meaning_en": "chihou",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "ちほう",
+    "katakana": "チホウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "地方を使います。",
+        "es": "Uso / empleo región / provincia / campo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_304",
+    "kanji": "名所",
+    "kana": "めいしょ",
+    "meaning_es": "lugar célebre o famoso",
+    "meaning_en": "meisho",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "めいしょ",
+    "katakana": "メイショ",
+    "tatoeba_sentences": [
+      {
+        "jp": "名所を使います。",
+        "es": "Uso / empleo lugar célebre o famoso."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_305",
+    "kanji": "名物",
+    "kana": "めいぶつ",
+    "meaning_es": "producto típico / especialidad local",
+    "meaning_en": "meibutsu",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "めいぶつ",
+    "katakana": "メイブツ",
+    "tatoeba_sentences": [
+      {
+        "jp": "名物を使います。",
+        "es": "Uso / empleo producto típico / especialidad local."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_306",
+    "kanji": "体験",
+    "kana": "たいけん",
+    "meaning_es": "experiencia vivencial en primera persona",
+    "meaning_en": "taiken",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "たいけん",
+    "katakana": "タイケン",
+    "tatoeba_sentences": [
+      {
+        "jp": "体験を使います。",
+        "es": "Uso / empleo experiencia vivencial en primera persona."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_307",
+    "kanji": "変更",
+    "kana": "へんこう",
+    "meaning_es": "cambio / modificación",
+    "meaning_en": "henkou",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "へんこう",
+    "katakana": "ヘンコウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "変更を使います。",
+        "es": "Uso / empleo cambio / modificación."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_308",
+    "kanji": "歴史",
+    "kana": "れきし",
+    "meaning_es": "historia",
+    "meaning_en": "rekishi",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "れきし",
+    "katakana": "レキシ",
+    "tatoeba_sentences": [
+      {
+        "jp": "歴史を使います。",
+        "es": "Uso / empleo historia."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_309",
+    "kanji": "求人",
+    "kana": "きゅうじん",
+    "meaning_es": "oferta de empleo / búsqueda de personal",
+    "meaning_en": "kyuujin",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "きゅうじん",
+    "katakana": "キュウジン",
+    "tatoeba_sentences": [
+      {
+        "jp": "求人を使います。",
+        "es": "Uso / empleo oferta de empleo / búsqueda de personal."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_310",
+    "kanji": "面接",
+    "kana": "めんせつ",
+    "meaning_es": "entrevista formal de trabajo",
+    "meaning_en": "mensetsu",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "めんせつ",
+    "katakana": "メンセツ",
+    "tatoeba_sentences": [
+      {
+        "jp": "面接を使います。",
+        "es": "Uso / empleo entrevista formal de trabajo."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_311",
+    "kanji": "履歴書",
+    "kana": "りれきしょ",
+    "meaning_es": "currículum vitae / hoja de vida",
+    "meaning_en": "rirekisho",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "りれきしょ",
+    "katakana": "リレキショ",
+    "tatoeba_sentences": [
+      {
+        "jp": "履歴書を使います。",
+        "es": "Uso / empleo currículum vitae / hoja de vida."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_312",
+    "kanji": "担当",
+    "kana": "たんとう",
+    "meaning_es": "estar a cargo / responsabilidad",
+    "meaning_en": "tantou",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "たんとう",
+    "katakana": "タントウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "担当を使います。",
+        "es": "Uso / empleo estar a cargo / responsabilidad."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_313",
+    "kanji": "手順",
+    "kana": "てじゅん",
+    "meaning_es": "procedimiento / orden de pasos",
+    "meaning_en": "tejun",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "てじゅん",
+    "katakana": "テジュン",
+    "tatoeba_sentences": [
+      {
+        "jp": "本日の業務手順について、こちらのマニュアルに沿ってご説明いたします。",
+        "es": "Acerca del procedimiento de trabajo del día de hoy, procederé a explicárselo siguiendo este manual."
+      }
+    ]
+  },
+  {
+    "id": "v_iro_314",
+    "kanji": "貢献",
+    "kana": "こうけん",
+    "meaning_es": "contribución / aportar valor",
+    "meaning_en": "kouken",
+    "category": "Irodori Pre-Intermedio (N3)",
+    "level": "N3",
+    "hiragana": "こうけん",
+    "katakana": "コウケン",
+    "tatoeba_sentences": [
+      {
+        "jp": "貢献を使います。",
+        "es": "Uso / empleo contribución / aportar valor."
+      }
+    ]
   }
 ]
