@@ -87,6 +87,34 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     }));
   };
 
+  // Mobile Theme Dropdown state & outside click handler
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const themeDropdownRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target)) {
+        setIsThemeDropdownOpen(false);
+      }
+    };
+    if (isThemeDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isThemeDropdownOpen]);
+
+  const themesList = [
+    { id: 'all', label: 'Todos los Módulos', icon: '🌐', count: steps.length },
+    { id: 'vida', label: 'Vida Cotidiana y Familia', icon: '🏠', count: 5 },
+    { id: 'trabajo', label: 'Trabajo, Horarios y Reglas', icon: '🏢', count: 3 },
+    { id: 'ciudad', label: 'Ciudad, Tiendas y Transporte', icon: '🛍️', count: 5 },
+    { id: 'ocio', label: 'Ocio, Cultura, Salud y Metas', icon: '🎮', count: 6 },
+  ];
+
   // Listen for browser Back/Forward navigation to smoothly switch between list and module view
   React.useEffect(() => {
     const handlePopState = () => {
@@ -1011,43 +1039,75 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
       {/* Theme & Level Filter Controls */}
       <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
-        {/* Theme Pills */}
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-          <button
-            className={`btn btn-sm ${selectedTheme === 'all' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTheme('all')}
-            style={{ fontWeight: 600, padding: '7px 14px' }}
-          >
-            🌐 Todos los Módulos ({steps.length})
-          </button>
-          <button
-            className={`btn btn-sm ${selectedTheme === 'vida' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTheme('vida')}
-            style={{ fontWeight: 600, padding: '7px 14px' }}
-          >
-            🏠 Vida Cotidiana y Familia (5)
-          </button>
-          <button
-            className={`btn btn-sm ${selectedTheme === 'trabajo' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTheme('trabajo')}
-            style={{ fontWeight: 600, padding: '7px 14px' }}
-          >
-            🏢 Trabajo, Horarios y Reglas (3)
-          </button>
-          <button
-            className={`btn btn-sm ${selectedTheme === 'ciudad' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTheme('ciudad')}
-            style={{ fontWeight: 600, padding: '7px 14px' }}
-          >
-            🛍️ Ciudad, Tiendas y Transporte (5)
-          </button>
-          <button
-            className={`btn btn-sm ${selectedTheme === 'ocio' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setSelectedTheme('ocio')}
-            style={{ fontWeight: 600, padding: '7px 14px' }}
-          >
-            🎮 Ocio, Cultura, Salud y Metas (6)
-          </button>
+        {/* Desktop Theme Pills */}
+        <div className="curriculum-theme-desktop">
+          {themesList.map(t => (
+            <button
+              key={t.id}
+              className={`btn btn-sm ${selectedTheme === t.id ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setSelectedTheme(t.id)}
+              style={{ fontWeight: 600, padding: '7px 14px' }}
+            >
+              {t.icon} {t.label} ({t.count})
+            </button>
+          ))}
+        </div>
+
+        {/* Mobile Theme Dropdown (Solo para Celular) */}
+        <div className="curriculum-theme-mobile" ref={themeDropdownRef}>
+          {(() => {
+            const activeThemeObj = themesList.find(t => t.id === selectedTheme) || themesList[0];
+
+            return (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary theme-dropdown-trigger"
+                  onClick={() => setIsThemeDropdownOpen(prev => !prev)}
+                  aria-haspopup="true"
+                  aria-expanded={isThemeDropdownOpen}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>{activeThemeObj.icon}</span>
+                    <span>{activeThemeObj.label} ({activeThemeObj.count})</span>
+                  </div>
+                  <ChevronDown 
+                    size={16} 
+                    style={{ 
+                      transform: isThemeDropdownOpen ? 'rotate(180deg)' : 'none', 
+                      transition: 'transform 0.2s ease',
+                      flexShrink: 0
+                    }} 
+                  />
+                </button>
+
+                {isThemeDropdownOpen && (
+                  <div className="theme-dropdown-menu">
+                    {themesList.map(t => {
+                      const isSelected = selectedTheme === t.id;
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'} theme-dropdown-item`}
+                          onClick={() => {
+                            setSelectedTheme(t.id);
+                            setIsThemeDropdownOpen(false);
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span>{t.icon}</span>
+                            <span>{t.label} ({t.count})</span>
+                          </div>
+                          {isSelected && <Check size={14} strokeWidth={3} />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
 
         {/* Secondary filters: Level, Status and Search */}

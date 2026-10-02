@@ -2439,6 +2439,71 @@ rt {
   animation: fadeIn 0.2s ease;
 }
 
+/* Curriculum Theme Filter: Desktop Pills vs Mobile Dropdown */
+.curriculum-theme-desktop {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.curriculum-theme-mobile {
+  display: none;
+  position: relative;
+  width: 100%;
+}
+
+.theme-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.theme-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.theme-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 0.86rem;
+  text-align: left;
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 768px) {
+  .curriculum-theme-desktop {
+    display: none !important;
+  }
+
+  .curriculum-theme-mobile {
+    display: block !important;
+  }
+}
+
 .step-target-tag {
   display: inline-block;
   font-size: 0.75rem;
