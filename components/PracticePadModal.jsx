@@ -1063,67 +1063,70 @@ export default function PracticePadModal({
             TOP HEADER BAR
            ========================================================================= */}
         <header 
+          className="practice-pad-header"
           style={{
-            padding: '12px 18px',
+            padding: '10px 16px',
             borderBottom: '1px solid var(--border)',
             background: 'var(--bg-surface)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 12,
+            gap: 8,
             flexWrap: 'wrap'
           }}
         >
-          {/* Left: Title & Badge */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Left: Compact title & badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
             <div 
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: '10px',
+                width: 32,
+                height: 32,
+                borderRadius: '8px',
                 background: 'linear-gradient(135deg, #6366f1, #ec4899)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#fff',
-                boxShadow: '0 4px 10px rgba(99, 102, 241, 0.3)'
+                flexShrink: 0,
+                boxShadow: '0 2px 6px rgba(99, 102, 241, 0.3)'
               }}
             >
-              <PenTool size={18} />
+              <PenTool size={16} />
             </div>
 
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>
-                  Cuaderno de Caligrafía & Trazos
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <h2 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0, color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
+                  Cuaderno
                 </h2>
                 <span 
                   style={{
-                    fontSize: '0.72rem',
+                    fontSize: '0.68rem',
                     fontWeight: 700,
-                    padding: '2px 8px',
+                    padding: '1px 6px',
                     borderRadius: 999,
                     background: 'var(--primary-bg, #eef2ff)',
                     color: 'var(--primary, #4f46e5)',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    whiteSpace: 'nowrap'
                   }}
                 >
-                  {source === 'kanji' ? 'Kanji' : source === 'vocab' ? 'Vocabulario' : source === 'conversation' ? 'Conversación' : source === 'story' ? 'Historia' : source === 'grammar' ? 'Gramática' : 'Notas Libres'}
+                  {source === 'kanji' ? 'Kanji' : source === 'vocab' ? 'Vocabulario' : source === 'conversation' ? 'Conversación' : source === 'story' ? 'Historia' : source === 'grammar' ? 'Gramática' : 'Libre'}
                 </span>
               </div>
-              <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              <p className="practice-mobile-hide" style={{ margin: 0, fontSize: '0.74rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 240 }}>
                 {title} {kana ? `(${kana})` : ''}
               </p>
             </div>
           </div>
 
-          {/* Center: Tabs Switcher (Cuaderno Libre vs Verificador Guiado) */}
+          {/* Center: Tabs Switcher (Cuaderno vs Paso a Paso) */}
           <div 
             style={{
               display: 'flex',
               background: 'var(--border, #e2e8f0)',
-              padding: '3px',
-              borderRadius: '10px',
+              padding: '2px',
+              borderRadius: '8px',
               gap: 2
             }}
           >
@@ -1133,12 +1136,12 @@ export default function PracticePadModal({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
-                padding: '6px 14px',
-                borderRadius: '8px',
+                gap: 5,
+                padding: '4px 10px',
+                borderRadius: '6px',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '0.82rem',
+                fontSize: '0.78rem',
                 fontWeight: activeTab === 'canvas' ? 700 : 500,
                 background: activeTab === 'canvas' ? 'var(--bg-surface)' : 'transparent',
                 color: activeTab === 'canvas' ? 'var(--primary)' : 'var(--text-muted)',
@@ -1146,8 +1149,8 @@ export default function PracticePadModal({
                 transition: 'all 0.15s ease'
               }}
             >
-              <Grid size={15} />
-              <span>Cuaderno & Cuadrícula</span>
+              <Grid size={13} />
+              <span>Lienzo</span>
             </button>
 
             <button
@@ -1156,12 +1159,12 @@ export default function PracticePadModal({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
-                padding: '6px 14px',
-                borderRadius: '8px',
+                gap: 5,
+                padding: '4px 10px',
+                borderRadius: '6px',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '0.82rem',
+                fontSize: '0.78rem',
                 fontWeight: activeTab === 'stroke_quiz' ? 700 : 500,
                 background: activeTab === 'stroke_quiz' ? 'var(--bg-surface)' : 'transparent',
                 color: activeTab === 'stroke_quiz' ? 'var(--primary)' : 'var(--text-muted)',
@@ -1169,64 +1172,63 @@ export default function PracticePadModal({
                 transition: 'all 0.15s ease'
               }}
             >
-              <CheckCircle2 size={15} />
-              <span>Verificador de Trazos Paso a Paso</span>
+              <CheckCircle2 size={13} />
+              <span>Trazos</span>
             </button>
           </div>
 
           {/* Right: Library, Save, Fullscreen & Close */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <button
               type="button"
-              className="btn btn-outline btn-sm"
+              className="btn btn-outline btn-xs"
               onClick={() => setIsLibraryOpen(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem' }}
-              title="Ver mis cuadernos y hojas guardadas para retomar"
+              style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.78rem', padding: '4px 8px', height: 28 }}
+              title="Mis cuadernos guardados"
             >
-              <FolderOpen size={14} />
-              <span>Mis Cuadernos ({savedSheets.length})</span>
+              <FolderOpen size={13} />
+              <span>{savedSheets.length}</span>
             </button>
 
             <button
               type="button"
-              className="btn btn-primary btn-sm"
+              className="btn btn-primary btn-xs"
               onClick={handleOpenSaveDialog}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem' }}
-              title="Guardar estado actual para retomar luego"
+              style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.78rem', padding: '4px 8px', height: 28 }}
+              title="Guardar estado actual"
             >
-              <Save size={14} />
-              <span>Guardar</span>
+              <Save size={13} />
+              <span className="practice-mobile-hide">Guardar</span>
             </button>
 
             <button
               type="button"
-              className="btn btn-outline btn-sm"
+              className="btn btn-outline btn-xs practice-mobile-hide"
               onClick={handleExportPNG}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.78rem', padding: '4px 8px', height: 28 }}
               title="Descargar imagen con sello Hanko"
             >
-              <Download size={14} />
-              <span className="hidden-sm">PNG</span>
+              <Download size={13} />
             </button>
 
             <button
               type="button"
-              className="btn btn-ghost btn-sm"
+              className="btn btn-ghost btn-xs practice-mobile-hide"
               onClick={() => setIsFullscreen(prev => !prev)}
-              style={{ padding: '6px' }}
+              style={{ padding: '4px', height: 28, width: 28 }}
               title={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
             >
-              {isFullscreen ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
+              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
             </button>
 
             <button
               type="button"
-              className="btn btn-ghost btn-sm"
+              className="btn btn-ghost btn-xs"
               onClick={onClose}
-              style={{ padding: '6px', color: 'var(--danger)' }}
-              title="Cerrar (El borrador se guarda automáticamente)"
+              style={{ padding: '4px', color: 'var(--danger)', height: 28, width: 28 }}
+              title="Cerrar cuaderno"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
         </header>
@@ -1235,69 +1237,67 @@ export default function PracticePadModal({
             CHARACTER NAVIGATION STRIP & AUDIO TOOLBAR
            ========================================================================= */}
         <div 
+          className="practice-pad-nav-strip"
           style={{
-            padding: '8px 18px',
+            padding: '6px 14px',
             background: 'var(--bg-main)',
             borderBottom: '1px solid var(--border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 12,
+            gap: 8,
             flexWrap: 'wrap'
           }}
         >
-          {/* MODO CUADERNO (activeTab === 'canvas'): TODOS LOS CARACTERES JUNTOS, NO SEPARADOS */}
+          {/* MODO CUADERNO */}
           {activeTab === 'canvas' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 260, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 200, flexWrap: 'wrap' }}>
               {(!text || !text.trim()) ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span 
                     style={{ 
-                      fontSize: '0.85rem', 
+                      fontSize: '0.8rem', 
                       fontWeight: 700, 
                       color: 'var(--text-main)', 
                       display: 'flex', 
                       alignItems: 'center', 
-                      gap: 6,
+                      gap: 5,
                       background: 'var(--bg-surface)',
-                      padding: '4px 12px',
-                      borderRadius: 8,
+                      padding: '3px 8px',
+                      borderRadius: 6,
                       border: '1px solid var(--border)'
                     }}
                   >
-                    📝 Cuaderno Libre sin Guía
+                    📝 Modo Libre
                   </span>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    Lienzo despejado para trazos libres, caligrafía y notas.
+                  <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                    Lienzo despejado para trazos libres y caligrafía.
                   </span>
                 </div>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
-                    {text.trim().length === 1 ? 'Carácter en práctica:' : 'Frase completa:'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span className="practice-mobile-hide" style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                    {text.trim().length === 1 ? 'Carácter:' : 'Frase:'}
                   </span>
-                  {/* TODOS LOS CARACTERES JUNTOS EN UN SOLO BLOQUE INTEGRADO */}
                   <div 
                     className="jp-text"
                     style={{
-                      fontSize: text.trim().length <= 6 ? '1.25rem' : '1.1rem',
+                      fontSize: text.trim().length <= 6 ? '1.1rem' : '0.98rem',
                       fontWeight: 700,
                       color: 'var(--text-main)',
                       background: 'var(--bg-surface)',
-                      padding: '5px 14px',
-                      borderRadius: '8px',
+                      padding: '3px 10px',
+                      borderRadius: '6px',
                       border: '1px solid var(--border)',
-                      letterSpacing: '0.05em',
+                      letterSpacing: '0.04em',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 8,
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                      gap: 6
                     }}
-                    title="Texto completo del cuaderno (mostrado continuo y no separado)"
                   >
                     <span>{text.trim()}</span>
                     {kana && (
-                      <span style={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+                      <span style={{ fontSize: '0.76rem', fontWeight: 500, color: 'var(--text-muted)' }}>
                         （{kana}）
                       </span>
                     )}
@@ -1307,10 +1307,10 @@ export default function PracticePadModal({
             </div>
           )}
 
-          {/* MODO PASO A PASO (activeTab === 'stroke_quiz'): CONSERVAR LOS CARACTERES SEPARADOS */}
+          {/* MODO PASO A PASO */}
           {activeTab === 'stroke_quiz' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflowX: 'auto', maxWidth: '70%', paddingBottom: 2 }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflowX: 'auto', maxWidth: '75%', paddingBottom: 2 }}>
+              <span className="practice-mobile-hide" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
                 Paso a paso ({characters.length}):
               </span>
 
@@ -1322,24 +1322,24 @@ export default function PracticePadModal({
                     type="button"
                     onClick={() => setCurrentCharIndex(idx)}
                     style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: '8px',
+                      width: 32,
+                      height: 32,
+                      borderRadius: '6px',
                       border: isCurrent ? '2px solid var(--primary)' : '1px solid var(--border)',
                       background: isCurrent ? 'var(--primary)' : 'var(--bg-surface)',
                       color: isCurrent ? '#ffffff' : 'var(--text-main)',
-                      fontSize: '1.25rem',
+                      fontSize: '1.1rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontFamily: 'var(--font-jp)',
-                      boxShadow: isCurrent ? '0 2px 8px rgba(99, 102, 241, 0.35)' : 'none',
+                      boxShadow: isCurrent ? '0 2px 6px rgba(99, 102, 241, 0.3)' : 'none',
                       transition: 'all 0.15s ease',
                       flexShrink: 0
                     }}
-                    title={`Verificar trazo del carácter ${ch}`}
+                    title={`Verificar trazo de ${ch}`}
                   >
                     {ch}
                   </button>
@@ -1349,16 +1349,16 @@ export default function PracticePadModal({
           )}
 
           {/* Quick Audio & Custom Text Input */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {activeTab === 'stroke_quiz' && (
               <button
                 type="button"
-                className="btn btn-outline btn-sm"
+                className="btn btn-outline btn-xs"
                 onClick={() => audioManager.speak(activeChar)}
-                style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.8rem' }}
-                title={`Escuchar pronunciación de ${activeChar}`}
+                style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', padding: '3px 8px', height: 26 }}
+                title={`Oír pronunciación de ${activeChar}`}
               >
-                <Volume2 size={14} />
+                <Volume2 size={13} />
                 <span>Oír {activeChar}</span>
               </button>
             )}
@@ -1366,21 +1366,21 @@ export default function PracticePadModal({
             {text && text.trim().length > 0 && (
               <button
                 type="button"
-                className="btn btn-outline btn-sm"
+                className="btn btn-outline btn-xs"
                 onClick={() => audioManager.speak(text)}
-                style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.8rem' }}
-                title="Escuchar pronunciación completa"
+                style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', padding: '3px 8px', height: 26 }}
+                title="Escuchar pronunciación"
               >
-                <Volume2 size={14} />
-                <span>{text.trim().length === 1 ? `Oír ${text.trim()}` : 'Oír Frase Completa'}</span>
+                <Volume2 size={13} />
+                <span className="practice-mobile-hide">{text.trim().length === 1 ? `Oír ${text.trim()}` : 'Oír Frase'}</span>
               </button>
             )}
 
             <button
               type="button"
-              className="btn btn-ghost btn-sm"
+              className="btn btn-ghost btn-xs"
               onClick={() => setIsEditingText(prev => !prev)}
-              style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', padding: '3px 8px', height: 26 }}
               title="Escribir o cambiar texto de práctica"
             >
               <Edit3 size={13} />
@@ -1516,229 +1516,176 @@ export default function PracticePadModal({
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
               {/* Canvas Controls Toolbar */}
               <div 
+                className="practice-toolbar"
                 style={{
-                  padding: '8px 16px',
+                  padding: '6px 12px',
                   background: 'var(--bg-surface)',
                   borderBottom: '1px solid var(--border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: 12,
+                  gap: 8,
                   flexWrap: 'wrap'
                 }}
               >
-                {/* 1. Stroke Style Selector (Shodo, Marker, Fountain, Pencil, Gel) */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                    Estilo de Trazo:
+                {/* 1. Stroke Style / Tool Selector */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                    Trazo:
                   </span>
-                  <div style={{ display: 'flex', background: 'var(--border, #e2e8f0)', padding: 2, borderRadius: 8, gap: 2 }}>
-                    {STROKE_STYLES.map(st => (
-                      <button
-                        key={st.id}
-                        type="button"
-                        onClick={() => {
-                          setStrokeStyle(st.id);
-                          setStrokeWidth(st.defaultWidth);
-                          setIsEraser(false);
-                          setIsPanMode(false);
-                        }}
-                        style={{
-                          border: 'none',
-                          background: strokeStyle === st.id && !isEraser && !isPanMode ? 'var(--bg-surface)' : 'transparent',
-                          color: strokeStyle === st.id && !isEraser && !isPanMode ? 'var(--primary)' : 'var(--text-muted)',
-                          padding: '4px 10px',
-                          borderRadius: 6,
-                          fontSize: '0.78rem',
-                          fontWeight: strokeStyle === st.id && !isEraser && !isPanMode ? 700 : 500,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          boxShadow: strokeStyle === st.id && !isEraser && !isPanMode ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                        }}
-                        title={st.desc}
-                      >
-                        <span>{st.icon}</span>
-                        <span className="hidden-xs">{st.name.split(' ')[0]}</span>
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => {
+                  <select
+                    className="practice-tool-select"
+                    value={isPanMode ? 'pan' : isEraser ? 'eraser' : strokeStyle}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === 'pan') {
+                        setIsPanMode(true);
+                        setIsEraser(false);
+                      } else if (val === 'eraser') {
                         setIsEraser(true);
                         setIsPanMode(false);
-                      }}
-                      style={{
-                        border: 'none',
-                        background: isEraser && !isPanMode ? 'var(--danger)' : 'transparent',
-                        color: isEraser && !isPanMode ? '#ffffff' : 'var(--text-muted)',
-                        padding: '4px 10px',
-                        borderRadius: 6,
-                        fontSize: '0.78rem',
-                        fontWeight: isEraser && !isPanMode ? 700 : 500,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 4
-                      }}
-                      title="Goma de borrar trazos"
-                    >
-                      <Eraser size={13} />
-                      <span className="hidden-xs">Goma</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsPanMode(!isPanMode)}
-                      style={{
-                        border: 'none',
-                        background: isPanMode ? 'var(--primary)' : 'transparent',
-                        color: isPanMode ? '#ffffff' : 'var(--text-muted)',
-                        padding: '4px 10px',
-                        borderRadius: 6,
-                        fontSize: '0.78rem',
-                        fontWeight: isPanMode ? 700 : 500,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 4
-                      }}
-                      title="Mover lienzo (Espacio + arrastrar o botón central)"
-                    >
-                      <Hand size={13} />
-                      <span className="hidden-xs">Mover</span>
-                    </button>
-                  </div>
+                      } else {
+                        const st = STROKE_STYLES.find(s => s.id === val);
+                        if (st) {
+                          setStrokeStyle(st.id);
+                          setStrokeWidth(st.defaultWidth);
+                        }
+                        setIsEraser(false);
+                        setIsPanMode(false);
+                      }
+                    }}
+                    title="Seleccionar herramienta o estilo de trazo"
+                  >
+                    <optgroup label="Trazos de Escritura">
+                      {STROKE_STYLES.map(st => (
+                        <option key={st.id} value={st.id}>
+                          {st.icon} {st.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Herramientas">
+                      <option value="eraser">🧹 Goma de Borrar</option>
+                      <option value="pan">✋ Mover / Desplazar</option>
+                    </optgroup>
+                  </select>
                 </div>
 
-                {/* 2. Ink Colors */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                {/* 2. Ink Color Selector */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
                     Tinta:
                   </span>
-                  <div style={{ display: 'flex', gap: 5 }}>
-                    {INK_PALETTES.map(ink => {
-                      const isSelected = inkColor === (paperStyle === 'chalkboard' ? ink.lightColor : ink.color);
-                      return (
-                        <button
-                          key={ink.id}
-                          type="button"
-                          onClick={() => {
-                            setInkColor(paperStyle === 'chalkboard' ? ink.lightColor : ink.color);
-                            setIsEraser(false);
-                          }}
-                          style={{
-                            width: 22,
-                            height: 22,
-                            borderRadius: '50%',
-                            background: paperStyle === 'chalkboard' ? ink.lightColor : ink.color,
-                            border: isSelected ? '2px solid var(--primary)' : '2px solid transparent',
-                            transform: isSelected ? 'scale(1.2)' : 'scale(1)',
-                            cursor: 'pointer',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                            transition: 'all 0.15s ease'
-                          }}
-                          title={ink.name}
-                        />
-                      );
-                    })}
-                  </div>
+                  <select
+                    className="practice-tool-select"
+                    value={
+                      INK_PALETTES.find(ink => 
+                        (paperStyle === 'chalkboard' ? ink.lightColor : ink.color) === inkColor
+                      )?.id || 'sumi'
+                    }
+                    onChange={(e) => {
+                      const found = INK_PALETTES.find(ink => ink.id === e.target.value);
+                      if (found) {
+                        setInkColor(paperStyle === 'chalkboard' ? found.lightColor : found.color);
+                        setIsEraser(false);
+                      }
+                    }}
+                    title="Color de tinta caligráfica"
+                  >
+                    {INK_PALETTES.map(ink => (
+                      <option key={ink.id} value={ink.id}>
+                        🎨 {ink.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* 3. Grid & Paper Types */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)' }}>Cuadrícula:</span>
+                    <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                      Cuadrícula:
+                    </span>
                     <select
+                      className="practice-tool-select"
                       value={gridType}
                       onChange={(e) => setGridType(e.target.value)}
-                      style={{
-                        padding: '4px 8px',
-                        borderRadius: 6,
-                        border: '1px solid var(--border)',
-                        fontSize: '0.78rem',
-                        background: 'var(--bg-surface)',
-                        color: 'var(--text-main)',
-                        cursor: 'pointer'
-                      }}
+                      title="Tipo de cuadrícula japonesa"
                     >
                       {GRID_TYPES.map(g => (
-                        <option key={g.id} value={g.id}>{g.name}</option>
+                        <option key={g.id} value={g.id}>{g.icon ? `${g.icon} ` : ''}{g.name}</option>
                       ))}
                     </select>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)' }}>Papel:</span>
+                    <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                      Papel:
+                    </span>
                     <select
+                      className="practice-tool-select"
                       value={paperStyle}
                       onChange={(e) => setPaperStyle(e.target.value)}
-                      style={{
-                        padding: '4px 8px',
-                        borderRadius: 6,
-                        border: '1px solid var(--border)',
-                        fontSize: '0.78rem',
-                        background: 'var(--bg-surface)',
-                        color: 'var(--text-main)',
-                        cursor: 'pointer'
-                      }}
+                      title="Fondo y textura de papel"
                     >
                       {PAPER_STYLES.map(p => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
+                        <option key={p.id} value={p.id}>📜 {p.name}</option>
                       ))}
                     </select>
                   </div>
                 </div>
 
                 {/* 4. Undo, Redo, Clear & Verify */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <button
                     type="button"
-                    className="btn btn-ghost btn-sm"
+                    className="btn btn-ghost btn-xs"
                     onClick={handleUndo}
                     disabled={strokes.length === 0}
-                    style={{ padding: '6px', opacity: strokes.length === 0 ? 0.4 : 1 }}
+                    style={{ padding: '4px 6px', opacity: strokes.length === 0 ? 0.4 : 1 }}
                     title="Deshacer trazo (Ctrl+Z)"
                   >
-                    <Undo2 size={15} />
+                    <Undo2 size={14} />
                   </button>
                   <button
                     type="button"
-                    className="btn btn-ghost btn-sm"
+                    className="btn btn-ghost btn-xs"
                     onClick={handleRedo}
                     disabled={redoStack.length === 0}
-                    style={{ padding: '6px', opacity: redoStack.length === 0 ? 0.4 : 1 }}
+                    style={{ padding: '4px 6px', opacity: redoStack.length === 0 ? 0.4 : 1 }}
                     title="Rehacer trazo"
                   >
-                    <Redo2 size={15} />
+                    <Redo2 size={14} />
                   </button>
                   <button
                     type="button"
-                    className="btn btn-outline btn-sm"
+                    className="btn btn-outline btn-xs"
                     onClick={handleClearCanvas}
-                    style={{ fontSize: '0.78rem', padding: '4px 8px' }}
+                    style={{ fontSize: '0.75rem', padding: '4px 8px' }}
                     title="Limpiar todo el lienzo"
                   >
                     <RotateCcw size={13} />
-                    <span className="hidden-xs">Limpiar</span>
+                    <span className="practice-mobile-hide">Limpiar</span>
                   </button>
 
                   <button
                     type="button"
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-primary btn-xs"
                     onClick={handleVerifyDrawing}
                     disabled={isVerifying}
                     style={{
-                      fontSize: '0.8rem',
-                      padding: '5px 12px',
+                      fontSize: '0.76rem',
+                      padding: '4px 10px',
                       background: 'linear-gradient(135deg, #059669, #10b981)',
                       border: 'none',
-                      boxShadow: '0 2px 6px rgba(16, 185, 129, 0.3)'
+                      boxShadow: '0 2px 6px rgba(16, 185, 129, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4
                     }}
-                    title="Analizar y verificar precisión de trazo respecto al carácter modelo"
+                    title="Analizar y verificar precisión de trazo respecto al modelo"
                   >
-                    <Sparkles size={14} />
-                    <span>Verificar Trazo</span>
+                    <Sparkles size={13} />
+                    <span>Verificar</span>
                   </button>
                 </div>
               </div>
@@ -1926,195 +1873,190 @@ export default function PracticePadModal({
                   />
                 </div>
 
-                {/* Floating Ghost Opacity Slider */}
+                {/* Unified Floating Controls Dock */}
                 <div 
+                  className="practice-bottom-dock"
                   style={{
                     position: 'absolute',
-                    bottom: 16,
-                    left: 16,
+                    bottom: 14,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                     zIndex: 10,
                     background: 'var(--bg-surface)',
-                    padding: '6px 12px',
-                    borderRadius: 12,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    padding: '5px 12px',
+                    borderRadius: 24,
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
+                    gap: 10,
                     border: '1px solid var(--border)',
-                    fontSize: '0.78rem'
+                    maxWidth: 'calc(100% - 20px)',
+                    overflowX: 'auto'
                   }}
                 >
-                  <span style={{ color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    {ghostOpacity > 0 ? <Eye size={13} /> : <EyeOff size={13} />}
-                    Guía Fantasma:
-                  </span>
-                  <input 
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={ghostOpacity}
-                    onChange={(e) => setGhostOpacity(Number(e.target.value))}
-                    style={{ width: 80, accentColor: 'var(--primary)' }}
-                    title="Opacidad de la silueta de ayuda para calcar (0% = oculta)"
-                  />
-                  <span style={{ minWidth: 32, fontWeight: 700 }}>{ghostOpacity}%</span>
-                </div>
+                  {/* Ghost Guide Opacity */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <button
+                      type="button"
+                      onClick={() => setGhostOpacity(ghostOpacity > 0 ? 0 : 35)}
+                      style={{
+                        border: 'none',
+                        background: 'transparent',
+                        color: ghostOpacity > 0 ? 'var(--primary)' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: 2,
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                      title={ghostOpacity > 0 ? "Ocultar guía fantasma" : "Mostrar guía fantasma"}
+                    >
+                      {ghostOpacity > 0 ? <Eye size={14} /> : <EyeOff size={14} />}
+                    </button>
+                    <span className="practice-mobile-hide" style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.74rem' }}>
+                      Guía:
+                    </span>
+                    <input 
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      value={ghostOpacity}
+                      onChange={(e) => setGhostOpacity(Number(e.target.value))}
+                      style={{ width: 60, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                      title={`Opacidad de la silueta de ayuda (${ghostOpacity}%)`}
+                    />
+                    <span style={{ minWidth: 26, fontWeight: 700, fontSize: '0.72rem' }}>{ghostOpacity}%</span>
+                  </div>
 
-                {/* Floating Stroke Thickness Slider */}
-                <div 
-                  style={{
-                    position: 'absolute',
-                    bottom: 16,
-                    left: 210,
-                    zIndex: 10,
-                    background: 'var(--bg-surface)',
-                    padding: '6px 12px',
-                    borderRadius: 12,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    border: '1px solid var(--border)',
-                    fontSize: '0.78rem'
-                  }}
-                >
-                  <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Grosor:</span>
-                  <input 
-                    type="range"
-                    min="2"
-                    max="28"
-                    value={strokeWidth}
-                    onChange={(e) => setStrokeWidth(Number(e.target.value))}
-                    style={{ width: 75, accentColor: 'var(--primary)' }}
-                  />
-                  <span style={{ minWidth: 28, fontWeight: 700 }}>{strokeWidth}px</span>
-                </div>
+                  <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
 
-                {/* Floating Zoom & Pan Navigation Dock */}
-                <div 
-                  style={{
-                    position: 'absolute',
-                    bottom: 16,
-                    right: 16,
-                    zIndex: 10,
-                    background: 'var(--bg-surface)',
-                    padding: '4px 8px',
-                    borderRadius: 12,
-                    boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    border: '1px solid var(--border)',
-                    fontSize: '0.78rem'
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleZoomChange(zoom - 0.25)}
-                    disabled={zoom <= 0.5}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: zoom <= 0.5 ? 'var(--text-muted)' : 'var(--text-main)',
-                      opacity: zoom <= 0.5 ? 0.4 : 1,
-                      cursor: zoom <= 0.5 ? 'not-allowed' : 'pointer',
-                      padding: '4px',
-                      borderRadius: 6,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    title="Alejar (Zoom Out - Ctrl+-)"
-                  >
-                    <ZoomOut size={15} />
-                  </button>
+                  {/* Stroke Width */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <Sliders size={13} style={{ color: 'var(--text-muted)' }} />
+                    <span className="practice-mobile-hide" style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.74rem' }}>
+                      Grosor:
+                    </span>
+                    <input 
+                      type="range"
+                      min="2"
+                      max="28"
+                      value={strokeWidth}
+                      onChange={(e) => setStrokeWidth(Number(e.target.value))}
+                      style={{ width: 55, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                      title={`Grosor de trazo (${strokeWidth}px)`}
+                    />
+                    <span style={{ minWidth: 24, fontWeight: 700, fontSize: '0.72rem' }}>{strokeWidth}px</span>
+                  </div>
 
-                  <button
-                    type="button"
-                    onClick={handleResetZoomAndPan}
-                    style={{
-                      border: 'none',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-main)',
-                      cursor: 'pointer',
-                      padding: '3px 8px',
-                      borderRadius: 6,
-                      fontWeight: 700,
-                      fontSize: '0.75rem',
-                      minWidth: 46,
-                      textAlign: 'center'
-                    }}
-                    title="Restablecer zoom al 100% y centrar (Ctrl+0)"
-                  >
-                    {Math.round(zoom * 100)}%
-                  </button>
+                  <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
 
-                  <button
-                    type="button"
-                    onClick={() => handleZoomChange(zoom + 0.25)}
-                    disabled={zoom >= 4}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: zoom >= 4 ? 'var(--text-muted)' : 'var(--text-main)',
-                      opacity: zoom >= 4 ? 0.4 : 1,
-                      cursor: zoom >= 4 ? 'not-allowed' : 'pointer',
-                      padding: '4px',
-                      borderRadius: 6,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    title="Acercar (Zoom In - Ctrl++)"
-                  >
-                    <ZoomIn size={15} />
-                  </button>
+                  {/* Zoom & Pan Controls */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                    <button
+                      type="button"
+                      onClick={() => handleZoomChange(zoom - 0.25)}
+                      disabled={zoom <= 0.5}
+                      style={{
+                        border: 'none',
+                        background: 'transparent',
+                        color: zoom <= 0.5 ? 'var(--text-muted)' : 'var(--text-main)',
+                        opacity: zoom <= 0.5 ? 0.4 : 1,
+                        cursor: zoom <= 0.5 ? 'not-allowed' : 'pointer',
+                        padding: '3px',
+                        borderRadius: 4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      title="Alejar (Zoom Out)"
+                    >
+                      <ZoomOut size={14} />
+                    </button>
 
-                  <div style={{ width: 1, height: 16, background: 'var(--border)', margin: '0 2px' }} />
-
-                  <button
-                    type="button"
-                    onClick={() => setIsPanMode(!isPanMode)}
-                    style={{
-                      border: 'none',
-                      background: isPanMode ? 'var(--primary)' : 'transparent',
-                      color: isPanMode ? '#ffffff' : 'var(--text-muted)',
-                      cursor: 'pointer',
-                      padding: '4px 8px',
-                      borderRadius: 6,
-                      fontSize: '0.72rem',
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4
-                    }}
-                    title={isPanMode ? "Modo mover activo (clic para volver a dibujar)" : "Mover lienzo (Espacio + arrastrar)"}
-                  >
-                    <Hand size={13} />
-                    <span className="hidden-xs">Mover</span>
-                  </button>
-
-                  {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
                     <button
                       type="button"
                       onClick={handleResetZoomAndPan}
                       style={{
                         border: 'none',
-                        background: 'transparent',
-                        color: 'var(--primary)',
+                        background: 'var(--bg-main)',
+                        color: 'var(--text-main)',
                         cursor: 'pointer',
-                        padding: '4px',
-                        borderRadius: 6,
+                        padding: '2px 6px',
+                        borderRadius: 4,
+                        fontWeight: 700,
+                        fontSize: '0.72rem',
+                        minWidth: 40,
+                        textAlign: 'center'
+                      }}
+                      title="Restablecer zoom al 100%"
+                    >
+                      {Math.round(zoom * 100)}%
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleZoomChange(zoom + 0.25)}
+                      disabled={zoom >= 4}
+                      style={{
+                        border: 'none',
+                        background: 'transparent',
+                        color: zoom >= 4 ? 'var(--text-muted)' : 'var(--text-main)',
+                        opacity: zoom >= 4 ? 0.4 : 1,
+                        cursor: zoom >= 4 ? 'not-allowed' : 'pointer',
+                        padding: '3px',
+                        borderRadius: 4,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}
-                      title="Centrar y reajustar lienzo"
+                      title="Acercar (Zoom In)"
                     >
-                      <RotateCcw size={13} />
+                      <ZoomIn size={14} />
                     </button>
-                  )}
+
+                    <button
+                      type="button"
+                      onClick={() => setIsPanMode(!isPanMode)}
+                      style={{
+                        border: 'none',
+                        background: isPanMode ? 'var(--primary)' : 'transparent',
+                        color: isPanMode ? '#ffffff' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '3px 6px',
+                        borderRadius: 4,
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 3
+                      }}
+                      title={isPanMode ? "Modo mover activo (clic para volver a dibujar)" : "Mover lienzo"}
+                    >
+                      <Hand size={13} />
+                      <span className="practice-mobile-hide">Mover</span>
+                    </button>
+
+                    {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
+                      <button
+                        type="button"
+                        onClick={handleResetZoomAndPan}
+                        style={{
+                          border: 'none',
+                          background: 'transparent',
+                          color: 'var(--primary)',
+                          cursor: 'pointer',
+                          padding: '3px',
+                          borderRadius: 4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title="Centrar y reajustar lienzo"
+                      >
+                        <RotateCcw size={13} />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Floating Verification Result Card */}

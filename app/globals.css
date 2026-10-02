@@ -8763,3 +8763,66 @@ html {
 .tour-info-shortcut-btn:active {
   transform: translateY(0);
 }
+
+/* =========================================================================
+   PRACTICE PAD MODAL - MOBILE RESPONSIVENESS & CANVAS MAXIMIZATION
+   ========================================================================= */
+
+.practice-tool-select {
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.practice-tool-select:focus {
+  border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .practice-pad-overlay {
+    padding: 0 !important;
+  }
+
+  .practice-pad-window {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .practice-mobile-hide {
+    display: none !important;
+  }
+
+  .practice-toolbar {
+    padding: 4px 8px !important;
+    gap: 5px !important;
+  }
+
+  .practice-tool-select {
+    font-size: 0.74rem !important;
+    padding: 3px 6px !important;
+    height: 28px !important;
+    max-width: 115px !important;
+  }
+
+  .practice-bottom-dock {
+    bottom: 8px !important;
+    padding: 3px 8px !important;
+    gap: 6px !important;
+    font-size: 0.72rem !important;
+    max-width: calc(100% - 12px) !important;
+  }
+}
+
+
