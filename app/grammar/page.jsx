@@ -10,13 +10,15 @@ function GrammarPageContent() {
   const { appState, handleUpdateState } = useApp();
   const searchParams = useSearchParams();
 
+  const levelParam = searchParams.get('level');
   const particleParam = searchParams.get('particle');
   const searchParam = searchParams.get('search');
   const quizParam = searchParams.get('quiz');
 
-  const handleParamsChange = ({ particle, search, quiz }) => {
+  const handleParamsChange = ({ particle, search, quiz, level }) => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams();
+    if (level && level !== 'all') params.set('level', level);
     if (particle && particle !== 'all') params.set('particle', particle);
     if (search && search.trim()) params.set('search', search.trim());
     if (quiz) params.set('quiz', 'true');
@@ -33,6 +35,7 @@ function GrammarPageContent() {
     <GrammarTab 
       appState={appState} 
       onUpdateState={handleUpdateState} 
+      initialLevel={levelParam}
       initialParticle={particleParam}
       initialSearch={searchParam}
       initialQuiz={quizParam === 'true' || quizParam === '1'}

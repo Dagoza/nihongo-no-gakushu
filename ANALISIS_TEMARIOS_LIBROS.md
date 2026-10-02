@@ -429,7 +429,30 @@ Total: **70 diálogos interactivos** con modos Shadowing, Ocultar Personaje, eva
 
 ---
 
-## 9. Checklist de Verificación Rápida para Desarrolladores y Agentes
+## 10. Catálogo Maestro de Partículas y Gramática Esencial (`data/particles.json`)
+
+Se completó la auditoría, consolidación y expansión exhaustiva de las partículas de la plataforma Nihongo Master, alcanzando **99 partículas estructuradas** organizadas con el estándar estricto de niveles **JLPT N5 a N1**:
+
+### 10.1. Distribución por Nivel JLPT y Funcionalidad
+| Nivel JLPT | Cantidad | Partículas y Conectores Clave | Enfoque Pedagógico |
+| :---: | :---: | :--- | :--- |
+| **N5** | **46** | `は`, `が`, `を`, `に`, `で`, `へ`, `と`, `も`, `から`, `まで`, `より`, `か`, `ね`, `よ`, `よね`, `や`, `など`, `までに`, `だけ`, `しか〜ない`, `くらい/ぐらい`, `ごろ`, `の`... | Casos gramaticales básicos, tema vs sujeto, objeto directo, dirección, tiempo, causa elemental, enumeración exhaustiva e inexhaustiva, y partículas discursivas de fin de oración. |
+| **N4** | **19** | `ので`, `のに`, `でも`, `ば`, `たら`, `なら`, `ても`, `ながら`, `し`, `たり〜たり`, `か/かどうか`, `ばかり`, `たばかり`, `ほど`, `とおり`, `まま`, `ために`, `ように`, `やすい/にくい` | Conjunciones causales, adversativas, condicionales (`ば`, `たら`, `なら`), acciones simultáneas (`ながら`), enumeración de razones (`し`), acciones recientes (`たばかり`) y propósito (`ために`, `ように`). |
+| **N3** | **22** | `にとって`, `について`, `に関して`, `に対して`, `によって`, `を通じて`, `をはじめ`, `を中心に`, `をこめて`, `にかけて`, `にわたって`, `おかげで`, `せいで`, `たびに`, `ついでに`, `最中に`, `うちに`, `向け`, `向き`, `っぽい`, `として`, `わりに` | Estructuras posicionales y abstractas: perspectiva (`にとって`), tópico formal (`について`, `に関して`), contraste/actitud (`に対して`), medio/agente (`によって`), rango espacio-temporal (`にかけて`, `にわたって`), causa positiva/negativa (`おかげで`, `せいで`), temporalidad (`最中に`, `うちに`), y roles (`として`). |
+| **N2** | **8** | `にこたえて`, `に基づいて`, `に沿って`, `のもとで`, `を契機に`, `を問わず`, `にかかわらず`, `のみならず` | Gramática avanzada y formal: respuesta a expectativas (`にこたえて`), fundamentación (`に基づいて`), conformidad con pautas (`に沿って`), condiciones (`のもとで`), puntos de inflexión (`を契機に`), indiferencia de condiciones (`を問わず`, `にかかわらず`) y adición formal (`のみならず`). |
+| **N1** | **4** | `はおろか`, `を余儀なくされる`, `たるもの`, `ならでは` | Estructuras formales y literarias: énfasis extremo ("ni hablar de", `はおろか`), inevitabilidad forzosa (`を余儀なくされる`), rol y deber moral (`たるもの`), y exclusividad única/inimitable (`ならでは`). |
+| **TOTAL** | **99** | — | **100% Cobertura de Partículas y Conectores de Examen JLPT** |
+
+### 10.2. Características y Prestaciones en la Interfaz (`/grammar`):
+1. **Selector de Nivel JLPT:** Pestañas directas (`Todas (99)`, `N5 (46)`, `N4 (19)`, `N3 (22)`, `N2 (8)`, `N1 (4)`) con códigos de color de alto contraste.
+2. **Filtrado Contextual de Símbolos:** Al seleccionar un nivel específico, el listado de botones de símbolos (`uniqueParticles`) se filtra automáticamente para mostrar solo las partículas pertenecientes a dicho nivel.
+3. **Modo Quiz Adaptativo por Nivel:** El Quiz permite practicar preguntas filtrando por nivel específico (`N5`, `N4`, etc.) o de manera global (`Todas`), además de permitir filtrar por partículas pendientes o dominadas.
+4. **Sincronización en URL:** Soporte nativo de parámetros de búsqueda (`?level=N5`, `?particle=は`, `?quiz=true`, `?search=...`).
+5. **Fichas Didácticas Completas:** Cada una de las 99 partículas incluye su símbolo kanji/kana, rol gramatical en inglés y español, fórmula sintáctica clara, ejemplos traducidos con romaji y audio Edge TTS, botón para practicar en el cuaderno de caligrafía y speech recognition para entrenar pronunciación.
+
+---
+
+## 11. Checklist de Verificación Rápida para Desarrolladores y Agentes
 
 Antes de proponer o implementar cualquier cambio en el temario, responde a estas preguntas:
 
@@ -442,5 +465,7 @@ Antes de proponer o implementar cualquier cambio en el temario, responde a estas
 - [x] **7. Registro de Seguimiento:** ¿Actualizaste las tablas de este documento (`ANALISIS_TEMARIOS_LIBROS.md`) para reflejar las nuevas adiciones?
 - [x] **8. Autoevaluación Can-Do y Ruta:** ¿Se encuentran implementados y operativos los checkboxes interactivos para la Ruta Consolidada y las Competencias Can-Do en la interfaz?
 - [x] **9. Historias y Conversaciones:** ¿Se encuentran seccionadas por Nivel (N5 a N3) y Colección en `/story` y `/nhk` con navegación fluida?
-- [ ] **10. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
+- [x] **10. Partículas Organizadas:** ¿Se encuentran las 99 partículas estructuradas por niveles JLPT (N5 a N1) con filtros, fórmulas y quizzes por nivel en `/grammar`?
+- [ ] **11. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
+
 

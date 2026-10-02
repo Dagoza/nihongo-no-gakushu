@@ -598,7 +598,7 @@ export default function Header({
 
           <div className="stat-badge" title="Partículas dominadas">
             <CheckCircle size={16} className="text-emerald-500" />
-            <span>{stats.particles}/25 part.</span>
+            <span>{stats.particles}/{stats.totalParticles || 99} part.</span>
           </div>
 
           {/* Temarios revisados con ejercicios pendientes */}

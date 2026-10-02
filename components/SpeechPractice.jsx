@@ -4,10 +4,143 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, CheckCircle2, RefreshCw } from 'lucide-react';
 import * as wanakana from 'wanakana';
 
+// Arabic digit to Kanji digit
+export const DIGIT_TO_KANJI = {
+  '0': '〇', '1': '一', '2': '二', '3': '三', '4': '四',
+  '5': '五', '6': '六', '7': '七', '8': '八', '9': '九'
+};
+
+// Kanji digit to Arabic digit
+export const KANJI_TO_DIGIT = {
+  '〇': '0', '零': '0', '一': '1', '二': '2', '三': '3', '四': '4',
+  '五': '5', '六': '6', '七': '7', '八': '8', '九': '9'
+};
+
+// Japanese Number Readings (Hiragana / Katakana)
+export const NUMBER_READINGS = {
+  '0': ['れい', 'ぜろ', 'ゼロ', 'まる'],
+  '1': ['いち', 'ひと', 'ひとつ', 'いっ'],
+  '2': ['に', 'ふた', 'ふたつ'],
+  '3': ['さん', 'み', 'みっつ', 'みつ'],
+  '4': ['よん', 'し', 'よ', 'よっつ'],
+  '5': ['ご', 'いつ', 'いつつ'],
+  '6': ['ろく', 'む', 'むっつ', 'ろっ'],
+  '7': ['なな', 'しち', 'ななつ'],
+  '8': ['はち', 'や', 'やっつ', 'はっ'],
+  '9': ['きゅう', 'く', 'ここの', 'ここのつ'],
+  '10': ['じゅう', 'とお', 'じゅっ', 'じっ'],
+  '20': ['にじゅう', 'はたち'],
+  '100': ['ひゃく'],
+  '1000': ['せん'],
+  '10000': ['まん', 'いちまん']
+};
+
+export const COUNTER_MAP = {
+  '1つ': ['一つ', 'ひとつ'], '一つ': ['1つ', 'ひとつ'],
+  '2つ': ['二つ', 'ふたつ'], '二つ': ['2つ', 'ふたつ'],
+  '3つ': ['三つ', 'みっつ'], '三つ': ['3つ', 'みっつ'],
+  '4つ': ['四つ', 'よっつ'], '四つ': ['4つ', 'よっつ'],
+  '5つ': ['五つ', 'いつつ'], '五つ': ['5つ', 'いつつ'],
+  '6つ': ['六つ', 'むっつ'], '六つ': ['6つ', 'むっつ'],
+  '7つ': ['七つ', 'ななつ'], '七つ': ['7つ', 'ななつ'],
+  '8つ': ['八つ', 'やっつ'], '八つ': ['8つ', 'やっつ'],
+  '9つ': ['九つ', 'ここのつ'], '九つ': ['9つ', 'ここのつ'],
+  '10': ['十', 'とお', 'じゅう'], '十': ['10', 'とお', 'じゅう'],
+  '1日': ['一日', 'ついたち', 'いちにち'], '一日': ['1日', 'ついたち', 'いちにち'],
+  '2日': ['二日', 'ふつか'], '二日': ['2日', 'ふつか'],
+  '3日': ['三日', 'みっか'], '三日': ['3日', 'みっか'],
+  '4日': ['四日', 'よっか'], '四日': ['4日', 'よっか'],
+  '5日': ['五日', 'いつか'], '五日': ['5日', 'いつか'],
+  '6日': ['六日', 'むいか'], '六日': ['6日', 'むいか'],
+  '7日': ['七日', 'なのか'], '七日': ['7日', 'なのか'],
+  '8日': ['八日', 'ようか'], '八日': ['8日', 'ようか'],
+  '9日': ['九日', 'ここのか'], '九日': ['9日', 'ここのか'],
+  '10日': ['十日', 'とおか'], '十日': ['10日', 'とおか'],
+  '14日': ['十四日', 'じゅうよっか'], '十四日': ['14日', 'じゅうよっか'],
+  '20日': ['二十日', 'はつか'], '二十日': ['20日', 'はつか'],
+  '24日': ['二十四日', 'にじゅうよっか'], '二十四日': ['24日', 'にじゅうよっか'],
+  '1人': ['一人', 'ひとり'], '一人': ['1人', 'ひとり'],
+  '2人': ['二人', 'ふたり'], '二人': ['2人', 'ふたり'],
+  '3人': ['三人', 'さんにん'], '三人': ['3人', 'さんにん'],
+  '4人': ['四人', 'よにん'], '四人': ['4人', 'よにん']
+};
+
+export function normalizeFullWidthDigits(str) {
+  if (!str) return '';
+  return String(str).replace(/[０-９]/g, (ch) =>
+    String.fromCharCode(ch.charCodeAt(0) - 0xfee0)
+  );
+}
+
+export function convertArabicToKanjiNumber(str) {
+  if (!str) return '';
+  return String(str).replace(/\b\d+\b/g, (match) => {
+    const n = parseInt(match, 10);
+    if (isNaN(n) || n > 99999) return match;
+    if (n === 0) return '〇';
+    const kanjiDigits = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+    if (n < 10) return kanjiDigits[n];
+    if (n === 10) return '十';
+    if (n < 20) return '十' + kanjiDigits[n % 10];
+    if (n < 100) {
+      const tens = Math.floor(n / 10);
+      const ones = n % 10;
+      return (tens === 1 ? '十' : kanjiDigits[tens] + '十') + kanjiDigits[ones];
+    }
+    if (n === 100) return '百';
+    if (n === 1000) return '千';
+    if (n === 10000) return '一万';
+    return match;
+  });
+}
+
+export function getNumberEquivalents(text) {
+  if (!text) return [];
+  const s = normalizeFullWidthDigits(text);
+  const results = new Set([s]);
+
+  if (COUNTER_MAP[s]) {
+    COUNTER_MAP[s].forEach(c => results.add(c));
+  }
+
+  if (NUMBER_READINGS[s]) {
+    NUMBER_READINGS[s].forEach(r => results.add(r));
+    if (s in DIGIT_TO_KANJI) results.add(DIGIT_TO_KANJI[s]);
+  }
+
+  if (KANJI_TO_DIGIT[s] && NUMBER_READINGS[KANJI_TO_DIGIT[s]]) {
+    const dig = KANJI_TO_DIGIT[s];
+    results.add(dig);
+    NUMBER_READINGS[dig].forEach(r => results.add(r));
+  }
+
+  if (s === '十') { results.add('10'); NUMBER_READINGS['10'].forEach(r => results.add(r)); }
+  if (s === '10') { results.add('十'); NUMBER_READINGS['10'].forEach(r => results.add(r)); }
+  if (s === '百') { results.add('100'); NUMBER_READINGS['100'].forEach(r => results.add(r)); }
+  if (s === '100') { results.add('百'); NUMBER_READINGS['100'].forEach(r => results.add(r)); }
+  if (s === '千') { results.add('1000'); NUMBER_READINGS['1000'].forEach(r => results.add(r)); }
+  if (s === '1000') { results.add('千'); NUMBER_READINGS['1000'].forEach(r => results.add(r)); }
+  if (s === '万') { results.add('10000'); NUMBER_READINGS['10000'].forEach(r => results.add(r)); }
+  if (s === '10000') { results.add('万'); NUMBER_READINGS['10000'].forEach(r => results.add(r)); }
+
+  // Compound replacement: digits to kanji
+  const toKanji = s.replace(/\d/g, d => DIGIT_TO_KANJI[d] || d);
+  results.add(toKanji);
+  const toFullKanji = convertArabicToKanjiNumber(s);
+  results.add(toFullKanji);
+
+  // Compound replacement: kanji to digits
+  const toDigits = s.replace(/[〇零一二三四五六七八九]/g, k => KANJI_TO_DIGIT[k] || k);
+  results.add(toDigits);
+
+  return Array.from(results);
+}
+
 // Helper to strip punctuation and whitespace for clean audio diff & matching
 export function cleanText(text) {
   if (!text) return '';
-  return String(text).replace(/[。、！？!?,，[\]()（）\s]/g, '');
+  const cleaned = String(text).replace(/[。、！？!?,，[\]()（）\s]/g, '');
+  return normalizeFullWidthDigits(cleaned);
 }
 
 // Compute Longest Common Subsequence length
@@ -163,6 +296,15 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
           const hira = wanakana.toHiragana(cleaned);
           if (hira) candidates.add(hira);
         } catch (e) {}
+
+        const equivs = getNumberEquivalents(cleaned);
+        for (const eq of equivs) {
+          candidates.add(eq);
+          try {
+            const h = wanakana.toHiragana(eq);
+            if (h) candidates.add(h);
+          } catch (e) {}
+        }
       }
     };
 
@@ -235,40 +377,51 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
     if (!spoken) return;
     
     const cleanSpoken = cleanText(spoken);
-    let spokenHiragana = cleanSpoken;
+    const spokenVariants = new Set([cleanSpoken]);
+    const numEquivs = getNumberEquivalents(cleanSpoken);
+    numEquivs.forEach(eq => spokenVariants.add(eq));
     try {
-      spokenHiragana = wanakana.toHiragana(cleanSpoken);
+      const hira = wanakana.toHiragana(cleanSpoken);
+      if (hira) spokenVariants.add(hira);
     } catch (e) {}
 
     const candidates = getCandidates();
 
     let isMatch = false;
-    for (const cand of candidates) {
-      if (!cand) continue;
-      const candClean = cleanText(cand);
-      let candHira = candClean;
+    for (const sv of spokenVariants) {
+      let svHira = sv;
       try {
-        candHira = wanakana.toHiragana(candClean);
+        svHira = wanakana.toHiragana(sv);
       } catch (e) {}
 
-      // Match exacto en kanji o en hiragana
-      if (cleanSpoken === candClean || spokenHiragana === candHira) {
-        isMatch = true;
-        break;
-      }
+      for (const cand of candidates) {
+        if (!cand) continue;
+        const candClean = cleanText(cand);
+        let candHira = candClean;
+        try {
+          candHira = wanakana.toHiragana(candClean);
+        } catch (e) {}
 
-      // Match parcial para oraciones compuestas (> 3 caracteres)
-      if (candClean.length > 3) {
-        if (
-          cleanSpoken.includes(candClean) || 
-          candClean.includes(cleanSpoken) ||
-          spokenHiragana.includes(candHira) || 
-          candHira.includes(spokenHiragana)
-        ) {
+        // Match exacto en kanji, dígitos o hiragana
+        if (sv === candClean || svHira === candHira) {
           isMatch = true;
           break;
         }
+
+        // Match parcial para oraciones compuestas (> 3 caracteres)
+        if (candClean.length > 3) {
+          if (
+            sv.includes(candClean) || 
+            candClean.includes(sv) ||
+            svHira.includes(candHira) || 
+            candHira.includes(svHira)
+          ) {
+            isMatch = true;
+            break;
+          }
+        }
       }
+      if (isMatch) break;
     }
 
     if (isMatch) {
@@ -346,7 +499,15 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
 
   const cleanSpoken = cleanText(transcript);
   const bestTarget = cleanSpoken ? getBestCandidate(transcript) : (cleanText(targetText) || targetText || '');
-  const diffResult = (cleanSpoken && bestTarget) ? diffStrings(cleanSpoken, bestTarget) : { sDiff: [], tDiff: [] };
+
+  // Align number representations between spoken and bestTarget for diff comparison
+  const hasKanjiNum = /[〇零一二三四五六七八九十百千万]/.test(bestTarget);
+  const hasArabicDigit = /\d/.test(cleanSpoken);
+  const spokenForDiff = (hasKanjiNum && hasArabicDigit) 
+    ? cleanSpoken.replace(/\d/g, d => DIGIT_TO_KANJI[d] || d) 
+    : cleanSpoken;
+
+  const diffResult = (cleanSpoken && bestTarget) ? diffStrings(spokenForDiff, bestTarget) : { sDiff: [], tDiff: [] };
 
   // COMPACT MODE (for lists, cards, tables, dialogues)
   if (compact) {
@@ -465,12 +626,22 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
                   <span style={{ color: 'var(--danger, #ef4444)', fontWeight: 600, fontSize: '0.72rem' }}>Dijiste: </span>
                   <span className="jp-text" style={{ fontSize: '0.88rem' }}>
                     {renderDiff(diffResult.sDiff, 'spoken')}
+                    {hasArabicDigit && hasKanjiNum && (
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginLeft: 4 }}>
+                        ({cleanSpoken})
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div>
                   <span style={{ color: 'var(--success, #10b981)', fontWeight: 600, fontSize: '0.72rem' }}>Esperado: </span>
                   <span className="jp-text" style={{ fontSize: '0.88rem' }}>
                     {renderDiff(diffResult.tDiff, 'target')}
+                    {hasKanjiNum && KANJI_TO_DIGIT[bestTarget] && (
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginLeft: 4 }}>
+                        ({KANJI_TO_DIGIT[bestTarget]})
+                      </span>
+                    )}
                   </span>
                 </div>
               </div>
@@ -547,12 +718,22 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
               <span style={{ color: 'var(--danger, #ef4444)', fontWeight: 600 }}>Dijiste: </span>
               <span className="jp-text" style={{ fontSize: '0.95rem' }}>
                 {renderDiff(diffResult.sDiff, 'spoken')}
+                {hasArabicDigit && hasKanjiNum && (
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 6 }}>
+                    ({cleanSpoken})
+                  </span>
+                )}
               </span>
             </div>
             <div style={{ fontSize: '0.82rem' }}>
               <span style={{ color: 'var(--success, #10b981)', fontWeight: 600 }}>Esperado: </span>
               <span className="jp-text" style={{ fontSize: '0.95rem' }}>
                 {renderDiff(diffResult.tDiff, 'target')}
+                {hasKanjiNum && KANJI_TO_DIGIT[bestTarget] && (
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 6 }}>
+                    ({KANJI_TO_DIGIT[bestTarget]})
+                  </span>
+                )}
               </span>
             </div>
           </>

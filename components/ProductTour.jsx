@@ -336,7 +336,7 @@ export default function ProductTour({
       title: 'Partículas & Gramática Esencial',
       subtitle: 'Domina los conectores y estructuras vitales del idioma',
       icon: Target,
-      description: 'Guía detallada de las 25 partículas japonesas más importantes (は, が, を, に, で, へ, と, も, から, まで, より, など...), con explicaciones directas y ejemplos comentados.',
+      description: 'Guía detallada y completa de 99 partículas japonesas organizadas por nivel JLPT (N5 a N1: は, が, を, に, で, へ, と, も, から, まで, より, など...), con explicaciones directas, fórmulas sintácticas y ejemplos comentados.',
       hiddenTip: '⚖️ Tablas Comparativas y Práctica Instantánea: Resuelve dudas comunes como cuándo usar "は" frente a "が", o "に" frente a "で", con comparativas visuales y ejercicios prácticos con retroalimentación inmediata.',
       tab: 'particles'
     },
@@ -766,7 +766,7 @@ export default function ProductTour({
                       )}
                       {selectedBadge === 'particles' && (
                         <div>
-                          <strong>🎯 Partículas Dominadas:</strong> Monitorea tu avance en las 25 partículas japonesas elementales (は, が, を, に, で...).
+                          <strong>🎯 Partículas Dominadas:</strong> Monitorea tu avance en las 99 partículas japonesas organizadas por nivel JLPT (N5 a N1: は, が, を, に, で, より, ほど, にとって, に基づいて...).
                         </div>
                       )}
                       {selectedBadge === 'bell' && (

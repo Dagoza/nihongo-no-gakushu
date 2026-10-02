@@ -14,6 +14,7 @@ export default function GrammarTab({
   initialParticle = null,
   initialSearch = null,
   initialQuiz = false,
+  initialLevel = null,
   onParamsChange
 }) {
   let contextApp = null;
@@ -21,15 +22,24 @@ export default function GrammarTab({
     contextApp = useApp();
   } catch (e) {}
 
+  const [levelFilter, setLevelFilter] = useState(initialLevel || 'all');
   const [filterParticle, setFilterParticle] = useState(initialParticle || 'all');
   const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'pending' | 'mastered'
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [quizActive, setQuizActive] = useState(!!initialQuiz);
   const [quizFilter, setQuizFilter] = useState('all'); // 'all' | 'pending'
+  const [quizLevelFilter, setQuizLevelFilter] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizFeedback, setQuizFeedback] = useState(null); // { selected, isCorrect, correct, sentence, role }
   const [imeInput, setImeInput] = useState('');
   const isComposingRef = useRef(false);
+
+  useEffect(() => {
+    if (initialLevel) {
+      setLevelFilter(initialLevel);
+      setQuizLevelFilter(initialLevel);
+    }
+  }, [initialLevel]);
 
   useEffect(() => {
     if (initialParticle) setFilterParticle(initialParticle);
@@ -43,26 +53,61 @@ export default function GrammarTab({
     if (initialQuiz !== undefined) setQuizActive(!!initialQuiz);
   }, [initialQuiz]);
 
-  const updateParams = (newP, newSearch, newQuiz) => {
+  const updateParams = (newP, newSearch, newQuiz, newLevel) => {
     if (onParamsChange) {
       onParamsChange({
         particle: newP !== undefined ? newP : filterParticle,
         search: newSearch !== undefined ? newSearch : searchTerm,
-        quiz: newQuiz !== undefined ? newQuiz : quizActive
+        quiz: newQuiz !== undefined ? newQuiz : quizActive,
+        level: newLevel !== undefined ? newLevel : levelFilter
       });
     }
   };
 
   const particlesData = dataStore.particles || [];
 
-  // Filter particles
-  const uniqueParticles = ['all', ...new Set(particlesData.map(p => p.particle))];
+  const levelCounts = useMemo(() => {
+    const counts = { all: particlesData.length, N5: 0, N4: 0, N3: 0, N2: 0, N1: 0 };
+    particlesData.forEach(p => {
+      const lvl = p.level || 'N5';
+      if (counts[lvl] !== undefined) counts[lvl]++;
+    });
+    return counts;
+  }, [particlesData]);
+
+  // Unique particle symbols filtered by selected level
+  const uniqueParticles = useMemo(() => {
+    const pool = levelFilter === 'all'
+      ? particlesData
+      : particlesData.filter(p => (p.level || 'N5') === levelFilter);
+    return ['all', ...new Set(pool.map(p => p.particle))];
+  }, [particlesData, levelFilter]);
+
+  const getLevelBadgeStyle = (level) => {
+    switch (level) {
+      case 'N5':
+        return { background: 'rgba(16, 185, 129, 0.15)', color: '#059669', borderColor: 'rgba(16, 185, 129, 0.3)' };
+      case 'N4':
+        return { background: 'rgba(59, 130, 246, 0.15)', color: '#2563eb', borderColor: 'rgba(59, 130, 246, 0.3)' };
+      case 'N3':
+        return { background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', borderColor: 'rgba(245, 158, 11, 0.3)' };
+      case 'N2':
+        return { background: 'rgba(139, 92, 246, 0.15)', color: '#7c3aed', borderColor: 'rgba(139, 92, 246, 0.3)' };
+      case 'N1':
+        return { background: 'rgba(239, 68, 68, 0.15)', color: '#dc2626', borderColor: 'rgba(239, 68, 68, 0.3)' };
+      default:
+        return { background: 'var(--primary-bg, rgba(59, 130, 246, 0.1))', color: 'var(--primary)', borderColor: 'rgba(59, 130, 246, 0.2)' };
+    }
+  };
 
   const filteredParticles = useMemo(() => {
     return particlesData.filter(p => {
       const isMastered = !!appState.masteredParticles?.[p.id];
       if (filterStatus === 'mastered' && !isMastered) return false;
       if (filterStatus === 'pending' && isMastered) return false;
+
+      const pLevel = p.level || 'N5';
+      if (levelFilter !== 'all' && pLevel !== levelFilter) return false;
 
       const matchFilter = filterParticle === 'all' || p.particle === filterParticle;
       const search = searchTerm.trim().toLowerCase();
@@ -81,7 +126,7 @@ export default function GrammarTab({
 
       return matchFilter && (matchParticle || matchRoleEs || matchRoleEn || matchFormula || matchExamples);
     });
-  }, [particlesData, filterParticle, filterStatus, searchTerm, appState.masteredParticles]);
+  }, [particlesData, levelFilter, filterParticle, filterStatus, searchTerm, appState.masteredParticles]);
 
   const masteredCount = particlesData.filter(p => !!appState.masteredParticles?.[p.id]).length;
   const pendingCount = particlesData.length - masteredCount;
@@ -99,17 +144,21 @@ export default function GrammarTab({
     });
   };
 
-  // Compile quiz questions from particle quiz_items
+  // Compile quiz questions from particle quiz_items with level filtering
   const quizQuestions = useMemo(() => {
     const questions = [];
     particlesData.forEach(p => {
       const isMastered = !!appState.masteredParticles?.[p.id];
       if (quizFilter === 'pending' && isMastered) return;
 
+      const pLevel = p.level || 'N5';
+      if (quizLevelFilter !== 'all' && pLevel !== quizLevelFilter) return;
+
       if (p.quiz_items && p.quiz_items.length > 0) {
         p.quiz_items.forEach(q => {
           questions.push({
             ...q,
+            particleLevel: pLevel,
             particleRole: p.role_es,
             particleName: p.particle,
             particleId: p.id
@@ -118,7 +167,7 @@ export default function GrammarTab({
       }
     });
     return questions.sort(() => 0.5 - Math.random());
-  }, [quizActive, particlesData, quizFilter, appState.masteredParticles]);
+  }, [quizActive, particlesData, quizFilter, quizLevelFilter, appState.masteredParticles]);
 
   const currentQuiz = quizQuestions[quizIndex];
 
@@ -223,7 +272,7 @@ export default function GrammarTab({
                 setQuizIndex(0);
                 setQuizFeedback(null);
                 setQuizActive(true);
-                updateParams(filterParticle, searchTerm, true);
+                updateParams(filterParticle, searchTerm, true, levelFilter);
               }}
             >
               ⚡ Iniciar Quiz de Partículas
@@ -231,67 +280,115 @@ export default function GrammarTab({
           </div>
 
           {/* Filter Bar */}
-          <div className="vocab-filter-bar" style={{ minWidth: 0, maxWidth: '100%' }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: '100%' }}>
-              <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-              <input 
-                type="text" 
-                className="search-input" 
-                style={{ paddingLeft: 38 }}
-                placeholder="Buscar función, fórmula, ejemplo o traducción..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  updateParams(filterParticle, e.target.value, quizActive);
-                }}
-              />
+          <div className="vocab-filter-bar" style={{ minWidth: 0, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Row 1: Search & Status */}
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', width: '100%' }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: 220, maxWidth: '100%' }}>
+                <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input 
+                  type="text" 
+                  className="search-input" 
+                  style={{ paddingLeft: 38 }}
+                  placeholder="Buscar función, fórmula, ejemplo o traducción..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    updateParams(filterParticle, e.target.value, quizActive, levelFilter);
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
+                {[
+                  { id: 'all', label: `Todas (${particlesData.length})` },
+                  { id: 'pending', label: `Por aprender (${pendingCount})` },
+                  { id: 'mastered', label: `Dominadas (${masteredCount})` }
+                ].map(st => (
+                  <button
+                    key={st.id}
+                    className={`btn ${filterStatus === st.id ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                    onClick={() => setFilterStatus(st.id)}
+                    style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {/* Row 2: JLPT Level Filters */}
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', paddingTop: 4, borderTop: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Nivel JLPT:</span>
+              {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => {
+                const count = levelCounts[lvl] || 0;
+                const isActive = levelFilter === lvl;
+                const badgeStyle = lvl !== 'all' ? getLevelBadgeStyle(lvl) : null;
+                return (
+                  <button
+                    key={lvl}
+                    className={`btn ${isActive ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                    style={{
+                      minWidth: 44,
+                      padding: '4px 10px',
+                      ...(isActive && badgeStyle ? { background: badgeStyle.color, borderColor: badgeStyle.color, color: '#fff' } : {})
+                    }}
+                    onClick={() => {
+                      setLevelFilter(lvl);
+                      const pool = lvl === 'all' ? particlesData : particlesData.filter(p => (p.level || 'N5') === lvl);
+                      const hasCurrent = pool.some(p => p.particle === filterParticle);
+                      const nextPart = hasCurrent ? filterParticle : 'all';
+                      if (nextPart !== filterParticle) {
+                        setFilterParticle('all');
+                      }
+                      updateParams(nextPart, searchTerm, quizActive, lvl);
+                    }}
+                  >
+                    {lvl === 'all' ? `Todas (${count})` : `${lvl} (${count})`}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Row 3: Particle Symbols Filter */}
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Partícula:</span>
               {uniqueParticles.map((p) => (
                 <button
                   key={p}
                   className={`btn ${filterParticle === p ? 'btn-primary' : 'btn-outline'} btn-sm jp-text`}
                   onClick={() => {
                     setFilterParticle(p);
-                    updateParams(p, searchTerm, quizActive);
+                    updateParams(p, searchTerm, quizActive, levelFilter);
                   }}
                 >
                   {p === 'all' ? 'Todas' : p}
                 </button>
               ))}
             </div>
-
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', borderLeft: '1px solid var(--border)', paddingLeft: 10 }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
-              {[
-                { id: 'all', label: `Todas (${particlesData.length})` },
-                { id: 'pending', label: `Por aprender (${pendingCount})` },
-                { id: 'mastered', label: `Dominadas (${masteredCount})` }
-              ].map(st => (
-                <button
-                  key={st.id}
-                  className={`btn ${filterStatus === st.id ? 'btn-primary' : 'btn-outline'} btn-sm`}
-                  onClick={() => setFilterStatus(st.id)}
-                  style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
-                >
-                  {st.label}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Results count indicator */}
-          <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 16 }}>
-            Mostrando <strong>{filteredParticles.length}</strong> de {particlesData.length} partículas
-            {filterParticle !== 'all' && ` con filtro "${filterParticle}"`}
-            {searchTerm.trim() && ` para "${searchTerm.trim()}"`}
+          <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span>Mostrando <strong>{filteredParticles.length}</strong> de {particlesData.length} partículas</span>
+            {levelFilter !== 'all' && (
+              <span 
+                className="particle-level-tag" 
+                style={{ ...getLevelBadgeStyle(levelFilter), borderWidth: 1, borderStyle: 'solid' }}
+              >
+                Nivel {levelFilter}
+              </span>
+            )}
+            {filterParticle !== 'all' && <span>• Partícula: <strong className="jp-text">{filterParticle}</strong></span>}
+            {filterStatus !== 'all' && <span>• {filterStatus === 'mastered' ? 'Dominadas' : 'Por aprender'}</span>}
+            {searchTerm.trim() && <span>• Búsqueda: &quot;{searchTerm.trim()}&quot;</span>}
           </div>
 
           {/* Particles Grid */}
           <div className="particles-grid">
             {filteredParticles.map((p) => {
               const isMastered = !!appState.masteredParticles?.[p.id];
+              const pLevel = p.level || 'N5';
               return (
                 <div 
                   key={p.id}
@@ -305,7 +402,16 @@ export default function GrammarTab({
                       </div>
                       <div className="particle-role">
                         <div className="particle-meta">
-                          <span className="particle-level-tag">{p.level || 'N5'}</span>
+                          <span 
+                            className="particle-level-tag"
+                            style={{
+                              ...getLevelBadgeStyle(pLevel),
+                              borderWidth: 1,
+                              borderStyle: 'solid'
+                            }}
+                          >
+                            {pLevel}
+                          </span>
                           <span className="particle-role-en">{p.role_en}</span>
                         </div>
                         <h4 className="particle-role-title">{p.role_es || 'Función gramatical'}</h4>
@@ -422,11 +528,26 @@ export default function GrammarTab({
                   className="btn btn-outline btn-sm"
                   onClick={() => {
                     setQuizActive(false);
-                    updateParams(filterParticle, searchTerm, false);
+                    updateParams(filterParticle, searchTerm, false, levelFilter);
                   }}
                 >
                   <ArrowLeft size={16} /> Volver al Checklist
                 </button>
+
+                {/* Level Filter for Quiz */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'var(--bg-main)', padding: '3px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel:</span>
+                  {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map(lvl => (
+                    <button
+                      key={lvl}
+                      className={`btn btn-sm ${quizLevelFilter === lvl ? 'btn-primary' : 'btn-outline'}`}
+                      onClick={() => { setQuizLevelFilter(lvl); setQuizIndex(0); setQuizFeedback(null); }}
+                      style={{ fontSize: '0.78rem', padding: '3px 7px', height: 'auto' }}
+                    >
+                      {lvl === 'all' ? 'Todos' : lvl}
+                    </button>
+                  ))}
+                </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-main)', padding: '3px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Preguntas:</span>
@@ -452,8 +573,22 @@ export default function GrammarTab({
               </div>
 
               <div className="quiz-question-box">
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: 8 }}>
-                  Función: {currentQuiz.particleRole}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                  <span 
+                    className="particle-level-tag" 
+                    style={{ 
+                      ...getLevelBadgeStyle(currentQuiz.particleLevel || 'N5'),
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      borderWidth: 1,
+                      borderStyle: 'solid'
+                    }}
+                  >
+                    {currentQuiz.particleLevel || 'N5'}
+                  </span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase' }}>
+                    Función: {currentQuiz.particleRole}
+                  </span>
                 </div>
 
                 <div className="quiz-sentence jp-text" style={{ fontSize: '1.5rem', lineHeight: 2 }}>
@@ -605,7 +740,7 @@ export default function GrammarTab({
                   className="btn btn-outline"
                   onClick={() => {
                     setQuizActive(false);
-                    updateParams(filterParticle, searchTerm, false);
+                    updateParams(filterParticle, searchTerm, false, levelFilter);
                   }}
                 >
                   Volver al Checklist
