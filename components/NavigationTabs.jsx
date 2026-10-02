@@ -93,7 +93,7 @@ export const TABS = [
     categoryName: 'Recursos & Práctica',
     shortLabel: 'Gramática',
     fullLabel: 'Partículas & Gramática',
-    desc: '25 partículas y estructuras esenciales explicadas',
+    desc: '99 partículas y estructuras esenciales (N5 a N1)',
     icon: Target,
     color: '#10b981',
   },

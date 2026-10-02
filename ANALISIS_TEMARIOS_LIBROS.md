@@ -466,6 +466,6 @@ Antes de proponer o implementar cualquier cambio en el temario, responde a estas
 - [x] **8. Autoevaluación Can-Do y Ruta:** ¿Se encuentran implementados y operativos los checkboxes interactivos para la Ruta Consolidada y las Competencias Can-Do en la interfaz?
 - [x] **9. Historias y Conversaciones:** ¿Se encuentran seccionadas por Nivel (N5 a N3) y Colección en `/story` y `/nhk` con navegación fluida?
 - [x] **10. Partículas Organizadas:** ¿Se encuentran las 99 partículas estructuradas por niveles JLPT (N5 a N1) con filtros, fórmulas y quizzes por nivel en `/grammar`?
-- [ ] **11. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
+- [x] **11. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
 
 

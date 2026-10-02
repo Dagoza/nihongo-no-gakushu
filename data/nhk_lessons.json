@@ -751,7 +751,7 @@
     "title_jp": "お母さんに叱られました。",
     "title_es": "Mi madre me regañó / Me regañó la encargada.",
     "topic": "En la residencia (Voz Pasiva)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Sakura",
@@ -813,7 +813,7 @@
     "title_jp": "机の下に入れ。",
     "title_es": "Pónganse bajo el pupitre / ¡Métanse debajo de la mesa!",
     "topic": "En la universidad (Emergencias e Imperativo)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Profesor",
@@ -839,7 +839,7 @@
     "title_jp": "次はがんばろう。",
     "title_es": "Esforcémonos la próxima vez.",
     "topic": "Ocasiones especiales (Modo Volitivo)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Anna",
@@ -947,7 +947,7 @@
     "title_jp": "近くで見ると、大きいですね。",
     "title_es": "Visto de cerca es grande, ¿eh?",
     "topic": "Viajes y salidas (Condicional con と)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Anna",
@@ -1138,7 +1138,7 @@
     "title_jp": "クレジットカードは使えますか。",
     "title_es": "¿Se puede usar tarjeta de crédito?",
     "topic": "Compras y restaurantes (Forma Potencial)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Kenta",
@@ -1174,7 +1174,7 @@
     "title_jp": "勉強しなければなりません。",
     "title_es": "Tengo que estudiar.",
     "topic": "Ayuda y obligaciones (Obligación imprescindible)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Kenta",
@@ -1205,7 +1205,7 @@
     "title_jp": "富士山を見たり、お寿司を食べたりしました。",
     "title_es": "Vi el monte Fuji, comí sushi, entre otras cosas.",
     "topic": "Viajes y salidas (Enumeración con 〜たり〜たり)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Encargada",
@@ -1334,7 +1334,7 @@
     "title_jp": "学園祭に行くことができて、楽しかったです。",
     "title_es": "Pude ir al festival universitario y fue divertido.",
     "topic": "Cultura japonesa (Capacidad con ことができる)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Anna",
@@ -1422,7 +1422,7 @@
     "title_jp": "和菓子を食べてから、抹茶を飲みます。",
     "title_es": "Tras comer el dulce japonés, se toma el té verde.",
     "topic": "Cultura japonesa (Secuencia con 〜てから)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Anna",
@@ -1494,7 +1494,7 @@
     "title_jp": "帰国する前に、雪を見ることができて幸せです。",
     "title_es": "Estoy feliz de ver la nieve antes de regresar a mi país.",
     "topic": "Viajes y salidas (Temporal con 〜前に)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Anna",
@@ -1525,7 +1525,7 @@
     "title_jp": "日本語教師になるのが夢です。",
     "title_es": "Mi sueño es ser profesora de japonés.",
     "topic": "Ocasiones especiales (Nominalización con の)",
-    "level": "N5-N4",
+    "level": "N4",
     "dialogue": [
       {
         "speaker": "Profesor",
