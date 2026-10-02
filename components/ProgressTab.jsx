@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { 
   Download, 
   Upload, 
@@ -20,7 +20,11 @@ import {
   ShieldCheck,
   AlertCircle,
   Sparkles,
-  Compass
+  Compass,
+  Monitor,
+  Smartphone,
+  Laptop,
+  Check
 } from 'lucide-react';
 import { exportData, parseImportData, getInitialState } from '../lib/storage';
 import { 
@@ -29,6 +33,225 @@ import {
 } from '../lib/supabaseSync';
 import { dataStore } from '../lib/data';
 import { useApp } from '../lib/AppContext';
+
+function detectUserOS() {
+  if (typeof window === 'undefined') return 'macos';
+  const ua = window.navigator.userAgent || '';
+  const platform = window.navigator.platform || '';
+  
+  if (/iPad|iPhone|iPod/.test(ua) || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) {
+    return 'ios';
+  }
+  if (/Android/i.test(ua)) {
+    return 'android';
+  }
+  if (/Win/i.test(ua) || /Win/.test(platform)) {
+    return 'windows';
+  }
+  if (/Mac/i.test(ua) || /Mac/.test(platform)) {
+    return 'macos';
+  }
+  if (/Linux/i.test(ua) || /Linux/.test(platform)) {
+    return 'linux';
+  }
+  return 'macos';
+}
+
+const OS_GUIDES = {
+  macos: {
+    id: 'macos',
+    name: 'macOS',
+    subtitle: 'Apple Mac (MacBook, iMac, Mac Mini)',
+    icon: '🍏',
+    steps: [
+      {
+        title: 'Abrir configuración de Teclado',
+        desc: 'Ve a Ajustes del Sistema (o Preferencias del Sistema) → Teclado → Fuentes de entrada y haz clic en Editar... o en el botón "+".'
+      },
+      {
+        title: 'Añadir fuente japonesa (Romaji)',
+        desc: 'Busca "Japonés" en la barra de búsqueda y selecciona "Japonés (Romaji)". Asegúrate de que las casillas "Hiragana" y "Katakana" estén activadas y haz clic en Añadir.'
+      },
+      {
+        title: 'Alternar rápidamente entre idiomas',
+        desc: 'Usa el atajo Control + Espacio o presiona la tecla Fn / 🌐 (o Bloq Mayús si lo configuraste) para cambiar al teclado japonés al instante.'
+      },
+      {
+        title: 'Escribir en Hiragana en tiempo real',
+        desc: 'Escribe fonéticamente en letras latinas (ej. watashi) y el sistema convertirá automáticamente el texto a わたし mientras tecleas.'
+      },
+      {
+        title: 'Convertir a Kanji con la Barra Espaciadora',
+        desc: 'Al escribir una palabra en Hiragana, presiona la Barra Espaciadora. Se desplegará la lista de kanjis candidatos (ej. わたし → 私). Navega y presiona Enter para confirmar.'
+      },
+      {
+        title: 'Conversión rápida a Katakana',
+        desc: 'Escribe la palabra (ej. terebi) y presiona la tecla F7 o Control + K para convertirla inmediatamente a Katakana (テレビ).'
+      }
+    ],
+    shortcuts: [
+      { key: 'Control + Espacio', action: 'Alternar entre teclados' },
+      { key: 'Barra Espaciadora', action: 'Convertir a Kanji (presionar varias veces para ver más candidatos)' },
+      { key: 'Enter', action: 'Confirmar el kanji / texto actual' },
+      { key: 'F7 o Control + K', action: 'Convertir selección a Katakana' },
+      { key: 'F6 o Control + J', action: 'Convertir selección a Hiragana' }
+    ],
+    tips: [
+      'Si tienes una Mac con chip Apple Silicon o teclado Magic Keyboard, la tecla Fn (globo terráqueo) en la esquina inferior izquierda cambia de idioma con solo un toque.',
+      'Si presionas la barra espaciadora dos veces consecutivas, se abre la cuadrícula completa con todos los kanjis y homófonos ordenados por frecuencia.'
+    ]
+  },
+  windows: {
+    id: 'windows',
+    name: 'Windows',
+    subtitle: 'Windows 10 & Windows 11',
+    icon: '🪟',
+    steps: [
+      {
+        title: 'Abrir Configuración de Idioma',
+        desc: 'Presiona Win + I para abrir Configuración → Ve a Hora e idioma → Idioma y región (o Idioma en Windows 10).'
+      },
+      {
+        title: 'Agregar el idioma Japonés',
+        desc: 'Haz clic en "Agregar un idioma", busca "Japonés (日本語)" y pulsa Siguiente. Con mantener marcada la opción "Escritura básica" es suficiente. Haz clic en Instalar.'
+      },
+      {
+        title: 'Cambiar al teclado japonés',
+        desc: 'Presiona la combinación Win + Barra Espaciadora o Alt + Shift para alternar entre el teclado español y el japonés.'
+      },
+      {
+        title: 'Activar el modo Hiragana (あ)',
+        desc: 'Al cambiar a japonés, si ves el icono "A" al lado del reloj en la barra de tareas, presiona Alt + ~ (o haz clic sobre la letra A) para que cambie a "あ" (modo Hiragana).'
+      },
+      {
+        title: 'Escribir y convertir a Kanji',
+        desc: 'Escribe en romaji (ej. nihon) y presiona la Barra Espaciadora para abrir la lista de Kanjis disponibles (ej. 日本). Presiona Enter para confirmar.'
+      },
+      {
+        title: 'Convertir a Katakana',
+        desc: 'Presiona la tecla F7 mientras la palabra está subrayada para transformarla al instante en Katakana (ej. kamera → カメラ).'
+      }
+    ],
+    shortcuts: [
+      { key: 'Win + Espacio', action: 'Alternar entre teclados de Windows' },
+      { key: 'Alt + ~ (tilde)', action: 'Alternar entre modo inglés (A) e Hiragana (あ)' },
+      { key: 'Barra Espaciadora', action: 'Convertir fonética a lista de Kanjis' },
+      { key: 'F7', action: 'Convertir a Katakana' },
+      { key: 'F6', action: 'Convertir a Hiragana' }
+    ],
+    tips: [
+      'El atajo rápido Alt + ~ es la forma más veloz de alternar entre escribir letras normales (A) y japonés (あ) sin cambiar la distribución de teclado.',
+      'Windows IME aprende de tus hábitos: los kanjis que más utilices aparecerán de primeros en las sugerencias.'
+    ]
+  },
+  ios: {
+    id: 'ios',
+    name: 'iOS / iPadOS',
+    subtitle: 'iPhone & iPad',
+    icon: '📱',
+    steps: [
+      {
+        title: 'Abrir Ajustes de Teclado',
+        desc: 'En tu iPhone o iPad, abre la app Ajustes → General → Teclado → Teclados.'
+      },
+      {
+        title: 'Añadir nuevo teclado japonés',
+        desc: 'Toca en "Añadir nuevo teclado...", busca y selecciona "Japonés".'
+      },
+      {
+        title: 'Elegir Romaji o Kana (Flick)',
+        desc: 'Puedes activar uno o ambos: "Romaji" (distribución QWERTY idéntica al teclado latino, ideal para escribir como en PC) o "Kana" (teclado japonés de 12 teclas con deslizamiento flick).'
+      },
+      {
+        title: 'Alternar teclados en cualquier app',
+        desc: 'Al escribir en cualquier campo de texto, mantén presionado el icono del Globo terráqueo 🌐 en la esquina inferior izquierda y selecciona el teclado japonés.'
+      },
+      {
+        title: 'Sugerencias de Kanjis en la barra predictiva',
+        desc: 'Escribe en Romaji (ej. neko); en la barra superior del teclado aparecerán automáticamente las opciones en Kanji (猫), Hiragana (ねこ) y Katakana (ネコ). Toca la opción deseada para insertarla.'
+      }
+    ],
+    shortcuts: [
+      { key: 'Icono 🌐 (Toque rápido)', action: 'Alternar al siguiente teclado instalado' },
+      { key: 'Icono 🌐 (Mantener)', action: 'Desplegar menú con todos los teclados' },
+      { key: 'Barra predictiva superior', action: 'Tocar el Kanji o Katakana correspondiente' }
+    ],
+    tips: [
+      'Si tienes un iPad con Magic Keyboard o teclado externo Bluetooth, puedes alternar idiomas presionando Control + Espacio o la tecla de globo terráqueo.',
+      'El teclado Romaji en iOS incluye acceso directo a signos de puntuación japoneses tradicionales como comillas de gancho 「 」, puntos de centro ・ y puntos finales 。.'
+    ]
+  },
+  android: {
+    id: 'android',
+    name: 'Android',
+    subtitle: 'Gboard / Samsung Keyboard',
+    icon: '🤖',
+    steps: [
+      {
+        title: 'Abrir ajustes del teclado',
+        desc: 'Toca cualquier campo de texto para abrir el teclado (ej. Gboard). Toca el icono de Ajustes ⚙️ en la barra superior del teclado (o mantén pulsada la coma "," o la barra espaciadora) y entra en "Idiomas".'
+      },
+      {
+        title: 'Añadir teclado japonés',
+        desc: 'Toca en "Añadir teclado", busca "Japonés (日本語)" y selecciónalo.'
+      },
+      {
+        title: 'Seleccionar formato (QWERTY o 12 teclas)',
+        desc: 'Elige tu modo favorito: "QWERTY" (escribes fonéticamente con letras latinas como en PC, ej. sakura → さくら) o "12 teclas" (teclado japonés deslizable tradicional). Pulsa "Listo".'
+      },
+      {
+        title: 'Alternar idiomas al escribir',
+        desc: 'Toca el icono del Globo terráqueo 🌐 o mantén presionada la Barra Espaciadora para cambiar rápidamente entre español y japonés.'
+      },
+      {
+        title: 'Selección de Kanjis',
+        desc: 'Mientras escribes, la barra de predicción de Gboard te sugerirá los kanjis correspondientes. Toca el kanji o la flechita hacia abajo para desplegar todos los candidatos.'
+      }
+    ],
+    shortcuts: [
+      { key: 'Icono 🌐', action: 'Cambiar de idioma con un solo toque' },
+      { key: 'Mantener Barra Espaciadora', action: 'Menú de selección de teclado activo' },
+      { key: 'Barra de sugerencias', action: 'Insertar Kanji, Katakana o emoji al instante' }
+    ],
+    tips: [
+      'En dispositivos Samsung con Samsung Keyboard: ve a Ajustes del teléfono → Administración general → Ajustes de Teclado Samsung → Idiomas y tipos → Administrar idiomas de entrada y activa Japonés.',
+      'Gboard para Android admite dictado por voz en japonés directamente tocando el micrófono del teclado mientras esté activo el modo japonés.'
+    ]
+  },
+  linux: {
+    id: 'linux',
+    name: 'Linux',
+    subtitle: 'Ubuntu, Fedora, Debian, Arch',
+    icon: '🐧',
+    steps: [
+      {
+        title: 'Instalar el motor de entrada Mozc',
+        desc: 'Instala el paquete ibus-mozc o fcitx5-mozc desde la terminal (ej. en Ubuntu/Debian: "sudo apt install ibus-mozc"; en Fedora: "sudo dnf install ibus-mozc"; en Arch: "sudo pacman -S fcitx5-mozc").'
+      },
+      {
+        title: 'Configurar la fuente en Región e Idioma',
+        desc: 'Abre Configuración del Sistema → Región e idioma → Fuentes de entrada → pulsa en "+" y añade "Japonés (Mozc)".'
+      },
+      {
+        title: 'Alternar teclado',
+        desc: 'Usa el atajo Super + Espacio o Control + Espacio para activar el motor Mozc.'
+      },
+      {
+        title: 'Escribir y convertir a Kanji',
+        desc: 'Escribe en romaji (ej. arigatou) y presiona la Barra Espaciadora para abrir la lista de Kanjis. Confirma con Enter.'
+      }
+    ],
+    shortcuts: [
+      { key: 'Super + Espacio', action: 'Alternar fuentes de entrada en GNOME' },
+      { key: 'Barra Espaciadora', action: 'Convertir fonética a Kanjis' },
+      { key: 'Enter', action: 'Fijar el kanji seleccionado' }
+    ],
+    tips: [
+      'Mozc es el motor de código abierto derivado de Google Japanese Input para sistemas basados en Unix.',
+      'Reiniciar la sesión tras la primera instalación asegura que el demonio de entrada (IBus o Fcitx5) cargue correctamente.'
+    ]
+  }
+};
 
 export default function ProgressTab({ 
   appState, 
@@ -79,6 +302,17 @@ export default function ProgressTab({
   const [isSyncingLocal, setIsSyncingLocal] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [syncMessage, setSyncMessage] = useState(null); // { type: 'success' | 'error' | 'info', text: string }
+
+  // Estados de Guía de Teclado Japonés e IME Multi-Sistema
+  const [selectedOS, setSelectedOS] = useState('macos');
+  const [detectedOS, setDetectedOS] = useState('macos');
+  const [testInput, setTestInput] = useState('');
+
+  useEffect(() => {
+    const os = detectUserOS();
+    setDetectedOS(os);
+    setSelectedOS(os);
+  }, []);
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -602,28 +836,270 @@ export default function ProgressTab({
         </div>
       </div>
 
-      {/* Japanese Keyboard Guide */}
-      <div className="card" style={{ background: 'var(--bg-main)', border: '2px dashed var(--border)' }}>
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Keyboard size={20} color="var(--primary)" /> Consejos para Escribir con Teclado Japonés (IME) en macOS
-        </h3>
-        <ul style={{ fontSize: '0.93rem', color: 'var(--text-muted)', lineHeight: 1.9, paddingLeft: 22 }}>
-          <li>
-            <strong>Activar Japonés:</strong> Ve a <em>Preferencias del Sistema → Teclado → Fuentes de Entrada</em> y agrega <strong>Japonés (Romaji)</strong>.
-          </li>
-          <li>
-            <strong>Alternar Rápido:</strong> Presiona <kbd style={{ background: 'var(--bg-surface)', padding: '2px 6px', border: '1px solid var(--border)', borderRadius: 4 }}>Control + Espacio</kbd> o la tecla <kbd style={{ background: 'var(--bg-surface)', padding: '2px 6px', border: '1px solid var(--border)', borderRadius: 4 }}>Bloq Mayús</kbd> (si está configurada para cambiar de fuente).
-          </li>
-          <li>
-            <strong>Hiragana Directo:</strong> Escribe en letras latinas (ej. <code>watashi</code>) y el sistema lo escribirá inmediatamente como <code>わたし</code>.
-          </li>
-          <li>
-            <strong>Conversión a Kanji:</strong> Al escribir una palabra en Hiragana, presiona la <kbd style={{ background: 'var(--bg-surface)', padding: '2px 6px', border: '1px solid var(--border)', borderRadius: 4 }}>Barra Espaciadora</kbd> para abrir el menú de conversión a Kanji (ej. <code>わたし</code> → <code>私</code>) y confirma con <kbd style={{ background: 'var(--bg-surface)', padding: '2px 6px', border: '1px solid var(--border)', borderRadius: 4 }}>Enter</kbd>.
-          </li>
-          <li>
-            <strong>Katakana:</strong> Escribe la palabra (ej. <code>terebi</code>) y presiona la barra espaciadora o la tecla <kbd style={{ background: 'var(--bg-surface)', padding: '2px 6px', border: '1px solid var(--border)', borderRadius: 4 }}>F7</kbd> para convertir directamente a Katakana (<code>テレビ</code>).
-          </li>
-        </ul>
+      {/* Multi-OS Japanese Keyboard & IME Guide */}
+      <div className="card" style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 16, padding: '24px', marginTop: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
+          <div>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Keyboard size={22} color="var(--primary)" /> Consejos y Configuración del Teclado Japonés (IME)
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Aprende a escribir en Hiragana, Katakana y convertir a Kanjis nativamente en tu sistema operativo.
+            </p>
+          </div>
+
+          {/* Detected OS indicator */}
+          {detectedOS && (
+            <div 
+              style={{ 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: 6, 
+                padding: '5px 12px', 
+                background: 'rgba(99, 102, 241, 0.12)', 
+                border: '1px solid rgba(99, 102, 241, 0.25)', 
+                borderRadius: 20, 
+                fontSize: '0.8rem', 
+                color: 'var(--primary)', 
+                fontWeight: 600 
+              }}
+            >
+              <Sparkles size={14} />
+              <span>Tu sistema detectado: <strong>{OS_GUIDES[detectedOS]?.name} {OS_GUIDES[detectedOS]?.icon}</strong></span>
+            </div>
+          )}
+        </div>
+
+        {/* Operating System Selector Tabs */}
+        <div 
+          style={{ 
+            display: 'flex', 
+            gap: 8, 
+            overflowX: 'auto', 
+            paddingBottom: 8, 
+            marginBottom: 20,
+            borderBottom: '1px solid var(--border)' 
+          }}
+        >
+          {Object.entries(OS_GUIDES).map(([key, item]) => {
+            const isSelected = selectedOS === key;
+            const isDetected = detectedOS === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSelectedOS(key)}
+                className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: '0.82rem',
+                  padding: '7px 14px',
+                  borderRadius: 10,
+                  whiteSpace: 'nowrap',
+                  fontWeight: isSelected ? 700 : 500
+                }}
+              >
+                <span>{item.icon}</span>
+                <span>{item.name}</span>
+                {isDetected && (
+                  <span 
+                    style={{ 
+                      fontSize: '0.68rem', 
+                      background: isSelected ? 'rgba(255,255,255,0.25)' : 'var(--primary-bg)', 
+                      padding: '1px 6px', 
+                      borderRadius: 4,
+                      marginLeft: 2
+                    }}
+                  >
+                    Actual
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Active OS Details */}
+        {(() => {
+          const currentGuide = OS_GUIDES[selectedOS] || OS_GUIDES.macos;
+          return (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                <span style={{ fontSize: '1.5rem' }}>{currentGuide.icon}</span>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700 }}>
+                    Cómo activar el teclado japonés en {currentGuide.name}
+                  </h4>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    {currentGuide.subtitle}
+                  </span>
+                </div>
+              </div>
+
+              {/* Step by step list */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+                {currentGuide.steps.map((step, idx) => (
+                  <div 
+                    key={idx}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 12,
+                      padding: '12px 14px',
+                      background: 'var(--bg-surface)',
+                      borderRadius: 10,
+                      border: '1px solid var(--border)'
+                    }}
+                  >
+                    <div 
+                      style={{ 
+                        width: 24, 
+                        height: 24, 
+                        borderRadius: '50%', 
+                        background: 'var(--primary)', 
+                        color: '#fff', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        flexShrink: 0,
+                        marginTop: 1
+                      }}
+                    >
+                      {idx + 1}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 3 }}>
+                        {step.title}
+                      </div>
+                      <div style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.55 }}>
+                        {step.desc}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Quick Shortcuts Grid */}
+              {currentGuide.shortcuts && currentGuide.shortcuts.length > 0 && (
+                <div style={{ marginBottom: 20 }}>
+                  <h5 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Keyboard size={15} color="var(--primary)" /> Atajos clave en {currentGuide.name}
+                  </h5>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
+                    {currentGuide.shortcuts.map((sc, i) => (
+                      <div 
+                        key={i}
+                        style={{
+                          padding: '10px 12px',
+                          background: 'var(--bg-surface)',
+                          borderRadius: 8,
+                          border: '1px solid var(--border)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 4
+                        }}
+                      >
+                        <kbd 
+                          style={{
+                            alignSelf: 'flex-start',
+                            background: 'var(--bg-main)',
+                            padding: '3px 8px',
+                            border: '1px solid var(--border)',
+                            borderRadius: 5,
+                            fontFamily: 'monospace',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            color: 'var(--text-main)'
+                          }}
+                        >
+                          {sc.key}
+                        </kbd>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                          {sc.action}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Useful Pro-Tips */}
+              {currentGuide.tips && currentGuide.tips.length > 0 && (
+                <div 
+                  style={{
+                    padding: '14px 16px',
+                    background: 'rgba(234, 179, 8, 0.08)',
+                    border: '1px solid rgba(234, 179, 8, 0.25)',
+                    borderRadius: 10,
+                    marginBottom: 20
+                  }}
+                >
+                  <div style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--warning, #eab308)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    💡 Consejos clave para {currentGuide.name}:
+                  </div>
+                  <ul style={{ margin: 0, paddingLeft: 18, fontSize: '0.83rem', color: 'var(--text-main)', lineHeight: 1.6 }}>
+                    {currentGuide.tips.map((tip, idx) => (
+                      <li key={idx} style={{ marginBottom: idx === currentGuide.tips.length - 1 ? 0 : 4 }}>
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Interactive Scratchpad Test Area */}
+              <div 
+                style={{
+                  padding: '16px 18px',
+                  background: 'var(--bg-surface)',
+                  borderRadius: 12,
+                  border: '1px solid var(--border)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    ✍️ ¡Prueba tu teclado japonés aquí mismo!
+                  </span>
+                  {testInput && (
+                    <button 
+                      type="button" 
+                      onClick={() => setTestInput('')} 
+                      className="btn btn-ghost btn-xs"
+                      style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}
+                    >
+                      Limpiar campo
+                    </button>
+                  )}
+                </div>
+                <input 
+                  type="text"
+                  className="japanese-input jp-text"
+                  value={testInput}
+                  onChange={(e) => setTestInput(e.target.value)}
+                  placeholder="Escribe aquí con tu teclado japonés activado (ej. escribe 'nihon' + espacio -> 日本)..."
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: 8,
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-main)',
+                    color: 'var(--text-main)',
+                    fontSize: '1rem',
+                    fontFamily: 'var(--font-jp)',
+                    outline: 'none'
+                  }}
+                />
+                <p style={{ margin: '8px 0 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  Tip: Con tu teclado en modo japonés, escribe letras romaji (ej. <code>watashi</code>), presiona la barra espaciadora para ver la lista de kanjis y presiona Enter para confirmar.
+                </p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
