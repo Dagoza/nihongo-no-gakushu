@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import * as kdModule from 'kanji-data';
 import * as wanakana from 'wanakana';
+import { convertKanjiToKanaSync } from '../../../../lib/japaneseUtils';
 
 const kd = kdModule.default || kdModule;
 
@@ -551,7 +552,25 @@ function resolveFullTextReading(rawText) {
     };
   }
 
-  // 1. Intentar resolver como término o compuesto único
+  // 1. Usar resolución morfológica síncrona avanzada (diccionario de 1500+ palabras, lematizador de verbos, adjetivos, partículas y cópulas)
+  const syncRes = convertKanjiToKanaSync(clean);
+  if (syncRes && syncRes.isResolved && syncRes.hiragana && !/[\u4e00-\u9faf\u3400-\u4dbf]/.test(syncRes.hiragana)) {
+    const finalHira = syncRes.hiragana;
+    const finalKata = syncRes.katakana || wanakana.toKatakana(finalHira);
+    const finalRom = wanakana.toRomaji(finalHira);
+    return {
+      text: clean,
+      hiragana: finalHira,
+      katakana: finalKata,
+      romaji: finalRom,
+      meaning_es: syncRes.meaning_es || '',
+      meaning_en: '',
+      level: syncRes.level || 'N5',
+      kanjis: Array.from(new Set(clean.match(/[\u4e00-\u9faf\u3400-\u4dbf]/g) || []))
+    };
+  }
+
+  // 2. Intentar resolver como término o compuesto único secundario
   const direct = findWordReading(clean);
   if (direct && direct.reading && !/[\u4e00-\u9faf]/.test(direct.reading)) {
     const finalHira = direct.reading;

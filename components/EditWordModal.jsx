@@ -139,30 +139,50 @@ export default function EditWordModal({
       } finally {
         setIsConvertingKana(false);
       }
-    }, 350);
+    }, 150);
   };
 
-  const handleAutoConvertKana = async () => {
-    const textTarget = kanji.trim();
-    if (!textTarget) return;
-
-    setIsConvertingKana(true);
-    try {
-      const res = await fetchKanjiReading(textTarget);
-      if (res && res.hiragana && !containsKanji(res.hiragana)) {
-        setHiragana(res.hiragana);
-        setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
-        if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
+  const handleKanjiBlur = async () => {
+    const trimmed = kanji.trim();
+    if (!trimmed || !containsKanji(trimmed)) return;
+    if (!hiragana || containsKanji(hiragana)) {
+      setIsConvertingKana(true);
+      try {
+        const res = await fetchKanjiReading(trimmed);
+        if (res && res.hiragana && !containsKanji(res.hiragana)) {
+          setHiragana(res.hiragana);
+          setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
+          if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
+        }
+      } finally {
+        setIsConvertingKana(false);
       }
-    } finally {
-      setIsConvertingKana(false);
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     const cleanKanji = kanji.trim();
     let cleanHiragana = hiragana.trim();
+
+    // Auto-resolución si falta hiragana o contiene kanjis
+    if (cleanKanji && (!cleanHiragana || containsKanji(cleanHiragana))) {
+      setIsConvertingKana(true);
+      try {
+        const res = await fetchKanjiReading(cleanKanji);
+        if (res && res.hiragana && !containsKanji(res.hiragana)) {
+          cleanHiragana = res.hiragana;
+          setHiragana(cleanHiragana);
+          if (!katakana || containsKanji(katakana)) {
+            setKatakana(res.katakana || hiraganaToKatakana(cleanHiragana));
+          }
+        }
+      } catch (err) {
+        console.warn('Auto-resolución en edición:', err);
+      } finally {
+        setIsConvertingKana(false);
+      }
+    }
 
     if (!cleanKanji || !cleanHiragana || !meaningEs.trim()) {
       showAlert({
@@ -182,8 +202,8 @@ export default function EditWordModal({
       } else {
         showAlert({
           type: 'warning',
-          title: 'Lectura con Kanji Inválida',
-          message: 'El campo "Hiragana" no debe contener caracteres Kanji (ej. 疲, 様). Usa el botón "Auto-Kana" o introduce la lectura fonética en kana.'
+          title: 'Lectura Fonética Requerida',
+          message: 'El campo "Hiragana" no debe contener caracteres Kanji. Por favor introduce la lectura fonética en kana.'
         });
         return;
       }
@@ -288,6 +308,7 @@ export default function EditWordModal({
                 placeholder="ej. 多分 o 明後日"
                 value={kanji}
                 onChange={(e) => handleKanjiChange(e.target.value)}
+                onBlur={handleKanjiBlur}
                 required
                 autoFocus
               />
@@ -297,17 +318,12 @@ export default function EditWordModal({
             <div className="form-group">
               <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>Hiragana (Lectura Kana)</span>
-                <button
-                  type="button"
-                  className="tts-mini-btn"
-                  onClick={handleAutoConvertKana}
-                  disabled={isConvertingKana}
-                  title="Auto-convertir Kanji a Hiragana y Katakana con diccionario y motor morfológico"
-                  style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px' }}
-                >
-                  <Sparkles size={12} className={isConvertingKana ? 'animate-spin' : ''} />
-                  <span>{isConvertingKana ? 'Convirtiendo...' : 'Auto-Kana'}</span>
-                </button>
+                {isConvertingKana && (
+                  <span style={{ fontSize: '0.72rem', color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <Sparkles size={12} className="animate-spin" />
+                    <span>Auto-Kana...</span>
+                  </span>
+                )}
               </label>
               <input
                 type="text"

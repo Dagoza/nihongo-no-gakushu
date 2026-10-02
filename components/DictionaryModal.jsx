@@ -18,6 +18,7 @@ import audioManager from '../lib/audioManager';
 import { 
   lookupJapaneseWord, 
   analyzeJapaneseSentence, 
+  convertKanjiToKanaSync,
   hiraganaToKatakana,
   katakanaToHiragana,
   containsKanji
@@ -71,12 +72,26 @@ export default function DictionaryModal({
     return dataStore.vocabulary || [];
   }, []);
 
+  // Detectar si la búsqueda es en español
+  const isSpanishQuery = useMemo(() => {
+    const q = (query || '').trim();
+    return Boolean(q && /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]+$/.test(q));
+  }, [query]);
+
   // Morphological analysis of the query
   const analysis = useMemo(() => {
     const clean = (query || '').trim();
     if (!clean) return [];
     return analyzeJapaneseSentence(clean, customVocab, externalVocab);
   }, [query, customVocab, externalVocab]);
+
+  // Lectura completa en kana de toda la frase cuando tiene kanji
+  const fullSentenceKana = useMemo(() => {
+    const clean = (query || '').trim();
+    if (!clean || isSpanishQuery || !containsKanji(clean)) return '';
+    const res = convertKanjiToKanaSync(clean, customVocab, externalVocab);
+    return (res && res.hiragana && res.hiragana !== clean) ? res.hiragana : '';
+  }, [query, isSpanishQuery, customVocab, externalVocab]);
 
   // Selected token for detailed card view
   const currentToken = useMemo(() => {
@@ -189,7 +204,7 @@ export default function DictionaryModal({
                 Diccionario Rápido & Análisis Morfológico
               </h3>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
-                Desarticula cópulas (です, でした, ではありません) y busca palabras individuales
+                Búsqueda en Español y Japonés · Segmentación morfológica, partículas y lematización
               </p>
             </div>
           </div>
@@ -229,7 +244,7 @@ export default function DictionaryModal({
                 setQuery(e.target.value);
                 setActiveTokenIndex(0);
               }}
-              placeholder="Escribe en Kanji, Hiragana o Romaji (ej. 学生です, 先生, 美味しい)..."
+              placeholder="Busca en Español, Kanji, Hiragana o Romaji (ej. comer, amigo, 食べました, 先生)..."
               style={{
                 width: '100%',
                 padding: '12px 38px 12px 42px',
@@ -284,6 +299,50 @@ export default function DictionaryModal({
             </div>
           ) : (
             <>
+              {/* Full sentence reading banner if sentence contains kanji */}
+              {fullSentenceKana && (
+                <div style={{
+                  padding: '12px 16px',
+                  borderRadius: 10,
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.08))',
+                  border: '1.5px solid rgba(99, 102, 241, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Lectura Fonética Completa (Hiragana)
+                    </span>
+                    <span className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '0.5px' }}>
+                      {fullSentenceKana}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-audio-circle"
+                    onClick={() => handlePlayAudio(query)}
+                    title="Escuchar toda la frase"
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      background: 'var(--primary-bg)',
+                      border: '1px solid var(--primary)',
+                      color: 'var(--primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      flexShrink: 0
+                    }}
+                  >
+                    <Volume2 size={16} />
+                  </button>
+                </div>
+              )}
+
               {/* Morphological Breakdown Chips (When multiple words/tokens exist) */}
               {analysis.length > 0 && (
                 <div>
@@ -294,10 +353,12 @@ export default function DictionaryModal({
                     marginBottom: 8
                   }}>
                     <span style={{ fontSize: '0.76rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>
-                      Desglose Morfológico ({analysis.length} {analysis.length === 1 ? 'componente' : 'componentes'})
+                      {isSpanishQuery 
+                        ? `Resultados en Español (${analysis.length} palabras encontradas)` 
+                        : `Desglose Morfológico (${analysis.length} ${analysis.length === 1 ? 'componente' : 'componentes'})`}
                     </span>
                     <span style={{ fontSize: '0.74rem', color: 'var(--primary)', fontWeight: 600 }}>
-                      Haz clic en un token para ver detalles
+                      {isSpanishQuery ? 'Toca una palabra para ver detalles' : 'Haz clic en un token para ver detalles'}
                     </span>
                   </div>
 
@@ -407,6 +468,19 @@ export default function DictionaryModal({
                         }}>
                           {currentToken.category || 'Vocabulario General'}
                         </span>
+                        {currentToken.baseForm && currentToken.baseForm !== currentToken.text && (
+                          <span style={{
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            padding: '2px 8px',
+                            borderRadius: 4,
+                            background: 'rgba(16, 185, 129, 0.12)',
+                            color: '#059669',
+                            border: '1px solid rgba(16, 185, 129, 0.25)'
+                          }}>
+                            Forma Base: {currentToken.baseForm}
+                          </span>
+                        )}
                       </div>
                     </div>
 

@@ -195,7 +195,7 @@ export default function SaveVocabModal({
       if (syncMatch.level) setLevel(syncMatch.level);
     }
 
-    // Debounce asíncrono para resolución completa en API
+    // Debounce asíncrono rápido para resolución completa en API
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     debounceTimerRef.current = setTimeout(async () => {
       setIsConvertingKana(true);
@@ -215,37 +215,60 @@ export default function SaveVocabModal({
       } finally {
         setIsConvertingKana(false);
       }
-    }, 350);
+    }, 150);
   };
 
-  // Botón manual para forzar conversión de Kanji a Kana
-  const handleAutoConvertKana = async () => {
-    const textTarget = (kanji || phraseJapanese || '').trim();
-    if (!textTarget) return;
-
-    setIsConvertingKana(true);
-    try {
-      const res = await fetchKanjiReading(textTarget, {
-        customVocab: appState?.savedCustomVocab || [],
-        externalVocab: dataStore?.vocabulary || []
-      });
-      if (res && res.hiragana && !containsKanji(res.hiragana)) {
-        setHiragana(res.hiragana);
-        setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
-        if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
-        if (res.level) setLevel(res.level);
+  // Conversión automática inmediata al perder el foco en el campo Kanji
+  const handleKanjiBlur = async () => {
+    const trimmed = kanji.trim();
+    if (!trimmed || !containsKanji(trimmed)) return;
+    if (!hiragana || containsKanji(hiragana)) {
+      setIsConvertingKana(true);
+      try {
+        const res = await fetchKanjiReading(trimmed, {
+          customVocab: appState?.savedCustomVocab || [],
+          externalVocab: dataStore?.vocabulary || []
+        });
+        if (res && res.hiragana && !containsKanji(res.hiragana)) {
+          setHiragana(res.hiragana);
+          setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
+          if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
+          if (res.level) setLevel(res.level);
+        }
+      } finally {
+        setIsConvertingKana(false);
       }
-    } finally {
-      setIsConvertingKana(false);
     }
   };
 
   const detectedKanjis = extractKanjis(kanji || phraseJapanese);
 
   // Guardar palabra cumpliendo INSTRUCCIONES.md
-  const handleSaveWord = () => {
+  const handleSaveWord = async () => {
     const cleanKanji = kanji.trim();
     let cleanHiragana = hiragana.trim();
+
+    // Auto-resolver si Hiragana aún está vacío o contiene kanjis residuales
+    if (cleanKanji && (!cleanHiragana || containsKanji(cleanHiragana))) {
+      setIsConvertingKana(true);
+      try {
+        const res = await fetchKanjiReading(cleanKanji, {
+          customVocab: appState?.savedCustomVocab || [],
+          externalVocab: dataStore?.vocabulary || []
+        });
+        if (res && res.hiragana && !containsKanji(res.hiragana)) {
+          cleanHiragana = res.hiragana;
+          setHiragana(cleanHiragana);
+          if (!katakana || containsKanji(katakana)) {
+            setKatakana(res.katakana || hiraganaToKatakana(cleanHiragana));
+          }
+        }
+      } catch (e) {
+        console.warn('Auto-resolución en guardado falló:', e);
+      } finally {
+        setIsConvertingKana(false);
+      }
+    }
 
     if (!cleanKanji || !cleanHiragana || !meaningEs.trim()) {
       showAlert({
@@ -265,8 +288,8 @@ export default function SaveVocabModal({
       } else {
         showAlert({
           type: 'warning',
-          title: 'Lectura Fonética Inválida',
-          message: 'El campo "Hiragana" no debe contener caracteres Kanji (ej. 疲, 様). Usa el botón "Auto-Kana" o escribe la lectura fonética en kana.'
+          title: 'Lectura Fonética Requerida',
+          message: 'El campo "Hiragana" no debe contener caracteres Kanji. Por favor escribe la lectura fonética en kana.'
         });
         return;
       }
@@ -458,23 +481,19 @@ export default function SaveVocabModal({
                   placeholder="ej. 先生 o アニメ"
                   value={kanji}
                   onChange={(e) => handleKanjiChange(e.target.value)}
+                  onBlur={handleKanjiBlur}
                 />
               </div>
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>Hiragana (Lectura Kana)</span>
-                  <button
-                    type="button"
-                    className="tts-mini-btn"
-                    onClick={handleAutoConvertKana}
-                    disabled={isConvertingKana}
-                    title="Auto-convertir Kanji a Hiragana y Katakana con diccionario y motor morfológico"
-                    style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px' }}
-                  >
-                    <Sparkles size={12} className={isConvertingKana ? 'animate-spin' : ''} />
-                    <span>{isConvertingKana ? 'Convirtiendo...' : 'Auto-Kana'}</span>
-                  </button>
+                  {isConvertingKana && (
+                    <span style={{ fontSize: '0.72rem', color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <Sparkles size={12} className="animate-spin" />
+                      <span>Auto-Kana...</span>
+                    </span>
+                  )}
                 </label>
                 <input
                   type="text"
