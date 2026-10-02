@@ -221,6 +221,47 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
     setQuizFeedback({});
   };
 
+  const handleCloseModule = () => {
+    setSelectedStepNum(null);
+    if (typeof window !== 'undefined') {
+      if (window.location.search.includes('step=')) {
+        window.history.pushState(null, '', '/curriculum');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (onStepChange) onStepChange(null);
+  };
+
+  const handlePlayAudio = (text, desc = '') => {
+    audioManager.speak(text, desc);
+  };
+
+  const handleSelectOption = (exercise, option) => {
+    const isCorrect = option === exercise.correct;
+    setQuizAnswers(prev => ({ ...prev, [exercise.id]: option }));
+    setQuizFeedback(prev => ({
+      ...prev,
+      [exercise.id]: {
+        isCorrect,
+        explanation: exercise.explanation
+      }
+    }));
+
+    if (isCorrect && userState && onUpdateState) {
+      // Award XP once and record exercise completion
+      const alreadyDone = !!userState.completedExercises?.[exercise.id];
+      const updatedExercises = {
+        ...(userState.completedExercises || {}),
+        [exercise.id]: true
+      };
+      onUpdateState({
+        ...userState,
+        completedExercises: updatedExercises,
+        xp: (userState.xp || 0) + (!alreadyDone ? 5 : 0)
+      });
+    }
+  };
+
   const handleSelectSubStep = (substepNum) => {
     setActiveSubStep(substepNum);
     if (onUpdateState && userState && selectedStepNum) {
