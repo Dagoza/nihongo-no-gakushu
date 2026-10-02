@@ -7468,5 +7468,41 @@
     "pattern": 0,
     "type": "heiban",
     "moraCount": 4
+  },
+  "お疲れ様": {
+    "reading": "おつかれさま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 6
+  },
+  "お疲れ様です": {
+    "reading": "おつかれさまです",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 8
+  },
+  "お疲れ様でした": {
+    "reading": "おつかれさまでした",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 9
+  },
+  "おつかれさま": {
+    "reading": "おつかれさま",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 6
+  },
+  "おつかれさまです": {
+    "reading": "おつかれさまです",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 8
+  },
+  "おつかれさまでした": {
+    "reading": "おつかれさまでした",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 9
   }
 }

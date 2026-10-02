@@ -3609,5 +3609,78 @@
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
+  },
+  {
+    "kanji": "疲",
+    "level": "N3",
+    "meaning_es": "cansancio, fatiga, agotamiento",
+    "meaning_en": "exhausted, tire, weary",
+    "pronunciation": "つか(れる), ヒ",
+    "strokes": 10,
+    "onyomi": "HI [ヒ]",
+    "kunyomi": "tsuka(reru) [つか(れる)]",
+    "mnemonic": "El radical de enfermedad 疒 junto a la piel 皮 refleja el desgaste físico y cansancio corporal.",
+    "words": [
+      {
+        "word": "お疲れ様",
+        "reading": "おつかれさま",
+        "meaning": "muchas gracias por su esfuerzo / buen trabajo"
+      },
+      {
+        "word": "お疲れ様です",
+        "reading": "おつかれさまです",
+        "meaning": "muchas gracias por su trabajo (saludo formal)"
+      },
+      {
+        "word": "疲れる",
+        "reading": "つかれる",
+        "meaning": "cansarse / estar cansado"
+      },
+      {
+        "word": "疲労",
+        "reading": "ひろう",
+        "meaning": "fatiga / agotamiento"
+      }
+    ],
+    "source": "Vocabulario Nihongo"
+  },
+  {
+    "kanji": "様",
+    "level": "N3",
+    "meaning_es": "señor, señora, sufijo honorífico (-sama), apariencia",
+    "meaning_en": "polite suffix, manner, situation, way",
+    "pronunciation": "さま, さん, ヨウ",
+    "strokes": 14,
+    "onyomi": "YOU, SHOU [ヨウ, ショウ]",
+    "kunyomi": "sama, san [さま, さん]",
+    "mnemonic": "Un árbol 木 junto a oveja 羊 muestra el porte respetuoso y honorable en las relaciones formales.",
+    "words": [
+      {
+        "word": "お疲れ様",
+        "reading": "おつかれさま",
+        "meaning": "muchas gracias por su esfuerzo / buen trabajo"
+      },
+      {
+        "word": "お疲れ様です",
+        "reading": "おつかれさまです",
+        "meaning": "muchas gracias por su trabajo (saludo formal)"
+      },
+      {
+        "word": "神様",
+        "reading": "かみさま",
+        "meaning": "Dios / Deidad"
+      },
+      {
+        "word": "皆様",
+        "reading": "みなさま",
+        "meaning": "Todos ustedes / Damas y caballeros"
+      },
+      {
+        "word": "様子",
+        "reading": "ようす",
+        "meaning": "Estado / Situación / Apariencia"
+      }
+    ],
+    "source": "Vocabulario Nihongo"
   }
 ]

@@ -16,7 +16,11 @@ import audioManager from '../lib/audioManager';
 import { 
   hiraganaToKatakana, 
   katakanaToHiragana, 
-  extractKanjis 
+  extractKanjis,
+  containsKanji,
+  convertKanjiToKanaSync,
+  fetchKanjiReading,
+  cleanKanaOnly
 } from '../lib/japaneseUtils';
 import { useApp } from '../lib/AppContext';
 
@@ -44,18 +48,49 @@ export default function EditWordModal({
   const [category, setCategory] = useState('Vocabulario General');
   const [notes, setNotes] = useState('');
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isConvertingKana, setIsConvertingKana] = useState(false);
+  const debounceRef = React.useRef(null);
 
   useEffect(() => {
     if (isOpen && word) {
-      setKanji(word.kanji || word.kana || '');
-      setHiragana(word.hiragana || word.kana || '');
-      setKatakana(word.katakana || hiraganaToKatakana(word.hiragana || word.kana || ''));
+      const rawKanji = (word.kanji || word.kana || '').trim();
+      const rawReading = (word.hiragana || word.kana || '').trim();
+
+      setKanji(rawKanji);
       setMeaningEs(word.meaning_es || '');
       setMeaningEn(word.meaning_en || '');
       setLevel(word.level || 'N5');
       setCategory(word.category || 'Vocabulario General');
       setNotes(word.notes || '');
       setSavedSuccess(false);
+
+      if (rawReading && !containsKanji(rawReading)) {
+        const cleanHira = katakanaToHiragana(rawReading);
+        setHiragana(cleanHira);
+        setKatakana(word.katakana || hiraganaToKatakana(cleanHira));
+      } else if (rawKanji) {
+        const syncRes = convertKanjiToKanaSync(rawKanji);
+        if (syncRes.hiragana && !containsKanji(syncRes.hiragana)) {
+          setHiragana(syncRes.hiragana);
+          setKatakana(syncRes.katakana || hiraganaToKatakana(syncRes.hiragana));
+        } else {
+          setHiragana('');
+          setKatakana('');
+        }
+
+        if (containsKanji(rawKanji)) {
+          setIsConvertingKana(true);
+          fetchKanjiReading(rawKanji).then((res) => {
+            if (res && res.hiragana && !containsKanji(res.hiragana)) {
+              setHiragana(res.hiragana);
+              setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
+            }
+          }).catch(console.warn).finally(() => setIsConvertingKana(false));
+        }
+      } else {
+        setHiragana('');
+        setKatakana('');
+      }
     }
   }, [isOpen, word]);
 
@@ -68,9 +103,68 @@ export default function EditWordModal({
     }
   };
 
+  const handleKanjiChange = (val) => {
+    setKanji(val);
+    const trimmed = val.trim();
+    if (!trimmed) {
+      setHiragana('');
+      setKatakana('');
+      return;
+    }
+
+    if (!containsKanji(trimmed)) {
+      const hira = katakanaToHiragana(trimmed);
+      setHiragana(hira);
+      setKatakana(hiraganaToKatakana(hira));
+      return;
+    }
+
+    const syncRes = convertKanjiToKanaSync(trimmed);
+    if (syncRes.hiragana && !containsKanji(syncRes.hiragana)) {
+      setHiragana(syncRes.hiragana);
+      setKatakana(syncRes.katakana || hiraganaToKatakana(syncRes.hiragana));
+      if (!meaningEs && syncRes.meaning_es) setMeaningEs(syncRes.meaning_es);
+    }
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      setIsConvertingKana(true);
+      try {
+        const res = await fetchKanjiReading(trimmed);
+        if (res && res.hiragana && !containsKanji(res.hiragana)) {
+          setHiragana(res.hiragana);
+          setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
+          if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
+        }
+      } finally {
+        setIsConvertingKana(false);
+      }
+    }, 350);
+  };
+
+  const handleAutoConvertKana = async () => {
+    const textTarget = kanji.trim();
+    if (!textTarget) return;
+
+    setIsConvertingKana(true);
+    try {
+      const res = await fetchKanjiReading(textTarget);
+      if (res && res.hiragana && !containsKanji(res.hiragana)) {
+        setHiragana(res.hiragana);
+        setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
+        if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
+      }
+    } finally {
+      setIsConvertingKana(false);
+    }
+  };
+
   const handleSave = (e) => {
     e.preventDefault();
-    if (!kanji.trim() || !hiragana.trim() || !meaningEs.trim()) {
+    const cleanKanji = kanji.trim();
+    let cleanHiragana = hiragana.trim();
+
+    if (!cleanKanji || !cleanHiragana || !meaningEs.trim()) {
       showAlert({
         type: 'warning',
         title: 'Campos Incompletos',
@@ -79,13 +173,37 @@ export default function EditWordModal({
       return;
     }
 
-    const finalKatakana = katakana.trim() || hiraganaToKatakana(hiragana);
+    // Regla obligatoria: Hiragana no debe contener Kanji
+    if (containsKanji(cleanHiragana)) {
+      const syncRes = convertKanjiToKanaSync(cleanKanji);
+      if (syncRes.hiragana && !containsKanji(syncRes.hiragana)) {
+        cleanHiragana = syncRes.hiragana;
+        setHiragana(cleanHiragana);
+      } else {
+        showAlert({
+          type: 'warning',
+          title: 'Lectura con Kanji Inválida',
+          message: 'El campo "Hiragana" no debe contener caracteres Kanji (ej. 疲, 様). Usa el botón "Auto-Kana" o introduce la lectura fonética en kana.'
+        });
+        return;
+      }
+    }
+
+    let finalKatakana = katakana.trim();
+    if (!finalKatakana || containsKanji(finalKatakana)) {
+      finalKatakana = hiraganaToKatakana(cleanHiragana);
+      setKatakana(finalKatakana);
+    }
+    if (containsKanji(finalKatakana)) {
+      finalKatakana = cleanKanaOnly(finalKatakana);
+    }
+
     const updated = {
       ...word,
-      kanji: kanji.trim(),
-      hiragana: hiragana.trim(),
+      kanji: cleanKanji,
+      hiragana: cleanHiragana,
       katakana: finalKatakana,
-      kana: hiragana.trim(),
+      kana: cleanHiragana,
       meaning_es: meaningEs.trim(),
       meaning_en: meaningEn.trim(),
       level,
@@ -169,7 +287,7 @@ export default function EditWordModal({
                 className="form-input jp-text"
                 placeholder="ej. 多分 o 明後日"
                 value={kanji}
-                onChange={(e) => setKanji(e.target.value)}
+                onChange={(e) => handleKanjiChange(e.target.value)}
                 required
                 autoFocus
               />
@@ -177,7 +295,20 @@ export default function EditWordModal({
 
             {/* Hiragana */}
             <div className="form-group">
-              <label className="form-label">Hiragana (Lectura Kana)</label>
+              <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Hiragana (Lectura Kana)</span>
+                <button
+                  type="button"
+                  className="tts-mini-btn"
+                  onClick={handleAutoConvertKana}
+                  disabled={isConvertingKana}
+                  title="Auto-convertir Kanji a Hiragana y Katakana con diccionario y motor morfológico"
+                  style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px' }}
+                >
+                  <Sparkles size={12} className={isConvertingKana ? 'animate-spin' : ''} />
+                  <span>{isConvertingKana ? 'Convirtiendo...' : 'Auto-Kana'}</span>
+                </button>
+              </label>
               <input
                 type="text"
                 className="form-input jp-text"

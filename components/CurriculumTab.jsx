@@ -82,7 +82,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   
   // Theme, Level and Status filter state
   const [selectedTheme, setSelectedTheme] = useState('all'); // 'all' | 'vida' | 'trabajo' | 'ciudad' | 'ocio'
-  const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'A1' | 'N5' | 'N4'
+  const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
   const [selectedStatus, setSelectedStatus] = useState('all'); // 'all' | 'pending' | 'completed'
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -419,8 +419,18 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
                 <span className="step-target-tag">{selectedStep.stage}</span>
+                <span style={{ 
+                  fontSize: '0.75rem', 
+                  fontWeight: 700, 
+                  padding: '2px 8px', 
+                  borderRadius: 4, 
+                  background: 'rgba(99, 102, 241, 0.12)', 
+                  color: 'var(--primary)' 
+                }}>
+                  {selectedStep.level}
+                </span>
                 <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                  Nivel {selectedStep.step} de {steps.length}
+                  Módulo {selectedStep.step} de {steps.length}
                 </span>
                 {selectedStep.sourcePdf && (
                   <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 4, border: '1px solid var(--border)', color: 'var(--primary)' }}>
@@ -1459,7 +1469,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel:</span>
-              {['all', 'A1', 'N5', 'N4'].map(lvl => (
+              {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map(lvl => (
                 <button
                   key={lvl}
                   className={`btn btn-sm ${selectedLevel === lvl ? 'btn-primary' : 'btn-outline'}`}

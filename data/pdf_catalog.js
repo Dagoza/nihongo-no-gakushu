@@ -103,7 +103,7 @@ window.PDF_CATALOG_DATA = [
     "filename": "japones from spanish.pdf",
     "title": "Hablemos en Japonés (NHK World en Español)",
     "category": "Curso en Español",
-    "level": "N5 / N4",
+    "level": "N5",
     "pages": 58,
     "size": "6.2 MB",
     "description": "Curso completo de 48 lecciones en español con diálogos reales de la vida cotidiana en Japón, explicaciones gramaticales y notas culturales."
@@ -112,7 +112,7 @@ window.PDF_CATALOG_DATA = [
     "filename": "irodori elementary.pdf",
     "title": "Irodori: Japanese for Life in Japan (Elementary)",
     "category": "Curso Oficial JF",
-    "level": "A2 (N5/N4)",
+    "level": "N4",
     "pages": 515,
     "size": "158 MB",
     "description": "El aclamado curso oficial de Fundación Japón basado en objetivos Can-do para la vida diaria y laboral en Japón."

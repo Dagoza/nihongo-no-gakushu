@@ -317,4 +317,4 @@ print(f"Total unified curriculum steps with NHK blocks: {len(all_curr)}")
 with open(curr_path, "w", encoding="utf-8") as f:
     json.dump(all_curr, f, ensure_ascii=False, indent=2)
 
-print("Saved curriculum.json with ALL tracks: Irodori A1, NHK World, and JLPT Progressive!")
+print("Saved curriculum.json with ALL tracks: Irodori N5, NHK World, and JLPT Progressive!")

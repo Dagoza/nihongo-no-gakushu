@@ -166,7 +166,7 @@ Antes de agregar cualquier módulo o temática al currículum (`data/curriculum.
   - **Complementar:** Si la nueva fuente o lección aporta ejemplos reales, objetivos Can-Do, diálogos contextuales o vocabulario enriquecedor, **se integran directamente dentro del módulo existente**.
   - **Saltar / Omitir:** Si la información es redundante o repite explicaciones ya cubiertas, **se omite y nunca se crea un módulo paralelo**.
 - **Si es un tema enteramente nuevo**:
-  - Se da de alta asignando el número de módulo correspondiente, nivel oficial (A1/N5/N4), Can-Dos pedagógicos y fuentes bibliográficas.
+  - Se da de alta asignando el número de módulo correspondiente, nivel oficial bajo el estándar JLPT (N5 a N1 exclusivamente), Can-Dos pedagógicos y fuentes bibliográficas.
 
 ### 4.2. Enlace Obligatorio con Temas Relacionados (`related_topics`)
 Todo módulo en `data/curriculum.json` **debe incorporar obligatoriamente el array `"related_topics"`** con enlaces directos hacia módulos precedentes, consecutivos o complementarios:

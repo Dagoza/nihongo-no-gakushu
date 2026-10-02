@@ -1957,7 +1957,7 @@ export default function ProductTour({
                     <div className="pdf-book-selector">
                       {[
                         { title: 'Minna no Nihongo I', level: 'N5', pages: '25 lecciones' },
-                        { title: 'Irodori Katsudou', level: 'A1 / N5', pages: '18 temas' },
+                        { title: 'Irodori Katsudou', level: 'N5', pages: '18 temas' },
                         { title: 'Guía de Kanjis N5', level: 'N5', pages: '103 caracteres' }
                       ].map((bk, i) => (
                         <div 

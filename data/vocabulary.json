@@ -2436,5 +2436,17 @@
     "category": "Ciudad y Transporte",
     "level": "N5",
     "id": "v_irodori_208"
+  },
+  {
+    "id": "v_otsukaresama_desu",
+    "kanji": "お疲れ様です",
+    "hiragana": "おつかれさまです",
+    "katakana": "オツカレサマデス",
+    "kana": "おつかれさまです",
+    "meaning_es": "Muchas gracias por su trabajo / Buen trabajo (saludo formal)",
+    "meaning_en": "Thank you for your hard work",
+    "category": "Saludos y Cortesía",
+    "level": "N5",
+    "romaji": "otsukaresamadesu"
   }
 ]

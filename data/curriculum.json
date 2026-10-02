@@ -4,7 +4,7 @@
     "title": "Saludos, Cortesía y Presentación Personal",
     "subtitle": "はじめまして。私はアンナです。(Encantada, soy Anna)",
     "icon": "🤝",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 1 · Fundamentos",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -788,7 +788,7 @@
     "title": "Estrategias de Comunicación y Gestión de Idiomas",
     "subtitle": "すみません、もう一度ゆっくりお願いします。(Disculpe, una vez más despacio)",
     "icon": "💬",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 2 · Comunicación",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -1062,7 +1062,7 @@
     "title": "Identidad, Familia, Residencia y Datos de Contacto",
     "subtitle": "東京に住んでいます。家族は3人です。(Vivo en Tokio. Somos 3 en mi familia)",
     "icon": "🏠",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 3 · Vida Personal",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -1454,7 +1454,7 @@
     "title": "Gustos, Preferencias Culinarias y Hábitos Diarios",
     "subtitle": "うどんが好きです。毎朝コーヒーを飲みます。(Me gusta el udon. Bebo café cada mañana)",
     "icon": "🍜",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 4 · Comida y Hábitos",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -1740,7 +1740,7 @@
           {
             "title": "Objeto directo de acción verbal",
             "formula": "[Comida] を 食べます／飲みます",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1753,7 +1753,7 @@
           {
             "title": "Expresión de gusto y aversión",
             "formula": "[Cosa] が 好きです／好きじゃないです",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1766,7 +1766,7 @@
           {
             "title": "Frecuencia temporal elemental",
             "formula": "毎日 (todos los días), いつも (siempre), よく (a menudo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1779,7 +1779,7 @@
           {
             "title": "Pregunta sobre preferencias",
             "formula": "どんな食べ物が好きですか",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1792,7 +1792,7 @@
           {
             "title": "Estructura Clave 1.5",
             "formula": "Objeto + を + Verbo transitivo (Marcador de objeto directo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1805,7 +1805,7 @@
           {
             "title": "Estructura Clave 1.6",
             "formula": "Lugar + で + Verbo de acción dinámica",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1941,7 +1941,7 @@
           {
             "title": "Persona + と + Verbo (Compañía",
             "formula": "'junto con')",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1954,7 +1954,7 @@
           {
             "title": "Estructura Clave 2.2",
             "formula": "Forma presente/futura ます y su negación ません",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1967,7 +1967,7 @@
           {
             "title": "Estructura Clave 2.3",
             "formula": "Nが好きです / 好きじゃないです (Gustos y disgustos)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1980,7 +1980,7 @@
           {
             "title": "Estructura Clave 2.4",
             "formula": "Nはちょっと… (Rechazo cortés sin decir 'no')",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -1993,7 +1993,7 @@
           {
             "title": "Estructura Clave 2.5",
             "formula": "Nを V-ます (Objeto directo de comer o beber)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2006,7 +2006,7 @@
           {
             "title": "Adverbios de frecuencia",
             "formula": "いつも (siempre), よく (a menudo), あまり〜ない (no mucho), ぜんぜん〜ない (nada en absoluto)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 5). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2146,7 +2146,7 @@
     "title": "Restaurantes, Menús, Pedidos y Contadores",
     "subtitle": "これを2つとウーロン茶をください。(Dos de esto y un té oolong, por favor)",
     "icon": "🍱",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 5 · Gastronomía",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -2368,7 +2368,7 @@
           {
             "title": "Petición directa de objetos",
             "formula": "[Objeto] を ください / [Objeto] を お願いします",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2381,7 +2381,7 @@
           {
             "title": "Conjunción de elementos en el pedido",
             "formula": "[A] と [B] (A y B)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2394,7 +2394,7 @@
           {
             "title": "Pregunta de existencia de productos",
             "formula": "[Plato] は ありますか",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2407,7 +2407,7 @@
           {
             "title": "Contadores nativos",
             "formula": "ひとつ (1), ふたつ (2), みっつ (3), よっつ (4), いつつ (5)...",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2420,7 +2420,7 @@
           {
             "title": "Estructura Clave 1.5",
             "formula": "N、お願いします / ください (Pedir un plato o bebida)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2433,7 +2433,7 @@
           {
             "title": "Nにします (Decisión personal",
             "formula": "'elijo esto')",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2446,7 +2446,7 @@
           {
             "title": "Contadores nativos",
             "formula": "ひとつ, ふたつ, みっつ",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2519,7 +2519,7 @@
           {
             "title": "N（は）ありますか (Consultar disponibilidad",
             "formula": "¿tienen...?)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2532,7 +2532,7 @@
           {
             "title": "Estructura Clave 2.2",
             "formula": "〜はありますか / 〜をください",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2545,7 +2545,7 @@
           {
             "title": "Conexión de Adjetivos-い",
             "formula": "〜くて (柔らかくておいしい)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2558,7 +2558,7 @@
           {
             "title": "Forma Potencial",
             "formula": "使えます (¿se puede usar tarjeta?)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2571,7 +2571,7 @@
           {
             "title": "Keigo de servicio",
             "formula": "かしこまりました",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2584,7 +2584,7 @@
           {
             "title": "Pagar por separado",
             "formula": "別々にお願いします",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2597,7 +2597,7 @@
           {
             "title": "Estructura Clave 2.7",
             "formula": "Secuencia temporal con 〜てから",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 6). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -2674,7 +2674,7 @@
     "title": "El Hogar, Vivienda, Distribución y Electrodomésticos",
     "subtitle": "部屋が4つあります。エアコンと洗濯機があります。(Hay 4 habitaciones. Hay aire y lavadora)",
     "icon": "🛋️",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 6 · El Hogar",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -2862,7 +2862,7 @@
           {
             "title": "Existencia de cosas inanimadas",
             "formula": "[Lugar] に [Cosa] が あります",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -2875,7 +2875,7 @@
           {
             "title": "Uso de contadores de estancias y cosas",
             "formula": "[Número] つ あります",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -2888,7 +2888,7 @@
           {
             "title": "Conexión aditiva de equipamiento",
             "formula": "[A] や [B] (A y B entre otros)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -2901,7 +2901,7 @@
           {
             "title": "ここは【Lugar】です (Identificar estancias",
             "formula": "Aquí está la cocina)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -2914,7 +2914,7 @@
           {
             "title": "Punto Gramatical 5",
             "formula": "【Lugar】に Nがあります / Nが【número】あります (Existencia en espacio)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -2927,7 +2927,7 @@
           {
             "title": "Punto Gramatical 6",
             "formula": "Nはありません / ないです (Ausencia)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -2940,7 +2940,7 @@
           {
             "title": "Punto Gramatical 7",
             "formula": "Adjetivos-い y な afirmativos y negativos (静かじゃないです / 広くないです)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -3055,7 +3055,7 @@
     "title": "El Lugar de Trabajo, Orientación y Existencia (ある vs いる)",
     "subtitle": "山田さんは2階の会議室にいます。コピー機はあそこです。(Yamada está en la 2ª planta)",
     "icon": "🏢",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 7 · Trabajo y Espacio",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -3337,7 +3337,7 @@
           {
             "title": "Existencia animada vs inanimada",
             "formula": "[Persona/Animal] が います vs [Cosa] が あります",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3350,7 +3350,7 @@
           {
             "title": "Demostrativos de lugar",
             "formula": "ここ (aquí), そこ (ahí), あそこ (allí), どこ (¿dónde?)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3363,7 +3363,7 @@
           {
             "title": "Contador de plantas de edificios",
             "formula": "〜階 (かい／がい)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3376,7 +3376,7 @@
           {
             "title": "Localización relativa",
             "formula": "上 (arriba), 下 (abajo), 隣 (al lado), 前 (delante)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3389,7 +3389,7 @@
           {
             "title": "あります (Existencia inanimada",
             "formula": "cosas, lugares, plantas)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3402,7 +3402,7 @@
           {
             "title": "います (Existencia animada",
             "formula": "personas, animales)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3524,7 +3524,7 @@
           {
             "title": "Estructura Clave 2.1",
             "formula": "Lugar に Sujeto が あります/います",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3537,7 +3537,7 @@
           {
             "title": "Demostrativos de lugar",
             "formula": "ここ (aquí), そこ (ahí), あそこ (allá), どこ (dónde)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3550,7 +3550,7 @@
           {
             "title": "Estructura Clave 2.3",
             "formula": "【Lugar】で V-ます (Lugar de acción dinámica)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3563,7 +3563,7 @@
           {
             "title": "Estructura Clave 2.4",
             "formula": "【Persona】は【Lugar】にいます (Ubicación de personas)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3576,7 +3576,7 @@
           {
             "title": "Estructura Clave 2.5",
             "formula": "【Objeto】は【Lugar】にあります (Ubicación de cosas inanimadas)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3589,7 +3589,7 @@
           {
             "title": "Estructura Clave 2.6",
             "formula": "Nの【posicion】にあります (引き出しの中にあります - adentro del cajón)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 8). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -3724,7 +3724,7 @@
     "title": "Rutinas, Horarios, Días de la Semana e Intervalos",
     "subtitle": "9時から5時まで働きます。水曜日は休みです。(Trabajo de 9 a 5. Descanso el miércoles)",
     "icon": "⏰",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 8 · Tiempo y Horarios",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -4029,7 +4029,7 @@
           {
             "title": "Contadores de tiempo",
             "formula": "〜時 (horas), 〜分 (minutos, pron. ぷん／ふん)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4042,7 +4042,7 @@
           {
             "title": "Partículas de intervalo",
             "formula": "[Punto A] から [Punto B] まで (desde A hasta B)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4055,7 +4055,7 @@
           {
             "title": "Días de la semana",
             "formula": "月 (lunes), 火 (martes), 水 (miércoles), 木 (jueves), 金 (viernes), 土 (sábado), 日 (domingo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4068,7 +4068,7 @@
           {
             "title": "Partícula temporal puntual",
             "formula": "[Hora/Día específico] に [Acción]",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4081,7 +4081,7 @@
           {
             "title": "Estructura Clave 1.5",
             "formula": "Sustantivo A + の + Sustantivo B (Posesión / Atribución)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4231,7 +4231,7 @@
           {
             "title": "Estructura Clave 2.1",
             "formula": "Lecturas numéricas Sino-japonesas (Ichi, Ni, San) y Nativas (Hitotsu, Futatsu)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4244,7 +4244,7 @@
           {
             "title": "Estructura Clave 2.2",
             "formula": "Días de la semana basados en los elementos naturales (Sol, Luna, Fuego, Agua, Madera, Metal, Tierra)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4257,7 +4257,7 @@
           {
             "title": "Estructura Clave 2.3",
             "formula": "【Hora】に V-ます / 【Hora】ごろ V-ます (Punto exacto o aproximado)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4270,7 +4270,7 @@
           {
             "title": "Estructura Clave 2.4",
             "formula": "【Hora A】から【Hora B】まで (Intervalos de tiempo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4283,7 +4283,7 @@
           {
             "title": "Estructura Clave 2.5",
             "formula": "【Fecha/Hora】がいいです (Conveniencia o preferencia horaria)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4296,7 +4296,7 @@
           {
             "title": "Días de la semana en kanji",
             "formula": "月, 火, 水, 木, 金, 土, 日",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 9). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -4445,7 +4445,7 @@
     "title": "Instrucciones de Trabajo, Peticiones y Reglas Laborales",
     "subtitle": "ホチキスを貸してください。ここでタバコを吸わないでください。(Préstame la grapadora)",
     "icon": "📋",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 9 · Peticiones y Reglas",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -4641,7 +4641,7 @@
           {
             "title": "Forma て de petición cortés",
             "formula": "[Verbo en forma て] + ください",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4654,7 +4654,7 @@
           {
             "title": "Petición de préstamo",
             "formula": "[Cosa] を 貸してください (Prestar hacia mí)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4667,7 +4667,7 @@
           {
             "title": "Petición de enseñanza",
             "formula": "[Acción] を 教えてください",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4680,7 +4680,7 @@
           {
             "title": "Prohibición suave o advertencia",
             "formula": "[Verbo ないで] + ください (No haga...)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4693,7 +4693,7 @@
           {
             "title": "Punto Gramatical 5",
             "formula": "V-てください / V-て (Petición formal o coloquial)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4706,7 +4706,7 @@
           {
             "title": "Punto Gramatical 6",
             "formula": "Nですね (Confirmación de datos o cantidades recibidas)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4719,7 +4719,7 @@
           {
             "title": "Punto Gramatical 7",
             "formula": "N、貸してください / 借りてもいいですか (Pedir prestado)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4732,7 +4732,7 @@
           {
             "title": "Contadores",
             "formula": "〜時 (horas), 〜分 (minutos), 〜半 (media hora), 〜枚 (hojas/papel)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -4847,7 +4847,7 @@
     "title": "Aficiones, Tiempo Libre, Ocio y Redes Sociales",
     "subtitle": "休みの日は何をしますか？マンガを読んだり、音楽を聴きます。(¿Qué haces en tu tiempo libre?)",
     "icon": "🎮",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 10 · Aficiones y Ocio",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -5060,7 +5060,7 @@
           {
             "title": "Pregunta abierta de gustos",
             "formula": "どんな [Categoría] が 好きですか",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5073,7 +5073,7 @@
           {
             "title": "Verbos de afición",
             "formula": "音楽を聴きます (escuchar música), 本を読みます (leer), 写真を撮ります (tomar fotos)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5086,7 +5086,7 @@
           {
             "title": "Partícula を con actividades recreativas",
             "formula": "[Deporte/Actividad] を します",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5099,7 +5099,7 @@
           {
             "title": "Estructura Clave 1.4",
             "formula": "趣味は何ですか (Preguntar por aficiones)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5112,7 +5112,7 @@
           {
             "title": "Estructura Clave 1.5",
             "formula": "どんな N が好きですか (Preguntar por clase o tipo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5185,7 +5185,7 @@
           {
             "title": "Estructura Clave 2.1",
             "formula": "あまり ナA-じゃない / イA-くない (Grado atenuado)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5198,7 +5198,7 @@
           {
             "title": "Estructura Clave 2.2",
             "formula": "【Persona】と【Lugar】で V-ます (Compañía y escenario de ocio)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5211,7 +5211,7 @@
           {
             "title": "Experiencias pasadas",
             "formula": "Verbo Ta-form + ことがある",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5224,7 +5224,7 @@
           {
             "title": "Construcción explicativa",
             "formula": "〜んですか",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5237,7 +5237,7 @@
           {
             "title": "Capacidad y causa",
             "formula": "〜ことができて",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5250,7 +5250,7 @@
           {
             "title": "Cortesía de regalos",
             "formula": "ほんの気持ちです",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 11). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -5322,7 +5322,7 @@
     "title": "Eventos, Festivales, Invitaciones y Propuestas",
     "subtitle": "今週の土曜日、いっしょにお祭りに行きませんか？(¿Vamos juntos al festival?)",
     "icon": "🎆",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 11 · Socialización",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -5505,7 +5505,7 @@
           {
             "title": "Invitación cortés",
             "formula": "[Verbo raíz] + ませんか (¿No le gustaría...?)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5518,7 +5518,7 @@
           {
             "title": "Propuesta / Aceptación activa",
             "formula": "[Verbo raíz] + ましょう (¡Hagámoslo!)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5531,7 +5531,7 @@
           {
             "title": "Partícula de lugar de acción",
             "formula": "[Lugar] で 会います／食べます",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5544,7 +5544,7 @@
           {
             "title": "Rechazo elíptico educado",
             "formula": "[Día] は ちょっと...",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5557,7 +5557,7 @@
           {
             "title": "Punto Gramatical 5",
             "formula": "【Fecha】に【Lugar】で【Evento】があります (Acontecimiento de eventos)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5570,7 +5570,7 @@
           {
             "title": "V-ませんか (Invitación cortés",
             "formula": "¿no te gustaría...?)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5583,7 +5583,7 @@
           {
             "title": "V-ましょう (Aceptación o propuesta entusiasta",
             "formula": "¡vamos a...!)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5596,7 +5596,7 @@
           {
             "title": "V-に行きます (Verbo de movimiento con propósito",
             "formula": "食べに行きます)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -5692,7 +5692,7 @@
     "title": "Movilidad, Transporte Público y Estaciones",
     "subtitle": "この電車は新宿に行きますか？何番線ですか？(¿Va a Shinjuku? ¿Qué vía es?)",
     "icon": "🚆",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 12 · Movilidad y Transporte",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -6046,7 +6046,7 @@
           {
             "title": "Partículas de dirección y destino",
             "formula": "[Destino] に／へ 行きます",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6059,7 +6059,7 @@
           {
             "title": "Partícula de medio de transporte",
             "formula": "[Medio] で 行きます (電車で, バスで, pero 歩いて para a pie)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6072,7 +6072,7 @@
           {
             "title": "Partículas de origen y destino espacial",
             "formula": "[Origen] から [Destino] まで",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6085,7 +6085,7 @@
           {
             "title": "Pregunta de andén",
             "formula": "何番線 (なんばんせん) / 次の電車 (próximo tren)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6098,7 +6098,7 @@
           {
             "title": "Estructura Clave 1.5",
             "formula": "Destino + へ / に + 行く / 来る / 帰る",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6111,7 +6111,7 @@
           {
             "title": "Estructura Clave 1.6",
             "formula": "Punto de partida から Punto final まで (Espacio y Tiempo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6207,7 +6207,7 @@
           {
             "title": "Estructura Clave 2.1",
             "formula": "Tiempo específico + に + Acción",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6220,7 +6220,7 @@
           {
             "title": "Estructura Clave 2.2",
             "formula": "Medio de transporte + で (電車で, バスで, 車で)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6233,7 +6233,7 @@
           {
             "title": "Estructura Clave 2.3",
             "formula": "この【vehículo】は【lugar】に行きますか (Preguntar ruta)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6246,7 +6246,7 @@
           {
             "title": "Estructura Clave 2.4",
             "formula": "【Vehículo】で来ます / 行きます (Medio de locomoción)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6259,7 +6259,7 @@
           {
             "title": "Estructura Clave 2.5",
             "formula": "【Tiempo】かかります (Duración del viaje)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6272,7 +6272,7 @@
           {
             "title": "Estructura Clave 2.6",
             "formula": "【Lugar】で【vehículo】に乗ります / 降ります (Subir y bajar)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6394,7 +6394,7 @@
           {
             "title": "Puntos cardinales",
             "formula": "東 (higashi), 西 (nishi), 南 (minami), 北 (kita)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6407,7 +6407,7 @@
           {
             "title": "Acción involuntaria o pesar",
             "formula": "〜てしまいました",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6420,7 +6420,7 @@
           {
             "title": "Estructura Clave 3.3",
             "formula": "Condicional natural con 〜と (見ると大きい)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6433,7 +6433,7 @@
           {
             "title": "Estructura Clave 3.4",
             "formula": "Deseos propios con 〜たいです",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6446,7 +6446,7 @@
           {
             "title": "Comparación de preferencia",
             "formula": "A のほうが B より好き",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6459,7 +6459,7 @@
           {
             "title": "Verbos de dar y recibir",
             "formula": "あげる vs くれる",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6472,7 +6472,7 @@
           {
             "title": "Enumeración representativa",
             "formula": "〜たり〜たりしました",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 13). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -6593,7 +6593,7 @@
     "title": "Orientación Urbana, Puntos de Encuentro y Señalización",
     "subtitle": "交差点を右に曲がってください。大きなビルの前です。(Gire a la derecha en el cruce)",
     "icon": "🗺️",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 13 · Ciudad y Rutas",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -6798,7 +6798,7 @@
           {
             "title": "Direcciones con forma て",
             "formula": "まっすぐ行って (vaya recto), 右に曲がって (gire a la derecha)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -6811,7 +6811,7 @@
           {
             "title": "Partícula de movimiento a través de un espacio",
             "formula": "[Espacio] を 渡ります／曲がります",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -6824,7 +6824,7 @@
           {
             "title": "Modificación nominal con adjetivos",
             "formula": "大きな [Sustantivo] / 赤い [Sustantivo]",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -6837,7 +6837,7 @@
           {
             "title": "Fórmulas de ubicación",
             "formula": "[Lugar A] は [Lugar B] の 前／隣／向かい です",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -6850,7 +6850,7 @@
           {
             "title": "Punto Gramatical 5",
             "formula": "【Lugar】に N（は）ありますか (Existencia de comercios en la zona)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -6863,7 +6863,7 @@
           {
             "title": "Nの【posición】にいます (Ubicación relativa",
             "formula": "前, 後ろ, 横)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -6876,7 +6876,7 @@
           {
             "title": "Punto Gramatical 7",
             "formula": "ナA-な Nですね / イA-い Nですね (Exclamación sobre características urbanas)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -6889,7 +6889,7 @@
           {
             "title": "Adjetivos opuestos",
             "formula": "大きい vs 小さい / 高い vs 低い",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7027,7 +7027,7 @@
     "title": "Tiendas, Grandes Almacenes y Búsqueda de Productos",
     "subtitle": "電池がほしいんですが、何階にありますか？(Busco pilas, ¿en qué planta están?)",
     "icon": "🛍️",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 14 · Tiendas y Compras",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -7230,7 +7230,7 @@
           {
             "title": "Expresión de deseo de sustantivos",
             "formula": "[Objeto] が ほしいです (Quiero/deseo un objeto)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7243,7 +7243,7 @@
           {
             "title": "Introducción suave o preliminar de consulta",
             "formula": "〜んですが (Es que quisiera...)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7256,7 +7256,7 @@
           {
             "title": "Pregunta por secciones",
             "formula": "[Artículo] 売り場 (sección de venta de...)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7269,7 +7269,7 @@
           {
             "title": "Petición de exhibición",
             "formula": "これを 見せてください (Por favor muéstreme este)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7282,7 +7282,7 @@
           {
             "title": "Punto Gramatical 5",
             "formula": "Nがほしいんですが… (Planteamiento atenuado de deseo o búsqueda)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7295,7 +7295,7 @@
           {
             "title": "Punto Gramatical 6",
             "formula": "〜は何階ですか (Preguntar por la planta de un edificio)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7308,7 +7308,7 @@
           {
             "title": "Exclamaciones valorativas",
             "formula": "かわいい！ / すてき！ / おしゃれですね",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7321,7 +7321,7 @@
           {
             "title": "Kanji de señalización",
             "formula": "入口, 出口, 押す, 引く, 安い",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7450,7 +7450,7 @@
     "title": "Precios, Descuentos y Caja del Combini",
     "subtitle": "これ、いくらですか？袋はいりません。(¿Cuánto cuesta esto? No necesito bolsa)",
     "icon": "💴",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 15 · Precios y Pagos",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -7637,7 +7637,7 @@
           {
             "title": "Pregunta de precio",
             "formula": "[Objeto] は いくらですか (¿Cuánto cuesta?)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7650,7 +7650,7 @@
           {
             "title": "Unidades de numeración",
             "formula": "百 (ひゃく - 100), 千 (せん - 1.000), 万 (まん - 10.000)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7663,7 +7663,7 @@
           {
             "title": "Descuentos porcentuales",
             "formula": "〜割引 (わりびき - décimas de descuento), 半額 (はんがく - mitad de precio)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7676,7 +7676,7 @@
           {
             "title": "Preguntas de cortesía en caja",
             "formula": "袋はいりますか (¿necesita bolsa?), 温めますか (¿se lo caliento?)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7689,7 +7689,7 @@
           {
             "title": "Punto Gramatical 5",
             "formula": "これ／それ／あれ はいくらですか (Pregunta de precio)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7702,7 +7702,7 @@
           {
             "title": "Punto Gramatical 6",
             "formula": "この／その／あの N (Demostrativo determinado)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7715,7 +7715,7 @@
           {
             "title": "【Cantidad】ずつ (Distribución equitativa",
             "formula": "2個ずつ - dos de cada)",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7728,7 +7728,7 @@
           {
             "title": "Kanjis de números 1 al 10",
             "formula": "一, 二, 三, 四, 五, 六, 七, 八, 九, 十",
-            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel A1 / N5.",
+            "explanation": "Estructura fundamental tratada en Irodori + NHK + JLPT. Permite formular expresiones comunicativas de manera natural y precisa en el nivel N5.",
             "usage_notes": "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
             "examples": [
               {
@@ -7829,7 +7829,7 @@
     "title": "Fin de Semana, Relatar el Pasado y Experiencias de Ocio",
     "subtitle": "週末はどうでしたか？映画を見ました。とても楽しかったです。(¿Qué tal el fin de semana?)",
     "icon": "🗓️",
-    "level": "A1 / N5",
+    "level": "N5",
     "stage": "Módulo 16 · Pasado y Experiencias",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -8260,7 +8260,7 @@
           {
             "title": "Pasado verbal formal",
             "formula": "[Verbo raíz] + ました / ませんでした",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8273,7 +8273,7 @@
           {
             "title": "Pasado de adjetivos い",
             "formula": "quitar い + かったです / くなかったです",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8286,7 +8286,7 @@
           {
             "title": "Pasado de adjetivos な y sustantivos",
             "formula": "+ でした / ではありませんでした",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8299,7 +8299,7 @@
           {
             "title": "Propósito de desplazamiento",
             "formula": "[Verbo raíz] に 行きました (Fui a ver, fui a comer)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8312,7 +8312,7 @@
           {
             "title": "Adjetivo-い",
             "formula": "Afirmativo, Negativo (-くない), Pasado (-かった)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8443,7 +8443,7 @@
           {
             "title": "Estructura Clave 2.1",
             "formula": "Adjetivo-な + な + Sustantivo / Adjetivo-な + です",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8456,7 +8456,7 @@
           {
             "title": "Forma -te conectiva",
             "formula": "〜くて / 〜で (Barato y delicioso = 安くて美味しい)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8469,7 +8469,7 @@
           {
             "title": "Comparaciones",
             "formula": "A より B の方が [Adjetivo] です (B es más [Adj] que A)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8482,7 +8482,7 @@
           {
             "title": "Estructura Clave 2.4",
             "formula": "Lectura fluida y alternancia entre Furigana / Hiragana",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8495,7 +8495,7 @@
           {
             "title": "Verbos de rutina",
             "formula": "起きます (despertar), 顔を洗う (lavarse la cara), 出かけます (salir)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8645,7 +8645,7 @@
           {
             "title": "Lecturas especiales del calendario",
             "formula": "一日 (ついたち - primer día del mes)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8658,7 +8658,7 @@
           {
             "title": "Adverbios de tiempo y modo",
             "formula": "早く (temprano), 少し (un poco)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8671,7 +8671,7 @@
           {
             "title": "Estructura Clave 3.3",
             "formula": "V-ました / V-ませんでした (Pasado afirmativo y negativo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8684,7 +8684,7 @@
           {
             "title": "Estructura Clave 3.4",
             "formula": "何も V-ませんでした / どこにも V-ませんでした (Negación total)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8697,7 +8697,7 @@
           {
             "title": "Estructura Clave 3.5",
             "formula": "ナA-でした / イA-かったです (Pasado de adjetivos)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8710,7 +8710,7 @@
           {
             "title": "Kanjis",
             "formula": "百 (100), 千 (1000), 万 (10000), 円, 休み, 映画, 勉強します, 買います",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 17). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -8866,7 +8866,7 @@
     "title": "Planes Vacacionales, Deseos y Cultura Onsen",
     "subtitle": "次の休みに温泉に行きたいです。富士山に登りたいです。(Quiero ir a un onsen)",
     "icon": "♨️",
-    "level": "A1 / N5-N4",
+    "level": "N5 - N4",
     "stage": "Módulo 17 · Planes y Tradición",
     "track": "consolidated",
     "track_label": "Módulo Consolidado",
@@ -9050,7 +9050,7 @@
         "kana": "ゴールデンウィークにおんせんにはいりたいです。ろてんぶろにはいりました。きもちよかったです。それに、けしきもきれいでした。",
         "romaji": "Gooruden wiiku ni onsen ni hairitai desu. Rotenburo ni hairimashita. Kimochi yokatta desu. Soreni, keshiki mo kirei deshita.",
         "es": "En la Golden Week quiero ir a unas aguas termales. Me bañé en una terma al aire libre. Fue muy placentero. Además, el paisaje era precioso.",
-        "explanation": "Relato culminante de viaje utilizando la gramática completa de Irodori A1."
+        "explanation": "Relato culminante de viaje utilizando la gramática completa de Irodori N5."
       }
     ],
     "exercises": [
@@ -9139,7 +9139,7 @@
           {
             "title": "Expresión de deseo de acción personal",
             "formula": "[Verbo raíz] + たいです / たくないです",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9152,7 +9152,7 @@
           {
             "title": "Partícula con 〜たい",
             "formula": "[Objeto] を／が 食べたいです (ambas son válidas en la norma)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9165,7 +9165,7 @@
           {
             "title": "Pregunta de planes futuros",
             "formula": "次の休みに 何を しますか／したいですか",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9178,7 +9178,7 @@
           {
             "title": "Fórmulas de experiencia previa",
             "formula": "[Verbo forma た] + ことが あります (Haber hecho alguna vez)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9191,7 +9191,7 @@
           {
             "title": "〜かもしれません (Posibilidad o duda",
             "formula": "'puede que...')",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9204,7 +9204,7 @@
           {
             "title": "Forma pasada + 方がいいです (Recomendación",
             "formula": "'es mejor que...')",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9326,7 +9326,7 @@
           {
             "title": "Condicional natural",
             "formula": "Verbo forma diccionario + と (Al hacer A, inevitablemente ocurre B)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9339,7 +9339,7 @@
           {
             "title": "Expresión de sensaciones",
             "formula": "気持ちがいい (Se siente bien / da gusto)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9352,7 +9352,7 @@
           {
             "title": "Estructura Clave 2.3",
             "formula": "V-たいです (Expresar deseos personales)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9365,7 +9365,7 @@
           {
             "title": "どこか V-ます (Indefinido afirmativo",
             "formula": "'viajar a alguna parte')",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9378,7 +9378,7 @@
           {
             "title": "Conectores de discurso",
             "formula": "それから (luego), それに (además), でも (sin embargo)",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9391,7 +9391,7 @@
           {
             "title": "Kanjis",
             "formula": "温泉, 予定, 来週, 会います, 入ります, 旅行します",
-            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel A1 / N5-N4.",
+            "explanation": "Punto gramatical extraído de Irodori Elementary 1 (Lecc. 18). Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel N5 - N4.",
             "usage_notes": "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
             "examples": [
               {
@@ -9501,7 +9501,7 @@
             "kana": "ゴールデンウィークにおんせんにはいりたいです。ろてんぶろにはいりました。きもちよかったです。それに、けしきもきれいでした。",
             "romaji": "Gooruden wiiku ni onsen ni hairitai desu. Rotenburo ni hairimashita. Kimochi yokatta desu. Soreni, keshiki mo kirei deshita.",
             "es": "En la Golden Week quiero ir a unas aguas termales. Me bañé en una terma al aire libre. Fue muy placentero. Además, el paisaje era precioso.",
-            "explanation": "Relato culminante de viaje utilizando la gramática completa de Irodori A1."
+            "explanation": "Relato culminante de viaje utilizando la gramática completa de Irodori N5."
           }
         ]
       }
