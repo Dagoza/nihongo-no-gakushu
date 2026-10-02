@@ -110,9 +110,6 @@ export default function PracticePadModal({
   // Verification state
   const [verificationResult, setVerificationResult] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [transcriptionInput, setTranscriptionInput] = useState('');
-  const [transcriptionMatch, setTranscriptionMatch] = useState(null); // 'correct' | 'incorrect' | null
-  const [transcriptionFeedback, setTranscriptionFeedback] = useState(null); // { type: 'success' | 'error' | 'info', message: string } | null
   const [useIme, setUseIme] = useState(true);
   const isComposingRef = useRef(false);
 
@@ -244,14 +241,6 @@ export default function PracticePadModal({
     }
   }, [isOpen, initialText, initialKana, initialTitle, initialSource, initialChar, initialGhostOpacity]);
 
-  // Reset transcription when modal opens, text changes or active character changes
-  useEffect(() => {
-    if (isOpen) {
-      setTranscriptionInput('');
-      setTranscriptionMatch(null);
-      setTranscriptionFeedback(null);
-    }
-  }, [isOpen, currentCharIndex, text]);
 
   // Adjust default ink color when chalkboard paper is picked
   useEffect(() => {
@@ -789,163 +778,6 @@ export default function PracticePadModal({
     }, 150);
   };
 
-  // Extract all valid target readings and representations
-  const getValidTargetReadings = useCallback(() => {
-    const targets = new Set();
-    
-    if (text && text.trim()) {
-      const cleanT = text.trim();
-      targets.add(cleanT);
-      try {
-        targets.add(wanakana.toHiragana(cleanT));
-        targets.add(wanakana.toKatakana(cleanT));
-        const rom = wanakana.toRomaji(cleanT).toLowerCase().trim();
-        if (rom) targets.add(rom);
-      } catch (e) {}
-    }
-
-    if (activeChar && activeChar.trim()) {
-      targets.add(activeChar.trim());
-    }
-
-    if (kana && kana.trim()) {
-      // Split readings like "にち、ひ、-び、-か" or "ニチ / ひ"
-      const parts = kana.split(/[,、/|;·\s]+/).filter(Boolean);
-      parts.forEach(p => {
-        const cleaned = p.replace(/[\[\]()（）]/g, '').replace(/^[-ー]+|[-ー]+$/g, '').trim();
-        if (cleaned) {
-          targets.add(cleaned);
-          try {
-            targets.add(wanakana.toHiragana(cleaned));
-            targets.add(wanakana.toKatakana(cleaned));
-            const rom = wanakana.toRomaji(cleaned).toLowerCase().trim();
-            if (rom) targets.add(rom);
-          } catch (e) {}
-        }
-      });
-      const rawClean = kana.replace(/[\[\]()（）]/g, '').trim();
-      if (rawClean) {
-        targets.add(rawClean);
-        try {
-          targets.add(wanakana.toHiragana(rawClean));
-          targets.add(wanakana.toKatakana(rawClean));
-          const rom = wanakana.toRomaji(rawClean).toLowerCase().trim();
-          if (rom) targets.add(rom);
-        } catch (e) {}
-      }
-    }
-
-    return Array.from(targets).filter(Boolean);
-  }, [text, kana, activeChar]);
-
-  const primaryExpectedReading = React.useMemo(() => {
-    const cleanKana = (kana || '').trim();
-    if (cleanKana) return cleanKana;
-    const cleanText = (text || '').trim();
-    if (cleanText) return cleanText;
-    if (activeChar) return activeChar;
-    return '';
-  }, [kana, text, activeChar]);
-
-  const primaryExpectedRomaji = React.useMemo(() => {
-    if (!primaryExpectedReading) return '';
-    try {
-      return wanakana.toRomaji(primaryExpectedReading);
-    } catch (e) {
-      return '';
-    }
-  }, [primaryExpectedReading]);
-
-  // Text transcription verification
-  const handleVerifyTranscription = useCallback((input, isExplicit = false) => {
-    setTranscriptionInput(input);
-    const cleanInput = (input || '').trim();
-    if (!cleanInput) {
-      setTranscriptionMatch(null);
-      setTranscriptionFeedback(null);
-      return;
-    }
-
-    const validTargets = getValidTargetReadings();
-
-    if (validTargets.length === 0) {
-      if (isExplicit) {
-        setTranscriptionMatch(null);
-        setTranscriptionFeedback({
-          type: 'info',
-          message: 'Cuaderno libre: Texto registrado. Puedes asignar un texto o kanji de referencia con ✏️ arriba.'
-        });
-      } else {
-        setTranscriptionMatch(null);
-        setTranscriptionFeedback(null);
-      }
-      return;
-    }
-
-    const inputLower = cleanInput.toLowerCase();
-    let inputHira = '';
-    let inputKata = '';
-    let inputRomaji = '';
-    try {
-      inputHira = wanakana.toHiragana(cleanInput);
-      inputKata = wanakana.toKatakana(cleanInput);
-      inputRomaji = wanakana.toRomaji(cleanInput).toLowerCase().trim();
-    } catch (e) {}
-
-    const isExact = validTargets.some(t => {
-      const tLower = t.toLowerCase();
-      return (
-        cleanInput === t ||
-        inputLower === tLower ||
-        (inputHira && inputHira === t) ||
-        (inputKata && inputKata === t) ||
-        (inputRomaji && inputRomaji === tLower)
-      );
-    });
-
-    if (isExact) {
-      setTranscriptionMatch('correct');
-      setTranscriptionFeedback({
-        type: 'success',
-        message: `¡Correcto! Lectura confirmada: ${cleanInput} ✨`
-      });
-      return;
-    }
-
-    // Check if the user is still typing a prefix
-    const isPrefix = validTargets.some(t => {
-      const tLower = t.toLowerCase();
-      return (
-        t.startsWith(cleanInput) ||
-        tLower.startsWith(inputLower) ||
-        (inputHira && t.startsWith(inputHira)) ||
-        (inputRomaji && tLower.startsWith(inputRomaji))
-      );
-    });
-
-    if (isPrefix && !isExplicit) {
-      // User is still typing in progress: neutral state without red error
-      setTranscriptionMatch(null);
-      setTranscriptionFeedback(null);
-    } else if (isExplicit || cleanInput.length >= (primaryExpectedReading ? primaryExpectedReading.length : 1)) {
-      // Distinctly incorrect
-      setTranscriptionMatch('incorrect');
-      const expectedDisplay = primaryExpectedReading 
-        ? `${primaryExpectedReading}${primaryExpectedRomaji && primaryExpectedRomaji !== primaryExpectedReading ? ` (${primaryExpectedRomaji})` : ''}`
-        : (text || activeChar);
-      setTranscriptionFeedback({
-        type: 'error',
-        message: `No coincide con la lectura esperada. Esperado: "${expectedDisplay}". Escribiste: "${cleanInput}".`
-      });
-    } else {
-      setTranscriptionMatch(null);
-      setTranscriptionFeedback(null);
-    }
-  }, [getValidTargetReadings, primaryExpectedReading, primaryExpectedRomaji, text, activeChar]);
-
-  const handleTriggerVerify = () => {
-    handleVerifyTranscription(transcriptionInput, true);
-  };
 
   // -------------------------------------------------------------
   // HANZI WRITER INTERACTIVE QUIZ & ANIMATION
@@ -1566,34 +1398,109 @@ export default function PracticePadModal({
               borderBottom: '1px solid var(--border)',
               display: 'flex',
               alignItems: 'center',
-              gap: 10
+              gap: 10,
+              flexWrap: 'wrap'
             }}
           >
-            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Texto a practicar:</span>
-            <input 
-              type="text" 
-              value={text} 
-              onChange={(e) => {
-                setText(e.target.value);
-                setCurrentCharIndex(0);
-              }}
-              placeholder="Escribe kanjis, oraciones, palabras..."
+            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>
+              Texto a practicar:
+            </span>
+            <div style={{ position: 'relative', flex: 1, minWidth: 260, display: 'flex', alignItems: 'center' }}>
+              <input 
+                type="text" 
+                className="japanese-input jp-text"
+                value={text} 
+                onChange={(e) => {
+                  const val = e.target.value;
+                  let finalVal = val;
+                  if (useIme && !isComposingRef.current) {
+                    try {
+                      finalVal = wanakana.toKana(val, { IMEMode: true });
+                    } catch (err) {
+                      finalVal = val;
+                    }
+                  }
+                  setText(finalVal);
+                  setCurrentCharIndex(0);
+                }}
+                onCompositionStart={() => { isComposingRef.current = true; }}
+                onCompositionEnd={(e) => {
+                  isComposingRef.current = false;
+                  setText(e.target.value);
+                  setCurrentCharIndex(0);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !isComposingRef.current) {
+                    setIsEditingText(false);
+                  }
+                }}
+                placeholder="Escribe kanjis, oraciones o palabras en romaji (ej. arigatou -> ありがとう)..."
+                style={{
+                  width: '100%',
+                  padding: '7px 32px 7px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  fontSize: '0.95rem',
+                  fontFamily: 'var(--font-jp)',
+                  background: 'var(--bg-main, #121214)',
+                  color: 'var(--text-main, #ffffff)',
+                  caretColor: 'var(--primary, #6366f1)',
+                  outline: 'none'
+                }}
+              />
+              {text && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setText('');
+                    setCurrentCharIndex(0);
+                  }}
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: 2,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                  title="Borrar texto"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* IME Mode Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setUseIme(prev => !prev)}
+              className={`btn btn-xs ${useIme ? 'btn-primary' : 'btn-outline'}`}
               style={{
-                flex: 1,
-                padding: '6px 12px',
-                borderRadius: '8px',
-                border: '1px solid var(--border)',
-                fontSize: '0.95rem',
-                fontFamily: 'var(--font-jp)',
-                background: 'var(--bg-surface)',
-                color: 'var(--text-main, #ffffff)',
-                outline: 'none'
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                fontSize: '0.76rem',
+                padding: '5px 10px',
+                borderRadius: 6,
+                height: 34,
+                whiteSpace: 'nowrap'
               }}
-            />
+              title={useIme ? 'IME activo: convierte romaji a kana automáticamente. Clic para desactivar.' : 'IME desactivado: escribe romaji o texto directo. Clic para activar conversión a kana.'}
+            >
+              <Keyboard size={14} />
+              <span>IME: {useIme ? 'ON 🇯🇵' : 'OFF'}</span>
+            </button>
+
             <button 
               type="button" 
               className="btn btn-primary btn-sm"
               onClick={() => setIsEditingText(false)}
+              style={{ height: 34, padding: '0 14px' }}
             >
               Aceptar
             </button>
@@ -2262,214 +2169,7 @@ export default function PracticePadModal({
                 )}
               </div>
 
-              {/* Bottom Reading & Verification Transcription Bar */}
-              <div 
-                style={{
-                  padding: '10px 18px',
-                  background: 'var(--bg-surface)',
-                  borderTop: '1px solid var(--border)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 8
-                }}
-              >
-                <div 
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    flexWrap: 'wrap'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 280, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                      Verificar Lectura / Transcripción:
-                    </span>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 240, maxWidth: 440 }}>
-                      <div style={{ position: 'relative', flex: 1 }}>
-                        <input 
-                          type="text"
-                          className="japanese-input jp-text"
-                          value={transcriptionInput}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            let finalVal = val;
-                            if (useIme && !isComposingRef.current) {
-                              try {
-                                finalVal = wanakana.toKana(val, { IMEMode: true });
-                              } catch (err) {
-                                finalVal = val;
-                              }
-                            }
-                            handleVerifyTranscription(finalVal);
-                          }}
-                          onCompositionStart={() => { isComposingRef.current = true; }}
-                          onCompositionEnd={(e) => {
-                            isComposingRef.current = false;
-                            handleVerifyTranscription(e.target.value);
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !isComposingRef.current) {
-                              e.preventDefault();
-                              handleTriggerVerify();
-                            }
-                          }}
-                          placeholder={primaryExpectedReading ? `Lectura en romaji o kana (ej. ${primaryExpectedRomaji || '...'})` : 'Escribe lo que practicaste...'}
-                          style={{
-                            width: '100%',
-                            padding: '6px 32px 6px 12px',
-                            borderRadius: 8,
-                            border: transcriptionMatch === 'correct' 
-                              ? '2px solid var(--success, #10b981)' 
-                              : transcriptionMatch === 'incorrect' 
-                                ? '2px solid var(--danger, #ef4444)' 
-                                : '1px solid var(--border)',
-                            fontSize: '0.88rem',
-                            fontFamily: 'var(--font-jp)',
-                            background: 'var(--bg-main, #121214)',
-                            color: 'var(--text-main, #ffffff)',
-                            caretColor: 'var(--primary, #6366f1)',
-                            outline: 'none',
-                            boxShadow: transcriptionMatch === 'correct'
-                              ? '0 0 0 2px rgba(16, 185, 129, 0.2)'
-                              : transcriptionMatch === 'incorrect'
-                                ? '0 0 0 2px rgba(239, 68, 68, 0.2)'
-                                : 'none'
-                          }}
-                        />
-                        {transcriptionInput && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setTranscriptionInput('');
-                              setTranscriptionMatch(null);
-                              setTranscriptionFeedback(null);
-                            }}
-                            style={{
-                              position: 'absolute',
-                              right: 8,
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              background: 'transparent',
-                              border: 'none',
-                              color: 'var(--text-muted)',
-                              cursor: 'pointer',
-                              padding: 2,
-                              display: 'flex',
-                              alignItems: 'center'
-                            }}
-                            title="Limpiar"
-                          >
-                            <X size={14} />
-                          </button>
-                        )}
-                      </div>
 
-                      {/* IME Mode Toggle Button */}
-                      <button
-                        type="button"
-                        onClick={() => setUseIme(prev => !prev)}
-                        className={`btn btn-xs ${useIme ? 'btn-primary' : 'btn-outline'}`}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          fontSize: '0.74rem',
-                          padding: '5px 8px',
-                          borderRadius: 6,
-                          height: 32,
-                          whiteSpace: 'nowrap'
-                        }}
-                        title={useIme ? 'IME activo: convierte romaji a kana automáticamente. Clic para desactivar.' : 'IME desactivado: escribe romaji o texto directo. Clic para activar conversión a kana.'}
-                      >
-                        <Keyboard size={13} />
-                        <span>IME: {useIme ? 'ON 🇯🇵' : 'OFF'}</span>
-                      </button>
-
-                      {/* Explicit Verify Button */}
-                      <button
-                        type="button"
-                        className="btn btn-outline btn-sm"
-                        onClick={handleTriggerVerify}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          fontSize: '0.76rem',
-                          padding: '0 10px',
-                          height: 32,
-                          borderRadius: 6,
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        <span>Verificar</span>
-                      </button>
-
-                      {/* Audio Button */}
-                      {primaryExpectedReading && (
-                        <button
-                          type="button"
-                          className="btn btn-outline btn-sm"
-                          onClick={() => audioManager.speak(primaryExpectedReading)}
-                          title={`Escuchar lectura esperada (${primaryExpectedReading})`}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 32,
-                            height: 32,
-                            padding: 0,
-                            borderRadius: 6,
-                            color: 'var(--primary)'
-                          }}
-                        >
-                          <Volume2 size={15} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    <span>💾 Borrador autoguardado en tiempo real</span>
-                  </div>
-                </div>
-
-                {/* Feedback message banner (Success, informative error or note) */}
-                {transcriptionFeedback && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      padding: '6px 12px',
-                      borderRadius: 6,
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      background: transcriptionFeedback.type === 'success'
-                        ? 'rgba(16, 185, 129, 0.12)'
-                        : transcriptionFeedback.type === 'error'
-                          ? 'rgba(239, 68, 68, 0.12)'
-                          : 'rgba(99, 102, 241, 0.12)',
-                      color: transcriptionFeedback.type === 'success'
-                        ? 'var(--success, #10b981)'
-                        : transcriptionFeedback.type === 'error'
-                          ? 'var(--danger, #ef4444)'
-                          : 'var(--primary, #6366f1)',
-                      border: transcriptionFeedback.type === 'success'
-                        ? '1px solid rgba(16, 185, 129, 0.3)'
-                        : transcriptionFeedback.type === 'error'
-                          ? '1px solid rgba(239, 68, 68, 0.3)'
-                          : '1px solid rgba(99, 102, 241, 0.3)'
-                    }}
-                  >
-                    {transcriptionFeedback.type === 'success' && <CheckCircle2 size={16} style={{ flexShrink: 0 }} />}
-                    {transcriptionFeedback.type === 'error' && <AlertCircle size={16} style={{ flexShrink: 0 }} />}
-                    <span>{transcriptionFeedback.message}</span>
-                  </div>
-                )}
-              </div>
             </div>
           )}
 
