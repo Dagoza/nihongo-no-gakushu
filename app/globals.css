@@ -2313,6 +2313,132 @@ rt {
   }
 }
 
+/* Step Collapsible Group & Triggers */
+.step-collapsible-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.step-collapsible-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-main);
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.step-collapsible-trigger:hover {
+  background: var(--bg-surface);
+  border-color: var(--primary-light);
+}
+
+.step-collapsible-trigger.open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: rgba(99, 102, 241, 0.35);
+  background: var(--bg-surface);
+}
+
+.step-collapsible-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.step-collapsible-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.collapsible-chevron {
+  transition: transform 0.2s ease;
+}
+
+.collapsible-chevron.rotate {
+  transform: rotate(180deg);
+}
+
+/* Structured Grammar Grid in Card */
+.curriculum-grammar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+  animation: fadeIn 0.2s ease;
+}
+
+.curriculum-grammar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.grammar-item-icon {
+  color: var(--accent);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.grammar-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.grammar-item-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--primary);
+}
+
+.grammar-item-formula {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-main);
+  word-break: break-word;
+}
+
+/* Collapsible Vocab Container in Card */
+.step-vocab-container {
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+  animation: fadeIn 0.2s ease;
+}
+
 .step-target-tag {
   display: inline-block;
   font-size: 0.75rem;

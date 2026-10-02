@@ -13,6 +13,7 @@ import {
   FileText, 
   ExternalLink,
   ChevronRight,
+  ChevronDown,
   RotateCcw,
   Check,
   X,
@@ -25,6 +26,38 @@ import {
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { useAppContext } from '../lib/AppContext';
+
+// Helper to structure and parse grammar points into title and Japanese pattern/content
+const parseGrammarPoint = (point) => {
+  if (!point || typeof point !== 'string') return { title: null, content: '' };
+  let inParen = 0;
+  let colonIndex = -1;
+  for (let i = 0; i < point.length; i++) {
+    if (point[i] === '(' || point[i] === '（') inParen++;
+    else if (point[i] === ')' || point[i] === '）') inParen--;
+    else if (point[i] === ':' && inParen === 0) {
+      colonIndex = i;
+      break;
+    }
+  }
+  if (colonIndex !== -1) {
+    return {
+      title: point.slice(0, colonIndex).trim(),
+      content: point.slice(colonIndex + 1).trim()
+    };
+  }
+  const match = point.match(/^(.*?)\s*([\(\（].*[\)\）])$/);
+  if (match && match[1].trim()) {
+    return {
+      title: match[2].replace(/^[\(\（]/, '').replace(/[\)\）]$/, '').trim(),
+      content: match[1].trim()
+    };
+  }
+  return {
+    title: null,
+    content: point.trim()
+  };
+};
 
 export default function CurriculumTab({ onNavigate, userState, onUpdateState, initialStep = null, onStepChange }) {
   const contextApp = useAppContext();
@@ -42,6 +75,17 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   // Quiz interaction state for module view
   const [quizAnswers, setQuizAnswers] = useState({}); // { [exerciseId]: selectedOption }
   const [quizFeedback, setQuizFeedback] = useState({}); // { [exerciseId]: { isCorrect, explanation } }
+
+  // Collapsible sections state for cards in curriculum list view
+  const [openSections, setOpenSections] = useState({}); // { [`${step}_grammar`]: boolean, [`${step}_vocab`]: boolean }
+
+  const toggleSection = (stepNum, sectionType) => {
+    const key = `${stepNum}_${sectionType}`;
+    setOpenSections(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
 
   // Listen for browser Back/Forward navigation to smoothly switch between list and module view
   React.useEffect(() => {
@@ -332,22 +376,32 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               <span>Puntos Clave de Gramática</span>
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {selectedStep.grammar_focus?.map((point, i) => (
-                <div 
-                  key={i} 
-                  style={{ 
-                    padding: '10px 14px', 
-                    borderRadius: 'var(--radius-sm)', 
-                    background: 'var(--primary-bg)', 
-                    border: '1px solid rgba(99, 102, 241, 0.2)',
-                    fontSize: '0.93rem',
-                    fontWeight: 600,
-                    color: 'var(--text-main)'
-                  }}
-                >
-                  ⚡ {point}
-                </div>
-              ))}
+              {selectedStep.grammar_focus?.map((point, i) => {
+                const { title, content } = parseGrammarPoint(point);
+                return (
+                  <div 
+                    key={i} 
+                    style={{ 
+                      padding: '10px 14px', 
+                      borderRadius: 'var(--radius-sm)', 
+                      background: 'var(--primary-bg)', 
+                      border: '1px solid rgba(99, 102, 241, 0.2)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4
+                    }}
+                  >
+                    {title && (
+                      <span style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--primary)', fontWeight: 700 }}>
+                        ⚡ {title}
+                      </span>
+                    )}
+                    <span className="jp-text" style={{ fontSize: '0.96rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.45 }}>
+                      {!title && '⚡ '}{content}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -1223,28 +1277,91 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                   </ul>
 
                   <div className="step-card-details">
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                      <strong>Puntos Gramaticales:</strong> {step.grammar_focus?.join(' · ')}
-                    </div>
+                    {/* Collapsible Grammar Points */}
+                    {step.grammar_focus && step.grammar_focus.length > 0 && (() => {
+                      const isGrammarOpen = !!openSections[`${step.step}_grammar`];
+                      const uniqueGrammar = Array.from(new Set(step.grammar_focus));
 
-                    <div>
-                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>
-                        Vocabulario Integrado ({step.included_vocab?.length} palabras):
-                      </div>
-                      <div className="step-chips">
-                        {step.included_vocab?.map((w, idx) => (
-                          <span 
-                            key={idx} 
-                            className="step-chip jp-text"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handlePlayAudio(w)}
-                            title="Click para escuchar"
+                      return (
+                        <div className="step-collapsible-group">
+                          <button
+                            type="button"
+                            className={`step-collapsible-trigger ${isGrammarOpen ? 'open' : ''}`}
+                            onClick={() => toggleSection(step.step, 'grammar')}
+                            aria-expanded={isGrammarOpen}
                           >
-                            {w}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                            <div className="step-collapsible-title">
+                              <Sparkles size={14} color="var(--accent)" />
+                              <span>Puntos Gramaticales ({uniqueGrammar.length})</span>
+                            </div>
+                            <div className="step-collapsible-status">
+                              <span>{isGrammarOpen ? 'Ocultar' : 'Ver puntos'}</span>
+                              <ChevronDown size={14} className={`collapsible-chevron ${isGrammarOpen ? 'rotate' : ''}`} />
+                            </div>
+                          </button>
+
+                          {isGrammarOpen && (
+                            <div className="curriculum-grammar-grid">
+                              {uniqueGrammar.map((point, idx) => {
+                                const { title, content } = parseGrammarPoint(point);
+                                return (
+                                  <div key={idx} className="curriculum-grammar-item">
+                                    <span className="grammar-item-icon">⚡</span>
+                                    <div className="grammar-item-body">
+                                      {title && <span className="grammar-item-title">{title}</span>}
+                                      <span className="grammar-item-formula jp-text">{content}</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+
+                    {/* Collapsible Vocabulary */}
+                    {step.included_vocab && step.included_vocab.length > 0 && (() => {
+                      const isVocabOpen = !!openSections[`${step.step}_vocab`];
+
+                      return (
+                        <div className="step-collapsible-group">
+                          <button
+                            type="button"
+                            className={`step-collapsible-trigger ${isVocabOpen ? 'open' : ''}`}
+                            onClick={() => toggleSection(step.step, 'vocab')}
+                            aria-expanded={isVocabOpen}
+                          >
+                            <div className="step-collapsible-title">
+                              <BookOpen size={14} color="var(--primary)" />
+                              <span>Vocabulario Integrado ({step.included_vocab.length} palabras)</span>
+                            </div>
+                            <div className="step-collapsible-status">
+                              <span>{isVocabOpen ? 'Ocultar' : 'Ver palabras'}</span>
+                              <ChevronDown size={14} className={`collapsible-chevron ${isVocabOpen ? 'rotate' : ''}`} />
+                            </div>
+                          </button>
+
+                          {isVocabOpen && (
+                            <div className="step-vocab-container">
+                              <div className="step-chips">
+                                {step.included_vocab.map((w, idx) => (
+                                  <span 
+                                    key={idx} 
+                                    className="step-chip jp-text"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => handlePlayAudio(w)}
+                                    title="Click para escuchar pronunciación"
+                                  >
+                                    {w}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
