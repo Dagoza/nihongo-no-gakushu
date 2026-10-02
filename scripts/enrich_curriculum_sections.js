@@ -249,105 +249,117 @@ const MODULE_SECTIONS_MAP = {
 // Generador genérico de secciones enriquecidas para módulos 4 a 19
 // basándose en el análisis y contenido real de cada módulo
 function generateSectionsForModule(m) {
+  let sections = [];
   if (MODULE_SECTIONS_MAP[m.step]) {
-    return MODULE_SECTIONS_MAP[m.step];
-  }
+    sections = JSON.parse(JSON.stringify(MODULE_SECTIONS_MAP[m.step]));
+  } else {
+    const grammarPts = m.grammar_focus || [];
+    const canDos = m.can_dos || [];
+    const vocab = m.vocab_details || [];
+    const exs = m.examples || [];
 
-  const grammarPts = m.grammar_focus || [];
-  const canDos = m.can_dos || [];
-  const vocab = m.vocab_details || [];
-  const exs = m.examples || [];
+    // Módulos multi-tema (con muchos puntos de gramática o múltiples situaciones)
+    const isMultiStep = [4, 5, 7, 8, 10, 12, 16, 17, 18].includes(m.step);
 
-  // Módulos multi-tema (con muchos puntos de gramática o múltiples situaciones)
-  const isMultiStep = [4, 5, 7, 8, 10, 12, 16, 17, 18].includes(m.step);
+    if (!isMultiStep) {
+      // 1 Paso enfocado de contenido temático
+      sections = [
+        {
+          substep: 1,
+          title: m.title,
+          objective: m.objectives?.[0] || `Dominar las estructuras centrales y vocabulario de ${m.title}.`,
+          grammar_points: grammarPts.map((pt, idx) => {
+            const parts = pt.split(':');
+            const title = parts.length > 1 ? parts[0].trim() : `Punto Gramatical ${idx + 1}`;
+            const formula = parts.length > 1 ? parts[1].trim() : pt;
+            const matchingEx = exs[idx % (exs.length || 1)] || {
+              jp: formula.includes('〜') ? formula.replace(/〜/g, '') : formula,
+              kana: formula,
+              es: title
+            };
+            return {
+              title,
+              formula,
+              explanation: `Estructura fundamental tratada en ${m.sourcePdf || 'los manuales'}. Permite formular expresiones comunicativas de manera natural y precisa en el nivel ${m.level}.`,
+              usage_notes: "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
+              examples: [{ jp: matchingEx.jp, kana: matchingEx.kana, es: matchingEx.es }]
+            };
+          }),
+          can_dos: canDos,
+          vocab: vocab,
+          vocabulary: vocab,
+          examples: exs
+        }
+      ];
+    } else {
+      // Multi-paso de contenido temático (2 a 3 pasos según extensión)
+      const stepCount = m.step === 12 || m.step === 16 ? 3 : 2;
 
-  if (!isMultiStep) {
-    // 1 Paso enfocado
-    const singleSection = [
-      {
-        substep: 1,
-        title: m.title,
-        objective: m.objectives?.[0] || `Dominar las estructuras centrales y vocabulario de ${m.title}.`,
-        grammar_points: grammarPts.map((pt, idx) => {
-          const parts = pt.split(':');
-          const title = parts.length > 1 ? parts[0].trim() : `Punto Gramatical ${idx + 1}`;
-          const formula = parts.length > 1 ? parts[1].trim() : pt;
-          const matchingEx = exs[idx % (exs.length || 1)] || {
-            jp: formula.includes('〜') ? formula.replace(/〜/g, '') : formula,
-            kana: formula,
-            es: title
-          };
-          return {
-            title,
-            formula,
-            explanation: `Estructura fundamental tratada en ${m.sourcePdf || 'los manuales'}. Permite formular expresiones comunicativas de manera natural y precisa en el nivel ${m.level}.`,
-            usage_notes: "Presta especial atención al orden de las partículas y a la cortesía según el interlocutor.",
-            examples: [{ jp: matchingEx.jp, kana: matchingEx.kana, es: matchingEx.es }]
-          };
-        }),
-        can_dos: canDos,
-        vocab: vocab,
-        vocabulary: vocab,
-        examples: exs
+      for (let s = 1; s <= stepCount; s++) {
+        const gStart = Math.floor(((s - 1) * grammarPts.length) / stepCount);
+        const gEnd = Math.floor((s * grammarPts.length) / stepCount);
+        const stepGrammar = grammarPts.slice(gStart, gEnd);
+
+        const cStart = Math.floor(((s - 1) * canDos.length) / stepCount);
+        const cEnd = Math.floor((s * canDos.length) / stepCount);
+        const stepCanDos = canDos.slice(cStart, cEnd);
+
+        const vStart = Math.floor(((s - 1) * vocab.length) / stepCount);
+        const vEnd = Math.floor((s * vocab.length) / stepCount);
+        const stepVocab = vocab.slice(vStart, vEnd);
+
+        const eStart = Math.floor(((s - 1) * exs.length) / stepCount);
+        const eEnd = Math.floor((s * exs.length) / stepCount);
+        const stepExs = exs.slice(eStart, eEnd);
+
+        const stepObjective = m.objectives?.[s - 1] || m.objectives?.[0] || `Comprender y aplicar la fase ${s} de ${m.title}.`;
+
+        sections.push({
+          substep: s,
+          title: `Paso ${s}: ${m.title} (Fase ${s})`,
+          objective: stepObjective,
+          grammar_points: stepGrammar.map((pt, idx) => {
+            const parts = pt.split(':');
+            const title = parts.length > 1 ? parts[0].trim() : `Estructura Clave ${s}.${idx + 1}`;
+            const formula = parts.length > 1 ? parts[1].trim() : pt;
+            const matchingEx = (stepExs.length > 0 ? stepExs : exs)[idx % (exs.length || 1)] || {
+              jp: formula.includes('〜') ? formula.replace(/〜/g, '') : formula,
+              kana: formula,
+              es: title
+            };
+            return {
+              title,
+              formula,
+              explanation: `Punto gramatical extraído de ${m.sourceBooks?.[0] || m.sourcePdf || 'el temario oficial'}. Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel ${m.level}.`,
+              usage_notes: "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
+              examples: [
+                {
+                  jp: matchingEx.jp,
+                  kana: matchingEx.kana,
+                  es: matchingEx.es
+                }
+              ]
+            };
+          }),
+          can_dos: stepCanDos.length > 0 ? stepCanDos : canDos.slice(0, 2),
+          vocab: stepVocab.length > 0 ? stepVocab : vocab.slice(0, 4),
+          vocabulary: stepVocab.length > 0 ? stepVocab : vocab.slice(0, 4),
+          examples: stepExs.length > 0 ? stepExs : exs.slice(0, 2)
+        });
       }
-    ];
-    return singleSection;
+    }
   }
 
-  // Multi-paso (2 a 3 pasos según extensión)
-  const stepCount = m.step === 12 || m.step === 16 ? 3 : 2;
-  const sections = [];
-
-  for (let s = 1; s <= stepCount; s++) {
-    const gStart = Math.floor(((s - 1) * grammarPts.length) / stepCount);
-    const gEnd = Math.floor((s * grammarPts.length) / stepCount);
-    const stepGrammar = grammarPts.slice(gStart, gEnd);
-
-    const cStart = Math.floor(((s - 1) * canDos.length) / stepCount);
-    const cEnd = Math.floor((s * canDos.length) / stepCount);
-    const stepCanDos = canDos.slice(cStart, cEnd);
-
-    const vStart = Math.floor(((s - 1) * vocab.length) / stepCount);
-    const vEnd = Math.floor((s * vocab.length) / stepCount);
-    const stepVocab = vocab.slice(vStart, vEnd);
-
-    const eStart = Math.floor(((s - 1) * exs.length) / stepCount);
-    const eEnd = Math.floor((s * exs.length) / stepCount);
-    const stepExs = exs.slice(eStart, eEnd);
-
-    const stepObjective = m.objectives?.[s - 1] || m.objectives?.[0] || `Comprender y aplicar la fase ${s} de ${m.title}.`;
-
+  // Regla obligatoria: Los ejercicios siempre serán un paso solo como paso final para pasar de módulo
+  const hasExerciseStep = sections.some(s => s.is_exercise_step);
+  if (!hasExerciseStep) {
+    const exerciseSubStep = sections.length + 1;
     sections.push({
-      substep: s,
-      title: `Paso ${s}: ${m.title} (Fase ${s})`,
-      objective: stepObjective,
-      grammar_points: stepGrammar.map((pt, idx) => {
-        const parts = pt.split(':');
-        const title = parts.length > 1 ? parts[0].trim() : `Estructura Clave ${s}.${idx + 1}`;
-        const formula = parts.length > 1 ? parts[1].trim() : pt;
-        const matchingEx = (stepExs.length > 0 ? stepExs : exs)[idx % (exs.length || 1)] || {
-          jp: formula.includes('〜') ? formula.replace(/〜/g, '') : formula,
-          kana: formula,
-          es: title
-        };
-        return {
-          title,
-          formula,
-          explanation: `Punto gramatical extraído de ${m.sourceBooks?.[0] || m.sourcePdf || 'el temario oficial'}. Profundiza en el uso comunicativo correcto y la función sintáctica en el nivel ${m.level}.`,
-          usage_notes: "Verifica las conjugaciones y los matices formales frente a coloquiales según el entorno.",
-          examples: [
-            {
-              jp: matchingEx.jp,
-              kana: matchingEx.kana,
-              es: matchingEx.es
-            }
-          ]
-        };
-      }),
-      can_dos: stepCanDos.length > 0 ? stepCanDos : canDos.slice(0, 2),
-      vocab: stepVocab.length > 0 ? stepVocab : vocab.slice(0, 4),
-      vocabulary: stepVocab.length > 0 ? stepVocab : vocab.slice(0, 4),
-      examples: stepExs.length > 0 ? stepExs : exs.slice(0, 2)
+      substep: exerciseSubStep,
+      title: "Ejercicios Prácticos y Evaluación",
+      objective: `Poner a prueba y consolidar los conocimientos adquiridos en ${m.title} resolviendo los ejercicios de autoevaluación para superar y completar el módulo.`,
+      is_exercise_step: true,
+      exercises: m.exercises || []
     });
   }
 
@@ -359,6 +371,10 @@ let totalSectionsCreated = 0;
 curriculum.forEach(m => {
   const sections = generateSectionsForModule(m);
   sections.forEach(s => {
+    if (s.is_exercise_step) {
+      s.exercises = s.exercises || m.exercises || [];
+      return;
+    }
     s.vocab = s.vocab || s.vocabulary || m.vocab_details?.slice(0, 4) || [];
     s.vocabulary = s.vocab;
     (s.grammar_points || []).forEach((gp, idx) => {

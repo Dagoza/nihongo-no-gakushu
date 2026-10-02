@@ -780,6 +780,105 @@
             "type": "Expresión"
           }
         ]
+      },
+      {
+        "substep": 4,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Saludos, Cortesía y Presentación Personal resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_1_1",
+            "question": "¿Cómo te presentas diciendo 'Soy estudiante'?",
+            "sentence": "私は (　) です。",
+            "options": [
+              "学生",
+              "先生",
+              "人",
+              "本"
+            ],
+            "correct": "学生",
+            "explanation": "学生 (gakusei) significa estudiante."
+          },
+          {
+            "id": "cur_1_2",
+            "question": "¿Cuál es la partícula que marca el tema principal de la oración?",
+            "sentence": "私 (　) アンナです。",
+            "options": [
+              "は",
+              "を",
+              "に",
+              "で"
+            ],
+            "correct": "は",
+            "explanation": "は (wa) marca el tema del que se habla."
+          },
+          {
+            "id": "cur_1_3",
+            "question": "¿Cómo se dice 'De nada' tras recibir un agradecimiento?",
+            "sentence": "どう (　) 。",
+            "options": [
+              "いたしまして",
+              "ぞよろしく",
+              "もありがとう",
+              "はよう"
+            ],
+            "correct": "いたしまして",
+            "explanation": "どういたしまして (douitashimashite) es la respuesta formal a arigatou gozaimasu."
+          },
+          {
+            "id": "iro_1_1",
+            "question": "¿Qué dices a tus compañeros al marcharte del trabajo al terminar tu turno?",
+            "sentence": "先に帰るとき： (　) 。",
+            "options": [
+              "お先に失礼します",
+              "こんにちは",
+              "いただきます",
+              "ごちそうさまでした"
+            ],
+            "correct": "お先に失礼します",
+            "explanation": "「お先に失礼します」 es la norma de cortesía obligatoria al marcharse antes que el resto."
+          },
+          {
+            "id": "iro_1_2",
+            "question": "¿Cuál es la respuesta adecuada cuando un compañero dice 'お先に失礼します'?",
+            "sentence": "返事： (　) 。",
+            "options": [
+              "お疲れさまでした",
+              "はじめまして",
+              "どういたしまして",
+              "おやすみなさい"
+            ],
+            "correct": "お疲れさまでした",
+            "explanation": "「お疲れさまでした」 reconoce el esfuerzo del compañero que acaba de trabajar."
+          },
+          {
+            "id": "iro_3_1",
+            "question": "¿Cómo indicas que provienes de España?",
+            "sentence": "スペイン (　) 来ました。",
+            "options": [
+              "から",
+              "まで",
+              "に",
+              "で"
+            ],
+            "correct": "から",
+            "explanation": "から indica origen o punto de partida ('vengo desde/de')."
+          },
+          {
+            "id": "nhk_mod_1_1",
+            "question": "¿Qué dice el profesor para ordenar protegerse bajo la mesa en un terremoto?",
+            "sentence": "地震のとき： (　) 。",
+            "options": [
+              "机の下に入れ",
+              "外に逃げろ",
+              "窓を開けろ",
+              "走れ"
+            ],
+            "correct": "机の下に入れ",
+            "explanation": "「机の下に入れ」 es la orden de protección sísmica en la Lección 25."
+          }
+        ]
       }
     ]
   },
@@ -1052,6 +1151,53 @@
             "kana": "ゆっくり",
             "meaning": "Despacio / Con calma",
             "type": "Adverbio"
+          }
+        ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Estrategias de Comunicación y Gestión de Idiomas resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_2_1",
+            "question": "¿Cómo pides que alguien hable más despacio?",
+            "sentence": "すみません、 (　) お願いします。",
+            "options": [
+              "ゆっくり",
+              "はやく",
+              "たくさん",
+              "ぜんぶ"
+            ],
+            "correct": "ゆっくり",
+            "explanation": "「ゆっくり」 significa 'despacio / con calma'."
+          },
+          {
+            "id": "m2_ex2",
+            "question": "¿Cómo indicas que puedes hablar inglés usando la forma de capacidad?",
+            "sentence": "私は英語が [___]。",
+            "options": [
+              "できます",
+              "言います",
+              "行きます",
+              "飲みます"
+            ],
+            "correct": "できます",
+            "explanation": "できます (dekimasu) significa 'poder / ser capaz de', y se acompaña de la partícula が: 英語ができます."
+          },
+          {
+            "id": "m2_ex3",
+            "question": "¿Cómo preguntas '¿Cómo se dice esto en japonés?'?",
+            "sentence": "これは日本語で何と [___] か？",
+            "options": [
+              "言います",
+              "聞きます",
+              "書きます",
+              "読みます"
+            ],
+            "correct": "言います",
+            "explanation": "何と言いますか (nan to iimasu ka) es la fórmula fija canónica para preguntar cómo se pronuncia o dice algo."
           }
         ]
       }
@@ -1444,6 +1590,66 @@
             "kana": "あに",
             "meaning": "Mi hermano mayor",
             "type": "Familia"
+          }
+        ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Identidad, Familia, Residencia y Datos de Contacto resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_4_1",
+            "question": "¿Qué partícula se utiliza para indicar dónde resides?",
+            "sentence": "私は大阪 (　) 住んでいます。",
+            "options": [
+              "に",
+              "で",
+              "を",
+              "から"
+            ],
+            "correct": "に",
+            "explanation": "El verbo 住む requiere la partícula に para indicar el lugar de asentamiento o residencia."
+          },
+          {
+            "id": "nhk_mod_2_1",
+            "question": "¿Cómo se dice 'fui regañada por la madre/encargada' en voz pasiva?",
+            "sentence": "お母さんに (　) 。",
+            "options": [
+              "叱られました",
+              "叱りました",
+              "叱る",
+              "叱らない"
+            ],
+            "correct": "叱られました",
+            "explanation": "叱られました es la forma pasiva en pasado del verbo 叱る."
+          },
+          {
+            "id": "m3_ex1",
+            "question": "¿Cómo dices que tu familia está compuesta por 4 personas?",
+            "sentence": "私の家族は [___] です。",
+            "options": [
+              "4人",
+              "4つ",
+              "4枚",
+              "4本"
+            ],
+            "correct": "4人",
+            "explanation": "Para contar personas se utiliza el contador 人 (にん / 4人は「よにん」)."
+          },
+          {
+            "id": "m3_ex2",
+            "question": "¿Cómo indicas tu edad diciendo 'Tengo 22 años'?",
+            "sentence": "私は東京に住んでいます。[___] です。",
+            "options": [
+              "22歳",
+              "22個",
+              "22時",
+              "22日"
+            ],
+            "correct": "22歳",
+            "explanation": "Para la edad se utiliza el contador 歳 / 才 (さい): 22歳 (にじゅうにさい)."
           }
         ]
       }
@@ -2138,6 +2344,66 @@
             "explanation": "Uso de が好き y adverbios de frecuencia en la vida cotidiana."
           }
         ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Gustos, Preferencias Culinarias y Hábitos Diarios resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_4_1",
+            "question": "¿Qué partícula se utiliza para señalar la comida que consumes?",
+            "sentence": "朝ご飯 (　) 食べます。",
+            "options": [
+              "を",
+              "は",
+              "に",
+              "で"
+            ],
+            "correct": "を",
+            "explanation": "を marca el objeto directo del verbo 食べる (comer)."
+          },
+          {
+            "id": "cur_4_2",
+            "question": "¿Cuál es el significado de '水を飲みます'?",
+            "sentence": "水を飲みます。",
+            "options": [
+              "Bebo agua",
+              "Como carne",
+              "Compro un libro",
+              "Leo el periódico"
+            ],
+            "correct": "Bebo agua",
+            "explanation": "水 (mizu) es agua y 飲む (nomu) es beber."
+          },
+          {
+            "id": "cur_4_3",
+            "question": "Completa la frase: 'Estudio en la escuela con un amigo'.",
+            "sentence": "学校 (　) 友達 (　) 勉強します。",
+            "options": [
+              "で / と",
+              "に / を",
+              "へ / から",
+              "の / が"
+            ],
+            "correct": "で / と",
+            "explanation": "で indica el lugar de estudio y と indica la compañía."
+          },
+          {
+            "id": "iro_5_1",
+            "question": "¿Cómo rechazas amablemente una comida diciendo 'El wasabi me resulta un poco...'?",
+            "sentence": "わさびは、 (　) …。",
+            "options": [
+              "ちょっと",
+              "とても",
+              "たくさん",
+              "いつも"
+            ],
+            "correct": "ちょっと",
+            "explanation": "「ちょっと…」 es la forma diplomática por excelencia en Japón para expresar rechazo."
+          }
+        ]
       }
     ]
   },
@@ -2666,6 +2932,66 @@
             "explanation": "Preguntas estándar en la caja de cualquier restaurante."
           }
         ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Restaurantes, Menús, Pedidos y Contadores resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_6_1",
+            "question": "¿Cómo pides dos hamburguesas en un restaurante?",
+            "sentence": "ハンバーガー (　) ください。",
+            "options": [
+              "ふたつ",
+              "ひとつ",
+              "みっつ",
+              "よっつ"
+            ],
+            "correct": "ふたつ",
+            "explanation": "「ふたつ」 es el contador nativo para dos unidades."
+          },
+          {
+            "id": "nhk_mod_3_1",
+            "question": "¿Cómo pides que la cuenta sea cobrada por separado para cada uno?",
+            "sentence": "支払いは (　) お願いします。",
+            "options": [
+              "別々に",
+              "いっしょに",
+              "ぜんぶで",
+              "もうすこし"
+            ],
+            "correct": "別々に",
+            "explanation": "「別々にお願いします」 significa 'por separado, por favor'."
+          },
+          {
+            "id": "m5_ex1",
+            "question": "¿Cómo solicitas tu comida para llevar en un local de comida rápida?",
+            "sentence": "持ち帰りで [___]。",
+            "options": [
+              "お願いします",
+              "いりません",
+              "結構です",
+              "ありました"
+            ],
+            "correct": "お願いします",
+            "explanation": "持ち帰りでお願いします (mochikaeri de onegai shimasu) significa 'Para llevar, por favor'."
+          },
+          {
+            "id": "m5_ex2",
+            "question": "¿Cómo pides dos unidades de bebida usando el contador general japonés?",
+            "sentence": "ウーロン茶を [___] ください。",
+            "options": [
+              "2つ",
+              "2人",
+              "2本",
+              "2枚"
+            ],
+            "correct": "2つ",
+            "explanation": "2つ (ふたつ) es el contador nativo para dos cosas genéricas en hostelería."
+          }
+        ]
       }
     ]
   },
@@ -3045,6 +3371,66 @@
             "romaji": "Koko wa daidokoro desu. Ikkai ni heya ga yottsu arimasu.",
             "es": "Aquí está la cocina. En el primer piso hay 4 habitaciones.",
             "explanation": "Descripción del plano de una vivienda."
+          }
+        ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en El Hogar, Vivienda, Distribución y Electrodomésticos resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_7_1",
+            "question": "¿Qué botón del mando del aire acondicionado presionas en verano para poner aire frío?",
+            "sentence": "夏のエアコン： (　) を押します。",
+            "options": [
+              "冷房",
+              "暖房",
+              "停止",
+              "送風"
+            ],
+            "correct": "冷房",
+            "explanation": "冷房 (reibou) es el modo refrigeración/aire frío."
+          },
+          {
+            "id": "m6_ex1",
+            "question": "¿Cómo indicas la existencia de habitaciones en un plano de vivienda?",
+            "sentence": "1階に部屋が4つ [___]。",
+            "options": [
+              "あります",
+              "います",
+              "します",
+              "おきます"
+            ],
+            "correct": "あります",
+            "explanation": "Para objetos o estancias inanimadas se usa el verbo de existencia あります."
+          },
+          {
+            "id": "m6_ex2",
+            "question": "¿Cómo preguntas si el apartamento cuenta con electrodomésticos clave?",
+            "sentence": "エアコンや洗濯機は [___] か？",
+            "options": [
+              "あります",
+              "います",
+              "使います",
+              "買います"
+            ],
+            "correct": "あります",
+            "explanation": "ありますか pregunta por la existencia o disponibilidad de electrodomésticos en el piso."
+          },
+          {
+            "id": "m6_ex3",
+            "question": "¿Cómo indicas que resides solo en un apartamento?",
+            "sentence": "アパートで [___] をしています。",
+            "options": [
+              "一人暮らし",
+              "会社員",
+              "留学生",
+              "買い物"
+            ],
+            "correct": "一人暮らし",
+            "explanation": "一人暮らし (ひとりづらし / hitorigurashi) significa vivir solo/a de forma independiente."
           }
         ]
       }
@@ -3714,6 +4100,66 @@
             "romaji": "Yamada-san wa ima, kaigishitsu ni imasu. Hasami wa hikidashi no naka ni arimasu.",
             "es": "El señor Yamada está ahora en la sala de reuniones. Las tijeras están dentro del cajón.",
             "explanation": "Distinción entre にいます (personas) y にあります (objetos)."
+          }
+        ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en El Lugar de Trabajo, Orientación y Existencia (ある vs いる) resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_3_1",
+            "question": "Completa la frase para decir: 'Hay un perro en el parque'.",
+            "sentence": "公園に犬が (　) 。",
+            "options": [
+              "います",
+              "あります",
+              "します",
+              "いきます"
+            ],
+            "correct": "います",
+            "explanation": "El perro (犬) es un ser vivo, requiere el verbo います (existencia animada)."
+          },
+          {
+            "id": "cur_3_2",
+            "question": "¿Qué partícula marca el lugar exacto de existencia estática?",
+            "sentence": "机 (　) パソコンがあります。",
+            "options": [
+              "に",
+              "で",
+              "を",
+              "へ"
+            ],
+            "correct": "に",
+            "explanation": "La partícula に indica el punto exacto donde reside o se encuentra un objeto."
+          },
+          {
+            "id": "cur_3_3",
+            "question": "¿Cómo se dice '¿Dónde está la estación?'?",
+            "sentence": "駅は (　) ですか。",
+            "options": [
+              "どこ",
+              "だれ",
+              "なに",
+              "いつ"
+            ],
+            "correct": "どこ",
+            "explanation": "どこ (doko) significa 'dónde'."
+          },
+          {
+            "id": "iro_8_1",
+            "question": "¿Qué partícula indica la ubicación de una persona viva con el verbo います?",
+            "sentence": "田中さんは食堂 (　) います。",
+            "options": [
+              "に",
+              "で",
+              "を",
+              "へ"
+            ],
+            "correct": "に",
+            "explanation": "La existencia o presencia de seres vivos se marca con にいます."
           }
         ]
       }
@@ -4437,6 +4883,66 @@
             "explanation": "Uso de に para hora exacta y から〜まで para intervalos."
           }
         ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Rutinas, Horarios, Días de la Semana e Intervalos resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_2_1",
+            "question": "¿Cómo se dice 'Mi libro'?",
+            "sentence": "私 (　) 本です。",
+            "options": [
+              "の",
+              "は",
+              "に",
+              "を"
+            ],
+            "correct": "の",
+            "explanation": "私 (yo) + の + 本 (libro) expresa posesión: 'mi libro'."
+          },
+          {
+            "id": "cur_2_2",
+            "question": "¿Qué día de la semana corresponde a 金曜日 (kin'youbi)?",
+            "sentence": "明日は金曜日です。",
+            "options": [
+              "Viernes",
+              "Lunes",
+              "Miércoles",
+              "Domingo"
+            ],
+            "correct": "Viernes",
+            "explanation": "金曜日 representa el día del oro/metal: Viernes."
+          },
+          {
+            "id": "cur_2_3",
+            "question": "¿Qué número representa el kanji 七?",
+            "sentence": "部屋番号は七です。",
+            "options": [
+              "7",
+              "6",
+              "8",
+              "9"
+            ],
+            "correct": "7",
+            "explanation": "七 se lee なな (nana) o しち (shichi) y representa el 7."
+          },
+          {
+            "id": "iro_9_1",
+            "question": "¿Cómo dices que tu turno de trabajo es 'desde las 9 hasta las 5'?",
+            "sentence": "仕事は9時 (　) 5時 (　) です。",
+            "options": [
+              "から / まで",
+              "に / で",
+              "を / と",
+              "より / ほど"
+            ],
+            "correct": "から / まで",
+            "explanation": "から expresa origen temporal y まで el límite final."
+          }
+        ]
       }
     ]
   },
@@ -4837,6 +5343,66 @@
             "romaji": "Sumimasen, chotto tetsudatte kudasai. Hochikisu o kashite kudasai.",
             "es": "Disculpe, ayúdeme un momento por favor. ¿Me presta la grapadora?",
             "explanation": "Instrucción y petición habitual en un entorno laboral."
+          }
+        ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Instrucciones de Trabajo, Peticiones y Reglas Laborales resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_10_1",
+            "question": "¿Cómo pides cortésmente a un compañero que te preste un cargador de móvil?",
+            "sentence": "スマホの充電器、 (　) ください。",
+            "options": [
+              "貸して",
+              "あげて",
+              "売って",
+              "捨てて"
+            ],
+            "correct": "貸して",
+            "explanation": "「貸してください」 significa 'préstame, por favor'."
+          },
+          {
+            "id": "m9_ex1",
+            "question": "¿Cómo das una instrucción de trabajo para fotocopiar 5 hojas de un documento?",
+            "sentence": "この書類を5枚 [___] ください。",
+            "options": [
+              "コピーして",
+              "見て",
+              "書いて",
+              "捨てて"
+            ],
+            "correct": "コピーして",
+            "explanation": "Forma て + ください para peticiones laborales: コピーしてください (por favor fotocopie)."
+          },
+          {
+            "id": "m9_ex2",
+            "question": "¿Cómo confirmas la cantidad de copias encargadas por tu compañero?",
+            "sentence": "はい、[___] ですね。わかりました。",
+            "options": [
+              "30枚",
+              "30本",
+              "30個",
+              "30人"
+            ],
+            "correct": "30枚",
+            "explanation": "Para objetos planos y delgados como folios o impresiones se usa el contador 枚 (まい)."
+          },
+          {
+            "id": "m9_ex3",
+            "question": "¿Cómo se formula la prohibición cortés de no fumar en un área de trabajo?",
+            "sentence": "ここでタバコを [___] でください。",
+            "options": [
+              "吸わない",
+              "吸って",
+              "吸います",
+              "吸おう"
+            ],
+            "correct": "吸わない",
+            "explanation": "Petición negativa: Verbo en forma ない + でください (吸わないでください)."
           }
         ]
       }
@@ -5314,6 +5880,66 @@
             "explanation": "Conversaciones culturales de la NHK."
           }
         ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Aficiones, Tiempo Libre, Ocio y Redes Sociales resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_11_1",
+            "question": "¿Cómo preguntas '¿Qué clase de deportes te gustan?'?",
+            "sentence": "(　) スポーツが好きですか。",
+            "options": [
+              "どんな",
+              "いくら",
+              "だれ",
+              "いつ"
+            ],
+            "correct": "どんな",
+            "explanation": "「どんな」 significa 'qué clase de / qué tipo de'."
+          },
+          {
+            "id": "nhk_mod_4_1",
+            "question": "¿Qué expresión utilizas al entregar un obsequio con cortesía y modestia?",
+            "sentence": "プレゼントを渡すとき： これ、 (　) です。",
+            "options": [
+              "ほんの気持ち",
+              "とても高いもの",
+              "すごいもの",
+              "おめでとう"
+            ],
+            "correct": "ほんの気持ち",
+            "explanation": "「ほんの気持ちです」 significa 'es solo un modesto detalle'."
+          },
+          {
+            "id": "m10_ex1",
+            "question": "¿Cómo explicas tu afición diciendo 'Mi hobby es escuchar música'?",
+            "sentence": "趣味は音楽を [___] ことです。",
+            "options": [
+              "聴く",
+              "聴いて",
+              "聴きます",
+              "聴いた"
+            ],
+            "correct": "聴く",
+            "explanation": "Nominalización con こと: Verbo en forma diccionario + ことです (聴くことです)."
+          },
+          {
+            "id": "m10_ex2",
+            "question": "¿Cómo listas actividades variadas de ocio de fin de semana con la estructura 〜たり〜たり?",
+            "sentence": "休みの日は家で映画を [___] します。",
+            "options": [
+              "見たり",
+              "見て",
+              "見る",
+              "見ます"
+            ],
+            "correct": "見たり",
+            "explanation": "Forma 〜たり 〜たり します para enumerar acciones representativas no exhaustivas de ocio."
+          }
+        ]
       }
     ]
   },
@@ -5682,6 +6308,66 @@
             "romaji": "Nichiyoubi ni kouen de natsumatsuri ga arimasu. Issho ni ikimasen ka.",
             "es": "El domingo hay festival de verano en el parque. ¿No vienes conmigo?",
             "explanation": "Fórmula estándar de invitación a eventos."
+          }
+        ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Eventos, Festivales, Invitaciones y Propuestas resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_12_1",
+            "question": "¿Cómo invitas cordialmente diciendo '¿Comemos juntos?'?",
+            "sentence": "いっしょに (　) か。",
+            "options": [
+              "食べません",
+              "食べます",
+              "食べた",
+              "食べない"
+            ],
+            "correct": "食べません",
+            "explanation": "「食べませんか」 es la fórmula canónica de invitación en japonés."
+          },
+          {
+            "id": "m11_ex1",
+            "question": "¿Cómo se llama el folleto promocional de un festival de verano?",
+            "sentence": "駅で夏祭りの [___] をもらいました。",
+            "options": [
+              "チラシ",
+              "切符",
+              "定期券",
+              "看板"
+            ],
+            "correct": "チラシ",
+            "explanation": "チラシ (chirashi) es el término común para volante o folleto informativo de eventos."
+          },
+          {
+            "id": "m11_ex2",
+            "question": "¿Cómo aceptas con entusiasmo una invitación diciendo '¡Sí, vayamos sin falta!'?",
+            "sentence": "いっしょに行きませんか？ — ええ、ぜひ [___]！",
+            "options": [
+              "行きましょう",
+              "行きます",
+              "行きません",
+              "行きたい"
+            ],
+            "correct": "行きましょう",
+            "explanation": "ぜひ行きましょう (zehi ikimashou) expresa aceptación cordial y entusiasmada a una propuesta."
+          },
+          {
+            "id": "m11_ex3",
+            "question": "¿Cómo declinas amablemente una invitación explicando que tienes un compromiso?",
+            "sentence": "すみません、その日はちょっと [___] があって…",
+            "options": [
+              "用事",
+              "時間",
+              "祭り",
+              "趣味"
+            ],
+            "correct": "用事",
+            "explanation": "用事 (youji) significa 'asunto / compromiso pendiente', la razón cortés tradicional para declinar."
           }
         ]
       }
@@ -6585,6 +7271,79 @@
             "explanation": "Gramática de viajes de la NHK."
           }
         ]
+      },
+      {
+        "substep": 4,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Movilidad, Transporte Público y Estaciones resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_5_1",
+            "question": "¿Qué partícula señala el medio de transporte usado para viajar?",
+            "sentence": "新幹線 (　) 大阪に行きます。",
+            "options": [
+              "で",
+              "に",
+              "を",
+              "へ"
+            ],
+            "correct": "で",
+            "explanation": "で indica el instrumento o medio de transporte empleado."
+          },
+          {
+            "id": "cur_5_2",
+            "question": "¿Cómo se dice 'desde las 9 hasta las 5'?",
+            "sentence": "９時 (　) ５時 (　) 働きます。",
+            "options": [
+              "から / まで",
+              "に / へ",
+              "で / と",
+              "を / が"
+            ],
+            "correct": "から / まで",
+            "explanation": "から significa 'desde' y まで significa 'hasta'."
+          },
+          {
+            "id": "cur_5_3",
+            "question": "Elige la partícula correcta para dirigirse a casa: うち (　) 帰ります。",
+            "sentence": "午後６時にうち (　) 帰ります。",
+            "options": [
+              "へ",
+              "で",
+              "を",
+              "から"
+            ],
+            "correct": "へ",
+            "explanation": "へ (o に) indica la dirección o meta del verbo 帰る (regresar)."
+          },
+          {
+            "id": "iro_13_1",
+            "question": "¿Qué partícula acompaña al medio de transporte utilizado (por ejemplo, en tren)?",
+            "sentence": "電車 (　) 会社に行きます。",
+            "options": [
+              "で",
+              "に",
+              "を",
+              "へ"
+            ],
+            "correct": "で",
+            "explanation": "で indica el instrumento o medio con el que se realiza la acción."
+          },
+          {
+            "id": "nhk_mod_5_1",
+            "question": "¿Cómo expresas que prefieres el futón a la cama?",
+            "sentence": "布団 (　) 好きです。",
+            "options": [
+              "のほうが",
+              "より",
+              "から",
+              "まで"
+            ],
+            "correct": "のほうが",
+            "explanation": "「Aのほうが好きです」 expresa preferencia comparativa ('prefiero A')."
+          }
+        ]
       }
     ]
   },
@@ -7019,6 +7778,66 @@
             "explanation": "Fórmula canónica para avisar tu paradero por móvil."
           }
         ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Orientación Urbana, Puntos de Encuentro y Señalización resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_14_1",
+            "question": "¿Qué cartel indica que un restaurante está actualmente abierto y atendiendo?",
+            "sentence": "店の看板： (　) 。",
+            "options": [
+              "営業中",
+              "準備中",
+              "定休日",
+              "入口"
+            ],
+            "correct": "営業中",
+            "explanation": "営業中 (eigyou-chuu) significa 'abierto / en servicio'."
+          },
+          {
+            "id": "m13_ex1",
+            "question": "¿Cómo preguntas en la calle si hay un cajero automático cercano?",
+            "sentence": "この近くに [___] はありますか？",
+            "options": [
+              "ATM",
+              "交番",
+              "駅",
+              "公園"
+            ],
+            "correct": "ATM",
+            "explanation": "ATM (ē-tī-emu) se utiliza en todo Japón para cajeros bancarios automáticos."
+          },
+          {
+            "id": "m13_ex2",
+            "question": "¿Cómo describes por teléfono tu ubicación en un punto de encuentro urbano?",
+            "sentence": "今、駅の前の [___] の近くにいます。",
+            "options": [
+              "交差点",
+              "電車",
+              "改札口",
+              "非常口"
+            ],
+            "correct": "交差点",
+            "explanation": "交差点 (こうさてん / kousaten) significa intersección o cruce de calles."
+          },
+          {
+            "id": "m13_ex3",
+            "question": "¿Qué cartel avisa que hoy es el día de descanso regular del comercio?",
+            "sentence": "ドアに「本日 [___] 」と書いてあります。",
+            "options": [
+              "定休日",
+              "営業中",
+              "満席",
+              "受付"
+            ],
+            "correct": "定休日",
+            "explanation": "定休日 (ていきゅうび / teikyuubi) indica el día de cierre regular o de descanso semanal."
+          }
+        ]
       }
     ]
   },
@@ -7442,6 +8261,66 @@
             "explanation": "Estructura canónica para iniciar una compra en Japón."
           }
         ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Tiendas, Grandes Almacenes y Búsqueda de Productos resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_15_1",
+            "question": "¿Qué kanji encuentras en la puerta de una tienda que significa 'Empujar'?",
+            "sentence": "ドアの表示： (　) 。",
+            "options": [
+              "押す",
+              "引く",
+              "入口",
+              "出口"
+            ],
+            "correct": "押す",
+            "explanation": "押す (osu) significa empujar."
+          },
+          {
+            "id": "m14_ex1",
+            "question": "¿Cómo preguntas al dependiente en qué planta está la sección de electrónica?",
+            "sentence": "家電製品は何 [___] にございますか？",
+            "options": [
+              "階",
+              "番",
+              "本",
+              "枚"
+            ],
+            "correct": "階",
+            "explanation": "Para indicar las plantas de un edificio se utiliza el contador 階 (かい / がい)."
+          },
+          {
+            "id": "m14_ex2",
+            "question": "¿Cómo preguntas si es posible pagar con tarjeta usando la forma potencial?",
+            "sentence": "クレジットカードは [___] か？",
+            "options": [
+              "使えます",
+              "買います",
+              "払います",
+              "持ちます"
+            ],
+            "correct": "使えます",
+            "explanation": "使えます (tsukaemasu) es la forma potencial de 使う (usar): '¿Se puede utilizar?'"
+          },
+          {
+            "id": "m14_ex3",
+            "question": "¿Qué indicación en una puerta de tienda significa 'Tirar / Jalar'?",
+            "sentence": "ドアの取っ手に「 [___] 」と表示されています。",
+            "options": [
+              "引く",
+              "押す",
+              "開く",
+              "止まれ"
+            ],
+            "correct": "引く",
+            "explanation": "引く (ひく / hiku) significa 'Tirar/Jalar', opuesto a 押す (おす / empujar)."
+          }
+        ]
       }
     ]
   },
@@ -7819,6 +8698,66 @@
             "romaji": "Ten'in: Kochira, atatamemasu ka? Kyaku: Hai, onegai shimasu.",
             "es": "Cajero: ¿Desea que le caliente esto? Cliente: Sí, por favor.",
             "explanation": "Intercambio típico en la caja de cualquier combini en Japón."
+          }
+        ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Precios, Descuentos y Caja del Combini resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "iro_16_1",
+            "question": "¿Qué significa la etiqueta promocional '半額' que ponen a los bento al final de la tarde?",
+            "sentence": "シールの表示： (　) 。",
+            "options": [
+              "Mitad de precio (50% de descuento)",
+              "No disponible",
+              "Producto caducado",
+              "Solo para llevar"
+            ],
+            "correct": "Mitad de precio (50% de descuento)",
+            "explanation": "半額 (hangaku) significa exactamente 'mitad de precio'."
+          },
+          {
+            "id": "m15_ex1",
+            "question": "¿Cómo anuncia el cajero el total a pagar al terminar la compra?",
+            "sentence": "お [___] は、ぜんぶで3,450円になります。",
+            "options": [
+              "会計",
+              "釣り",
+              "金",
+              "財布"
+            ],
+            "correct": "会計",
+            "explanation": "お会計 (おかいけい / okaikei) es el término cortés usado por los dependientes para la cuenta total."
+          },
+          {
+            "id": "m15_ex2",
+            "question": "¿Cómo pides una cantidad de peso exacta en una carnicería?",
+            "sentence": "豚肉を300 [___] ください。",
+            "options": [
+              "グラム",
+              "キロ",
+              "メートル",
+              "ミリ"
+            ],
+            "correct": "グラム",
+            "explanation": "グラム (guramu) es la unidad estándar en japonés para el peso en carnicerías y fiambrerías."
+          },
+          {
+            "id": "m15_ex3",
+            "question": "¿Cómo indicas educadamente en el combini que no necesitas bolsa de plástico?",
+            "sentence": "レジ袋は [___] です。このままでいいです。",
+            "options": [
+              "いらない",
+              "ほしい",
+              "温め",
+              "大丈夫"
+            ],
+            "correct": "大丈夫",
+            "explanation": "袋は大丈夫です / 結構です es la respuesta cortés más habitual para declinar una bolsa plástica."
           }
         ]
       }
@@ -8858,6 +9797,105 @@
             "explanation": "Diálogo completo de recapitulación de fin de semana."
           }
         ]
+      },
+      {
+        "substep": 4,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Fin de Semana, Relatar el Pasado y Experiencias de Ocio resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_6_1",
+            "question": "¿Cómo se niega el adjetivo 高い (caro) para decir 'no es caro'?",
+            "sentence": "この本は (　) です。",
+            "options": [
+              "高くない",
+              "高いない",
+              "高いくありません",
+              "高かった"
+            ],
+            "correct": "高くない",
+            "explanation": "Para negar un adjetivo-い se reemplaza la 'い' final por 'くない' (takakunai)."
+          },
+          {
+            "id": "cur_6_2",
+            "question": "¿Cómo se une '静か' (tranquilo) con una ciudad (町)?",
+            "sentence": "ここは (　) 町です。",
+            "options": [
+              "静かな",
+              "静かい",
+              "静かで",
+              "静かに"
+            ],
+            "correct": "静かな",
+            "explanation": "Los adjetivos-な requieren la partícula copulativa 'な' al modificar un sustantivo."
+          },
+          {
+            "id": "cur_6_3",
+            "question": "¿Qué significa '富士山は大きいです'?",
+            "sentence": "富士山は大きいです。",
+            "options": [
+              "El Monte Fuji es grande",
+              "El Monte Fuji es pequeño",
+              "El Monte Fuji es peligroso",
+              "El Monte Fuji está lejos"
+            ],
+            "correct": "El Monte Fuji es grande",
+            "explanation": "大きい (ookii) significa grande."
+          },
+          {
+            "id": "cur_7_1",
+            "question": "¿Cómo se lee en japonés la fecha '1 de abril'?",
+            "sentence": "今日は (　) です。",
+            "options": [
+              "しがつついたち",
+              "よんがついちにち",
+              "しがつひとつ",
+              "よんがつついたち"
+            ],
+            "correct": "しがつついたち",
+            "explanation": "El primer día del mes se pronuncia irregularmente como ついたち (tsuitachi)."
+          },
+          {
+            "id": "cur_7_2",
+            "question": "¿Cuál es el significado de '空は青くて、白い雲がありました'?",
+            "sentence": "空は青くて、白い雲がありました。",
+            "options": [
+              "El cielo era azul y había nubes blancas",
+              "El mar estaba tranquilo y frío",
+              "La casa era grande y blanca",
+              "El tren llegó muy temprano"
+            ],
+            "correct": "El cielo era azul y había nubes blancas",
+            "explanation": "空 (cielo) es azul (青くて) y hay nubes blancas (白い雲)."
+          },
+          {
+            "id": "cur_7_3",
+            "question": "Traduce al japonés la acción de rutina: 'Lavarse la cara'.",
+            "sentence": "朝、(　) を洗います。",
+            "options": [
+              "顔 (かお)",
+              "手 (て)",
+              "足 (あし)",
+              "目 (め)"
+            ],
+            "correct": "顔 (かお)",
+            "explanation": "顔 (kao) significa cara / rostro; 顔を洗う es lavarse la cara."
+          },
+          {
+            "id": "iro_17_1",
+            "question": "¿Cómo dices 'No fui a ningún lugar' el fin de semana?",
+            "sentence": "週末は、 (　) 行きませんでした。",
+            "options": [
+              "どこにも",
+              "だれにも",
+              "なにも",
+              "いつも"
+            ],
+            "correct": "どこにも",
+            "explanation": "「どこにも + negativo」 significa 'a ningún sitio / a ningún lugar'."
+          }
+        ]
       }
     ]
   },
@@ -9504,6 +10542,66 @@
             "explanation": "Relato culminante de viaje utilizando la gramática completa de Irodori N5."
           }
         ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Planes Vacacionales, Deseos y Cultura Onsen resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_8_1",
+            "question": "¿Qué estructura se usa para sugerir: 'Es mejor que vayas al médico'?",
+            "sentence": "病院に (　) 方がいいです。",
+            "options": [
+              "行った",
+              "行く",
+              "行かない",
+              "行きます"
+            ],
+            "correct": "行った",
+            "explanation": "Para recomendar una acción afirmativa se utiliza el verbo en forma pasada -ta + 方がいい."
+          },
+          {
+            "id": "cur_8_2",
+            "question": "¿Qué expresa la terminación '〜かもしれません'?",
+            "sentence": "彼は来ないかもしれません。",
+            "options": [
+              "Tal vez / Posibilidad",
+              "Obligación absoluta",
+              "Habilidad o permiso",
+              "Petición cordial"
+            ],
+            "correct": "Tal vez / Posibilidad",
+            "explanation": "かもしれません indica una posibilidad estimada (quizás / puede ser)."
+          },
+          {
+            "id": "cur_8_3",
+            "question": "¿Qué significa '足を入れると気持ちがいい'?",
+            "sentence": "足を入れると気持ちがいい。",
+            "options": [
+              "Al meter los pies se siente muy bien",
+              "Caminar mucho cansa las piernas",
+              "El agua está demasiado caliente",
+              "Mis zapatos son nuevos y cómodos"
+            ],
+            "correct": "Al meter los pies se siente muy bien",
+            "explanation": "足 (pies) + 入れる (meter) + と (cuando) + 気持ちがいい (se siente muy bien)."
+          },
+          {
+            "id": "iro_18_1",
+            "question": "¿Cómo expresas el deseo 'Quiero bañarme en aguas termales'?",
+            "sentence": "温泉に (　) 。",
+            "options": [
+              "入りたいです",
+              "入ります",
+              "入りました",
+              "入らないです"
+            ],
+            "correct": "入りたいです",
+            "explanation": "「入りたいです」 es la forma de deseo personal (~たいです) del verbo 入る (entrar / bañarse)."
+          }
+        ]
       }
     ]
   },
@@ -10099,6 +11197,66 @@
             "explanation": "Diálogo médico en la Lección 39 y 40."
           }
         ]
+      },
+      {
+        "substep": 3,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Salud, Síntomas Corporales y Deberes Ineludibles resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "cur_9_1",
+            "question": "Completa la oración: 'Nick vivió en Japón, así que habla bien (hábilmente) japonés.'",
+            "sentence": "ニックさんは日本に住んでいたから、日本語が (　) です。",
+            "options": [
+              "じょうず",
+              "きびしい",
+              "うるさい",
+              "にがい"
+            ],
+            "correct": "じょうず",
+            "explanation": "じょうず (上手) describe habilidad o dominio en una disciplina o lengua."
+          },
+          {
+            "id": "cur_9_2",
+            "question": "¿Qué adverbio significa 'sin falta' en una promesa?",
+            "sentence": "明日、(　) 電話します。",
+            "options": [
+              "かならず",
+              "そろそろ",
+              "あまり",
+              "ぜんぜん"
+            ],
+            "correct": "かならず",
+            "explanation": "かならず (必ず) expresa compromiso certero e ineludible."
+          },
+          {
+            "id": "cur_9_3",
+            "question": "¿Qué adjetivo describe al profesor que es apasionado con su enseñanza?",
+            "sentence": "先生はとても (　) に教えてくれます。",
+            "options": [
+              "熱心 (ねっしん)",
+              "危ない (あぶない)",
+              "寂しい (さびしい)",
+              "苦い (にがい)"
+            ],
+            "correct": "熱心 (ねっしん)",
+            "explanation": "熱心 (nesshin) significa entusiasta, dedicado o apasionado."
+          },
+          {
+            "id": "nhk_mod_6_1",
+            "question": "¿Qué estructura indica obligación ('tengo que estudiar')?",
+            "sentence": "大学で勉強 (　) 。",
+            "options": [
+              "しなければなりません",
+              "してもいいです",
+              "してください",
+              "したことがあります"
+            ],
+            "correct": "しなければなりません",
+            "explanation": "〜なければなりません es la estructura que expresa obligación ineludible."
+          }
+        ]
       }
     ]
   },
@@ -10391,6 +11549,66 @@
             "romaji": "Nihongo-kyoushi ni naru no ga yume desu. Iroiro osewa ni narimashita.",
             "es": "Mi sueño es ser profesora de japonés. Muchísimas gracias por todas sus atenciones.",
             "explanation": "Conclusión del curso NHK."
+          }
+        ]
+      },
+      {
+        "substep": 2,
+        "title": "Ejercicios Prácticos y Evaluación",
+        "objective": "Poner a prueba y consolidar los conocimientos adquiridos en Metas Personales, Despedidas y Expresiones de Gratitud resolviendo los ejercicios de autoevaluación para superar y completar el módulo.",
+        "is_exercise_step": true,
+        "exercises": [
+          {
+            "id": "nhk_mod_7_1",
+            "question": "¿Cuál es la expresión por excelencia de agradecimiento al terminar una estancia o etapa?",
+            "sentence": "別れのあいさつ： (　) 。",
+            "options": [
+              "いろいろお世話になりました",
+              "はじめまして",
+              "どういたしまして",
+              "いただきます"
+            ],
+            "correct": "いろいろお世話になりました",
+            "explanation": "「いろいろお世話になりました」 es la expresión japonesa canónica de agradecimiento por el apoyo recibido."
+          },
+          {
+            "id": "m19_ex1",
+            "question": "¿Cómo expresas tu meta de superación diciendo 'Quiero mejorar y hablar mejor japonés'?",
+            "sentence": "日本語がもっと [___] なりたいです。",
+            "options": [
+              "上手に",
+              "上手な",
+              "上手で",
+              "上手"
+            ],
+            "correct": "上手に",
+            "explanation": "Con adjetivos-na y el verbo なる (volverse), se utiliza に: 上手になります / 上手になりたい."
+          },
+          {
+            "id": "m19_ex2",
+            "question": "¿Cómo le deseas buena salud a un profesor o anfitrión al despedirte de Japón?",
+            "sentence": "先生もお [___] で。またいつか会いましょう！",
+            "options": [
+              "元気",
+              "安心",
+              "便利",
+              "丁寧"
+            ],
+            "correct": "元気",
+            "explanation": "お元気で (ogenki de) es la expresión canónica de despedida que desea salud y bienestar duradero."
+          },
+          {
+            "id": "m19_ex3",
+            "question": "¿Cómo pides los datos de contacto para seguir comunicándose?",
+            "sentence": "連絡 [___] を教えてください。メッセージを送ります。",
+            "options": [
+              "先",
+              "人",
+              "所",
+              "手"
+            ],
+            "correct": "先",
+            "explanation": "連絡先 (れんらくさき / renrakusaki) significa 'información / datos de contacto'."
           }
         ]
       }

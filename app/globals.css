@@ -2857,6 +2857,37 @@ rt {
   border-color: var(--primary);
 }
 
+.curriculum-step-tab.exercise-tab {
+  border-left: 3.5px solid var(--warning);
+}
+
+.curriculum-step-tab.exercise-tab .step-tab-number {
+  border-color: rgba(245, 158, 11, 0.45);
+  color: var(--warning);
+}
+
+.curriculum-step-tab.exercise-tab.active {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 1px var(--warning), var(--shadow-sm);
+}
+
+.curriculum-step-tab.exercise-tab.active .step-tab-number {
+  background: var(--warning);
+  border-color: var(--warning);
+  color: #fff;
+}
+
+.curriculum-step-tab.exercise-tab.completed {
+  border-color: rgba(16, 185, 129, 0.4);
+  border-left: 3.5px solid var(--success);
+}
+
+.curriculum-step-tab.exercise-tab.completed .step-tab-number {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+
 .step-tab-number {
   width: 32px;
   height: 32px;
