@@ -344,6 +344,19 @@ export default function VocabTab({
     });
   };
 
+  const handleSrsUndo = (item, prevCardData) => {
+    const updated = { ...(appState.masteredVocab || {}) };
+    if (prevCardData === undefined || prevCardData === null) {
+      delete updated[item.id];
+    } else {
+      updated[item.id] = prevCardData;
+    }
+    onUpdateState({
+      ...appState,
+      masteredVocab: updated
+    });
+  };
+
   // Typing validation
   const currentTypingItem = filteredVocab[typingIndex] || filteredVocab[0];
 
@@ -1109,16 +1122,62 @@ export default function VocabTab({
         <SrsReview 
           queue={srsQueue}
           onRate={handleSrsReview}
-          onExit={() => setMode('cards')}
+          onUndo={handleSrsUndo}
+          getCurrentCard={(item) => appState.masteredVocab?.[item.id]}
+          onExit={() => {
+            setMode('cards');
+            updateParams('cards', level, category, searchTerm);
+          }}
+          backLabel="Volver a Vocabulario"
           renderFront={(item) => (
-            <div className="vocab-kanji" style={{ fontSize: '4rem', marginBottom: 16 }}>
-              <span className="jp-text">{item.kanji}</span>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                <span className="vocab-tag" style={{ fontWeight: 700 }}>{item.level || 'N5'}</span>
+                {item.category && (
+                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)', fontWeight: 600 }}>
+                    {item.category}
+                  </span>
+                )}
+                {item.type && (
+                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                    {item.type}
+                  </span>
+                )}
+              </div>
+
+              <div className="vocab-kanji" style={{ fontSize: '4.8rem', lineHeight: 1.15, margin: '8px 0 16px 0' }}>
+                <span className="jp-text">{item.kanji}</span>
+              </div>
+
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>
+                ¿Recuerdas la lectura en Kana y el significado en español?
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    audioManager.speak(item.kana || item.hiragana || item.kanji);
+                  }}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                  title="Escuchar audio de lectura"
+                >
+                  <Volume2 size={14} /> Pista de Audio
+                </button>
+              </div>
             </div>
           )}
           renderBack={(item) => (
             <>
-              <div className="vocab-kana jp-text" style={{ fontSize: '1.5rem', marginBottom: 8, color: 'var(--primary)' }}>
-                {item.kana || ''}
+              <div className="vocab-kana jp-text" style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: 12, color: 'var(--primary)' }}>
+                {item.kana || item.hiragana || ''}
+                {item.romaji && (
+                  <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500, marginLeft: 8 }}>
+                    ({item.romaji})
+                  </span>
+                )}
               </div>
 
               {/* Pitch Accent Visual Curve en SRS */}
@@ -1132,20 +1191,55 @@ export default function VocabTab({
                 />
               </div>
 
-              <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-main)' }}>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 6 }}>
                 🇪🇸 {item.meaning_es}
               </div>
               {item.meaning_en && (
-                <div style={{ fontSize: '1rem', color: 'var(--text-muted)', marginTop: 8 }}>
+                <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginBottom: 16 }}>
                   🇬🇧 {item.meaning_en}
                 </div>
               )}
 
+              {/* Herramientas de audio y pronunciación */}
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 16, marginBottom: 16 }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => audioManager.speak(item.kana || item.hiragana || item.kanji)}
+                >
+                  <Volume2 size={16} /> Escuchar
+                </button>
+                <SpeechPractice 
+                  targetText={item.kanji} 
+                  targetKana={item.kana || item.hiragana} 
+                  acceptableReadings={[item.kana, item.hiragana, item.katakana].filter(Boolean)}
+                />
+                {contextApp?.openPracticePad && (
+                  <button 
+                    type="button"
+                    className="btn btn-outline btn-sm" 
+                    onClick={() => {
+                      contextApp.openPracticePad({
+                        text: item.kanji,
+                        kana: item.kana || item.hiragana,
+                        title: `Palabra: ${item.kanji} (${item.meaning_es})`,
+                        source: 'vocab',
+                        initialChar: item.kanji?.[0]
+                      });
+                    }}
+                    title="Abrir en Cuaderno de Cuadrícula y Caligrafía"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                  >
+                    <PenTool size={14} /> Cuaderno
+                  </button>
+                )}
+              </div>
+
               {/* Tatoeba Sentences Integration */}
               {item.tatoeba_sentences && item.tatoeba_sentences.length > 0 && (
-                <div style={{ marginTop: 24, textAlign: 'left', background: 'var(--bg-main)', padding: 12, borderRadius: 8 }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: 8 }}>
-                    📚 Ejemplos (Tatoeba):
+                <div style={{ marginTop: 20, textAlign: 'left', background: 'var(--bg-surface)', padding: 14, borderRadius: 10, border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    📚 Ejemplos en Contexto (Tatoeba):
                   </div>
                   {item.tatoeba_sentences.map((sentence, idx) => (
                     <div key={idx} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: idx === item.tatoeba_sentences.length - 1 ? 'none' : '1px solid var(--border)' }}>
@@ -1165,24 +1259,14 @@ export default function VocabTab({
                           />
                         </div>
                         <div>
-                          <div className="jp-text" style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>{sentence.jp}</div>
-                          <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>🇪🇸 {sentence.es}</div>
+                          <div className="jp-text" style={{ fontSize: '1.05rem', color: 'var(--text-main)', fontWeight: 600 }}>{sentence.jp}</div>
+                          <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>🇪🇸 {sentence.es}</div>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-              
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16 }}>
-                <button 
-                  className="btn btn-outline btn-sm"
-                  onClick={() => audioManager.speak(item.kana || item.kanji)}
-                >
-                  <Volume2 size={16} /> Escuchar
-                </button>
-                <SpeechPractice targetText={item.kanji} targetKana={item.kana} />
-              </div>
             </>
           )}
         />

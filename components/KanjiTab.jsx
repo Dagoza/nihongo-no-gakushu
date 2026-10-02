@@ -260,6 +260,19 @@ export default function KanjiTab({
     });
   };
 
+  const handleSrsUndo = (item, prevCardData) => {
+    const updated = { ...(appState.masteredKanji || {}) };
+    if (prevCardData === undefined || prevCardData === null) {
+      delete updated[item.kanji];
+    } else {
+      updated[item.kanji] = prevCardData;
+    }
+    onUpdateState({
+      ...appState,
+      masteredKanji: updated
+    });
+  };
+
   // Compile quiz items
   const quizItems = React.useMemo(() => {
     const items = [];
@@ -776,34 +789,122 @@ export default function KanjiTab({
         <SrsReview 
           queue={srsQueue}
           onRate={handleSrsReview}
+          onUndo={handleSrsUndo}
+          getCurrentCard={(item) => appState.masteredKanji?.[item.kanji]}
           onExit={() => {
             setSrsActive(false);
             updateParams(searchTerm, 'list', drawingKanji);
           }}
+          backLabel="Volver a Kanjis"
           renderFront={(item) => (
-            <div className="kanji-big-char jp-text" style={{ fontSize: '5rem', marginBottom: 16 }}>
-              {item.kanji}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                <span className="vocab-tag" style={{ fontWeight: 700 }}>{item.level || 'N5'}</span>
+                {item.strokes && (
+                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)', fontWeight: 600 }}>
+                    {item.strokes} trazos
+                  </span>
+                )}
+                {item.radical && (
+                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                    Radical: <strong className="jp-text">{item.radical}</strong>
+                  </span>
+                )}
+              </div>
+
+              <div className="kanji-big-char jp-text" style={{ fontSize: '5.5rem', lineHeight: 1.1, margin: '8px 0 16px 0' }}>
+                {item.kanji}
+              </div>
+
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>
+                ¿Recuerdas las lecturas (Kun/On) y el significado en español?
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    audioManager.speak(getPrimaryKanjiReading(item) || item.kanji);
+                  }}
+                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                  title="Escuchar audio de lectura"
+                >
+                  <Volume2 size={14} /> Pista de Audio
+                </button>
+              </div>
             </div>
           )}
           renderBack={(item) => (
             <>
-              <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 12 }}>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 16 }}>
                 🇪🇸 {item.meaning_es}
               </div>
-              <div style={{ background: 'var(--bg-main)', padding: '12px', borderRadius: 'var(--radius-sm)', fontSize: '1rem', textAlign: 'left', marginBottom: 16 }}>
+
+              {/* Bloque ordenado de lecturas Kun y On */}
+              <div style={{ 
+                background: 'var(--bg-surface)', 
+                padding: '16px', 
+                borderRadius: 'var(--radius-md, 12px)', 
+                border: '1px solid var(--border)',
+                fontSize: '0.95rem', 
+                textAlign: 'left', 
+                marginBottom: 18,
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 12
+              }}>
                 {item.kunyomi && (
-                  <div><strong>Kun:</strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{item.kunyomi}</span></div>
+                  <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 2 }}>
+                      Kun'yomi (Lectura Japonesa)
+                    </div>
+                    <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent)' }}>
+                      {item.kunyomi}
+                    </div>
+                  </div>
                 )}
                 {item.onyomi && (
-                  <div><strong>On:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{item.onyomi}</span></div>
+                  <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: 2 }}>
+                      On'yomi (Lectura China)
+                    </div>
+                    <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary)' }}>
+                      {item.onyomi}
+                    </div>
+                  </div>
                 )}
                 {item.pronunciation && !item.kunyomi && !item.onyomi && (
-                  <div><strong>Lectura:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{item.pronunciation}</span></div>
+                  <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: 2 }}>
+                      Lectura
+                    </div>
+                    <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary)' }}>
+                      {item.pronunciation}
+                    </div>
+                  </div>
                 )}
               </div>
+
               {item.mnemonic && (
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textAlign: 'left', fontStyle: 'italic', marginBottom: 16 }}>
-                  💡 {item.mnemonic}
+                <div style={{ 
+                  fontSize: '0.92rem', 
+                  color: 'var(--text-main)', 
+                  background: 'rgba(234, 179, 8, 0.08)', 
+                  border: '1px solid rgba(234, 179, 8, 0.25)', 
+                  padding: '12px 16px', 
+                  borderRadius: 10, 
+                  textAlign: 'left', 
+                  marginBottom: 18,
+                  lineHeight: 1.5
+                }}>
+                  <div style={{ fontWeight: 700, color: 'var(--warning, #eab308)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}>
+                    💡 Mnemotécnica para recordar:
+                  </div>
+                  <div style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>
+                    {item.mnemonic}
+                  </div>
                 </div>
               )}
 
@@ -817,7 +918,8 @@ export default function KanjiTab({
                   showAudio={true} 
                 />
               </div>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
                 <button 
                   type="button"
                   className="btn btn-outline btn-sm"
@@ -865,6 +967,50 @@ export default function KanjiTab({
                   <PenTool size={14} /> Cuaderno
                 </button>
               </div>
+
+              {/* Vocabulario contextual con este Kanji */}
+              {item.words && item.words.length > 0 && (
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)', textAlign: 'left' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    📖 Vocabulario con este Kanji:
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8 }}>
+                    {item.words.slice(0, 4).map((w, idx) => (
+                      <div 
+                        key={idx} 
+                        style={{ 
+                          background: 'var(--bg-surface)', 
+                          padding: '8px 12px', 
+                          borderRadius: 8, 
+                          border: '1px solid var(--border)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 8
+                        }}
+                      >
+                        <div>
+                          <div className="jp-text" style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-main)' }}>
+                            {w.word} <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>({w.reading})</span>
+                          </div>
+                          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                            {w.meaning}
+                          </div>
+                        </div>
+                        <button 
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => audioManager.speak(w.reading || w.word)}
+                          style={{ padding: 4, color: 'var(--text-muted)' }}
+                          title="Escuchar palabra"
+                        >
+                          <Volume2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           )}
         />
