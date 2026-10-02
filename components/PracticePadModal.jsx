@@ -96,19 +96,10 @@ export default function PracticePadModal({
   const [isEraser, setIsEraser] = useState(false);
   const [gridType, setGridType] = useState('mizige'); // 'tianzige' | 'mizige' | 'genkouyoushi' | 'dot' | 'lined' | 'blank'
   const [paperStyle, setPaperStyle] = useState('washi'); // 'washi' | 'white' | 'chalkboard'
-  const [showPaperMenu, setShowPaperMenu] = useState(false);
-  const paperMenuRef = useRef(null);
+  const [isPaperModalOpen, setIsPaperModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (!showPaperMenu) return;
-    const handleClickOutside = (e) => {
-      if (paperMenuRef.current && !paperMenuRef.current.contains(e.target)) {
-        setShowPaperMenu(false);
-      }
-    };
-    document.addEventListener('pointerdown', handleClickOutside);
-    return () => document.removeEventListener('pointerdown', handleClickOutside);
-  }, [showPaperMenu]);
+  // Determinar si hay texto/silueta para mostrar guías y ajustar el dock inferior
+  const hasGuide = source !== 'free' && Boolean(text && text.trim().length > 0);
 
   const [ghostOpacity, setGhostOpacity] = useState(
     typeof initialGhostOpacity === 'number' 
@@ -1675,102 +1666,33 @@ export default function PracticePadModal({
 
                 <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
 
-                {/* 5. Botón Desplegable: Opciones de Papel y Cuadrícula */}
-                <div style={{ position: 'relative', flexShrink: 0 }} ref={paperMenuRef}>
-                  <button
-                    type="button"
-                    className={`btn btn-xs ${showPaperMenu ? 'btn-primary' : 'btn-outline'}`}
-                    onClick={() => setShowPaperMenu(prev => !prev)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      fontSize: '0.76rem',
-                      padding: '4px 8px',
-                      height: 28,
-                      borderRadius: 6,
-                      borderColor: showPaperMenu ? 'var(--primary)' : 'var(--border)',
-                      background: showPaperMenu ? 'var(--primary)' : 'var(--bg-surface)',
-                      color: showPaperMenu ? '#ffffff' : 'var(--text-main)',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap'
-                    }}
-                    title="Configurar tipo de cuadrícula y fondo de papel"
-                  >
-                    <Grid size={13} />
-                    <span>Papel</span>
-                    <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>▾</span>
-                  </button>
-
-                  {/* Menú Flotante de Opciones de Papel */}
-                  {showPaperMenu && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 'calc(100% + 6px)',
-                        left: 0,
-                        zIndex: 50,
-                        background: 'var(--bg-surface)',
-                        border: '1px solid var(--border)',
-                        borderRadius: 12,
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-                        padding: '12px 14px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 12,
-                        minWidth: 230,
-                        animation: 'fadeIn 0.15s ease-out'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: 6 }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                          📐 Opciones de Papel
-                        </span>
-                        <button
-                          type="button"
-                          className="btn btn-ghost btn-xs"
-                          onClick={() => setShowPaperMenu(false)}
-                          style={{ padding: 2 }}
-                        >
-                          <X size={13} />
-                        </button>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                        <label style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                          Cuadrícula:
-                        </label>
-                        <select
-                          className="practice-tool-select"
-                          value={gridType}
-                          onChange={(e) => setGridType(e.target.value)}
-                          style={{ width: '100%', fontSize: '0.78rem' }}
-                        >
-                          {GRID_TYPES.map(g => (
-                            <option key={g.id} value={g.id}>{g.icon ? `${g.icon} ` : ''}{g.name}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                        <label style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                          Fondo y Textura:
-                        </label>
-                        <select
-                          className="practice-tool-select"
-                          value={paperStyle}
-                          onChange={(e) => setPaperStyle(e.target.value)}
-                          style={{ width: '100%', fontSize: '0.78rem' }}
-                        >
-                          {PAPER_STYLES.map(p => (
-                            <option key={p.id} value={p.id}>📜 {p.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                {/* 5. Botón Modal: Opciones de Papel y Cuadrícula */}
+                <button
+                  type="button"
+                  className={`btn btn-xs ${isPaperModalOpen ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setIsPaperModalOpen(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    fontSize: '0.76rem',
+                    padding: '4px 8px',
+                    height: 28,
+                    borderRadius: 6,
+                    borderColor: isPaperModalOpen ? 'var(--primary)' : 'var(--border)',
+                    background: isPaperModalOpen ? 'var(--primary)' : 'var(--bg-surface)',
+                    color: isPaperModalOpen ? '#ffffff' : 'var(--text-main)',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
+                  }}
+                  title="Configurar tipo de cuadrícula y textura de papel"
+                >
+                  <Grid size={13} />
+                  <span>Papel</span>
+                  <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>⚙️</span>
+                </button>
 
                 <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
 
@@ -2016,169 +1938,171 @@ export default function PracticePadModal({
 
                 {/* Unified Floating Controls Dock */}
                 <div 
-                  className="practice-bottom-dock"
+                  className={`practice-bottom-dock ${hasGuide ? 'has-guide' : 'no-guide'}`}
                   style={{
                     position: 'absolute',
-                    bottom: 22,
+                    bottom: 20,
                     left: '50%',
                     transform: 'translateX(-50%)',
                     zIndex: 20,
                     background: 'var(--bg-surface)',
-                    padding: '6px 14px',
-                    borderRadius: 28,
-                    boxShadow: '0 6px 24px rgba(0,0,0,0.28)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
                     border: '1.5px solid var(--border)',
+                    boxShadow: '0 6px 24px rgba(0,0,0,0.28)',
                     color: 'var(--text-main)',
                     width: 'max-content',
                     maxWidth: 'calc(100% - 20px)'
                   }}
                 >
-                  {/* 1. Guía Fantasma */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-                    <button
-                      type="button"
-                      onClick={() => setGhostOpacity(ghostOpacity > 0 ? 0 : 35)}
-                      style={{
-                        border: 'none',
-                        background: 'transparent',
-                        color: ghostOpacity > 0 ? 'var(--primary)' : 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: 3,
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                      title={ghostOpacity > 0 ? "Ocultar guía fantasma" : "Mostrar guía fantasma"}
-                    >
-                      {ghostOpacity > 0 ? <Eye size={15} /> : <EyeOff size={15} />}
-                    </button>
-                    <span style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '0.76rem' }}>
-                      Guía
-                    </span>
-                    <input 
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="5"
-                      value={ghostOpacity}
-                      onChange={(e) => setGhostOpacity(Number(e.target.value))}
-                      style={{ width: 48, accentColor: 'var(--primary)', cursor: 'pointer' }}
-                      title={`Opacidad de la silueta (${ghostOpacity}%)`}
-                    />
-                    <span style={{ minWidth: 28, fontWeight: 800, fontSize: '0.76rem', color: 'var(--text-main)' }}>
-                      {ghostOpacity}%
-                    </span>
-                  </div>
+                  {/* ROW 1: Guía Fantasma (ONLY when hasGuide is true) */}
+                  {hasGuide && (
+                    <>
+                      <div className="dock-row dock-row-guide" style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                        <button
+                          type="button"
+                          onClick={() => setGhostOpacity(ghostOpacity > 0 ? 0 : 35)}
+                          style={{
+                            border: 'none',
+                            background: 'transparent',
+                            color: ghostOpacity > 0 ? 'var(--primary)' : 'var(--text-muted)',
+                            cursor: 'pointer',
+                            padding: 3,
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
+                          title={ghostOpacity > 0 ? "Ocultar guía fantasma" : "Mostrar guía fantasma"}
+                        >
+                          {ghostOpacity > 0 ? <Eye size={15} /> : <EyeOff size={15} />}
+                        </button>
+                        <span style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '0.76rem' }}>
+                          Guía
+                        </span>
+                        <input 
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="5"
+                          value={ghostOpacity}
+                          onChange={(e) => setGhostOpacity(Number(e.target.value))}
+                          style={{ width: 60, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                          title={`Opacidad de la silueta (${ghostOpacity}%)`}
+                        />
+                        <span style={{ minWidth: 28, fontWeight: 800, fontSize: '0.76rem', color: 'var(--text-main)' }}>
+                          {ghostOpacity}%
+                        </span>
+                      </div>
 
-                  <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
+                      <div className="dock-divider-desktop" style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
+                    </>
+                  )}
 
-                  {/* 2. Grosor */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-                    <span style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '0.76rem' }}>
-                      Grosor
-                    </span>
-                    <input 
-                      type="range"
-                      min="2"
-                      max="28"
-                      value={strokeWidth}
-                      onChange={(e) => setStrokeWidth(Number(e.target.value))}
-                      style={{ width: 48, accentColor: 'var(--primary)', cursor: 'pointer' }}
-                      title={`Grosor de trazo (${strokeWidth}px)`}
-                    />
-                    <span style={{ minWidth: 26, fontWeight: 800, fontSize: '0.76rem', color: 'var(--text-main)' }}>
-                      {strokeWidth}px
-                    </span>
-                  </div>
+                  {/* ROW 2 (or ONLY ROW when hasGuide is false): Grosor + Zoom */}
+                  <div className="dock-row dock-row-controls" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                    {/* Grosor */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+                      <span style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '0.76rem' }}>
+                        Grosor
+                      </span>
+                      <input 
+                        type="range"
+                        min="2"
+                        max="28"
+                        value={strokeWidth}
+                        onChange={(e) => setStrokeWidth(Number(e.target.value))}
+                        style={{ width: 48, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                        title={`Grosor de trazo (${strokeWidth}px)`}
+                      />
+                      <span style={{ minWidth: 26, fontWeight: 800, fontSize: '0.76rem', color: 'var(--text-main)' }}>
+                        {strokeWidth}px
+                      </span>
+                    </div>
 
-                  <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
+                    <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
 
-                  {/* 3. Zoom Controls */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-                    <button
-                      type="button"
-                      onClick={() => handleZoomChange(zoom - 0.25)}
-                      disabled={zoom <= 0.5}
-                      style={{
-                        border: 'none',
-                        background: 'transparent',
-                        color: zoom <= 0.5 ? 'var(--text-muted)' : 'var(--text-main)',
-                        opacity: zoom <= 0.5 ? 0.4 : 1,
-                        cursor: zoom <= 0.5 ? 'not-allowed' : 'pointer',
-                        padding: '3px 4px',
-                        borderRadius: 4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      title="Alejar (Zoom Out)"
-                    >
-                      <ZoomOut size={15} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleResetZoomAndPan}
-                      style={{
-                        border: 'none',
-                        background: 'var(--bg-main)',
-                        color: 'var(--text-main)',
-                        cursor: 'pointer',
-                        padding: '2px 6px',
-                        borderRadius: 4,
-                        fontWeight: 800,
-                        fontSize: '0.74rem',
-                        minWidth: 38,
-                        textAlign: 'center'
-                      }}
-                      title="Restablecer zoom al 100%"
-                    >
-                      {Math.round(zoom * 100)}%
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleZoomChange(zoom + 0.25)}
-                      disabled={zoom >= 4}
-                      style={{
-                        border: 'none',
-                        background: 'transparent',
-                        color: zoom >= 4 ? 'var(--text-muted)' : 'var(--text-main)',
-                        opacity: zoom >= 4 ? 0.4 : 1,
-                        cursor: zoom >= 4 ? 'not-allowed' : 'pointer',
-                        padding: '3px 4px',
-                        borderRadius: 4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      title="Acercar (Zoom In)"
-                    >
-                      <ZoomIn size={15} />
-                    </button>
-
-                    {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
+                    {/* Zoom Controls */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                       <button
                         type="button"
-                        onClick={handleResetZoomAndPan}
+                        onClick={() => handleZoomChange(zoom - 0.25)}
+                        disabled={zoom <= 0.5}
                         style={{
                           border: 'none',
                           background: 'transparent',
-                          color: 'var(--primary)',
-                          cursor: 'pointer',
+                          color: zoom <= 0.5 ? 'var(--text-muted)' : 'var(--text-main)',
+                          opacity: zoom <= 0.5 ? 0.4 : 1,
+                          cursor: zoom <= 0.5 ? 'not-allowed' : 'pointer',
                           padding: '3px 4px',
                           borderRadius: 4,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
                         }}
-                        title="Centrar y reajustar lienzo"
+                        title="Alejar (Zoom Out)"
                       >
-                        <RotateCcw size={13} />
+                        <ZoomOut size={15} />
                       </button>
-                    )}
+
+                      <button
+                        type="button"
+                        onClick={handleResetZoomAndPan}
+                        style={{
+                          border: 'none',
+                          background: 'var(--bg-main)',
+                          color: 'var(--text-main)',
+                          cursor: 'pointer',
+                          padding: '2px 6px',
+                          borderRadius: 4,
+                          fontWeight: 800,
+                          fontSize: '0.74rem',
+                          minWidth: 38,
+                          textAlign: 'center'
+                        }}
+                        title="Restablecer zoom al 100%"
+                      >
+                        {Math.round(zoom * 100)}%
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleZoomChange(zoom + 0.25)}
+                        disabled={zoom >= 4}
+                        style={{
+                          border: 'none',
+                          background: 'transparent',
+                          color: zoom >= 4 ? 'var(--text-muted)' : 'var(--text-main)',
+                          opacity: zoom >= 4 ? 0.4 : 1,
+                          cursor: zoom >= 4 ? 'not-allowed' : 'pointer',
+                          padding: '3px 4px',
+                          borderRadius: 4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title="Acercar (Zoom In)"
+                      >
+                        <ZoomIn size={15} />
+                      </button>
+
+                      {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
+                        <button
+                          type="button"
+                          onClick={handleResetZoomAndPan}
+                          style={{
+                            border: 'none',
+                            background: 'transparent',
+                            color: 'var(--primary)',
+                            cursor: 'pointer',
+                            padding: '3px 4px',
+                            borderRadius: 4,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                          title="Centrar y reajustar lienzo"
+                        >
+                          <RotateCcw size={13} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -2610,6 +2534,179 @@ export default function PracticePadModal({
                     onClick={handleConfirmSave}
                   >
                     Guardar Hoja
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* =========================================================================
+              MODAL: OPCIONES DE PAPEL Y CUADRÍCULA JAPONESA
+             ========================================================================= */}
+          {isPaperModalOpen && (
+            <div 
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(0,0,0,0.6)',
+                backdropFilter: 'blur(5px)',
+                WebkitBackdropFilter: 'blur(5px)',
+                zIndex: 200,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 16
+              }}
+              onClick={() => setIsPaperModalOpen(false)}
+            >
+              <div 
+                style={{
+                  background: 'var(--bg-surface)',
+                  padding: '22px 20px',
+                  borderRadius: '16px',
+                  maxWidth: 480,
+                  width: '100%',
+                  maxHeight: '88vh',
+                  overflowY: 'auto',
+                  boxShadow: '0 20px 45px rgba(0,0,0,0.35)',
+                  border: '1.5px solid var(--border)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 18
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Grid size={17} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                        Opciones de Papel y Guías
+                      </h3>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        Personaliza la pauta caligráfica y la textura del cuaderno
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-xs"
+                    onClick={() => setIsPaperModalOpen(false)}
+                    style={{ padding: 6, borderRadius: 8 }}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                {/* Sección 1: Cuadrícula Japonesa */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    1. Cuadrícula de Práctica
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8 }}>
+                    {GRID_TYPES.map(g => {
+                      const isSelected = gridType === g.id;
+                      return (
+                        <button
+                          key={g.id}
+                          type="button"
+                          onClick={() => setGridType(g.id)}
+                          style={{
+                            padding: '8px 10px',
+                            borderRadius: 10,
+                            border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border)',
+                            background: isSelected ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-main)',
+                            color: 'var(--text-main)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            textAlign: 'left',
+                            gap: 4,
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                            <span style={{ fontSize: '1.1rem', fontWeight: 800 }}>{g.icon}</span>
+                            {isSelected && <Check size={14} color="var(--primary)" />}
+                          </div>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: isSelected ? 'var(--primary)' : 'var(--text-main)' }}>
+                            {g.name}
+                          </span>
+                          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', lineHeight: 1.2 }}>
+                            {g.desc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Sección 2: Textura y Fondo de Papel */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    2. Fondo y Textura del Cuaderno
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8 }}>
+                    {PAPER_STYLES.map(p => {
+                      const isSelected = paperStyle === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setPaperStyle(p.id)}
+                          style={{
+                            padding: '10px 12px',
+                            borderRadius: 10,
+                            border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border)',
+                            background: isSelected ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-main)',
+                            color: 'var(--text-main)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            textAlign: 'left',
+                            gap: 6,
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                            <div 
+                              style={{ 
+                                width: 26, 
+                                height: 26, 
+                                borderRadius: 6, 
+                                background: p.bg, 
+                                border: '1.5px solid var(--border)',
+                                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)'
+                              }} 
+                            />
+                            {isSelected && <Check size={14} color="var(--primary)" />}
+                          </div>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: isSelected ? 'var(--primary)' : 'var(--text-main)' }}>
+                            {p.name}
+                          </span>
+                          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', lineHeight: 1.2 }}>
+                            {p.desc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Footer Actions */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={() => setIsPaperModalOpen(false)}
+                    style={{ minWidth: 100, fontWeight: 700 }}
+                  >
+                    Aceptar
                   </button>
                 </div>
               </div>
