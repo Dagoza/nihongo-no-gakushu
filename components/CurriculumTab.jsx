@@ -1121,16 +1121,17 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
             return (
               <div key={step.step} className={`curriculum-step-card ${isDone ? 'completed' : ''}`}>
-                <div className="step-number-badge">
-                  <span>{step.icon}</span>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
-                    M{step.step}
-                  </span>
-                </div>
+                {/* Header Row: Badge + Titles + Actions */}
+                <div className="step-card-header">
+                  <div className="step-number-badge">
+                    <span>{step.icon}</span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                      M{step.step}
+                    </span>
+                  </div>
 
-                <div className="step-content">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
-                    <div>
+                  <div className="step-header-content">
+                    <div className="step-header-main">
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6, alignItems: 'center' }}>
                         <span className="step-target-tag">{step.stage}</span>
                         <span style={{ 
@@ -1180,70 +1181,73 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                       <p className="step-subtitle">{step.subtitle}</p>
                     </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {/* Direct Checkbox to Mark Module as Completed */}
-                    <button 
-                      type="button"
-                      className={`step-card-check-btn ${isDone ? 'checked' : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleStepCompleted(step.step);
-                      }}
-                      title={isDone ? 'Módulo completado (Clic para desmarcar)' : 'Marcar módulo como completado (+25 XP)'}
-                    >
-                      <div className={`step-checkbox-square ${isDone ? 'checked' : ''}`}>
-                        {isDone ? <Check size={12} strokeWidth={3} /> : null}
-                      </div>
-                      <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>
-                        {isDone ? 'Completado ✓' : 'Marcar'}
-                      </span>
-                    </button>
+                    <div className="step-card-actions">
+                      {/* Direct Checkbox to Mark Module as Completed */}
+                      <button 
+                        type="button"
+                        className={`step-card-check-btn ${isDone ? 'checked' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleStepCompleted(step.step);
+                        }}
+                        title={isDone ? 'Módulo completado (Clic para desmarcar)' : 'Marcar módulo como completado (+25 XP)'}
+                      >
+                        <div className={`step-checkbox-square ${isDone ? 'checked' : ''}`}>
+                          {isDone ? <Check size={12} strokeWidth={3} /> : null}
+                        </div>
+                        <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>
+                          {isDone ? 'Completado ✓' : 'Marcar'}
+                        </span>
+                      </button>
 
-                    {/* Primary action: Open deep module view */}
-                    <button 
-                      className="btn btn-primary btn-sm"
-                      onClick={() => handleOpenModule(step.step)}
-                      title="Ver guía completa, ejercicios, vocabulario con audio y temas relacionados"
-                      style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-                    >
-                      <span>Ir al Módulo</span>
-                      <ArrowRight size={14} />
-                    </button>
+                      {/* Primary action: Open deep module view */}
+                      <button 
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handleOpenModule(step.step)}
+                        title="Ver guía completa, ejercicios, vocabulario con audio y temas relacionados"
+                        style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                      >
+                        <span>Ir al Módulo</span>
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <ul className="step-objectives">
-                  {step.objectives?.slice(0, 3).map((obj, i) => (
-                    <li key={i}>{obj}</li>
-                  ))}
-                </ul>
+                {/* Body: Full Width, Aligned to the Left */}
+                <div className="step-card-body">
+                  <ul className="step-objectives">
+                    {step.objectives?.slice(0, 3).map((obj, i) => (
+                      <li key={i}>{obj}</li>
+                    ))}
+                  </ul>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed var(--border)' }}>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    <strong>Puntos Gramaticales:</strong> {step.grammar_focus?.join(' · ')}
-                  </div>
-
-                  <div>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>
-                      Vocabulario Integrado ({step.included_vocab?.length} palabras):
+                  <div className="step-card-details">
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      <strong>Puntos Gramaticales:</strong> {step.grammar_focus?.join(' · ')}
                     </div>
-                    <div className="step-chips">
-                      {step.included_vocab?.map((w, idx) => (
-                        <span 
-                          key={idx} 
-                          className="step-chip jp-text"
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => handlePlayAudio(w)}
-                          title="Click para escuchar"
-                        >
-                          {w}
-                        </span>
-                      ))}
+
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>
+                        Vocabulario Integrado ({step.included_vocab?.length} palabras):
+                      </div>
+                      <div className="step-chips">
+                        {step.included_vocab?.map((w, idx) => (
+                          <span 
+                            key={idx} 
+                            className="step-chip jp-text"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => handlePlayAudio(w)}
+                            title="Click para escuchar"
+                          >
+                            {w}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
           );
         }))}
       </div>
