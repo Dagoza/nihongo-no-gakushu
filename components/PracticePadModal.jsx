@@ -96,6 +96,20 @@ export default function PracticePadModal({
   const [isEraser, setIsEraser] = useState(false);
   const [gridType, setGridType] = useState('mizige'); // 'tianzige' | 'mizige' | 'genkouyoushi' | 'dot' | 'lined' | 'blank'
   const [paperStyle, setPaperStyle] = useState('washi'); // 'washi' | 'white' | 'chalkboard'
+  const [showPaperMenu, setShowPaperMenu] = useState(false);
+  const paperMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!showPaperMenu) return;
+    const handleClickOutside = (e) => {
+      if (paperMenuRef.current && !paperMenuRef.current.contains(e.target)) {
+        setShowPaperMenu(false);
+      }
+    };
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
+  }, [showPaperMenu]);
+
   const [ghostOpacity, setGhostOpacity] = useState(
     typeof initialGhostOpacity === 'number' 
       ? initialGhostOpacity 
@@ -1510,15 +1524,15 @@ export default function PracticePadModal({
         {/* =========================================================================
             MAIN WORKSPACE BODY
            ========================================================================= */}
-        <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative', minWidth: 0, width: '100%', maxWidth: '100%' }}>
           {/* TAB 1: CANVAS PRACTICE WORKSPACE */}
           {activeTab === 'canvas' && (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minWidth: 0, width: '100%', maxWidth: '100%' }}>
               {/* Canvas Controls Toolbar */}
               <div 
                 className="practice-toolbar"
                 style={{
-                  padding: '6px 12px',
+                  padding: '6px 10px',
                   background: 'var(--bg-surface)',
                   borderBottom: '1px solid var(--border)',
                   display: 'flex',
@@ -1527,10 +1541,14 @@ export default function PracticePadModal({
                   overflowX: 'auto',
                   flexWrap: 'nowrap',
                   scrollbarWidth: 'none',
-                  WebkitOverflowScrolling: 'touch'
+                  WebkitOverflowScrolling: 'touch',
+                  minWidth: 0,
+                  width: '100%',
+                  maxWidth: '100%',
+                  touchAction: 'pan-x'
                 }}
               >
-                {/* 1. Stroke Style Dropdown Selector */}
+                {/* 1. Selector de Estilo de Trazo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                   <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
                     Trazo:
@@ -1561,7 +1579,7 @@ export default function PracticePadModal({
                   </select>
                 </div>
 
-                {/* 2. Direct Quick-Action: Borrador (Goma) */}
+                {/* 2. Borrador / Goma (Solo Icono) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -1572,22 +1590,22 @@ export default function PracticePadModal({
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 4,
-                    fontSize: '0.76rem',
-                    padding: '4px 8px',
-                    flexShrink: 0,
+                    justifyContent: 'center',
+                    width: 32,
                     height: 28,
+                    padding: 0,
+                    flexShrink: 0,
+                    borderRadius: 6,
                     background: isEraser && !isPanMode ? 'var(--danger, #ef4444)' : 'transparent',
                     color: isEraser && !isPanMode ? '#ffffff' : 'var(--text-main)',
                     borderColor: isEraser && !isPanMode ? 'var(--danger, #ef4444)' : 'var(--border)'
                   }}
-                  title="Goma de borrar trazos (Alternar)"
+                  title={isEraser ? "Goma activa (clic para volver al trazo)" : "Goma de borrar"}
                 >
-                  <Eraser size={13} />
-                  <span>Goma</span>
+                  <Eraser size={15} />
                 </button>
 
-                {/* 3. Direct Quick-Action: Mover (Pan) */}
+                {/* 3. Mover / Desplazar (Solo Icono) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -1598,24 +1616,24 @@ export default function PracticePadModal({
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 4,
-                    fontSize: '0.76rem',
-                    padding: '4px 8px',
-                    flexShrink: 0,
+                    justifyContent: 'center',
+                    width: 32,
                     height: 28,
+                    padding: 0,
+                    flexShrink: 0,
+                    borderRadius: 6,
                     background: isPanMode ? 'var(--primary)' : 'transparent',
                     color: isPanMode ? '#ffffff' : 'var(--text-main)',
                     borderColor: isPanMode ? 'var(--primary)' : 'var(--border)'
                   }}
-                  title="Mover o desplazar lienzo (Alternar)"
+                  title={isPanMode ? "Mover activo (clic para volver al trazo)" : "Mover lienzo"}
                 >
-                  <Hand size={13} />
-                  <span>Mover</span>
+                  <Hand size={15} />
                 </button>
 
                 <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
 
-                {/* 4. Ink Colors: Color Circles */}
+                {/* 4. Colores de Tinta en Círculos con Borde Blanco Thin */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
                   <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
                     Tinta:
@@ -1638,10 +1656,12 @@ export default function PracticePadModal({
                             height: 22,
                             borderRadius: '50%',
                             background: targetColor,
-                            border: isSelected ? '2px solid var(--primary)' : '2px solid rgba(0,0,0,0.12)',
+                            border: '1.5px solid #ffffff',
+                            boxShadow: isSelected 
+                              ? '0 0 0 2px var(--primary), 0 2px 6px rgba(0,0,0,0.35)' 
+                              : '0 0 0 1px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.15)',
                             transform: isSelected ? 'scale(1.2)' : 'scale(1)',
                             cursor: 'pointer',
-                            boxShadow: isSelected ? '0 0 0 2px var(--bg-surface), 0 2px 5px rgba(0,0,0,0.25)' : '0 1px 2px rgba(0,0,0,0.1)',
                             transition: 'all 0.15s ease',
                             flexShrink: 0,
                             padding: 0
@@ -1655,44 +1675,106 @@ export default function PracticePadModal({
 
                 <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
 
-                {/* 5. Grid & Paper Types */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                      Cuadrícula:
-                    </span>
-                    <select
-                      className="practice-tool-select"
-                      value={gridType}
-                      onChange={(e) => setGridType(e.target.value)}
-                      title="Tipo de cuadrícula japonesa"
-                    >
-                      {GRID_TYPES.map(g => (
-                        <option key={g.id} value={g.id}>{g.icon ? `${g.icon} ` : ''}{g.name}</option>
-                      ))}
-                    </select>
-                  </div>
+                {/* 5. Botón Desplegable: Opciones de Papel y Cuadrícula */}
+                <div style={{ position: 'relative', flexShrink: 0 }} ref={paperMenuRef}>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${showPaperMenu ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setShowPaperMenu(prev => !prev)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontSize: '0.76rem',
+                      padding: '4px 8px',
+                      height: 28,
+                      borderRadius: 6,
+                      borderColor: showPaperMenu ? 'var(--primary)' : 'var(--border)',
+                      background: showPaperMenu ? 'var(--primary)' : 'var(--bg-surface)',
+                      color: showPaperMenu ? '#ffffff' : 'var(--text-main)',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title="Configurar tipo de cuadrícula y fondo de papel"
+                  >
+                    <Grid size={13} />
+                    <span>Papel</span>
+                    <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>▾</span>
+                  </button>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                      Papel:
-                    </span>
-                    <select
-                      className="practice-tool-select"
-                      value={paperStyle}
-                      onChange={(e) => setPaperStyle(e.target.value)}
-                      title="Fondo y textura de papel"
+                  {/* Menú Flotante de Opciones de Papel */}
+                  {showPaperMenu && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 6px)',
+                        left: 0,
+                        zIndex: 50,
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border)',
+                        borderRadius: 12,
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                        padding: '12px 14px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 12,
+                        minWidth: 230,
+                        animation: 'fadeIn 0.15s ease-out'
+                      }}
                     >
-                      {PAPER_STYLES.map(p => (
-                        <option key={p.id} value={p.id}>📜 {p.name}</option>
-                      ))}
-                    </select>
-                  </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: 6 }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                          📐 Opciones de Papel
+                        </span>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => setShowPaperMenu(false)}
+                          style={{ padding: 2 }}
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        <label style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                          Cuadrícula:
+                        </label>
+                        <select
+                          className="practice-tool-select"
+                          value={gridType}
+                          onChange={(e) => setGridType(e.target.value)}
+                          style={{ width: '100%', fontSize: '0.78rem' }}
+                        >
+                          {GRID_TYPES.map(g => (
+                            <option key={g.id} value={g.id}>{g.icon ? `${g.icon} ` : ''}{g.name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        <label style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                          Fondo y Textura:
+                        </label>
+                        <select
+                          className="practice-tool-select"
+                          value={paperStyle}
+                          onChange={(e) => setPaperStyle(e.target.value)}
+                          style={{ width: '100%', fontSize: '0.78rem' }}
+                        >
+                          {PAPER_STYLES.map(p => (
+                            <option key={p.id} value={p.id}>📜 {p.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
 
-                {/* 6. Undo, Redo, Clear & Verify */}
+                {/* 6. Deshacer, Rehacer, Limpiar y Verificar */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                   <button
                     type="button"
@@ -1937,22 +2019,25 @@ export default function PracticePadModal({
                   className="practice-bottom-dock"
                   style={{
                     position: 'absolute',
-                    bottom: 14,
+                    bottom: 22,
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    zIndex: 10,
+                    zIndex: 20,
                     background: 'var(--bg-surface)',
-                    padding: '5px 14px',
-                    borderRadius: 24,
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+                    padding: '6px 14px',
+                    borderRadius: 28,
+                    boxShadow: '0 6px 24px rgba(0,0,0,0.28)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 10,
-                    border: '1px solid var(--border)'
+                    border: '1.5px solid var(--border)',
+                    color: 'var(--text-main)',
+                    width: 'max-content',
+                    maxWidth: 'calc(100% - 20px)'
                   }}
                 >
-                  {/* Ghost Guide Opacity */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                  {/* 1. Guía Fantasma */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
                     <button
                       type="button"
                       onClick={() => setGhostOpacity(ghostOpacity > 0 ? 0 : 35)}
@@ -1961,16 +2046,16 @@ export default function PracticePadModal({
                         background: 'transparent',
                         color: ghostOpacity > 0 ? 'var(--primary)' : 'var(--text-muted)',
                         cursor: 'pointer',
-                        padding: 2,
+                        padding: 3,
                         display: 'flex',
                         alignItems: 'center'
                       }}
                       title={ghostOpacity > 0 ? "Ocultar guía fantasma" : "Mostrar guía fantasma"}
                     >
-                      {ghostOpacity > 0 ? <Eye size={14} /> : <EyeOff size={14} />}
+                      {ghostOpacity > 0 ? <Eye size={15} /> : <EyeOff size={15} />}
                     </button>
-                    <span className="practice-mobile-hide" style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.74rem' }}>
-                      Guía:
+                    <span style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '0.76rem' }}>
+                      Guía
                     </span>
                     <input 
                       type="range"
@@ -1979,19 +2064,20 @@ export default function PracticePadModal({
                       step="5"
                       value={ghostOpacity}
                       onChange={(e) => setGhostOpacity(Number(e.target.value))}
-                      style={{ width: 55, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                      style={{ width: 48, accentColor: 'var(--primary)', cursor: 'pointer' }}
                       title={`Opacidad de la silueta (${ghostOpacity}%)`}
                     />
-                    <span style={{ minWidth: 26, fontWeight: 700, fontSize: '0.72rem' }}>{ghostOpacity}%</span>
+                    <span style={{ minWidth: 28, fontWeight: 800, fontSize: '0.76rem', color: 'var(--text-main)' }}>
+                      {ghostOpacity}%
+                    </span>
                   </div>
 
                   <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
 
-                  {/* Stroke Width */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                    <Sliders size={13} style={{ color: 'var(--text-muted)' }} />
-                    <span className="practice-mobile-hide" style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.74rem' }}>
-                      Grosor:
+                  {/* 2. Grosor */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '0.76rem' }}>
+                      Grosor
                     </span>
                     <input 
                       type="range"
@@ -1999,15 +2085,17 @@ export default function PracticePadModal({
                       max="28"
                       value={strokeWidth}
                       onChange={(e) => setStrokeWidth(Number(e.target.value))}
-                      style={{ width: 50, accentColor: 'var(--primary)', cursor: 'pointer' }}
+                      style={{ width: 48, accentColor: 'var(--primary)', cursor: 'pointer' }}
                       title={`Grosor de trazo (${strokeWidth}px)`}
                     />
-                    <span style={{ minWidth: 24, fontWeight: 700, fontSize: '0.72rem' }}>{strokeWidth}px</span>
+                    <span style={{ minWidth: 26, fontWeight: 800, fontSize: '0.76rem', color: 'var(--text-main)' }}>
+                      {strokeWidth}px
+                    </span>
                   </div>
 
                   <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
 
-                  {/* Zoom Controls */}
+                  {/* 3. Zoom Controls */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                     <button
                       type="button"
@@ -2019,7 +2107,7 @@ export default function PracticePadModal({
                         color: zoom <= 0.5 ? 'var(--text-muted)' : 'var(--text-main)',
                         opacity: zoom <= 0.5 ? 0.4 : 1,
                         cursor: zoom <= 0.5 ? 'not-allowed' : 'pointer',
-                        padding: '3px',
+                        padding: '3px 4px',
                         borderRadius: 4,
                         display: 'flex',
                         alignItems: 'center',
@@ -2027,7 +2115,7 @@ export default function PracticePadModal({
                       }}
                       title="Alejar (Zoom Out)"
                     >
-                      <ZoomOut size={14} />
+                      <ZoomOut size={15} />
                     </button>
 
                     <button
@@ -2040,8 +2128,8 @@ export default function PracticePadModal({
                         cursor: 'pointer',
                         padding: '2px 6px',
                         borderRadius: 4,
-                        fontWeight: 700,
-                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        fontSize: '0.74rem',
                         minWidth: 38,
                         textAlign: 'center'
                       }}
@@ -2060,7 +2148,7 @@ export default function PracticePadModal({
                         color: zoom >= 4 ? 'var(--text-muted)' : 'var(--text-main)',
                         opacity: zoom >= 4 ? 0.4 : 1,
                         cursor: zoom >= 4 ? 'not-allowed' : 'pointer',
-                        padding: '3px',
+                        padding: '3px 4px',
                         borderRadius: 4,
                         display: 'flex',
                         alignItems: 'center',
@@ -2068,7 +2156,7 @@ export default function PracticePadModal({
                       }}
                       title="Acercar (Zoom In)"
                     >
-                      <ZoomIn size={14} />
+                      <ZoomIn size={15} />
                     </button>
 
                     {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
@@ -2080,7 +2168,7 @@ export default function PracticePadModal({
                           background: 'transparent',
                           color: 'var(--primary)',
                           cursor: 'pointer',
-                          padding: '3px',
+                          padding: '3px 4px',
                           borderRadius: 4,
                           display: 'flex',
                           alignItems: 'center',

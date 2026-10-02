@@ -9059,11 +9059,17 @@ html {
    ========================================================================= */
 
 .practice-toolbar {
-  overflow-x: auto;
-  overflow-y: hidden;
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  align-items: center;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
   flex-wrap: nowrap !important;
   scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x !important;
 }
 
 .practice-toolbar::-webkit-scrollbar {
@@ -9093,6 +9099,26 @@ html {
   border-color: var(--primary);
 }
 
+/* Bottom dock: ALWAYS centered on desktop and mobile */
+.practice-bottom-dock {
+  position: absolute;
+  bottom: 20px;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+  z-index: 20;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  border-radius: 28px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  box-sizing: border-box;
+}
+
 @media (max-width: 768px) {
   .practice-pad-overlay {
     padding: 0 !important;
@@ -9113,8 +9139,8 @@ html {
   }
 
   .practice-toolbar {
-    padding: 6px 10px !important;
-    gap: 8px !important;
+    padding: 6px 8px !important;
+    gap: 6px !important;
   }
 
   .practice-tool-select {
@@ -9125,20 +9151,13 @@ html {
   }
 
   .practice-bottom-dock {
-    left: 8px !important;
-    right: 8px !important;
-    transform: none !important;
-    bottom: max(14px, env(safe-area-inset-bottom, 14px)) !important;
-    width: auto !important;
-    max-width: none !important;
-    justify-content: space-around !important;
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding: 4px 10px !important;
+    bottom: max(22px, env(safe-area-inset-bottom, 22px)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+    padding: 6px 12px !important;
     gap: 8px !important;
-    font-size: 0.72rem !important;
-    border-radius: 24px !important;
+    max-width: calc(100vw - 16px) !important;
   }
 
   .practice-bottom-dock input[type="range"] {
