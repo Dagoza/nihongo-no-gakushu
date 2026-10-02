@@ -406,16 +406,41 @@ Cada entrada contiene rigurosamente:
 
 ---
 
-## 7. Checklist de Verificación Rápida para Desarrolladores y Agentes
+---
+
+## 8. Catálogo Integrado de Historias y Diálogos Situacionales (Irodori & NHK World)
+
+### 8.1. Biblioteca de Historias Graduadas (`data/stories.json`)
+Todas las historias cuentan con capítulos progresivos, audio Edge TTS nativo, desglose frase por frase con explicaciones gramaticales en español, modo IME Typing y quizzes de comprensión:
+
+| ID Historia | Título (JP / ES) | Nivel JLPT | Capítulos | Frases Clave | Módulos del Currículum Vinculados |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `story_1` | **日本での一日** · *Un día en Japón* | **N5** | 4 capítulos | 58 frases | **M1, M3, M5, M8** (Saludos, presentaciones, compras, rutina) |
+| `story_2` | **東京での新しい暮らし** · *Nueva Vida en Tokio* | **N5** | 4 capítulos | 21 frases | **M4, M6, M12, M13, M14, M15** (Sharehouse, transporte, restaurantes, salud) |
+| `story_3` | **日本での挑戦と発見** · *Desafíos y Descubrimientos* | **N4** | 5 capítulos | 12 frases | **M20, M21, M22, M23, M25, M26, M27, M28** (Autonomía, trámites, cocina, viajes) |
+| `story_4` | **日本社会で生きる：夢への架け橋** · *Vivir en la Sociedad Japonesa* | **N3** | 5 capítulos | 8 frases | **M29, M30, M31, M32, M35, M36, M37** (Negocios, honoríficos, desastres, metas) |
+
+### 8.2. Biblioteca Unificada de Conversaciones (`data/irodori_dialogues.json` y `data/nhk_lessons.json`)
+Total: **70 diálogos interactivos** con modos Shadowing, Ocultar Personaje, evaluación de pronunciación por micrófono, audio neuronal multi-voz y caligrafía:
+- **Irodori Situacional (Fundación Japón):** 22 diálogos de alta fidelidad organizados por escenarios de la vida real (llegada, izakaya, basura, hospital, oficina, etc.).
+- **NHK World (Hablemos en Japonés):** 48 lecciones canónicas con audio original de radio y diálogos progresivos.
+- **Filtros interactivos en `/nhk`:** Colección (`Todas`, `Irodori Situacional`, `NHK World`), Nivel JLPT (`Todos`, `N5`, `N4`, `N3`), Estado (`Estudiadas`, `Pendientes`) y Buscador contextual.
+- **Enlace bidireccional:** Cada módulo del currículum (`/curriculum`) incluye tarjetas directas a sus diálogos e historias correspondientes, y cada diálogo/historia enlaza de vuelta a su módulo curricular.
+
+---
+
+## 9. Checklist de Verificación Rápida para Desarrolladores y Agentes
 
 Antes de proponer o implementar cualquier cambio en el temario, responde a estas preguntas:
 
-- [x] **1. No Duplicidad:** ¿Revisaste la **Sección 2** de este documento y confirmaste que la temática no está ya cubierta en los Módulos 1 al 19?
+- [x] **1. No Duplicidad:** ¿Revisaste la **Sección 2** de este documento y confirmaste que la temática no está ya cubierta en los Módulos 1 al 37?
 - [x] **2. Complementación:** ¿Agregaste los nuevos ejemplos, Can-Dos o ejercicios directamente dentro del módulo correspondiente de `data/curriculum.json` en lugar de crear un módulo nuevo?
-- [x] **3. Enlaces Temáticos:** ¿Configuraste o actualizaste el bloque `related_topics` de los módulos vinculados con `step`, `title`, `relationship` y `reason`?
+- [x] **3. Enlaces Temáticos:** ¿Configuraste o actualizaste el bloque `related_topics`, `related_dialogues` y `related_stories` de los módulos vinculados?
 - [x] **4. Vocabulario Completo:** ¿Las palabras están registradas con sus 3 escrituras (**Kanji**, **Hiragana**, **Katakana**) y su nivel JLPT en `data/vocabulary.json`?
 - [x] **5. Sincronización Kanji:** ¿Añadiste la referencia de cada palabra al array `words` de **todos los kanjis que la componen** en `data/kanji.json`?
 - [x] **6. Build Check:** ¿Ejecutaste `npm run build` y verificaste que compile con 0 errores?
 - [x] **7. Registro de Seguimiento:** ¿Actualizaste las tablas de este documento (`ANALISIS_TEMARIOS_LIBROS.md`) para reflejar las nuevas adiciones?
 - [x] **8. Autoevaluación Can-Do y Ruta:** ¿Se encuentran implementados y operativos los checkboxes interactivos para la Ruta Consolidada y las Competencias Can-Do en la interfaz?
-- [ ] **9. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
+- [x] **9. Historias y Conversaciones:** ¿Se encuentran seccionadas por Nivel (N5 a N3) y Colección en `/story` y `/nhk` con navegación fluida?
+- [ ] **10. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?
+

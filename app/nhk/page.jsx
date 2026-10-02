@@ -11,14 +11,19 @@ function NhkPageContent() {
   const searchParams = useSearchParams();
 
   const lessonParam = searchParams.get('lesson');
+  const dialogueParam = searchParams.get('dialogue');
   const tabParam = searchParams.get('tab'); // 'dialogue' | 'practice'
   const statusParam = searchParams.get('status'); // 'all' | 'completed' | 'pending'
   const typeParam = searchParams.get('type'); // 'all' | 'reply' | 'missing_word' | 'missing_kanji'
 
-  const handleParamsChange = ({ lesson, tab, status, type }) => {
+  const handleParamsChange = ({ lesson, dialogue, tab, status, type }) => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams();
-    if (lesson && lesson !== 1) params.set('lesson', lesson);
+    if (dialogue) {
+      params.set('dialogue', dialogue);
+    } else if (lesson && lesson !== 1) {
+      params.set('lesson', lesson);
+    }
     if (tab && tab !== 'dialogue') params.set('tab', tab);
     if (status && status !== 'all') params.set('status', status);
     if (type && type !== 'all') params.set('type', type);
@@ -37,6 +42,7 @@ function NhkPageContent() {
       onUpdateState={handleUpdateState} 
       authUser={authUser}
       initialLesson={lessonParam}
+      initialDialogue={dialogueParam}
       initialTab={tabParam || 'dialogue'}
       initialStatus={statusParam || 'all'}
       initialType={typeParam || 'all'}

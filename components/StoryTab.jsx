@@ -1,9 +1,24 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { dataStore } from '../lib/data';
 import audioManager from '../lib/audioManager';
-import { Volume2, CheckCircle2, Sparkles, BookOpen, HelpCircle, PlusCircle, PenTool, Info } from 'lucide-react';
+import { 
+  Volume2, 
+  CheckCircle2, 
+  Sparkles, 
+  BookOpen, 
+  HelpCircle, 
+  PlusCircle, 
+  PenTool, 
+  Info,
+  Search,
+  Filter,
+  Layers,
+  ArrowRight,
+  ExternalLink
+} from 'lucide-react';
 import * as wanakana from 'wanakana';
 import SpeechPractice from './SpeechPractice';
 import ComprehensionQuiz from './ComprehensionQuiz';
@@ -36,6 +51,8 @@ export default function StoryTab({
   const [selectedStoryId, setSelectedStoryId] = useState(initialStoryId || activeStoryId || allStories[0]?.id || 'story_1');
   const [currentChapter, setCurrentChapter] = useState(initialChapter ? parseInt(initialChapter, 10) : 1);
   const [readingMode, setReadingMode] = useState(initialMode || 'natural'); // 'natural', 'hiragana', 'kanji_only'
+  const [storyLevelFilter, setStoryLevelFilter] = useState('Todos'); // 'Todos', 'N5', 'N4', 'N3', 'Personalizadas'
+  const [storySearch, setStorySearch] = useState('');
 
   useEffect(() => {
     if (initialStoryId && allStories.some(s => s.id === initialStoryId)) {
@@ -83,6 +100,25 @@ export default function StoryTab({
     return allStories.find(s => s.id === selectedStoryId) || allStories[0] || dataStore.stories?.[0] || {};
   }, [allStories, selectedStoryId]);
 
+  const filteredStories = useMemo(() => {
+    return allStories.filter(s => {
+      const lvl = s.level || s.difficulty || 'N5';
+      const matchesLevel = 
+        storyLevelFilter === 'Todos' ? true :
+        storyLevelFilter === 'Personalizadas' ? s.isCustom :
+        lvl === storyLevelFilter;
+      if (!matchesLevel) return false;
+
+      if (storySearch.trim()) {
+        const q = storySearch.toLowerCase().trim();
+        const titleJp = (s.title || '').toLowerCase();
+        const titleEs = (s.title_es || s.title_en || s.description || '').toLowerCase();
+        return titleJp.includes(q) || titleEs.includes(q);
+      }
+      return true;
+    });
+  }, [allStories, storyLevelFilter, storySearch]);
+
   const [selectedSentenceId, setSelectedSentenceId] = useState('sent_1');
   const [typingInput, setTypingInput] = useState('');
   const [typingFeedback, setTypingFeedback] = useState(null);
@@ -99,19 +135,31 @@ export default function StoryTab({
 
   const chapter = paragraphs.find(p => p.chapter === currentChapter) || paragraphs[0];
 
-  // Distribute sentences
-  const chapterRanges = {
-    1: [0, 12],
-    2: [12, 26],
-    3: [26, 40],
-    4: [40, 58]
-  };
-  const [start, end] = chapterRanges[currentChapter] || [0, 15];
-
+  // Distribute sentences cleanly by chapter
   const storySentences = story.sentences && story.sentences.length > 0 ? story.sentences : [];
-  const chapterSentences = story.isCustom
-    ? storySentences
-    : storySentences.slice(start, end);
+  const chapterSentences = useMemo(() => {
+    if (story.isCustom) return storySentences;
+    const matching = storySentences.filter(s => s.chapter === currentChapter);
+    if (matching.length > 0) return matching;
+
+    const chapterRanges = {
+      1: [0, 12],
+      2: [12, 26],
+      3: [26, 40],
+      4: [40, 58]
+    };
+    const [start, end] = chapterRanges[currentChapter] || [0, 15];
+    return storySentences.slice(start, end);
+  }, [story, currentChapter, storySentences]);
+
+  useEffect(() => {
+    if (chapterSentences.length > 0 && !chapterSentences.some(s => s.id === selectedSentenceId)) {
+      setSelectedSentenceId(chapterSentences[0].id);
+      setTypingInput('');
+      setTypingFeedback(null);
+    }
+  }, [chapterSentences, selectedSentenceId]);
+
   const activeSentence = chapterSentences.find(s => s.id === selectedSentenceId) || chapterSentences[0];
 
   const handlePlayChapter = () => {
@@ -230,37 +278,134 @@ export default function StoryTab({
 
   return (
     <div>
-      {/* Story Selector Header */}
-      <div className="story-selection-container">
-        <div className="story-selector-label">
-          <BookOpen size={16} className="text-primary" />
-          <span>Biblioteca de Historias ({allStories.length}):</span>
+      {/* Story Selector Header & Level Filtering */}
+      <div className="card" style={{ marginBottom: 20, padding: '16px 20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BookOpen size={18} className="text-primary" />
+            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>
+              Biblioteca de Historias Graduadas ({allStories.length})
+            </h3>
+          </div>
+
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => onNavigate && onNavigate('saved')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            title="Ir a Guardados para crear una nueva historia con tus palabras"
+          >
+            <Sparkles size={14} />
+            <span>+ Crear Historia IA</span>
+          </button>
         </div>
-        <div className="story-pills-scroll">
-          {allStories.map((s) => (
-            <button
-              key={s.id}
-              className={`story-select-pill ${s.id === story.id ? 'active' : ''}`}
-              onClick={() => {
-                setSelectedStoryId(s.id);
-                setCurrentChapter(1);
-                if (onSelectStory) onSelectStory(s.id);
-                if (onParamsChange) onParamsChange({ id: s.id, chapter: 1, mode: readingMode });
-              }}
-            >
-              <span>{s.title}</span>
-              {s.isCustom && <span className="custom-story-tag">Creada</span>}
-            </button>
-          ))}
+
+        {/* Filter Pills and Search */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {['Todos', 'N5', 'N4', 'N3', 'Personalizadas'].map((lvl) => {
+              const count = 
+                lvl === 'Todos' ? allStories.length :
+                lvl === 'Personalizadas' ? allStories.filter(s => s.isCustom).length :
+                allStories.filter(s => (s.level || s.difficulty) === lvl).length;
+              const isActive = storyLevelFilter === lvl;
+              return (
+                <button
+                  key={lvl}
+                  className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setStoryLevelFilter(lvl)}
+                  style={{ fontSize: '0.8rem', padding: '4px 12px' }}
+                >
+                  {lvl === 'Todos' ? `Todas (${count})` :
+                   lvl === 'Personalizadas' ? `✨ Creadas (${count})` :
+                   `${lvl} (${count})`}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick Search */}
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '4px 10px', gap: 6, minWidth: 220 }}>
+            <Search size={14} style={{ color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              placeholder="Buscar historia..."
+              value={storySearch}
+              onChange={(e) => setStorySearch(e.target.value)}
+              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.85rem', width: '100%' }}
+            />
+          </div>
         </div>
-        <button
-          className="btn btn-outline btn-xs create-story-link-btn"
-          onClick={() => onNavigate && onNavigate('saved')}
-          title="Ir a Guardados para crear una nueva historia con tus palabras"
-        >
-          <Sparkles size={13} />
-          <span>+ Crear Historia</span>
-        </button>
+
+        {/* Stories Grid / Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+          {filteredStories.map((s) => {
+            const isSelected = s.id === story.id;
+            const lvl = s.level || s.difficulty || 'N5';
+            const lvlColor = 
+              lvl === 'N5' ? '#059669' :
+              lvl === 'N4' ? '#2563eb' :
+              lvl === 'N3' ? '#d97706' : '#8b5cf6';
+            const lvlBg = 
+              lvl === 'N5' ? 'rgba(16, 185, 129, 0.12)' :
+              lvl === 'N4' ? 'rgba(59, 130, 246, 0.12)' :
+              lvl === 'N3' ? 'rgba(245, 158, 11, 0.12)' : 'rgba(139, 92, 246, 0.12)';
+
+            return (
+              <div
+                key={s.id}
+                onClick={() => {
+                  setSelectedStoryId(s.id);
+                  setCurrentChapter(1);
+                  if (onSelectStory) onSelectStory(s.id);
+                  if (onParamsChange) onParamsChange({ id: s.id, chapter: 1, mode: readingMode });
+                }}
+                style={{
+                  padding: '12px 14px',
+                  borderRadius: 'var(--radius-md)',
+                  border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border)',
+                  background: isSelected ? 'rgba(99, 102, 241, 0.06)' : 'var(--bg-main)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: 8,
+                  transition: 'all 0.2s ease',
+                  boxShadow: isSelected ? 'var(--shadow-sm)' : 'none'
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '2px 7px', borderRadius: 4, background: lvlBg, color: lvlColor }}>
+                      {s.isCustom ? '✨ Creada' : lvl}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                      {s.paragraphs?.length || 1} {s.paragraphs?.length === 1 ? 'capítulo' : 'capítulos'}
+                    </span>
+                  </div>
+
+                  <h4 className="jp-text" style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 4px 0', color: isSelected ? 'var(--primary)' : 'var(--text-main)' }}>
+                    {s.title}
+                  </h4>
+
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.35 }}>
+                    {s.title_es || s.description || 'Lectura graduada en japonés'}
+                  </p>
+                </div>
+
+                {s.source_modules && s.source_modules.length > 0 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap', paddingTop: 6, borderTop: '1px dashed var(--border)' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Módulos:</span>
+                    {s.source_modules.map((m) => (
+                      <span key={m} style={{ fontSize: '0.68rem', fontWeight: 700, padding: '1px 5px', borderRadius: 3, background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)' }}>
+                        M{m}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {story.isCustom && (
@@ -296,29 +441,76 @@ export default function StoryTab({
         </div>
       )}
 
-      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+      {/* Active Story Header */}
+      <div className="section-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 14 }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span style={{ 
+              fontSize: '0.75rem', 
+              fontWeight: 800, 
+              padding: '2px 8px', 
+              borderRadius: 4, 
+              background: (story.level || story.difficulty) === 'N5' ? 'rgba(16, 185, 129, 0.15)' : (story.level || story.difficulty) === 'N4' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+              color: (story.level || story.difficulty) === 'N5' ? '#059669' : (story.level || story.difficulty) === 'N4' ? '#2563eb' : '#d97706'
+            }}>
+              Nivel {story.level || story.difficulty || 'JLPT'}
+            </span>
+            {story.category && (
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                • {story.category}
+              </span>
+            )}
+          </div>
+
+          <h2 className="section-title jp-text" style={{ margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span>📖</span>
             <span>{story.title}</span>
           </h2>
-          <button
-            type="button"
-            className="tour-info-shortcut-btn"
-            onClick={() => {
-              if (contextApp?.openTour) {
-                contextApp.openTour('story');
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                window.__nihongoOpenTour('story');
-              }
-            }}
-            title="Ver guía de Historias y Generador IA"
-            aria-label="Información de Historias"
-          >
-            <Info size={14} />
-            <span>Guía</span>
-          </button>
+
+          {story.title_es && (
+            <p style={{ fontSize: '1rem', color: 'var(--text-muted)', margin: '0 0 8px 0' }}>
+              🇪🇸 {story.title_es}
+            </p>
+          )}
+
+          {/* Curriculum Modules Links */}
+          {story.source_modules && story.source_modules.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                🔗 Módulos del Currículum Asociados:
+              </span>
+              {story.source_modules.map((modNum) => (
+                <Link
+                  key={modNum}
+                  href={`/curriculum?step=${modNum}`}
+                  className="btn btn-outline btn-xs"
+                  style={{ fontSize: '0.75rem', padding: '2px 8px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                  title={`Ver teoría y ejercicios del Módulo ${modNum}`}
+                >
+                  <span>Módulo {modNum}</span>
+                  <ArrowRight size={11} />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
+
+        <button
+          type="button"
+          className="tour-info-shortcut-btn"
+          onClick={() => {
+            if (contextApp?.openTour) {
+              contextApp.openTour('story');
+            } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+              window.__nihongoOpenTour('story');
+            }
+          }}
+          title="Ver guía de Historias y Generador IA"
+          aria-label="Información de Historias"
+        >
+          <Info size={14} />
+          <span>Guía</span>
+        </button>
       </div>
 
       {/* Story Controls Bar */}

@@ -887,6 +887,56 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_1",
+        "title_jp": "初めまして、よろしくお願いします",
+        "title_es": "Saludos vecinales y presentación en la sharehouse",
+        "level": "N5",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_1",
+        "speakers": [
+          "マルシア",
+          "田中"
+        ]
+      },
+      {
+        "id": "nhk_l_1",
+        "lesson_num": 1,
+        "title_jp": "はじめまして。私はアンナです。",
+        "title_es": "Encantada de conocerte. Soy Anna.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=1",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_2",
+        "lesson_num": 2,
+        "title_jp": "これは何ですか。",
+        "title_es": "¿Qué es esto?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=2",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_1",
+        "chapter": 1,
+        "title": "朝の始まり (Comienza la mañana)",
+        "story_title": "日本での一日",
+        "level": "N5",
+        "link_url": "/story?id=story_1&chapter=1"
+      }
     ]
   },
   {
@@ -1208,7 +1258,24 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_8",
+        "lesson_num": 8,
+        "title_jp": "もう一度お願いします。",
+        "title_es": "¿Podría repetirlo una vez más?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=8",
+        "speakers": [
+          "Estudiantes",
+          "Profesor",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 3,
@@ -1659,6 +1726,85 @@
             "explanation": "Para la edad se utiliza el contador 歳 / 才 (さい): 22歳 (にじゅうにさい)."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_4",
+        "lesson_num": 4,
+        "title_jp": "ただいま。",
+        "title_es": "¡Ya llegué!",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=4",
+        "speakers": [
+          "Encargada",
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_5",
+        "lesson_num": 5,
+        "title_jp": "それは私の宝物です。",
+        "title_es": "Ese es mi tesoro.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=5",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_6",
+        "lesson_num": 6,
+        "title_jp": "電話番号は何番ですか。",
+        "title_es": "¿Cuál es tu número de teléfono?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=6",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_15",
+        "lesson_num": 15,
+        "title_jp": "寝ています。",
+        "title_es": "Están durmiendo.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=15",
+        "speakers": [
+          "Sakura",
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_31",
+        "lesson_num": 31,
+        "title_jp": "もう82歳ですよ。",
+        "title_es": "¡Ya tengo 82 años!",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=31",
+        "speakers": [
+          "Abuela",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_1",
+        "chapter": 2,
+        "title": "学校への道と友達 (Camino a la escuela)",
+        "story_title": "日本での一日",
+        "level": "N5",
+        "link_url": "/story?id=story_1&chapter=2"
       }
     ]
   },
@@ -2419,6 +2565,31 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_13",
+        "lesson_num": 13,
+        "title_jp": "小説が好きです。",
+        "title_es": "Me gustan las novelas.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=13",
+        "speakers": [
+          "Sakura",
+          "Rodrigo"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 2,
+        "title": "スーパーでの買い物と料理",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=2"
+      }
     ]
   },
   {
@@ -3014,6 +3185,97 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_2",
+        "title_jp": "これを二つと烏龍茶をください",
+        "title_es": "Pidiendo comida y raciones en una taberna Izakaya",
+        "level": "N5",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_2",
+        "speakers": [
+          "客",
+          "店員"
+        ]
+      },
+      {
+        "id": "nhk_l_7",
+        "lesson_num": 7,
+        "title_jp": "シュークリームはありますか。",
+        "title_es": "¿Hay bollos de crema?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=7",
+        "speakers": [
+          "Vendedora",
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_17",
+        "lesson_num": 17,
+        "title_jp": "おすすめは何ですか。",
+        "title_es": "¿Cuál me recomiendas?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=17",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_34",
+        "lesson_num": 34,
+        "title_jp": "柔らかくておいしいです。",
+        "title_es": "Es tierno y sabroso.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=34",
+        "speakers": [
+          "Kenta",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_42",
+        "lesson_num": 42,
+        "title_jp": "どれが一番おいしいかな。",
+        "title_es": "¿Cuál será el más delicioso?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=42",
+        "speakers": [
+          "Vendedora",
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_44",
+        "lesson_num": 44,
+        "title_jp": "和菓子を食べてから、抹茶を飲みます。",
+        "title_es": "Tras comer el dulce japonés, se toma el té verde.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=44",
+        "speakers": [
+          "Profesor",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_1",
+        "chapter": 4,
+        "title": "昼休みと週末の計画 (Almuerzo y planes)",
+        "story_title": "日本での一日",
+        "level": "N5",
+        "link_url": "/story?id=story_1&chapter=4"
+      }
     ]
   },
   {
@@ -3461,6 +3723,44 @@
             "explanation": "一人暮らし (ひとりづらし / hitorigurashi) significa vivir solo/a de forma independiente."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_14",
+        "lesson_num": 14,
+        "title_jp": "ここにゴミを捨ててもいいですか。",
+        "title_es": "¿Puedo tirar la basura aquí?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=14",
+        "speakers": [
+          "Encargada",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_32",
+        "lesson_num": 32,
+        "title_jp": "布団のほうが好きです。",
+        "title_es": "Prefiero el futón.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=32",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 1,
+        "title": "シェアハウスでの新しい生活",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=1"
       }
     ]
   },
@@ -4191,7 +4491,50 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_3",
+        "lesson_num": 3,
+        "title_jp": "トイレはどこですか。",
+        "title_es": "¿Dónde está el baño?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=3",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_10",
+        "lesson_num": 10,
+        "title_jp": "全員いますか。",
+        "title_es": "¿Están todos?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=10",
+        "speakers": [
+          "Profesor",
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_25",
+        "lesson_num": 25,
+        "title_jp": "机の下に入れ。",
+        "title_es": "Pónganse bajo el pupitre / ¡Métanse debajo de la mesa!",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=25",
+        "speakers": [
+          "Profesor",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 8,
@@ -4972,6 +5315,31 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_9",
+        "lesson_num": 9,
+        "title_jp": "何時からですか。",
+        "title_es": "¿Desde qué hora es?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=9",
+        "speakers": [
+          "Profesor",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_1",
+        "chapter": 3,
+        "title": "日本語の授業 (Clase de japonés)",
+        "story_title": "日本での一日",
+        "level": "N5",
+        "link_url": "/story?id=story_1&chapter=3"
+      }
     ]
   },
   {
@@ -5441,7 +5809,48 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_3",
+        "title_jp": "この書類を五枚コピーしてください",
+        "title_es": "Instrucciones de trabajo y favores en la oficina",
+        "level": "N5",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_3",
+        "speakers": [
+          "先輩",
+          "後輩"
+        ]
+      },
+      {
+        "id": "nhk_l_23",
+        "lesson_num": 23,
+        "title_jp": "お母さんに叱られました。",
+        "title_es": "Mi madre me regañó / Me regañó la encargada.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=23",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_24",
+        "lesson_num": 24,
+        "title_jp": "使わないでください。",
+        "title_es": "Por favor no los usen.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=24",
+        "speakers": [
+          "Profesor",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 10,
@@ -5983,6 +6392,60 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_11",
+        "lesson_num": 11,
+        "title_jp": "ぜひ来てください。",
+        "title_es": "Por favor no dejes de venir.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=11",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_20",
+        "lesson_num": 20,
+        "title_jp": "日本の歌を歌ったことがありますか。",
+        "title_es": "¿Has cantado canciones japonesas alguna vez?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=20",
+        "speakers": [
+          "Sakura",
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_45",
+        "lesson_num": 45,
+        "title_jp": "お誕生日おめでとう。",
+        "title_es": "¡Feliz cumpleaños!",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=45",
+        "speakers": [
+          "Sakura",
+          "Kenta",
+          "Amigos",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 4,
+        "title": "下町の夏祭りと花火",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=4"
+      }
     ]
   },
   {
@@ -6419,6 +6882,55 @@
             "explanation": "用事 (youji) significa 'asunto / compromiso pendiente', la razón cortés tradicional para declinar."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_4",
+        "title_jp": "今週末の花火大会に行きませんか？",
+        "title_es": "Invitación entusiasta al festival de fuegos artificiales",
+        "level": "N5",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_4",
+        "speakers": [
+          "アンナ",
+          "ケン"
+        ]
+      },
+      {
+        "id": "nhk_l_27",
+        "lesson_num": 27,
+        "title_jp": "誰が結婚するんですか。",
+        "title_es": "¿Quién es el que se casa?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=27",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_41",
+        "lesson_num": 41,
+        "title_jp": "学園祭に行くことができて、楽しかったです。",
+        "title_es": "Pude ir al festival universitario y fue divertido.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=41",
+        "speakers": [
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 4,
+        "title": "下町の夏祭りと花火",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=4"
       }
     ]
   },
@@ -7401,6 +7913,83 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_5",
+        "title_jp": "新宿駅へは何番線に乗ればいいですか？",
+        "title_es": "Preguntando por andenes y trenes en la estación",
+        "level": "N5",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_5",
+        "speakers": [
+          "乗客",
+          "駅員"
+        ]
+      },
+      {
+        "id": "nhk_l_12",
+        "lesson_num": 12,
+        "title_jp": "いつ日本に来ましたか。",
+        "title_es": "¿Cuándo viniste a Japón?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=12",
+        "speakers": [
+          "Sakura",
+          "Rodrigo"
+        ]
+      },
+      {
+        "id": "nhk_l_16",
+        "lesson_num": 16,
+        "title_jp": "階段を上がって、右に行ってください。",
+        "title_es": "Suba la escalera y vaya a la derecha.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=16",
+        "speakers": [
+          "Anna",
+          "Vendedor"
+        ]
+      },
+      {
+        "id": "nhk_l_28",
+        "lesson_num": 28,
+        "title_jp": "静岡へようこそ。",
+        "title_es": "Bienvenida a Shizuoka.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=28",
+        "speakers": [
+          "Sakura",
+          "Kenta",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_46",
+        "lesson_num": 46,
+        "title_jp": "帰国する前に、雪を見ることができて幸せです。",
+        "title_es": "Estoy feliz de ver la nieve antes de regresar a mi país.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=46",
+        "speakers": [
+          "Kenta",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 3,
+        "title": "地下鉄に乗って秋葉原へ",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=3"
+      }
     ]
   },
   {
@@ -7895,6 +8484,44 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_18",
+        "lesson_num": 18,
+        "title_jp": "道に迷ってしまいました。",
+        "title_es": "Me he perdido.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=18",
+        "speakers": [
+          "Sakura",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_38",
+        "lesson_num": 38,
+        "title_jp": "かしこまりました。",
+        "title_es": "Entendido con mucho gusto / A su servicio.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=38",
+        "speakers": [
+          "Encargada",
+          "Taxista"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 3,
+        "title": "地下鉄に乗って秋葉原へ",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=3"
+      }
     ]
   },
   {
@@ -8385,6 +9012,31 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_35",
+        "lesson_num": 35,
+        "title_jp": "クレジットカードは使えますか。",
+        "title_es": "¿Se puede usar tarjeta de crédito?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=35",
+        "speakers": [
+          "Cajero",
+          "Kenta"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 2,
+        "title": "スーパーでの買い物と料理",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=2"
+      }
     ]
   },
   {
@@ -8823,6 +9475,43 @@
             "explanation": "袋は大丈夫です / 結構です es la respuesta cortés más habitual para declinar una bolsa plástica."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_6",
+        "title_jp": "袋はいりません。温めをお願いします",
+        "title_es": "Compras rutinarias en la caja del combini",
+        "level": "N5",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_6",
+        "speakers": [
+          "客",
+          "店員"
+        ]
+      },
+      {
+        "id": "nhk_l_35",
+        "lesson_num": 35,
+        "title_jp": "クレジットカードは使えますか。",
+        "title_es": "¿Se puede usar tarjeta de crédito?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=35",
+        "speakers": [
+          "Cajero",
+          "Kenta"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_2",
+        "chapter": 2,
+        "title": "スーパーでの買い物と料理",
+        "story_title": "東京での新しい暮らし",
+        "level": "N5",
+        "link_url": "/story?id=story_2&chapter=2"
       }
     ]
   },
@@ -9960,7 +10649,24 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_20",
+        "lesson_num": 20,
+        "title_jp": "日本の歌を歌ったことがありますか。",
+        "title_es": "¿Has cantado canciones japonesas alguna vez?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=20",
+        "speakers": [
+          "Sakura",
+          "Rodrigo",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 17,
@@ -10673,7 +11379,63 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_29",
+        "lesson_num": 29,
+        "title_jp": "近くで見ると、大きいですね。",
+        "title_es": "Visto de cerca es grande, ¿eh?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=29",
+        "speakers": [
+          "Kenta",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_30",
+        "lesson_num": 30,
+        "title_jp": "もう少し写真を撮りたいです。",
+        "title_es": "Quiero tomar un poco más de fotos.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=30",
+        "speakers": [
+          "Sakura",
+          "Kenta",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_33",
+        "lesson_num": 33,
+        "title_jp": "アンナさんにあげます。",
+        "title_es": "Se lo doy a Anna.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=33",
+        "speakers": [
+          "Kenta",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_37",
+        "lesson_num": 37,
+        "title_jp": "富士山を見たり、お寿司を食べたりしました。",
+        "title_es": "Vi el monte Fuji, comí sushi, entre otras cosas.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=37",
+        "speakers": [
+          "Encargada",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 18,
@@ -11335,7 +12097,76 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_19",
+        "lesson_num": 19,
+        "title_jp": "よかった。心配したよ。",
+        "title_es": "Menos mal. Me preocupé.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=19",
+        "speakers": [
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_22",
+        "lesson_num": 22,
+        "title_jp": "遅くなりました。",
+        "title_es": "Llegué tarde.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=22",
+        "speakers": [
+          "Encargada",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_36",
+        "lesson_num": 36,
+        "title_jp": "勉強しなければなりません。",
+        "title_es": "Tengo que estudiar.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=36",
+        "speakers": [
+          "Kenta",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_39",
+        "lesson_num": 39,
+        "title_jp": "風邪だと思います。",
+        "title_es": "Creo que es un resfriado.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=39",
+        "speakers": [
+          "Encargada",
+          "Médico",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_40",
+        "lesson_num": 40,
+        "title_jp": "頭がずきずきします。",
+        "title_es": "Me palpita intensamente la cabeza.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=40",
+        "speakers": [
+          "Encargada",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 19,
@@ -11696,7 +12527,79 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "nhk_l_21",
+        "lesson_num": 21,
+        "title_jp": "いいえ、それほどでも。",
+        "title_es": "No, no es para tanto.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=21",
+        "speakers": [
+          "Sakura",
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_26",
+        "lesson_num": 26,
+        "title_jp": "次はがんばろう。",
+        "title_es": "Esforcémonos la próxima vez.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=26",
+        "speakers": [
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_43",
+        "lesson_num": 43,
+        "title_jp": "どうしてでしょうか。",
+        "title_es": "¿Por qué será?",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=43",
+        "speakers": [
+          "Profesor",
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_47",
+        "lesson_num": 47,
+        "title_jp": "日本語教師になるのが夢です。",
+        "title_es": "Mi sueño es ser profesora de japonés.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=47",
+        "speakers": [
+          "Profesor",
+          "Rodrigo",
+          "Anna"
+        ]
+      },
+      {
+        "id": "nhk_l_48",
+        "lesson_num": 48,
+        "title_jp": "いろいろお世話になりました。",
+        "title_es": "Muchísimas gracias por todas sus atenciones.",
+        "level": "N5",
+        "series": "NHK World: Hablemos en Japonés",
+        "link_url": "/nhk?lesson=48",
+        "speakers": [
+          "Sakura",
+          "Kenta",
+          "Anna"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 20,
@@ -12077,6 +12980,30 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_7",
+        "title_jp": "先週、日本に来たばかりです",
+        "title_es": "Llegada reciente a Japón y conjetura de personalidad con 〜そう",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_7",
+        "speakers": [
+          "リー",
+          "佐藤"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 1,
+        "title": "日本に来たばかりの日々と電器屋",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=1"
+      }
     ]
   },
   {
@@ -12447,6 +13374,30 @@
             "explanation": "La forma て (混ぜて) conecta la acción preparatoria con el consumo: 'mézclelo bien y cómalo'."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_8",
+        "title_jp": "アレルギーがあるので、食べられないんです",
+        "title_es": "Declarando alergias alimentarias en el restaurante",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_8",
+        "speakers": [
+          "客",
+          "店員"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 2,
+        "title": "ラーメン屋での注文とアレルギー",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=2"
       }
     ]
   },
@@ -12819,6 +13770,30 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_9",
+        "title_jp": "早く予約したほうがいいですよ",
+        "title_es": "Consejos para reservar alojamiento y trenes de puente festivo",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_9",
+        "speakers": [
+          "同僚",
+          "アンナ"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 1,
+        "title": "日本に来たばかりの日々と電器屋",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=1"
+      }
     ]
   },
   {
@@ -13189,6 +14164,30 @@
             "explanation": "屋台 (yatai) son los puestos ambulantes de comida en festivales."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_10",
+        "title_jp": "雨が降ったら、どうしますか？",
+        "title_es": "Condicionales e imprevistos en festivales comunitarios",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_10",
+        "speakers": [
+          "ボランティア",
+          "責任者"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 3,
+        "title": "突然の雨と地域のお祭り",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=3"
       }
     ]
   },
@@ -13561,6 +14560,17 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 3,
+        "title": "突然の雨と地域のお祭り",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=3"
+      }
     ]
   },
   {
@@ -13931,6 +14941,30 @@
             "explanation": "割引 (waribiki) denota descuento de precio."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_11",
+        "title_jp": "この掃除機は軽くて動かしやすいですよ",
+        "title_es": "Comparando electrodomésticos y solicitando rebaja",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_11",
+        "speakers": [
+          "客",
+          "店員"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 1,
+        "title": "日本に来たばかりの日々と電器屋",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=1"
       }
     ]
   },
@@ -14303,6 +15337,30 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_12",
+        "title_jp": "前髪を短く切ってもらえますか？",
+        "title_es": "Pidiendo un corte de pelo a medida en la peluquería",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_12",
+        "speakers": [
+          "客",
+          "美容師"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 4,
+        "title": "美容院と不在票の連絡",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=4"
+      }
     ]
   },
   {
@@ -14674,6 +15732,30 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_13",
+        "title_jp": "地震が来ても、慌てないでください",
+        "title_es": "Instrucciones de seguridad y simulacro de terremoto",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_13",
+        "speakers": [
+          "指導員",
+          "従業員"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 5,
+        "title": "緊急地震速報と将来の夢",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=5"
+      }
     ]
   },
   {
@@ -15044,6 +16126,30 @@
             "explanation": "〜ていただく es la fórmula honorífica para reconocer un favor recibido de otros con enorme respeto."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_14",
+        "title_jp": "将来、自分の会社を作ろうと思っています",
+        "title_es": "Discurso emotivo en la fiesta de despedida",
+        "level": "N4",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_14",
+        "speakers": [
+          "カルロス",
+          "部長"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_3",
+        "chapter": 5,
+        "title": "緊急地震速報と将来の夢",
+        "story_title": "日本での挑戦と発見",
+        "level": "N4",
+        "link_url": "/story?id=story_3&chapter=5"
       }
     ]
   },
@@ -15422,6 +16528,30 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_15",
+        "title_jp": "推し活って何でしたっけ？",
+        "title_es": "Tertulia informal sobre cultura pop y cine con 〜って",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_15",
+        "speakers": [
+          "ケンタ",
+          "アリス"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_4",
+        "chapter": 3,
+        "title": "カフェでのオタク談義と友情",
+        "story_title": "日本社会で生きる：夢への架け橋",
+        "level": "N3",
+        "link_url": "/story?id=story_4&chapter=3"
+      }
     ]
   },
   {
@@ -15792,6 +16922,30 @@
             "explanation": "物件 (bukken) es el término formal inmobiliario para pisos o propiedades."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_16",
+        "title_jp": "エアコンが故障したみたいなんですが…",
+        "title_es": "Reportando una avería al administrador del edificio",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_16",
+        "speakers": [
+          "入居者",
+          "管理会社"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_4",
+        "chapter": 1,
+        "title": "アパートの契約と引越し",
+        "story_title": "日本社会で生きる：夢への架け橋",
+        "level": "N3",
+        "link_url": "/story?id=story_4&chapter=1"
       }
     ]
   },
@@ -16164,6 +17318,30 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_17",
+        "title_jp": "自炊するように気をつけています",
+        "title_es": "Conversando sobre nutrición equilibrada y cocina casera",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_17",
+        "speakers": [
+          "同僚",
+          "マルシア"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_4",
+        "chapter": 2,
+        "title": "毎日の自炊と健康管理",
+        "story_title": "日本社会で生きる：夢への架け橋",
+        "level": "N3",
+        "link_url": "/story?id=story_4&chapter=2"
+      }
     ]
   },
   {
@@ -16534,6 +17712,30 @@
             "explanation": "連絡先 (renrakusaki) son las señas de contacto."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_18",
+        "title_jp": "隣に座ってもかまいませんか？",
+        "title_es": "Cortesía en espacios públicos y solicitud de permiso",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_18",
+        "speakers": [
+          "学生A",
+          "学生B"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_4",
+        "chapter": 3,
+        "title": "カフェでのオタク談義と友情",
+        "story_title": "日本社会で生きる：夢への架け橋",
+        "level": "N3",
+        "link_url": "/story?id=story_4&chapter=3"
       }
     ]
   },
@@ -16906,7 +18108,9 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [],
+    "related_stories": []
   },
   {
     "step": 34,
@@ -17277,7 +18481,22 @@
           }
         ]
       }
-    ]
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_19",
+        "title_jp": "救急車を呼んでほしいんです！",
+        "title_es": "Llamando a emergencias y prestando auxilio ciudadano",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_19",
+        "speakers": [
+          "目撃者",
+          "通行人"
+        ]
+      }
+    ],
+    "related_stories": []
   },
   {
     "step": 35,
@@ -17647,6 +18866,30 @@
             "explanation": "披露宴 (hirouen) es el banquete nupcial de bodas."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_20",
+        "title_jp": "心よりお祝い申し上げます",
+        "title_es": "Felicitación nupcial solemne y consulta personal",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_20",
+        "speakers": [
+          "招待客",
+          "新郎"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_4",
+        "chapter": 3,
+        "title": "カフェでのオタク談義と友情",
+        "story_title": "日本社会で生きる：夢への架け橋",
+        "level": "N3",
+        "link_url": "/story?id=story_4&chapter=3"
       }
     ]
   },
@@ -18019,6 +19262,30 @@
           }
         ]
       }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_21",
+        "title_jp": "桜島を見てみたいんです",
+        "title_es": "Planificando una ruta por Kyushu y deseos de viaje",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_21",
+        "speakers": [
+          "ユキ",
+          "ケン"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_4",
+        "chapter": 4,
+        "title": "九州・桜島への一人旅",
+        "story_title": "日本社会で生きる：夢への架け橋",
+        "level": "N3",
+        "link_url": "/story?id=story_4&chapter=4"
+      }
     ]
   },
   {
@@ -18389,6 +19656,30 @@
             "explanation": "ほうれんそう acrónimo de 報告 (houkoku), 連絡 (renraku) y 相談 (soudan)."
           }
         ]
+      }
+    ],
+    "related_dialogues": [
+      {
+        "id": "iro_diag_22",
+        "title_jp": "こちらの部署で働かせていただければ幸いです",
+        "title_es": "Entrevista formal de trabajo con Keigo corporativo",
+        "level": "N3",
+        "series": "Irodori (Fundación Japón)",
+        "link_url": "/nhk?dialogue=iro_diag_22",
+        "speakers": [
+          "面接官",
+          "応募者"
+        ]
+      }
+    ],
+    "related_stories": [
+      {
+        "id": "story_4",
+        "chapter": 5,
+        "title": "運命の採用面接とこれからの私",
+        "story_title": "日本社会で生きる：夢への架け橋",
+        "level": "N3",
+        "link_url": "/story?id=story_4&chapter=5"
       }
     ]
   }

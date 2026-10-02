@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import dataStore from '../lib/data';
 import { 
   ArrowRight, 
@@ -22,7 +23,8 @@ import {
   Search,
   Filter,
   Target,
-  Info
+  Info,
+  MessageSquare
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { useAppContext } from '../lib/AppContext';
@@ -1498,6 +1500,189 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                     <span>Ir al Módulo {rel.step}</span>
                     <ArrowRight size={14} />
                   </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Conversaciones y Diálogos Situacionales Relacionados */}
+        {selectedStep.related_dialogues && selectedStep.related_dialogues.length > 0 && (
+          <div className="card" style={{ marginBottom: 28, background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: '1.4rem' }}>💬</span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>
+                  Conversaciones y Diálogos Situacionales Relacionados
+                </h3>
+              </div>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                Aplica la gramática y expresiones de este módulo en situaciones reales de vida y trabajo en Japón (Irodori y NHK World):
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+              {selectedStep.related_dialogues.map((dlg, dIdx) => (
+                <div
+                  key={dIdx}
+                  style={{
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+                      <span style={{ 
+                        fontSize: '0.72rem', 
+                        fontWeight: 700, 
+                        padding: '3px 8px', 
+                        borderRadius: 4, 
+                        background: dlg.series?.includes('Irodori') ? 'rgba(59, 130, 246, 0.12)' : 'rgba(239, 68, 68, 0.12)', 
+                        color: dlg.series?.includes('Irodori') ? '#2563eb' : '#dc2626' 
+                      }}>
+                        {dlg.series || 'Diálogo'}
+                      </span>
+                      <span style={{ 
+                        fontSize: '0.72rem', 
+                        fontWeight: 800, 
+                        padding: '2px 7px', 
+                        borderRadius: 4, 
+                        background: 'rgba(16, 185, 129, 0.15)', 
+                        color: '#059669' 
+                      }}>
+                        {dlg.level || 'JLPT'}
+                      </span>
+                    </div>
+
+                    <h4 className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 6px 0', lineHeight: 1.4 }}>
+                      {dlg.title_jp}
+                    </h4>
+
+                    <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.4, margin: '0 0 8px 0' }}>
+                      {dlg.title_es}
+                    </p>
+
+                    {dlg.speakers && dlg.speakers.length > 0 && (
+                      <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>👥 Hablantes:</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{dlg.speakers.join(', ')}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <Link
+                    href={dlg.link_url}
+                    className="btn btn-outline btn-sm"
+                    style={{ 
+                      width: '100%', 
+                      justifyContent: 'center', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 6,
+                      fontWeight: 600,
+                      marginTop: 4,
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <MessageSquare size={14} />
+                    <span>Practicar Diálogo</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Historias y Lecturas Graduadas Relacionadas */}
+        {selectedStep.related_stories && selectedStep.related_stories.length > 0 && (
+          <div className="card" style={{ marginBottom: 28, background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: '1.4rem' }}>📖</span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>
+                  Historias y Lecturas Graduadas Relacionadas
+                </h3>
+              </div>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                Lee historias inmersivas por capítulos, practica typing/IME con frases reales y escucha la narración nativa:
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+              {selectedStep.related_stories.map((st, sIdx) => (
+                <div
+                  key={sIdx}
+                  style={{
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+                      <span style={{ 
+                        fontSize: '0.72rem', 
+                        fontWeight: 700, 
+                        padding: '3px 8px', 
+                        borderRadius: 4, 
+                        background: 'rgba(168, 85, 247, 0.12)', 
+                        color: '#9333ea' 
+                      }}>
+                        Capítulo {st.chapter}
+                      </span>
+                      <span style={{ 
+                        fontSize: '0.72rem', 
+                        fontWeight: 800, 
+                        padding: '2px 7px', 
+                        borderRadius: 4, 
+                        background: 'rgba(16, 185, 129, 0.15)', 
+                        color: '#059669' 
+                      }}>
+                        {st.level || 'JLPT'}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: 2 }}>
+                      {st.story_title}
+                    </div>
+
+                    <h4 className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 6px 0', lineHeight: 1.4 }}>
+                      {st.title}
+                    </h4>
+                  </div>
+
+                  <Link
+                    href={st.link_url}
+                    className="btn btn-outline btn-sm"
+                    style={{ 
+                      width: '100%', 
+                      justifyContent: 'center', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 6,
+                      fontWeight: 600,
+                      marginTop: 4,
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <BookOpen size={14} />
+                    <span>Leer y Practicar Capítulo</span>
+                    <ArrowRight size={14} />
+                  </Link>
                 </div>
               ))}
             </div>

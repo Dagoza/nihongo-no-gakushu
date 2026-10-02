@@ -1,0 +1,920 @@
+[
+  {
+    "id": "iro_diag_1",
+    "dialogue_num": 1,
+    "title_jp": "初めまして、よろしくお願いします",
+    "title_es": "Saludos vecinales y presentación en la sharehouse",
+    "level": "N5",
+    "topic": "Vida Cotidiana",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 1,
+    "situation": "Un nuevo residente extranjero saluda a su vecino de pasillo en el edificio de apartamentos.",
+    "characters": [
+      "マルシア",
+      "田中"
+    ],
+    "dialogue": [
+      {
+        "speaker": "マルシア",
+        "jp": "初めまして。隣の部屋に引っ越してきたマルシアです。",
+        "kana": "はじめまして。となりのへやにひっこしてきたまるしあです。",
+        "es": "Mucho gusto. Soy Marcia, me mudé a la habitación de al lado."
+      },
+      {
+        "speaker": "田中",
+        "jp": "あ、田中です。よろしくお願いします。どちらからですか？",
+        "kana": "あ、たなかです。よろしくおねがいします。どちらからですか？",
+        "es": "Ah, soy Tanaka. Mucho gusto. ¿De dónde es usted?"
+      },
+      {
+        "speaker": "マルシア",
+        "jp": "ブラジルから来ました。まだ日本語があまり上手じゃありません。",
+        "kana": "ぶらじるからきました。まだにほんごがあまりじょうずじゃありません。",
+        "es": "Vengo de Brasil. Todavía no hablo muy bien japonés."
+      },
+      {
+        "speaker": "田中",
+        "jp": "いえいえ、とても上手ですよ。困ったことがあったら何でも聞いてくださいね。",
+        "kana": "いえいえ、とてもじょうずですよ。こまったことがあったらなんでもきいてくださいね。",
+        "es": "No, qué va, lo habla muy bien. Si tiene cualquier problema, pregúnteme lo que sea."
+      }
+    ],
+    "grammar_notes": "Uso de はじめまして para la primera presentación y どちらからですか para indagar procedencia con cortesía."
+  },
+  {
+    "id": "iro_diag_2",
+    "dialogue_num": 2,
+    "title_jp": "これを二つと烏龍茶をください",
+    "title_es": "Pidiendo comida y raciones en una taberna Izakaya",
+    "level": "N5",
+    "topic": "Vida Cotidiana",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 5,
+    "situation": "Dos comensales hacen su pedido al camarero en un restaurante tradicional.",
+    "characters": [
+      "客",
+      "店員"
+    ],
+    "dialogue": [
+      {
+        "speaker": "店員",
+        "jp": "いらっしゃいませ！ご注文はお決まりですか？",
+        "kana": "いらっしゃいませ！ごちゅうもんはおきまりですか？",
+        "es": "¡Bienvenidos! ¿Han decidido ya su pedido?"
+      },
+      {
+        "speaker": "客",
+        "jp": "はい。この焼き鳥セットを二つと、烏龍茶を一つください。",
+        "kana": "はい。このやきとりせっとをふたつと、うーろんちゃをひとつください。",
+        "es": "Sí. Por favor, pónganos dos combos de yakitori y un té oolong."
+      },
+      {
+        "speaker": "店員",
+        "jp": "かしこまりました。烏龍茶は氷をお入れしますか？",
+        "kana": "かしこまりました。うーろんちゃはこおりをおいれしますか？",
+        "es": "Muy bien entendido. ¿Le ponemos hielo al té oolong?"
+      },
+      {
+        "speaker": "客",
+        "jp": "はい、氷入りでお願いします。あと、お水も二つもらえますか？",
+        "kana": "はい、こおりいりでおねがいします。あと、おみずもふたつもらえますか？",
+        "es": "Sí, con hielo por favor. Además, ¿nos podría traer dos vasos de agua?"
+      },
+      {
+        "speaker": "店員",
+        "jp": "はい、喜んで！少々お待ちください。",
+        "kana": "はい、よろこんで！しょうしょうおまちください。",
+        "es": "¡Sí, con mucho gusto! Esperen un momento, por favor."
+      }
+    ],
+    "grammar_notes": "Contadores nativos japoneses ひとつ, ふたつ con la fórmula de comanda 〜をください."
+  },
+  {
+    "id": "iro_diag_3",
+    "dialogue_num": 3,
+    "title_jp": "この書類を五枚コピーしてください",
+    "title_es": "Instrucciones de trabajo y favores en la oficina",
+    "level": "N5",
+    "topic": "Trabajo y Normas",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 9,
+    "situation": "Un supervisor de equipo le explica una tarea urgente a un nuevo empleado.",
+    "characters": [
+      "先輩",
+      "後輩"
+    ],
+    "dialogue": [
+      {
+        "speaker": "先輩",
+        "jp": "カルロスさん、ちょっといいですか？",
+        "kana": "かるろすさん、ちょっといいですか？",
+        "es": "Carlos, ¿tienes un momento?"
+      },
+      {
+        "speaker": "後輩",
+        "jp": "はい、何でしょうか？",
+        "kana": "はい、なんでしょうか？",
+        "es": "Sí, ¿de qué se trata?"
+      },
+      {
+        "speaker": "先輩",
+        "jp": "この会議の資料を五枚コピーして、ホチキスで留めてください。",
+        "kana": "このかいぎのしりょうをごまいこぴーして、ほちきすでとめてください。",
+        "es": "Haz cinco fotocopias de estos documentos de la reunión y grápalos, por favor."
+      },
+      {
+        "speaker": "後輩",
+        "jp": "分かりました。カラーですか、白黒ですか？",
+        "kana": "わかりました。からーですか、しろくろですか？",
+        "es": "Entendido. ¿En color o en blanco y negro?"
+      },
+      {
+        "speaker": "先輩",
+        "jp": "白黒で大丈夫です。できたら二階の会議室に持ってきてください。",
+        "kana": "しろくろでだいじょうぶです。できたらにかいのかいぎしつにもってきてください。",
+        "es": "En blanco y negro está bien. Cuando termines, tráelos a la sala de reuniones del segundo piso."
+      }
+    ],
+    "grammar_notes": "Fórmula 〜てください para dar instrucciones laborales claras y amables."
+  },
+  {
+    "id": "iro_diag_4",
+    "dialogue_num": 4,
+    "title_jp": "今週末の花火大会に行きませんか？",
+    "title_es": "Invitación entusiasta al festival de fuegos artificiales",
+    "level": "N5",
+    "topic": "Ocio y Sociedad",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 11,
+    "situation": "Dos amigos conversan después de clase para organizar una salida el sábado.",
+    "characters": [
+      "アンナ",
+      "ケン"
+    ],
+    "dialogue": [
+      {
+        "speaker": "アンナ",
+        "jp": "ケンさん、今週の土曜日の夜は空いていますか？",
+        "kana": "けんさん、こんしゅうのどようびのよるはあいていますか？",
+        "es": "Ken, ¿estás libre este sábado por la noche?"
+      },
+      {
+        "speaker": "ケン",
+        "jp": "ええ、特に予定はないよ。どうしたの？",
+        "kana": "ええ、とくによていはないよ。どうしたの？",
+        "es": "Sí, no tengo planes en particular. ¿Qué pasa?"
+      },
+      {
+        "speaker": "アンナ",
+        "jp": "隅田川で花火大会があるんです。いっしょに行きませんか？",
+        "kana": "すみだがわではなびたいかいがあるんです。いっしょにいきませんか？",
+        "es": "Hay un festival de fuegos artificiales en el río Sumida. ¿Vamos juntos?"
+      },
+      {
+        "speaker": "ケン",
+        "jp": "いいね！ぜひ行こう。何時にどこで待ち合わせする？",
+        "kana": "いいね！ぜひいこう。なんじにどこでまちあわせする？",
+        "es": "¡Qué bien! Vayamos sin falta. ¿A qué hora y dónde quedamos?"
+      }
+    ],
+    "grammar_notes": "Invitación cortés con 〜ませんか y aceptación con ぜひ + volitivo."
+  },
+  {
+    "id": "iro_diag_5",
+    "dialogue_num": 5,
+    "title_jp": "新宿駅へは何番線に乗ればいいですか？",
+    "title_es": "Preguntando por andenes y trenes en la estación",
+    "level": "N5",
+    "topic": "Ciudad y Servicios",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 12,
+    "situation": "Un usuario consulta con el revisor de estación cuál es el andén correcto.",
+    "characters": [
+      "乗客",
+      "駅員"
+    ],
+    "dialogue": [
+      {
+        "speaker": "乗客",
+        "jp": "すみません、新宿に行きたいんですが、何番線ですか？",
+        "kana": "すみません、しんじゅくにいきたいんですが、なんばんせんですか？",
+        "es": "Disculpe, quiero ir a Shinjuku, ¿en qué andén debo tomarlo?"
+      },
+      {
+        "speaker": "駅員",
+        "jp": "新宿でしたら、二番線の山手線内回りにご乗車ください。",
+        "kana": "しんじゅくでしたら、にばんせんのやまのてせんうちまわりにごじょうしゃください。",
+        "es": "Si es para Shinjuku, tome la línea Yamanote (sentido interior) en el andén número dos."
+      },
+      {
+        "speaker": "乗客",
+        "jp": "次は快速ですか、各駅停車ですか？",
+        "kana": "つぎはかいそくですか、かくえきていしゃですか？",
+        "es": "¿El siguiente es rápido o para en todas las estaciones?"
+      },
+      {
+        "speaker": "駅員",
+        "jp": "山手線はすべて各駅停車ですよ。三分後に参ります。",
+        "kana": "やまのてせんはすべてかくえきていしゃですよ。さんぷんごにまいります。",
+        "es": "La línea Yamanote para en todas las estaciones. Llega en tres minutos."
+      }
+    ],
+    "grammar_notes": "Fórmula 〜たいんですが para solicitar orientación y 何番線 para consultar el andén."
+  },
+  {
+    "id": "iro_diag_6",
+    "dialogue_num": 6,
+    "title_jp": "袋はいりません。温めをお願いします",
+    "title_es": "Compras rutinarias en la caja del combini",
+    "level": "N5",
+    "topic": "Ciudad y Servicios",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 15,
+    "situation": "Un cliente compra un bento en la tienda de conveniencia 24h.",
+    "characters": [
+      "客",
+      "店員"
+    ],
+    "dialogue": [
+      {
+        "speaker": "店員",
+        "jp": "お弁当、温めますか？",
+        "kana": "おべんとう、あたためますか？",
+        "es": "¿Le caliento el bento?"
+      },
+      {
+        "speaker": "客",
+        "jp": "はい、お願いします。",
+        "kana": "はい、おねがいします。",
+        "es": "Sí, por favor."
+      },
+      {
+        "speaker": "店員",
+        "jp": "レジ袋はご利用になりますか？",
+        "kana": "れじぶくろはごりようになりますか？",
+        "es": "¿Va a necesitar bolsa de plástico?"
+      },
+      {
+        "speaker": "客",
+        "jp": "いいえ、袋はいりません。このままでいいです。",
+        "kana": "いいえ、ふくろはいりません。このままでいいです。",
+        "es": "No, no necesito bolsa. Así tal cual está bien."
+      },
+      {
+        "speaker": "店員",
+        "jp": "合計で680円になります。お支払いはどうされますか？",
+        "kana": "ごうけいでろっぴゃくはちじゅうえんになります。おしはらいはどうされますか？",
+        "es": "El total son 680 yenes. ¿Cómo desea pagar?"
+      },
+      {
+        "speaker": "客",
+        "jp": "交通系ICカードで払います。",
+        "kana": "こうつうけいあいしーかーどではらいます。",
+        "es": "Pagaré con tarjeta de transporte IC."
+      }
+    ],
+    "grammar_notes": "Preguntas canónicas de cajeros en Japón: 温め y 袋はいりません."
+  },
+  {
+    "id": "iro_diag_7",
+    "dialogue_num": 7,
+    "title_jp": "先週、日本に来たばかりです",
+    "title_es": "Llegada reciente a Japón y conjetura de personalidad con 〜そう",
+    "level": "N4",
+    "topic": "Vida Cotidiana",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 20,
+    "situation": "Presentación entre nuevos compañeros de departamento.",
+    "characters": [
+      "リー",
+      "佐藤"
+    ],
+    "dialogue": [
+      {
+        "speaker": "佐藤",
+        "jp": "リーさん、日本の生活はどうですか？もう慣れましたか？",
+        "kana": "りーさん、にほんのせいかつはどうですか？もうなれましたか？",
+        "es": "Li, ¿qué tal la vida en Japón? ¿Ya te has acostumbrado?"
+      },
+      {
+        "speaker": "リー",
+        "jp": "先週日本に来たばかりなので、まだ見るもの全部が新鮮で驚いています。",
+        "kana": "せんしゅうにほんにきたばかりなので、まだみるものぜんぶがしんせんでおどろいています。",
+        "es": "Como acabo de llegar a Japón la semana pasada, todo lo que veo es nuevo y me asombra."
+      },
+      {
+        "speaker": "佐藤",
+        "jp": "新しい課長はどう？優しそうな方でしょう？",
+        "kana": "あたらしいかちょうはどう？やさしかなかたでしょう？",
+        "es": "¿Y qué tal el nuevo jefe de sección? Parece una persona muy amable, ¿verdad?"
+      },
+      {
+        "speaker": "リー",
+        "jp": "はい、とても真面目そうで、話しやすそうな方で安心しました。",
+        "kana": "はい、とてもまじめそうで、はなしやすかなかたであんしんしました。",
+        "es": "Sí, parece muy responsable y alguien accesible para hablar, así que me tranquilicé."
+      }
+    ],
+    "grammar_notes": "〜たばかり (pasado inmediato subjetivo) y 〜そう (conjetura por apariencia)."
+  },
+  {
+    "id": "iro_diag_8",
+    "dialogue_num": 8,
+    "title_jp": "アレルギーがあるので、食べられないんです",
+    "title_es": "Declarando alergias alimentarias en el restaurante",
+    "level": "N4",
+    "topic": "Vida Cotidiana",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 21,
+    "situation": "Un cliente consulta los ingredientes de un plato tradicional con el mesero.",
+    "characters": [
+      "客",
+      "店員"
+    ],
+    "dialogue": [
+      {
+        "speaker": "客",
+        "jp": "すみません、この定食の小鉢には卵が入っていますか？",
+        "kana": "すみません、このていしょくのこばちにはたまごがはいっていますか？",
+        "es": "Disculpe, ¿este plato pequeño del menú incluye huevo?"
+      },
+      {
+        "speaker": "店員",
+        "jp": "はい、茶碗蒸しですので卵を使っております。",
+        "kana": "はい、ちゃわんむしですのでたまごをつかっております。",
+        "es": "Sí, es chawanmushi, por lo que usamos huevo."
+      },
+      {
+        "speaker": "客",
+        "jp": "実は卵アレルギーがあるので、卵が食べられないんです。何か別のものに変えてもらえますか？",
+        "kana": "じつはたまごあれるぎーがあるので、たまごがたべられないんです。なにかべつのものにかえてもらえますか？",
+        "es": "En realidad tengo alergia al huevo y no puedo comerlo. ¿Podría cambiármelo por otra cosa?"
+      },
+      {
+        "speaker": "店員",
+        "jp": "かしこまりました。冷奴に変更いたしますね。",
+        "kana": "かしこまりました。ひややっこにへんこういたしますね。",
+        "es": "Comprendido perfectamente. Se lo cambiaremos por tofu frío."
+      }
+    ],
+    "grammar_notes": "〜ので como justificación médica respetuosa y 食べられない como forma potencial negativa."
+  },
+  {
+    "id": "iro_diag_9",
+    "dialogue_num": 9,
+    "title_jp": "早く予約したほうがいいですよ",
+    "title_es": "Consejos para reservar alojamiento y trenes de puente festivo",
+    "level": "N4",
+    "topic": "Ciudad y Servicios",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 22,
+    "situation": "Un colega aconseja sobre cómo viajar durante la temporada alta de otoño.",
+    "characters": [
+      "同僚",
+      "アンナ"
+    ],
+    "dialogue": [
+      {
+        "speaker": "アンナ",
+        "jp": "来月の連休に京都へ行こうと思っているんです。",
+        "kana": "らいげつのれんきゅうにきょうとへいこうとおもっているんです。",
+        "es": "Pienso ir a Kioto durante los festivos del próximo mes."
+      },
+      {
+        "speaker": "同僚",
+        "jp": "紅葉の季節の京都は最高だよ！でもすごく混むから、新幹線と宿は早く予約したほうがいいよ。",
+        "kana": "こうようのきせつのきょうとはさいこうだよ！でもすごくこむから、しんかんせんとやどははやくよやくしたほうがいいよ。",
+        "es": "¡Kioto en época de follaje otoñal es lo máximo! Pero se llena muchísimo, así que es mejor que reserves pronto el Shinkansen y el hotel."
+      },
+      {
+        "speaker": "アンナ",
+        "jp": "そうなんですね。どんなエリアに泊まったらいいですか？",
+        "kana": "そうなんですね。どんなえりあにとまったらいいですか？",
+        "es": "Vaya, conque es así. ¿En qué zona me aconsejas hospedarme?"
+      },
+      {
+        "speaker": "同僚",
+        "jp": "地下鉄の駅に近い烏丸や河原町のあたりが便利でおすすめだよ。",
+        "kana": "ちかてつのえきにちかいからすまやかわらまちのあたりがべんりでおすすめだよ。",
+        "es": "Cerca de las estaciones de Karasuma o Kawaramachi es muy cómodo y te lo recomiendo."
+      }
+    ],
+    "grammar_notes": "〜たほうがいい para dar un consejo contundente y 〜たらいいですか para pedir orientación."
+  },
+  {
+    "id": "iro_diag_10",
+    "dialogue_num": 10,
+    "title_jp": "雨が降ったら、どうしますか？",
+    "title_es": "Condicionales e imprevistos en festivales comunitarios",
+    "level": "N4",
+    "topic": "Ocio y Sociedad",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 23,
+    "situation": "Voluntarios organizan un festival al aire libre coordinando contingencias por mal tiempo.",
+    "characters": [
+      "ボランティア",
+      "責任者"
+    ],
+    "dialogue": [
+      {
+        "speaker": "ボランティア",
+        "jp": "リーダー、もし明日雨が降ったら、屋外のステージはどうなりますか？",
+        "kana": "りーだー、もしあしたあめがふったら、おくがいのすてーじはどうなりますか？",
+        "es": "Líder, si mañana llueve, ¿qué pasará con el escenario al aire libre?"
+      },
+      {
+        "speaker": "責任者",
+        "jp": "雨が降ったら、隣の公民館の大ホールに移動することになっています。",
+        "kana": "あめがふったら、となりのこうみんかんのだいほーるにいどうすることになっています。",
+        "es": "Si llueve, está establecido que nos trasladaremos al auditorio del centro cívico contiguo."
+      },
+      {
+        "speaker": "ボランティア",
+        "jp": "分かりました。屋台がどこに設置されるか、地図で確認できますか？",
+        "kana": "わかりました。やたいがどこにせっちされるか、ちずでかくにんできますか？",
+        "es": "Entendido. ¿Podemos confirmar en el mapa dónde se ubicarán los puestos?"
+      },
+      {
+        "speaker": "責任者",
+        "jp": "受付の掲示板に貼ってありますので、見ておいてください。",
+        "kana": "うけつけのけいじばんにはってありますので、みておいてください。",
+        "es": "Está pegado en el tablón de anuncios de recepción, así que échale un vistazo."
+      }
+    ],
+    "grammar_notes": "Condicional 〜たら y pregunta indirecta incrustada どこにあるか."
+  },
+  {
+    "id": "iro_diag_11",
+    "dialogue_num": 11,
+    "title_jp": "この掃除機は軽くて動かしやすいですよ",
+    "title_es": "Comparando electrodomésticos y solicitando rebaja",
+    "level": "N4",
+    "topic": "Ciudad y Servicios",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 25,
+    "situation": "En una tienda de electrónica, un comprador busca una aspiradora ergonómica.",
+    "characters": [
+      "客",
+      "店員"
+    ],
+    "dialogue": [
+      {
+        "speaker": "客",
+        "jp": "コードレスの掃除機を探しているんですが、おすすめはありますか？",
+        "kana": "こーどれすのそうじきをさがしているんですが、おすすめはありますか？",
+        "es": "Busco una aspiradora sin cable, ¿tiene alguna recomendación?"
+      },
+      {
+        "speaker": "店員",
+        "jp": "こちらの最新モデルはいかがですか？本体がとても軽くて動かしやすいですよ。",
+        "kana": "こちらのさいしんもでるはいかがですか？ほんたいがとてもかるくてうごかしやすいですよ。",
+        "es": "¿Qué tal este modelo más reciente? El cuerpo es muy ligero y fácil de mover."
+      },
+      {
+        "speaker": "客",
+        "jp": "音も静かですね。ただ、少し予算オーバーで…これ、少し安くなりますか？",
+        "kana": "おともしずかですね。ただ、すこしよさんおーばーで…これ、すこしやすくなりますか？",
+        "es": "El ruido también es silencioso. Pero se pasa un poco de mi presupuesto... ¿Se puede rebajar un poco?"
+      },
+      {
+        "speaker": "店員",
+        "jp": "本日ご購入いただけるなら、ポイントを10％お付けできますよ！",
+        "kana": "ほんじつごこうにゅういただけるなら、ぽいんとをじゅっぱーせんと おつけできますよ！",
+        "es": "Si la adquiere el día de hoy, ¡podemos abonarle un 10% en puntos!"
+      }
+    ],
+    "grammar_notes": "Sufijo 〜やすい (facilidad operativa) y fórmula de regateo 安くなりますか."
+  },
+  {
+    "id": "iro_diag_12",
+    "dialogue_num": 12,
+    "title_jp": "前髪を短く切ってもらえますか？",
+    "title_es": "Pidiendo un corte de pelo a medida en la peluquería",
+    "level": "N4",
+    "topic": "Trabajo y Normas",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 26,
+    "situation": "En un salón de estética japonés, el cliente detalla el peinado que desea.",
+    "characters": [
+      "客",
+      "美容師"
+    ],
+    "dialogue": [
+      {
+        "speaker": "美容師",
+        "jp": "本日はどのような髪型にいたしましょうか？",
+        "kana": "ほんじつはどのようなかみがたにいたしましょうか？",
+        "es": "¿Qué estilo de peinado desea que le hagamos hoy?"
+      },
+      {
+        "speaker": "客",
+        "jp": "全体的に長さを揃えて、前髪は眉毛が見えるくらい短く切ってもらえますか？",
+        "kana": "ぜんたいてきにながさをそろえて、まえがみはまゆげがみえるくらいみじかくきってもらえますか？",
+        "es": "¿Podría emparejarme el largo en general y cortarme el flequillo lo bastante corto para que se vean las cejas?"
+      },
+      {
+        "speaker": "美容師",
+        "jp": "かしこまりました。サイドのボリュームはいかがなさいますか？",
+        "kana": "かしこまりました。さいどのぼりゅーむはいかがなさいますか？",
+        "es": "Entendido. ¿Qué hacemos con el volumen de los laterales?"
+      },
+      {
+        "speaker": "客",
+        "jp": "重くなっているので、少しすいて軽くしてもらいたいです。",
+        "kana": "おもくなっているので、すこしすいてかるくしてもらいたいです。",
+        "es": "Se siente pesado, así que me gustaría que lo descargara un poco para que quede liviano."
+      }
+    ],
+    "grammar_notes": "Petición de favor técnico con 〜てもらえますか y adjetivo en adverbio 短く."
+  },
+  {
+    "id": "iro_diag_13",
+    "dialogue_num": 13,
+    "title_jp": "地震が来ても、慌てないでください",
+    "title_es": "Instrucciones de seguridad y simulacro de terremoto",
+    "level": "N4",
+    "topic": "Trabajo y Normas",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 27,
+    "situation": "Instrucciones de brigadistas durante un simulacro de evacuación ante seísmos.",
+    "characters": [
+      "指導員",
+      "従業員"
+    ],
+    "dialogue": [
+      {
+        "speaker": "指導員",
+        "jp": "ただ今から防災訓練を始めます。大きな揺れが来ても、決して慌てないでください。",
+        "kana": "ただいまからぼうさいくんれんをはじめます。おおきなゆれがきても、けっしてあわてないでください。",
+        "es": "Daremos inicio al simulacro de prevención de desastres. Aunque venga una gran sacudida, bajo ningún concepto entren en pánico."
+      },
+      {
+        "speaker": "従業員",
+        "jp": "揺れている最中に火を消しに行ってもいいですか？",
+        "kana": "ゆれているさいちゅうにひをけしにいってもいいですか？",
+        "es": "¿Se puede ir a apagar el fuego en medio del temblor?"
+      },
+      {
+        "speaker": "指導員",
+        "jp": "いいえ、まずは机の下に潜って頭を守るのが最優先です。揺れが収まってから火を消してください。",
+        "kana": "いいえ、まずはつくえのしたにもぐってあたまをまもるのがさいゆうせんです。ゆれがおさまってからひをけしてください。",
+        "es": "No, primero meterse bajo la mesa y protegerse la cabeza es la máxima prioridad. Apaguen el fuego después de que cese el temblor."
+      }
+    ],
+    "grammar_notes": "Concesivo 〜ても (来ても) y orden de autoprotección 〜ないでください."
+  },
+  {
+    "id": "iro_diag_14",
+    "dialogue_num": 14,
+    "title_jp": "将来、自分の会社を作ろうと思っています",
+    "title_es": "Discurso emotivo en la fiesta de despedida",
+    "level": "N4",
+    "topic": "Ocio y Sociedad",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 28,
+    "situation": "Un empleado agradece a sus colegas en su cena de despedida anunciando sus proyectos futuros.",
+    "characters": [
+      "カルロス",
+      "部長"
+    ],
+    "dialogue": [
+      {
+        "speaker": "部長",
+        "jp": "カルロスさん、三年間の勤務本当にお疲れ様でした。一言ご挨拶をお願いします。",
+        "kana": "かるろすさん、さんねんかんのきんむほんとうにおつかれさまでした。ひとことごあいさつをおねがいします。",
+        "es": "Carlos, muchas gracias por tu arduo trabajo en estos tres años. Por favor, dedícanos unas palabras."
+      },
+      {
+        "speaker": "カルロス",
+        "jp": "皆様には本当に親切にしていただき、心から感謝しております。日本語も前よりずっと話せるようになりました。",
+        "kana": "みなさまにはほんとうにしんせつにしていただき、こころからかんしゃしております。にほんごもまえよりずっぱなせるようになりました。",
+        "es": "Les agradezco de todo corazón por haberme tratado con tanta amabilidad. Ahora puedo hablar japonés mucho mejor que antes."
+      },
+      {
+        "speaker": "カルロス",
+        "jp": "今後はこの経験を活かし、将来は自分の貿易会社を作ろうと思っています！",
+        "kana": "こんごはこのけいけんをいかし、しょうらいはじぶんのぼうえきかいしゃをつくろうとおもっています！",
+        "es": "¡En adelante aprovecharé esta experiencia y en el futuro pienso crear mi propia empresa de comercio exterior!"
+      }
+    ],
+    "grammar_notes": "Evolución con 〜ようになる y propósito deliberado con la forma volitiva + と思っている."
+  },
+  {
+    "id": "iro_diag_15",
+    "dialogue_num": 15,
+    "title_jp": "推し活って何でしたっけ？",
+    "title_es": "Tertulia informal sobre cultura pop y cine con 〜って",
+    "level": "N3",
+    "topic": "Ocio y Sociedad",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 29,
+    "situation": "Dos amigos conversan en un café sobre las tendencias y hobbies del momento.",
+    "characters": [
+      "ケンタ",
+      "アリス"
+    ],
+    "dialogue": [
+      {
+        "speaker": "アリス",
+        "jp": "最近よく耳にする「推し活」って、具体的には何のことでしたっけ？",
+        "kana": "さいきんよくみみにする「おしかつ」って、ぐたいてきにはなんのことでしたっけ？",
+        "es": "Eso de 'oshikatsu' que se oye tanto últimamente, ¿qué era en concreto?"
+      },
+      {
+        "speaker": "ケンタ",
+        "jp": "自分が熱心に応援しているアイドルやアニメキャラを推す活動全般のことだよ。ライブに行ったりグッズを買ったりするんだ。",
+        "kana": "じぶんがねっしんにおうえんしているあいどるやあにめきゃらをおすかつどうぜんぱんのことだよ。らいぶにいったりぐっずをかったりするんだ。",
+        "es": "Se refiere a todas las actividades de apoyo apasionado a tu idol o personaje de anime favorito: ir a conciertos, comprar merchandising..."
+      },
+      {
+        "speaker": "アリス",
+        "jp": "なるほど！私も大好きなアニメ映画を何度も映画館で観るのが一番好きだから、立派な推し活ですね。",
+        "kana": "なるほど！わたしもだいすきなあにめえいがをなんどもえいがかんでみるのがいちばんすきだから、りっぱなおしかつですね。",
+        "es": "¡Entendido! Como a mí lo que más me gusta es ver mi película favorita de anime una y otra vez en el cine, ¡también es auténtico oshikatsu!"
+      }
+    ],
+    "grammar_notes": "Definición coloquial con 〜って, recuerdo con 〜でしたっけ y superlativo con 〜のが一番好き."
+  },
+  {
+    "id": "iro_diag_16",
+    "dialogue_num": 16,
+    "title_jp": "エアコンが故障したみたいなんですが…",
+    "title_es": "Reportando una avería al administrador del edificio",
+    "level": "N3",
+    "topic": "Vida Cotidiana",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 30,
+    "situation": "Un inquilino llama por teléfono a la empresa administradora para pedir una reparación.",
+    "characters": [
+      "入居者",
+      "管理会社"
+    ],
+    "dialogue": [
+      {
+        "speaker": "入居者",
+        "jp": "お世話になっております。302号室のキムですが、リビングのエアコンの調子が悪いみたいなんです。",
+        "kana": "おせわになっております。さんまるにごうしつのきむですが、りびんぐのえあこんのちょうしがわるいみたいなんです。",
+        "es": "Buenos días. Soy Kim de la habitación 302; parece que el aire acondicionado del salón no funciona bien."
+      },
+      {
+        "speaker": "管理会社",
+        "jp": "キム様、お電話ありがとうございます。どのような状態でしょうか？",
+        "kana": "きむさま、おでんわありがとうございます。どのようなじょうたいでしょうか？",
+        "es": "Señor Kim, gracias por llamar. ¿En qué estado se encuentra?"
+      },
+      {
+        "speaker": "入居者",
+        "jp": "電源は入るのですが、冷たい風が全く出なくて部屋が冷えないんです。修理業者を手配していただけないでしょうか？",
+        "kana": "でんげんははいるのですが、つめたいかぜがまったくでなくてへやがひえないんです。しゅうりぎょうしゃをてはいしていただけないでしょうか？",
+        "es": "Enciende, pero no sale nada de aire frío y la habitación no se enfría. ¿Sería tan amable de enviarme a un técnico de reparaciones?"
+      },
+      {
+        "speaker": "管理会社",
+        "jp": "ご不便をおかけして申し訳ございません。明日の午後に手配いたします。",
+        "kana": "ごふべんをおかけしてもうしわけございません。あすのごごにてはいいたします。",
+        "es": "Lamentamos mucho las molestias. Le enviaremos un técnico mañana por la tarde."
+      }
+    ],
+    "grammar_notes": "Deducción objetiva con 〜みたい y petición de suma deferencia 〜ていただけないでしょうか."
+  },
+  {
+    "id": "iro_diag_17",
+    "dialogue_num": 17,
+    "title_jp": "自炊するように気をつけています",
+    "title_es": "Conversando sobre nutrición equilibrada y cocina casera",
+    "level": "N3",
+    "topic": "Vida Cotidiana",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 31,
+    "situation": "Dos colegas almuerzan juntos hablando de hábitos de salud.",
+    "characters": [
+      "同僚",
+      "マルシア"
+    ],
+    "dialogue": [
+      {
+        "speaker": "同僚",
+        "jp": "マルシアさん、いつも美味しそうなお弁当を作ってきてるね！",
+        "kana": "まるしあさん、いつもおいしそうなおべんとうをつくってきてるね！",
+        "es": "¡Marcia, siempre traes un bento que se ve delicioso!"
+      },
+      {
+        "speaker": "マルシア",
+        "jp": "ありがとうございます。外食が続くと野菜不足になるので、毎日自炊するようにしているんです。",
+        "kana": "ありがとうございます。がいしょくがつづくとやさいぶそくになるので、まいにちじすいするようにしているんです。",
+        "es": "Gracias. Como comer fuera seguido provoca falta de verduras, procuro cocinar en casa todos los días."
+      },
+      {
+        "speaker": "同僚",
+        "jp": "えらいなあ。何か気をつけていることとかある？",
+        "kana": "えらいなあ。なにかきをつけていることとかある？",
+        "es": "Qué admirable. ¿Hay algo en lo que prestes especial atención?"
+      },
+      {
+        "speaker": "マルシア",
+        "jp": "塩分と油を控えめにして、具だくさんのお味噌汁を必ず飲むようにしています。",
+        "kana": "えんぶんとあぶらをひかえめにして、ぐだくさんのおみそしるをかならずのむようにしています。",
+        "es": "Modero la sal y el aceite, y me esfuerzo por tomar siempre sopa de miso con abundantes ingredientes."
+      }
+    ],
+    "grammar_notes": "Formulación de hábitos saludables y esfuerzo consciente con 〜ようにしている."
+  },
+  {
+    "id": "iro_diag_18",
+    "dialogue_num": 18,
+    "title_jp": "隣に座ってもかまいませんか？",
+    "title_es": "Cortesía en espacios públicos y solicitud de permiso",
+    "level": "N3",
+    "topic": "Vida Cotidiana",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 32,
+    "situation": "En una biblioteca concurrida, un estudiante pide permiso para ocupar un asiento.",
+    "characters": [
+      "学生A",
+      "学生B"
+    ],
+    "dialogue": [
+      {
+        "speaker": "学生A",
+        "jp": "恐れ入ります、こちらの隣の席は空いていますか？座ってもかまいませんか？",
+        "kana": "おそれいります、こちらのとなりのせきはあいていますか？すわってもかまいませんか？",
+        "es": "Disculpe, ¿este asiento de al lado está libre? ¿Le importaría si me siento?"
+      },
+      {
+        "speaker": "学生B",
+        "jp": "あ、どうぞ。荷物をどけますね。",
+        "kana": "あ、どうぞ。にもつをどけますね。",
+        "es": "Ah, adelante. Quito mis cosas."
+      },
+      {
+        "speaker": "学生A",
+        "jp": "すみません、お気遣いありがとうございます。パソコンの充電器を使っても差し支えないでしょうか？",
+        "kana": "すみません、おきづかいありがとうございます。ぱそこんのじゅうでんきをつかってもさしつかえないでしょうか？",
+        "es": "Muchas gracias por su gentileza. ¿Habría algún inconveniente si uso el cargador del portátil?"
+      },
+      {
+        "speaker": "学生B",
+        "jp": "ええ、コンセントは共用ですので遠慮なくお使いください。",
+        "kana": "ええ、こんせんとはきょうようですのでえんりょなくおつかいください。",
+        "es": "Claro, el enchufe es compartido, úselo sin ningún reparo."
+      }
+    ],
+    "grammar_notes": "Permiso cortés con 〜てもかまわない y la fórmula de confianza 遠慮なく."
+  },
+  {
+    "id": "iro_diag_19",
+    "dialogue_num": 19,
+    "title_jp": "救急車を呼んでほしいんです！",
+    "title_es": "Llamando a emergencias y prestando auxilio ciudadano",
+    "level": "N3",
+    "topic": "Trabajo y Normas",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 34,
+    "situation": "Una persona presencia una caída de bicicleta en la calle y pide socorro.",
+    "characters": [
+      "目撃者",
+      "通行人"
+    ],
+    "dialogue": [
+      {
+        "speaker": "目撃者",
+        "jp": "すみません！そこの方、助けてください！お年寄りが転倒して頭から血を流しています！",
+        "kana": "すみません！そこのかた、たすけてください！おとしよりがてんとうしてあたまからちをながしています！",
+        "es": "¡Disculpe! ¡Usted el de ahí, ayúdeme por favor! ¡Un anciano se cayó y está sangrando de la cabeza!"
+      },
+      {
+        "speaker": "通行人",
+        "jp": "大変だ！意識はありますか？",
+        "kana": "たいへんだ！いしきはありますか？",
+        "es": "¡Dios mío! ¿Está consciente?"
+      },
+      {
+        "speaker": "目撃者",
+        "jp": "呼びかけに応じません！すぐに119番に電話して救急車を呼んでほしいんです！",
+        "kana": "よびかけにおうじません！すぐにいちいちきゅうばんにでんわしてきゅうきゅうしゃをよんでほしいんです！",
+        "es": "¡No responde a las llamadas! ¡Necesito que llame al 119 y pida una ambulancia inmediatamente!"
+      },
+      {
+        "speaker": "通行人",
+        "jp": "分かりました！私が救急車を呼びますので、あなたは体を毛布で温めてあげてください！",
+        "kana": "わかりました！わたしがきゅうきゅうしゃをよびますので、あなたからはだをもーふであたためてあげてください！",
+        "es": "¡Entendido! ¡Yo pido la ambulancia, tú mantén su cuerpo caliente con una manta!"
+      }
+    ],
+    "grammar_notes": "Solicitud perentoria de acción urgente hacia un tercero: Verbo [Forma て] + ほしい."
+  },
+  {
+    "id": "iro_diag_20",
+    "dialogue_num": 20,
+    "title_jp": "心よりお祝い申し上げます",
+    "title_es": "Felicitación nupcial solemne y consulta personal",
+    "level": "N3",
+    "topic": "Ocio y Sociedad",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 35,
+    "situation": "En la recepción de una boda, un invitado felicita a los novios y charla con amigos.",
+    "characters": [
+      "招待客",
+      "新郎"
+    ],
+    "dialogue": [
+      {
+        "speaker": "招待客",
+        "jp": "田中さん、本日はご結婚誠におめでとうございます。心よりお祝い申し上げます。",
+        "kana": "たなかさん、ほんじつはごけっこんまことにおめでとうございます。こころよりおいわいもうしあげます。",
+        "es": "Tanaka, muchas felicidades de verdad por tu boda el día de hoy. Te expreso mis más sinceras felicitaciones de todo corazón."
+      },
+      {
+        "speaker": "新郎",
+        "jp": "ありがとうございます！遠くから来てくださって本当に感謝しています。",
+        "kana": "ありがとうございます！とおくからきてくださってほんとうにかんしゃしています。",
+        "es": "¡Muchas gracias! Te agradezco enormemente por haber venido desde tan lejos."
+      },
+      {
+        "speaker": "招待客",
+        "jp": "お二人の末永いお幸せをお祈りしております。素晴らしい披露宴ですね！",
+        "kana": "おふたりのすえながいおしあわせをおいのりしております。すばらしいひろうえんですね！",
+        "es": "Ruego por la felicidad eterna de ambos. ¡Es un banquete nupcial verdaderamente maravilloso!"
+      }
+    ],
+    "grammar_notes": "Cortesía honorífica solemne en ritos vitales (冠婚葬祭) con お祝い申し上げます."
+  },
+  {
+    "id": "iro_diag_21",
+    "dialogue_num": 21,
+    "title_jp": "桜島を見てみたいんです",
+    "title_es": "Planificando una ruta por Kyushu y deseos de viaje",
+    "level": "N3",
+    "topic": "Ciudad y Servicios",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 36,
+    "situation": "Dos amigos apasionados por el turismo planifican una ruta por el sur de Japón.",
+    "characters": [
+      "ユキ",
+      "ケン"
+    ],
+    "dialogue": [
+      {
+        "speaker": "ユキ",
+        "jp": "次の連休に九州に行こうと思っているんだけど、どこがおすすめ？",
+        "kana": "つぎのれんきゅうにきゅうしゅうにいこうとおもっているんだけど、どこがおすすめ？",
+        "es": "Pienso ir a Kyushu el próximo puente festivo, ¿qué lugar me recomiendas?"
+      },
+      {
+        "speaker": "ケン",
+        "jp": "鹿児島が最高だよ！フェリーに乗って目の前から噴煙を上げる桜島を見てみたいと思わない？",
+        "kana": "かごしまがさいこうだよ！ふぇりーにのってめのまえからふんえんをあげるさくらじまをみてみたいとおもわない？",
+        "es": "¡Kagoshima es lo máximo! ¿No te gustaría probar a subir al ferry y contemplar ante tus ojos la humareda del Sakurajima?"
+      },
+      {
+        "speaker": "ユキ",
+        "jp": "ぜひ見てみたい！名物の黒豚しゃぶしゃぶも味わってみたいわ。",
+        "kana": "ぜひみてみたい！めいぶつのくろぶたしゃぶしゃぶもあじわってみたいわ。",
+        "es": "¡Sin falta me gustaría probarlo! También quiero probar el famoso shabu-shabu de cerdo negro local."
+      }
+    ],
+    "grammar_notes": "Deseo vivencial en primera persona con 〜てみたい y vocabulario de geografía regional."
+  },
+  {
+    "id": "iro_diag_22",
+    "dialogue_num": 22,
+    "title_jp": "こちらの部署で働かせていただければ幸いです",
+    "title_es": "Entrevista formal de trabajo con Keigo corporativo",
+    "level": "N3",
+    "topic": "Trabajo y Normas",
+    "series": "Irodori (Fundación Japón)",
+    "related_step": 37,
+    "situation": "Un candidato extranjero defiende sus aptitudes en una entrevista de selección.",
+    "characters": [
+      "面接官",
+      "応募者"
+    ],
+    "dialogue": [
+      {
+        "speaker": "面接官",
+        "jp": "本日は弊社の面接にお越しいただきありがとうございます。志望動機をお聞かせいただけますか？",
+        "kana": "ほんじつはへいしゃのめんせつにおこしいただきありがとうございます。しぼうどうきをおきかせいただけますか？",
+        "es": "Muchas gracias por asistir hoy a nuestra entrevista. ¿Podría exponernos su motivación para postularse?"
+      },
+      {
+        "speaker": "応募者",
+        "jp": "はい。母国での物流業務の手順と日本での語学力を活かし、貴社の国際事業に貢献させていただければ幸いです。",
+        "kana": "はい。ぼこくでのぶつりゅうぎょうむのてじゅんと にほんでのごがくりょくをいかし、きしゃのこくさいじぎょうにこうけんさせていただければさいわいです。",
+        "es": "Sí. Aprovechando los procedimientos de logística de mi país y mi dominio del idioma en Japón, sería un gran honor si me permiten contribuir a los proyectos internacionales de su distinguida empresa."
+      },
+      {
+        "speaker": "面接官",
+        "jp": "素晴らしいですね。チーム内での「ほうれんそう（報連相）」も重視できますか？",
+        "kana": "すばらしいですね。ちーむないでの「ほうれんそう」もじゅうしできますか？",
+        "es": "Magnífico. ¿Es capaz también de priorizar el principio de 'Hou-Ren-So' (informar, comunicar y consultar) en equipo?"
+      },
+      {
+        "speaker": "応募者",
+        "jp": "はい、日々の進捗について小まめに報告と連絡を徹底いたします。",
+        "kana": "はい、ひびのしんちょくについてこまめにほうこくとれんらくをてっていいたします。",
+        "es": "Sí, me aseguraré de reportar y comunicar minuciosamente el avance diario."
+      }
+    ],
+    "grammar_notes": "Causativo humilde 貢献させていただければ幸いです y Keigo corporativo (貴社, 弊社)."
+  }
+]

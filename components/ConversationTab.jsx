@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { 
   Volume2, 
   Play, 
@@ -32,7 +33,9 @@ import {
   Calendar,
   Tag,
   PenTool,
-  Info
+  Info,
+  Search,
+  Filter
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { dataStore } from '../lib/data';
@@ -63,6 +66,7 @@ export default function ConversationTab({
   appState, 
   onUpdateState,
   initialLesson = null,
+  initialDialogue = null,
   initialTab = 'dialogue',
   initialStatus = 'all',
   initialType = 'all',
@@ -78,9 +82,71 @@ export default function ConversationTab({
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
   const showConfirm = contextApp?.showConfirm || ((opts) => Promise.resolve(window.confirm(opts.message || opts.title)));
 
-  const [currentLessonNum, setCurrentLessonNum] = useState(initialLesson ? parseInt(initialLesson, 10) : 1);
+  const nhkLessons = dataStore.nhkLessons || [];
+  const irodoriDialogues = dataStore.irodoriDialogues || [];
+  const allExercises = dataStore.conversationExercises || [];
+  const savedConversations = appState?.savedConversations || [];
+  const completedConversations = appState?.completedConversations || {};
+
+  // Build unified dialogue list from Irodori and NHK World
+  const allDialogues = useMemo(() => {
+    const list = [];
+    // Irodori Dialogues (22)
+    irodoriDialogues.forEach(d => {
+      list.push({
+        id: d.id,
+        lessonNum: null,
+        dialogueNum: d.dialogue_num,
+        title_jp: d.title_jp,
+        title_es: d.title_es,
+        level: d.level || 'N5',
+        topic: d.topic || 'Vida Cotidiana',
+        series: d.series || 'Irodori (Fundación Japón)',
+        seriesKey: 'irodori',
+        related_step: d.related_step,
+        situation: d.situation,
+        characters: d.characters || [],
+        dialogue: d.dialogue || [],
+        grammar_notes: Array.isArray(d.grammar_notes) ? d.grammar_notes : [d.grammar_notes].filter(Boolean),
+        audio_url: null,
+        audio_local: null
+      });
+    });
+    // NHK Lessons (48)
+    nhkLessons.forEach(l => {
+      list.push({
+        id: `nhk_l_${l.lesson}`,
+        lessonNum: l.lesson,
+        dialogueNum: l.lesson,
+        title_jp: l.title_jp,
+        title_es: l.title_es,
+        level: l.level || 'N5',
+        topic: l.topic || 'General',
+        series: 'NHK World: Hablemos en Japonés',
+        seriesKey: 'nhk',
+        related_step: l.related_step || null,
+        situation: null,
+        characters: Array.from(new Set((l.dialogue || []).map(d => d.speaker))).filter(Boolean),
+        dialogue: l.dialogue || [],
+        grammar_notes: Array.isArray(l.grammar_notes) ? l.grammar_notes : [l.grammar_notes].filter(Boolean),
+        audio_url: l.audio_url || null,
+        audio_local: l.audio_local || null
+      });
+    });
+    return list;
+  }, [nhkLessons, irodoriDialogues]);
+
+  const [selectedDialogueId, setSelectedDialogueId] = useState(() => {
+    if (initialDialogue) return initialDialogue;
+    if (initialLesson) return `nhk_l_${initialLesson}`;
+    return 'iro_diag_1';
+  });
+
   const [activeSubTab, setActiveSubTab] = useState(initialTab || 'dialogue'); // 'dialogue' | 'roleplay' | 'saved' | 'practice'
+  const [seriesFilter, setSeriesFilter] = useState('all'); // 'all' | 'irodori' | 'nhk'
+  const [levelFilter, setLevelFilter] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
   const [statusFilter, setStatusFilter] = useState(initialStatus || 'all'); // 'all' | 'completed' | 'pending'
+  const [searchDialogueQuery, setSearchDialogueQuery] = useState('');
   
   // Exercise practice state
   const [filterType, setFilterType] = useState(initialType || 'all'); // 'all' | 'reply' | 'missing_word' | 'missing_kanji'
@@ -89,7 +155,7 @@ export default function ConversationTab({
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [exerciseStatusFilter, setExerciseStatusFilter] = useState('all'); // 'all' | 'pending' | 'completed'
 
-  // Shadowing / Ocultar Personaje state for NHK Lessons
+  // Shadowing / Ocultar Personaje state for active Dialogue
   const [mutedSpeaker, setMutedSpeaker] = useState('');
   const [revealedLineIndices, setRevealedLineIndices] = useState({});
 
@@ -101,10 +167,13 @@ export default function ConversationTab({
   // Modal for AI Conversation Generation
   const [isGenModalOpen, setIsGenModalOpen] = useState(false);
 
-  const updateParams = (newLesson, newTab, newStatus, newType) => {
+  const updateParams = (newDialogueId, newTab, newStatus, newType) => {
     if (onParamsChange) {
+      const targetId = newDialogueId !== undefined ? newDialogueId : selectedDialogueId;
+      const targetObj = allDialogues.find(d => d.id === targetId);
       onParamsChange({
-        lesson: newLesson !== undefined ? newLesson : currentLessonNum,
+        dialogue: targetId,
+        lesson: targetObj?.lessonNum || undefined,
         tab: newTab !== undefined ? newTab : activeSubTab,
         status: newStatus !== undefined ? newStatus : statusFilter,
         type: newType !== undefined ? newType : filterType
@@ -113,11 +182,13 @@ export default function ConversationTab({
   };
 
   useEffect(() => {
-    if (initialLesson) {
-      const parsed = parseInt(initialLesson, 10);
-      if (!isNaN(parsed) && parsed !== currentLessonNum) setCurrentLessonNum(parsed);
+    if (initialDialogue && allDialogues.some(d => d.id === initialDialogue)) {
+      setSelectedDialogueId(initialDialogue);
+    } else if (initialLesson) {
+      const match = allDialogues.find(d => d.lessonNum === parseInt(initialLesson, 10));
+      if (match) setSelectedDialogueId(match.id);
     }
-  }, [initialLesson]);
+  }, [initialDialogue, initialLesson, allDialogues]);
 
   useEffect(() => {
     if (initialTab && ['dialogue', 'roleplay', 'saved', 'practice'].includes(initialTab)) {
@@ -133,21 +204,28 @@ export default function ConversationTab({
     if (initialType) setFilterType(initialType);
   }, [initialType]);
 
-  const lessons = dataStore.nhkLessons || [];
-  const allExercises = dataStore.conversationExercises || [];
-  const savedConversations = appState?.savedConversations || [];
+  const isDialogueCompleted = (d) => {
+    if (!d) return false;
+    return !!(completedConversations[d.id] || (d.lessonNum && completedConversations[d.lessonNum]));
+  };
 
-  const completedConversations = appState?.completedConversations || {};
-  const completedCount = Object.values(completedConversations).filter(Boolean).length;
-  const progressPercent = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
+  const currentDialogue = useMemo(() => {
+    return allDialogues.find(d => d.id === selectedDialogueId) || allDialogues[0] || null;
+  }, [allDialogues, selectedDialogueId]);
 
-  const lesson = lessons.find(l => l.lesson === currentLessonNum) || lessons[0];
-  const isCurrentLessonCompleted = !!completedConversations[lesson?.lesson];
+  const isCurrentDialogueCompleted = isDialogueCompleted(currentDialogue);
 
-  // Distinct speakers in the current NHK lesson
-  const currentSpeakers = lesson?.dialogue 
-    ? Array.from(new Set(lesson.dialogue.map(d => d.speaker))).filter(Boolean)
-    : [];
+  const completedCount = allDialogues.filter(isDialogueCompleted).length;
+  const progressPercent = allDialogues.length > 0 ? Math.round((completedCount / allDialogues.length) * 100) : 0;
+
+  // Distinct speakers in the current dialogue
+  const currentSpeakers = useMemo(() => {
+    if (!currentDialogue) return [];
+    if (currentDialogue.characters && currentDialogue.characters.length > 0) {
+      return currentDialogue.characters;
+    }
+    return Array.from(new Set((currentDialogue.dialogue || []).map(d => d.speaker))).filter(Boolean);
+  }, [currentDialogue]);
 
   // Currently selected saved conversation
   const selectedSavedConv = savedConversations.find(c => c.id === selectedSavedConvId) || savedConversations[0] || null;
@@ -155,13 +233,30 @@ export default function ConversationTab({
     ? Array.from(new Set(selectedSavedConv.dialogue.map(d => d.speaker))).filter(Boolean)
     : [];
 
-  // Filter lessons by completion status if requested
-  const visibleLessons = lessons.filter(l => {
-    const isCompleted = !!completedConversations[l.lesson];
-    if (statusFilter === 'completed') return isCompleted;
-    if (statusFilter === 'pending') return !isCompleted;
-    return true;
-  });
+  // Filter dialogues
+  const visibleDialogues = useMemo(() => {
+    return allDialogues.filter(d => {
+      if (seriesFilter !== 'all' && d.seriesKey !== seriesFilter) return false;
+      if (levelFilter !== 'all' && d.level !== levelFilter) return false;
+
+      const isDone = isDialogueCompleted(d);
+      if (statusFilter === 'completed' && !isDone) return false;
+      if (statusFilter === 'pending' && isDone) return false;
+
+      if (searchDialogueQuery.trim()) {
+        const q = searchDialogueQuery.toLowerCase().trim();
+        const matchTitle = (d.title_jp || '').toLowerCase().includes(q) || (d.title_es || '').toLowerCase().includes(q);
+        const matchTopic = (d.topic || '').toLowerCase().includes(q);
+        const matchCharacters = (d.characters || []).some(c => c.toLowerCase().includes(q));
+        const matchDialogue = (d.dialogue || []).some(line => 
+          (line.jp || line.japanese || '').toLowerCase().includes(q) ||
+          (line.es || line.spanish || '').toLowerCase().includes(q)
+        );
+        if (!matchTitle && !matchTopic && !matchCharacters && !matchDialogue) return false;
+      }
+      return true;
+    });
+  }, [allDialogues, seriesFilter, levelFilter, statusFilter, searchDialogueQuery, completedConversations]);
 
   const convCompletedCount = allExercises.filter(ex => !!appState?.completedExercises?.[ex.id]).length;
   const convPendingCount = allExercises.length - convCompletedCount;
@@ -177,17 +272,20 @@ export default function ConversationTab({
 
   const currentExercise = filteredExercises[currentExIndex] || filteredExercises[0] || null;
 
-  const toggleLessonCompletion = (lessonNum) => {
-    if (!onUpdateState || !appState) return;
-    const isCompleted = !!completedConversations[lessonNum];
-    const newCompleted = {
-      ...completedConversations,
-      [lessonNum]: !isCompleted
-    };
-    
-    // Reward XP when newly completing a conversation
-    const xpBonus = !isCompleted ? 30 : 0;
-    
+  const toggleDialogueCompletion = (item) => {
+    if (!onUpdateState || !appState || !item) return;
+    const isDone = isDialogueCompleted(item);
+    const newCompleted = { ...completedConversations };
+
+    if (isDone) {
+      delete newCompleted[item.id];
+      if (item.lessonNum) delete newCompleted[item.lessonNum];
+    } else {
+      newCompleted[item.id] = true;
+      if (item.lessonNum) newCompleted[item.lessonNum] = true;
+    }
+
+    const xpBonus = !isDone ? 30 : 0;
     onUpdateState({
       ...appState,
       xp: (appState.xp || 0) + xpBonus,
@@ -268,10 +366,12 @@ export default function ConversationTab({
   };
 
   const handleJumpToNextPending = () => {
-    const nextPending = lessons.find(l => !completedConversations[l.lesson]);
+    const nextPending = allDialogues.find(d => !isDialogueCompleted(d));
     if (nextPending) {
-      setCurrentLessonNum(nextPending.lesson);
-      updateParams(nextPending.lesson, activeSubTab, statusFilter, filterType);
+      setSelectedDialogueId(nextPending.id);
+      setMutedSpeaker('');
+      setRevealedLineIndices({});
+      updateParams(nextPending.id, activeSubTab, statusFilter, filterType);
     }
   };
 
@@ -304,7 +404,7 @@ export default function ConversationTab({
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             <span>📻</span>
-            <span>Conversación NHK & Diálogos</span>
+            <span>Conversación, Diálogos Irodori & NHK</span>
           </h2>
           <button
             type="button"
@@ -328,16 +428,16 @@ export default function ConversationTab({
       {/* Main Navigation Subtabs + AI Generator Button */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '1px solid var(--border)', paddingBottom: 14, flexWrap: 'wrap', gap: 12 }}>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* Subtab 1: NHK Lessons */}
+          {/* Subtab 1: Unified Dialogues */}
           <button
             className={`btn ${activeSubTab === 'dialogue' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => {
               setActiveSubTab('dialogue');
-              updateParams(currentLessonNum, 'dialogue', statusFilter, filterType);
+              updateParams(selectedDialogueId, 'dialogue', statusFilter, filterType);
             }}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px', fontWeight: 700 }}
           >
-            <Radio size={18} /> Diálogos NHK ({lessons.length})
+            <Radio size={18} /> Diálogos y Conversaciones ({allDialogues.length})
           </button>
 
           {/* Subtab 2: AI Roleplay Mode */}
@@ -419,7 +519,7 @@ export default function ConversationTab({
       </div>
 
       {/* ========================================================================= */}
-      {/* SUBTAB 1: NHK LESSONS & DIALOGUES                                         */}
+      {/* SUBTAB 1: UNIFIED DIALOGUES LIBRARY (IRODORI & NHK WORLD)                 */}
       {/* ========================================================================= */}
       {activeSubTab === 'dialogue' && (
         <>
@@ -430,10 +530,10 @@ export default function ConversationTab({
                 <span style={{ fontSize: '1.2rem' }}>🎓</span>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-main)' }}>
-                    Progreso de Estudio: {completedCount} de {lessons.length} conversaciones completadas
+                    Progreso de Estudio: {completedCount} de {allDialogues.length} conversaciones completadas
                   </div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {progressPercent}% del curso completado · +30 XP por cada lección estudiada
+                    {progressPercent}% del catálogo completado · +30 XP por cada diálogo estudiado
                   </div>
                 </div>
               </div>
@@ -444,17 +544,17 @@ export default function ConversationTab({
                   className={`btn btn-sm ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
                   onClick={() => {
                     setStatusFilter('all');
-                    updateParams(currentLessonNum, activeSubTab, 'all', filterType);
+                    updateParams(selectedDialogueId, activeSubTab, 'all', filterType);
                   }}
                   style={{ fontSize: '0.8rem', padding: '4px 10px' }}
                 >
-                  Todas ({lessons.length})
+                  Todas ({allDialogues.length})
                 </button>
                 <button
                   className={`btn btn-sm ${statusFilter === 'completed' ? 'btn-primary' : 'btn-outline'}`}
                   onClick={() => {
                     setStatusFilter('completed');
-                    updateParams(currentLessonNum, activeSubTab, 'completed', filterType);
+                    updateParams(selectedDialogueId, activeSubTab, 'completed', filterType);
                   }}
                   style={{ fontSize: '0.8rem', padding: '4px 10px' }}
                 >
@@ -464,14 +564,14 @@ export default function ConversationTab({
                   className={`btn btn-sm ${statusFilter === 'pending' ? 'btn-primary' : 'btn-outline'}`}
                   onClick={() => {
                     setStatusFilter('pending');
-                    updateParams(currentLessonNum, activeSubTab, 'pending', filterType);
+                    updateParams(selectedDialogueId, activeSubTab, 'pending', filterType);
                   }}
                   style={{ fontSize: '0.8rem', padding: '4px 10px' }}
                 >
-                  Pendientes ({lessons.length - completedCount})
+                  Pendientes ({allDialogues.length - completedCount})
                 </button>
 
-                {completedCount < lessons.length && (
+                {completedCount < allDialogues.length && (
                   <button
                     className="btn btn-outline btn-sm"
                     onClick={handleJumpToNextPending}
@@ -497,25 +597,98 @@ export default function ConversationTab({
             </div>
           </div>
 
-          {/* Lesson Selector Bar */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', maxHeight: 150, overflowY: 'auto', padding: '4px 0' }}>
-            {visibleLessons.map(l => {
-              const isDone = !!completedConversations[l.lesson];
-              const isSelected = l.lesson === currentLessonNum;
+          {/* Filtering & Search Controls Bar */}
+          <div className="card" style={{ marginBottom: 18, padding: '14px 18px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+              {/* Collection Tabs */}
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginRight: 4 }}>Colección:</span>
+                <button
+                  className={`btn btn-sm ${seriesFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setSeriesFilter('all')}
+                  style={{ fontSize: '0.78rem', padding: '3px 10px' }}
+                >
+                  Todas ({allDialogues.length})
+                </button>
+                <button
+                  className={`btn btn-sm ${seriesFilter === 'irodori' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setSeriesFilter('irodori')}
+                  style={{ 
+                    fontSize: '0.78rem', 
+                    padding: '3px 10px', 
+                    borderColor: seriesFilter === 'irodori' ? '#2563eb' : undefined,
+                    background: seriesFilter === 'irodori' ? '#2563eb' : undefined,
+                    color: seriesFilter === 'irodori' ? '#fff' : undefined
+                  }}
+                >
+                  🏙️ Irodori Situacional ({irodoriDialogues.length})
+                </button>
+                <button
+                  className={`btn btn-sm ${seriesFilter === 'nhk' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setSeriesFilter('nhk')}
+                  style={{ 
+                    fontSize: '0.78rem', 
+                    padding: '3px 10px', 
+                    borderColor: seriesFilter === 'nhk' ? '#dc2626' : undefined,
+                    background: seriesFilter === 'nhk' ? '#dc2626' : undefined,
+                    color: seriesFilter === 'nhk' ? '#fff' : undefined
+                  }}
+                >
+                  📻 NHK World ({nhkLessons.length})
+                </button>
+              </div>
 
-              let btnClass = `btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`;
+              {/* JLPT Level Tabs */}
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginRight: 4 }}>Nivel:</span>
+                {['all', 'N5', 'N4', 'N3'].map(lvl => {
+                  const count = lvl === 'all' ? allDialogues.length : allDialogues.filter(d => d.level === lvl).length;
+                  const isSelected = levelFilter === lvl;
+                  return (
+                    <button
+                      key={lvl}
+                      className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                      onClick={() => setLevelFilter(lvl)}
+                      style={{ fontSize: '0.78rem', padding: '3px 10px' }}
+                    >
+                      {lvl === 'all' ? 'Todos' : lvl} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Search Bar */}
+              <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '4px 10px', gap: 6, minWidth: 200, flex: '1 1 200px', maxWidth: 300 }}>
+                <Search size={14} style={{ color: 'var(--text-muted)' }} />
+                <input
+                  type="text"
+                  placeholder="Buscar por tema, frase o personaje..."
+                  value={searchDialogueQuery}
+                  onChange={(e) => setSearchDialogueQuery(e.target.value)}
+                  style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.85rem', width: '100%' }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Dialogue Selector Pills */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', maxHeight: 180, overflowY: 'auto', padding: '4px 0' }}>
+            {visibleDialogues.map(d => {
+              const isDone = isDialogueCompleted(d);
+              const isSelected = d.id === selectedDialogueId;
+
               return (
                 <button
-                  key={l.lesson}
-                  className={btnClass}
+                  key={d.id}
+                  className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
                   onClick={() => {
-                    setCurrentLessonNum(l.lesson);
+                    setSelectedDialogueId(d.id);
                     setMutedSpeaker('');
                     setRevealedLineIndices({});
-                    updateParams(l.lesson, activeSubTab, statusFilter, filterType);
+                    updateParams(d.id, activeSubTab, statusFilter, filterType);
                   }}
                   style={{ 
-                    fontSize: '0.85rem', 
+                    fontSize: '0.82rem', 
                     whiteSpace: 'nowrap',
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -523,27 +696,65 @@ export default function ConversationTab({
                     borderColor: isDone ? (isSelected ? 'var(--primary)' : '#22c55e') : undefined,
                     background: isDone && !isSelected ? 'rgba(34, 197, 94, 0.08)' : undefined
                   }}
-                  title={isDone ? `Lección ${l.lesson} (Estudiada)` : `Lección ${l.lesson} (Pendiente)`}
+                  title={`${d.series} · Nivel ${d.level} · ${d.title_es}`}
                 >
                   {isDone ? (
-                    <CheckCircle2 size={14} color={isSelected ? '#fff' : '#22c55e'} />
+                    <CheckCircle2 size={13} color={isSelected ? '#fff' : '#22c55e'} />
                   ) : (
-                    <span style={{ opacity: 0.5 }}>○</span>
+                    <span style={{ opacity: 0.5, fontSize: '0.75rem' }}>○</span>
                   )}
-                  <span>L{l.lesson}: {l.title_es.split('.')[0].slice(0, 20)}...</span>
+                  <span style={{ 
+                    fontSize: '0.7rem', 
+                    fontWeight: 800, 
+                    padding: '1px 5px', 
+                    borderRadius: 3, 
+                    background: isSelected ? 'rgba(255, 255, 255, 0.25)' : (d.level === 'N5' ? 'rgba(16, 185, 129, 0.15)' : d.level === 'N4' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)'),
+                    color: isSelected ? '#fff' : (d.level === 'N5' ? '#059669' : d.level === 'N4' ? '#2563eb' : '#d97706')
+                  }}>
+                    {d.level}
+                  </span>
+                  <span>
+                    {d.seriesKey === 'irodori' ? `Irodori ${d.dialogueNum}` : `L${d.dialogueNum}`}: {d.title_jp.slice(0, 16)}...
+                  </span>
                 </button>
               );
             })}
           </div>
 
-          {lesson && (
-            <div className="card" style={{ marginBottom: 24, border: isCurrentLessonCompleted ? '1.5px solid rgba(34, 197, 94, 0.4)' : undefined }}>
+          {currentDialogue && (
+            <div className="card" style={{ marginBottom: 24, border: isCurrentDialogueCompleted ? '1.5px solid rgba(34, 197, 94, 0.4)' : undefined }}>
               {/* Top Info Bar */}
               <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    <span className="vocab-tag">Lección {lesson.lesson} de {lessons.length} · {lesson.topic}</span>
-                    {isCurrentLessonCompleted ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                    <span 
+                      style={{ 
+                        fontSize: '0.75rem', 
+                        fontWeight: 700, 
+                        padding: '3px 8px', 
+                        borderRadius: 4, 
+                        background: currentDialogue.seriesKey === 'irodori' ? 'rgba(59, 130, 246, 0.12)' : 'rgba(239, 68, 68, 0.12)', 
+                        color: currentDialogue.seriesKey === 'irodori' ? '#2563eb' : '#dc2626' 
+                      }}
+                    >
+                      {currentDialogue.series}
+                    </span>
+                    <span 
+                      style={{ 
+                        fontSize: '0.75rem', 
+                        fontWeight: 800, 
+                        padding: '3px 8px', 
+                        borderRadius: 4, 
+                        background: currentDialogue.level === 'N5' ? 'rgba(16, 185, 129, 0.15)' : currentDialogue.level === 'N4' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)', 
+                        color: currentDialogue.level === 'N5' ? '#059669' : currentDialogue.level === 'N4' ? '#2563eb' : '#d97706' 
+                      }}
+                    >
+                      {currentDialogue.level}
+                    </span>
+                    <span className="vocab-tag">
+                      {currentDialogue.topic}
+                    </span>
+                    {isCurrentDialogueCompleted ? (
                       <span 
                         style={{ 
                           display: 'inline-flex', 
@@ -580,11 +791,36 @@ export default function ConversationTab({
                   </div>
 
                   <h3 className="jp-text" style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--primary)', marginTop: 8 }}>
-                    {lesson.title_jp}
+                    {currentDialogue.title_jp}
                   </h3>
-                  <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                    🇪🇸 {lesson.title_es}
+                  <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                    🇪🇸 {currentDialogue.title_es}
                   </p>
+
+                  {/* Real-life Situation Context Box (Irodori) */}
+                  {currentDialogue.situation && (
+                    <div style={{ marginTop: 10, background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.25)', borderRadius: 'var(--radius-md)', padding: '10px 14px' }}>
+                      <strong style={{ color: '#2563eb', fontSize: '0.82rem' }}>🏙️ Situación real:</strong>
+                      <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: 'var(--text-main)', lineHeight: 1.4 }}>
+                        {currentDialogue.situation}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Related Curriculum Module Link */}
+                  {currentDialogue.related_step && (
+                    <div style={{ marginTop: 10 }}>
+                      <Link
+                        href={`/curriculum?step=${currentDialogue.related_step}`}
+                        className="btn btn-outline btn-xs"
+                        style={{ fontSize: '0.78rem', padding: '3px 10px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 5, borderColor: 'var(--primary)', color: 'var(--primary)', fontWeight: 600 }}
+                        title={`Ir al Módulo ${currentDialogue.related_step} del currículum`}
+                      >
+                        <span>🔗 Módulo {currentDialogue.related_step} del Currículum</span>
+                        <ArrowRight size={12} />
+                      </Link>
+                    </div>
+                  )}
                 </div>
 
                 {/* Header Action Buttons */}
@@ -592,19 +828,19 @@ export default function ConversationTab({
                   {/* Mark Completed Toggle Button */}
                   <button 
                     className="btn"
-                    onClick={() => toggleLessonCompletion(lesson.lesson)}
+                    onClick={() => toggleDialogueCompletion(currentDialogue)}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 8,
-                      background: isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.15)' : 'var(--bg-card)',
-                      color: isCurrentLessonCompleted ? '#15803d' : 'var(--text-main)',
-                      borderColor: isCurrentLessonCompleted ? '#22c55e' : 'var(--border)',
+                      background: isCurrentDialogueCompleted ? 'rgba(34, 197, 94, 0.15)' : 'var(--bg-card)',
+                      color: isCurrentDialogueCompleted ? '#15803d' : 'var(--text-main)',
+                      borderColor: isCurrentDialogueCompleted ? '#22c55e' : 'var(--border)',
                       fontWeight: 700
                     }}
-                    title={isCurrentLessonCompleted ? 'Hacer clic para marcar como pendiente' : 'Hacer clic para marcar como completada (+30 XP)'}
+                    title={isCurrentDialogueCompleted ? 'Hacer clic para marcar como pendiente' : 'Hacer clic para marcar como completada (+30 XP)'}
                   >
-                    {isCurrentLessonCompleted ? (
+                    {isCurrentDialogueCompleted ? (
                       <>
                         <CheckCircle2 size={17} color="#22c55e" /> Estudiada ✓
                       </>
@@ -617,17 +853,17 @@ export default function ConversationTab({
 
                   <button 
                     className="btn btn-primary"
-                    onClick={() => handlePlayFullDialogue(lesson.dialogue, mutedSpeaker)}
+                    onClick={() => handlePlayFullDialogue(currentDialogue.dialogue, mutedSpeaker)}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
                     title={mutedSpeaker ? `Reproducir solo la voz de tu contraparte (silenciando a ${mutedSpeaker})` : "Reproducir el diálogo línea a línea con voz neuronal"}
                   >
                     <Play size={16} /> {mutedSpeaker ? `Reproducir sin ${mutedSpeaker}` : 'Diálogo Línea a Línea'}
                   </button>
 
-                  {(lesson.audio_url || lesson.audio_local) && (
+                  {(currentDialogue.audio_url || currentDialogue.audio_local) && (
                     <button 
                       className="btn btn-outline"
-                      onClick={() => audioManager.playAudioUrl(lesson.audio_local || lesson.audio_url, `Radio NHK · Lección ${lesson.lesson}: ${lesson.title_jp}`)}
+                      onClick={() => audioManager.playAudioUrl(currentDialogue.audio_local || currentDialogue.audio_url, `Radio NHK · Lección ${currentDialogue.dialogueNum}: ${currentDialogue.title_jp}`)}
                       style={{ 
                         display: 'inline-flex', 
                         alignItems: 'center', 
@@ -692,7 +928,7 @@ export default function ConversationTab({
                           setRevealedLineIndices({});
                         } else {
                           const allRev = {};
-                          (lesson.dialogue || []).forEach((_, i) => { allRev[i] = true; });
+                          (currentDialogue.dialogue || []).forEach((_, i) => { allRev[i] = true; });
                           setRevealedLineIndices(allRev);
                         }
                       }}
@@ -754,7 +990,7 @@ export default function ConversationTab({
               </h4>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
-                {lesson.dialogue.map((d, idx) => {
+                {currentDialogue.dialogue.map((d, idx) => {
                   const lineJp = d.jp || d.japanese || '';
                   const lineEs = d.es || d.spanish || '';
                   const lineKana = d.furigana || d.kana || '';
@@ -912,16 +1148,18 @@ export default function ConversationTab({
               </div>
 
               {/* Grammar Notes in Spanish */}
-              <div style={{ background: 'var(--primary-bg)', borderLeft: '4px solid var(--primary)', padding: '18px 20px', borderRadius: '0 var(--radius-md) var(--radius-md) 0', marginBottom: 20 }}>
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--primary-dark)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <BookOpen size={18} /> Puntos Clave de Gramática y Uso Cotidiano:
-                </h4>
-                <ul style={{ listStyleType: 'disc', paddingLeft: 22, fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--text-main)' }}>
-                  {lesson.grammar_notes.map((note, idx) => (
-                    <li key={idx} style={{ marginBottom: 4 }}>{note}</li>
-                  ))}
-                </ul>
-              </div>
+              {currentDialogue.grammar_notes && currentDialogue.grammar_notes.length > 0 && (
+                <div style={{ background: 'var(--primary-bg)', borderLeft: '4px solid var(--primary)', padding: '18px 20px', borderRadius: '0 var(--radius-md) var(--radius-md) 0', marginBottom: 20 }}>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--primary-dark)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <BookOpen size={18} /> Puntos Clave de Gramática y Uso Cotidiano:
+                  </h4>
+                  <ul style={{ listStyleType: 'disc', paddingLeft: 22, fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--text-main)' }}>
+                    {currentDialogue.grammar_notes.map((note, idx) => (
+                      <li key={idx} style={{ marginBottom: 4 }}>{note}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Bottom Study Status & Next Lesson Callout */}
               <div 
@@ -931,20 +1169,20 @@ export default function ConversationTab({
                   alignItems: 'center', 
                   padding: '16px 20px', 
                   borderRadius: 'var(--radius-md)',
-                  background: isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.08)' : 'var(--bg-main)',
-                  border: `1px solid ${isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.25)' : 'var(--border)'}`,
+                  background: isCurrentDialogueCompleted ? 'rgba(34, 197, 94, 0.08)' : 'var(--bg-main)',
+                  border: `1px solid ${isCurrentDialogueCompleted ? 'rgba(34, 197, 94, 0.25)' : 'var(--border)'}`,
                   flexWrap: 'wrap',
                   gap: 12
                 }}
               >
                 <div>
-                  <div style={{ fontWeight: 700, color: isCurrentLessonCompleted ? '#15803d' : 'var(--text-main)', fontSize: '0.95rem' }}>
-                    {isCurrentLessonCompleted 
+                  <div style={{ fontWeight: 700, color: isCurrentDialogueCompleted ? '#15803d' : 'var(--text-main)', fontSize: '0.95rem' }}>
+                    {isCurrentDialogueCompleted 
                       ? '🎉 ¡Has estudiado esta conversación!' 
                       : '¿Ya escuchaste y comprendiste este diálogo?'}
                   </div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {isCurrentLessonCompleted
+                    {isCurrentDialogueCompleted
                       ? 'El estado está registrado en tus estadísticas de progreso.'
                       : 'Márcala como estudiada para sumar +30 XP y avanzar en tu racha.'}
                   </div>
@@ -953,17 +1191,17 @@ export default function ConversationTab({
                 <div style={{ display: 'flex', gap: 10 }}>
                   <button
                     className="btn btn-sm"
-                    onClick={() => toggleLessonCompletion(lesson.lesson)}
+                    onClick={() => toggleDialogueCompletion(currentDialogue)}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 6,
-                      background: isCurrentLessonCompleted ? 'rgba(34, 197, 94, 0.2)' : 'var(--primary)',
-                      color: isCurrentLessonCompleted ? '#15803d' : '#fff',
+                      background: isCurrentDialogueCompleted ? 'rgba(34, 197, 94, 0.2)' : 'var(--primary)',
+                      color: isCurrentDialogueCompleted ? '#15803d' : '#fff',
                       fontWeight: 700
                     }}
                   >
-                    {isCurrentLessonCompleted ? (
+                    {isCurrentDialogueCompleted ? (
                       <>
                         <CheckCircle2 size={16} /> Estudiada ✓
                       </>
@@ -974,15 +1212,14 @@ export default function ConversationTab({
                     )}
                   </button>
 
-                  {lesson.lesson < lessons.length && (
-                    <button
-                      className="btn btn-outline btn-sm"
-                      onClick={() => setCurrentLessonNum(lesson.lesson + 1)}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                    >
-                      Lección {lesson.lesson + 1} <ChevronRight size={16} />
-                    </button>
-                  )}
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={handleJumpToNextPending}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <span>Siguiente conversación</span>
+                    <ChevronRight size={16} />
+                  </button>
                 </div>
               </div>
             </div>
