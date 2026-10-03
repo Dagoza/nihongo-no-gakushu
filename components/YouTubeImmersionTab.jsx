@@ -35,11 +35,15 @@ import {
   Loader2
 } from 'lucide-react';
 
-import YouTubePlayer from './YouTubePlayer';
-import SaveVocabModal from './SaveVocabModal';
+import dynamic from 'next/dynamic';
 import audioManager from '../lib/audioManager';
-import { dataStore } from '../lib/data';
+import youtubeCatalog from '../data/youtube_catalog.json';
+import vocabularyData from '../data/vocabulary.json';
+import kanjiData from '../data/kanji.json';
 import { tokenizeJapanese, formatTimestamp, containsKanji, katakanaToHiragana } from '../lib/japaneseUtils';
+
+const YouTubePlayer = dynamic(() => import('./YouTubePlayer'), { ssr: false });
+const SaveVocabModal = dynamic(() => import('./SaveVocabModal'), { ssr: false });
 
 const TOPIC_PRESETS = [
   { id: 'anime', label: '🎌 Anime & Pop', query: 'Anime Japanese conversation', desc: 'Diálogos de anime y expresiones en japonés' },
@@ -104,7 +108,7 @@ export default function YouTubeImmersionTab({
   const [savingVideoId, setSavingVideoId] = useState(null);
 
   // Selected Video & Player State
-  const catalogData = dataStore.youtubeCatalog || { channels: [], videos: [] };
+  const catalogData = youtubeCatalog || { channels: [], videos: [] };
   const [currentVideo, setCurrentVideo] = useState(catalogData.videos?.[0] || null);
   const [currentTime, setCurrentTime] = useState(0);
   const [playerState, setPlayerState] = useState(2); // 1 = playing, 2 = paused
@@ -518,10 +522,10 @@ export default function YouTubeImmersionTab({
 
   // Abrir modal de guardado para una palabra específica
   const handleOpenSaveWord = (wordToken, cue, prefillReading = null) => {
-    const knownVocab = (dataStore.vocabulary || []).find(
+    const knownVocab = (vocabularyData || []).find(
       (v) => v.kanji === wordToken || v.kana === wordToken
     );
-    const knownKanji = (dataStore.kanji || []).find((k) => k.kanji === wordToken);
+    const knownKanji = (kanjiData || []).find((k) => k.kanji === wordToken);
 
     setModalData({
       type: 'word',

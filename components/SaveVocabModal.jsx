@@ -24,7 +24,9 @@ import {
   fetchKanjiReading,
   cleanKanaOnly
 } from '../lib/japaneseUtils';
-import { dataStore } from '../lib/data';
+import vocabularyData from '../data/vocabulary.json';
+import kanjiData from '../data/kanji.json';
+import storiesData from '../data/stories.json';
 import { useApp } from '../lib/AppContext';
 import PitchAccent from './PitchAccent';
 
@@ -81,7 +83,7 @@ export default function SaveVocabModal({
         setKatakana(cleanKata);
       } else if (rawText) {
         // 1. Resolución síncrona inmediata en cliente
-        const syncMatch = convertKanjiToKanaSync(rawText, appState?.savedCustomVocab || [], dataStore?.vocabulary || []);
+        const syncMatch = convertKanjiToKanaSync(rawText, appState?.savedCustomVocab || [], vocabularyData || []);
         if (syncMatch && syncMatch.hiragana && !containsKanji(syncMatch.hiragana)) {
           setHiragana(syncMatch.hiragana);
           setKatakana(syncMatch.katakana || hiraganaToKatakana(syncMatch.hiragana));
@@ -105,7 +107,7 @@ export default function SaveVocabModal({
           setIsConvertingKana(true);
           fetchKanjiReading(rawText, {
             customVocab: appState?.savedCustomVocab || [],
-            externalVocab: dataStore?.vocabulary || []
+            externalVocab: vocabularyData || []
           }).then((res) => {
             if (res && res.hiragana && !containsKanji(res.hiragana)) {
               setHiragana(res.hiragana);
@@ -135,8 +137,8 @@ export default function SaveVocabModal({
 
       // Buscar si coincide con alguna oración de la historia
       let matchedTranslation = initialData.sentenceTranslation || initialData.translation || '';
-      if (!matchedTranslation && dataStore?.stories) {
-        for (const st of dataStore.stories) {
+      if (!matchedTranslation && storiesData) {
+        for (const st of storiesData) {
           const matchSent = st.sentences?.find(s => s.japanese?.includes(sentenceTarget) || sentenceTarget.includes(s.japanese));
           if (matchSent) {
             matchedTranslation = matchSent.translation_es || matchSent.english || '';
@@ -184,7 +186,7 @@ export default function SaveVocabModal({
     }
 
     // Resolución síncrona inmediata
-    const syncMatch = convertKanjiToKanaSync(trimmed, appState?.savedCustomVocab || [], dataStore?.vocabulary || []);
+    const syncMatch = convertKanjiToKanaSync(trimmed, appState?.savedCustomVocab || [], vocabularyData || []);
     if (syncMatch && syncMatch.hiragana && !containsKanji(syncMatch.hiragana)) {
       setHiragana(syncMatch.hiragana);
       setKatakana(syncMatch.katakana || hiraganaToKatakana(syncMatch.hiragana));
@@ -199,7 +201,7 @@ export default function SaveVocabModal({
       try {
         const res = await fetchKanjiReading(trimmed, {
           customVocab: appState?.savedCustomVocab || [],
-          externalVocab: dataStore?.vocabulary || []
+          externalVocab: vocabularyData || []
         });
         if (res && res.hiragana && !containsKanji(res.hiragana)) {
           setHiragana(res.hiragana);
@@ -224,7 +226,7 @@ export default function SaveVocabModal({
       try {
         const res = await fetchKanjiReading(trimmed, {
           customVocab: appState?.savedCustomVocab || [],
-          externalVocab: dataStore?.vocabulary || []
+          externalVocab: vocabularyData || []
         });
         if (res && res.hiragana && !containsKanji(res.hiragana)) {
           setHiragana(res.hiragana);
@@ -251,7 +253,7 @@ export default function SaveVocabModal({
       try {
         const res = await fetchKanjiReading(cleanKanji, {
           customVocab: appState?.savedCustomVocab || [],
-          externalVocab: dataStore?.vocabulary || []
+          externalVocab: vocabularyData || []
         });
         if (res && res.hiragana && !containsKanji(res.hiragana)) {
           cleanHiragana = res.hiragana;
@@ -278,7 +280,7 @@ export default function SaveVocabModal({
 
     // Regla obligatoria: Hiragana NUNCA puede contener ideogramas Kanji
     if (containsKanji(cleanHiragana)) {
-      const syncCheck = convertKanjiToKanaSync(cleanKanji, appState?.savedCustomVocab || [], dataStore?.vocabulary || []);
+      const syncCheck = convertKanjiToKanaSync(cleanKanji, appState?.savedCustomVocab || [], vocabularyData || []);
       if (syncCheck && syncCheck.hiragana && !containsKanji(syncCheck.hiragana)) {
         cleanHiragana = syncCheck.hiragana;
         setHiragana(cleanHiragana);
@@ -322,9 +324,9 @@ export default function SaveVocabModal({
     const updatedVocab = [newWord, ...prevCustomVocab.filter(v => v.kanji !== newWord.kanji)];
 
     // Sincronización en memoria con catálogo de kanjis
-    if (dataStore?.kanji && detectedKanjis.length > 0) {
+    if (kanjiData && detectedKanjis.length > 0) {
       detectedKanjis.forEach(kChar => {
-        const targetKanji = dataStore.kanji.find(k => k.kanji === kChar);
+        const targetKanji = kanjiData.find(k => k.kanji === kChar);
         if (targetKanji) {
           if (!targetKanji.words) targetKanji.words = [];
           if (!targetKanji.words.some(w => w.word === newWord.kanji)) {

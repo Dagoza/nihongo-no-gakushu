@@ -23,7 +23,7 @@ import {
   katakanaToHiragana,
   containsKanji
 } from '../lib/japaneseUtils';
-import { dataStore } from '../lib/data';
+import vocabularyData from '../data/vocabulary.json';
 import { useApp } from '../lib/AppContext';
 
 export default function DictionaryModal({
@@ -69,7 +69,7 @@ export default function DictionaryModal({
   // Combined vocabulary sources
   const customVocab = contextApp?.appState?.savedCustomVocab || [];
   const externalVocab = useMemo(() => {
-    return dataStore.vocabulary || [];
+    return vocabularyData || [];
   }, []);
 
   // Detectar si la búsqueda es en español

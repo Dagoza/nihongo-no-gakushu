@@ -1,16 +1,19 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { AppProvider, useApp } from '../lib/AppContext';
 import Header from './Header';
 import NavigationTabs from './NavigationTabs';
 import AudioPlayerBar from './AudioPlayerBar';
-import AuthModal from './AuthModal';
 import UIModal from './UIModal';
-import ProductTour from './ProductTour';
-import PracticePadModal from './PracticePadModal';
-import DictionaryModal from './DictionaryModal';
-import SettingsModal from './SettingsModal';
+
+// Lazy loading con code-splitting para componentes de alto peso e impacto
+const AuthModal = dynamic(() => import('./AuthModal'), { ssr: false });
+const ProductTour = dynamic(() => import('./ProductTour'), { ssr: false });
+const PracticePadModal = dynamic(() => import('./PracticePadModal'), { ssr: false });
+const DictionaryModal = dynamic(() => import('./DictionaryModal'), { ssr: false });
+const SettingsModal = dynamic(() => import('./SettingsModal'), { ssr: false });
 
 function AppShellContent({ children }) {
   const {
@@ -88,11 +91,13 @@ function AppShellContent({ children }) {
       />
 
       {/* Modal de Autenticación de Usuario Seguro */}
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
-        onAuthSuccess={handleAuthSuccess} 
-      />
+      {isAuthModalOpen && (
+        <AuthModal 
+          isOpen={isAuthModalOpen} 
+          onClose={() => setIsAuthModalOpen(false)} 
+          onAuthSuccess={handleAuthSuccess} 
+        />
+      )}
 
       {/* Modal Global Amigable para Avisos y Confirmaciones (Cero alerts) */}
       <UIModal 
@@ -109,50 +114,58 @@ function AppShellContent({ children }) {
       />
 
       {/* Onboarding Tour / Product Tour Interactivo y Animado */}
-      <ProductTour 
-        isOpen={isTourOpen}
-        initialStep={tourInitialStep}
-        onClose={closeTour}
-        onSkip={handleSkipTour}
-        onComplete={handleCompleteTour}
-        onNavigate={navigate}
-      />
+      {isTourOpen && (
+        <ProductTour 
+          isOpen={isTourOpen}
+          initialStep={tourInitialStep}
+          onClose={closeTour}
+          onSkip={handleSkipTour}
+          onComplete={handleCompleteTour}
+          onNavigate={navigate}
+        />
+      )}
 
       {/* Cuaderno de Caligrafía, Cuadrículas y Práctica de Trazos */}
-      <PracticePadModal 
-        isOpen={practicePadState?.isOpen}
-        onClose={closePracticePad}
-        initialText={practicePadState?.text}
-        initialKana={practicePadState?.kana}
-        initialTitle={practicePadState?.title}
-        initialSource={practicePadState?.source}
-        initialChar={practicePadState?.initialChar}
-        initialGhostOpacity={practicePadState?.ghostOpacity}
-        initialTab={practicePadState?.initialTab}
-        onSaveToCloud={(sheet) => {
-          if (appState && handleUpdateState) {
-            const currentList = appState.savedPracticeSheets || [];
-            const nextList = [sheet, ...currentList.filter(s => s.id !== sheet.id)];
-            handleUpdateState({
-              ...appState,
-              savedPracticeSheets: nextList
-            });
-          }
-        }}
-      />
+      {practicePadState?.isOpen && (
+        <PracticePadModal 
+          isOpen={practicePadState.isOpen}
+          onClose={closePracticePad}
+          initialText={practicePadState.text}
+          initialKana={practicePadState.kana}
+          initialTitle={practicePadState.title}
+          initialSource={practicePadState.source}
+          initialChar={practicePadState.initialChar}
+          initialGhostOpacity={practicePadState.ghostOpacity}
+          initialTab={practicePadState.initialTab}
+          onSaveToCloud={(sheet) => {
+            if (appState && handleUpdateState) {
+              const currentList = appState.savedPracticeSheets || [];
+              const nextList = [sheet, ...currentList.filter(s => s.id !== sheet.id)];
+              handleUpdateState({
+                ...appState,
+                savedPracticeSheets: nextList
+              });
+            }
+          }}
+        />
+      )}
 
       {/* Diccionario Rápido y Desarticulador Morfológico */}
-      <DictionaryModal 
-        isOpen={dictionaryState?.isOpen}
-        onClose={closeDictionary}
-        initialSearch={dictionaryState?.search}
-      />
+      {dictionaryState?.isOpen && (
+        <DictionaryModal 
+          isOpen={dictionaryState.isOpen}
+          onClose={closeDictionary}
+          initialSearch={dictionaryState.search}
+        />
+      )}
 
       {/* Configuración Global del Sistema (Voz TTS, velocidad, etc.) */}
-      <SettingsModal 
-        isOpen={isSettingsModalOpen}
-        onClose={() => setIsSettingsModalOpen(false)}
-      />
+      {isSettingsModalOpen && (
+        <SettingsModal 
+          isOpen={isSettingsModalOpen}
+          onClose={() => setIsSettingsModalOpen(false)}
+        />
+      )}
     </>
   );
 }

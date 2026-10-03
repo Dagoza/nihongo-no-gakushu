@@ -360,6 +360,11 @@
         "word": "出口",
         "reading": "でぐち",
         "meaning": "Salida"
+      },
+      {
+        "word": "出発",
+        "reading": "しゅっぱつ",
+        "meaning": "salida / partida"
       }
     ],
     "source": "Kanji Book"
@@ -2251,7 +2256,13 @@
     "onyomi": "MU, BU [む, ぶ]",
     "kunyomi": "na(i) [な(い)]",
     "mnemonic": "Un bosque que se consume en las llamas (灬) hasta que no queda absolutamente nada.",
-    "words": [],
+    "words": [
+      {
+        "word": "無理",
+        "reading": "むり",
+        "meaning": "imposible"
+      }
+    ],
     "source": "Kanji to Print"
   },
   {
@@ -2264,7 +2275,18 @@
     "onyomi": "BUN, MON [ぶん, もん]",
     "kunyomi": "fumi, aya [ふみ, あや]",
     "mnemonic": "Un pergamino con trazos entrecruzados que representan la escritura y las bellas letras.",
-    "words": [],
+    "words": [
+      {
+        "word": "文法",
+        "reading": "ぶんぽう",
+        "meaning": "gramática"
+      },
+      {
+        "word": "作文",
+        "reading": "さくぶん",
+        "meaning": "redacción"
+      }
+    ],
     "source": "Kanji to Print"
   },
   {
@@ -2296,7 +2318,18 @@
     "onyomi": "GAI, GE [がい, げ]",
     "kunyomi": "soto, hoka [そと, ほか]",
     "mnemonic": "Al anochecer (夕), la adivinación con huesos (卜) se efectúa afuera al aire libre.",
-    "words": [],
+    "words": [
+      {
+        "word": "外",
+        "reading": "そと",
+        "meaning": "afuera"
+      },
+      {
+        "word": "外国",
+        "reading": "がいこく",
+        "meaning": "país extranjero"
+      }
+    ],
     "source": "Kanji to Print"
   },
   {
@@ -2309,7 +2342,18 @@
     "onyomi": "KOKU [こく]",
     "kunyomi": "kuni [くに]",
     "mnemonic": "Una joya o tesoro precioso (玉) protegido dentro de las fronteras cuadradas (囗) de un país.",
-    "words": [],
+    "words": [
+      {
+        "word": "国",
+        "reading": "くに",
+        "meaning": "país"
+      },
+      {
+        "word": "外国",
+        "reading": "がいこく",
+        "meaning": "país extranjero"
+      }
+    ],
     "source": "Kanji to Print"
   },
   {
@@ -2322,7 +2366,13 @@
     "onyomi": "HATSU, HOTSU [はつ, ほつ]",
     "kunyomi": "ta(tsu) [た(つ)]",
     "mnemonic": "Pies listos que tensan la cuerda de un arco para salir disparados a toda velocidad.",
-    "words": [],
+    "words": [
+      {
+        "word": "出発",
+        "reading": "しゅっぱつ",
+        "meaning": "salida / partida"
+      }
+    ],
     "source": "Kanji to Print"
   },
   {

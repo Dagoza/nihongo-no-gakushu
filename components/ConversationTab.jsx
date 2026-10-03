@@ -37,13 +37,18 @@ import {
   Search,
   Filter
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import audioManager from '../lib/audioManager';
-import { dataStore } from '../lib/data';
-import RoleplayChat from './RoleplayChat';
-import ConversationGeneratorModal from './ConversationGeneratorModal';
-import SpeechPractice from './SpeechPractice';
-import ComprehensionQuiz from './ComprehensionQuiz';
+import nhkLessonsData from '../data/nhk_lessons.json';
+import irodoriDialoguesData from '../data/irodori_dialogues.json';
+import conversationExercisesData from '../data/conversation_exercises.json';
 import { useApp } from '../lib/AppContext';
+
+// Lazy loading con code-splitting para componentes pesados
+const RoleplayChat = dynamic(() => import('./RoleplayChat'), { ssr: false });
+const ConversationGeneratorModal = dynamic(() => import('./ConversationGeneratorModal'), { ssr: false });
+const SpeechPractice = dynamic(() => import('./SpeechPractice'), { ssr: false });
+const ComprehensionQuiz = dynamic(() => import('./ComprehensionQuiz'), { ssr: false });
 
 export function getSpeakerVoice(speakerName, speakerIndex = 0) {
   if (!speakerName) {
@@ -82,9 +87,9 @@ export default function ConversationTab({
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
   const showConfirm = contextApp?.showConfirm || ((opts) => Promise.resolve(window.confirm(opts.message || opts.title)));
 
-  const nhkLessons = dataStore.nhkLessons || [];
-  const irodoriDialogues = dataStore.irodoriDialogues || [];
-  const allExercises = dataStore.conversationExercises || [];
+  const nhkLessons = nhkLessonsData || [];
+  const irodoriDialogues = irodoriDialoguesData || [];
+  const allExercises = conversationExercisesData || [];
   const savedConversations = appState?.savedConversations || [];
   const completedConversations = appState?.completedConversations || {};
 
@@ -1969,19 +1974,21 @@ export default function ConversationTab({
       {/* ========================================================================= */}
       {/* MODAL: AI CONVERSATION GENERATOR                                          */}
       {/* ========================================================================= */}
-      <ConversationGeneratorModal
-        isOpen={isGenModalOpen}
-        onClose={() => setIsGenModalOpen(false)}
-        defaultLevel="N5"
-        appState={appState}
-        onUpdateState={onUpdateState}
-        authUser={authUser}
-        onSelectConversation={(newConv) => {
-          setIsGenModalOpen(false);
-          setActiveSubTab('saved');
-          setSelectedSavedConvId(newConv.id);
-        }}
-      />
+      {isGenModalOpen && (
+        <ConversationGeneratorModal
+          isOpen={isGenModalOpen}
+          onClose={() => setIsGenModalOpen(false)}
+          defaultLevel="N5"
+          appState={appState}
+          onUpdateState={onUpdateState}
+          authUser={authUser}
+          onSelectConversation={(newConv) => {
+            setIsGenModalOpen(false);
+            setActiveSubTab('saved');
+            setSelectedSavedConvId(newConv.id);
+          }}
+        />
+      )}
     </div>
   );
 }

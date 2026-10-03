@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { dataStore } from '../lib/data';
+import dynamic from 'next/dynamic';
+import storiesData from '../data/stories.json';
 import audioManager from '../lib/audioManager';
 import { 
   Volume2, 
@@ -12,17 +13,19 @@ import {
   HelpCircle, 
   PlusCircle, 
   PenTool, 
-  Info,
-  Search,
-  Filter,
-  Layers,
-  ArrowRight,
-  ExternalLink
+  Info, 
+  Search, 
+  Filter, 
+  Layers, 
+  ArrowRight, 
+  ExternalLink 
 } from 'lucide-react';
 import * as wanakana from 'wanakana';
-import SpeechPractice from './SpeechPractice';
-import ComprehensionQuiz from './ComprehensionQuiz';
 import { useApp } from '../lib/AppContext';
+
+// Lazy loading con code-splitting
+const SpeechPractice = dynamic(() => import('./SpeechPractice'), { ssr: false });
+const ComprehensionQuiz = dynamic(() => import('./ComprehensionQuiz'), { ssr: false });
 
 export default function StoryTab({ 
   userState, 
@@ -37,13 +40,10 @@ export default function StoryTab({
   initialMode = null,
   onParamsChange
 }) {
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
+  const contextApp = useApp();
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
   const allStories = useMemo(() => {
-    const defaultStories = dataStore?.stories || [];
+    const defaultStories = storiesData || [];
     const customStories = appState?.savedStories || [];
     return [...defaultStories, ...customStories];
   }, [appState?.savedStories]);
@@ -97,7 +97,7 @@ export default function StoryTab({
   }, [allStories]);
 
   const story = useMemo(() => {
-    return allStories.find(s => s.id === selectedStoryId) || allStories[0] || dataStore.stories?.[0] || {};
+    return allStories.find(s => s.id === selectedStoryId) || allStories[0] || storiesData?.[0] || {};
   }, [allStories, selectedStoryId]);
 
   const filteredStories = useMemo(() => {

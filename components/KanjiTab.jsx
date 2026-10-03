@@ -1,18 +1,21 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check, MessageSquare, PenTool, Info } from 'lucide-react';
 import audioManager from '../lib/audioManager';
-import { dataStore } from '../lib/data';
+import kanjiData from '../data/kanji.json';
 import * as wanakana from 'wanakana';
 import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
-import SrsReview from './SrsReview';
-import KanjiDraw from './KanjiDraw';
 import PitchAccent from './PitchAccent';
-import SpeechPractice from './SpeechPractice';
 import { getKanjiFromSupabase } from '../lib/supabaseData';
 import { useApp } from '../lib/AppContext';
-import AIGeneratorModal from './AIGeneratorModal';
+
+// Lazy loading con code-splitting para componentes interactivos de alto impacto
+const SrsReview = dynamic(() => import('./SrsReview'), { ssr: false });
+const KanjiDraw = dynamic(() => import('./KanjiDraw'), { ssr: false });
+const SpeechPractice = dynamic(() => import('./SpeechPractice'), { ssr: false });
+const AIGeneratorModal = dynamic(() => import('./AIGeneratorModal'), { ssr: false });
 
 export function getPrimaryKanjiReading(k) {
   if (!k) return '';
@@ -59,10 +62,7 @@ export default function KanjiTab({
   initialDraw = null,
   onParamsChange
 }) {
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
+  const contextApp = useApp();
   const authUser = propAuthUser || contextApp?.authUser;
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [quizActive, setQuizActive] = useState(initialMode === 'quiz');
@@ -117,8 +117,9 @@ export default function KanjiTab({
 
   const isMassive = Boolean(authUser && appState?.useMassiveKanji);
   const [level, setLevel] = useState('all');
-  const [kanjiList, setKanjiList] = useState(dataStore.kanji || []);
+  const [kanjiList, setKanjiList] = useState(kanjiData || []);
   const [isLoading, setIsLoading] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(32);
 
   // AI Content Generator & Kanji Selection State
   const [selectedKanjiChars, setSelectedKanjiChars] = useState(new Set());
@@ -160,7 +161,7 @@ export default function KanjiTab({
   useEffect(() => {
     // Si está apagado el catálogo masivo o no hay sesión activa, usar estrictamente los kanjis propios
     if (!authUser || !appState?.useMassiveKanji) {
-      setKanjiList(dataStore.kanji || []);
+      setKanjiList(kanjiData || []);
       setIsLoading(false);
       return;
     }
@@ -179,6 +180,11 @@ export default function KanjiTab({
       });
     return () => { isMounted = false; };
   }, [level, authUser, appState?.useMassiveKanji]);
+
+  // Reset de ventana visible cuando cambian filtros o búsqueda para optimizar rendimiento
+  useEffect(() => {
+    setVisibleCount(32);
+  }, [searchTerm, level, isMassive]);
 
   // Filter kanji
   const filteredKanji = kanjiList.filter(k => {
@@ -603,7 +609,7 @@ export default function KanjiTab({
 
           {/* Kanji Cards Grid */}
           <div className="kanji-grid">
-            {filteredKanji.map((k) => {
+            {filteredKanji.slice(0, visibleCount).map((k) => {
               const isMastered = !!appState.masteredKanji?.[k.kanji];
               const isSelected = selectedKanjiChars.has(k.kanji);
               return (
@@ -784,6 +790,20 @@ export default function KanjiTab({
               );
             })}
           </div>
+
+          {visibleCount < filteredKanji.length && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 24, marginBottom: 12 }}>
+              <button 
+                type="button" 
+                className="btn btn-outline"
+                onClick={() => setVisibleCount(prev => Math.min(prev + 32, filteredKanji.length))}
+                style={{ padding: '8px 24px', borderRadius: '24px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, borderColor: 'var(--primary)', color: 'var(--primary)' }}
+              >
+                <span>Mostrar más kanjis ({visibleCount} de {filteredKanji.length})</span>
+                <ArrowRight size={15} />
+              </button>
+            </div>
+          )}
         </div>
       ) : srsActive ? (
         <SrsReview 

@@ -4233,5 +4233,124 @@
         "es": "Uso / empleo contribución / aportar valor."
       }
     ]
+  },
+  {
+    "id": "v_n5_soto",
+    "kanji": "外",
+    "kana": "そと",
+    "meaning_es": "Afuera / Exterior",
+    "meaning_en": "Outside",
+    "category": "Lugares y Posición",
+    "level": "N5",
+    "hiragana": "そと",
+    "katakana": "ソト",
+    "tatoeba_sentences": [
+      {
+        "jp": "外は寒いです。",
+        "es": "Afuera hace frío."
+      }
+    ]
+  },
+  {
+    "id": "v_n5_gaikoku",
+    "kanji": "外国",
+    "kana": "がいこく",
+    "meaning_es": "País extranjero",
+    "meaning_en": "Foreign country",
+    "category": "Lugares y Posición",
+    "level": "N5",
+    "hiragana": "がいこく",
+    "katakana": "ガイコク",
+    "tatoeba_sentences": [
+      {
+        "jp": "外国に行きたいです。",
+        "es": "Quiero ir a un país extranjero."
+      }
+    ]
+  },
+  {
+    "id": "v_n5_kuni",
+    "kanji": "国",
+    "kana": "くに",
+    "meaning_es": "País / Nación",
+    "meaning_en": "Country",
+    "category": "Lugares y Posición",
+    "level": "N5",
+    "hiragana": "くに",
+    "katakana": "クニ",
+    "tatoeba_sentences": [
+      {
+        "jp": "お国はどちらですか。",
+        "es": "¿De qué país eres?"
+      }
+    ]
+  },
+  {
+    "id": "v_n5_muri",
+    "kanji": "無理",
+    "kana": "むり",
+    "meaning_es": "Imposible / No te sobreesfuerces",
+    "meaning_en": "Impossible / Don't overdo it",
+    "category": "Vida Cotidiana",
+    "level": "N5",
+    "hiragana": "むり",
+    "katakana": "ムリ",
+    "tatoeba_sentences": [
+      {
+        "jp": "無理をしないでください。",
+        "es": "Por favor no te sobreesfuerces."
+      }
+    ]
+  },
+  {
+    "id": "v_n5_bumpo",
+    "kanji": "文法",
+    "kana": "ぶんぽう",
+    "meaning_es": "Gramática",
+    "meaning_en": "Grammar",
+    "category": "Trabajo y Estudio",
+    "level": "N5",
+    "hiragana": "ぶんぽう",
+    "katakana": "ブンポウ",
+    "tatoeba_sentences": [
+      {
+        "jp": "日本語の文法を勉強します。",
+        "es": "Estudio gramática japonesa."
+      }
+    ]
+  },
+  {
+    "id": "v_n5_sakubun",
+    "kanji": "作文",
+    "kana": "さくぶん",
+    "meaning_es": "Redacción / Composición",
+    "meaning_en": "Composition / Essay",
+    "category": "Trabajo y Estudio",
+    "level": "N5",
+    "hiragana": "さくぶん",
+    "katakana": "サクブン",
+    "tatoeba_sentences": [
+      {
+        "jp": "日本語で作文を書きました。",
+        "es": "Escribí una redacción en japonés."
+      }
+    ]
+  },
+  {
+    "id": "v_n5_shuppatsu",
+    "kanji": "出発",
+    "kana": "しゅっぱつ",
+    "meaning_es": "Salida / Partida",
+    "meaning_en": "Departure",
+    "category": "Viajes y Transporte",
+    "level": "N5",
+    "hiragana": "しゅっぱつ",
+    "katakana": "シュッパツ",
+    "tatoeba_sentences": [
+      {
+        "jp": "電車は９時に出発します。",
+        "es": "El tren sale a las 9."
+      }
+    ]
   }
 ]

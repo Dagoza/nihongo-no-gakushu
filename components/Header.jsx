@@ -27,7 +27,9 @@ import {
   PenTool,
   Settings
 } from 'lucide-react';
-import { dataStore } from '../lib/data';
+import curriculumData from '../data/curriculum.json';
+import nhkLessonsData from '../data/nhk_lessons.json';
+import convExercisesData from '../data/conversation_exercises.json';
 import { useApp } from '../lib/AppContext';
 
 function GoogleLogo({ size = 14 }) {
@@ -93,7 +95,7 @@ export default function Header({
   // Compute reviewed topics that have pending exercises
   const reviewedTopicsWithPendingExercises = useMemo(() => {
     if (!userState) return [];
-    const curriculum = dataStore.curriculum || [];
+    const curriculum = curriculumData || [];
     const completedSteps = userState.completedSteps || {};
     const completedCanDos = userState.completedCanDos || {};
     const completedExercises = userState.completedExercises || {};
@@ -126,8 +128,8 @@ export default function Header({
     });
 
     // 2. Revisar Lecciones NHK completadas con ejercicios pendientes
-    const nhkLessons = dataStore.nhkLessons || [];
-    const convExercises = dataStore.conversationExercises || [];
+    const nhkLessons = nhkLessonsData || [];
+    const convExercises = convExercisesData || [];
     const completedConversations = userState.completedConversations || {};
 
     nhkLessons.forEach(l => {

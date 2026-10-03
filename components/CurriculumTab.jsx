@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import dataStore from '../lib/data';
+import curriculumData from '../data/curriculum.json';
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -63,7 +63,7 @@ const parseGrammarPoint = (point) => {
 
 export default function CurriculumTab({ onNavigate, userState, onUpdateState, initialStep = null, onStepChange }) {
   const contextApp = useAppContext();
-  const steps = dataStore.curriculum || [];
+  const steps = curriculumData || [];
   
   // State for active module detailed view
   const [selectedStepNum, setSelectedStepNum] = useState(initialStep);

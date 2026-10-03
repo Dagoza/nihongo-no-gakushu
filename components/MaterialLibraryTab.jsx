@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, ExternalLink, Eye, X, FileText, BookOpen, FileSpreadsheet } from 'lucide-react';
-import { dataStore } from '../lib/data';
+import pdfCatalogData from '../data/pdf_catalog.json';
 
 export default function MaterialLibraryTab({
   initialCategory = 'all',
@@ -14,7 +14,7 @@ export default function MaterialLibraryTab({
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [activeModal, setActiveModal] = useState(null); // { title, url }
 
-  const catalog = dataStore.pdfCatalog || [];
+  const catalog = pdfCatalogData || [];
 
   const updateParams = (newCat, newSearch, newDoc) => {
     if (onParamsChange) {

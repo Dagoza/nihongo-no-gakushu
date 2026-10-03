@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen, PenTool, Info } from 'lucide-react';
 import audioManager from '../lib/audioManager';
-import { dataStore } from '../lib/data';
+import particlesData from '../data/particles.json';
 import * as wanakana from 'wanakana';
-import SpeechPractice from './SpeechPractice';
 import { useApp } from '../lib/AppContext';
+
+// Lazy loading con code-splitting
+const SpeechPractice = dynamic(() => import('./SpeechPractice'), { ssr: false });
 
 export default function GrammarTab({ 
   appState, 
@@ -17,10 +20,7 @@ export default function GrammarTab({
   initialLevel = null,
   onParamsChange
 }) {
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
+  const contextApp = useApp();
 
   const [levelFilter, setLevelFilter] = useState(initialLevel || 'all');
   const [filterParticle, setFilterParticle] = useState(initialParticle || 'all');
@@ -64,7 +64,11 @@ export default function GrammarTab({
     }
   };
 
-  const particlesData = dataStore.particles || [];
+  const [visibleCount, setVisibleCount] = useState(30);
+
+  useEffect(() => {
+    setVisibleCount(30);
+  }, [levelFilter, filterParticle, filterStatus, searchTerm]);
 
   const levelCounts = useMemo(() => {
     const counts = { all: particlesData.length, N5: 0, N4: 0, N3: 0, N2: 0, N1: 0 };
@@ -386,7 +390,7 @@ export default function GrammarTab({
 
           {/* Particles Grid */}
           <div className="particles-grid">
-            {filteredParticles.map((p) => {
+            {filteredParticles.slice(0, visibleCount).map((p) => {
               const isMastered = !!appState.masteredParticles?.[p.id];
               const pLevel = p.level || 'N5';
               return (
@@ -517,6 +521,19 @@ export default function GrammarTab({
               );
             })}
           </div>
+
+          {visibleCount < filteredParticles.length && (
+            <div style={{ textAlign: 'center', marginTop: 24, marginBottom: 20 }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setVisibleCount((prev) => prev + 30)}
+                style={{ padding: '10px 24px', fontWeight: 600 }}
+              >
+                Mostrar más partículas ({filteredParticles.length - visibleCount} restantes)
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         /* QUIZ MODE */

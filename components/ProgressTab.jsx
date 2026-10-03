@@ -31,7 +31,8 @@ import {
   executeFullSync, 
   signInWithGoogle 
 } from '../lib/supabaseSync';
-import { dataStore } from '../lib/data';
+import nhkLessonsData from '../data/nhk_lessons.json';
+import curriculumData from '../data/curriculum.json';
 import { useApp } from '../lib/AppContext';
 
 function detectUserOS() {
@@ -337,10 +338,10 @@ export default function ProgressTab({
   const masteredKanjiCount = Object.values(appState.masteredKanji || {}).filter(Boolean).length;
   const completedSentencesCount = Object.values(appState.completedSentences || {}).filter(Boolean).length;
   const completedConversationsCount = Object.values(appState.completedConversations || {}).filter(Boolean).length;
-  const totalConversations = dataStore.nhkLessons?.length || 48;
+  const totalConversations = nhkLessonsData?.length || 48;
   const completedStepsCount = Object.values(appState.completedSteps || {}).filter(Boolean).length;
-  const totalSteps = dataStore.curriculum?.length || 19;
-  const allCanDos = (dataStore.curriculum || []).flatMap(s => s.can_dos || []);
+  const totalSteps = curriculumData?.length || 19;
+  const allCanDos = (curriculumData || []).flatMap(s => s.can_dos || []);
   const totalCanDos = allCanDos.length || 87;
   const completedCanDosCount = Object.values(appState.completedCanDos || {}).filter(Boolean).length;
 

@@ -20,19 +20,23 @@ import {
   PenTool,
   Info
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import audioManager from '../lib/audioManager';
-import { dataStore } from '../lib/data';
+import vocabularyData from '../data/vocabulary.json';
+import exercisesData from '../data/exercises.json';
 import * as wanakana from 'wanakana';
 import { SRSRating, getNewCard, reviewCard, isDue } from '../lib/srs';
-import SrsReview from './SrsReview';
-import SpeechPractice from './SpeechPractice';
 import PitchAccent from './PitchAccent';
 import { getVocabularyFromSupabase } from '../lib/supabaseData';
 import { useApp } from '../lib/AppContext';
 import { getAuthSession } from '../lib/supabaseSync';
-import EditWordModal from './EditWordModal';
-import SaveVocabModal from './SaveVocabModal';
-import AIGeneratorModal from './AIGeneratorModal';
+
+// Lazy loading con code-splitting para componentes de alto peso e interactividad
+const SrsReview = dynamic(() => import('./SrsReview'), { ssr: false });
+const SpeechPractice = dynamic(() => import('./SpeechPractice'), { ssr: false });
+const EditWordModal = dynamic(() => import('./EditWordModal'), { ssr: false });
+const SaveVocabModal = dynamic(() => import('./SaveVocabModal'), { ssr: false });
+const AIGeneratorModal = dynamic(() => import('./AIGeneratorModal'), { ssr: false });
 
 export default function VocabTab({ 
   appState, 
@@ -44,10 +48,7 @@ export default function VocabTab({
   initialSearch = null,
   onParamsChange
 }) {
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
+  const contextApp = useApp();
   const authUser = propAuthUser || contextApp?.authUser;
   const [mode, setMode] = useState(initialMode || 'cards'); // 'cards' | 'typing' | 'n4_exercises' | 'srs'
   const [level, setLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4'
@@ -114,8 +115,9 @@ export default function VocabTab({
   const [aiGenType, setAiGenType] = useState('story');
 
   const isMassive = Boolean(authUser && appState?.useMassiveDictionary);
-  const [vocabularyList, setVocabularyList] = useState(dataStore.vocabulary || []);
+  const [vocabularyList, setVocabularyList] = useState(vocabularyData || []);
   const [isLoading, setIsLoading] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(36);
 
   const handleToggleSource = (enableMassive) => {
     if (enableMassive) {
@@ -152,7 +154,7 @@ export default function VocabTab({
   useEffect(() => {
     // Si está apagado el catálogo masivo o no hay sesión activa, usar estrictamente los recursos propios
     if (!authUser || !appState?.useMassiveDictionary) {
-      setVocabularyList(dataStore.vocabulary || []);
+      setVocabularyList(vocabularyData || []);
       setIsLoading(false);
       return;
     }
@@ -172,7 +174,12 @@ export default function VocabTab({
     return () => { isMounted = false; };
   }, [level, authUser, appState?.useMassiveDictionary]);
 
-  const n4Exercises = dataStore.exercises || [];
+  // Reset de ventana visible cuando cambian filtros o búsqueda
+  useEffect(() => {
+    setVisibleCount(36);
+  }, [searchTerm, level, category, mode, isMassive]);
+
+  const n4Exercises = exercisesData || [];
 
   // Merge vocabulary with user customizations and saved custom words
   const effectiveVocabList = useMemo(() => {
@@ -772,7 +779,7 @@ export default function VocabTab({
 
           {/* Cards Grid */}
           <div className="vocab-grid">
-            {filteredVocab.map((item) => {
+            {filteredVocab.slice(0, visibleCount).map((item) => {
               const isMastered = !!appState.masteredVocab?.[item.id];
               const wordKey = item.id || item.kanji;
               const isSelected = selectedWordIds.has(wordKey);
@@ -986,6 +993,20 @@ export default function VocabTab({
               );
             })}
           </div>
+
+          {visibleCount < filteredVocab.length && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 24, marginBottom: 16 }}>
+              <button 
+                type="button" 
+                className="btn btn-outline"
+                onClick={() => setVisibleCount(prev => Math.min(prev + 36, filteredVocab.length))}
+                style={{ padding: '8px 24px', borderRadius: '24px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, borderColor: 'var(--primary)', color: 'var(--primary)' }}
+              >
+                <span>Mostrar más palabras ({visibleCount} de {filteredVocab.length})</span>
+                <ArrowRight size={15} />
+              </button>
+            </div>
+          )}
 
           {filteredVocab.length === 0 && (
             <div className="card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
