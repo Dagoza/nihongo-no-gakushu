@@ -48,6 +48,13 @@ function AppShellContent({ children }) {
     setIsSettingsModalOpen
   } = useApp();
 
+  // Ensure horizontal scroll position is strictly locked to 0 on mobile/desktop tab navigation
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.scrollX !== 0) {
+      window.scrollTo({ left: 0 });
+    }
+  }, [currentTab]);
+
   return (
     <>
       {/* Top Header */}

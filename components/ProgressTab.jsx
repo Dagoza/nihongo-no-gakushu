@@ -423,7 +423,8 @@ export default function ProgressTab({
       {/* Header */}
       <div className="section-header">
         <h2 className="section-title">
-          <span>📊</span> Mi Progreso y Estadísticas de Aprendizaje
+          <span style={{ flexShrink: 0 }}>📊</span>
+          <span>Mi Progreso y Estadísticas de Aprendizaje</span>
         </h2>
         <p className="section-desc">
           Consulta tu rendimiento, mantén tu sesión sincronizada en tiempo real entre tu móvil, tablet y computadora, y gestiona tus copias de seguridad.
@@ -469,7 +470,7 @@ export default function ProgressTab({
       )}
 
       {/* Stats Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 24 }}>
+      <div className="progress-stats-grid">
         <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🔥</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent)' }}>
@@ -997,7 +998,7 @@ export default function ProgressTab({
                   <h5 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Keyboard size={15} color="var(--primary)" /> Atajos clave en {currentGuide.name}
                   </h5>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 10 }}>
                     {currentGuide.shortcuts.map((sc, i) => (
                       <div 
                         key={i}

@@ -203,17 +203,18 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     };
   }, [checkScroll, selectedCategory]);
 
-  // Center active tab into view when changed
+  // Center active tab into view when changed (scroll only internal container, never window or ancestors)
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
 
     const activeBtn = el.querySelector(`.nav-tab-pill[data-tab-id="${activeTabId}"]`) || el.querySelector('.nav-tab-pill.active');
     if (activeBtn) {
-      activeBtn.scrollIntoView({
+      const containerWidth = el.clientWidth;
+      const targetScroll = activeBtn.offsetLeft - (containerWidth / 2) + (activeBtn.offsetWidth / 2);
+      el.scrollTo({
+        left: Math.max(0, targetScroll),
         behavior: 'smooth',
-        inline: 'center',
-        block: 'nearest',
       });
     }
     // Re-check scroll positions after animation
@@ -277,7 +278,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     const targetPath = tabObj ? tabObj.path : `/${tabId}`;
     router.push(targetPath);
     if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     }
   };
 
