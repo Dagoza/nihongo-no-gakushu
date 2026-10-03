@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 const jsonPath = path.join(__dirname, '../data/nhk_lessons.json');
-const jsPath = path.join(__dirname, '../data/nhk_lessons.js');
 
 const rawJson = fs.readFileSync(jsonPath, 'utf8');
 const lessons = JSON.parse(rawJson);
@@ -20,7 +19,3 @@ const updatedLessons = lessons.map(lesson => {
 
 fs.writeFileSync(jsonPath, JSON.stringify(updatedLessons, null, 2), 'utf8');
 console.log(`Updated ${updatedLessons.length} lessons in nhk_lessons.json`);
-
-const jsContent = `// Auto-generated dataset for Nihongo Master\nwindow.NHK_LESSONS_DATA = ${JSON.stringify(updatedLessons, null, 2)};\n`;
-fs.writeFileSync(jsPath, jsContent, 'utf8');
-console.log(`Updated nhk_lessons.js`);

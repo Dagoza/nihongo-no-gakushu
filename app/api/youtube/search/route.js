@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
-// Memoria caché simple en servidor para búsquedas repetidas
+// Memoria caché acotada en servidor para búsquedas repetidas
 const searchCache = new Map();
+const MAX_SEARCH_CACHE_SIZE = 100;
 
 async function verifyVideoCandidate(vid) {
   // 1. Verificación OBLIGATORIA oEmbed:
@@ -155,7 +156,11 @@ async function handleSearch(rawQuery, maxResults = 8) {
     }
   }
 
-  // Guardar en caché
+  // Guardar en caché con límite de tamaño
+  if (searchCache.size >= MAX_SEARCH_CACHE_SIZE) {
+    const firstKey = searchCache.keys().next().value;
+    searchCache.delete(firstKey);
+  }
   searchCache.set(cacheKey, {
     timestamp: Date.now(),
     results: verifiedResults

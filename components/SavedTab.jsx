@@ -52,11 +52,7 @@ export default function SavedTab({
   initialCategory = 'all',
   onParamsChange
 }) {
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
-
+  const contextApp = useApp();
   const authUser = propAuthUser || contextApp?.authUser;
   const onOpenAuth = propOnOpenAuth || (() => {
     if (contextApp?.setIsAuthModalOpen) {

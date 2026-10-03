@@ -60,10 +60,7 @@ export default function Header({
   const dropdownRef = useRef(null);
   const notifRef = useRef(null);
 
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
+  const contextApp = useApp();
 
   // Close dropdowns on click outside or escape key
   useEffect(() => {

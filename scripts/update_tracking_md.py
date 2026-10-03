@@ -138,7 +138,7 @@ Distribuido pedagógicamente en los módulos nucleares M1 al M19.
 
 ## 5. Seguimiento del Catálogo de Kanjis y Vocabulario Maestro
 
-### 5.1. Kanjis Auditados (161 Kanjis en `data/kanji.json` y `data/kanji.js`)
+### 5.1. Kanjis Auditados (161 Kanjis en `data/kanji.json`)
 Cobertura integral con mnemotecnias, trazos SVG animados, lecturas On/Kun y palabras de vocabulario sincronizadas en el array `words`.
 
 ### 5.2. Vocabulario Maestro (314 Palabras en `data/vocabulary.json`)
@@ -172,7 +172,7 @@ Antes de proponer o implementar cualquier cambio en el temario, responde a estas
 - [ ] **3. Enlaces Temáticos:** ¿Configuraste o actualizaste el bloque `related_topics` de los módulos vinculados con `step`, `title`, `relationship` y `reason`?
 - [ ] **4. Paso Final de Evaluación:** ¿Aseguraste que cada módulo concluye con un paso exclusivo `is_exercise_step: true` que contenga los ejercicios evaluativos?
 - [ ] **5. Vocabulario Completo:** Si agregaste palabras nuevas, ¿las registraste con sus 3 escrituras (**Kanji**, **Hiragana**, **Katakana**) y su nivel JLPT en `data/vocabulary.json`?
-- [ ] **6. Sincronización Kanji:** ¿Añadiste la referencia de cada palabra al array `words` de **todos los kanjis que la componen** en `data/kanji.json` y `data/kanji.js`?
+- [ ] **6. Sincronización Kanji:** ¿Añadiste la referencia de cada palabra al array `words` de **todos los kanjis que la componen** en `data/kanji.json`?
 - [ ] **7. Build Check:** ¿Ejecutaste `npm run build` y verificaste que compile con 0 errores?
 - [ ] **8. Registro de Seguimiento:** ¿Actualizaste las tablas de este documento (`ANALISIS_TEMARIOS_LIBROS.md`) para reflejar las nuevas adiciones?
 - [ ] **9. Despliegue:** ¿Realizaste `git commit`, `git push origin main` y confirmaste el estado en Vercel?

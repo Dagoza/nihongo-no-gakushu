@@ -1990,16 +1990,7 @@ def main():
     with open(particles_file, "w", encoding="utf-8") as f:
         json.dump(combined, f, ensure_ascii=False, indent=2)
         
-    print(f"Catálogo final de partículas guardado exitosamente: {len(combined)} entradas.")
-    
-    # También actualizar data/particles.js para mantener coherencia
-    particles_js_file = os.path.join(root, "data", "particles.js")
-    with open(particles_js_file, "w", encoding="utf-8") as f:
-        f.write("// Auto-generated dataset for Nihongo Master\n")
-        f.write("window.PARTICLES_DATA = ")
-        json.dump(combined, f, ensure_ascii=False, indent=2)
-        f.write(";\n")
-    print("data/particles.js sincronizado.")
+    print(f"Catálogo final de partículas guardado exitosamente: {len(combined)} entradas en data/particles.json.")
 
     # Conteo por nivel JLPT
     level_counts = {}

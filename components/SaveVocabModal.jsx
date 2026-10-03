@@ -35,10 +35,7 @@ export default function SaveVocabModal({
   appState,
   onUpdateState
 }) {
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
+  const contextApp = useApp();
   const showAlert = contextApp?.showAlert || ((opts) => console.log(opts));
   const [activeTab, setActiveTab] = useState(initialData.type || 'word'); // 'word' | 'phrase' | 'kanji'
   

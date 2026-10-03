@@ -12,6 +12,37 @@ export default function KanjiDraw({ character, size = 250, onQuizComplete }) {
   const [loadingError, setLoadingError] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
 
+  const startQuiz = React.useCallback(() => {
+    if (!writerRef.current) return;
+    setErrorCount(0);
+    setSuccess(false);
+    setIsQuizMode(true);
+    try {
+      writerRef.current.quiz({
+        onMistake: () => {
+          setErrorCount(prev => prev + 1);
+        },
+        onComplete: (summaryData) => {
+          setSuccess(true);
+          if (onQuizComplete) onQuizComplete(summaryData);
+        }
+      });
+    } catch (e) {
+      console.error('Quiz start error:', e);
+    }
+  }, [onQuizComplete]);
+
+  const animateKanji = React.useCallback(() => {
+    if (!writerRef.current) return;
+    setIsQuizMode(false);
+    try {
+      writerRef.current.cancelQuiz();
+      writerRef.current.animateCharacter();
+    } catch (e) {
+      console.error('Animate error:', e);
+    }
+  }, []);
+
   useEffect(() => {
     if (!containerRef.current || !character) return;
 
@@ -96,38 +127,7 @@ export default function KanjiDraw({ character, size = 250, onQuizComplete }) {
         containerRef.current.innerHTML = '';
       }
     };
-  }, [character, size, retryKey]);
-
-  const startQuiz = () => {
-    if (!writerRef.current) return;
-    setErrorCount(0);
-    setSuccess(false);
-    setIsQuizMode(true);
-    try {
-      writerRef.current.quiz({
-        onMistake: () => {
-          setErrorCount(prev => prev + 1);
-        },
-        onComplete: (summaryData) => {
-          setSuccess(true);
-          if (onQuizComplete) onQuizComplete(summaryData);
-        }
-      });
-    } catch (e) {
-      console.error('Quiz start error:', e);
-    }
-  };
-
-  const animateKanji = () => {
-    if (!writerRef.current) return;
-    setIsQuizMode(false);
-    try {
-      writerRef.current.cancelQuiz();
-      writerRef.current.animateCharacter();
-    } catch (e) {
-      console.error('Animate error:', e);
-    }
-  };
+  }, [character, size, retryKey, startQuiz]);
 
   if (loadingError) {
     return (

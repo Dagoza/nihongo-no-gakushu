@@ -220,10 +220,4 @@ for w in vocabulary:
 with open(kanji_json_path, "w", encoding="utf-8") as f:
     json.dump(kanji_list, f, ensure_ascii=False, indent=2)
 
-# Sincronizar data/kanji.js
-with open("data/kanji.js", "w", encoding="utf-8") as f:
-    f.write("// Auto-generated dataset for Nihongo Master\nwindow.KANJI_DATA = ")
-    json.dump(kanji_list, f, ensure_ascii=False, indent=2)
-    f.write(";\n")
-
-print(f"✅ data/kanji.json y data/kanji.js sincronizados con {synced_kanji_count} nuevas referencias de palabras en kanjis.")
+print(f"✅ data/kanji.json sincronizado con {synced_kanji_count} nuevas referencias de palabras en kanjis.")

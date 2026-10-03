@@ -32,10 +32,7 @@ export default function EditWordModal({
   onReset,     // Callback (wordIdOrKanji) => void to restore default
   isCustomized = false
 }) {
-  let contextApp = null;
-  try {
-    contextApp = useApp();
-  } catch (e) {}
+  const contextApp = useApp();
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
   const showAlert = contextApp?.showAlert || ((opts) => console.log(opts));
 

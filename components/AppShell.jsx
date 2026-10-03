@@ -11,7 +11,6 @@ import ProductTour from './ProductTour';
 import PracticePadModal from './PracticePadModal';
 import DictionaryModal from './DictionaryModal';
 import SettingsModal from './SettingsModal';
-import { dataStore } from '../lib/data';
 
 function AppShellContent({ children }) {
   const {
@@ -55,7 +54,7 @@ function AppShellContent({ children }) {
           xp: appState.xp || 0,
           level: Math.floor((appState.xp || 0) / 100) + 1,
           particles: Object.values(appState.masteredParticles || {}).filter(Boolean).length,
-          totalParticles: dataStore.particles?.length || 99,
+          totalParticles: 99,
           vocab: Object.values(appState.masteredVocab || {}).filter(Boolean).length
         }}
         theme={theme}
