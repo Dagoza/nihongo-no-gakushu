@@ -135,6 +135,7 @@ export default function PracticePadModal({
   const [isPanMode, setIsPanMode] = useState(false);
   const [isSpacePressed, setIsSpacePressed] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
+  const [isPinching, setIsPinching] = useState(false);
 
   // Refs
   const viewportRef = useRef(null);
@@ -148,6 +149,25 @@ export default function PracticePadModal({
   const isPanningRef = useRef(false);
   const panStartRef = useRef({ clientX: 0, clientY: 0, panX: 0, panY: 0 });
   const touchStateRef = useRef({ distance: 0, startPan: { x: 0, y: 0 }, startZoom: 1, startCenter: { x: 0, y: 0 } });
+  const isPinchZoomingRef = useRef(false);
+  const pinchCooldownUntilRef = useRef(0);
+  const activeTouchPointersRef = useRef(new Set());
+  const activePointerIdRef = useRef(null);
+  const strokesRef = useRef(strokes);
+  const zoomRef = useRef(zoom);
+  const panRef = useRef(pan);
+
+  useEffect(() => {
+    strokesRef.current = strokes;
+  }, [strokes]);
+
+  useEffect(() => {
+    zoomRef.current = zoom;
+  }, [zoom]);
+
+  useEffect(() => {
+    panRef.current = pan;
+  }, [pan]);
 
   // Dimensiones del área de trabajo para cálculos de cuadrícula
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 800, height: 600 });
@@ -342,8 +362,8 @@ export default function PracticePadModal({
     };
   }, [activeTab, setupCanvases, isFullscreen]);
 
-  // Redraw strokes when strokes state changes
-  useEffect(() => {
+  // Redraw strokes when strokes state changes or uncommitted stroke is cancelled
+  const redrawCommittedStrokes = useCallback(() => {
     const drawCanvas = drawingCanvasRef.current;
     if (!drawCanvas) return;
     const dpr = window.devicePixelRatio || 1;
@@ -354,13 +374,47 @@ export default function PracticePadModal({
     dCtx.setTransform(1, 0, 0, 1, 0, 0);
     dCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     dCtx.scale(dpr, dpr);
-    renderAllStrokes(dCtx, (strokes || []).filter(Boolean));
+    renderAllStrokes(dCtx, (strokesRef.current || []).filter(Boolean));
     dCtx.restore();
-  }, [strokes]);
+  }, []);
+
+  // Cancel any in-progress stroke and restore canvas (crucial when a multi-touch pinch starts)
+  const cancelCurrentStroke = useCallback(() => {
+    isPointerDownRef.current = false;
+    currentStrokeRef.current = null;
+    setIsDrawing(false);
+    try {
+      if (drawingCanvasRef.current && activePointerIdRef.current !== null) {
+        drawingCanvasRef.current.releasePointerCapture(activePointerIdRef.current);
+      }
+    } catch (err) {}
+    activePointerIdRef.current = null;
+    activeTouchPointersRef.current.clear();
+    redrawCommittedStrokes();
+  }, [redrawCommittedStrokes]);
+
+  useEffect(() => {
+    redrawCommittedStrokes();
+  }, [strokes, redrawCommittedStrokes]);
 
   // Pointer event handlers for drawing and panning
   const handlePointerDown = (e) => {
     if (activeTab !== 'canvas') return;
+
+    // Prevenir cualquier dibujo si se está haciendo pinch/zoom con 2 dedos o durante el cooldown posterior
+    if (isPinchZoomingRef.current || Date.now() < pinchCooldownUntilRef.current) {
+      return;
+    }
+
+    if (e.pointerType === 'touch') {
+      activeTouchPointersRef.current.add(e.pointerId);
+      if (activeTouchPointersRef.current.size >= 2) {
+        isPinchZoomingRef.current = true;
+        setIsPinching(true);
+        cancelCurrentStroke();
+        return;
+      }
+    }
 
     const isPanAction = isPanMode || isSpacePressed || e.button === 1;
     if (isPanAction) {
@@ -378,6 +432,7 @@ export default function PracticePadModal({
     const drawCanvas = drawingCanvasRef.current;
     if (!drawCanvas) return;
 
+    activePointerIdRef.current = e.pointerId;
     try {
       drawCanvas.setPointerCapture(e.pointerId);
     } catch (err) {}
@@ -430,6 +485,18 @@ export default function PracticePadModal({
       return;
     }
 
+    // Prevenir dibujo durante pinch-to-zoom o durante el cooldown
+    if (isPinchZoomingRef.current || Date.now() < pinchCooldownUntilRef.current) {
+      return;
+    }
+
+    if (e.pointerType === 'touch' && activeTouchPointersRef.current.size >= 2) {
+      isPinchZoomingRef.current = true;
+      setIsPinching(true);
+      cancelCurrentStroke();
+      return;
+    }
+
     if (!isPointerDownRef.current || !currentStrokeRef.current) return;
     const drawCanvas = drawingCanvasRef.current;
     if (!drawCanvas) return;
@@ -468,6 +535,10 @@ export default function PracticePadModal({
   };
 
   const handlePointerUp = (e) => {
+    if (e?.pointerType === 'touch' && e?.pointerId !== undefined) {
+      activeTouchPointersRef.current.delete(e.pointerId);
+    }
+
     if (isPanningRef.current) {
       isPanningRef.current = false;
       setIsPanning(false);
@@ -476,10 +547,24 @@ export default function PracticePadModal({
           drawingCanvasRef.current.releasePointerCapture(e.pointerId);
         }
       } catch (err) {}
+      activePointerIdRef.current = null;
       return;
     }
 
-    if (!isPointerDownRef.current) return;
+    // Si se estaba haciendo zoom con dedos o el trazo fue cancelado/abortado, no guardar nada
+    if (isPinchZoomingRef.current || !isPointerDownRef.current) {
+      isPointerDownRef.current = false;
+      currentStrokeRef.current = null;
+      setIsDrawing(false);
+      try {
+        if (drawingCanvasRef.current && e?.pointerId !== undefined) {
+          drawingCanvasRef.current.releasePointerCapture(e.pointerId);
+        }
+      } catch (err) {}
+      activePointerIdRef.current = null;
+      return;
+    }
+
     isPointerDownRef.current = false;
     setIsDrawing(false);
 
@@ -488,6 +573,7 @@ export default function PracticePadModal({
         drawingCanvasRef.current.releasePointerCapture(e.pointerId);
       }
     } catch (err) {}
+    activePointerIdRef.current = null;
 
     const completed = currentStrokeRef.current;
     currentStrokeRef.current = null;
@@ -507,6 +593,7 @@ export default function PracticePadModal({
 
   const handleViewportPointerDown = (e) => {
     if (e.target === drawingCanvasRef.current) return;
+    if (isPinchZoomingRef.current || Date.now() < pinchCooldownUntilRef.current) return;
     const isPanAction = isPanMode || isSpacePressed || e.button === 1 || zoom > 1;
     if (isPanAction) {
       isPanningRef.current = true;
@@ -594,6 +681,7 @@ export default function PracticePadModal({
 
     const handleWheel = (e) => {
       if (e.ctrlKey || e.metaKey) {
+        cancelCurrentStroke();
         e.preventDefault();
         const rect = viewport.getBoundingClientRect();
         const mouseX = e.clientX - rect.left - rect.width / 2;
@@ -628,22 +716,26 @@ export default function PracticePadModal({
     return () => {
       viewport.removeEventListener('wheel', handleWheel);
     };
-  }, [activeTab, zoom]);
+  }, [activeTab, zoom, cancelCurrentStroke]);
 
-  // Touch Pinch-to-Zoom and Touch Pan
+  // Touch Pinch-to-Zoom and Touch Pan (Previene dibujar cuando se hace zoom con 2 dedos en móviles)
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport || activeTab !== 'canvas') return;
 
     const onTouchStart = (e) => {
-      if (e.touches.length === 2) {
+      if (e.touches.length >= 2) {
+        isPinchZoomingRef.current = true;
+        setIsPinching(true);
+        cancelCurrentStroke();
+
         const t1 = e.touches[0];
         const t2 = e.touches[1];
         const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
         touchStateRef.current = {
           distance: dist,
-          startPan: { ...pan },
-          startZoom: zoom,
+          startPan: { ...panRef.current },
+          startZoom: zoomRef.current,
           startCenter: {
             x: (t1.clientX + t2.clientX) / 2,
             y: (t1.clientY + t2.clientY) / 2
@@ -653,8 +745,14 @@ export default function PracticePadModal({
     };
 
     const onTouchMove = (e) => {
-      if (e.touches.length === 2 && touchStateRef.current.distance > 0) {
+      if (e.touches.length >= 2) {
         e.preventDefault();
+        if (!isPinchZoomingRef.current) {
+          isPinchZoomingRef.current = true;
+          setIsPinching(true);
+          cancelCurrentStroke();
+        }
+
         const t1 = e.touches[0];
         const t2 = e.touches[1];
         const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
@@ -662,6 +760,16 @@ export default function PracticePadModal({
           x: (t1.clientX + t2.clientX) / 2,
           y: (t1.clientY + t2.clientY) / 2
         };
+
+        if (touchStateRef.current.distance <= 0) {
+          touchStateRef.current = {
+            distance: dist,
+            startPan: { ...panRef.current },
+            startZoom: zoomRef.current,
+            startCenter: center
+          };
+          return;
+        }
 
         const factor = dist / touchStateRef.current.distance;
         const newZoom = Math.min(Math.max(Number((touchStateRef.current.startZoom * factor).toFixed(2)), 0.5), 4);
@@ -673,25 +781,76 @@ export default function PracticePadModal({
           x: Math.round(touchStateRef.current.startPan.x + dx),
           y: Math.round(touchStateRef.current.startPan.y + dy)
         });
+      } else if (isPinchZoomingRef.current) {
+        // Bloquear desplazamiento si aún hay un dedo residual tras pellizcar
+        e.preventDefault();
       }
     };
 
     const onTouchEnd = (e) => {
-      if (e.touches.length < 2) {
+      if (e.touches.length >= 2) {
+        // Todavía hay al menos 2 dedos, recalibrar centro y distancia inicial para continuidad
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        touchStateRef.current = {
+          distance: dist,
+          startPan: { ...panRef.current },
+          startZoom: zoomRef.current,
+          startCenter: {
+            x: (t1.clientX + t2.clientX) / 2,
+            y: (t1.clientY + t2.clientY) / 2
+          }
+        };
+      } else if (e.touches.length === 1) {
+        // Queda 1 dedo residual: no dibujar con él
         touchStateRef.current.distance = 0;
+      } else {
+        // Levantados todos los dedos: finalizar pinch y habilitar cooldown
+        touchStateRef.current.distance = 0;
+        if (isPinchZoomingRef.current) {
+          isPinchZoomingRef.current = false;
+          setIsPinching(false);
+          pinchCooldownUntilRef.current = Date.now() + 350;
+        }
+        activeTouchPointersRef.current.clear();
       }
     };
 
-    viewport.addEventListener('touchstart', onTouchStart, { passive: true });
-    viewport.addEventListener('touchmove', onTouchMove, { passive: false });
-    viewport.addEventListener('touchend', onTouchEnd, { passive: true });
+    const onGesture = (e) => {
+      e.preventDefault();
+      if (!isPinchZoomingRef.current) {
+        isPinchZoomingRef.current = true;
+        setIsPinching(true);
+        cancelCurrentStroke();
+      }
+    };
+
+    // Usar capture: true para garantizar intercepción antes de que eventos lleguen a los elementos hijos
+    viewport.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
+    viewport.addEventListener('touchmove', onTouchMove, { capture: true, passive: false });
+    viewport.addEventListener('touchend', onTouchEnd, { capture: true, passive: true });
+    viewport.addEventListener('touchcancel', onTouchEnd, { capture: true, passive: true });
+    viewport.addEventListener('gesturestart', onGesture, { capture: true, passive: false });
+    viewport.addEventListener('gesturechange', onGesture, { capture: true, passive: false });
+    viewport.addEventListener('gestureend', onGesture, { capture: true, passive: false });
+
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
     return () => {
-      viewport.removeEventListener('touchstart', onTouchStart);
-      viewport.removeEventListener('touchmove', onTouchMove);
-      viewport.removeEventListener('touchend', onTouchEnd);
+      viewport.removeEventListener('touchstart', onTouchStart, { capture: true });
+      viewport.removeEventListener('touchmove', onTouchMove, { capture: true });
+      viewport.removeEventListener('touchend', onTouchEnd, { capture: true });
+      viewport.removeEventListener('touchcancel', onTouchEnd, { capture: true });
+      viewport.removeEventListener('gesturestart', onGesture, { capture: true });
+      viewport.removeEventListener('gesturechange', onGesture, { capture: true });
+      viewport.removeEventListener('gestureend', onGesture, { capture: true });
+
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
     };
-  }, [activeTab, zoom, pan]);
+  }, [activeTab, cancelCurrentStroke]);
 
   // Zoom control helpers
   const handleZoomChange = (newZoom) => {
@@ -1783,7 +1942,7 @@ export default function PracticePadModal({
                     touchAction: 'none',
                     transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
                     transformOrigin: 'center center',
-                    transition: isPanning ? 'none' : 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
+                    transition: (isPanning || isPinching) ? 'none' : 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
                 >
                   {/* Layer 1: Background Grid Canvas */}
