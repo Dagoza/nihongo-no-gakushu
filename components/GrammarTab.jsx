@@ -390,14 +390,32 @@ export default function GrammarTab({
 
           {/* Particles Grid */}
           <div className="particles-grid">
-            {filteredParticles.slice(0, visibleCount).map((p) => {
-              const isMastered = !!appState.masteredParticles?.[p.id];
-              const pLevel = p.level || 'N5';
-              return (
-                <div 
-                  key={p.id}
-                  className={`particle-card ${isMastered ? 'mastered' : ''}`}
+            {filteredParticles.length === 0 ? (
+              <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+                <p style={{ fontSize: '1rem', marginBottom: 12 }}>No se encontraron partículas con los filtros seleccionados.</p>
+                <button 
+                  type="button" 
+                  className="btn btn-outline btn-sm" 
+                  onClick={() => {
+                    setLevelFilter('all');
+                    setFilterParticle('all');
+                    setFilterStatus('all');
+                    setSearchTerm('');
+                    updateParams('all', '', quizActive, 'all');
+                  }}
                 >
+                  Restablecer filtros
+                </button>
+              </div>
+            ) : (
+              filteredParticles.slice(0, visibleCount).map((p) => {
+                const isMastered = !!appState.masteredParticles?.[p.id];
+                const pLevel = p.level || 'N5';
+                return (
+                  <div 
+                    key={p.id}
+                    className={`particle-card ${isMastered ? 'mastered' : ''}`}
+                  >
                   {/* Card Header */}
                   <div className="particle-header">
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 0 }}>
@@ -519,7 +537,7 @@ export default function GrammarTab({
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
 
           {visibleCount < filteredParticles.length && (

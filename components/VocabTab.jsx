@@ -539,7 +539,7 @@ export default function VocabTab({
                 fontSize: '0.75rem',
                 fontWeight: 700
               }}>
-                187 palabras
+                {(vocabularyData || []).length} palabras
               </span>
             </button>
             <button
@@ -1010,7 +1010,21 @@ export default function VocabTab({
 
           {filteredVocab.length === 0 && (
             <div className="card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
-              No se encontraron palabras con los filtros aplicados.
+              <p style={{ fontSize: '1rem', marginBottom: 12 }}>No se encontraron palabras con los filtros aplicados.</p>
+              <button 
+                type="button" 
+                className="btn btn-outline btn-sm" 
+                onClick={() => {
+                  setLevel('all');
+                  setCategory('all');
+                  setSearchTerm('');
+                  setFilterOnlyWithNotes(false);
+                  setFilterOnlyCustomized(false);
+                  updateParams(mode, 'all', 'all', '');
+                }}
+              >
+                Restablecer filtros
+              </button>
             </div>
           )}
         </div>

@@ -128,76 +128,93 @@ export default function MaterialLibraryTab({
 
       {/* Grid of Materials */}
       <div className="pdf-grid">
-        {filtered.map((pdf, idx) => {
-          const isPages = pdf.filename.endsWith('.pages');
-          const isXlsx = pdf.filename.endsWith('.xlsx');
-          const isViewablePdf = !isPages && !isXlsx;
+        {filtered.length === 0 ? (
+          <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: '1rem', marginBottom: 12 }}>No se encontraron materiales con los filtros actuales.</p>
+            <button 
+              type="button" 
+              className="btn btn-outline btn-sm" 
+              onClick={() => {
+                setCurrentCategory('all');
+                setSearchTerm('');
+                updateParams('all', '', activeModal?.filename);
+              }}
+            >
+              Ver todos los materiales
+            </button>
+          </div>
+        ) : (
+          filtered.map((pdf, idx) => {
+            const isPages = pdf.filename.endsWith('.pages');
+            const isXlsx = pdf.filename.endsWith('.xlsx');
+            const isViewablePdf = !isPages && !isXlsx;
 
-          return (
-            <div key={idx} className="pdf-card">
-              <div className="pdf-card-header">
-                <div className="pdf-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {getFileIcon(pdf.filename)}
-                </div>
-                <div className="pdf-meta" style={{ flex: 1 }}>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                    {pdf.title}
-                  </h3>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'monospace', margin: '3px 0' }}>
-                    {pdf.filename}
+            return (
+              <div key={idx} className="pdf-card">
+                <div className="pdf-card-header">
+                  <div className="pdf-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {getFileIcon(pdf.filename)}
                   </div>
-                  <div className="pdf-badges">
-                    <span className="badge-tag">{pdf.level}</span>
-                    <span className="badge-tag">{pdf.pages} pág.</span>
-                    <span className="badge-tag">{pdf.size}</span>
+                  <div className="pdf-meta" style={{ flex: 1 }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                      {pdf.title}
+                    </h3>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'monospace', margin: '3px 0' }}>
+                      {pdf.filename}
+                    </div>
+                    <div className="pdf-badges">
+                      <span className="badge-tag">{pdf.level}</span>
+                      <span className="badge-tag">{pdf.pages} pág.</span>
+                      <span className="badge-tag">{pdf.size}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <p className="pdf-desc" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.5, flex: 1, margin: '12px 0' }}>
-                {pdf.description}
-              </p>
+                <p className="pdf-desc" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.5, flex: 1, margin: '12px 0' }}>
+                  {pdf.description}
+                </p>
 
-              <div className="pdf-actions" style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                {isViewablePdf && (
-                  <button 
-                    className="btn btn-primary btn-sm"
-                    onClick={() => {
-                      setActiveModal({ title: pdf.title, url: pdf.path, externalUrl: pdf.external_url, filename: pdf.filename });
-                      updateParams(currentCategory, searchTerm, pdf.filename);
-                    }}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                  >
-                    <Eye size={14} /> Ver en la App
-                  </button>
-                )}
+                <div className="pdf-actions" style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
+                  {isViewablePdf && (
+                    <button 
+                      className="btn btn-primary btn-sm"
+                      onClick={() => {
+                        setActiveModal({ title: pdf.title, url: pdf.path, externalUrl: pdf.external_url, filename: pdf.filename });
+                        updateParams(currentCategory, searchTerm, pdf.filename);
+                      }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    >
+                      <Eye size={14} /> Ver en la App
+                    </button>
+                  )}
 
-                <a 
-                  href={pdf.path} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="btn btn-outline btn-sm"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                >
-                  <ExternalLink size={14} /> Abrir Archivo
-                </a>
-
-                {pdf.external_url && (
                   <a 
-                    href={pdf.external_url} 
+                    href={pdf.path} 
                     target="_blank" 
                     rel="noreferrer" 
                     className="btn btn-outline btn-sm"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                    title="Enlace oficial en línea de Fundación Japón"
                   >
-                    <ExternalLink size={14} /> Web Oficial
+                    <ExternalLink size={14} /> Abrir Archivo
                   </a>
-                )}
+
+                  {pdf.external_url && (
+                    <a 
+                      href={pdf.external_url} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="btn btn-outline btn-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                      title="Enlace oficial en línea de Fundación Japón"
+                    >
+                      <ExternalLink size={14} /> Web Oficial
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       {/* Integrated PDF Viewer Modal */}

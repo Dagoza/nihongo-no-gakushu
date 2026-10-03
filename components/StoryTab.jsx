@@ -338,7 +338,19 @@ export default function StoryTab({
 
         {/* Stories Grid / Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
-          {filteredStories.map((s) => {
+          {filteredStories.length === 0 ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '36px 16px', color: 'var(--text-muted)' }}>
+              <p style={{ fontSize: '0.95rem', marginBottom: 10 }}>No se encontraron historias con el filtro seleccionado.</p>
+              <button 
+                type="button" 
+                className="btn btn-outline btn-sm" 
+                onClick={() => { setStoryLevelFilter('Todos'); setStorySearch(''); }}
+              >
+                Ver todas las historias
+              </button>
+            </div>
+          ) : (
+            filteredStories.map((s) => {
             const isSelected = s.id === story.id;
             const lvl = s.level || s.difficulty || 'N5';
             const lvlColor = 
@@ -404,7 +416,7 @@ export default function StoryTab({
                 )}
               </div>
             );
-          })}
+          }))}
         </div>
       </div>
 

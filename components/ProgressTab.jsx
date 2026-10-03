@@ -32,7 +32,11 @@ import {
   signInWithGoogle 
 } from '../lib/supabaseSync';
 import nhkLessonsData from '../data/nhk_lessons.json';
+import irodoriDialoguesData from '../data/irodori_dialogues.json';
 import curriculumData from '../data/curriculum.json';
+import particlesData from '../data/particles.json';
+import kanjiData from '../data/kanji.json';
+import vocabularyData from '../data/vocabulary.json';
 import { useApp } from '../lib/AppContext';
 
 function detectUserOS() {
@@ -334,15 +338,18 @@ export default function ProgressTab({
   const xp = appState.xp || 0;
   const userLevel = Math.floor(xp / 100) + 1;
   const masteredParticlesCount = Object.values(appState.masteredParticles || {}).filter(Boolean).length;
+  const totalParticles = particlesData?.length || 99;
   const masteredVocabCount = Object.values(appState.masteredVocab || {}).filter(Boolean).length;
+  const totalVocab = vocabularyData?.length || 321;
   const masteredKanjiCount = Object.values(appState.masteredKanji || {}).filter(Boolean).length;
+  const totalKanji = kanjiData?.length || 161;
   const completedSentencesCount = Object.values(appState.completedSentences || {}).filter(Boolean).length;
   const completedConversationsCount = Object.values(appState.completedConversations || {}).filter(Boolean).length;
-  const totalConversations = nhkLessonsData?.length || 48;
+  const totalConversations = (nhkLessonsData?.length || 48) + (irodoriDialoguesData?.length || 22);
   const completedStepsCount = Object.values(appState.completedSteps || {}).filter(Boolean).length;
-  const totalSteps = curriculumData?.length || 19;
+  const totalSteps = curriculumData?.length || 37;
   const allCanDos = (curriculumData || []).flatMap(s => s.can_dos || []);
-  const totalCanDos = allCanDos.length || 87;
+  const totalCanDos = allCanDos.length || 141;
   const completedCanDosCount = Object.values(appState.completedCanDos || {}).filter(Boolean).length;
 
   // Sincronización manual en la nube (requiere sesión activa)
@@ -482,7 +489,7 @@ export default function ProgressTab({
         <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎯</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--success)' }}>
-            {masteredParticlesCount}/25
+            {masteredParticlesCount}/{totalParticles}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Partículas Dominadas</div>
         </div>
@@ -490,7 +497,7 @@ export default function ProgressTab({
         <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>漢</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary-light)' }}>
-            {masteredKanjiCount}/101
+            {masteredKanjiCount}/{totalKanji}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Kanjis Aprendidos</div>
         </div>
@@ -498,7 +505,7 @@ export default function ProgressTab({
         <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>📚</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--warning)' }}>
-            {masteredVocabCount}/163
+            {masteredVocabCount}/{totalVocab}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Vocabulario Dominado</div>
         </div>

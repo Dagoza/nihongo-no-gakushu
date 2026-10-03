@@ -678,52 +678,65 @@ export default function ConversationTab({
 
           {/* Dialogue Selector Pills */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', maxHeight: 180, overflowY: 'auto', padding: '4px 0' }}>
-            {visibleDialogues.map(d => {
-              const isDone = isDialogueCompleted(d);
-              const isSelected = d.id === selectedDialogueId;
-
-              return (
-                <button
-                  key={d.id}
-                  className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => {
-                    setSelectedDialogueId(d.id);
-                    setMutedSpeaker('');
-                    setRevealedLineIndices({});
-                    updateParams(d.id, activeSubTab, statusFilter, filterType);
-                  }}
-                  style={{ 
-                    fontSize: '0.82rem', 
-                    whiteSpace: 'nowrap',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    borderColor: isDone ? (isSelected ? 'var(--primary)' : '#22c55e') : undefined,
-                    background: isDone && !isSelected ? 'rgba(34, 197, 94, 0.08)' : undefined
-                  }}
-                  title={`${d.series} · Nivel ${d.level} · ${d.title_es}`}
+            {visibleDialogues.length === 0 ? (
+              <div style={{ padding: '16px 20px', textAlign: 'center', width: '100%', color: 'var(--text-muted)' }}>
+                <p style={{ margin: '0 0 8px 0', fontSize: '0.9rem' }}>No se encontraron diálogos con los filtros seleccionados.</p>
+                <button 
+                  type="button" 
+                  className="btn btn-outline btn-sm" 
+                  onClick={() => { setSeriesFilter('all'); setLevelFilter('all'); setStatusFilter('all'); setSearchDialogueQuery(''); }}
                 >
-                  {isDone ? (
-                    <CheckCircle2 size={13} color={isSelected ? '#fff' : '#22c55e'} />
-                  ) : (
-                    <span style={{ opacity: 0.5, fontSize: '0.75rem' }}>○</span>
-                  )}
-                  <span style={{ 
-                    fontSize: '0.7rem', 
-                    fontWeight: 800, 
-                    padding: '1px 5px', 
-                    borderRadius: 3, 
-                    background: isSelected ? 'rgba(255, 255, 255, 0.25)' : (d.level === 'N5' ? 'rgba(16, 185, 129, 0.15)' : d.level === 'N4' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)'),
-                    color: isSelected ? '#fff' : (d.level === 'N5' ? '#059669' : d.level === 'N4' ? '#2563eb' : '#d97706')
-                  }}>
-                    {d.level}
-                  </span>
-                  <span>
-                    {d.seriesKey === 'irodori' ? `Irodori ${d.dialogueNum}` : `L${d.dialogueNum}`}: {d.title_jp.slice(0, 16)}...
-                  </span>
+                  Restablecer filtros
                 </button>
-              );
-            })}
+              </div>
+            ) : (
+              visibleDialogues.map(d => {
+                const isDone = isDialogueCompleted(d);
+                const isSelected = d.id === selectedDialogueId;
+
+                return (
+                  <button
+                    key={d.id}
+                    className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => {
+                      setSelectedDialogueId(d.id);
+                      setMutedSpeaker('');
+                      setRevealedLineIndices({});
+                      updateParams(d.id, activeSubTab, statusFilter, filterType);
+                    }}
+                    style={{ 
+                      fontSize: '0.82rem', 
+                      whiteSpace: 'nowrap',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      borderColor: isDone ? (isSelected ? 'var(--primary)' : '#22c55e') : undefined,
+                      background: isDone && !isSelected ? 'rgba(34, 197, 94, 0.08)' : undefined
+                    }}
+                    title={`${d.series} · Nivel ${d.level} · ${d.title_es}`}
+                  >
+                    {isDone ? (
+                      <CheckCircle2 size={13} color={isSelected ? '#fff' : '#22c55e'} />
+                    ) : (
+                      <span style={{ opacity: 0.5, fontSize: '0.75rem' }}>○</span>
+                    )}
+                    <span style={{ 
+                      fontSize: '0.7rem', 
+                      fontWeight: 800, 
+                      padding: '1px 5px', 
+                      borderRadius: 3, 
+                      background: isSelected ? 'rgba(255, 255, 255, 0.25)' : (d.level === 'N5' ? 'rgba(16, 185, 129, 0.15)' : d.level === 'N4' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)'),
+                      color: isSelected ? '#fff' : (d.level === 'N5' ? '#059669' : d.level === 'N4' ? '#2563eb' : '#d97706')
+                    }}>
+                      {d.level}
+                    </span>
+                    <span>
+                      {d.seriesKey === 'irodori' ? `Irodori ${d.dialogueNum}` : `L${d.dialogueNum}`}: {d.title_jp.slice(0, 16)}...
+                    </span>
+                  </button>
+                );
+              })
+            )}
           </div>
 
           {currentDialogue && (

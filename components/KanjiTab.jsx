@@ -429,7 +429,7 @@ export default function KanjiTab({
                 fontSize: '0.75rem',
                 fontWeight: 700
               }}>
-                134 kanjis
+                {(kanjiData || []).length} kanjis
               </span>
             </button>
             <button
@@ -609,7 +609,23 @@ export default function KanjiTab({
 
           {/* Kanji Cards Grid */}
           <div className="kanji-grid">
-            {filteredKanji.slice(0, visibleCount).map((k) => {
+            {filteredKanji.length === 0 ? (
+              <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+                <p style={{ fontSize: '1rem', marginBottom: 12 }}>No se encontraron kanjis con los filtros seleccionados.</p>
+                <button 
+                  type="button" 
+                  className="btn btn-outline btn-sm" 
+                  onClick={() => {
+                    setLevel('all');
+                    setSearchTerm('');
+                    updateParams('', 'list', drawingKanji);
+                  }}
+                >
+                  Restablecer filtros
+                </button>
+              </div>
+            ) : (
+              filteredKanji.slice(0, visibleCount).map((k) => {
               const isMastered = !!appState.masteredKanji?.[k.kanji];
               const isSelected = selectedKanjiChars.has(k.kanji);
               return (
@@ -788,7 +804,7 @@ export default function KanjiTab({
                   )}
                 </div>
               );
-            })}
+            }))}
           </div>
 
           {visibleCount < filteredKanji.length && (
