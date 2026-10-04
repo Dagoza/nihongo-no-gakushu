@@ -2763,6 +2763,14 @@ export default function ProductTour({
                       </div>
                       <div className="checklist-item">
                         <Check size={14} className="text-emerald-500" />
+                        <span>Meta Diaria con FSRS y recordatorios móviles activados</span>
+                      </div>
+                      <div className="checklist-item">
+                        <Check size={14} className="text-emerald-500" />
+                        <span>Simulacros Oficiales JLPT (N5 a N1) listos para entrenar</span>
+                      </div>
+                      <div className="checklist-item">
+                        <Check size={14} className="text-emerald-500" />
                         <span>Teclado IME y Pitch Accent dominados</span>
                       </div>
                       <div className="checklist-item">
