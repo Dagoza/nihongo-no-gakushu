@@ -24,8 +24,10 @@ import {
   Monitor,
   Smartphone,
   Laptop,
-  Check
+  Check,
+  Brain
 } from 'lucide-react';
+import FsrsStatsModule from './FsrsStatsModule';
 import { exportData, parseImportData, getInitialState } from '../lib/storage';
 import { 
   executeFullSync, 
@@ -313,10 +315,18 @@ export default function ProgressTab({
   const [detectedOS, setDetectedOS] = useState('macos');
   const [testInput, setTestInput] = useState('');
 
+  // Sección activa en la página de Progreso ('fsrs' por defecto)
+  const [activeSection, setActiveSection] = useState('fsrs'); // 'fsrs' | 'cloud' | 'backup' | 'keyboard'
+
   useEffect(() => {
-    const os = detectUserOS();
-    setDetectedOS(os);
-    setSelectedOS(os);
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const sec = params.get('section');
+      if (sec && ['fsrs', 'cloud', 'backup', 'keyboard'].includes(sec)) {
+        setActiveSection(sec);
+      }
+    } catch (e) {}
   }, []);
 
   const handleGoogleSignIn = async () => {
@@ -544,8 +554,75 @@ export default function ProgressTab({
         </div>
       </div>
 
-      {/* CLOUD SYNC & USER ACCOUNT CARD */}
-      <div className="card" style={{ marginBottom: 24, border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+      {/* Selector de Sección Principal en Mi Progreso */}
+      <div 
+        style={{
+          display: 'flex',
+          gap: 10,
+          marginBottom: 24,
+          overflowX: 'auto',
+          paddingBottom: 6,
+          borderBottom: '2px solid var(--border)'
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setActiveSection('fsrs')}
+          className={`btn btn-sm ${activeSection === 'fsrs' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 16px' }}
+        >
+          <Brain size={16} />
+          <span>🧠 Análisis & FSRS</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSection('cloud')}
+          className={`btn btn-sm ${activeSection === 'cloud' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 16px' }}
+        >
+          <Cloud size={16} />
+          <span>☁️ Nube & Cuenta</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSection('backup')}
+          className={`btn btn-sm ${activeSection === 'backup' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 16px' }}
+        >
+          <Download size={16} />
+          <span>💾 Respaldos JSON</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSection('keyboard')}
+          className={`btn btn-sm ${activeSection === 'keyboard' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 16px' }}
+        >
+          <Keyboard size={16} />
+          <span>⌨️ Teclados Japonés (IME)</span>
+        </button>
+      </div>
+
+      {/* SECCIÓN 1: ANÁLISIS & FSRS */}
+      {activeSection === 'fsrs' && (
+        <FsrsStatsModule
+          appState={appState}
+          onUpdateState={onUpdateState}
+          onOpenDailyGoal={contextApp?.openDailyGoalModal}
+          onNavigate={contextApp?.navigate}
+          showConfirm={showConfirm}
+          showAlert={contextApp?.showAlert}
+        />
+      )}
+
+      {/* SECCIÓN 2: NUBE Y CUENTA */}
+      {activeSection === 'cloud' && (
+        <>
+          {/* CLOUD SYNC & USER ACCOUNT CARD */}
+          <div className="card" style={{ marginBottom: 24, border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
         {/* Card Header with Status Badge */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -800,8 +877,11 @@ export default function ProgressTab({
           </button>
         </div>
       </div>
+      </>
+    )}
 
-      {/* Backup and Restore Box (JSON Manual) */}
+    {/* SECCIÓN 3: RESPALDOS MANUALES JSON */}
+    {activeSection === 'backup' && (
       <div className="card" style={{ marginBottom: 24 }}>
         <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
           <span>💾</span> Respaldo Manual en Archivo JSON
@@ -844,9 +924,11 @@ export default function ProgressTab({
           </button>
         </div>
       </div>
+    )}
 
-      {/* Multi-OS Japanese Keyboard & IME Guide */}
-      <div className="card" style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 16, padding: '24px', marginTop: 24 }}>
+    {/* SECCIÓN 4: CONSEJOS Y CONFIGURACIÓN DEL TECLADO JAPONÉS (IME) */}
+    {activeSection === 'keyboard' && (
+      <div className="card" style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 16, padding: '24px', marginTop: 12 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1110,6 +1192,7 @@ export default function ProgressTab({
           );
         })()}
       </div>
+    )}
     </div>
   );
 }

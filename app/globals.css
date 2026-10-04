@@ -10259,6 +10259,21 @@ html {
   }
 }
 
+/* FSRS Stats Module Styles */
+.fsrs-table-row:hover {
+  background: rgba(99, 102, 241, 0.04) !important;
+}
 
+[data-theme='dark'] .fsrs-table-row:hover {
+  background: rgba(99, 102, 241, 0.1) !important;
+}
 
+.fsrs-stats-module .card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
 
+@media (max-width: 768px) {
+  .fsrs-stats-module table {
+    min-width: 680px;
+  }
+}
