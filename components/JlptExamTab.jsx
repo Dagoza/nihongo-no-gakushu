@@ -26,7 +26,10 @@ import {
   ArrowRight, 
   AlertTriangle,
   Check,
-  Filter
+  Filter,
+  Shuffle,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useApp } from '../lib/AppContext';
 import audioManager from '../lib/audioManager';
@@ -50,6 +53,28 @@ const JLPT_LEVELS = [
   { id: 'N1', name: 'N1', desc: 'Avanzado', passScore: 100, maxScore: 180, timeMins: 60 }
 ];
 
+const SUBTYPE_LABELS = {
+  kanji_reading: 'Lectura de Kanji',
+  orthography: 'Ortografía',
+  context_word: 'Uso en Contexto',
+  paraphrase: 'Paráfrasis / Sinónimo',
+  particle: 'Partículas',
+  grammar_form: 'Estructura Gramatical',
+  sentence_order: 'Composición de Oración ★',
+  short_reading: 'Lectura Corta',
+  info_retrieval: 'Búsqueda de Info',
+  listening_task: 'Comprensión Auditiva'
+};
+
+function formatSubType(subType, section) {
+  if (subType && SUBTYPE_LABELS[subType]) return SUBTYPE_LABELS[subType];
+  if (section === 'vocabulary') return 'Vocabulario';
+  if (section === 'grammar') return 'Gramática';
+  if (section === 'reading') return 'Lectura';
+  if (section === 'listening') return 'Audio';
+  return 'Pregunta JLPT';
+}
+
 export default function JlptExamTab() {
   const { appState, onUpdateState } = useApp();
 
@@ -66,19 +91,45 @@ export default function JlptExamTab() {
   const [examFinished, setExamFinished] = useState(false);
   const [practiceFeedback, setPracticeFeedback] = useState({}); // { [qId]: { isCorrect, selectedIndex } }
 
+  // Shuffle & Question Count Controls
+  const [isRandomOrder, setIsRandomOrder] = useState(true);
+  const [questionCountLimit, setQuestionCountLimit] = useState(25); // 15, 25, 0 (todas)
+  const [shuffleSeed, setShuffleSeed] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   // Timed mode state
   const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const timerRef = useRef(null);
 
-  // Filter questions by level and section
+  // Total questions available in the database for the active level
+  const totalPoolForLevel = useMemo(() => {
+    return (jlptExamsData || []).filter(q => q.level === level).length;
+  }, [level]);
+
+  // Filter and shuffle questions
   const filteredQuestions = useMemo(() => {
-    return (jlptExamsData || []).filter(q => {
+    let list = (jlptExamsData || []).filter(q => {
       if (q.level !== level) return false;
       if (section !== 'all' && q.section !== section) return false;
       return true;
     });
-  }, [level, section]);
+
+    if (isRandomOrder) {
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      list = copy;
+    }
+
+    if (questionCountLimit > 0 && list.length > questionCountLimit) {
+      list = list.slice(0, questionCountLimit);
+    }
+
+    return list;
+  }, [level, section, isRandomOrder, questionCountLimit, shuffleSeed]);
 
   const currentLevelConfig = useMemo(() => {
     return JLPT_LEVELS.find(l => l.id === level) || JLPT_LEVELS[0];
@@ -122,7 +173,7 @@ export default function JlptExamTab() {
     return () => clearInterval(timerRef.current);
   }, [mode, isTimerRunning, examFinished]);
 
-  const currentQuestion = filteredQuestions[currentIndex];
+  const currentQuestion = filteredQuestions[currentIndex] || filteredQuestions[0];
 
   // Handle answering in practice or timed mode
   const handleSelectOption = (optIndex) => {
@@ -259,16 +310,9 @@ export default function JlptExamTab() {
   }, [examFinished, filteredQuestions, userAnswers, currentLevelConfig]);
 
   return (
-    <div className="tab-pane active" style={{ maxWidth: 1040, margin: '0 auto', paddingBottom: 60 }}>
+    <div className="tab-pane active jlpt-exam-tab-pane">
       {/* Top Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-        borderRadius: 20,
-        padding: '28px 24px',
-        color: '#ffffff',
-        marginBottom: 24,
-        boxShadow: '0 8px 24px rgba(79, 70, 229, 0.25)'
-      }}>
+      <div className="jlpt-top-banner">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
@@ -337,9 +381,9 @@ export default function JlptExamTab() {
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: 12,
-        marginBottom: 20
+        marginBottom: 16
       }}>
-        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
+        <div className="jlpt-scroll-pills">
           {JLPT_LEVELS.map(lvl => {
             const active = level === lvl.id;
             return (
@@ -354,7 +398,8 @@ export default function JlptExamTab() {
                   fontSize: '0.9rem',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 8
+                  gap: 8,
+                  whiteSpace: 'nowrap'
                 }}
                 onClick={() => handleResetExam(lvl.id, section)}
               >
@@ -406,14 +451,7 @@ export default function JlptExamTab() {
       </div>
 
       {/* Section Filter Pills */}
-      <div style={{
-        display: 'flex',
-        gap: 8,
-        overflowX: 'auto',
-        paddingBottom: 10,
-        marginBottom: 20,
-        borderBottom: '1px solid var(--border)'
-      }}>
+      <div className="jlpt-scroll-pills" style={{ marginBottom: 14, borderBottom: '1px solid var(--border)' }}>
         {SECTIONS.map(sec => {
           const Icon = sec.icon;
           const active = section === sec.id;
@@ -446,6 +484,49 @@ export default function JlptExamTab() {
             </button>
           );
         })}
+      </div>
+
+      {/* Controls Bar: Shuffle & Question Count */}
+      <div className="jlpt-exam-controls-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline"
+            style={{ borderRadius: 8, fontSize: '0.78rem', gap: 6, fontWeight: 700 }}
+            onClick={() => {
+              setShuffleSeed(prev => prev + 1);
+              handleResetExam(level, section);
+            }}
+            title="Mezclar aleatoriamente el banco de preguntas"
+          >
+            <Shuffle size={14} color="var(--primary)" />
+            <span>Barajar Preguntas 🔀</span>
+          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: 4 }}>
+            <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+              TEST:
+            </span>
+            {[15, 25, 0].map(cnt => (
+              <button
+                key={cnt}
+                type="button"
+                className={`btn btn-sm ${questionCountLimit === cnt ? 'btn-primary' : 'btn-outline'}`}
+                style={{ padding: '2px 8px', fontSize: '0.74rem', borderRadius: 6 }}
+                onClick={() => {
+                  setQuestionCountLimit(cnt);
+                  handleResetExam(level, section);
+                }}
+              >
+                {cnt === 0 ? 'Todas' : `${cnt} q`}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+          Catálogo total: <strong style={{ color: 'var(--text-main)' }}>{totalPoolForLevel} preguntas</strong> en {level}
+        </div>
       </div>
 
       {/* Main Content Area */}
@@ -644,54 +725,48 @@ export default function JlptExamTab() {
         </div>
       ) : (
         /* Question Card & Interaction View */
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 20, alignItems: 'start' }}>
+        <div className="jlpt-exam-layout">
           {/* Main Question Panel */}
-          <div className="card" style={{ padding: '24px', borderRadius: 16 }}>
+          <div className="jlpt-question-card">
             {/* Question Header Bar */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  padding: '3px 10px',
-                  borderRadius: 999,
-                  background: 'rgba(99, 102, 241, 0.12)',
-                  color: 'var(--primary)'
-                }}>
+            <div className="jlpt-q-header">
+              <div className="jlpt-q-meta">
+                <span className="jlpt-q-badge">
                   Pregunta {currentIndex + 1} de {filteredQuestions.length}
                 </span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  {currentQuestion.subType?.replace(/_/g, ' ')}
+                <span className="jlpt-q-section-label">
+                  {formatSubType(currentQuestion?.subType)}
                 </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div className="jlpt-q-actions">
                 <button
                   type="button"
-                  className={`btn btn-sm ${flaggedQuestions.has(currentQuestion.id) ? 'btn-danger' : 'btn-outline'}`}
-                  style={{ padding: '4px 8px', borderRadius: 6, fontSize: '0.75rem' }}
-                  onClick={() => toggleFlag(currentQuestion.id)}
+                  className={`btn btn-sm ${flaggedQuestions.has(currentQuestion?.id) ? 'btn-danger' : 'btn-outline'}`}
+                  style={{ padding: '4px 9px', borderRadius: 8, fontSize: '0.78rem' }}
+                  onClick={() => currentQuestion && toggleFlag(currentQuestion.id)}
                   title="Marcar pregunta para revisar luego"
                 >
                   <Flag size={14} />
-                  <span className="hidden-xs">Marcar</span>
+                  <span>Marcar</span>
                 </button>
 
                 <button
                   type="button"
                   className="btn btn-outline btn-sm"
-                  style={{ padding: '4px 8px', borderRadius: 6, fontSize: '0.75rem' }}
+                  style={{ padding: '4px 9px', borderRadius: 8, fontSize: '0.78rem' }}
                   onClick={() => setShowFurigana(prev => !prev)}
                 >
                   {showFurigana ? <EyeOff size={14} /> : <Eye size={14} />}
-                  <span className="hidden-xs">Furigana</span>
+                  <span>Furigana</span>
                 </button>
 
                 <button
                   type="button"
                   className="btn btn-outline btn-sm"
-                  style={{ padding: '4px 8px', borderRadius: 6 }}
+                  style={{ padding: '4px 9px', borderRadius: 8 }}
                   onClick={() => {
+                    if (!currentQuestion) return;
                     const text = currentQuestion.furigana || currentQuestion.question;
                     audioManager.speak(text.replace(/<[^>]*>/g, ''));
                   }}
@@ -703,7 +778,7 @@ export default function JlptExamTab() {
             </div>
 
             {/* Passage for reading/listening */}
-            {currentQuestion.passage && (
+            {currentQuestion?.passage && (
               <div style={{
                 padding: '16px',
                 borderRadius: 12,
@@ -712,34 +787,38 @@ export default function JlptExamTab() {
                 marginBottom: 16,
                 fontSize: '0.94rem',
                 lineHeight: 1.65,
-                color: 'var(--text-main)'
+                color: 'var(--text-main)',
+                wordBreak: 'break-word'
               }}>
                 {currentQuestion.passage}
               </div>
             )}
 
             {/* Question Stem */}
-            <div 
-              className="jp-text"
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: 'var(--text-main)',
-                lineHeight: 1.6,
-                marginBottom: 12
-              }}
-              dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
-            />
+            {currentQuestion && (
+              <div 
+                className="jp-text"
+                style={{
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: 'var(--text-main)',
+                  lineHeight: 1.6,
+                  marginBottom: 12,
+                  wordBreak: 'break-word'
+                }}
+                dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
+              />
+            )}
 
-            {showFurigana && currentQuestion.furigana && (
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 20 }}>
+            {showFurigana && currentQuestion?.furigana && (
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 20, wordBreak: 'break-word' }}>
                 {currentQuestion.furigana}
               </div>
             )}
 
             {/* Options */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10, marginBottom: 24 }}>
-              {currentQuestion.options.map((opt, optIdx) => {
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10, marginBottom: 24, width: '100%' }}>
+              {currentQuestion?.options?.map((opt, optIdx) => {
                 const isSelected = userAnswers[currentQuestion.id] === optIdx;
                 const feedback = practiceFeedback[currentQuestion.id];
 
@@ -755,7 +834,10 @@ export default function JlptExamTab() {
                   fontSize: '1rem',
                   fontWeight: 600,
                   color: 'var(--text-main)',
-                  transition: 'all 0.15s ease'
+                  transition: 'all 0.15s ease',
+                  textAlign: 'left',
+                  width: '100%',
+                  boxSizing: 'border-box'
                 };
 
                 if (mode === 'practice' && feedback) {
@@ -780,15 +862,15 @@ export default function JlptExamTab() {
                     style={optStyle}
                     onClick={() => handleSelectOption(optIdx)}
                   >
-                    <span className="jp-text" style={{ flex: 1, textAlign: 'left' }}>
-                      <span style={{ opacity: 0.5, marginRight: 10 }}>{optIdx + 1}.</span>
+                    <span className="jp-text" style={{ flex: 1, textAlign: 'left', wordBreak: 'break-word', marginRight: 8 }}>
+                      <span style={{ opacity: 0.6, marginRight: 8, fontWeight: 700 }}>{optIdx + 1}.</span>
                       {opt}
                     </span>
                     {mode === 'practice' && feedback && optIdx === currentQuestion.correctIndex && (
-                      <CheckCircle2 size={18} color="var(--success)" />
+                      <CheckCircle2 size={18} color="var(--success)" style={{ flexShrink: 0 }} />
                     )}
                     {mode === 'practice' && feedback && optIdx === feedback.selectedIndex && !feedback.isCorrect && (
-                      <XCircle size={18} color="var(--danger)" />
+                      <XCircle size={18} color="var(--danger)" style={{ flexShrink: 0 }} />
                     )}
                   </button>
                 );
@@ -796,13 +878,14 @@ export default function JlptExamTab() {
             </div>
 
             {/* Practice Mode Explanation Box */}
-            {mode === 'practice' && practiceFeedback[currentQuestion.id] && (
+            {mode === 'practice' && currentQuestion && practiceFeedback[currentQuestion.id] && (
               <div style={{
                 padding: '16px 20px',
                 borderRadius: 12,
                 background: practiceFeedback[currentQuestion.id].isCorrect ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
-                border: `1px solid ${practiceFeedback[currentQuestion.id].isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-                marginBottom: 20
+                border: `1.5px solid ${practiceFeedback[currentQuestion.id].isCorrect ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`,
+                marginBottom: 20,
+                wordBreak: 'break-word'
               }}>
                 <div style={{
                   fontWeight: 700,
@@ -812,14 +895,14 @@ export default function JlptExamTab() {
                 }}>
                   {practiceFeedback[currentQuestion.id].isCorrect ? '🎉 ¡Respuesta Correcta!' : '❌ Respuesta Incorrecta'}
                 </div>
-                <p style={{ margin: 0, fontSize: '0.88rem', lineHeight: 1.5, color: 'var(--text-main)' }}>
+                <p style={{ margin: 0, fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--text-main)', whiteSpace: 'pre-line' }}>
                   {currentQuestion.explanation}
                 </p>
               </div>
             )}
 
             {/* Navigation buttons */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 8 }}>
               <button
                 type="button"
                 className="btn btn-outline"
@@ -853,101 +936,132 @@ export default function JlptExamTab() {
           </div>
 
           {/* Question Grid Navigator (Sidebar) */}
-          <div className="card" style={{ padding: '18px', borderRadius: 16 }}>
-            <h4 style={{ margin: '0 0 12px', fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-muted)' }}>
-              PANEL DE PREGUNTAS ({Object.keys(userAnswers).length}/{filteredQuestions.length})
-            </h4>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
-              gap: 8,
-              maxHeight: 360,
-              overflowY: 'auto',
-              padding: 2
-            }}>
-              {filteredQuestions.map((q, idx) => {
-                const isAnswered = userAnswers[q.id] !== undefined;
-                const isFlagged = flaggedQuestions.has(q.id);
-                const isCurrent = currentIndex === idx;
-
-                let bg = 'var(--bg-subtle)';
-                let color = 'var(--text-main)';
-                let border = '1px solid var(--border)';
-
-                if (isCurrent) {
-                  border = '2px solid var(--primary)';
-                }
-                if (isAnswered) {
-                  bg = 'rgba(99, 102, 241, 0.15)';
-                  color = 'var(--primary)';
-                }
-                if (isFlagged) {
-                  border = '2px solid var(--danger)';
-                }
-
-                return (
-                  <button
-                    key={q.id}
-                    type="button"
-                    style={{
-                      height: 38,
-                      borderRadius: 8,
-                      border,
-                      background: bg,
-                      color,
-                      fontSize: '0.82rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative'
-                    }}
-                    onClick={() => setCurrentIndex(idx)}
-                  >
-                    {idx + 1}
-                    {isFlagged && (
-                      <span style={{
-                        position: 'absolute',
-                        top: 2,
-                        right: 2,
-                        width: 6,
-                        height: 6,
-                        borderRadius: '50%',
-                        background: 'var(--danger)'
-                      }} />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(99, 102, 241, 0.2)' }} />
-                <span>Respondida</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <span style={{ width: 10, height: 10, borderRadius: 2, border: '2px solid var(--primary)' }} />
-                <span>Actual</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ width: 10, height: 10, borderRadius: 2, border: '2px solid var(--danger)' }} />
-                <span>Marcada para revisión</span>
-              </div>
-            </div>
-
-            {mode === 'timed' && (
+          <div className="jlpt-sidebar-card">
+            {/* Header toggle on mobile */}
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                userSelect: 'none'
+              }}
+              onClick={() => setIsSidebarOpen(prev => !prev)}
+            >
+              <h4 style={{ margin: 0, fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-muted)' }}>
+                PREGUNTAS ({Object.keys(userAnswers).length}/{filteredQuestions.length})
+              </h4>
               <button
                 type="button"
-                className="btn btn-primary"
-                style={{ width: '100%', marginTop: 16, justifyContent: 'center' }}
-                onClick={handleFinishExam}
+                className="btn btn-sm btn-outline"
+                style={{ padding: '2px 8px', borderRadius: 6, fontSize: '0.72rem' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsSidebarOpen(prev => !prev);
+                }}
               >
-                Finalizar y Calificar
+                {isSidebarOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                <span>{isSidebarOpen ? 'Ocultar' : 'Ver Todas'}</span>
               </button>
-            )}
+            </div>
+
+            <div className={`jlpt-sidebar-body ${isSidebarOpen ? 'is-open' : ''}`}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(5, 1fr)',
+                gap: 8,
+                maxHeight: 360,
+                overflowY: 'auto',
+                padding: '8px 2px 2px'
+              }}>
+                {filteredQuestions.map((q, idx) => {
+                  const isAnswered = userAnswers[q.id] !== undefined;
+                  const isFlagged = flaggedQuestions.has(q.id);
+                  const isCurrent = currentIndex === idx;
+
+                  let bg = 'var(--bg-subtle)';
+                  let color = 'var(--text-main)';
+                  let border = '1px solid var(--border)';
+
+                  if (isCurrent) {
+                    border = '2px solid var(--primary)';
+                  }
+                  if (isAnswered) {
+                    bg = 'rgba(99, 102, 241, 0.15)';
+                    color = 'var(--primary)';
+                  }
+                  if (isFlagged) {
+                    border = '2px solid var(--danger)';
+                  }
+
+                  return (
+                    <button
+                      key={q.id}
+                      type="button"
+                      style={{
+                        height: 38,
+                        borderRadius: 8,
+                        border,
+                        background: bg,
+                        color,
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative'
+                      }}
+                      onClick={() => {
+                        setCurrentIndex(idx);
+                        if (typeof window !== 'undefined' && window.innerWidth <= 860) {
+                          setIsSidebarOpen(false);
+                        }
+                      }}
+                    >
+                      {idx + 1}
+                      {isFlagged && (
+                        <span style={{
+                          position: 'absolute',
+                          top: 2,
+                          right: 2,
+                          width: 6,
+                          height: 6,
+                          borderRadius: '50%',
+                          background: 'var(--danger)'
+                        }} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(99, 102, 241, 0.2)' }} />
+                  <span>Respondida</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 2, border: '2px solid var(--primary)' }} />
+                  <span>Actual</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 2, border: '2px solid var(--danger)' }} />
+                  <span>Marcada para revisión</span>
+                </div>
+              </div>
+
+              {mode === 'timed' && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ width: '100%', marginTop: 16, justifyContent: 'center' }}
+                  onClick={handleFinishExam}
+                >
+                  Finalizar y Calificar
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
