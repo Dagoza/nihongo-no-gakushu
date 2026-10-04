@@ -1183,14 +1183,15 @@ export default function KanjiTab({
         </div>
       )}
 
-      {/* DRAWING MODAL */}
+      {/* DRAWING MODAL - 筆順 STROKE ORDER */}
       {drawingKanji && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-          background: 'rgba(0,0,0,0.5)', zIndex: 1000,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
+          background: 'rgba(0,0,0,0.6)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+          backdropFilter: 'blur(4px)'
         }}>
-          <div className="card" style={{ maxWidth: 400, width: '100%', position: 'relative', textAlign: 'center' }}>
+          <div className="card" style={{ maxWidth: 420, width: '100%', position: 'relative', textAlign: 'center', padding: '22px 20px 18px 20px', maxHeight: '94vh', overflowY: 'auto' }}>
             <button 
               className="btn btn-outline btn-sm"
               style={{ position: 'absolute', top: 12, right: 12, borderRadius: '50%', width: 32, height: 32, padding: 0 }}
@@ -1198,20 +1199,27 @@ export default function KanjiTab({
                 setDrawingKanji(null);
                 updateParams(searchTerm, undefined, null);
               }}
+              title="Cerrar ventana de trazos"
             >
               ✕
             </button>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 4 }}>Práctica de Trazos</h3>
             {(() => {
               const currentK = kanjiList.find(k => k.kanji === drawingKanji);
               return (
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--primary)' }}>
-                    {drawingKanji} {currentK?.meaning_es ? `— ${currentK.meaning_es}` : ''}
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    <span className="jp-text" style={{ fontSize: '1.6rem', color: 'var(--primary)', lineHeight: 1 }}>{drawingKanji}</span>
+                    <span>{currentK?.meaning_es ? `— ${currentK.meaning_es}` : ''}</span>
                   </div>
-                  {currentK?.strokes && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                      {currentK.strokes} trazo{currentK.strokes === 1 ? '' : 's'} • Dibuja los trazos en el orden y dirección correctos.
+                  {(currentK?.kunyomi || currentK?.onyomi) && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                      {currentK.kunyomi && (
+                        <span>Kun: <strong className="jp-text" style={{ color: 'var(--accent)' }}>{currentK.kunyomi}</strong></span>
+                      )}
+                      {currentK.kunyomi && currentK.onyomi && <span> • </span>}
+                      {currentK.onyomi && (
+                        <span>On: <strong className="jp-text" style={{ color: 'var(--primary)' }}>{currentK.onyomi}</strong></span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1220,9 +1228,14 @@ export default function KanjiTab({
             
             <KanjiDraw 
               character={drawingKanji} 
-              size={250} 
+              size={260} 
+              initialMode="order"
               onQuizComplete={() => {
-                // Optional: add XP or mark as practiced
+                const newXp = (appState.xp || 0) + 10;
+                onUpdateState({
+                  ...appState,
+                  xp: newXp
+                });
               }} 
             />
 
@@ -1254,11 +1267,12 @@ export default function KanjiTab({
                   alignItems: 'center',
                   gap: 6,
                   borderColor: 'var(--primary)',
-                  color: 'var(--primary)'
+                  color: 'var(--primary)',
+                  fontSize: '0.82rem'
                 }}
               >
                 <PenTool size={14} />
-                <span>Abrir en Cuaderno Avanzado (Cuadrícula & Estilos)</span>
+                <span>Abrir en Cuaderno Avanzado</span>
               </button>
             </div>
           </div>

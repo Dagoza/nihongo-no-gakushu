@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import HanziWriter from 'hanzi-writer';
+import KanjiDraw from './KanjiDraw';
 import { 
   PenTool, 
   Eraser, 
@@ -947,127 +948,7 @@ export default function PracticePadModal({
   // HANZI WRITER INTERACTIVE QUIZ & ANIMATION
   // -------------------------------------------------------------
 
-  useEffect(() => {
-    if (activeTab !== 'stroke_quiz') {
-      if (writerRef.current) {
-        try {
-          writerRef.current.cancelQuiz();
-        } catch (e) {}
-      }
-      return;
-    }
 
-    if (!hanziContainerRef.current || !activeChar) return;
-
-    let isMounted = true;
-    setQuizLoading(true);
-    setQuizError(false);
-    setQuizSuccess(false);
-    setQuizMistakes(0);
-
-    try {
-      if (writerRef.current) {
-        try {
-          writerRef.current.cancelQuiz();
-        } catch (e) {}
-      }
-      hanziContainerRef.current.innerHTML = '';
-
-      writerRef.current = HanziWriter.create(hanziContainerRef.current, activeChar, {
-        width: 280,
-        height: 280,
-        padding: 16,
-        showOutline: true,
-        strokeAnimationSpeed: 1.4,
-        delayBetweenStrokes: 160,
-        strokeColor: '#3b82f6',
-        radicalColor: '#10b981',
-        outlineColor: '#cbd5e1',
-        drawingColor: '#1e293b',
-        drawingWidth: 16,
-        showCharacter: false,
-        charDataLoader: (char, onLoad, onError) => {
-          const encoded = encodeURIComponent(char);
-          const urls = [
-            `https://cdn.jsdelivr.net/npm/hanzi-writer-data-jp@0/${encoded}.json`,
-            `https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${encoded}.json`,
-            `https://unpkg.com/hanzi-writer-data-jp@0/${encoded}.json`,
-            `https://unpkg.com/hanzi-writer-data@2.0/${encoded}.json`
-          ];
-
-          let index = 0;
-          const tryNext = () => {
-            if (!isMounted) return;
-            if (index >= urls.length) {
-              setQuizLoading(false);
-              setQuizError(true);
-              onError(new Error(`Stroke data not found for ${char}`));
-              return;
-            }
-            fetch(urls[index++])
-              .then(res => {
-                if (!res.ok) throw new Error();
-                return res.json();
-              })
-              .then(data => {
-                if (!isMounted) return;
-                setQuizLoading(false);
-                setQuizError(false);
-                onLoad(data);
-              })
-              .catch(() => tryNext());
-          };
-          tryNext();
-        }
-      });
-
-      // Start quiz automatically
-      startQuizSession();
-    } catch (err) {
-      console.error('HanziWriter init error:', err);
-      setQuizLoading(false);
-      setQuizError(true);
-    }
-
-    return () => {
-      isMounted = false;
-      if (writerRef.current) {
-        try {
-          writerRef.current.cancelQuiz();
-        } catch (e) {}
-      }
-      if (hanziContainerRef.current) {
-        hanziContainerRef.current.innerHTML = '';
-      }
-    };
-  }, [activeTab, activeChar]);
-
-  const startQuizSession = () => {
-    if (!writerRef.current) return;
-    setQuizMistakes(0);
-    setQuizSuccess(false);
-    try {
-      writerRef.current.quiz({
-        onMistake: () => setQuizMistakes(m => m + 1),
-        onComplete: () => {
-          setQuizSuccess(true);
-          showNotification('¡Trazo completado perfectamente en orden y dirección! 🎉', 'success');
-        }
-      });
-    } catch (e) {
-      console.warn('Quiz start error:', e);
-    }
-  };
-
-  const handleAnimateQuiz = () => {
-    if (!writerRef.current) return;
-    try {
-      writerRef.current.cancelQuiz();
-      writerRef.current.animateCharacter({
-        onComplete: () => startQuizSession()
-      });
-    } catch (e) {}
-  };
 
   // -------------------------------------------------------------
   // GUARDAR Y RETOMAR HOJAS
@@ -2378,105 +2259,13 @@ export default function PracticePadModal({
                   )}
                 </div>
 
-                {/* HanziWriter Canvas Mount Target */}
-                <div 
-                  style={{
-                    position: 'relative',
-                    width: 280,
-                    height: 280,
-                    background: '#ffffff',
-                    borderRadius: '16px',
-                    border: quizSuccess ? '3px solid var(--success)' : '2px dashed var(--border)',
-                    boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.05)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <div ref={hanziContainerRef} style={{ width: 280, height: 280 }} />
-
-                  {quizLoading && (
-                    <div 
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'rgba(255,255,255,0.92)',
-                        borderRadius: '16px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 8,
-                        fontSize: '0.85rem',
-                        color: 'var(--text-muted)'
-                      }}
-                    >
-                      <RotateCcw size={24} className="animate-spin text-indigo-500" />
-                      <span>Cargando trazos de {activeChar}...</span>
-                    </div>
-                  )}
-
-                  {quizError && (
-                    <div 
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'rgba(255,255,255,0.95)',
-                        borderRadius: '16px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 16,
-                        textAlign: 'center',
-                        gap: 8,
-                        fontSize: '0.82rem',
-                        color: 'var(--danger)'
-                      }}
-                    >
-                      <AlertCircle size={24} />
-                      <span>Trazos vectoriales no indexados para este carácter específico. Puedes practicarlo libremente en el modo Cuaderno & Cuadrícula.</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Controls */}
-                <div style={{ display: 'flex', gap: 10, width: '100%', justifyContent: 'center' }}>
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-sm"
-                    onClick={handleAnimateQuiz}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-                    title="Ver animación de trazos"
-                  >
-                    <Play size={14} />
-                    <span>Animar Trazos</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm"
-                    onClick={startQuizSession}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-                    title="Reiniciar práctica interactiva"
-                  >
-                    <RotateCcw size={14} />
-                    <span>Reiniciar Quiz</span>
-                  </button>
-                </div>
-
-                {/* Mistakes and Success Badge */}
-                <div style={{ fontSize: '0.85rem', textAlign: 'center' }}>
-                  {quizSuccess ? (
-                    <div style={{ color: 'var(--success)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Sparkles size={16} />
-                      <span>¡Kanji trazado con éxito y orden perfecto! 🎉</span>
-                    </div>
-                  ) : (
-                    <span style={{ color: 'var(--text-muted)' }}>
-                      Errores de orden o dirección: <strong style={{ color: quizMistakes > 0 ? 'var(--danger)' : 'inherit' }}>{quizMistakes}</strong>
-                    </span>
-                  )}
+                {/* Diagrama y Práctica de Trazos Numerados */}
+                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                  <KanjiDraw 
+                    character={activeChar} 
+                    size={280} 
+                    initialMode="order"
+                  />
                 </div>
               </div>
             </div>
