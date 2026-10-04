@@ -11,8 +11,7 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Grid,
-  PenTool,
-  Sparkles
+  Check
 } from 'lucide-react';
 import { 
   fetchKanjiStrokeData, 
@@ -24,12 +23,12 @@ export default function KanjiDraw({
   character, 
   size = 260, 
   onQuizComplete,
-  initialMode = 'order' // 'order' (筆順 - Stroke Order) | 'quiz' (Practicar y Animar)
+  initialMode = 'order' // 'order' (Trazos) | 'quiz' (Practicar)
 }) {
   const containerRef = useRef(null);
   const writerRef = useRef(null);
   
-  // 2 Modos principales: 'order' (筆順 Stroke Order) y 'quiz' (Practicar con Animar integrado)
+  // 2 Modos principales: 'order' (Trazos) y 'quiz' (Practicar con Animar integrado)
   const [activeTab, setActiveTab] = useState(initialMode);
   
   // Datos vectoriales del Kanji
@@ -38,7 +37,7 @@ export default function KanjiDraw({
   const [loadingError, setLoadingError] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
 
-  // Estados del Modo 'order' (筆順 Stroke Order)
+  // Estados del Modo 'order' (Trazos)
   const [activeStep, setActiveStep] = useState(null); // null = todos los trazos; número = paso específico (1..total)
   const [showNumbers, setShowNumbers] = useState(true);
   const [isMultiColor, setIsMultiColor] = useState(true);
@@ -105,7 +104,7 @@ export default function KanjiDraw({
     return getScalingTransform(size, 14);
   }, [size]);
 
-  // Manejo de paso a paso automático en modo 筆順 Stroke Order
+  // Manejo de paso a paso automático en modo Trazos
   useEffect(() => {
     if (isPlayingSteps && totalStrokes > 0) {
       stepTimerRef.current = setInterval(() => {
@@ -263,8 +262,21 @@ export default function KanjiDraw({
       maxWidth: size + 36,
       margin: '0 auto'
     }}>
+      {/* Estilos para animación de check superior derecho */}
+      <style>{`
+        @keyframes kanjiCheckPop {
+          0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+          60% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes checkRipple {
+          0% { transform: scale(0.85); opacity: 0.75; }
+          100% { transform: scale(1.85); opacity: 0; }
+        }
+      `}</style>
+
       {/* =========================================================================
-          SELECTOR DE 2 TABS: [筆順 Stroke Order] y [✍️ Practicar]
+          SELECTOR DE 2 TABS: [Trazos] y [Practicar] (sin emoticonos)
          ========================================================================= */}
       <div style={{
         display: 'flex',
@@ -280,10 +292,10 @@ export default function KanjiDraw({
           onClick={() => setActiveTab('order')}
           style={{
             flex: 1,
-            padding: '7px 10px',
+            padding: '8px 12px',
             borderRadius: '9px',
             border: 'none',
-            fontSize: '0.86rem',
+            fontSize: '0.88rem',
             fontWeight: activeTab === 'order' ? 800 : 600,
             background: activeTab === 'order' ? '#ffffff' : 'transparent',
             color: activeTab === 'order' ? '#be123c' : 'var(--text-muted, #64748b)',
@@ -292,13 +304,11 @@ export default function KanjiDraw({
             transition: 'all 0.15s ease',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6
+            justifyContent: 'center'
           }}
-          title="Ver orden oficial de trazos con números y colores armónicos"
+          title="Ver orden de trazos numerados"
         >
-          <PenTool size={14} />
-          <span>筆順 Stroke Order</span>
+          <span>Trazos</span>
         </button>
 
         <button
@@ -306,10 +316,10 @@ export default function KanjiDraw({
           onClick={() => setActiveTab('quiz')}
           style={{
             flex: 1,
-            padding: '7px 10px',
+            padding: '8px 12px',
             borderRadius: '9px',
             border: 'none',
-            fontSize: '0.86rem',
+            fontSize: '0.88rem',
             fontWeight: activeTab === 'quiz' ? 800 : 600,
             background: activeTab === 'quiz' ? '#ffffff' : 'transparent',
             color: activeTab === 'quiz' ? 'var(--primary, #3b82f6)' : 'var(--text-muted, #64748b)',
@@ -318,13 +328,11 @@ export default function KanjiDraw({
             transition: 'all 0.15s ease',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6
+            justifyContent: 'center'
           }}
           title="Practicar trazo a mano y ver animación"
         >
-          <Target size={14} />
-          <span>✍️ Practicar</span>
+          <span>Practicar</span>
         </button>
       </div>
 
@@ -337,11 +345,50 @@ export default function KanjiDraw({
         height: size,
         background: '#ffffff',
         borderRadius: '18px',
-        border: '1.5px solid #cbd5e1',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+        border: quizSuccess ? '2px solid #10b981' : '1.5px solid #cbd5e1',
+        boxShadow: quizSuccess ? '0 4px 24px rgba(16, 185, 129, 0.2)' : '0 4px 20px rgba(0, 0, 0, 0.08)',
+        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
         overflow: 'hidden',
         userSelect: 'none'
       }}>
+        {/* Check animado en la parte superior derecha al completar el kanji en Practicar */}
+        {quizSuccess && (
+          <div style={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            zIndex: 25,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none'
+          }}>
+            <div style={{
+              position: 'absolute',
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: '#10b981',
+              animation: 'checkRipple 1.4s ease-out infinite'
+            }} />
+            <div style={{
+              position: 'relative',
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.45)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              animation: 'kanjiCheckPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'
+            }}>
+              <Check size={18} strokeWidth={3} />
+            </div>
+          </div>
+        )}
+
         {/* Cuadrícula tradicional Tianzige / Mizige bien visible y nítida */}
         {showGrid && (
           <svg
@@ -387,7 +434,7 @@ export default function KanjiDraw({
         )}
 
         {/* -------------------------------------------------------------
-            MODO 1: DIAGRAMA 筆順 STROKE ORDER CON PALETA VIBRANTE
+            MODO 1: DIAGRAMA DE TRAZOS CON PALETA VIBRANTE
            ------------------------------------------------------------- */}
         {activeTab === 'order' && charData && (
           <svg
@@ -581,7 +628,7 @@ export default function KanjiDraw({
       </div>
 
       {/* =========================================================================
-          CONTROLES: 筆順 STROKE ORDER
+          CONTROLES: MODO TRAZOS
          ========================================================================= */}
       {activeTab === 'order' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
@@ -611,7 +658,7 @@ export default function KanjiDraw({
               <span>Ant.</span>
             </button>
 
-            {/* Badge de cantidad de trazos solicitada en Punto 5 */}
+            {/* Badge de cantidad de trazos */}
             <button
               type="button"
               onClick={() => {
@@ -681,7 +728,7 @@ export default function KanjiDraw({
             </button>
           </div>
 
-          {/* Fila 2: Color & Cuadrícula (con indicador claro de ON/OFF - Punto 6) */}
+          {/* Fila 2: Color & Cuadrícula */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
             <button
               type="button"
@@ -714,7 +761,7 @@ export default function KanjiDraw({
       )}
 
       {/* =========================================================================
-          CONTROLES: PRACTICAR (CON FUNCIÓN ANIMAR INTEGRADA - Punto 1)
+          CONTROLES: MODO PRACTICAR (CON ANIMAR INTEGRADO)
          ========================================================================= */}
       {activeTab === 'quiz' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
@@ -764,17 +811,12 @@ export default function KanjiDraw({
             </button>
           </div>
 
-          {/* Feedback de Errores y Éxito */}
-          <div style={{ fontSize: '0.82rem', textAlign: 'center' }}>
-            {quizSuccess ? (
-              <span style={{ color: 'var(--success, #10b981)', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <Sparkles size={14} />
-                ¡Trazo completado en el orden y dirección correctos! 🎉
-              </span>
+          {/* Contador de trazo y errores (sin texto verde de felicitación inferior) */}
+          <div style={{ fontSize: '0.82rem', textAlign: 'center', color: 'var(--text-muted, #64748b)' }}>
+            {!quizSuccess ? (
+              <span>Trazo: <strong>{Math.min(currentQuizStroke + 1, totalStrokes)} de {totalStrokes}</strong> • Errores: <strong style={{ color: errorCount > 0 ? 'var(--danger, #ef4444)' : 'inherit' }}>{errorCount}</strong></span>
             ) : (
-              <span style={{ color: 'var(--text-muted, #64748b)' }}>
-                Trazo: <strong>{currentQuizStroke + 1} de {totalStrokes}</strong> • Errores: <strong style={{ color: errorCount > 0 ? 'var(--danger, #ef4444)' : 'inherit' }}>{errorCount}</strong>
-              </span>
+              <span>Completado • Errores: <strong style={{ color: errorCount > 0 ? 'var(--danger, #ef4444)' : 'var(--success, #10b981)' }}>{errorCount}</strong></span>
             )}
           </div>
         </div>
