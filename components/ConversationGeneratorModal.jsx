@@ -588,13 +588,14 @@ export default function ConversationGeneratorModal({
               </div>
 
               {/* Dialogue Lines */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+              <div className="dialogue-chat-stream" style={{ marginBottom: 12 }}>
                 {(generatedConv.dialogue || []).map((d, idx) => {
                   const spkStyle = getSpeakerStyle(d.speaker, false, generatedConv.speakers || []);
+                  const isSecondSpeaker = idx % 2 === 1;
                   return (
                     <div
                       key={idx}
-                      className="dialogue-card-item"
+                      className={`dialogue-card-item dialogue-chat-bubble ${isSecondSpeaker ? 'bubble-right' : 'bubble-left'}`}
                       style={{ background: 'var(--surface)', padding: '12px 14px' }}
                     >
                       <div className="dialogue-card-header">

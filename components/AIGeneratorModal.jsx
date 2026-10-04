@@ -1123,13 +1123,14 @@ export default function AIGeneratorModal({
               )}
 
               {/* Dialogue Lines Presentation */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+              <div className="dialogue-chat-stream" style={{ marginBottom: 20 }}>
                 {(resultConversation.dialogue || []).map((line, idx) => {
                   const spkStyle = getSpeakerStyle(line.speaker, false, resultConversation.speakers || []);
+                  const isSecondSpeaker = (resultConversation.speakers || [])[1] === line.speaker || idx % 2 === 1;
                   return (
                     <div
                       key={idx}
-                      className="dialogue-card-item"
+                      className={`dialogue-card-item dialogue-chat-bubble ${isSecondSpeaker ? 'bubble-right' : 'bubble-left'}`}
                       style={{ background: 'var(--surface)', padding: '12px 14px' }}
                     >
                       <div className="dialogue-card-header">

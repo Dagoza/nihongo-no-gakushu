@@ -10279,15 +10279,23 @@ html {
 }
 
 /* ==========================================================================
-   Responsive Dialogue Cards (Mobile & Smartphone Optimized)
+   Responsive Dialogue Cards (Chat Style & Mobile Optimized)
    ========================================================================== */
+
+.dialogue-chat-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+  width: 100%;
+}
 
 .dialogue-card-item {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 14px 18px;
-  background: var(--bg-main);
+  background: var(--bg-surface);
   border-radius: var(--radius-md);
   border: 1.5px solid var(--border);
   transition: all 0.2s ease;
@@ -10296,19 +10304,53 @@ html {
   width: 100%;
 }
 
+/* Chat bubble variants */
+.dialogue-card-item.dialogue-chat-bubble {
+  max-width: 92%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.dialogue-card-item.bubble-left {
+  align-self: flex-start;
+  margin-right: auto;
+  border-radius: 4px 18px 18px 18px;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+}
+
+[data-theme='dark'] .dialogue-card-item.bubble-left {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.dialogue-card-item.bubble-right {
+  align-self: flex-end;
+  margin-left: auto;
+  border-radius: 18px 4px 18px 18px;
+  background: rgba(99, 102, 241, 0.04);
+  border: 1.5px solid rgba(99, 102, 241, 0.18);
+}
+
+[data-theme='dark'] .dialogue-card-item.bubble-right {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
 .dialogue-card-item:hover {
   border-color: var(--border-focus);
 }
 
-.dialogue-card-item.is-muted {
-  background: rgba(139, 92, 246, 0.06);
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.2);
+.dialogue-card-item.is-muted,
+.dialogue-card-item.is-roleplay-user {
+  background: rgba(139, 92, 246, 0.07) !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.12) !important;
 }
 
-[data-theme='dark'] .dialogue-card-item.is-muted {
-  background: rgba(139, 92, 246, 0.12);
-  border-color: #8b5cf6;
+[data-theme='dark'] .dialogue-card-item.is-muted,
+[data-theme='dark'] .dialogue-card-item.is-roleplay-user {
+  background: rgba(139, 92, 246, 0.14) !important;
+  border-color: #8b5cf6 !important;
 }
 
 /* Header: Speaker chip & Actions aligned horizontally */
@@ -10347,10 +10389,12 @@ html {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   flex-shrink: 0;
+  font-weight: 800;
+  font-size: 0.74rem;
 }
 
 .dialogue-role-badge {
@@ -10364,6 +10408,13 @@ html {
   align-items: center;
   gap: 4px;
   white-space: nowrap;
+}
+
+.dialogue-turn-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-light);
+  opacity: 0.7;
 }
 
 .dialogue-card-actions {
@@ -10455,6 +10506,47 @@ html {
   gap: 6px;
 }
 
+/* Active Recall Peek / Hide buttons */
+.dialogue-peek-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px dashed rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+.dialogue-peek-btn:hover {
+  background: rgba(99, 102, 241, 0.14);
+  border-color: var(--primary);
+}
+
+.dialogue-hide-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 2px 0;
+  font-size: 0.72rem;
+  color: var(--text-light);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 2px;
+}
+
+.dialogue-hide-btn:hover {
+  color: var(--text-muted);
+}
+
 /* Saved Conversations Grid Responsive Wrapper */
 .saved-conversations-layout {
   display: grid;
@@ -10465,9 +10557,26 @@ html {
 
 /* Mobile responsive fine-tuning (< 640px / Smartphones) */
 @media (max-width: 640px) {
+  .dialogue-chat-stream {
+    gap: 12px;
+  }
+
   .dialogue-card-item {
     padding: 12px 12px;
     gap: 8px;
+  }
+
+  .dialogue-card-item.dialogue-chat-bubble {
+    max-width: 96%;
+    width: 96%;
+  }
+
+  .dialogue-card-item.bubble-left {
+    border-radius: 4px 16px 16px 16px;
+  }
+
+  .dialogue-card-item.bubble-right {
+    border-radius: 16px 4px 16px 16px;
   }
 
   .dialogue-card-header {
@@ -10509,6 +10618,11 @@ html {
 
   .dialogue-card-prompt-text {
     font-size: 0.85rem;
+  }
+
+  .dialogue-peek-btn {
+    font-size: 0.74rem;
+    padding: 3px 8px;
   }
 
   .saved-conversations-layout {

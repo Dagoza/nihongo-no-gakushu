@@ -212,6 +212,12 @@ export default function ConversationTab({
   const [savedRevealedLineIndices, setSavedRevealedLineIndices] = useState({});
   const [selectedSavedConvId, setSelectedSavedConvId] = useState(null);
 
+  // Active Recall: Hide/Show Furigana (reading) & Spanish Translation
+  const [showFurigana, setShowFurigana] = useState(true);
+  const [showSpanish, setShowSpanish] = useState(true);
+  const [revealedKanaIndices, setRevealedKanaIndices] = useState({});
+  const [revealedEsIndices, setRevealedEsIndices] = useState({});
+
   // Modal for AI Conversation Generation
   const [isGenModalOpen, setIsGenModalOpen] = useState(false);
 
@@ -251,6 +257,11 @@ export default function ConversationTab({
   useEffect(() => {
     if (initialType) setFilterType(initialType);
   }, [initialType]);
+
+  useEffect(() => {
+    setRevealedKanaIndices({});
+    setRevealedEsIndices({});
+  }, [selectedDialogueId, selectedSavedConvId]);
 
   const isDialogueCompleted = (d) => {
     if (!d) return false;
@@ -1045,12 +1056,46 @@ export default function ConversationTab({
                 </div>
               </div>
 
-              {/* Dialogue Lines */}
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <MessageSquare size={18} color="var(--primary)" /> Diálogo de la Lección:
-              </h4>
+              {/* Dialogue Lines Header with Active Recall Toggles */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+                <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <MessageSquare size={18} color="var(--primary)" /> Diálogo de la Lección ({currentDialogue.dialogue?.length || 0} líneas):
+                </h4>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
+                {/* Active Recall Controls: Furigana / Kana & Spanish Translation */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${showFurigana ? 'btn-outline' : 'btn-ghost'}`}
+                    onClick={() => {
+                      setShowFurigana(!showFurigana);
+                      setRevealedKanaIndices({});
+                    }}
+                    style={{ fontSize: '0.8rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                    title={showFurigana ? "Ocultar pronunciación kana para practicar kanji" : "Mostrar pronunciación kana"}
+                  >
+                    {showFurigana ? <Eye size={13} /> : <EyeOff size={13} />}
+                    <span>{showFurigana ? 'Pronunciación (Kana)' : 'Kana Oculto'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${showSpanish ? 'btn-outline' : 'btn-ghost'}`}
+                    onClick={() => {
+                      setShowSpanish(!showSpanish);
+                      setRevealedEsIndices({});
+                    }}
+                    style={{ fontSize: '0.8rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                    title={showSpanish ? "Ocultar traducción español para practicar comprensión" : "Mostrar traducción español"}
+                  >
+                    {showSpanish ? <Eye size={13} /> : <EyeOff size={13} />}
+                    <span>{showSpanish ? 'Traducción 🇪🇸' : 'Traducción Oculta'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Chat-style Dialogue Stream */}
+              <div className="dialogue-chat-stream">
                 {currentDialogue.dialogue.map((d, idx) => {
                   const lineJp = d.jp || d.japanese || '';
                   const lineEs = d.es || d.spanish || '';
@@ -1058,11 +1103,16 @@ export default function ConversationTab({
                   const isMuted = mutedSpeaker && d.speaker === mutedSpeaker;
                   const isRevealed = !!revealedLineIndices[idx];
                   const spkStyle = getSpeakerStyle(d.speaker, isMuted, currentSpeakers);
+                  const speakerIdx = currentSpeakers.indexOf(d.speaker);
+                  const isSecondSpeaker = speakerIdx % 2 === 1;
+                  const bubbleAlignClass = isSecondSpeaker ? 'bubble-right' : 'bubble-left';
+                  const isKanaRevealed = !!revealedKanaIndices[idx];
+                  const isEsRevealed = !!revealedEsIndices[idx];
 
                   return (
                     <div 
                       key={idx}
-                      className={`dialogue-card-item ${isMuted ? 'is-muted' : ''}`}
+                      className={`dialogue-card-item dialogue-chat-bubble ${bubbleAlignClass} ${isMuted ? 'is-roleplay-user' : ''}`}
                     >
                       {/* Top Header Row: Speaker Identification on Left, Action Buttons on Right */}
                       <div className="dialogue-card-header">
@@ -1082,15 +1132,17 @@ export default function ConversationTab({
                                 color: spkStyle.color
                               }}
                             >
-                              <User size={12} />
+                              {d.speaker ? d.speaker.slice(0, 1) : <User size={12} />}
                             </span>
                             <span>{d.speaker}</span>
                           </div>
 
-                          {isMuted && (
+                          {isMuted ? (
                             <span className="dialogue-role-badge">
                               🎙️ Tu papel
                             </span>
+                          ) : (
+                            <span className="dialogue-turn-tag">#{idx + 1}</span>
                           )}
                         </div>
 
@@ -1170,11 +1222,38 @@ export default function ConversationTab({
                             <div className="dialogue-card-jp jp-text">
                               {lineJp}
                             </div>
+
+                            {/* Pronunciation / Kana Reading with Active Recall toggle */}
                             {lineKana && lineKana !== lineJp && (
-                              <div className="dialogue-card-kana jp-text">
-                                {lineKana}
-                              </div>
+                              showFurigana ? (
+                                <div className="dialogue-card-kana jp-text">
+                                  {lineKana}
+                                </div>
+                              ) : isKanaRevealed ? (
+                                <div style={{ marginTop: 2 }}>
+                                  <div className="dialogue-card-kana jp-text" style={{ color: 'var(--primary)' }}>
+                                    {lineKana}
+                                  </div>
+                                  <button
+                                    type="button"
+                                    className="dialogue-hide-btn"
+                                    onClick={() => setRevealedKanaIndices(prev => ({ ...prev, [idx]: false }))}
+                                  >
+                                    <EyeOff size={11} /> Ocultar pronunciación
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  className="dialogue-peek-btn"
+                                  onClick={() => setRevealedKanaIndices(prev => ({ ...prev, [idx]: true }))}
+                                  title="Ver lectura en kana de esta frase"
+                                >
+                                  <Eye size={12} /> Ver pronunciación
+                                </button>
+                              )
                             )}
+
                             {isMuted && isRevealed && (
                               <button
                                 type="button"
@@ -1187,11 +1266,39 @@ export default function ConversationTab({
                           </div>
                         )}
 
-                        {/* Spanish Translation Prompt */}
-                        <div className="dialogue-card-es">
-                          <span style={{ marginRight: 6 }}>🇪🇸</span>
-                          <span>{lineEs}</span>
-                        </div>
+                        {/* Spanish Translation Prompt with Active Recall toggle */}
+                        {showSpanish ? (
+                          <div className="dialogue-card-es">
+                            <span style={{ marginRight: 6 }}>🇪🇸</span>
+                            <span>{lineEs}</span>
+                          </div>
+                        ) : isEsRevealed ? (
+                          <div className="dialogue-card-es">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6 }}>
+                              <div>
+                                <span style={{ marginRight: 6 }}>🇪🇸</span>
+                                <span>{lineEs}</span>
+                              </div>
+                              <button
+                                type="button"
+                                className="dialogue-hide-btn"
+                                onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: false }))}
+                              >
+                                <EyeOff size={11} /> Ocultar
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="dialogue-peek-btn"
+                            style={{ marginTop: 6 }}
+                            onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: true }))}
+                            title="Ver traducción al español de esta frase"
+                          >
+                            <Eye size={12} /> Ver traducción 🇪🇸
+                          </button>
+                        )}
                       </div>
 
                       {/* Interactive Pronunciation Evaluation Footer for Muted Character */}
@@ -1544,12 +1651,46 @@ export default function ConversationTab({
                     </div>
                   </div>
 
-                  {/* Dialogue Lines */}
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <MessageSquare size={18} color="var(--primary)" /> Diálogo:
-                  </h4>
+                  {/* Dialogue Lines Header with Active Recall Toggles */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+                    <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <MessageSquare size={18} color="var(--primary)" /> Diálogo ({selectedSavedConv.dialogue?.length || 0} líneas):
+                    </h4>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
+                    {/* Active Recall Controls: Furigana / Kana & Spanish Translation */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className={`btn btn-sm ${showFurigana ? 'btn-outline' : 'btn-ghost'}`}
+                        onClick={() => {
+                          setShowFurigana(!showFurigana);
+                          setRevealedKanaIndices({});
+                        }}
+                        style={{ fontSize: '0.8rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                        title={showFurigana ? "Ocultar pronunciación kana para practicar kanji" : "Mostrar pronunciación kana"}
+                      >
+                        {showFurigana ? <Eye size={13} /> : <EyeOff size={13} />}
+                        <span>{showFurigana ? 'Pronunciación (Kana)' : 'Kana Oculto'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className={`btn btn-sm ${showSpanish ? 'btn-outline' : 'btn-ghost'}`}
+                        onClick={() => {
+                          setShowSpanish(!showSpanish);
+                          setRevealedEsIndices({});
+                        }}
+                        style={{ fontSize: '0.8rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                        title={showSpanish ? "Ocultar traducción español para practicar comprensión" : "Mostrar traducción español"}
+                      >
+                        {showSpanish ? <Eye size={13} /> : <EyeOff size={13} />}
+                        <span>{showSpanish ? 'Traducción 🇪🇸' : 'Traducción Oculta'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Chat-style Dialogue Stream */}
+                  <div className="dialogue-chat-stream">
                     {(selectedSavedConv.dialogue || []).map((d, idx) => {
                       const lineJp = d.japanese || d.jp || '';
                       const lineEs = d.spanish || d.es || '';
@@ -1557,11 +1698,16 @@ export default function ConversationTab({
                       const isMuted = savedMutedSpeaker && d.speaker === savedMutedSpeaker;
                       const isRevealed = !!savedRevealedLineIndices[idx];
                       const spkStyle = getSpeakerStyle(d.speaker, isMuted, savedSpeakers);
+                      const speakerIdx = savedSpeakers.indexOf(d.speaker);
+                      const isSecondSpeaker = speakerIdx % 2 === 1;
+                      const bubbleAlignClass = isSecondSpeaker ? 'bubble-right' : 'bubble-left';
+                      const isKanaRevealed = !!revealedKanaIndices[idx];
+                      const isEsRevealed = !!revealedEsIndices[idx];
 
                       return (
                         <div 
                           key={idx}
-                          className={`dialogue-card-item ${isMuted ? 'is-muted' : ''}`}
+                          className={`dialogue-card-item dialogue-chat-bubble ${bubbleAlignClass} ${isMuted ? 'is-roleplay-user' : ''}`}
                         >
                           {/* Top Header Row: Speaker Identification on Left, Action Buttons on Right */}
                           <div className="dialogue-card-header">
@@ -1581,15 +1727,17 @@ export default function ConversationTab({
                                     color: spkStyle.color
                                   }}
                                 >
-                                  <User size={12} />
+                                  {d.speaker ? d.speaker.slice(0, 1) : <User size={12} />}
                                 </span>
                                 <span>{d.speaker}</span>
                               </div>
 
-                              {isMuted && (
+                              {isMuted ? (
                                 <span className="dialogue-role-badge">
                                   🎙️ Tu papel
                                 </span>
+                              ) : (
+                                <span className="dialogue-turn-tag">#{idx + 1}</span>
                               )}
                             </div>
 
@@ -1669,11 +1817,38 @@ export default function ConversationTab({
                                 <div className="dialogue-card-jp jp-text">
                                   {lineJp}
                                 </div>
+
+                                {/* Pronunciation / Kana Reading with Active Recall toggle */}
                                 {lineKana && lineKana !== lineJp && (
-                                  <div className="dialogue-card-kana jp-text">
-                                    {lineKana}
-                                  </div>
+                                  showFurigana ? (
+                                    <div className="dialogue-card-kana jp-text">
+                                      {lineKana}
+                                    </div>
+                                  ) : isKanaRevealed ? (
+                                    <div style={{ marginTop: 2 }}>
+                                      <div className="dialogue-card-kana jp-text" style={{ color: 'var(--primary)' }}>
+                                        {lineKana}
+                                      </div>
+                                      <button
+                                        type="button"
+                                        className="dialogue-hide-btn"
+                                        onClick={() => setRevealedKanaIndices(prev => ({ ...prev, [idx]: false }))}
+                                      >
+                                        <EyeOff size={11} /> Ocultar pronunciación
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      className="dialogue-peek-btn"
+                                      onClick={() => setRevealedKanaIndices(prev => ({ ...prev, [idx]: true }))}
+                                      title="Ver lectura en kana de esta frase"
+                                    >
+                                      <Eye size={12} /> Ver pronunciación
+                                    </button>
+                                  )
                                 )}
+
                                 {isMuted && isRevealed && (
                                   <button
                                     type="button"
@@ -1686,11 +1861,39 @@ export default function ConversationTab({
                               </div>
                             )}
 
-                            {/* Spanish Translation Prompt */}
-                            <div className="dialogue-card-es">
-                              <span style={{ marginRight: 6 }}>🇪🇸</span>
-                              <span>{lineEs}</span>
-                            </div>
+                            {/* Spanish Translation Prompt with Active Recall toggle */}
+                            {showSpanish ? (
+                              <div className="dialogue-card-es">
+                                <span style={{ marginRight: 6 }}>🇪🇸</span>
+                                <span>{lineEs}</span>
+                              </div>
+                            ) : isEsRevealed ? (
+                              <div className="dialogue-card-es">
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6 }}>
+                                  <div>
+                                    <span style={{ marginRight: 6 }}>🇪🇸</span>
+                                    <span>{lineEs}</span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    className="dialogue-hide-btn"
+                                    onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: false }))}
+                                  >
+                                    <EyeOff size={11} /> Ocultar
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                className="dialogue-peek-btn"
+                                style={{ marginTop: 6 }}
+                                onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: true }))}
+                                title="Ver traducción al español de esta frase"
+                              >
+                                <Eye size={12} /> Ver traducción 🇪🇸
+                              </button>
+                            )}
                           </div>
 
                           {/* Interactive Pronunciation Evaluation Footer for Muted Character */}
