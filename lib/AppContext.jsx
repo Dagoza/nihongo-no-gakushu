@@ -317,6 +317,7 @@ export function AppProvider({ children }) {
       };
       window.addEventListener('nihongo-open-tour', handleCustomOpenTour);
       window.__nihongoOpenPracticePad = openPracticePad;
+      window.__nihongoOpenDailyGoal = openDailyGoalModal;
     }
 
     let tourTimer = null;

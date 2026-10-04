@@ -124,6 +124,9 @@ export default function ProductTour({
   // Paso 10: Kanji
   const [kanjiAnimating, setKanjiAnimating] = useState(false);
   const [kanjiStrokeStep, setKanjiStrokeStep] = useState(0); // 0 = all/complete, 1, 2, 3, 4
+  const [tourKanjiShowNumbers, setTourKanjiShowNumbers] = useState(true);
+  const [tourKanjiMultiColor, setTourKanjiMultiColor] = useState(true);
+  const [tourKanjiSuccess, setTourKanjiSuccess] = useState(true);
   const kanjiTimerRef = useRef(null);
 
   // Paso 11: PDF
@@ -141,6 +144,17 @@ export default function ProductTour({
   // Paso 13: Audio Bar
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [audioSpeed, setAudioSpeed] = useState('1.0x');
+
+  // Paso: Daily Goal
+  const [tourGoalCategory, setTourGoalCategory] = useState('all');
+  const [tourGoalAnswer, setTourGoalAnswer] = useState(null);
+  const [tourGoalNotifTested, setTourGoalNotifTested] = useState(false);
+
+  // Paso: JLPT
+  const [tourJlptLevel, setTourJlptLevel] = useState('N5');
+  const [tourJlptMode, setTourJlptMode] = useState('practice');
+  const [tourJlptAnswer, setTourJlptAnswer] = useState(null);
+  const [tourJlptSrsSaved, setTourJlptSrsSaved] = useState(false);
 
   // Mobile segmented view ('explanation' | 'demo')
   const [mobileTab, setMobileTab] = useState('explanation');
@@ -259,8 +273,19 @@ export default function ProductTour({
       title: 'Badges y Medallas de Progreso Diario',
       subtitle: 'Tus indicadores esenciales siempre a la vista en la barra superior',
       icon: Flame,
-      description: 'En la parte superior encontrarás tu panel de control diario: racha activa, nivel, partículas y palabras dominadas, indicador del teclado japonés y sincronización en la nube.',
+      description: 'En la parte superior encontrarás tu panel de control diario: racha activa, meta diaria (🎯), nivel, partículas y palabras dominadas, indicador del teclado japonés y sincronización en la nube.',
       hiddenTip: '🔔 Notificación Inteligente de Ejercicios: Si revisas un tema curricular o lección pero dejas preguntas sin resolver, la campana te alertará exactamente cuántas tienes pendientes y te llevará a resolverlas con un clic.',
+      tab: null
+    },
+    {
+      id: 'daily_goal',
+      category: 'Hábitos & Gamificación',
+      categoryColor: '#f59e0b',
+      title: 'Meta Diaria Personalizada & Notificaciones Móviles',
+      subtitle: 'Crea tu hábito diario de estudio y protege tu racha activa',
+      icon: Target,
+      description: 'Define tu meta diaria (3, 5 o 10 preguntas) y selecciona el tema que prefieras: Mix Inteligente con prioridad FSRS, solo Kanji, Vocabulario, Gramática o Simulacro JLPT. Recibe recordatorios directos en tu teléfono móvil (iOS PWA / Android) para no perder tu racha.',
+      hiddenTip: '📱 Notificaciones Móviles Inteligentes: Activa los recordatorios para que tu teléfono te avise si tienes preguntas pendientes antes de que termine el día.',
       tab: null
     },
     {
@@ -341,14 +366,25 @@ export default function ProductTour({
       tab: 'particles'
     },
     {
+      id: 'jlpt',
+      category: 'Recursos & Práctica',
+      categoryColor: '#8b5cf6',
+      title: 'Simulacros Oficiales JLPT (N5 a N1)',
+      subtitle: 'Exámenes completos y por sección con temporizador oficial y práctica guiada',
+      icon: Award,
+      description: 'Prepárate para la certificación oficial con 80 preguntas auténticas para los 5 niveles (N5 a N1). Incluye Modo Simulacro con cronómetro real y hoja de puntajes (0-180 puntos con corte de aprobación), y Modo Práctica Guiada con explicaciones didácticas paso a paso en español.',
+      hiddenTip: '🧠 Repaso de Errores con FSRS: Cualquier pregunta que falles en un simulacro puede añadirse con un solo clic al algoritmo de repetición espaciada FSRS para programar repasos automáticos.',
+      tab: 'jlpt'
+    },
+    {
       id: 'kanji',
       category: 'Recursos & Práctica',
       categoryColor: '#f59e0b',
-      title: 'Biblioteca Kanji & Lienzo de Dibujo',
-      subtitle: 'Aprende ideogramas con orden de trazos y dibujo a mano',
+      title: 'Biblioteca Kanji & Orden de Trazos',
+      subtitle: 'Trazos numerados (1, 2, 3...) y práctica interactiva con verificación',
       icon: Languages,
-      description: 'Fichas completas de kanjis con número de trazos, radicales, lecturas On\'yomi (chinas), Kun\'yomi (japonesas) y lista sincronizada de palabras compuestas que los contienen.',
-      hiddenTip: '✍️ Animación de Trazos y Modo Lienzo: Puedes ver la animación trazo a trazo y activar el modo dibujo para trazar el kanji con el mouse o con el dedo en pantallas táctiles; la app califica la precisión y dirección.',
+      description: 'Fichas completas de kanjis con orden oficial de trazos numerados (1, 2, 3...) en colores vibrantes, radicales, lecturas On\'yomi (chinas) y Kun\'yomi (japonesas), mnemotécnicas y palabras compuestas sincronizadas.',
+      hiddenTip: '✍️ 1. Pestaña "Trazos": Diagrama con números de inicio por trazo, cuadrícula visible (ON/OFF) y navegación paso a paso. 2. Pestaña "Practicar": Dibuja sobre el lienzo con números guía (ON/OFF), animación integrada trazo a trazo y confirmación visual con check (✓).',
       tab: 'kanji'
     },
     {
@@ -703,6 +739,13 @@ export default function ProductTour({
                         <span>3d racha</span>
                       </div>
                       <div 
+                        className={`stat-badge ${selectedBadge === 'daily_goal' ? 'active-preview' : ''}`}
+                        onClick={() => setSelectedBadge('daily_goal')}
+                      >
+                        <Target size={15} style={{ color: 'var(--accent, #f59e0b)' }} />
+                        <span style={{ fontWeight: 700, color: 'var(--accent, #f59e0b)' }}>3/5 hoy</span>
+                      </div>
+                      <div 
                         className={`stat-badge ${selectedBadge === 'xp' ? 'active-preview' : ''}`}
                         onClick={() => setSelectedBadge('xp')}
                       >
@@ -759,6 +802,11 @@ export default function ProductTour({
                           <strong>🔥 Racha Diaria:</strong> Registra los días consecutivos que completas al menos una actividad. ¡La constancia es la clave del japonés!
                         </div>
                       )}
+                      {selectedBadge === 'daily_goal' && (
+                        <div>
+                          <strong>🎯 Meta Diaria FSRS:</strong> Desafío diario configurable (3 a 10 preguntas) sobre Kanji, Vocabulario, Gramática o JLPT con repetición espaciada inteligente FSRS y recordatorios push en tu móvil.
+                        </div>
+                      )}
                       {selectedBadge === 'xp' && (
                         <div>
                           <strong>⭐ Puntos de Experiencia (XP):</strong> Ganas XP al resolver ejercicios, escuchar historias y aprender palabras. Cada 100 XP subes de nivel.
@@ -797,6 +845,251 @@ export default function ProductTour({
                     </div>
                   </div>
                 )}
+
+                {/* Paso: Daily Goal Widget */}
+                {currentStep.id === 'daily_goal' && (() => {
+                  const sampleQuestions = {
+                    all: {
+                      tag: 'Mix Inteligente (FSRS Repaso)',
+                      sentence: '毎朝 コーヒー [ ___ ] 飲みます。',
+                      meaning: '(Cada mañana tomo café)',
+                      options: [
+                        { text: 'を', isCorrect: true, reason: 'Marca el objeto directo de la acción activa (tomar café).' },
+                        { text: 'に', isCorrect: false, reason: 'Indica dirección, destino o tiempo puntual, no el objeto directo.' },
+                        { text: 'で', isCorrect: false, reason: 'Indica medio, herramienta o lugar de acción.' },
+                        { text: 'は', isCorrect: false, reason: 'Marca el tema principal, pero aquí el objeto directo requiere を.' }
+                      ]
+                    },
+                    kanji: {
+                      tag: 'Kanji N5',
+                      sentence: '¿Cuál es el significado del ideograma 「水」 y su lectura común?',
+                      meaning: '(Lecturas: みず / スイ)',
+                      options: [
+                        { text: 'Agua (みず)', isCorrect: true, reason: '¡Correcto! 水 significa agua y se pronuncia mizu en kun\'yomi y sui en on\'yomi.' },
+                        { text: 'Fuego (ひ)', isCorrect: false, reason: 'Fuego es 火 (ひ / カ).' },
+                        { text: 'Árbol (き)', isCorrect: false, reason: 'Árbol es 木 (き / モク).' },
+                        { text: 'Tierra (つち)', isCorrect: false, reason: 'Tierra es 土 (つち / ド).' }
+                      ]
+                    },
+                    vocab: {
+                      tag: 'Vocabulario N5',
+                      sentence: '田中さんは [ ___ ] ですか。はい、大学生です。',
+                      meaning: '(¿El Sr. Tanaka es estudiante? Sí, es universitario)',
+                      options: [
+                        { text: 'がくせい (Estudiante)', isCorrect: true, reason: '¡Correcto! 学生 (がくせい) significa estudiante.' },
+                        { text: 'せんせい (Profesor)', isCorrect: false, reason: '先生 (せんせい) significa profesor o maestro.' },
+                        { text: 'いしゃ (Médico)', isCorrect: false, reason: '医者 (いしゃ) significa médico.' },
+                        { text: 'かいしゃいん (Empleado)', isCorrect: false, reason: '会社員 (かいしゃいん) significa empleado de empresa.' }
+                      ]
+                    },
+                    grammar: {
+                      tag: 'Gramática N5',
+                      sentence: 'ここで 写真を [ ___ ] ください。',
+                      meaning: '(Por favor tome fotos aquí)',
+                      options: [
+                        { text: 'とって (Forma て)', isCorrect: true, reason: 'La petición cortés se forma con Verbo [Forma て] + ください (撮ってください).' },
+                        { text: 'とります (Forma ます)', isCorrect: false, reason: 'No se une la forma ます directamente con ください.' },
+                        { text: 'とり (Raíz)', isCorrect: false, reason: 'La raíz por sí sola no se combina con ください para peticiones.' },
+                        { text: 'とる (Diccionario)', isCorrect: false, reason: 'La forma diccionario no se usa directamente con ください.' }
+                      ]
+                    },
+                    jlpt: {
+                      tag: 'Simulacro JLPT N5',
+                      sentence: 'きょうは てんきが [ ___ ] ですね。',
+                      meaning: '(Hoy hace buen tiempo, ¿verdad?)',
+                      options: [
+                        { text: 'いい', isCorrect: true, reason: 'いい (bueno) modifica directamente a です en tiempo presente afirmativo.' },
+                        { text: 'よく', isCorrect: false, reason: 'よく es la forma adverbial o conectiva, no predica solo con です.' },
+                        { text: 'いいでした', isCorrect: false, reason: 'En pasado sería よかったです, no いいでした.' },
+                        { text: 'よかった', isCorrect: false, reason: 'Concluiría en pasado (hizo buen tiempo), pero la oración es presente.' }
+                      ]
+                    }
+                  };
+
+                  const currentQ = sampleQuestions[tourGoalCategory] || sampleQuestions.all;
+
+                  return (
+                    <div className="tour-widget-inner daily-goal-widget" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {/* Cabecera del Reto Diario con progreso */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: 10, padding: '8px 12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <Target size={18} style={{ color: '#f59e0b' }} />
+                          <div>
+                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                              Meta de Hoy: {tourGoalAnswer !== null ? '4' : '3'} / 5 preguntas
+                            </div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                              Racha protegida: 5 días 🔥 · +20 XP por acierto
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ width: 80 }}>
+                          <div style={{ height: 6, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
+                            <div 
+                              style={{ 
+                                width: tourGoalAnswer !== null ? '80%' : '60%', 
+                                height: '100%', 
+                                background: 'linear-gradient(90deg, #f59e0b, #10b981)',
+                                transition: 'width 0.3s ease'
+                              }} 
+                            />
+                          </div>
+                          <div style={{ fontSize: '0.65rem', textAlign: 'right', color: 'var(--text-muted)', marginTop: 2 }}>
+                            {tourGoalAnswer !== null ? '80%' : '60%'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Selector de categoría temático */}
+                      <div>
+                        <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginBottom: 6 }}>
+                          Elige el tema de tu meta diaria para probar:
+                        </div>
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {[
+                            { id: 'all', label: '🎯 Mix FSRS' },
+                            { id: 'kanji', label: '🈁 Kanji' },
+                            { id: 'vocab', label: '📚 Vocabulario' },
+                            { id: 'grammar', label: '🧩 Gramática' },
+                            { id: 'jlpt', label: '🏆 JLPT N5' }
+                          ].map(cat => (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              className={`btn btn-sm ${tourGoalCategory === cat.id ? 'btn-primary' : 'btn-outline'}`}
+                              onClick={() => {
+                                setTourGoalCategory(cat.id);
+                                setTourGoalAnswer(null);
+                              }}
+                              style={{ fontSize: '0.72rem', padding: '3px 8px' }}
+                            >
+                              {cat.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Tarjeta de Pregunta Interactiva */}
+                      <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: 'rgba(245, 158, 11, 0.15)', color: '#d97706' }}>
+                            {currentQ.tag}
+                          </span>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            onClick={() => handlePlayAudio(currentQ.sentence.replace(/\[ ___ \]/g, ''))}
+                            style={{ padding: '2px 6px', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                          >
+                            <Volume2 size={12} /> Audio
+                          </button>
+                        </div>
+
+                        <div className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, margin: '6px 0' }}>
+                          {currentQ.sentence}
+                        </div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 10 }}>
+                          {currentQ.meaning}
+                        </div>
+
+                        {/* Opciones */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+                          {currentQ.options.map((opt, idx) => {
+                            const isSelected = tourGoalAnswer === idx;
+                            let btnStyle = 'btn-outline';
+                            if (tourGoalAnswer !== null) {
+                              if (opt.isCorrect) btnStyle = 'btn-primary';
+                              else if (isSelected) btnStyle = 'btn-danger';
+                            }
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                className={`btn btn-sm ${btnStyle}`}
+                                onClick={() => setTourGoalAnswer(idx)}
+                                style={{ fontSize: '0.8rem', textAlign: 'left', justifyContent: 'flex-start', padding: '6px 10px' }}
+                              >
+                                <strong>{String.fromCharCode(65 + idx)}.</strong> {opt.text}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Feedback Didáctico y FSRS */}
+                        {tourGoalAnswer !== null && (
+                          <div style={{ marginTop: 10, padding: '8px 10px', borderRadius: 8, background: currentQ.options[tourGoalAnswer]?.isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', border: `1px solid ${currentQ.options[tourGoalAnswer]?.isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`, fontSize: '0.75rem', lineHeight: 1.4 }}>
+                            {currentQ.options[tourGoalAnswer]?.isCorrect ? (
+                              <div>
+                                <span style={{ color: 'var(--success, #10b981)', fontWeight: 700 }}>✓ ¡Excelente!</span> {currentQ.options[tourGoalAnswer].reason}
+                                <div style={{ marginTop: 4, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <Sparkles size={12} style={{ color: '#f59e0b' }} />
+                                  <span>Algoritmo FSRS: Próximo repaso programado en 3 días (Retención 90%).</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div>
+                                <span style={{ color: 'var(--danger, #ef4444)', fontWeight: 700 }}>✕ Respuesta incorrecta.</span> {currentQ.options[tourGoalAnswer]?.reason}
+                                <div style={{ marginTop: 4, color: 'var(--text-muted)' }}>
+                                  La opción correcta era: <strong>{currentQ.options.find(o => o.isCorrect)?.text}</strong>. FSRS la volverá a repasar hoy.
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Demostración de Notificación Push Móvil */}
+                      <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: tourGoalNotifTested ? 8 : 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.76rem', color: 'var(--text-main)', fontWeight: 600 }}>
+                            <Bell size={14} style={{ color: '#f59e0b' }} />
+                            <span>Recordatorio Push en tu Celular (PWA / Web):</span>
+                          </div>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            onClick={() => setTourGoalNotifTested(prev => !prev)}
+                            style={{ fontSize: '0.7rem', padding: '2px 8px' }}
+                          >
+                            {tourGoalNotifTested ? 'Ocultar vista previa' : 'Simular notificación móvil 📲'}
+                          </button>
+                        </div>
+
+                        {tourGoalNotifTested && (
+                          <div style={{ background: 'var(--bg-main)', border: '1px solid #f59e0b', borderRadius: 8, padding: '8px 10px', display: 'flex', gap: 8, alignItems: 'flex-start', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                            <div style={{ background: '#f59e0b', color: '#fff', borderRadius: 6, width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.75rem', fontWeight: 800 }}>
+                              日
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-main)' }}>Nihongo Master</span>
+                                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Ahora</span>
+                              </div>
+                              <div style={{ fontSize: '0.72rem', color: 'var(--text-main)', marginTop: 2, lineHeight: 1.3 }}>
+                                🎯 ¡Casi completas tu meta diaria! Te faltan 2 preguntas para proteger tu racha de 5 días 🔥. Toca para responderlas ahora.
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Botón para abrir el modal real */}
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {
+                          if (typeof window !== 'undefined' && window.__nihongoOpenDailyGoal) {
+                            window.__nihongoOpenDailyGoal();
+                          }
+                        }}
+                        style={{ width: '100%', fontSize: '0.78rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                      >
+                        <Target size={14} /> Abrir Reto Diario Real Ahora
+                      </button>
+                    </div>
+                  );
+                })()}
 
                 {/* Paso 3: IME Widget */}
                 {currentStep.id === 'ime_keyboard' && (
@@ -1520,6 +1813,231 @@ export default function ProductTour({
                   </div>
                 )}
 
+                {/* Paso: JLPT Widget */}
+                {currentStep.id === 'jlpt' && (() => {
+                  const jlptLevelData = {
+                    N5: {
+                      title: 'JLPT N5 (Principiante)',
+                      section: 'Sección: 文字・語彙 (Vocabulario & Kanjis)',
+                      sentence: '毎朝、新聞を [ ___ ]。',
+                      meaning: '(Cada mañana leo el periódico)',
+                      options: [
+                        { text: 'よみます (Leer)', isCorrect: true, reason: '新聞 (しんぶん / periódico) se lee, por lo que el verbo correspondiente es よみます.' },
+                        { text: 'ききます (Escuchar)', isCorrect: false, reason: 'ききます se usa para radio (ラジオ) o música (おんがく).' },
+                        { text: 'たべます (Comer)', isCorrect: false, reason: 'たべます se usa para comida o alimentos.' },
+                        { text: 'いきます (Ir)', isCorrect: false, reason: 'いきます indica desplazamiento a un destino.' }
+                      ],
+                      totalScore: '180 pts (Aprobación: 90 pts)',
+                      timeLimit: '25 min'
+                    },
+                    N4: {
+                      title: 'JLPT N4 (Básico Superior)',
+                      section: 'Sección: 文法 (Gramática)',
+                      sentence: '田中さんは [ ___ ] から、あしたのパーティーに来ません。',
+                      meaning: '(Como el Sr. Tanaka está ocupado, no vendrá a la fiesta de mañana)',
+                      options: [
+                        { text: 'いそがしい (Forma Llena/Plana)', isCorrect: true, reason: 'Antes de la conjunción causal から se utiliza la forma plana directa en adjetivos -i.' },
+                        { text: 'いそがしくて (Forma て)', isCorrect: false, reason: 'La forma て no se combina antes de から para expresar causa.' },
+                        { text: 'いそがしかった (Pasado)', isCorrect: false, reason: 'La fiesta es mañana (あした); se describe su estado presente.' },
+                        { text: 'いそがし (Incompleto)', isCorrect: false, reason: 'Falta la desinencia い del adjetivo.' }
+                      ],
+                      totalScore: '180 pts (Aprobación: 90 pts)',
+                      timeLimit: '30 min'
+                    },
+                    N3: {
+                      title: 'JLPT N3 (Intermedio)',
+                      section: 'Sección: 文法・表現 (Patrones Gramaticales)',
+                      sentence: 'どんなに [ ___ ]、あきらめないで最後までやり抜くつもりだ。',
+                      meaning: '(Por muy difícil/doloroso que sea, no me rendiré y llegaré hasta el final)',
+                      options: [
+                        { text: 'つらくても (Por muy... que sea)', isCorrect: true, reason: 'El patrón どんなに + [Forma て + も] expresa concesión extrema ("por más que / sin importar cuánto").' },
+                        { text: 'つらいなら (Condicional)', isCorrect: false, reason: 'なら expresa condición sobre suposición del interlocutor, no concesión con どんなに.' },
+                        { text: 'つらければ (Condicional ば)', isCorrect: false, reason: 'ば expresa condición lógica simple ("si es difícil").' },
+                        { text: 'つらいのに (A pesar de que)', isCorrect: false, reason: 'のに indica contraste de hechos reales consumados, no acompaña a どんなに.' }
+                      ],
+                      totalScore: '180 pts (Aprobación: 95 pts)',
+                      timeLimit: '40 min'
+                    },
+                    N2: {
+                      title: 'JLPT N2 (Avanzado)',
+                      section: 'Sección: 語彙・コロケーション (Colocaciones Léxicas)',
+                      sentence: '健康診断の [ ___ ]、特に異常は見つからなかった。',
+                      meaning: '(Como resultado del chequeo médico, no se encontraron anomalías)',
+                      options: [
+                        { text: '結果 (けっか / Resultado)', isCorrect: true, reason: '〜の結果 expresa el desenlace o reporte tras una prueba o examen formal.' },
+                        { text: '結論 (けつろん / Conclusión)', isCorrect: false, reason: '結論 se refiere a deducciones lógicas de un debate o ensayo.' },
+                        { text: '成果 (せいか / Logro/Fruto)', isCorrect: false, reason: '成果 denota frutos positivos fruto de un esfuerzo o investigación.' },
+                        { text: '結末 (けつまつ / Desenlace narrativo)', isCorrect: false, reason: '結末 se usa para el final o desenlace de una novela o película.' }
+                      ],
+                      totalScore: '180 pts (Aprobación: 90 pts)',
+                      timeLimit: '50 min'
+                    },
+                    N1: {
+                      title: 'JLPT N1 (Experto / Nativo)',
+                      section: 'Sección: 上級文法 (Gramática Avanzada)',
+                      sentence: '彼の実力をもって [ ___ ]、この難関試験の合格は容易ではない。',
+                      meaning: '(Incluso con su notable habilidad, aprobar este examen no será fácil)',
+                      options: [
+                        { text: 'しても (〜をもってしても)', isCorrect: true, reason: 'El patrón 〜をもってしても indica que aun disponiendo de medios extraordinarios, lograrlo es casi imposible.' },
+                        { text: 'すれば (Condicional)', isCorrect: false, reason: 'をもってすれば expresa "si se cuenta con...", de tono positivo, que no encaja con 容易ではない.' },
+                        { text: 'なれば (Sin sentido)', isCorrect: false, reason: 'No existe la construcción grammatica をもってなれば.' },
+                        { text: 'おいて (Lugar)', isCorrect: false, reason: 'において indica marco temporal o espacial, no concesión de capacidad.' }
+                      ],
+                      totalScore: '180 pts (Aprobación: 100 pts)',
+                      timeLimit: '60 min'
+                    }
+                  };
+
+                  const currentData = jlptLevelData[tourJlptLevel] || jlptLevelData.N5;
+
+                  return (
+                    <div className="tour-widget-inner jlpt-widget" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {/* Selector de Nivel JLPT Oficial (N5 a N1 estrictamente) */}
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                            Nivel Oficial de Certificación JLPT:
+                          </span>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)' }}>
+                            {currentData.totalScore}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {['N5', 'N4', 'N3', 'N2', 'N1'].map(lvl => (
+                            <button
+                              key={lvl}
+                              type="button"
+                              className={`btn btn-sm ${tourJlptLevel === lvl ? 'btn-primary' : 'btn-outline'}`}
+                              onClick={() => {
+                                setTourJlptLevel(lvl);
+                                setTourJlptAnswer(null);
+                                setTourJlptSrsSaved(false);
+                              }}
+                              style={{ flex: 1, minWidth: 44, fontWeight: 700, fontSize: '0.8rem', padding: '4px 0' }}
+                            >
+                              {lvl}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Selector de Modo: Simulacro vs Práctica */}
+                      <div style={{ display: 'flex', gap: 6, background: 'var(--bg-surface)', padding: 3, borderRadius: 8, border: '1px solid var(--border)' }}>
+                        <button
+                          type="button"
+                          className={`btn btn-sm ${tourJlptMode === 'practice' ? 'btn-primary' : 'btn-ghost'}`}
+                          onClick={() => setTourJlptMode('practice')}
+                          style={{ flex: 1, fontSize: '0.72rem', padding: '4px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                        >
+                          <BookOpen size={12} /> Práctica Guiada
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn-sm ${tourJlptMode === 'exam' ? 'btn-primary' : 'btn-ghost'}`}
+                          onClick={() => setTourJlptMode('exam')}
+                          style={{ flex: 1, fontSize: '0.72rem', padding: '4px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                        >
+                          <Award size={12} /> Simulacro Cronometrado
+                        </button>
+                      </div>
+
+                      {/* Tarjeta de Pregunta JLPT */}
+                      <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                            {currentData.section}
+                          </span>
+                          {tourJlptMode === 'exam' ? (
+                            <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#ef4444', display: 'flex', alignItems: 'center', gap: 3 }}>
+                              ⏱️ {currentData.timeLimit}
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn btn-outline btn-sm"
+                              onClick={() => handlePlayAudio(currentData.sentence.replace(/\[ ___ \]/g, ''))}
+                              style={{ padding: '2px 6px', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                            >
+                              <Volume2 size={12} /> Audio
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, margin: '6px 0' }}>
+                          {currentData.sentence}
+                        </div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 10 }}>
+                          {currentData.meaning}
+                        </div>
+
+                        {/* Opciones */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+                          {currentData.options.map((opt, idx) => {
+                            const isSelected = tourJlptAnswer === idx;
+                            let btnStyle = 'btn-outline';
+                            if (tourJlptAnswer !== null) {
+                              if (opt.isCorrect) btnStyle = 'btn-primary';
+                              else if (isSelected) btnStyle = 'btn-danger';
+                            }
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                className={`btn btn-sm ${btnStyle}`}
+                                onClick={() => setTourJlptAnswer(idx)}
+                                style={{ fontSize: '0.8rem', textAlign: 'left', justifyContent: 'flex-start', padding: '6px 10px' }}
+                              >
+                                <strong>{idx + 1}.</strong> {opt.text}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Feedback / Explicación Didáctica / Guardar en FSRS */}
+                        {tourJlptAnswer !== null && (
+                          <div style={{ marginTop: 10, padding: '8px 10px', borderRadius: 8, background: currentData.options[tourJlptAnswer]?.isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', border: `1px solid ${currentData.options[tourJlptAnswer]?.isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`, fontSize: '0.75rem', lineHeight: 1.4 }}>
+                            {currentData.options[tourJlptAnswer]?.isCorrect ? (
+                              <div>
+                                <span style={{ color: 'var(--success, #10b981)', fontWeight: 700 }}>✓ ¡Respuesta Correcta!</span> {currentData.options[tourJlptAnswer].reason}
+                              </div>
+                            ) : (
+                              <div>
+                                <span style={{ color: 'var(--danger, #ef4444)', fontWeight: 700 }}>✕ Opción incorrecta.</span> {currentData.options[tourJlptAnswer]?.reason}
+                              </div>
+                            )}
+
+                            {/* Integración con FSRS */}
+                            <div style={{ marginTop: 8, paddingTop: 6, borderTop: '1px dashed var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                {tourJlptSrsSaved ? '🧠 Pregunta guardada en tu mazo de repaso FSRS' : '¿Deseas repasar este punto periódicamente?'}
+                              </span>
+                              <button
+                                type="button"
+                                className={`btn btn-sm ${tourJlptSrsSaved ? 'btn-success' : 'btn-outline'}`}
+                                onClick={() => setTourJlptSrsSaved(true)}
+                                disabled={tourJlptSrsSaved}
+                                style={{ fontSize: '0.68rem', padding: '2px 8px' }}
+                              >
+                                {tourJlptSrsSaved ? '✓ En Repaso FSRS' : '+ Añadir a FSRS'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Botón directo a la sección JLPT */}
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => handleExploreTab('jlpt')}
+                        style={{ width: '100%', fontSize: '0.78rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, color: '#8b5cf6', borderColor: '#8b5cf6' }}
+                      >
+                        <Award size={14} /> Ir a la Sección de Exámenes JLPT ({tourJlptLevel})
+                      </button>
+                    </div>
+                  );
+                })()}
+
                 {/* Paso 10: Kanji Widget */}
                 {currentStep.id === 'kanji' && (() => {
                   const STROKE_LABELS = {
@@ -1532,6 +2050,7 @@ export default function ProductTour({
                   const handleTriggerStrokeAnimation = () => {
                     if (kanjiTimerRef.current) clearInterval(kanjiTimerRef.current);
                     setKanjiAnimating(true);
+                    setTourKanjiSuccess(false);
                     setKanjiStrokeStep(1);
                     handlePlayAudio('にち');
 
@@ -1544,6 +2063,7 @@ export default function ProductTour({
                         clearInterval(kanjiTimerRef.current);
                         kanjiTimerRef.current = null;
                         setKanjiAnimating(false);
+                        setTourKanjiSuccess(true);
                         // Mantener el carácter completo visible tras finalizar
                         setTimeout(() => setKanjiStrokeStep(0), 1200);
                       }
@@ -1571,20 +2091,60 @@ export default function ProductTour({
                           style={{
                             width: 110,
                             height: 110,
-                            background: '#fffef9',
-                            border: '2px solid #b45309',
-                            borderRadius: 8,
+                            background: '#ffffff',
+                            border: tourKanjiSuccess ? '2px solid #10b981' : '1.5px solid #cbd5e1',
+                            borderRadius: 12,
                             position: 'relative',
                             flexShrink: 0,
-                            boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.06)'
+                            boxShadow: tourKanjiSuccess ? '0 3px 14px rgba(16, 185, 129, 0.25)' : '0 2px 8px rgba(0,0,0,0.06)',
+                            transition: 'all 0.3s ease',
+                            overflow: 'hidden'
                           }}
                         >
-                          {/* Líneas guía de cuadrícula 米字格 Mizige */}
-                          <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: 1, borderLeft: '1px dashed rgba(180, 83, 9, 0.35)' }} />
-                          <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, borderTop: '1px dashed rgba(180, 83, 9, 0.35)' }} />
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(45deg, transparent 49.5%, rgba(180, 83, 9, 0.15) 50%, transparent 50.5%), linear-gradient(-45deg, transparent 49.5%, rgba(180, 83, 9, 0.15) 50%, transparent 50.5%)' }} />
+                          {/* Check animado en la esquina superior derecha */}
+                          {tourKanjiSuccess && !kanjiAnimating && (
+                            <div style={{
+                              position: 'absolute',
+                              top: 5,
+                              right: 5,
+                              zIndex: 10,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              pointerEvents: 'none'
+                            }}>
+                              <div style={{
+                                position: 'absolute',
+                                width: 22,
+                                height: 22,
+                                borderRadius: '50%',
+                                background: '#10b981',
+                                animation: 'checkRipple 1.4s ease-out infinite'
+                              }} />
+                              <div style={{
+                                position: 'relative',
+                                width: 22,
+                                height: 22,
+                                borderRadius: '50%',
+                                background: 'linear-gradient(135deg, #10b981, #059669)',
+                                boxShadow: '0 2px 8px rgba(16, 185, 129, 0.45)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#ffffff',
+                                animation: 'kanjiCheckPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'
+                              }}>
+                                <Check size={13} strokeWidth={3} />
+                              </div>
+                            </div>
+                          )}
 
-                          {/* SVG con los 4 trazos exactos de 日 */}
+                          {/* Líneas guía de cuadrícula 米字格 Mizige bien marcadas */}
+                          <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: 1, borderLeft: '1.2px dashed #94a3b8', opacity: 0.7 }} />
+                          <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, borderTop: '1.2px dashed #94a3b8', opacity: 0.7 }} />
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(45deg, transparent 49.5%, rgba(203, 213, 225, 0.8) 50%, transparent 50.5%), linear-gradient(-45deg, transparent 49.5%, rgba(203, 213, 225, 0.8) 50%, transparent 50.5%)' }} />
+
+                          {/* SVG con los 4 trazos exactos de 日 y sus números de orden */}
                           <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
                             {/* Silueta tenue de fondo para calcar */}
                             <g stroke="rgba(148, 163, 184, 0.28)" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" fill="none">
@@ -1594,85 +2154,142 @@ export default function ProductTour({
                               <path d="M 28 82 L 74 82" />
                             </g>
 
-                            {/* Trazo 1 (Vertical Izquierdo) */}
+                            {/* Trazo 1 (Vertical Izquierdo: Rojo) */}
                             {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 1) && (
                               <path
                                 d="M 28 20 L 28 82"
                                 fill="none"
-                                stroke={kanjiStrokeStep === 1 ? '#3b82f6' : '#1e293b'}
+                                stroke={tourKanjiMultiColor ? '#ef4444' : '#1e293b'}
                                 strokeWidth="9.5"
                                 strokeLinecap="round"
                                 style={{
-                                  strokeDasharray: 70,
-                                  strokeDashoffset: kanjiStrokeStep === 1 ? 0 : 0,
                                   transition: 'stroke 0.2s ease'
                                 }}
                               />
                             )}
 
-                            {/* Trazo 2 (Horizontal Superior y Vertical Derecho) */}
+                            {/* Trazo 2 (Horizontal Superior y Vertical Derecho: Azul) */}
                             {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 2) && (
                               <path
                                 d="M 28 20 L 74 20 L 74 82"
                                 fill="none"
-                                stroke={kanjiStrokeStep === 2 ? '#3b82f6' : '#1e293b'}
+                                stroke={tourKanjiMultiColor ? '#3b82f6' : '#1e293b'}
                                 strokeWidth="9.5"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 style={{
-                                  strokeDasharray: 120,
-                                  strokeDashoffset: kanjiStrokeStep === 2 ? 0 : 0,
                                   transition: 'stroke 0.2s ease'
                                 }}
                               />
                             )}
 
-                            {/* Trazo 3 (Barra Central) */}
+                            {/* Trazo 3 (Barra Central: Verde Esmeralda) */}
                             {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 3) && (
                               <path
                                 d="M 28 51 L 74 51"
                                 fill="none"
-                                stroke={kanjiStrokeStep === 3 ? '#3b82f6' : '#1e293b'}
+                                stroke={tourKanjiMultiColor ? '#10b981' : '#1e293b'}
                                 strokeWidth="9"
                                 strokeLinecap="round"
                                 style={{ transition: 'stroke 0.2s ease' }}
                               />
                             )}
 
-                            {/* Trazo 4 (Barra Inferior de Cierre) */}
+                            {/* Trazo 4 (Barra Inferior de Cierre: Ámbar Dorado) */}
                             {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 4) && (
                               <path
                                 d="M 28 82 L 74 82"
                                 fill="none"
-                                stroke={kanjiStrokeStep === 4 ? '#3b82f6' : '#1e293b'}
+                                stroke={tourKanjiMultiColor ? '#f59e0b' : '#1e293b'}
                                 strokeWidth="9.5"
                                 strokeLinecap="round"
                                 style={{ transition: 'stroke 0.2s ease' }}
                               />
                             )}
 
-                            {/* Indicador de posición del pincel en trazo activo */}
-                            {kanjiStrokeStep === 1 && <circle cx="28" cy="20" r="4.5" fill="#3b82f6" />}
-                            {kanjiStrokeStep === 2 && <circle cx="74" cy="20" r="4.5" fill="#3b82f6" />}
-                            {kanjiStrokeStep === 3 && <circle cx="28" cy="51" r="4.5" fill="#3b82f6" />}
-                            {kanjiStrokeStep === 4 && <circle cx="28" cy="82" r="4.5" fill="#3b82f6" />}
+                            {/* Números identificadores de orden de trazos (1, 2, 3, 4) */}
+                            {tourKanjiShowNumbers && (
+                              <g>
+                                {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 1) && (
+                                  <text
+                                    x="16"
+                                    y="23"
+                                    textAnchor="middle"
+                                    dominantBaseline="central"
+                                    fill={tourKanjiMultiColor ? '#ef4444' : '#1e293b'}
+                                    stroke="#ffffff"
+                                    strokeWidth="2.5"
+                                    strokeLinejoin="round"
+                                    style={{ paintOrder: 'stroke fill', fontWeight: 900, fontSize: '11px', fontFamily: 'system-ui, sans-serif' }}
+                                  >
+                                    1
+                                  </text>
+                                )}
+                                {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 2) && (
+                                  <text
+                                    x="31"
+                                    y="11"
+                                    textAnchor="middle"
+                                    dominantBaseline="central"
+                                    fill={tourKanjiMultiColor ? '#3b82f6' : '#1e293b'}
+                                    stroke="#ffffff"
+                                    strokeWidth="2.5"
+                                    strokeLinejoin="round"
+                                    style={{ paintOrder: 'stroke fill', fontWeight: 900, fontSize: '11px', fontFamily: 'system-ui, sans-serif' }}
+                                  >
+                                    2
+                                  </text>
+                                )}
+                                {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 3) && (
+                                  <text
+                                    x="16"
+                                    y="52"
+                                    textAnchor="middle"
+                                    dominantBaseline="central"
+                                    fill={tourKanjiMultiColor ? '#10b981' : '#1e293b'}
+                                    stroke="#ffffff"
+                                    strokeWidth="2.5"
+                                    strokeLinejoin="round"
+                                    style={{ paintOrder: 'stroke fill', fontWeight: 900, fontSize: '11px', fontFamily: 'system-ui, sans-serif' }}
+                                  >
+                                    3
+                                  </text>
+                                )}
+                                {(kanjiStrokeStep === 0 || kanjiStrokeStep >= 4) && (
+                                  <text
+                                    x="16"
+                                    y="83"
+                                    textAnchor="middle"
+                                    dominantBaseline="central"
+                                    fill={tourKanjiMultiColor ? '#f59e0b' : '#1e293b'}
+                                    stroke="#ffffff"
+                                    strokeWidth="2.5"
+                                    strokeLinejoin="round"
+                                    style={{ paintOrder: 'stroke fill', fontWeight: 900, fontSize: '11px', fontFamily: 'system-ui, sans-serif' }}
+                                  >
+                                    4
+                                  </text>
+                                )}
+                              </g>
+                            )}
                           </svg>
 
-                          {/* Badge de número de trazo en esquina */}
+                          {/* Badge de cantidad de trazos en esquina */}
                           <div
                             style={{
                               position: 'absolute',
-                              bottom: 3,
-                              right: 3,
+                              bottom: 4,
+                              right: 4,
                               fontSize: '9px',
                               fontWeight: 800,
-                              background: kanjiStrokeStep ? '#3b82f6' : '#10b981',
-                              color: '#fff',
+                              background: 'rgba(225, 29, 72, 0.08)',
+                              color: '#be123c',
+                              border: '1px solid rgba(225, 29, 72, 0.25)',
                               borderRadius: 4,
-                              padding: '1px 4px'
+                              padding: '1px 5px'
                             }}
                           >
-                            {kanjiStrokeStep ? `${kanjiStrokeStep}/4` : '4/4'}
+                            {kanjiStrokeStep ? `${kanjiStrokeStep}/4` : '4 trazos'}
                           </div>
                         </div>
 
@@ -1688,13 +2305,13 @@ export default function ProductTour({
                           <div><strong>Kun&apos;yomi:</strong> ひ (hi), -び (-bi)</div>
 
                           <div style={{ marginTop: 6, fontSize: '0.72rem', color: kanjiStrokeStep ? 'var(--primary)' : 'var(--text-muted)', fontWeight: 600 }}>
-                            ✍️ {kanjiStrokeStep ? STROKE_LABELS[kanjiStrokeStep] : 'Orden: 1) Vertical → 2) Ángulo → 3) Centro → 4) Cierre'}
+                            ✍️ {kanjiStrokeStep ? STROKE_LABELS[kanjiStrokeStep] : 'Trazos: 1) Vertical → 2) Ángulo → 3) Centro → 4) Cierre'}
                           </div>
                         </div>
                       </div>
 
-                      {/* Botones interactivos */}
-                      <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                      {/* Botones interactivos con toggles de números y color */}
+                      <div style={{ display: 'flex', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
                         <button
                           type="button"
                           className="btn btn-primary btn-sm"
@@ -1707,11 +2324,35 @@ export default function ProductTour({
 
                         <button
                           type="button"
+                          className={`btn btn-sm ${tourKanjiShowNumbers ? 'btn-primary' : 'btn-outline'}`}
+                          onClick={() => setTourKanjiShowNumbers(!tourKanjiShowNumbers)}
+                          style={{
+                            fontSize: '0.75rem',
+                            padding: '4px 8px',
+                            background: tourKanjiShowNumbers ? '#be123c' : 'transparent',
+                            borderColor: tourKanjiShowNumbers ? '#be123c' : 'var(--border)',
+                            color: tourKanjiShowNumbers ? '#ffffff' : 'var(--text-muted)'
+                          }}
+                        >
+                          <span>🔢 Números: {tourKanjiShowNumbers ? 'ON' : 'OFF'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          className={`btn btn-sm ${tourKanjiMultiColor ? 'btn-primary' : 'btn-outline'}`}
+                          onClick={() => setTourKanjiMultiColor(!tourKanjiMultiColor)}
+                          style={{ fontSize: '0.75rem', padding: '4px 8px' }}
+                        >
+                          <span>🎨 Color: {tourKanjiMultiColor ? 'ON' : 'OFF'}</span>
+                        </button>
+
+                        <button
+                          type="button"
                           className="btn btn-outline btn-sm"
                           onClick={handleOpenRealDrawingModal}
                           style={{ fontSize: '0.75rem', padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 5 }}
                         >
-                          ✍️ Probar lienzo de dibujo real
+                          ✍️ Probar lienzo y orden real
                         </button>
                       </div>
                     </div>
