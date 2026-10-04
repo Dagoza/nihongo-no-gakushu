@@ -317,17 +317,73 @@ export default function ConversationTab({
     });
   }, [allDialogues, seriesFilter, levelFilter, statusFilter, searchDialogueQuery, completedConversations]);
 
+  // Dialogue-specific exercises state & practice filter
+  const [dialogueAnswers, setDialogueAnswers] = useState({}); // { [exId]: { chosen, isCorrect } }
+  const [practiceDialogueFilter, setPracticeDialogueFilter] = useState('all'); // 'all' | dialogueId
+
+  useEffect(() => {
+    setDialogueAnswers({});
+  }, [selectedDialogueId]);
+
+  const currentDialogueExercises = useMemo(() => {
+    if (!currentDialogue) return [];
+    return allExercises.filter(ex => {
+      if (ex.dialogue_id && ex.dialogue_id === currentDialogue.id) return true;
+      if (currentDialogue.lessonNum && ex.lesson === currentDialogue.lessonNum) return true;
+      return false;
+    });
+  }, [allExercises, currentDialogue]);
+
+  const handleSelectDialogueExerciseOption = (exercise, option) => {
+    if (dialogueAnswers[exercise.id]) return; // already answered in this session
+    const isCorrect = option === exercise.correct;
+    setDialogueAnswers(prev => ({
+      ...prev,
+      [exercise.id]: {
+        chosen: option,
+        isCorrect
+      }
+    }));
+
+    if (isCorrect) {
+      audioManager.speak(option);
+      if (onUpdateState && appState) {
+        const alreadyDone = !!appState.completedExercises?.[exercise.id];
+        onUpdateState({
+          ...appState,
+          xp: (appState.xp || 0) + (!alreadyDone ? 10 : 0),
+          completedExercises: {
+            ...(appState.completedExercises || {}),
+            [exercise.id]: true
+          }
+        });
+      }
+    }
+  };
+
+  const handleResetDialogueExercises = () => {
+    setDialogueAnswers({});
+  };
+
   const convCompletedCount = allExercises.filter(ex => !!appState?.completedExercises?.[ex.id]).length;
   const convPendingCount = allExercises.length - convCompletedCount;
 
-  // Exercises filtered by current active category and status
-  const filteredExercises = allExercises.filter(ex => {
-    const matchType = filterType === 'all' || ex.type === filterType;
-    const isCompleted = !!appState?.completedExercises?.[ex.id];
-    if (exerciseStatusFilter === 'completed' && !isCompleted) return false;
-    if (exerciseStatusFilter === 'pending' && isCompleted) return false;
-    return matchType;
-  });
+  // Exercises filtered by current active dialogue, category and status
+  const filteredExercises = useMemo(() => {
+    return allExercises.filter(ex => {
+      if (practiceDialogueFilter !== 'all') {
+        const targetDiag = allDialogues.find(d => d.id === practiceDialogueFilter);
+        const matchDiag = (ex.dialogue_id && ex.dialogue_id === practiceDialogueFilter) ||
+          (targetDiag?.lessonNum && ex.lesson === targetDiag.lessonNum);
+        if (!matchDiag) return false;
+      }
+      const matchType = filterType === 'all' || ex.type === filterType;
+      const isCompleted = !!appState?.completedExercises?.[ex.id];
+      if (exerciseStatusFilter === 'completed' && !isCompleted) return false;
+      if (exerciseStatusFilter === 'pending' && isCompleted) return false;
+      return matchType;
+    });
+  }, [allExercises, practiceDialogueFilter, filterType, exerciseStatusFilter, appState?.completedExercises, allDialogues]);
 
   const currentExercise = filteredExercises[currentExIndex] || filteredExercises[0] || null;
 
@@ -504,7 +560,7 @@ export default function ConversationTab({
             className={`btn ${activeSubTab === 'roleplay' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => {
               setActiveSubTab('roleplay');
-              updateParams(currentLessonNum, 'roleplay', statusFilter, filterType);
+              updateParams(selectedDialogueId, 'roleplay', statusFilter, filterType);
             }}
             style={{ 
               display: 'inline-flex', 
@@ -528,7 +584,7 @@ export default function ConversationTab({
             className={`btn ${activeSubTab === 'saved' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => {
               setActiveSubTab('saved');
-              updateParams(currentLessonNum, 'saved', statusFilter, filterType);
+              updateParams(selectedDialogueId, 'saved', statusFilter, filterType);
             }}
             style={{ 
               display: 'inline-flex', 
@@ -549,7 +605,7 @@ export default function ConversationTab({
             className={`btn ${activeSubTab === 'practice' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => {
               setActiveSubTab('practice');
-              updateParams(currentLessonNum, 'practice', statusFilter, filterType);
+              updateParams(selectedDialogueId, 'practice', statusFilter, filterType);
             }}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px', fontWeight: 700 }}
           >
@@ -1328,6 +1384,270 @@ export default function ConversationTab({
                 </div>
               )}
 
+              {/* Dialogue-Specific Interactive Didactic Exercises */}
+              {currentDialogueExercises.length > 0 && (
+                <div 
+                  className="card" 
+                  style={{ 
+                    marginBottom: 24, 
+                    padding: '24px 26px', 
+                    borderRadius: 'var(--radius-lg, 16px)',
+                    border: '1.5px solid var(--border)',
+                    background: 'var(--bg-card)'
+                  }}
+                >
+                  {/* Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18, borderBottom: '1px solid var(--border)', paddingBottom: 14 }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: '1.3rem' }}>📝</span>
+                        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+                          Ejercicios Didácticos de este Diálogo
+                        </h3>
+                        <span className="vocab-tag" style={{ background: 'var(--accent-bg)', color: 'var(--accent)', fontWeight: 700, fontSize: '0.75rem' }}>
+                          {currentDialogueExercises.length} preguntas interactivas
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: 0 }}>
+                        Pon a prueba tu comprensión y capacidad de respuesta en esta situación (+10 XP por acierto):
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                      {/* Score badge */}
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 700, background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '6px 14px', borderRadius: 'var(--radius-full)' }}>
+                        <Award size={16} color="var(--primary)" />
+                        <span>
+                          Superadas: {currentDialogueExercises.filter(ex => !!appState?.completedExercises?.[ex.id] || dialogueAnswers[ex.id]?.isCorrect).length} de {currentDialogueExercises.length}
+                        </span>
+                      </div>
+
+                      {/* Jump to full practice mode */}
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={() => {
+                          setPracticeDialogueFilter(currentDialogue.id);
+                          setActiveSubTab('practice');
+                          setCurrentExIndex(0);
+                          setSelectedAnswer(null);
+                          updateParams(currentDialogue.id, 'practice', statusFilter, filterType);
+                        }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', padding: '6px 12px' }}
+                        title="Abrir estos ejercicios en el modo de práctica con carrusel y filtros"
+                      >
+                        <HelpCircle size={14} /> Modo Test Completo ↗
+                      </button>
+
+                      {/* Reset local session answers */}
+                      {Object.keys(dialogueAnswers).length > 0 && (
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={handleResetDialogueExercises}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', padding: '6px 10px' }}
+                          title="Reiniciar respuestas de esta sesión"
+                        >
+                          <RotateCcw size={13} /> Reiniciar
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 3 Questions List */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    {currentDialogueExercises.map((ex, exIdx) => {
+                      const answerState = dialogueAnswers[ex.id];
+                      const isCompletedInProfile = !!appState?.completedExercises?.[ex.id];
+                      const hasAnswered = answerState !== undefined;
+                      const isCorrect = answerState?.isCorrect;
+
+                      return (
+                        <div
+                          key={ex.id || exIdx}
+                          style={{
+                            background: 'var(--bg-main)',
+                            border: `1.5px solid ${hasAnswered ? (isCorrect ? '#10b981' : 'rgba(239, 68, 68, 0.4)') : 'var(--border)'}`,
+                            borderRadius: 'var(--radius-md, 12px)',
+                            padding: '18px 20px',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          {/* Question header */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <span 
+                                style={{ 
+                                  width: 24, 
+                                  height: 24, 
+                                  borderRadius: 999, 
+                                  background: hasAnswered ? (isCorrect ? '#10b981' : '#ef4444') : 'var(--primary)',
+                                  color: '#fff', 
+                                  fontSize: '0.8rem', 
+                                  fontWeight: 800, 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  justifyContent: 'center',
+                                  flexShrink: 0
+                                }}
+                              >
+                                {exIdx + 1}
+                              </span>
+                              <span className="vocab-tag" style={{ background: 'var(--primary-bg)', color: 'var(--primary-dark)', fontSize: '0.78rem', fontWeight: 700 }}>
+                                {ex.type_label}
+                              </span>
+                            </div>
+
+                            {isCompletedInProfile && (
+                              <span style={{
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                padding: '2px 8px',
+                                background: 'rgba(16, 185, 129, 0.15)',
+                                color: 'var(--success, #10b981)',
+                                borderRadius: 'var(--radius-full)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4
+                              }}>
+                                <Check size={12} /> Superado (+10 XP)
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Prompt */}
+                          <p style={{ fontSize: '0.96rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 12, lineHeight: 1.5 }}>
+                            {ex.prompt_es}
+                          </p>
+
+                          {/* Context box */}
+                          {ex.context && (
+                            <div 
+                              className="jp-text" 
+                              style={{ 
+                                fontSize: '1.25rem', 
+                                background: 'var(--bg-card)', 
+                                padding: '12px 16px', 
+                                borderRadius: 'var(--radius-sm, 8px)', 
+                                borderLeft: '4px solid var(--primary)',
+                                lineHeight: 1.8,
+                                whiteSpace: 'pre-line',
+                                color: 'var(--text-main)',
+                                marginBottom: 16
+                              }}
+                            >
+                              {ex.context}
+                            </div>
+                          )}
+
+                          {/* Options grid */}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10, marginBottom: hasAnswered ? 14 : 0 }}>
+                            {ex.options.map((option, optIdx) => {
+                              const isSelected = answerState?.chosen === option;
+                              const isThisCorrect = option === ex.correct;
+
+                              let bg = 'var(--bg-card)';
+                              let border = 'var(--border)';
+                              let color = 'var(--text-main)';
+
+                              if (hasAnswered) {
+                                if (isThisCorrect) {
+                                  bg = 'rgba(34, 197, 94, 0.12)';
+                                  border = '#22c55e';
+                                  color = '#15803d';
+                                } else if (isSelected && !isCorrect) {
+                                  bg = 'rgba(239, 68, 68, 0.12)';
+                                  border = '#ef4444';
+                                  color = '#b91c1c';
+                                } else {
+                                  color = 'var(--text-muted)';
+                                }
+                              }
+
+                              return (
+                                <button
+                                  key={optIdx}
+                                  type="button"
+                                  disabled={hasAnswered}
+                                  onClick={() => handleSelectDialogueExerciseOption(ex, option)}
+                                  className="jp-text"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    gap: 10,
+                                    padding: '12px 14px',
+                                    borderRadius: 'var(--radius-sm, 8px)',
+                                    border: `1.5px solid ${border}`,
+                                    background: bg,
+                                    color: color,
+                                    fontSize: '1rem',
+                                    fontWeight: 600,
+                                    cursor: hasAnswered ? 'default' : 'pointer',
+                                    textAlign: 'left',
+                                    transition: 'transform 0.15s, border-color 0.2s',
+                                    outline: 'none'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (!hasAnswered) e.currentTarget.style.borderColor = 'var(--primary)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (!hasAnswered) e.currentTarget.style.borderColor = border;
+                                  }}
+                                >
+                                  <span>{option}</span>
+                                  {hasAnswered && isThisCorrect && <CheckCircle2 size={18} color="#22c55e" style={{ flexShrink: 0 }} />}
+                                  {hasAnswered && isSelected && !isCorrect && <XCircle size={18} color="#ef4444" style={{ flexShrink: 0 }} />}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Feedback & Explanation */}
+                          {hasAnswered && (
+                            <div 
+                              style={{ 
+                                marginTop: 12, 
+                                padding: '14px 16px', 
+                                borderRadius: 'var(--radius-sm, 8px)', 
+                                background: isCorrect ? 'rgba(34, 197, 94, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                                border: `1px solid ${isCorrect ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 6 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.95rem', color: isCorrect ? '#15803d' : '#b91c1c' }}>
+                                  {isCorrect ? (
+                                    <>
+                                      <CheckCircle2 size={18} /> ¡Correcto! (+10 XP)
+                                    </>
+                                  ) : (
+                                    <>
+                                      <XCircle size={18} /> Respuesta adecuada: <span className="jp-text">{ex.correct}</span>
+                                    </>
+                                  )}
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <button
+                                    className="audio-btn"
+                                    style={{ width: 28, height: 28 }}
+                                    onClick={() => audioManager.speak(ex.correct)}
+                                    title="Escuchar respuesta"
+                                  >
+                                    <Volume2 size={14} />
+                                  </button>
+                                  <SpeechPractice targetText={ex.correct} compact={true} />
+                                </div>
+                              </div>
+                              <p style={{ fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: 1.5, margin: 0 }}>
+                                💡 <strong>Explicación:</strong> {ex.explanation}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Bottom Study Status & Next Lesson Callout */}
               <div 
                 style={{ 
@@ -1944,7 +2264,57 @@ export default function ConversationTab({
       {/* SUBTAB 4: INTERACTIVE EXERCISES                                           */}
       {/* ========================================================================= */}
       {activeSubTab === 'practice' && (
-        <div className="card" style={{ maxWidth: 820, margin: '0 auto', padding: '24px 28px' }}>
+        <div className="card" style={{ maxWidth: 860, margin: '0 auto', padding: '24px 28px' }}>
+          {/* Dialogue selector filter bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 18, background: 'var(--bg-main)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 260 }}>
+              <Filter size={16} color="var(--primary)" />
+              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
+                Diálogo:
+              </span>
+              <select
+                className="input"
+                value={practiceDialogueFilter}
+                onChange={(e) => {
+                  setPracticeDialogueFilter(e.target.value);
+                  setCurrentExIndex(0);
+                  setSelectedAnswer(null);
+                }}
+                style={{ fontSize: '0.85rem', padding: '6px 10px', height: 'auto', flex: 1, minWidth: 200 }}
+              >
+                <option value="all">🌐 Todos los diálogos ({allExercises.length} ejercicios didácticos)</option>
+                <optgroup label="NHK World: Hablemos en Japonés (48 lecciones)">
+                  {allDialogues.filter(d => d.seriesKey === 'nhk').map(d => (
+                    <option key={d.id} value={d.id}>
+                      Lección {d.lessonNum}: {d.title_jp} — {d.title_es}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Irodori: Vida Cotidiana en Japón (22 diálogos)">
+                  {allDialogues.filter(d => d.seriesKey === 'irodori').map(d => (
+                    <option key={d.id} value={d.id}>
+                      Irodori {d.dialogueNum}: {d.title_jp} — {d.title_es}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
+
+            {practiceDialogueFilter !== 'all' && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setPracticeDialogueFilter('all');
+                  setCurrentExIndex(0);
+                  setSelectedAnswer(null);
+                }}
+                style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+              >
+                ✕ Ver todos los diálogos
+              </button>
+            )}
+          </div>
+
           {/* Practice Filter Pills */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 12 }}>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -1954,10 +2324,10 @@ export default function ConversationTab({
                   setFilterType('all'); 
                   setCurrentExIndex(0); 
                   setSelectedAnswer(null); 
-                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'all');
+                  updateParams(selectedDialogueId, activeSubTab, statusFilter, 'all');
                 }}
               >
-                Todos ({allExercises.length})
+                Todos ({filteredExercises.length})
               </button>
               <button
                 className={`btn btn-sm ${filterType === 'reply' ? 'btn-primary' : 'btn-outline'}`}
@@ -1965,7 +2335,7 @@ export default function ConversationTab({
                   setFilterType('reply'); 
                   setCurrentExIndex(0); 
                   setSelectedAnswer(null); 
-                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'reply');
+                  updateParams(selectedDialogueId, activeSubTab, statusFilter, 'reply');
                 }}
               >
                 💬 ¿Qué responder?
@@ -1976,7 +2346,7 @@ export default function ConversationTab({
                   setFilterType('missing_word'); 
                   setCurrentExIndex(0); 
                   setSelectedAnswer(null); 
-                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'missing_word');
+                  updateParams(selectedDialogueId, activeSubTab, statusFilter, 'missing_word');
                 }}
               >
                 🧩 ¿Qué palabra falta?
@@ -1987,7 +2357,7 @@ export default function ConversationTab({
                   setFilterType('missing_kanji'); 
                   setCurrentExIndex(0); 
                   setSelectedAnswer(null); 
-                  updateParams(currentLessonNum, activeSubTab, statusFilter, 'missing_kanji');
+                  updateParams(selectedDialogueId, activeSubTab, statusFilter, 'missing_kanji');
                 }}
               >
                 ㊗️ ¿Qué kanji corresponde?
@@ -2004,9 +2374,9 @@ export default function ConversationTab({
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 18, borderTop: '1px solid var(--border)', paddingTop: 12 }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
             {[
-              { id: 'all', label: `Todos (${allExercises.length})` },
-              { id: 'pending', label: `Pendientes (${convPendingCount})` },
-              { id: 'completed', label: `Superados (${convCompletedCount})` }
+              { id: 'all', label: `Todos (${filteredExercises.length})` },
+              { id: 'pending', label: `Pendientes (${filteredExercises.filter(ex => !appState?.completedExercises?.[ex.id]).length})` },
+              { id: 'completed', label: `Superados (${filteredExercises.filter(ex => !!appState?.completedExercises?.[ex.id]).length})` }
             ].map(st => (
               <button
                 key={st.id}
@@ -2036,6 +2406,7 @@ export default function ConversationTab({
                 onClick={() => {
                   setExerciseStatusFilter('all');
                   setFilterType('all');
+                  setPracticeDialogueFilter('all');
                   setCurrentExIndex(0);
                   setSelectedAnswer(null);
                 }}
@@ -2051,14 +2422,24 @@ export default function ConversationTab({
                   <span className="vocab-tag" style={{ background: 'var(--accent-bg)', color: 'var(--accent)' }}>
                     {currentExercise.type_label}
                   </span>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Basado en la Lección {currentExercise.lesson}
-                  </span>
-                  {completedConversations[currentExercise.lesson] && (
-                    <span style={{ fontSize: '0.75rem', color: '#15803d', background: 'rgba(34, 197, 94, 0.12)', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>
-                      ✓ Lección estudiada
-                    </span>
-                  )}
+                  {(() => {
+                    const relatedDiag = allDialogues.find(d => 
+                      (currentExercise.dialogue_id && d.id === currentExercise.dialogue_id) || 
+                      (currentExercise.lesson && d.lessonNum === currentExercise.lesson)
+                    );
+                    return (
+                      <>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          {relatedDiag ? `${relatedDiag.seriesKey === 'nhk' ? `Lección ${relatedDiag.lessonNum}` : `Irodori ${relatedDiag.dialogueNum}`}: ${relatedDiag.title_es}` : (currentExercise.lesson ? `Lección ${currentExercise.lesson}` : 'Diálogo')}
+                        </span>
+                        {(completedConversations[currentExercise.dialogue_id] || (currentExercise.lesson && completedConversations[currentExercise.lesson])) && (
+                          <span style={{ fontSize: '0.75rem', color: '#15803d', background: 'rgba(34, 197, 94, 0.12)', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>
+                            ✓ Diálogo estudiado
+                          </span>
+                        )}
+                      </>
+                    );
+                  })()}
                   {appState?.completedExercises?.[currentExercise.id] && (
                     <span style={{
                       fontSize: '0.75rem',
