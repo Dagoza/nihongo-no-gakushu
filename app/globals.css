@@ -14,6 +14,9 @@
   --danger-bg: #fef2f2;
   --bg-main: #f8fafc;
   --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --card-bg: #ffffff;
+  --bg-subtle: #f1f5f9;
   --text-main: #0f172a;
   --text-muted: #64748b;
   --text-light: #94a3b8;
@@ -33,6 +36,9 @@
 [data-theme="dark"] {
   --bg-main: #090d16;
   --bg-surface: #111827;
+  --bg-card: #111827;
+  --card-bg: #111827;
+  --bg-subtle: #1e293b;
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
   --text-light: #64748b;
@@ -9870,10 +9876,34 @@ html {
 
 /* ==================== META DIARIA MODAL ==================== */
 .daily-goal-modal {
-  background: var(--bg-surface, var(--card-bg, #ffffff)) !important;
+  background: var(--bg-surface) !important;
+  color: var(--text-main) !important;
   border: 1px solid var(--border) !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.45) !important;
   animation: modalFadeIn 0.2s ease-out;
+}
+
+.daily-goal-modal .daily-goal-header {
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-main) !important;
+}
+
+.daily-goal-modal .daily-goal-question-card {
+  background: var(--bg-main) !important;
+  border: 1.5px solid var(--border) !important;
+  color: var(--text-main) !important;
+}
+
+.daily-goal-modal .daily-goal-opt-btn {
+  background: var(--bg-surface) !important;
+  border: 1.5px solid var(--border) !important;
+  color: var(--text-main) !important;
+}
+
+.daily-goal-modal .daily-goal-opt-btn:hover:not(:disabled) {
+  border-color: var(--primary-light) !important;
+  background: var(--primary-bg) !important;
 }
 
 @media (max-width: 640px) {

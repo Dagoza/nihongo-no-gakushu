@@ -375,7 +375,7 @@ export default function JlptExamTab() {
             display: 'flex',
             alignItems: 'center',
             gap: 12,
-            background: timeLeft < 300 ? 'rgba(239, 68, 68, 0.12)' : 'var(--card-bg)',
+            background: timeLeft < 300 ? 'rgba(239, 68, 68, 0.12)' : 'var(--bg-surface)',
             border: `1px solid ${timeLeft < 300 ? 'var(--danger)' : 'var(--border)'}`,
             padding: '6px 14px',
             borderRadius: 12
@@ -746,7 +746,7 @@ export default function JlptExamTab() {
                   padding: '14px 18px',
                   borderRadius: 12,
                   border: '2px solid var(--border)',
-                  background: 'var(--card-bg)',
+                  background: 'var(--bg-surface)',
                   cursor: 'pointer',
                   fontSize: '1rem',
                   fontWeight: 600,

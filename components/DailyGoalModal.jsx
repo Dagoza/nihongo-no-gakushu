@@ -333,15 +333,18 @@ export default function DailyGoalModal({ isOpen, onClose }) {
         aria-label="Meta Diaria de Práctica"
       >
         {/* Header Bar */}
-        <div style={{
-          padding: '16px 20px',
-          background: 'var(--card-bg, #ffffff)',
-          borderBottom: '1px solid var(--border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 12
-        }}>
+        <div 
+          className="daily-goal-header"
+          style={{
+            padding: '16px 20px',
+            background: 'var(--bg-surface)',
+            borderBottom: '1px solid var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
               width: 38,
@@ -373,7 +376,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 </span>
               </div>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Racha actual: <strong>{currentStreak} días 🔥</strong> · FSRS Spaced Repetition activo
+                Racha actual: <strong style={{ color: 'var(--text-main)' }}>{currentStreak} días 🔥</strong> · FSRS Spaced Repetition activo
               </div>
             </div>
           </div>
@@ -382,7 +385,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
             <button
               type="button"
               className="btn btn-outline btn-sm"
-              style={{ padding: '6px 10px', borderRadius: 8 }}
+              style={{ padding: '6px 10px', borderRadius: 8, color: 'var(--text-main)', borderColor: 'var(--border)' }}
               onClick={() => setShowConfig(prev => !prev)}
               title="Configurar tema, nivel y cantidad de preguntas"
             >
@@ -394,7 +397,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
               className="btn-icon"
               onClick={onClose}
               aria-label="Cerrar modal"
-              style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 6 }}
+              style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 6, color: 'var(--text-muted)' }}
             >
               <X size={20} />
             </button>
@@ -405,7 +408,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
         {showConfig && (
           <div style={{
             padding: '16px 20px',
-            background: 'var(--bg-subtle, #f8fafc)',
+            background: 'var(--bg-main)',
             borderBottom: '1px solid var(--border)'
           }}>
             <div style={{ marginBottom: 12 }}>
@@ -513,7 +516,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
         )}
 
         {/* Modal Body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px', background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
           {!sessionCompleted && currentQuestion ? (
             <div>
               {/* Progress and Topic Chips */}
@@ -543,7 +546,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
-                    style={{ padding: '4px 8px', fontSize: '0.75rem', borderRadius: 6 }}
+                    style={{ padding: '4px 8px', fontSize: '0.75rem', borderRadius: 6, color: 'var(--text-main)', borderColor: 'var(--border)' }}
                     onClick={() => setShowFurigana(prev => !prev)}
                     title={showFurigana ? 'Ocultar Furigana' : 'Mostrar Furigana'}
                   >
@@ -555,7 +558,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
-                    style={{ padding: '4px 8px', borderRadius: 6 }}
+                    style={{ padding: '4px 8px', borderRadius: 6, color: 'var(--text-main)', borderColor: 'var(--border)' }}
                     onClick={() => {
                       const textToSpeak = currentQuestion.furigana || currentQuestion.question;
                       audioManager.speak(textToSpeak.replace(/<[^>]*>/g, ''));
@@ -578,24 +581,28 @@ export default function DailyGoalModal({ isOpen, onClose }) {
               </div>
 
               {/* Question Text Box */}
-              <div style={{
-                background: 'var(--card-bg, #ffffff)',
-                border: '1px solid var(--border)',
-                borderRadius: 14,
-                padding: '20px',
-                marginBottom: 20,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
+              <div 
+                className="daily-goal-question-card"
+                style={{
+                  background: 'var(--bg-main)',
+                  border: '1.5px solid var(--border)',
+                  borderRadius: 14,
+                  padding: '20px',
+                  marginBottom: 20,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+                }}
+              >
                 {currentQuestion.passage && (
                   <div style={{
                     padding: '12px 14px',
-                    background: 'var(--bg-subtle, #f8fafc)',
+                    background: 'var(--bg-surface)',
                     borderRadius: 10,
                     marginBottom: 14,
                     fontSize: '0.92rem',
                     lineHeight: 1.6,
                     color: 'var(--text-main)',
-                    borderLeft: '4px solid var(--primary)'
+                    borderLeft: '4px solid var(--primary)',
+                    border: '1px solid var(--border)'
                   }}>
                     {currentQuestion.passage}
                   </div>
@@ -629,8 +636,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                     justifyContent: 'space-between',
                     padding: '14px 18px',
                     borderRadius: 12,
-                    border: '2px solid var(--border)',
-                    background: 'var(--card-bg, #ffffff)',
+                    border: '1.5px solid var(--border)',
+                    background: 'var(--bg-surface)',
                     cursor: feedback ? 'default' : 'pointer',
                     fontSize: '0.98rem',
                     fontWeight: 600,
@@ -641,28 +648,30 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   if (feedback) {
                     if (oIdx === currentQuestion.correctIndex) {
                       optStyle.borderColor = 'var(--success, #10b981)';
-                      optStyle.background = 'rgba(16, 185, 129, 0.1)';
+                      optStyle.background = 'rgba(16, 185, 129, 0.15)';
                       optStyle.color = 'var(--success, #10b981)';
                     } else if (oIdx === selectedOption) {
                       optStyle.borderColor = 'var(--danger, #ef4444)';
-                      optStyle.background = 'rgba(239, 68, 68, 0.1)';
+                      optStyle.background = 'rgba(239, 68, 68, 0.15)';
                       optStyle.color = 'var(--danger, #ef4444)';
                     } else {
                       optStyle.opacity = 0.5;
                     }
                   } else if (selectedOption === oIdx) {
                     optStyle.borderColor = 'var(--primary)';
+                    optStyle.background = 'var(--primary-bg)';
                   }
 
                   return (
                     <button
                       key={oIdx}
                       type="button"
+                      className="daily-goal-opt-btn"
                       style={optStyle}
                       disabled={!!feedback}
                       onClick={() => handleSelectOption(oIdx)}
                     >
-                      <span className="jp-text" style={{ flex: 1, textAlign: 'left' }}>
+                      <span className="jp-text" style={{ flex: 1, textAlign: 'left', color: optStyle.color || 'var(--text-main)' }}>
                         {opt}
                       </span>
                       {feedback && oIdx === currentQuestion.correctIndex && (
@@ -814,7 +823,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 <div style={{
                   padding: '16px 12px',
                   borderRadius: 14,
-                  background: 'var(--bg-subtle, #f8fafc)',
+                  background: 'var(--bg-main)',
                   border: '1px solid var(--border)'
                 }}>
                   <div style={{ color: 'var(--accent, #f59e0b)', marginBottom: 4 }}>
@@ -829,7 +838,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 <div style={{
                   padding: '16px 12px',
                   borderRadius: 14,
-                  background: 'var(--bg-subtle, #f8fafc)',
+                  background: 'var(--bg-main)',
                   border: '1px solid var(--border)'
                 }}>
                   <div style={{ color: 'var(--primary, #6366f1)', marginBottom: 4 }}>
@@ -844,7 +853,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 <div style={{
                   padding: '16px 12px',
                   borderRadius: 14,
-                  background: 'var(--bg-subtle, #f8fafc)',
+                  background: 'var(--bg-main)',
                   border: '1px solid var(--border)'
                 }}>
                   <div style={{ color: 'var(--success, #10b981)', marginBottom: 4 }}>
