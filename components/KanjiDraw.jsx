@@ -8,35 +8,28 @@ import {
   RotateCcw, 
   Target, 
   Loader2, 
-  Check, 
   ChevronLeft, 
   ChevronRight, 
-  SlidersHorizontal,
   Grid,
   PenTool,
-  Eye,
-  EyeOff,
-  Sparkles,
-  Volume2
+  Sparkles
 } from 'lucide-react';
 import { 
-  STROKE_COLORS, 
   fetchKanjiStrokeData, 
   computeStrokeNumbers, 
   getScalingTransform 
 } from '../lib/kanjiStrokeUtils';
-import audioManager from '../lib/audioManager';
 
 export default function KanjiDraw({ 
   character, 
   size = 260, 
   onQuizComplete,
-  initialMode = 'order' // 'order' (筆順 - Stroke Order) | 'quiz' | 'animate'
+  initialMode = 'order' // 'order' (筆順 - Stroke Order) | 'quiz' (Practicar y Animar)
 }) {
   const containerRef = useRef(null);
   const writerRef = useRef(null);
   
-  // Modos principales: 'order' (Diagrama numerado), 'quiz' (Práctica interactiva), 'animate' (Animación)
+  // 2 Modos principales: 'order' (筆順 Stroke Order) y 'quiz' (Practicar con Animar integrado)
   const [activeTab, setActiveTab] = useState(initialMode);
   
   // Datos vectoriales del Kanji
@@ -45,8 +38,8 @@ export default function KanjiDraw({
   const [loadingError, setLoadingError] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
 
-  // Estados del Modo 'order' (Diagrama de Trazos Numerado - 筆順)
-  const [activeStep, setActiveStep] = useState(null); // null = mostrar todos; número = paso específico (1..total)
+  // Estados del Modo 'order' (筆順 Stroke Order)
+  const [activeStep, setActiveStep] = useState(null); // null = todos los trazos; número = paso específico (1..total)
   const [showNumbers, setShowNumbers] = useState(true);
   const [isMultiColor, setIsMultiColor] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
@@ -54,13 +47,11 @@ export default function KanjiDraw({
   const [isPlayingSteps, setIsPlayingSteps] = useState(false);
   const stepTimerRef = useRef(null);
 
-  // Estados del Modo 'quiz' (Práctica con HanziWriter)
+  // Estados del Modo 'quiz' (Practicar + Animar)
   const [currentQuizStroke, setCurrentQuizStroke] = useState(0);
   const [errorCount, setErrorCount] = useState(0);
   const [quizSuccess, setQuizSuccess] = useState(false);
   const [showQuizGuideNumbers, setShowQuizGuideNumbers] = useState(true);
-
-  // Estados del Modo 'animate'
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1.4);
 
@@ -76,6 +67,7 @@ export default function KanjiDraw({
     setCurrentQuizStroke(0);
     setErrorCount(0);
     setQuizSuccess(false);
+    setIsAnimating(false);
 
     if (stepTimerRef.current) {
       clearInterval(stepTimerRef.current);
@@ -113,7 +105,7 @@ export default function KanjiDraw({
     return getScalingTransform(size, 14);
   }, [size]);
 
-  // Manejo de paso a paso automático en modo Orden de Trazos
+  // Manejo de paso a paso automático en modo 筆順 Stroke Order
   useEffect(() => {
     if (isPlayingSteps && totalStrokes > 0) {
       stepTimerRef.current = setInterval(() => {
@@ -135,7 +127,7 @@ export default function KanjiDraw({
     };
   }, [isPlayingSteps, totalStrokes]);
 
-  // Inicialización de HanziWriter cuando se entra en 'quiz' o 'animate'
+  // Inicialización de HanziWriter cuando se entra en 'quiz'
   const initHanziWriter = useCallback(() => {
     if (!containerRef.current || !character || !charData) return;
 
@@ -160,21 +152,17 @@ export default function KanjiDraw({
         drawingColor: '#1e293b',
         drawingWidth: 16,
         showCharacter: false,
-        charDataLoader: () => charData // Utiliza los datos ya precargados
+        charDataLoader: () => charData
       });
 
-      if (activeTab === 'quiz') {
-        startQuizSession();
-      } else if (activeTab === 'animate') {
-        runAnimation();
-      }
+      startQuizSession();
     } catch (e) {
       console.error('Error inicializando HanziWriter:', e);
     }
-  }, [character, charData, size, activeTab, animationSpeed]);
+  }, [character, charData, size, animationSpeed]);
 
   useEffect(() => {
-    if (activeTab === 'quiz' || activeTab === 'animate') {
+    if (activeTab === 'quiz') {
       initHanziWriter();
     } else {
       if (writerRef.current) {
@@ -198,6 +186,7 @@ export default function KanjiDraw({
     setErrorCount(0);
     setQuizSuccess(false);
     setCurrentQuizStroke(0);
+    setIsAnimating(false);
 
     try {
       writerRef.current.quiz({
@@ -218,7 +207,7 @@ export default function KanjiDraw({
     }
   };
 
-  const runAnimation = () => {
+  const handleAnimateInQuiz = () => {
     if (!writerRef.current) return;
     setIsAnimating(true);
     try {
@@ -226,6 +215,7 @@ export default function KanjiDraw({
       writerRef.current.animateCharacter({
         onComplete: () => {
           setIsAnimating(false);
+          startQuizSession();
         }
       });
     } catch (e) {
@@ -234,7 +224,6 @@ export default function KanjiDraw({
     }
   };
 
-  // Reintento en caso de error
   if (loadingError) {
     return (
       <div style={{
@@ -269,99 +258,47 @@ export default function KanjiDraw({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: 14,
+      gap: 12,
       width: '100%',
       maxWidth: size + 36,
       margin: '0 auto'
     }}>
       {/* =========================================================================
-          CABECERA OFICIAL "筆順 - Stroke Order" (idéntica a la referencia)
+          SELECTOR DE 2 TABS: [筆順 Stroke Order] y [✍️ Practicar]
          ========================================================================= */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        padding: '6px 12px',
-        borderRadius: '12px',
-        background: 'linear-gradient(135deg, rgba(244, 63, 94, 0.08), rgba(225, 29, 72, 0.04))',
-        border: '1px solid rgba(244, 63, 94, 0.2)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{
-            width: 28,
-            height: 28,
-            borderRadius: 8,
-            background: 'linear-gradient(135deg, #e11d48, #be123c)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            boxShadow: '0 2px 6px rgba(225, 29, 72, 0.3)'
-          }}>
-            <PenTool size={15} />
-          </div>
-          <span style={{
-            fontSize: '1rem',
-            fontWeight: 800,
-            color: '#be123c',
-            letterSpacing: '0.02em',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6
-          }}>
-            <span>筆順</span>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.85 }}>— Stroke Order</span>
-          </span>
-        </div>
-
-        <div style={{
-          fontSize: '0.78rem',
-          fontWeight: 700,
-          background: '#fff',
-          color: '#be123c',
-          padding: '2px 8px',
-          borderRadius: 999,
-          border: '1px solid rgba(244, 63, 94, 0.25)'
-        }}>
-          {totalStrokes > 0 ? `${totalStrokes} trazos` : 'Cargando...'}
-        </div>
-      </div>
-
-      {/* =========================================================================
-          SELECTOR DE MODOS (Orden con Números / Practicar / Animar)
-         ========================================================================= */}
-      <div style={{
-        display: 'flex',
         background: 'var(--bg-main, #f1f5f9)',
-        padding: '3px',
-        borderRadius: '10px',
+        padding: '4px',
+        borderRadius: '12px',
         width: '100%',
-        gap: '4px'
+        gap: '6px'
       }}>
         <button
           type="button"
           onClick={() => setActiveTab('order')}
           style={{
             flex: 1,
-            padding: '6px 8px',
-            borderRadius: '8px',
+            padding: '7px 10px',
+            borderRadius: '9px',
             border: 'none',
-            fontSize: '0.82rem',
-            fontWeight: activeTab === 'order' ? 700 : 500,
+            fontSize: '0.86rem',
+            fontWeight: activeTab === 'order' ? 800 : 600,
             background: activeTab === 'order' ? '#ffffff' : 'transparent',
             color: activeTab === 'order' ? '#be123c' : 'var(--text-muted, #64748b)',
-            boxShadow: activeTab === 'order' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+            boxShadow: activeTab === 'order' ? '0 2px 6px rgba(0,0,0,0.1)' : 'none',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 4
+            gap: 6
           }}
-          title="Ver orden oficial de trazos con números y colores"
+          title="Ver orden oficial de trazos con números y colores armónicos"
         >
-          <span>🔢 Orden (123)</span>
+          <PenTool size={14} />
+          <span>筆順 Stroke Order</span>
         </button>
 
         <button
@@ -369,56 +306,30 @@ export default function KanjiDraw({
           onClick={() => setActiveTab('quiz')}
           style={{
             flex: 1,
-            padding: '6px 8px',
-            borderRadius: '8px',
+            padding: '7px 10px',
+            borderRadius: '9px',
             border: 'none',
-            fontSize: '0.82rem',
-            fontWeight: activeTab === 'quiz' ? 700 : 500,
+            fontSize: '0.86rem',
+            fontWeight: activeTab === 'quiz' ? 800 : 600,
             background: activeTab === 'quiz' ? '#ffffff' : 'transparent',
             color: activeTab === 'quiz' ? 'var(--primary, #3b82f6)' : 'var(--text-muted, #64748b)',
-            boxShadow: activeTab === 'quiz' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+            boxShadow: activeTab === 'quiz' ? '0 2px 6px rgba(0,0,0,0.1)' : 'none',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 4
+            gap: 6
           }}
-          title="Dibujar y practicar trazos interactivamente"
+          title="Practicar trazo a mano y ver animación"
         >
-          <Target size={13} />
-          <span>Practicar</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('animate')}
-          style={{
-            flex: 1,
-            padding: '6px 8px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '0.82rem',
-            fontWeight: activeTab === 'animate' ? 700 : 500,
-            background: activeTab === 'animate' ? '#ffffff' : 'transparent',
-            color: activeTab === 'animate' ? 'var(--primary, #3b82f6)' : 'var(--text-muted, #64748b)',
-            boxShadow: activeTab === 'animate' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4
-          }}
-          title="Ver animación trazo a trazo"
-        >
-          <Play size={13} />
-          <span>Animar</span>
+          <Target size={14} />
+          <span>✍️ Practicar</span>
         </button>
       </div>
 
       {/* =========================================================================
-          LIENZO PRINCIPAL
+          LIENZO PRINCIPAL CON CUADRÍCULA BIEN MARCADA
          ========================================================================= */}
       <div style={{
         position: 'relative',
@@ -426,52 +337,57 @@ export default function KanjiDraw({
         height: size,
         background: '#ffffff',
         borderRadius: '18px',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(0, 0, 0, 0.06)',
+        border: '1.5px solid #cbd5e1',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
         overflow: 'hidden',
         userSelect: 'none'
       }}>
-        {/* Cuadrícula tradicional Tianzige / Mizige de fondo */}
+        {/* Cuadrícula tradicional Tianzige / Mizige bien visible y nítida */}
         {showGrid && (
           <svg
             width={size}
             height={size}
             style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}
           >
-            {/* Cruz central punteada */}
+            {/* Cruz central punteada (bien marcada) */}
             <line 
               x1={size / 2} y1={0} 
               x2={size / 2} y2={size} 
-              stroke="#e2e8f0" 
-              strokeWidth={1} 
-              strokeDasharray="4 4" 
+              stroke="#94a3b8" 
+              strokeWidth={1.3} 
+              strokeDasharray="5 4" 
+              opacity={0.75}
             />
             <line 
               x1={0} y1={size / 2} 
               x2={size} y2={size / 2} 
-              stroke="#e2e8f0" 
-              strokeWidth={1} 
-              strokeDasharray="4 4" 
+              stroke="#94a3b8" 
+              strokeWidth={1.3} 
+              strokeDasharray="5 4" 
+              opacity={0.75}
             />
             {/* Diagonales suaves */}
             <line 
               x1={0} y1={0} 
               x2={size} y2={size} 
-              stroke="#f1f5f9" 
+              stroke="#cbd5e1" 
               strokeWidth={1} 
-              strokeDasharray="3 3" 
+              strokeDasharray="4 4" 
+              opacity={0.7}
             />
             <line 
               x1={0} y1={size} 
               x2={size} y2={0} 
-              stroke="#f1f5f9" 
+              stroke="#cbd5e1" 
               strokeWidth={1} 
-              strokeDasharray="3 3" 
+              strokeDasharray="4 4" 
+              opacity={0.7}
             />
           </svg>
         )}
 
         {/* -------------------------------------------------------------
-            MODO 1: DIAGRAMA NUMERADO OFICIAL (筆順 - Stroke Order)
+            MODO 1: DIAGRAMA 筆順 STROKE ORDER CON PALETA VIBRANTE
            ------------------------------------------------------------- */}
         {activeTab === 'order' && charData && (
           <svg
@@ -490,9 +406,8 @@ export default function KanjiDraw({
                 let opacity = 1;
 
                 if (!isVisible) {
-                  // Muestra el trazo en contorno muy tenue si aún no se ha dibujado en el paso a paso
                   strokeFill = '#e2e8f0';
-                  opacity = 0.55;
+                  opacity = 0.45;
                 } else if (isHovered || isCurrentStep) {
                   strokeFill = st.color;
                   opacity = 1;
@@ -534,7 +449,6 @@ export default function KanjiDraw({
                       onMouseLeave={() => setHoveredStrokeIndex(null)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {/* Círculo suave de respaldo cuando está resaltado */}
                       {(isCurrent || isHovered) && (
                         <circle
                           cx={st.numX}
@@ -542,12 +456,11 @@ export default function KanjiDraw({
                           r={10.5}
                           fill="#ffffff"
                           stroke={numColor}
-                          strokeWidth={1.5}
+                          strokeWidth={1.6}
                           style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' }}
                         />
                       )}
 
-                      {/* Texto con halo blanco alrededor para máxima legibilidad */}
                       <text
                         x={st.numX}
                         y={st.numY}
@@ -561,7 +474,7 @@ export default function KanjiDraw({
                           paintOrder: 'stroke fill',
                           fontWeight: (isCurrent || isHovered) ? 900 : 800,
                           fontSize: (isCurrent || isHovered) ? '15px' : '13px',
-                          fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          fontFamily: 'system-ui, -apple-system, sans-serif',
                           transition: 'all 0.15s ease',
                           userSelect: 'none'
                         }}
@@ -577,7 +490,7 @@ export default function KanjiDraw({
         )}
 
         {/* -------------------------------------------------------------
-            MODO 2 & 3: CONTENEDOR HANZIWRITER (Practicar y Animar)
+            MODO 2: CONTENEDOR HANZIWRITER (Practicar y Animar)
            ------------------------------------------------------------- */}
         <div
           ref={containerRef}
@@ -602,7 +515,6 @@ export default function KanjiDraw({
 
               return (
                 <g key={`quiz-num-${idx}`}>
-                  {/* Si ya fue completado con éxito */}
                   {isPast ? (
                     <circle
                       cx={st.numX}
@@ -612,7 +524,6 @@ export default function KanjiDraw({
                       opacity={0.85}
                     />
                   ) : isCurrent ? (
-                    /* El trazo actual pulsa con círculo blanco resaltado */
                     <circle
                       cx={st.numX}
                       cy={st.numY}
@@ -670,13 +581,11 @@ export default function KanjiDraw({
       </div>
 
       {/* =========================================================================
-          CONTROLES ESPECÍFICOS SEGÚN EL MODO ACTIVO
+          CONTROLES: 筆順 STROKE ORDER
          ========================================================================= */}
-      
-      {/* 1. CONTROLES DEL MODO "筆順 - Stroke Order" */}
       {activeTab === 'order' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
-          {/* Stepper Paso a Paso */}
+          {/* Stepper con Badge limpia (ej. "3 trazos" o "Trazo 1 de 3") */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -684,8 +593,8 @@ export default function KanjiDraw({
             background: 'var(--bg-surface, #ffffff)',
             borderRadius: '12px',
             border: '1px solid var(--border, #e2e8f0)',
-            padding: '6px 10px',
-            gap: 8
+            padding: '6px 8px',
+            gap: 6
           }}>
             <button
               type="button"
@@ -696,28 +605,35 @@ export default function KanjiDraw({
               }}
               disabled={activeStep === 1}
               title="Trazo anterior"
-              style={{ padding: '4px 8px' }}
+              style={{ padding: '4px 10px', fontSize: '0.82rem' }}
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={15} />
               <span>Ant.</span>
             </button>
 
+            {/* Badge de cantidad de trazos solicitada en Punto 5 */}
             <button
               type="button"
-              className="btn btn-ghost btn-xs"
               onClick={() => {
                 setIsPlayingSteps(false);
-                setActiveStep(null);
+                setActiveStep(null); // Resetea a todos los trazos
               }}
               style={{
-                fontWeight: activeStep === null ? 700 : 500,
-                color: activeStep === null ? '#be123c' : 'var(--text-muted, #64748b)',
-                fontSize: '0.82rem'
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                padding: '4px 12px',
+                borderRadius: 999,
+                background: activeStep === null ? 'rgba(225, 29, 72, 0.08)' : 'var(--bg-main, #f1f5f9)',
+                color: activeStep === null ? '#be123c' : 'var(--text-main, #0f172a)',
+                border: activeStep === null ? '1px solid rgba(225, 29, 72, 0.25)' : '1px solid var(--border, #e2e8f0)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
               }}
+              title={activeStep !== null ? "Haz clic para ver todos los trazos" : `${totalStrokes} trazos en total`}
             >
               {activeStep === null 
-                ? `Todos los trazos (${totalStrokes})` 
-                : `Paso ${activeStep} de ${totalStrokes}`}
+                ? `${totalStrokes} trazos` 
+                : `Trazo ${activeStep} de ${totalStrokes}`}
             </button>
 
             <button
@@ -729,20 +645,20 @@ export default function KanjiDraw({
               }}
               disabled={activeStep === totalStrokes}
               title="Siguiente trazo"
-              style={{ padding: '4px 8px' }}
+              style={{ padding: '4px 10px', fontSize: '0.82rem' }}
             >
               <span>Sig.</span>
-              <ChevronRight size={16} />
+              <ChevronRight size={15} />
             </button>
           </div>
 
-          {/* Botones de acción & Toggles */}
-          <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {/* Fila 1: Paso a paso & Números */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
             <button
               type="button"
               className={`btn btn-xs ${isPlayingSteps ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setIsPlayingSteps(!isPlayingSteps)}
-              style={{ fontSize: '0.78rem' }}
+              style={{ fontSize: '0.8rem', padding: '6px 10px' }}
             >
               {isPlayingSteps ? <Pause size={13} /> : <Play size={13} />}
               <span>{isPlayingSteps ? 'Pausar' : 'Paso a paso'}</span>
@@ -750,75 +666,105 @@ export default function KanjiDraw({
 
             <button
               type="button"
-              className={`btn btn-xs ${showNumbers ? 'btn-outline' : 'btn-ghost'}`}
+              className={`btn btn-xs ${showNumbers ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setShowNumbers(!showNumbers)}
-              style={{ fontSize: '0.78rem', color: showNumbers ? '#be123c' : 'var(--text-muted)' }}
-              title="Mostrar / ocultar números del orden de trazos"
+              style={{
+                fontSize: '0.8rem',
+                padding: '6px 10px',
+                background: showNumbers ? '#be123c' : 'transparent',
+                borderColor: showNumbers ? '#be123c' : 'var(--border)',
+                color: showNumbers ? '#ffffff' : 'var(--text-muted)'
+              }}
+              title="Activar o desactivar números del orden de trazos"
             >
               <span>🔢 Números: {showNumbers ? 'ON' : 'OFF'}</span>
             </button>
-
-            <button
-              type="button"
-              className="btn btn-ghost btn-xs"
-              onClick={() => setIsMultiColor(!isMultiColor)}
-              style={{ fontSize: '0.78rem' }}
-              title="Alternar entre paleta multicolor o monocromática"
-            >
-              <span>🎨 {isMultiColor ? 'Color' : 'Mono'}</span>
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-ghost btn-xs"
-              onClick={() => setShowGrid(!showGrid)}
-              style={{ fontSize: '0.78rem' }}
-              title="Mostrar / ocultar cuadrícula"
-            >
-              <Grid size={13} />
-            </button>
           </div>
 
-          {/* Explicación contextual de trazo activo */}
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748b)', textAlign: 'center' }}>
-            {hoveredStrokeIndex !== null ? (
-              <span style={{ color: strokeItems[hoveredStrokeIndex]?.color, fontWeight: 700 }}>
-                Trazo #{hoveredStrokeIndex + 1} de {totalStrokes}
-              </span>
-            ) : activeStep !== null ? (
-              <span>Visualizando hasta el trazo <strong>#{activeStep}</strong></span>
-            ) : (
-              <span>Haz clic en cualquier número o flecha para ver el paso a paso.</span>
-            )}
+          {/* Fila 2: Color & Cuadrícula (con indicador claro de ON/OFF - Punto 6) */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+            <button
+              type="button"
+              className={`btn btn-xs ${isMultiColor ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setIsMultiColor(!isMultiColor)}
+              style={{ fontSize: '0.8rem', padding: '6px 10px' }}
+              title="Alternar entre paleta multicolor y monocromático"
+            >
+              <span>🎨 Color: {isMultiColor ? 'ON' : 'OFF'}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`btn btn-xs ${showGrid ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setShowGrid(!showGrid)}
+              style={{
+                fontSize: '0.8rem',
+                padding: '6px 10px',
+                background: showGrid ? 'var(--primary, #3b82f6)' : 'transparent',
+                borderColor: showGrid ? 'var(--primary, #3b82f6)' : 'var(--border)',
+                color: showGrid ? '#ffffff' : 'var(--text-muted)'
+              }}
+              title="Activar o desactivar cuadrícula"
+            >
+              <Grid size={13} />
+              <span>Cuadrícula: {showGrid ? 'ON' : 'OFF'}</span>
+            </button>
           </div>
         </div>
       )}
 
-      {/* 2. CONTROLES DEL MODO "✍️ Practicar" */}
+      {/* =========================================================================
+          CONTROLES: PRACTICAR (CON FUNCIÓN ANIMAR INTEGRADA - Punto 1)
+         ========================================================================= */}
       {activeTab === 'quiz' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', width: '100%' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: 6, width: '100%' }}>
+            {/* Función Animar integrada en Practicar */}
             <button
               type="button"
-              className="btn btn-primary btn-sm"
+              className={`btn btn-sm ${isAnimating ? 'btn-primary' : 'btn-outline'}`}
+              onClick={handleAnimateInQuiz}
+              disabled={isAnimating}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, fontSize: '0.8rem', padding: '6px 8px' }}
+              title="Ver animación del kanji trazo por trazo"
+            >
+              <Play size={14} />
+              <span>{isAnimating ? 'Animando...' : 'Animar'}</span>
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
               onClick={startQuizSession}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, fontSize: '0.8rem', padding: '6px 8px' }}
+              title="Borrar lienzo y reiniciar quiz"
             >
               <RotateCcw size={14} />
               <span>Reiniciar</span>
             </button>
 
+            {/* Toggle de Números Guía en el lienzo */}
             <button
               type="button"
-              className={`btn btn-sm ${showQuizGuideNumbers ? 'btn-outline' : 'btn-ghost'}`}
+              className={`btn btn-sm ${showQuizGuideNumbers ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setShowQuizGuideNumbers(!showQuizGuideNumbers)}
-              style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.82rem' }}
-              title="Mostrar números de orden sobre el lienzo mientras dibujas"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4,
+                fontSize: '0.78rem',
+                padding: '6px 8px',
+                background: showQuizGuideNumbers ? 'var(--primary)' : 'transparent',
+                color: showQuizGuideNumbers ? '#fff' : 'inherit'
+              }}
+              title="Mostrar u ocultar números guía sobre el lienzo"
             >
-              <span>🔢 Guía {showQuizGuideNumbers ? 'ON' : 'OFF'}</span>
+              <span>🔢 Guía: {showQuizGuideNumbers ? 'ON' : 'OFF'}</span>
             </button>
           </div>
 
+          {/* Feedback de Errores y Éxito */}
           <div style={{ fontSize: '0.82rem', textAlign: 'center' }}>
             {quizSuccess ? (
               <span style={{ color: 'var(--success, #10b981)', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -827,45 +773,9 @@ export default function KanjiDraw({
               </span>
             ) : (
               <span style={{ color: 'var(--text-muted, #64748b)' }}>
-                Trazo actual: <strong>{currentQuizStroke + 1} de {totalStrokes}</strong> • Errores: <strong style={{ color: errorCount > 0 ? 'var(--danger, #ef4444)' : 'inherit' }}>{errorCount}</strong>
+                Trazo: <strong>{currentQuizStroke + 1} de {totalStrokes}</strong> • Errores: <strong style={{ color: errorCount > 0 ? 'var(--danger, #ef4444)' : 'inherit' }}>{errorCount}</strong>
               </span>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* 3. CONTROLES DEL MODO "▶️ Animar" */}
-      {activeTab === 'animate' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              onClick={runAnimation}
-              disabled={isAnimating}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem' }}
-            >
-              <Play size={14} />
-              <span>{isAnimating ? 'Animando...' : 'Reproducir'}</span>
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={() => {
-                const speeds = [1.0, 1.4, 2.0];
-                const next = speeds[(speeds.indexOf(animationSpeed) + 1) % speeds.length];
-                setAnimationSpeed(next);
-              }}
-              style={{ fontSize: '0.82rem' }}
-              title="Velocidad de reproducción"
-            >
-              <span>{animationSpeed}x</span>
-            </button>
-          </div>
-
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-            Observa el orden secuencial y el punto de inicio de cada trazo.
           </div>
         </div>
       )}
