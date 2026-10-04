@@ -25,7 +25,8 @@ import {
   X,
   Sparkles,
   PenTool,
-  Settings
+  Settings,
+  Target
 } from 'lucide-react';
 import curriculumData from '../data/curriculum.json';
 import nhkLessonsData from '../data/nhk_lessons.json';
@@ -160,6 +161,12 @@ export default function Header({
   const pendingTopicsCount = reviewedTopicsWithPendingExercises.length;
   const totalPendingQuestions = reviewedTopicsWithPendingExercises.reduce((acc, item) => acc + item.pendingExercises, 0);
 
+  const dailyGoal = userState?.dailyGoal || {};
+  const todayStr = new Date().toISOString().split('T')[0];
+  const answeredToday = (dailyGoal.date === todayStr) ? (dailyGoal.answeredToday || 0) : 0;
+  const dailyGoalTarget = dailyGoal.target || 5;
+  const isGoalReached = dailyGoal.completed || (answeredToday >= dailyGoalTarget);
+
   const displayName = authUser?.name || authUser?.email?.split('@')[0] || 'Estudiante';
   const initialLetter = (displayName || 'U')[0].toUpperCase();
 
@@ -216,6 +223,53 @@ export default function Header({
                         {totalPendingQuestions} por resolver
                       </span>
                     )}
+                  </div>
+
+                  {/* Tarjeta Destacada de Meta Diaria en Notificaciones */}
+                  <div style={{
+                    padding: '12px 14px',
+                    borderRadius: 12,
+                    background: isGoalReached ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)',
+                    border: `1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.25)' : 'rgba(245, 158, 11, 0.25)'}`,
+                    margin: '8px 0 12px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.86rem', color: 'var(--text-main)' }}>
+                        <Flame size={16} className="text-amber-500" />
+                        <span>Meta Diaria de Hoy</span>
+                      </div>
+                      <span style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '1px 6px',
+                        borderRadius: 999,
+                        background: isGoalReached ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                        color: isGoalReached ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)'
+                      }}>
+                        {isGoalReached ? '✓ Cumplida' : `${answeredToday}/${dailyGoalTarget} resueltas`}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 8, lineHeight: 1.35 }}>
+                      {isGoalReached 
+                        ? '¡Excelente! Has alcanzado tu meta diaria para mantener tu racha.' 
+                        : `Te faltan ${Math.max(1, dailyGoalTarget - answeredToday)} preguntas para cumplir tu meta de hoy.`}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      style={{ width: '100%', justifyContent: 'center', fontSize: '0.78rem', padding: '6px 10px', borderRadius: 8 }}
+                      onClick={() => {
+                        setIsNotifOpen(false);
+                        if (contextApp?.openDailyGoalModal) {
+                          contextApp.openDailyGoalModal();
+                        }
+                      }}
+                    >
+                      <Target size={14} />
+                      <span>{isGoalReached ? 'Ver o Seguir Practicando' : 'Resolver Preguntas de Hoy'}</span>
+                    </button>
                   </div>
 
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 8px', lineHeight: 1.35 }}>
@@ -588,6 +642,33 @@ export default function Header({
           <div className="stat-badge" title="Racha de estudio activa">
             <Flame size={16} className="text-amber-500" />
             <span>{stats.streak}d</span>
+          </div>
+
+          {/* Chip de Meta Diaria interactivo */}
+          <div 
+            className="stat-badge"
+            style={{
+              cursor: 'pointer',
+              background: isGoalReached ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)',
+              borderColor: isGoalReached ? 'rgba(16, 185, 129, 0.4)' : 'rgba(245, 158, 11, 0.4)',
+              transition: 'all 0.15s ease'
+            }}
+            onClick={() => {
+              if (contextApp?.openDailyGoalModal) {
+                contextApp.openDailyGoalModal();
+              }
+            }}
+            title={isGoalReached 
+              ? '¡Meta diaria cumplida! Clic para revisar o seguir practicando.' 
+              : `Meta diaria: ${answeredToday}/${dailyGoalTarget} preguntas hoy. Clic para practicar.`}
+          >
+            <Target size={15} style={{ color: isGoalReached ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)' }} />
+            <span style={{ 
+              fontWeight: 700, 
+              color: isGoalReached ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)' 
+            }}>
+              {isGoalReached ? `${dailyGoalTarget}/${dailyGoalTarget} ✓` : `${answeredToday}/${dailyGoalTarget} hoy`}
+            </span>
           </div>
 
           <div className="stat-badge" title="Puntos de experiencia y nivel">

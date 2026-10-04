@@ -11,6 +11,7 @@ import {
   subscribeToAuthChanges,
   extractUserProfile 
 } from './supabaseSync';
+import { checkDailyReminderScheduled } from './notificationManager';
 
 export const AppContext = createContext(null);
 
@@ -148,6 +149,45 @@ export function AppProvider({ children }) {
 
   // Modal de Configuración Global (Voz TTS, velocidad, motor)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  // Modal de Meta Diaria / Reto Diario (Daily Goal Challenge)
+  const [isDailyGoalModalOpen, setIsDailyGoalModalOpen] = useState(false);
+
+  const openDailyGoalModal = useCallback(() => {
+    setIsDailyGoalModalOpen(true);
+  }, []);
+
+  const closeDailyGoalModal = useCallback(() => {
+    setIsDailyGoalModalOpen(false);
+  }, []);
+
+  // Manejar parámetro URL ?daily_goal=1 y eventos de Service Worker para notificaciones móviles
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('daily_goal') === '1') {
+        setIsDailyGoalModalOpen(true);
+      }
+    } catch (e) {}
+
+    if ('serviceWorker' in navigator) {
+      const handleSwMessage = (event) => {
+        if (event.data?.type === 'OPEN_DAILY_GOAL') {
+          setIsDailyGoalModalOpen(true);
+        }
+      };
+      navigator.serviceWorker.addEventListener('message', handleSwMessage);
+      return () => navigator.serviceWorker.removeEventListener('message', handleSwMessage);
+    }
+  }, []);
+
+  // Verificar recordatorio diario en móvil / escritorio
+  useEffect(() => {
+    if (mounted && appState) {
+      checkDailyReminderScheduled(appState);
+    }
+  }, [mounted, appState]);
 
   // Modal amigable para alertas, avisos y confirmaciones (Reemplazo total de alert() y confirm())
   const [uiModal, setUiModal] = useState({
@@ -490,7 +530,11 @@ export function AppProvider({ children }) {
     closeDictionary,
     // Modal de Configuración Global
     isSettingsModalOpen,
-    setIsSettingsModalOpen
+    setIsSettingsModalOpen,
+    // Modal de Meta Diaria / Reto Diario
+    isDailyGoalModalOpen,
+    openDailyGoalModal,
+    closeDailyGoalModal
   };
 
   return (

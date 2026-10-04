@@ -146,3 +146,59 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+// Notifications Support (Mobile PWA & Web Push)
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const targetUrl = (event.notification.data && event.notification.data.url) 
+    ? event.notification.data.url 
+    : '/?daily_goal=1';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // Si ya hay una pestaña abierta, enfocarla y enviarle el mensaje
+      for (const client of clientList) {
+        if ('focus' in client) {
+          client.postMessage({ type: 'OPEN_DAILY_GOAL' });
+          return client.focus();
+        }
+      }
+      // Si no hay ventana abierta, abrir una nueva
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
+
+self.addEventListener('push', (event) => {
+  let data = {
+    title: '🇯🇵 Meta Diaria - Nihongo Master',
+    body: '¡Es hora de tu práctica diaria de japonés! Mantén tu racha activa 🔥',
+    url: '/?daily_goal=1'
+  };
+
+  if (event.data) {
+    try {
+      data = { ...data, ...event.data.json() };
+    } catch (e) {
+      data.body = event.data.text() || data.body;
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: '/icons/icon-192x192.png',
+    badge: '/icons/icon-72x72.png',
+    vibrate: [200, 100, 200],
+    data: { url: data.url },
+    actions: [
+      { action: 'open', title: 'Comenzar Reto' }
+    ]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});

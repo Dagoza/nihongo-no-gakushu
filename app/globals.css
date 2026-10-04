@@ -9868,5 +9868,22 @@ html {
   }
 }
 
+/* ==================== META DIARIA MODAL ==================== */
+.daily-goal-modal {
+  background: var(--bg-surface, var(--card-bg, #ffffff)) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25) !important;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@media (max-width: 640px) {
+  .daily-goal-modal {
+    width: 98% !important;
+    max-height: 96vh !important;
+    border-radius: 16px !important;
+  }
+}
+
+
 
 

@@ -14,6 +14,7 @@ const ProductTour = dynamic(() => import('./ProductTour'), { ssr: false });
 const PracticePadModal = dynamic(() => import('./PracticePadModal'), { ssr: false });
 const DictionaryModal = dynamic(() => import('./DictionaryModal'), { ssr: false });
 const SettingsModal = dynamic(() => import('./SettingsModal'), { ssr: false });
+const DailyGoalModal = dynamic(() => import('./DailyGoalModal'), { ssr: false });
 
 function AppShellContent({ children }) {
   const {
@@ -45,7 +46,9 @@ function AppShellContent({ children }) {
     dictionaryState,
     closeDictionary,
     isSettingsModalOpen,
-    setIsSettingsModalOpen
+    setIsSettingsModalOpen,
+    isDailyGoalModalOpen,
+    closeDailyGoalModal
   } = useApp();
 
   // Ensure horizontal scroll position is strictly locked to 0 on mobile/desktop tab navigation
@@ -171,6 +174,14 @@ function AppShellContent({ children }) {
         <SettingsModal 
           isOpen={isSettingsModalOpen}
           onClose={() => setIsSettingsModalOpen(false)}
+        />
+      )}
+
+      {/* Modal de Meta Diaria / Reto Diario (Daily Goal Challenge) */}
+      {isDailyGoalModalOpen && (
+        <DailyGoalModal 
+          isOpen={isDailyGoalModalOpen}
+          onClose={closeDailyGoalModal}
         />
       )}
     </>

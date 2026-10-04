@@ -20,13 +20,14 @@ import {
   Sparkles,
   Check,
   X,
-  BookmarkCheck
+  BookmarkCheck,
+  Award
 } from 'lucide-react';
 
 export const NAV_CATEGORIES = [
-  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 10 },
+  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 11 },
   { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 4 },
-  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 5 },
+  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 6 },
   { id: 'progress', label: 'Progreso', shortLabel: 'Progreso', icon: BarChart3, count: 1 },
 ];
 
@@ -98,6 +99,17 @@ export const TABS = [
     color: '#10b981',
   },
   {
+    id: 'jlpt',
+    path: '/jlpt',
+    category: 'practice',
+    categoryName: 'Recursos & Práctica',
+    shortLabel: 'JLPT',
+    fullLabel: 'Simulacros JLPT',
+    desc: 'Exámenes oficiales y simulacros cronometrados (N5 a N1)',
+    icon: Award,
+    color: '#8b5cf6',
+  },
+  {
     id: 'kanji',
     path: '/kanji',
     category: 'practice',
@@ -155,6 +167,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     if (pathname.startsWith('/youtube')) return 'youtube';
     if (pathname.startsWith('/vocab')) return 'vocab';
     if (pathname.startsWith('/grammar') || pathname.startsWith('/particles')) return 'particles';
+    if (pathname.startsWith('/jlpt')) return 'jlpt';
     if (pathname.startsWith('/kanji')) return 'kanji';
     if (pathname.startsWith('/pdf')) return 'pdf';
     if (pathname.startsWith('/saved')) return 'saved';

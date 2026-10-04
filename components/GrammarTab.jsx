@@ -7,6 +7,8 @@ import audioManager from '../lib/audioManager';
 import particlesData from '../data/particles.json';
 import * as wanakana from 'wanakana';
 import { useApp } from '../lib/AppContext';
+import { SRSRating, reviewCard, ensureFsrsCard } from '../lib/srs';
+import { recordActivity } from '../lib/storage';
 
 // Lazy loading con code-splitting
 const SpeechPractice = dynamic(() => import('./SpeechPractice'), { ssr: false });
@@ -186,18 +188,37 @@ export default function GrammarTab({
       role: currentQuiz.particleRole
     });
 
+    const exId = `PARTICLE-${currentQuiz.particleName}-${currentQuiz.sentence.slice(0, 10)}`;
+    const rating = isCorrect ? SRSRating.GOOD : SRSRating.AGAIN;
+    
+    // Actualizar tarjeta FSRS para esta partícula
+    const currentParticleCard = appState.masteredParticles?.[currentQuiz.particleName];
+    const newParticleCard = reviewCard(ensureFsrsCard(currentParticleCard), rating);
+
+    // Actualizar tarjeta FSRS para esta pregunta específica
+    const currentQuestionCard = appState.srsQuestions?.[exId];
+    const newQuestionCard = reviewCard(ensureFsrsCard(currentQuestionCard), rating);
+
+    const updatedState = {
+      ...appState,
+      masteredParticles: {
+        ...(appState.masteredParticles || {}),
+        [currentQuiz.particleName]: newParticleCard
+      },
+      srsQuestions: {
+        ...(appState.srsQuestions || {}),
+        [exId]: newQuestionCard
+      },
+      completedExercises: {
+        ...(appState.completedExercises || {}),
+        [exId]: true
+      }
+    };
+
+    const finalState = recordActivity(updatedState, isCorrect);
+    onUpdateState(finalState);
+
     if (isCorrect) {
-      const exId = `PARTICLE-${currentQuiz.particleName}-${currentQuiz.sentence.slice(0, 10)}`;
-      const alreadyDone = !!appState.completedExercises?.[exId];
-      const newXp = (appState.xp || 0) + (!alreadyDone ? 15 : 0);
-      onUpdateState({
-        ...appState,
-        xp: newXp,
-        completedExercises: {
-          ...(appState.completedExercises || {}),
-          [exId]: true
-        }
-      });
       audioManager.speak(currentQuiz.sentence);
     }
 
