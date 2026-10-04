@@ -9989,17 +9989,13 @@ html {
 }
 
 .daily-goal-header-sub {
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
   padding-left: 44px;
-}
-
-.daily-goal-sub-dot {
-  color: var(--border);
 }
 
 .daily-goal-modal .daily-goal-question-card {
@@ -10027,26 +10023,26 @@ html {
   }
 
   .daily-goal-header {
-    padding: 10px 12px;
-    gap: 4px;
+    padding: 10px 14px;
+    gap: 6px;
   }
 
   .daily-goal-header-top {
-    gap: 6px;
+    gap: 8px;
   }
 
   .daily-goal-title-group {
-    gap: 6px;
+    gap: 8px;
   }
 
   .daily-goal-flame-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
   }
 
   .daily-goal-title {
-    font-size: 0.92rem;
+    font-size: 0.95rem;
   }
 
   .daily-goal-title-sub {
@@ -10055,17 +10051,21 @@ html {
 
   .daily-goal-status-badge {
     font-size: 0.68rem;
-    padding: 2px 6px;
+    padding: 2px 7px;
   }
 
   .daily-goal-header-sub {
     padding-left: 0;
-    font-size: 0.7rem;
-    gap: 4px;
+    font-size: 0.74rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
 
   .daily-goal-settings-btn {
-    padding: 5px 6px;
+    padding: 3px 8px;
+    font-size: 0.72rem;
   }
 }
 

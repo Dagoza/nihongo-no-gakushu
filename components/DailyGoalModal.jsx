@@ -47,6 +47,53 @@ import particlesData from '../data/particles.json';
 import vocabularyData from '../data/vocabulary.json';
 import kanjiData from '../data/kanji.json';
 
+const SESSION_STORAGE_KEY = 'nihongo_daily_goal_active_session';
+
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getSavedQuizSession(cat, lvl, tgt) {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const today = new Date().toISOString().split('T')[0];
+    if (
+      parsed.date === today &&
+      parsed.category === cat &&
+      parsed.level === lvl &&
+      parsed.target === tgt &&
+      Array.isArray(parsed.queue) &&
+      parsed.queue.length > 0 &&
+      !parsed.completed
+    ) {
+      return parsed;
+    }
+  } catch (e) {}
+  return null;
+}
+
+function saveQuizSession(sessionData) {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
+  } catch (e) {}
+}
+
+function clearQuizSession() {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch (e) {}
+}
+
 const CATEGORIES = [
   { id: 'all', label: 'Mix Inteligente', shortLabel: 'Mix', icon: Sparkles, desc: 'Prioriza repaso FSRS y combina todos los temas' },
   { id: 'kanji', label: 'Kanji', shortLabel: 'Kanji', icon: Languages, desc: 'Lectura On/Kun, trazos y significado' },
@@ -82,28 +129,68 @@ export default function DailyGoalModal({ isOpen, onClose }) {
   const [isNotifActive, setIsNotifActive] = useState(false);
 
   // Build the questions queue based on preferences and FSRS due items
-  const generateQueue = useCallback((cat = selectedCategory, lvl = selectedLevel, tgt = targetCount) => {
-    // 1. Gather any JLPT Exam questions
+  const generateQueue = useCallback((cat = selectedCategory, lvl = selectedLevel, tgt = targetCount, forceNew = false) => {
+    // Si no se fuerza una nueva tanda, verificar si ya hay una sesión activa para hoy
+    if (!forceNew) {
+      const saved = getSavedQuizSession(cat, lvl, tgt);
+      if (saved) {
+        setQueue(saved.queue);
+        setCurrentIndex(saved.currentIndex || 0);
+        setSelectedOption(null);
+        setFeedback(null);
+        setSessionCompleted(false);
+        setStatsGained(saved.statsGained || { xp: 0, correct: 0 });
+        setShowConfig(false);
+        return;
+      }
+    }
+
+    // 1. Preguntas oficiales de examen JLPT
     const filteredJlpt = (jlptExamsData || []).filter(q => {
       if (cat !== 'all' && cat !== 'jlpt') return false;
       return q.level === lvl;
-    });
+    }).map(q => ({
+      ...q,
+      category: 'jlpt'
+    }));
 
-    // 2. Gather Particle Quiz questions
+    // 2. Preguntas de gramática y partículas bien estructuradas
     const filteredParticles = [];
     (particlesData || []).forEach(p => {
       if (cat !== 'all' && cat !== 'grammar') return false;
       if (p.level && p.level !== lvl) return false;
       if (p.quiz_items && p.quiz_items.length > 0) {
         p.quiz_items.forEach((qi, qIdx) => {
+          const correctOpt = qi.correct || p.particle;
+          const example = (p.examples || []).find(e => e.ja === qi.sentence) || p.examples?.[qIdx] || p.examples?.[0];
+          const esTrans = example?.es ? `Traducción: «${example.es}»` : '';
+          const roleDesc = p.role_es || p.meaning_es || 'Función gramatical';
+          const formulaDesc = p.formula ? `• Estructura: ${p.formula}` : '';
+          const noteDesc = qi.explanation ? `• Nota: ${qi.explanation}` : '';
+
+          let rawOpts = Array.isArray(qi.options) && qi.options.length >= 2 
+            ? qi.options 
+            : [correctOpt, 'は', 'が', 'を', 'に', 'で'];
+          const uniqueOpts = Array.from(new Set([correctOpt, ...rawOpts]));
+          let shuffledOpts = shuffleArray(uniqueOpts).slice(0, 4);
+          if (!shuffledOpts.includes(correctOpt)) {
+            shuffledOpts[0] = correctOpt;
+          }
+          const finalOpts = shuffleArray(shuffledOpts);
+          const correctIndex = finalOpts.indexOf(correctOpt);
+
+          const maskedDisplay = qi.masked 
+            ? qi.masked.replace(/【\s*？\s*】/g, '<span style="color: var(--primary); text-decoration: underline; font-weight: 800;">【 ？ 】</span>')
+            : qi.sentence;
+
           filteredParticles.push({
-            id: `part_quiz_${p.particle}_${qIdx}`,
+            id: `part_quiz_${p.id || p.particle}_${qIdx}`,
             category: 'grammar',
             level: p.level || 'N5',
-            question: qi.sentence || `${p.particle}の文法`,
-            options: qi.options || [p.particle, 'は', 'が', 'を'],
-            correctIndex: (qi.options || []).indexOf(qi.correct || p.particle),
-            explanation: `Partícula «${p.particle}»: ${p.meaning_es || p.role_es || 'Uso gramatical'}. ${qi.explanation || ''}`,
+            question: `¿Qué partícula completa correctamente la oración?<br/><div style="margin-top: 10px; font-size: 1.25rem; letter-spacing: 0.5px;">${maskedDisplay}</div>`,
+            options: finalOpts,
+            correctIndex,
+            explanation: `• Oración: 「${qi.sentence}」\n${esTrans ? '• ' + esTrans + '\n' : ''}• Partícula correcta: 「${correctOpt}」 (${roleDesc}).\n${formulaDesc ? formulaDesc + '\n' : ''}${noteDesc}`.trim(),
             furigana: qi.sentence || '',
             targetItem: p.particle
           });
@@ -111,50 +198,60 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       }
     });
 
-    // 3. Gather Vocabulary generated questions
+    // 3. Preguntas de vocabulario con distractores aleatorios
     const filteredVocab = (vocabularyData || []).filter(v => {
       if (cat !== 'all' && cat !== 'vocab') return false;
-      return v.level === lvl;
+      return v.level === lvl && (v.meaning_es || v.meaning_en);
     }).map(v => {
-      const wrong = (vocabularyData || []).filter(x => x.id !== v.id && x.meaning_es).slice(0, 3).map(x => x.meaning_es);
-      const allOpts = [v.meaning_es, ...wrong].sort(() => Math.random() - 0.5);
+      const correctMeaning = v.meaning_es || v.meaning_en;
+      const wrongPool = shuffleArray((vocabularyData || []).filter(x => x.id !== v.id && (x.meaning_es || x.meaning_en) && (x.meaning_es || x.meaning_en) !== correctMeaning));
+      const wrong = wrongPool.slice(0, 3).map(x => x.meaning_es || x.meaning_en);
+      const allOpts = shuffleArray([correctMeaning, ...wrong]);
+      const ex = v.tatoeba_sentences?.[0];
+      const exLine = ex ? `\n• Ejemplo: 「${ex.jp}」 → «${ex.es}»` : '';
+
       return {
         id: `vocab_q_${v.id}`,
         category: 'vocab',
         level: v.level || 'N5',
-        question: `¿Qué significa la palabra «${v.kanji || v.hiragana}» (${v.hiragana})?`,
+        question: `¿Cuál es el significado de la palabra 「<span style="color: var(--primary); font-weight: 700;">${v.kanji || v.hiragana}</span>」?<br/><span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">Lectura: ${v.hiragana}</span>`,
         options: allOpts,
-        correctIndex: allOpts.indexOf(v.meaning_es),
-        explanation: `«${v.kanji || v.hiragana}» (${v.hiragana}) significa: ${v.meaning_es}.`,
+        correctIndex: allOpts.indexOf(correctMeaning),
+        explanation: `• Palabra: 「${v.kanji || v.hiragana}」 (${v.hiragana})\n• Significado: ${correctMeaning}${exLine}`.trim(),
         furigana: v.hiragana,
         targetItem: v.id
       };
     });
 
-    // 4. Gather Kanji generated questions
+    // 4. Preguntas de kanji con distractores aleatorios
     const filteredKanji = (kanjiData || []).filter(k => {
       if (cat !== 'all' && cat !== 'kanji') return false;
-      return k.level === lvl;
+      return k.level === lvl && (k.meaning_es || k.meaning_en);
     }).map(k => {
-      const wrong = (kanjiData || []).filter(x => x.kanji !== k.kanji && x.meaning_es).slice(0, 3).map(x => x.meaning_es);
-      const allOpts = [k.meaning_es, ...wrong].sort(() => Math.random() - 0.5);
+      const correctMeaning = k.meaning_es || k.meaning_en;
+      const wrongPool = shuffleArray((kanjiData || []).filter(x => x.kanji !== k.kanji && (x.meaning_es || x.meaning_en) && (x.meaning_es || x.meaning_en) !== correctMeaning));
+      const wrong = wrongPool.slice(0, 3).map(x => x.meaning_es || x.meaning_en);
+      const allOpts = shuffleArray([correctMeaning, ...wrong]);
+      const wordEx = k.words?.[0] ? `\n• Compuesto: 「${k.words[0].word}」 (${k.words[0].reading}) = ${k.words[0].meaning}` : '';
+      const mnem = k.mnemonic ? `\n• Mnemotecnia: ${k.mnemonic}` : '';
+
       return {
         id: `kanji_q_${k.kanji}`,
         category: 'kanji',
         level: k.level || 'N5',
-        question: `¿Cuál es el significado principal del kanji 「${k.kanji}」?`,
+        question: `¿Cuál es el significado principal del kanji 「<span style="font-size: 1.45rem; color: var(--primary); font-weight: 800;">${k.kanji}</span>」?`,
         options: allOpts,
-        correctIndex: allOpts.indexOf(k.meaning_es),
-        explanation: `Kanji 「${k.kanji}」: Significa '${k.meaning_es}'. Lecturas: On: ${(k.on_readings || []).join('、 ')} | Kun: ${(k.kun_readings || []).join('、 ')}.`,
+        correctIndex: allOpts.indexOf(correctMeaning),
+        explanation: `• Kanji: 「${k.kanji}」\n• Significado: ${correctMeaning}\n• Lecturas: Onyomi: ${k.onyomi || '—'} | Kunyomi: ${k.kunyomi || '—'}${mnem}${wordEx}`.trim(),
         furigana: (k.kun_readings || [])[0] || (k.on_readings || [])[0] || '',
         targetItem: k.kanji
       };
     });
 
-    // Combine pool based on category
+    // Combinar pool según categoría
     let pool = [];
     if (cat === 'jlpt') {
-      pool = filteredJlpt.map(q => ({ ...q, category: 'jlpt' }));
+      pool = filteredJlpt;
     } else if (cat === 'grammar') {
       pool = filteredParticles;
     } else if (cat === 'vocab') {
@@ -162,9 +259,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
     } else if (cat === 'kanji') {
       pool = filteredKanji;
     } else {
-      // 'all' Mix: combine from all pools
       pool = [
-        ...filteredJlpt.map(q => ({ ...q, category: 'jlpt' })),
+        ...filteredJlpt,
         ...filteredParticles,
         ...filteredVocab,
         ...filteredKanji
@@ -175,7 +271,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       pool = (jlptExamsData || []).map(q => ({ ...q, category: 'jlpt' }));
     }
 
-    // Prioritize FSRS Due Items using latest ref (does NOT trigger queue regeneration on state updates)
+    // Priorizar tarjetas FSRS pendientes de repaso
     const srsDue = [];
     const nonDue = [];
 
@@ -188,10 +284,21 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       }
     });
 
-    srsDue.sort(() => Math.random() - 0.5);
-    nonDue.sort(() => Math.random() - 0.5);
+    const finalQueue = [...shuffleArray(srsDue), ...shuffleArray(nonDue)].slice(0, tgt);
 
-    const finalQueue = [...srsDue, ...nonDue].slice(0, tgt);
+    // Guardar sesión activa en storage para persistencia ante bloqueos de pantalla o idles
+    const today = new Date().toISOString().split('T')[0];
+    saveQuizSession({
+      date: today,
+      category: cat,
+      level: lvl,
+      target: tgt,
+      queue: finalQueue,
+      currentIndex: 0,
+      statsGained: { xp: 0, correct: 0 },
+      completed: false
+    });
+
     setQueue(finalQueue);
     setCurrentIndex(0);
     setSelectedOption(null);
@@ -261,12 +368,14 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       onUpdateState(savedState);
     }
 
-    // Play feedback audio if enabled
-    if (isCorrect) {
-      audioManager.playSfx('correct');
-    } else {
-      audioManager.playSfx('wrong');
-    }
+    // Play feedback audio if enabled (safely wrapped)
+    try {
+      if (isCorrect) {
+        audioManager.playSfx?.('correct');
+      } else {
+        audioManager.playSfx?.('wrong');
+      }
+    } catch (e) {}
 
     setFeedback({
       isCorrect,
@@ -274,21 +383,44 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       rating
     });
 
-    setStatsGained(prev => ({
-      xp: prev.xp + (isCorrect ? 15 : 5),
-      correct: prev.correct + (isCorrect ? 1 : 0)
-    }));
+    setStatsGained(prev => {
+      const nextStats = {
+        xp: prev.xp + (isCorrect ? 15 : 5),
+        correct: prev.correct + (isCorrect ? 1 : 0)
+      };
+      const saved = getSavedQuizSession(selectedCategory, selectedLevel, targetCount);
+      if (saved) {
+        saveQuizSession({
+          ...saved,
+          currentIndex,
+          statsGained: nextStats
+        });
+      }
+      return nextStats;
+    });
   };
 
   // Next question or complete
   const handleNext = () => {
     setSelectedOption(null);
     setFeedback(null);
-    if (currentIndex + 1 < queue.length) {
-      setCurrentIndex(prev => prev + 1);
+    const nextIdx = currentIndex + 1;
+    if (nextIdx < queue.length) {
+      setCurrentIndex(nextIdx);
+      const saved = getSavedQuizSession(selectedCategory, selectedLevel, targetCount);
+      if (saved) {
+        saveQuizSession({
+          ...saved,
+          currentIndex: nextIdx,
+          statsGained
+        });
+      }
     } else {
       setSessionCompleted(true);
-      audioManager.playSfx('complete');
+      clearQuizSession();
+      try {
+        audioManager.playSfx?.('complete');
+      } catch (e) {}
     }
   };
 
@@ -361,17 +493,6 @@ export default function DailyGoalModal({ isOpen, onClose }) {
             </div>
 
             <div className="daily-goal-header-actions">
-              {canShowSettings && (
-                <button
-                  type="button"
-                  className="btn btn-outline btn-sm daily-goal-settings-btn"
-                  onClick={() => setShowConfig(prev => !prev)}
-                  title="Configurar tema, nivel y cantidad de preguntas"
-                >
-                  <Settings2 size={15} />
-                  <span className="hidden-xs">Ajustes</span>
-                </button>
-              )}
               <button
                 type="button"
                 className="btn-icon daily-goal-close-btn"
@@ -385,8 +506,17 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
           <div className="daily-goal-header-sub">
             <span>Racha actual: <strong style={{ color: 'var(--text-main)' }}>{currentStreak} días 🔥</strong></span>
-            <span className="daily-goal-sub-dot">·</span>
-            <span>FSRS Spaced Repetition activo</span>
+            {canShowSettings && (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm daily-goal-settings-btn"
+                onClick={() => setShowConfig(prev => !prev)}
+                title="Configurar tema, nivel y cantidad de preguntas"
+              >
+                <Settings2 size={13} />
+                <span>Ajustes</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -490,7 +620,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   className="btn btn-secondary btn-sm"
                   onClick={() => {
                     setShowConfig(false);
-                    generateQueue();
+                    clearQuizSession();
+                    generateQueue(selectedCategory, selectedLevel, targetCount, true);
                   }}
                 >
                   <RotateCcw size={14} />
@@ -698,14 +829,15 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                     </span>
                   </div>
 
-                  <p style={{
+                  <div style={{
                     fontSize: '0.88rem',
-                    lineHeight: 1.5,
+                    lineHeight: 1.6,
                     color: 'var(--text-main)',
-                    margin: '0 0 12px'
+                    margin: '0 0 12px',
+                    whiteSpace: 'pre-line'
                   }}>
                     {feedback.explanation}
-                  </p>
+                  </div>
 
                   {/* FSRS Rating Adjustment Bar */}
                   <div style={{
@@ -905,7 +1037,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   className="btn btn-outline"
                   style={{ borderRadius: 10, padding: '10px 20px' }}
                   onClick={() => {
-                    generateQueue();
+                    clearQuizSession();
+                    generateQueue(selectedCategory, selectedLevel, targetCount, true);
                   }}
                 >
                   <RotateCcw size={16} />

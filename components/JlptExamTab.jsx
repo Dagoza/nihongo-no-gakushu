@@ -151,11 +151,13 @@ export default function JlptExamTab() {
       const finalState = recordActivity(updated, isCorrect);
       if (onUpdateState) onUpdateState(finalState);
 
-      if (isCorrect) {
-        audioManager.playSfx('correct');
-      } else {
-        audioManager.playSfx('wrong');
-      }
+      try {
+        if (isCorrect) {
+          audioManager.playSfx?.('correct');
+        } else {
+          audioManager.playSfx?.('wrong');
+        }
+      } catch (e) {}
     } else {
       // Timed mode: record answer without giving immediate feedback
       setUserAnswers(prev => ({ ...prev, [qId]: optIndex }));
@@ -176,7 +178,9 @@ export default function JlptExamTab() {
   const handleFinishExam = () => {
     setIsTimerRunning(false);
     setExamFinished(true);
-    audioManager.playSfx('complete');
+    try {
+      audioManager.playSfx?.('complete');
+    } catch (e) {}
 
     // Calculate score and persist exam result in storage
     const total = filteredQuestions.length;
