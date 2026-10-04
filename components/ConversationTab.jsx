@@ -67,6 +67,49 @@ export function getSpeakerVoice(speakerName, speakerIndex = 0) {
   return (speakerIndex % 2 === 0) ? 'ja-JP-NanamiNeural' : 'ja-JP-KeitaNeural';
 }
 
+export function getSpeakerStyle(speakerName, isMuted, speakersList = []) {
+  if (isMuted) {
+    return {
+      pillBg: 'rgba(139, 92, 246, 0.12)',
+      pillBorder: 'rgba(139, 92, 246, 0.35)',
+      color: '#8b5cf6',
+      iconBg: 'rgba(139, 92, 246, 0.2)'
+    };
+  }
+  const idx = speakersList.indexOf(speakerName);
+  if (idx === 1) {
+    return {
+      pillBg: 'rgba(59, 130, 246, 0.1)',
+      pillBorder: 'rgba(59, 130, 246, 0.28)',
+      color: '#2563eb',
+      iconBg: 'rgba(59, 130, 246, 0.18)'
+    };
+  }
+  if (idx === 2) {
+    return {
+      pillBg: 'rgba(16, 185, 129, 0.1)',
+      pillBorder: 'rgba(16, 185, 129, 0.28)',
+      color: '#059669',
+      iconBg: 'rgba(16, 185, 129, 0.18)'
+    };
+  }
+  if (idx >= 3) {
+    return {
+      pillBg: 'rgba(245, 158, 11, 0.1)',
+      pillBorder: 'rgba(245, 158, 11, 0.28)',
+      color: '#d97706',
+      iconBg: 'rgba(245, 158, 11, 0.18)'
+    };
+  }
+  // Default / first speaker (e.g. 店員, Anna, or main speaker)
+  return {
+    pillBg: 'rgba(225, 29, 72, 0.08)',
+    pillBorder: 'rgba(225, 29, 72, 0.24)',
+    color: 'var(--accent)',
+    iconBg: 'rgba(225, 29, 72, 0.16)'
+  };
+}
+
 export default function ConversationTab({ 
   appState, 
   onUpdateState,
@@ -1014,94 +1057,48 @@ export default function ConversationTab({
                   const lineKana = d.furigana || d.kana || '';
                   const isMuted = mutedSpeaker && d.speaker === mutedSpeaker;
                   const isRevealed = !!revealedLineIndices[idx];
+                  const spkStyle = getSpeakerStyle(d.speaker, isMuted, currentSpeakers);
 
                   return (
                     <div 
                       key={idx}
-                      style={{ 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        gap: 8, 
-                        padding: '16px 18px', 
-                        background: isMuted ? 'rgba(139, 92, 246, 0.05)' : 'var(--bg-main)', 
-                        borderRadius: 'var(--radius-md)', 
-                        border: `1.5px solid ${isMuted ? '#8b5cf6' : 'var(--border)'}`,
-                        transition: 'all 0.2s ease'
-                      }}
+                      className={`dialogue-card-item ${isMuted ? 'is-muted' : ''}`}
                     >
-                      <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                        {/* Speaker column */}
-                        <div style={{ minWidth: 80, fontWeight: 700, color: isMuted ? '#8b5cf6' : 'var(--accent)', paddingTop: 2 }}>
-                          {d.speaker}:
-                          {isMuted && (
-                            <div style={{ fontSize: '0.72rem', color: '#8b5cf6', fontWeight: 700, marginTop: 2 }}>
-                              🎙️ Tu papel
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Dialogue content */}
-                        <div style={{ flex: 1 }}>
-                          {/* Masked vs visible Japanese text */}
-                          {isMuted && !isRevealed ? (
-                            <div style={{ marginBottom: 8 }}>
-                              <div style={{
-                                background: 'rgba(139, 92, 246, 0.12)',
-                                border: '1px dashed #8b5cf6',
-                                borderRadius: 'var(--radius-sm)',
-                                padding: '10px 14px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                flexWrap: 'wrap',
-                                gap: 8
-                              }}>
-                                <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#8b5cf6' }}>
-                                  🎙️ ¡Tu turno! Di esta frase en japonés en voz alta...
-                                </span>
-                                <button
-                                  type="button"
-                                  className="btn btn-sm btn-outline"
-                                  onClick={() => setRevealedLineIndices(prev => ({ ...prev, [idx]: true }))}
-                                  style={{ fontSize: '0.75rem', padding: '3px 8px', borderColor: '#8b5cf6', color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                                >
-                                  <Eye size={13} /> Ver pista japonesa
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div style={{ marginBottom: 4 }}>
-                              <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 2 }}>
-                                {lineJp}
-                              </div>
-                              {lineKana && lineKana !== lineJp && (
-                                <div className="jp-text" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 2 }}>
-                                  {lineKana}
-                                </div>
-                              )}
-                              {isMuted && isRevealed && (
-                                <button
-                                  type="button"
-                                  onClick={() => setRevealedLineIndices(prev => ({ ...prev, [idx]: false }))}
-                                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 2 }}
-                                >
-                                  <EyeOff size={12} /> Ocultar pista
-                                </button>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Spanish Translation Prompt */}
-                          <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
-                            🇪🇸 {lineEs}
+                      {/* Top Header Row: Speaker Identification on Left, Action Buttons on Right */}
+                      <div className="dialogue-card-header">
+                        <div className="dialogue-speaker-wrap">
+                          <div 
+                            className="dialogue-speaker-pill"
+                            style={{
+                              background: spkStyle.pillBg,
+                              borderColor: spkStyle.pillBorder,
+                              color: spkStyle.color
+                            }}
+                          >
+                            <span 
+                              className="dialogue-speaker-avatar"
+                              style={{
+                                background: spkStyle.iconBg,
+                                color: spkStyle.color
+                              }}
+                            >
+                              <User size={12} />
+                            </span>
+                            <span>{d.speaker}</span>
                           </div>
+
+                          {isMuted && (
+                            <span className="dialogue-role-badge">
+                              🎙️ Tu papel
+                            </span>
+                          )}
                         </div>
 
-                        {/* Line Audio Playback & Speech Practice */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+                        {/* Action buttons toolbar: Audio, SpeechPractice & Handwriting practice */}
+                        <div className="dialogue-card-actions" onClick={(e) => e.stopPropagation()}>
                           <button 
+                            type="button"
                             className="audio-btn" 
-                            style={{ width: 34, height: 34, flexShrink: 0 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               audioManager.speak(lineJp, { voice: getSpeakerVoice(d.speaker, idx) });
@@ -1126,7 +1123,6 @@ export default function ConversationTab({
                           <button
                             type="button"
                             className="audio-btn"
-                            style={{ width: 34, height: 34, flexShrink: 0 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               if (contextApp?.openPracticePad) {
@@ -1152,9 +1148,55 @@ export default function ConversationTab({
                         </div>
                       </div>
 
-                      {/* Interactive Pronunciation Evaluation for the Muted Character */}
+                      {/* Main Body: Full-width Japanese dialogue, kana and Spanish translation */}
+                      <div className="dialogue-card-body">
+                        {/* Masked vs visible Japanese text */}
+                        {isMuted && !isRevealed ? (
+                          <div className="dialogue-card-prompt">
+                            <span className="dialogue-card-prompt-text">
+                              🎙️ ¡Tu turno! Di esta frase en japonés en voz alta...
+                            </span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline"
+                              onClick={() => setRevealedLineIndices(prev => ({ ...prev, [idx]: true }))}
+                              style={{ fontSize: '0.75rem', padding: '3px 8px', borderColor: '#8b5cf6', color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                            >
+                              <Eye size={13} /> Ver pista japonesa
+                            </button>
+                          </div>
+                        ) : (
+                          <div>
+                            <div className="dialogue-card-jp jp-text">
+                              {lineJp}
+                            </div>
+                            {lineKana && lineKana !== lineJp && (
+                              <div className="dialogue-card-kana jp-text">
+                                {lineKana}
+                              </div>
+                            )}
+                            {isMuted && isRevealed && (
+                              <button
+                                type="button"
+                                onClick={() => setRevealedLineIndices(prev => ({ ...prev, [idx]: false }))}
+                                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 4 }}
+                              >
+                                <EyeOff size={12} /> Ocultar pista
+                              </button>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Spanish Translation Prompt */}
+                        <div className="dialogue-card-es">
+                          <span style={{ marginRight: 6 }}>🇪🇸</span>
+                          <span>{lineEs}</span>
+                        </div>
+                      </div>
+
+                      {/* Interactive Pronunciation Evaluation Footer for Muted Character */}
                       {isMuted && (
-                        <div style={{ borderTop: '1px solid rgba(139, 92, 246, 0.25)', paddingTop: 8, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div className="dialogue-card-footer">
                           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                             <Mic size={14} /> ¡Tu turno de hablar! Presiona el micrófono arriba para evaluar tu dicción en japonés.
                           </span>
@@ -1284,7 +1326,7 @@ export default function ConversationTab({
               </div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 320px) 1fr', gap: 20, alignItems: 'flex-start' }}>
+            <div className="saved-conversations-layout">
               {/* Left Column: Saved Conversations List */}
               <div className="card" style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, borderBottom: '1px solid var(--border)', paddingBottom: 10 }}>
@@ -1514,90 +1556,48 @@ export default function ConversationTab({
                       const lineKana = d.furigana || d.kana || '';
                       const isMuted = savedMutedSpeaker && d.speaker === savedMutedSpeaker;
                       const isRevealed = !!savedRevealedLineIndices[idx];
+                      const spkStyle = getSpeakerStyle(d.speaker, isMuted, savedSpeakers);
 
                       return (
                         <div 
                           key={idx}
-                          style={{ 
-                            display: 'flex', 
-                            flexDirection: 'column',
-                            gap: 8, 
-                            padding: '16px 18px', 
-                            background: isMuted ? 'rgba(139, 92, 246, 0.05)' : 'var(--bg-main)', 
-                            borderRadius: 'var(--radius-md)', 
-                            border: `1.5px solid ${isMuted ? '#8b5cf6' : 'var(--border)'}`,
-                            transition: 'all 0.2s ease'
-                          }}
+                          className={`dialogue-card-item ${isMuted ? 'is-muted' : ''}`}
                         >
-                          <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                            <div style={{ minWidth: 80, fontWeight: 700, color: isMuted ? '#8b5cf6' : 'var(--accent)', paddingTop: 2 }}>
-                              {d.speaker}:
-                              {isMuted && (
-                                <div style={{ fontSize: '0.72rem', color: '#8b5cf6', fontWeight: 700, marginTop: 2 }}>
-                                  🎙️ Tu papel
-                                </div>
-                              )}
-                            </div>
-
-                            <div style={{ flex: 1 }}>
-                              {isMuted && !isRevealed ? (
-                                <div style={{ marginBottom: 8 }}>
-                                  <div style={{
-                                    background: 'rgba(139, 92, 246, 0.12)',
-                                    border: '1px dashed #8b5cf6',
-                                    borderRadius: 'var(--radius-sm)',
-                                    padding: '10px 14px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    flexWrap: 'wrap',
-                                    gap: 8
-                                  }}>
-                                    <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#8b5cf6' }}>
-                                      🎙️ ¡Tu turno! Di esta frase en japonés en voz alta...
-                                    </span>
-                                    <button
-                                      type="button"
-                                      className="btn btn-sm btn-outline"
-                                      onClick={() => setSavedRevealedLineIndices(prev => ({ ...prev, [idx]: true }))}
-                                      style={{ fontSize: '0.75rem', padding: '3px 8px', borderColor: '#8b5cf6', color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                                    >
-                                      <Eye size={13} /> Ver pista japonesa
-                                    </button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div style={{ marginBottom: 4 }}>
-                                  <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 2 }}>
-                                    {lineJp}
-                                  </div>
-                                  {lineKana && lineKana !== lineJp && (
-                                    <div className="jp-text" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: 2 }}>
-                                      {lineKana}
-                                    </div>
-                                  )}
-                                  {isMuted && isRevealed && (
-                                    <button
-                                      type="button"
-                                      onClick={() => setSavedRevealedLineIndices(prev => ({ ...prev, [idx]: false }))}
-                                      style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 2 }}
-                                    >
-                                      <EyeOff size={12} /> Ocultar pista
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-
-                              <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
-                                🇪🇸 {lineEs}
+                          {/* Top Header Row: Speaker Identification on Left, Action Buttons on Right */}
+                          <div className="dialogue-card-header">
+                            <div className="dialogue-speaker-wrap">
+                              <div 
+                                className="dialogue-speaker-pill"
+                                style={{
+                                  background: spkStyle.pillBg,
+                                  borderColor: spkStyle.pillBorder,
+                                  color: spkStyle.color
+                                }}
+                              >
+                                <span 
+                                  className="dialogue-speaker-avatar"
+                                  style={{
+                                    background: spkStyle.iconBg,
+                                    color: spkStyle.color
+                                  }}
+                                >
+                                  <User size={12} />
+                                </span>
+                                <span>{d.speaker}</span>
                               </div>
+
+                              {isMuted && (
+                                <span className="dialogue-role-badge">
+                                  🎙️ Tu papel
+                                </span>
+                              )}
                             </div>
 
-                            {/* Line Audio Playback & Speech Practice */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+                            {/* Action buttons: Audio, SpeechPractice & Cuaderno Canvas */}
+                            <div className="dialogue-card-actions" onClick={(e) => e.stopPropagation()}>
                               <button 
+                                type="button"
                                 className="audio-btn" 
-                                style={{ width: 34, height: 34, flexShrink: 0 }}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   audioManager.speak(lineJp, { voice: getSpeakerVoice(d.speaker, idx) });
@@ -1621,8 +1621,7 @@ export default function ConversationTab({
                               />
                               <button
                                 type="button"
-                                className="audio-btn"
-                                style={{ width: 34, height: 34, flexShrink: 0 }}
+                                className="audio-btn" 
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   if (contextApp?.openPracticePad) {
@@ -1648,8 +1647,55 @@ export default function ConversationTab({
                             </div>
                           </div>
 
+                          {/* Main Body: Full width dialogue content */}
+                          <div className="dialogue-card-body">
+                            {/* Masked vs visible Japanese text */}
+                            {isMuted && !isRevealed ? (
+                              <div className="dialogue-card-prompt">
+                                <span className="dialogue-card-prompt-text">
+                                  🎙️ ¡Tu turno! Di esta frase en japonés en voz alta...
+                                </span>
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline"
+                                  onClick={() => setSavedRevealedLineIndices(prev => ({ ...prev, [idx]: true }))}
+                                  style={{ fontSize: '0.75rem', padding: '3px 8px', borderColor: '#8b5cf6', color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                                >
+                                  <Eye size={13} /> Ver pista japonesa
+                                </button>
+                              </div>
+                            ) : (
+                              <div>
+                                <div className="dialogue-card-jp jp-text">
+                                  {lineJp}
+                                </div>
+                                {lineKana && lineKana !== lineJp && (
+                                  <div className="dialogue-card-kana jp-text">
+                                    {lineKana}
+                                  </div>
+                                )}
+                                {isMuted && isRevealed && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setSavedRevealedLineIndices(prev => ({ ...prev, [idx]: false }))}
+                                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 4 }}
+                                  >
+                                    <EyeOff size={12} /> Ocultar pista
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Spanish Translation Prompt */}
+                            <div className="dialogue-card-es">
+                              <span style={{ marginRight: 6 }}>🇪🇸</span>
+                              <span>{lineEs}</span>
+                            </div>
+                          </div>
+
+                          {/* Interactive Pronunciation Evaluation Footer for Muted Character */}
                           {isMuted && (
-                            <div style={{ borderTop: '1px solid rgba(139, 92, 246, 0.25)', paddingTop: 8, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div className="dialogue-card-footer">
                               <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#8b5cf6', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                                 <Mic size={14} /> ¡Tu turno de hablar! Presiona el micrófono arriba para evaluar tu pronunciación.
                               </span>

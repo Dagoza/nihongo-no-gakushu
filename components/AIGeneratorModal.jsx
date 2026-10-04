@@ -16,7 +16,8 @@ import {
   Plus, 
   Trash2,
   BookmarkCheck,
-  PlayCircle
+  PlayCircle,
+  User
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { getAuthSession } from '../lib/supabaseSync';
@@ -24,6 +25,7 @@ import { useApp } from '../lib/AppContext';
 import { useRouter } from 'next/navigation';
 import ComprehensionQuiz from './ComprehensionQuiz';
 import * as wanakana from 'wanakana';
+import { getSpeakerVoice, getSpeakerStyle } from './ConversationTab';
 
 export const THEME_PRESETS = [
   { id: 'daily', label: 'Vida Cotidiana', icon: '🏠', prompt: 'Vida cotidiana, rutinas en el hogar y compras' },
@@ -1122,48 +1124,66 @@ export default function AIGeneratorModal({
 
               {/* Dialogue Lines Presentation */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
-                {(resultConversation.dialogue || []).map((line, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      background: 'var(--surface)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 12,
-                      padding: '14px 16px',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 12
-                    }}
-                  >
-                    <div style={{ minWidth: 80, fontWeight: 700, color: 'var(--accent)', paddingTop: 2, fontSize: '0.9rem' }}>
-                      {line.speaker}:
-                    </div>
-
-                    <div style={{ flex: 1 }}>
-                      <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 2 }}>
-                        {line.jp}
-                      </div>
-                      {line.kana && line.kana !== line.jp && (
-                        <div className="jp-text" style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 4 }}>
-                          {line.kana}
-                        </div>
-                      )}
-                      <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                        🇪🇸 {line.es}
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="audio-btn"
-                      style={{ width: 32, height: 32, flexShrink: 0 }}
-                      onClick={() => audioManager.speak(line.jp)}
-                      title="Escuchar réplica"
+                {(resultConversation.dialogue || []).map((line, idx) => {
+                  const spkStyle = getSpeakerStyle(line.speaker, false, resultConversation.speakers || []);
+                  return (
+                    <div
+                      key={idx}
+                      className="dialogue-card-item"
+                      style={{ background: 'var(--surface)', padding: '12px 14px' }}
                     >
-                      <Volume2 size={15} />
-                    </button>
-                  </div>
-                ))}
+                      <div className="dialogue-card-header">
+                        <div className="dialogue-speaker-wrap">
+                          <div 
+                            className="dialogue-speaker-pill"
+                            style={{
+                              background: spkStyle.pillBg,
+                              borderColor: spkStyle.pillBorder,
+                              color: spkStyle.color
+                            }}
+                          >
+                            <span 
+                              className="dialogue-speaker-avatar"
+                              style={{
+                                background: spkStyle.iconBg,
+                                color: spkStyle.color
+                              }}
+                            >
+                              <User size={12} />
+                            </span>
+                            <span>{line.speaker}</span>
+                          </div>
+                        </div>
+
+                        <div className="dialogue-card-actions">
+                          <button
+                            type="button"
+                            className="audio-btn"
+                            onClick={() => audioManager.speak(line.jp, { voice: getSpeakerVoice(line.speaker, idx) })}
+                            title="Escuchar réplica"
+                          >
+                            <Volume2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="dialogue-card-body">
+                        <div className="dialogue-card-jp jp-text" style={{ fontSize: '1.2rem' }}>
+                          {line.jp}
+                        </div>
+                        {line.kana && line.kana !== line.jp && (
+                          <div className="dialogue-card-kana jp-text">
+                            {line.kana}
+                          </div>
+                        )}
+                        <div className="dialogue-card-es">
+                          <span style={{ marginRight: 6 }}>🇪🇸</span>
+                          <span>{line.es}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Grammar Notes */}

@@ -10277,3 +10277,243 @@ html {
     min-width: 680px;
   }
 }
+
+/* ==========================================================================
+   Responsive Dialogue Cards (Mobile & Smartphone Optimized)
+   ========================================================================== */
+
+.dialogue-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 18px;
+  background: var(--bg-main);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  transition: all 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dialogue-card-item:hover {
+  border-color: var(--border-focus);
+}
+
+.dialogue-card-item.is-muted {
+  background: rgba(139, 92, 246, 0.06);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.2);
+}
+
+[data-theme='dark'] .dialogue-card-item.is-muted {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: #8b5cf6;
+}
+
+/* Header: Speaker chip & Actions aligned horizontally */
+.dialogue-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialogue-speaker-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.dialogue-speaker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.dialogue-speaker-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dialogue-role-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #8b5cf6;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.dialogue-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dialogue-card-actions .audio-btn {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Card Body: Full-width text presentation */
+.dialogue-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.dialogue-card-jp {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.55;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.dialogue-card-kana {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-top: 2px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.dialogue-card-es {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+[data-theme='dark'] .dialogue-card-es {
+  color: #cbd5e1;
+}
+
+.dialogue-card-prompt {
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px dashed #8b5cf6;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dialogue-card-prompt-text {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #8b5cf6;
+}
+
+.dialogue-card-footer {
+  border-top: 1px solid rgba(139, 92, 246, 0.25);
+  padding-top: 8px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Saved Conversations Grid Responsive Wrapper */
+.saved-conversations-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) 1fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Mobile responsive fine-tuning (< 640px / Smartphones) */
+@media (max-width: 640px) {
+  .dialogue-card-item {
+    padding: 12px 12px;
+    gap: 8px;
+  }
+
+  .dialogue-card-header {
+    padding-bottom: 6px;
+  }
+
+  .dialogue-speaker-pill {
+    font-size: 0.82rem;
+    padding: 2px 8px;
+  }
+
+  .dialogue-card-actions {
+    gap: 4px;
+  }
+
+  .dialogue-card-actions .audio-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .dialogue-card-jp {
+    font-size: 1.18rem;
+    line-height: 1.5;
+  }
+
+  .dialogue-card-kana {
+    font-size: 0.88rem;
+  }
+
+  .dialogue-card-es {
+    font-size: 0.88rem;
+  }
+
+  .dialogue-card-prompt {
+    padding: 8px 10px;
+  }
+
+  .dialogue-card-prompt-text {
+    font-size: 0.85rem;
+  }
+
+  .saved-conversations-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
