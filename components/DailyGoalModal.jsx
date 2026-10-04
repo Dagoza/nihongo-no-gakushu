@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { 
   X, 
   Flame, 
@@ -59,6 +59,10 @@ const JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
 export default function DailyGoalModal({ isOpen, onClose }) {
   const { appState, onUpdateState } = useApp();
+  const appStateRef = useRef(appState);
+  appStateRef.current = appState;
+  const wasOpenRef = useRef(false);
+
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLevel, setSelectedLevel] = useState('N5');
   const [targetCount, setTargetCount] = useState(5);
@@ -77,35 +81,19 @@ export default function DailyGoalModal({ isOpen, onClose }) {
   const [notifPermission, setNotifPermission] = useState('default');
   const [isNotifActive, setIsNotifActive] = useState(false);
 
-  // Sync settings from appState on load
-  useEffect(() => {
-    if (appState?.dailyGoal) {
-      if (appState.dailyGoal.category) setSelectedCategory(appState.dailyGoal.category);
-      if (appState.dailyGoal.level) setSelectedLevel(appState.dailyGoal.level);
-      if (appState.dailyGoal.target) setTargetCount(appState.dailyGoal.target);
-    }
-    if (typeof window !== 'undefined') {
-      setNotifPermission(getNotificationPermission());
-      setIsNotifActive(isDailyReminderEnabled());
-    }
-  }, [appState?.dailyGoal, isOpen]);
-
   // Build the questions queue based on preferences and FSRS due items
-  const generateQueue = useCallback(() => {
-    const questions = [];
-    const today = new Date().toISOString().split('T')[0];
-
+  const generateQueue = useCallback((cat = selectedCategory, lvl = selectedLevel, tgt = targetCount) => {
     // 1. Gather any JLPT Exam questions
     const filteredJlpt = (jlptExamsData || []).filter(q => {
-      if (selectedCategory !== 'all' && selectedCategory !== 'jlpt') return false;
-      return q.level === selectedLevel;
+      if (cat !== 'all' && cat !== 'jlpt') return false;
+      return q.level === lvl;
     });
 
     // 2. Gather Particle Quiz questions
     const filteredParticles = [];
     (particlesData || []).forEach(p => {
-      if (selectedCategory !== 'all' && selectedCategory !== 'grammar') return false;
-      if (p.level && p.level !== selectedLevel) return false;
+      if (cat !== 'all' && cat !== 'grammar') return false;
+      if (p.level && p.level !== lvl) return false;
       if (p.quiz_items && p.quiz_items.length > 0) {
         p.quiz_items.forEach((qi, qIdx) => {
           filteredParticles.push({
@@ -125,8 +113,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
     // 3. Gather Vocabulary generated questions
     const filteredVocab = (vocabularyData || []).filter(v => {
-      if (selectedCategory !== 'all' && selectedCategory !== 'vocab') return false;
-      return v.level === selectedLevel;
+      if (cat !== 'all' && cat !== 'vocab') return false;
+      return v.level === lvl;
     }).map(v => {
       const wrong = (vocabularyData || []).filter(x => x.id !== v.id && x.meaning_es).slice(0, 3).map(x => x.meaning_es);
       const allOpts = [v.meaning_es, ...wrong].sort(() => Math.random() - 0.5);
@@ -145,8 +133,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
     // 4. Gather Kanji generated questions
     const filteredKanji = (kanjiData || []).filter(k => {
-      if (selectedCategory !== 'all' && selectedCategory !== 'kanji') return false;
-      return k.level === selectedLevel;
+      if (cat !== 'all' && cat !== 'kanji') return false;
+      return k.level === lvl;
     }).map(k => {
       const wrong = (kanjiData || []).filter(x => x.kanji !== k.kanji && x.meaning_es).slice(0, 3).map(x => x.meaning_es);
       const allOpts = [k.meaning_es, ...wrong].sort(() => Math.random() - 0.5);
@@ -165,13 +153,13 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
     // Combine pool based on category
     let pool = [];
-    if (selectedCategory === 'jlpt') {
+    if (cat === 'jlpt') {
       pool = filteredJlpt.map(q => ({ ...q, category: 'jlpt' }));
-    } else if (selectedCategory === 'grammar') {
+    } else if (cat === 'grammar') {
       pool = filteredParticles;
-    } else if (selectedCategory === 'vocab') {
+    } else if (cat === 'vocab') {
       pool = filteredVocab;
-    } else if (selectedCategory === 'kanji') {
+    } else if (cat === 'kanji') {
       pool = filteredKanji;
     } else {
       // 'all' Mix: combine from all pools
@@ -184,17 +172,15 @@ export default function DailyGoalModal({ isOpen, onClose }) {
     }
 
     if (pool.length === 0) {
-      // Fallback to all JLPT questions if filtered is empty
       pool = (jlptExamsData || []).map(q => ({ ...q, category: 'jlpt' }));
     }
 
-    // Prioritize FSRS Due Items:
-    // If a question card is stored in appState.srsQuestions and isDue(card) is true, prioritize it
+    // Prioritize FSRS Due Items using latest ref (does NOT trigger queue regeneration on state updates)
     const srsDue = [];
     const nonDue = [];
 
     pool.forEach(item => {
-      const card = appState?.srsQuestions?.[item.id];
+      const card = appStateRef.current?.srsQuestions?.[item.id];
       if (card && isDue(card)) {
         srsDue.push(item);
       } else {
@@ -205,28 +191,53 @@ export default function DailyGoalModal({ isOpen, onClose }) {
     srsDue.sort(() => Math.random() - 0.5);
     nonDue.sort(() => Math.random() - 0.5);
 
-    const finalQueue = [...srsDue, ...nonDue].slice(0, targetCount);
+    const finalQueue = [...srsDue, ...nonDue].slice(0, tgt);
     setQueue(finalQueue);
     setCurrentIndex(0);
     setSelectedOption(null);
     setFeedback(null);
     setSessionCompleted(false);
     setStatsGained({ xp: 0, correct: 0 });
-  }, [selectedCategory, selectedLevel, targetCount, appState]);
+    setShowConfig(false);
+  }, [selectedCategory, selectedLevel, targetCount]);
 
-  // Trigger queue generation when modal opens or settings change
+  // Generate queue only on modal open transition (false -> true), NOT on internal state updates
   useEffect(() => {
     if (isOpen) {
-      generateQueue();
+      if (!wasOpenRef.current) {
+        const goal = appStateRef.current?.dailyGoal || {};
+        const cat = goal.category || selectedCategory;
+        const lvl = goal.level || selectedLevel;
+        const tgt = goal.target || targetCount;
+        if (goal.category) setSelectedCategory(goal.category);
+        if (goal.level) setSelectedLevel(goal.level);
+        if (goal.target) setTargetCount(goal.target);
+        if (typeof window !== 'undefined') {
+          setNotifPermission(getNotificationPermission());
+          setIsNotifActive(isDailyReminderEnabled());
+        }
+        generateQueue(cat, lvl, tgt);
+      }
+    } else {
+      setShowConfig(false);
     }
-  }, [isOpen, generateQueue]);
+    wasOpenRef.current = isOpen;
+  }, [isOpen, generateQueue, selectedCategory, selectedLevel, targetCount]);
+
+  // Clean option selection and feedback whenever question index changes
+  useEffect(() => {
+    setSelectedOption(null);
+    setFeedback(null);
+  }, [currentIndex]);
 
   const currentQuestion = queue[currentIndex];
+  const canShowSettings = currentIndex === 0 && selectedOption === null && !feedback && !sessionCompleted;
 
   // Handle answering an option
   const handleSelectOption = (index) => {
     if (feedback || !currentQuestion) return;
 
+    setShowConfig(false);
     setSelectedOption(index);
     const isCorrect = index === currentQuestion.correctIndex;
 
@@ -271,10 +282,10 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
   // Next question or complete
   const handleNext = () => {
+    setSelectedOption(null);
+    setFeedback(null);
     if (currentIndex + 1 < queue.length) {
       setCurrentIndex(prev => prev + 1);
-      setSelectedOption(null);
-      setFeedback(null);
     } else {
       setSessionCompleted(true);
       audioManager.playSfx('complete');
@@ -333,74 +344,49 @@ export default function DailyGoalModal({ isOpen, onClose }) {
         aria-label="Meta Diaria de Práctica"
       >
         {/* Header Bar */}
-        <div 
-          className="daily-goal-header"
-          style={{
-            padding: '16px 20px',
-            background: 'var(--bg-surface)',
-            borderBottom: '1px solid var(--border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 12,
-              background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-              boxShadow: '0 4px 10px rgba(245, 158, 11, 0.3)'
-            }}>
-              <Flame size={20} />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                  Meta Diaria · Reto de Hoy
+        <div className="daily-goal-header">
+          <div className="daily-goal-header-top">
+            <div className="daily-goal-title-group">
+              <div className="daily-goal-flame-icon">
+                <Flame size={18} />
+              </div>
+              <div className="daily-goal-title-wrap">
+                <h3 className="daily-goal-title">
+                  Meta Diaria <span className="daily-goal-title-sub">· Reto de Hoy</span>
                 </h3>
-                <span style={{
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  padding: '2px 8px',
-                  borderRadius: 999,
-                  background: isGoalReached ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                  color: isGoalReached ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)'
-                }}>
+                <span className={`daily-goal-status-badge ${isGoalReached ? 'reached' : ''}`}>
                   {isGoalReached ? '✓ Cumplida' : `${todayProgress}/${dailyGoal.target || 5} resueltas`}
                 </span>
               </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Racha actual: <strong style={{ color: 'var(--text-main)' }}>{currentStreak} días 🔥</strong> · FSRS Spaced Repetition activo
-              </div>
+            </div>
+
+            <div className="daily-goal-header-actions">
+              {canShowSettings && (
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm daily-goal-settings-btn"
+                  onClick={() => setShowConfig(prev => !prev)}
+                  title="Configurar tema, nivel y cantidad de preguntas"
+                >
+                  <Settings2 size={15} />
+                  <span className="hidden-xs">Ajustes</span>
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn-icon daily-goal-close-btn"
+                onClick={onClose}
+                aria-label="Cerrar modal"
+              >
+                <X size={20} />
+              </button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              style={{ padding: '6px 10px', borderRadius: 8, color: 'var(--text-main)', borderColor: 'var(--border)' }}
-              onClick={() => setShowConfig(prev => !prev)}
-              title="Configurar tema, nivel y cantidad de preguntas"
-            >
-              <Settings2 size={16} />
-              <span className="hidden-xs">Ajustes</span>
-            </button>
-            <button
-              type="button"
-              className="btn-icon"
-              onClick={onClose}
-              aria-label="Cerrar modal"
-              style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 6, color: 'var(--text-muted)' }}
-            >
-              <X size={20} />
-            </button>
+          <div className="daily-goal-header-sub">
+            <span>Racha actual: <strong style={{ color: 'var(--text-main)' }}>{currentStreak} días 🔥</strong></span>
+            <span className="daily-goal-sub-dot">·</span>
+            <span>FSRS Spaced Repetition activo</span>
           </div>
         </div>
 
