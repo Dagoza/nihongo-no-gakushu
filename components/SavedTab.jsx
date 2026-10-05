@@ -26,7 +26,8 @@ import {
   Calendar,
   Tag,
   StickyNote,
-  PenTool
+  PenTool,
+  Info
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import SaveVocabModal from './SaveVocabModal';
@@ -526,7 +527,25 @@ export default function SavedTab({
               <BookmarkCheck size={28} />
             </div>
             <div>
-              <h2 className="saved-title">Palabras y Frases Guardadas</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <h2 className="saved-title" style={{ margin: 0 }}>Palabras y Frases Guardadas</h2>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('saved');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('saved');
+                    }
+                  }}
+                  title="Ver guía y explicación del Banco de Guardados y FSRS en el tour"
+                  aria-label="Guía de Guardados"
+                >
+                  <Info size={15} />
+                  <span>Guía</span>
+                </button>
+              </div>
               <p className="saved-subtitle">
                 Banco de vocabulario y expresiones extraídas desde el reproductor ya incorporado, lecturas de historias y videos de inmersión para exportar y crear nuevas historias interactivas.
               </p>

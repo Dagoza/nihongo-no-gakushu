@@ -32,10 +32,12 @@ import {
   Trash2,
   Check,
   ShieldCheck,
-  Loader2
+  Loader2,
+  Info
 } from 'lucide-react';
 
 import dynamic from 'next/dynamic';
+import { useApp } from '../lib/AppContext';
 import audioManager from '../lib/audioManager';
 import youtubeCatalog from '../data/youtube_catalog.json';
 import vocabularyData from '../data/vocabulary.json';
@@ -69,6 +71,7 @@ export default function YouTubeImmersionTab({
   initialTopic = null,
   onParamsChange
 }) {
+  const contextApp = useApp();
   // Navigation internal views: 'catalog' | 'player' | 'saved' | 'channels' | 'search'
   const [activeView, setActiveView] = useState(initialView || (initialVideoId ? 'player' : 'catalog'));
 
@@ -668,7 +671,25 @@ export default function YouTubeImmersionTab({
             <Tv size={24} />
           </div>
           <div>
-            <h2 className="immersion-heading">Inmersión YouTube con Transcripciones Completas</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <h2 className="immersion-heading" style={{ margin: 0 }}>Inmersión YouTube con Transcripciones Completas</h2>
+              <button
+                type="button"
+                className="tour-info-shortcut-btn"
+                onClick={() => {
+                  if (contextApp?.openTour) {
+                    contextApp.openTour('youtube');
+                  } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                    window.__nihongoOpenTour('youtube');
+                  }
+                }}
+                title="Ver guía y explicación de Inmersión YouTube en el tour"
+                aria-label="Guía de Inmersión YouTube"
+              >
+                <Info size={15} />
+                <span>Guía</span>
+              </button>
+            </div>
             <p className="immersion-subheading">
               Aprende en el idioma real en que se habla (Japonés, Inglés o Español), guarda videos enviados por URL incluso si tienen restricciones de inserción, y captura vocabulario en tu cuaderno.
             </p>

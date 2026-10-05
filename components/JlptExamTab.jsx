@@ -29,7 +29,8 @@ import {
   Filter,
   Shuffle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Info
 } from 'lucide-react';
 import { useApp } from '../lib/AppContext';
 import audioManager from '../lib/audioManager';
@@ -76,7 +77,7 @@ function formatSubType(subType, section) {
 }
 
 export default function JlptExamTab() {
-  const { appState, onUpdateState } = useApp();
+  const { appState, onUpdateState, openTour } = useApp();
 
   // Filters
   const [level, setLevel] = useState('N5');
@@ -315,11 +316,29 @@ export default function JlptExamTab() {
       <div className="jlpt-top-banner">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <Award size={26} color="#fbbf24" />
-              <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-                Simulacros Oficiales JLPT
-              </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Award size={26} color="#fbbf24" />
+                <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+                  Simulacros Oficiales JLPT
+                </h1>
+              </div>
+              <button
+                type="button"
+                className="tour-info-shortcut-btn"
+                onClick={() => {
+                  if (openTour) {
+                    openTour('jlpt');
+                  } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                    window.__nihongoOpenTour('jlpt');
+                  }
+                }}
+                title="Ver guía y explicación de Simulacros JLPT en el tour"
+                aria-label="Guía de Simulacros JLPT"
+              >
+                <Info size={15} />
+                <span>Guía</span>
+              </button>
             </div>
             <p style={{ margin: 0, fontSize: '0.92rem', opacity: 0.9, maxWidth: 620, lineHeight: 1.5 }}>
               Banco oficial de exámenes por cada nivel (N5 a N1). Practica en modo simulacro cronometrado con temporizador real o en modo práctica guiada con explicaciones en español y FSRS.

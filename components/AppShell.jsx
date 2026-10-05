@@ -80,6 +80,7 @@ function AppShellContent({ children }) {
         onSignOut={handleSignOut}
         onTriggerSync={handleTriggerSync}
         userState={appState}
+        onOpenTour={openTour}
       />
 
       {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}

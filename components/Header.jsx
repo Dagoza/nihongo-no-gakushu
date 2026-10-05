@@ -26,7 +26,9 @@ import {
   Sparkles,
   PenTool,
   Settings,
-  Target
+  Target,
+  Compass,
+  Info
 } from 'lucide-react';
 import curriculumData from '../data/curriculum.json';
 import nhkLessonsData from '../data/nhk_lessons.json';
@@ -55,7 +57,8 @@ export default function Header({
   onOpenAuth = null, 
   onSignOut = null, 
   onTriggerSync = null, 
-  userState = null 
+  userState = null,
+  onOpenTour = null
 }) {
   const [isMinimized, setIsMinimized] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -389,6 +392,25 @@ export default function Header({
               )}
             </div>
 
+            {/* Quick Tour / Onboarding Guide Button */}
+            <button 
+              type="button"
+              className="theme-toggle-btn tour-header-quick-btn"
+              onClick={() => {
+                if (typeof onOpenTour === 'function') {
+                  onOpenTour();
+                } else if (contextApp?.openTour) {
+                  contextApp.openTour();
+                } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                  window.__nihongoOpenTour();
+                }
+              }}
+              title="Guía y Tour Interactivo de la Aplicación"
+              aria-label="Abrir tour interactivo de la aplicación"
+            >
+              <Compass size={17} style={{ color: 'var(--primary, #6366f1)' }} />
+            </button>
+
             {/* Theme Toggle Button */}
             <button 
               className="theme-toggle-btn"
@@ -551,6 +573,19 @@ export default function Header({
                         <Settings size={15} />
                         <span>Configuración & Voz</span>
                       </button>
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          if (typeof onOpenTour === 'function') onOpenTour();
+                          else if (contextApp?.openTour) contextApp.openTour();
+                          else if (typeof window !== 'undefined' && window.__nihongoOpenTour) window.__nihongoOpenTour();
+                        }}
+                      >
+                        <Compass size={15} style={{ color: 'var(--primary)' }} />
+                        <span>Guía / Tour de la App</span>
+                      </button>
                       {onSignOut && (
                         <button
                           type="button"
@@ -605,6 +640,20 @@ export default function Header({
                     </div>
 
                     <div className="session-card-actions">
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          if (typeof onOpenTour === 'function') onOpenTour();
+                          else if (contextApp?.openTour) contextApp.openTour();
+                          else if (typeof window !== 'undefined' && window.__nihongoOpenTour) window.__nihongoOpenTour();
+                        }}
+                      >
+                        <Compass size={15} style={{ color: 'var(--primary)' }} />
+                        <span>Guía / Tour de la App</span>
+                      </button>
+
                       <button
                         type="button"
                         className="session-action-item"

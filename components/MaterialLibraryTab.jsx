@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, ExternalLink, Eye, X, FileText, BookOpen, FileSpreadsheet } from 'lucide-react';
+import { Search, ExternalLink, Eye, X, FileText, BookOpen, FileSpreadsheet, Info } from 'lucide-react';
+import { useApp } from '../lib/AppContext';
 import pdfCatalogData from '../data/pdf_catalog.json';
 
 export default function MaterialLibraryTab({
@@ -10,6 +11,7 @@ export default function MaterialLibraryTab({
   initialDoc = null,
   onParamsChange
 }) {
+  const contextApp = useApp();
   const [currentCategory, setCurrentCategory] = useState(initialCategory || 'all');
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [activeModal, setActiveModal] = useState(null); // { title, url }
@@ -81,9 +83,27 @@ export default function MaterialLibraryTab({
     <div className="section-panel active">
       {/* Header */}
       <div className="section-header">
-        <h2 className="section-title">
-          <span>📑</span> Biblioteca y Visor de Materiales Originales
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
+          <h2 className="section-title" style={{ margin: 0 }}>
+            <span>📑</span> Biblioteca y Visor de Materiales Originales
+          </h2>
+          <button
+            type="button"
+            className="tour-info-shortcut-btn"
+            onClick={() => {
+              if (contextApp?.openTour) {
+                contextApp.openTour('pdf');
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                window.__nihongoOpenTour('pdf');
+              }
+            }}
+            title="Ver guía y explicación de la Biblioteca de Materiales en el tour"
+            aria-label="Guía de Materiales"
+          >
+            <Info size={15} />
+            <span>Guía</span>
+          </button>
+        </div>
         <p className="section-desc">
           Acceso centralizado a los 15 materiales de apoyo de tu carpeta <code style={{ background: 'var(--border)', padding: '2px 6px', borderRadius: 4 }}>material_de_estudio/</code>. Toda la información ha sido extraída e integrada en los ejercicios interactivos de la aplicación, y aquí puedes consultar los documentos originales siempre que lo desees.
         </p>

@@ -168,7 +168,32 @@ export default function ProductTour({
         if (typeof effectiveTargetStep === 'number') {
           startIndex = Math.max(0, Math.min(effectiveTargetStep, TOUR_STEPS.length - 1));
         } else if (typeof effectiveTargetStep === 'string') {
-          const idx = TOUR_STEPS.findIndex(s => s.id === effectiveTargetStep || s.tab === effectiveTargetStep);
+          const rawTarget = String(effectiveTargetStep).toLowerCase().trim();
+          const STEP_ALIASES = {
+            grammar: 'particles',
+            particulas: 'particles',
+            gramatica: 'particles',
+            dialogue: 'nhk',
+            dialogos: 'nhk',
+            conversacion: 'nhk',
+            books: 'pdf',
+            libros: 'pdf',
+            materiales: 'pdf',
+            review: 'saved',
+            srs: 'saved',
+            guardados: 'saved',
+            cuaderno: 'practice_pad',
+            practice: 'practice_pad',
+            exam: 'jlpt',
+            exams: 'jlpt',
+            simulacro: 'jlpt',
+            simulacros: 'jlpt',
+            ruta: 'curriculum',
+            historia: 'story',
+            historias: 'story'
+          };
+          const target = STEP_ALIASES[rawTarget] || rawTarget;
+          const idx = TOUR_STEPS.findIndex(s => s.id === target || s.tab === target);
           if (idx !== -1) startIndex = idx;
         }
       }

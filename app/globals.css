@@ -8086,6 +8086,7 @@ rt {
   .typing-btn-group .btn {
     width: 100% !important;
     justify-content: center !important;
+  }
 }
 
 @media (min-width: 500px) and (max-width: 640px) {
@@ -9486,25 +9487,45 @@ html {
   gap: 6px;
   padding: 4px 12px;
   border-radius: 999px;
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(99, 102, 241, 0.1);
   color: var(--primary, #6366f1);
-  border: 1px solid rgba(99, 102, 241, 0.22);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  white-space: nowrap;
+  user-select: none;
+}
+
+[data-theme='dark'] .tour-info-shortcut-btn {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #818cf8;
 }
 
 .tour-info-shortcut-btn:hover {
-  background: rgba(99, 102, 241, 0.16);
-  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.5);
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
 }
 
 .tour-info-shortcut-btn:active {
   transform: translateY(0);
+}
+
+.tour-header-quick-btn {
+  color: var(--primary, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.08) !important;
+  border: 1px solid rgba(99, 102, 241, 0.22) !important;
+}
+
+.tour-header-quick-btn:hover {
+  background: rgba(99, 102, 241, 0.16) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  transform: translateY(-1px);
 }
 
 /* =========================================================================

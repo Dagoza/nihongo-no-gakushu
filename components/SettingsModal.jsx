@@ -15,7 +15,8 @@ import {
   CloudOff, 
   Check, 
   Radio,
-  Sliders
+  Sliders,
+  Compass
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { useApp } from '../lib/AppContext';
@@ -403,6 +404,45 @@ export default function SettingsModal({
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
               <span>{theme === 'dark' ? 'Cambiar a Claro' : 'Cambiar a Oscuro'}</span>
+            </button>
+          </div>
+
+          {/* Guía y Onboarding */}
+          <div style={{
+            padding: '16px',
+            borderRadius: 12,
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12
+          }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Compass size={16} style={{ color: 'var(--primary)' }} />
+                <span>Tour y Guía Interactiva</span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Vuelve a repasar el recorrido paso a paso de todas las funciones
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => {
+                onClose();
+                if (contextApp?.openTour) {
+                  contextApp.openTour();
+                } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                  window.__nihongoOpenTour();
+                }
+              }}
+              style={{ gap: 6 }}
+            >
+              <Compass size={15} />
+              <span>Abrir Tour</span>
             </button>
           </div>
         </div>
