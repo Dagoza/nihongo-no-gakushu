@@ -34,7 +34,8 @@ import {
   ZoomIn,
   ZoomOut,
   Hand,
-  Keyboard
+  Keyboard,
+  Plus
 } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../lib/audioManager';
@@ -43,6 +44,8 @@ import {
   GRID_TYPES, 
   PAPER_STYLES, 
   INK_PALETTES,
+  PAGE_WIDTH,
+  PAGE_HEIGHT,
   savePracticeDraft,
   loadPracticeDraft,
   clearPracticeDraft,
@@ -113,6 +116,12 @@ export default function PracticePadModal({
   const [redoStack, setRedoStack] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
 
+  // Sistema de páginas y hojas por cuaderno
+  const [pages, setPages] = useState([
+    { id: 'page-1', strokes: [] }
+  ]);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+
   // Verification state
   const [verificationResult, setVerificationResult] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -155,12 +164,22 @@ export default function PracticePadModal({
   const activeTouchPointersRef = useRef(new Set());
   const activePointerIdRef = useRef(null);
   const strokesRef = useRef(strokes);
+  const pagesRef = useRef(pages);
+  const currentPageIndexRef = useRef(currentPageIndex);
   const zoomRef = useRef(zoom);
   const panRef = useRef(pan);
 
   useEffect(() => {
     strokesRef.current = strokes;
   }, [strokes]);
+
+  useEffect(() => {
+    pagesRef.current = pages;
+  }, [pages]);
+
+  useEffect(() => {
+    currentPageIndexRef.current = currentPageIndex;
+  }, [currentPageIndex]);
 
   useEffect(() => {
     zoomRef.current = zoom;
@@ -170,8 +189,8 @@ export default function PracticePadModal({
     panRef.current = pan;
   }, [pan]);
 
-  // Dimensiones del área de trabajo para cálculos de cuadrícula
-  const [canvasDimensions, setCanvasDimensions] = useState({ width: 800, height: 600 });
+  // Dimensiones del área de trabajo: Proporción fija estándar de libreta/cuaderno japonés (800 x 1100 px)
+  const canvasDimensions = React.useMemo(() => ({ width: PAGE_WIDTH, height: PAGE_HEIGHT }), []);
 
   // Split text into individual characters (filtering out pure whitespace)
   const characters = React.useMemo(() => {
@@ -183,10 +202,10 @@ export default function PracticePadModal({
 
   const activeChar = characters[currentCharIndex] || characters[0] || '日';
 
-  // Layout geométrico adaptado a la cuadrícula seleccionada y al texto
+  // Layout geométrico adaptado a la cuadrícula seleccionada y al texto (hoja llena)
   const gridLayout = React.useMemo(() => {
-    return getGridLayout(canvasDimensions.width, canvasDimensions.height, gridType, text, 24);
-  }, [canvasDimensions.width, canvasDimensions.height, gridType, text]);
+    return getGridLayout(PAGE_WIDTH, PAGE_HEIGHT, gridType, text, 32);
+  }, [gridType, text]);
 
   // Show temporary banner / toast
   const showNotification = (msg, type = 'info') => {
@@ -194,12 +213,32 @@ export default function PracticePadModal({
     setTimeout(() => setNotification(null), 3500);
   };
 
+  // Cálculo de zoom ajustado para ver la hoja completa en cualquier pantalla (celular, tablet o desktop)
+  const calculateFitZoom = useCallback(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return 1;
+    const rect = viewport.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return 1;
+    const padX = 24;
+    const padY = 24;
+    const availW = Math.max(80, rect.width - padX);
+    const availH = Math.max(80, rect.height - padY);
+    const fit = Math.min(availW / PAGE_WIDTH, availH / PAGE_HEIGHT);
+    return Number(fit.toFixed(2));
+  }, []);
+
   // Sync incoming props when modal opens with new data
   useEffect(() => {
     if (isOpen) {
-      setZoom(1);
       setPan({ x: 0, y: 0 });
       setIsPanMode(false);
+
+      // Calcular fit zoom inicial para ajustar la página completa al visor
+      const fitTimer = setTimeout(() => {
+        const fit = calculateFitZoom();
+        setZoom(fit);
+      }, 50);
+
       if (initialSource === 'free') {
         // Cuaderno libre sin guía desde el header
         setText(initialText || '');
@@ -210,16 +249,25 @@ export default function PracticePadModal({
         setCurrentCharIndex(0);
         setVerificationResult(null);
 
-        // Si existe un borrador previo de cuaderno libre, recuperar trazos
+        // Si existe un borrador previo de cuaderno libre, recuperar páginas y trazos
         const draft = loadPracticeDraft();
-        if (draft && draft.source === 'free' && Array.isArray(draft.strokes) && draft.strokes.length > 0) {
-          const validStrokes = draft.strokes.filter(s => s && typeof s === 'object' && Array.isArray(s.points) && s.points.length > 0);
-          setStrokes(validStrokes);
+        if (draft && draft.source === 'free' && ((Array.isArray(draft.pages) && draft.pages.length > 0) || (Array.isArray(draft.strokes) && draft.strokes.length > 0))) {
+          const draftPages = Array.isArray(draft.pages) && draft.pages.length > 0
+            ? draft.pages
+            : [{ id: 'page-1', strokes: draft.strokes || [] }];
+          const pIdx = Math.max(0, Math.min(draft.currentPageIndex || 0, draftPages.length - 1));
+          setPages(draftPages);
+          setCurrentPageIndex(pIdx);
+          setStrokes(draftPages[pIdx]?.strokes || []);
           setGridType(draft.gridType || 'mizige');
           setPaperStyle(draft.paperStyle || 'washi');
           setStrokeStyle(draft.strokeStyle || 'shodo');
           setStrokeWidth(draft.strokeWidth || 8);
           setInkColor(draft.inkColor || '#18181b');
+        } else {
+          setPages([{ id: 'page-1', strokes: [] }]);
+          setCurrentPageIndex(0);
+          setStrokes([]);
         }
       } else if (initialText) {
         setText(initialText);
@@ -228,6 +276,9 @@ export default function PracticePadModal({
         setSource(initialSource || 'custom');
         setGhostOpacity(typeof initialGhostOpacity === 'number' ? initialGhostOpacity : 35);
         setVerificationResult(null);
+        setPages([{ id: 'page-1', strokes: [] }]);
+        setCurrentPageIndex(0);
+        setStrokes([]);
         
         // Find index of initialChar if passed
         const chars = Array.from(initialText.trim()).filter(c => c && c.trim().length > 0);
@@ -240,13 +291,19 @@ export default function PracticePadModal({
       } else {
         // Try restoring last active draft
         const draft = loadPracticeDraft();
-        if (draft && Array.isArray(draft.strokes) && draft.strokes.length > 0) {
-          const validStrokes = draft.strokes.filter(s => s && typeof s === 'object' && Array.isArray(s.points) && s.points.length > 0);
+        if (draft && ((Array.isArray(draft.pages) && draft.pages.length > 0) || (Array.isArray(draft.strokes) && draft.strokes.length > 0))) {
+          const draftPages = Array.isArray(draft.pages) && draft.pages.length > 0
+            ? draft.pages
+            : [{ id: 'page-1', strokes: draft.strokes || [] }];
+          const pIdx = Math.max(0, Math.min(draft.currentPageIndex || 0, draftPages.length - 1));
+          setPages(draftPages);
+          setCurrentPageIndex(pIdx);
+          setStrokes(draftPages[pIdx]?.strokes || []);
+
           setText(draft.text || '');
           setKana(draft.kana || '');
           setTitle(draft.title || (draft.source === 'free' ? 'Cuaderno Libre' : 'Práctica de Escritura'));
           setSource(draft.source || 'custom');
-          setStrokes(validStrokes);
           setGridType(draft.gridType || 'mizige');
           setPaperStyle(draft.paperStyle || 'washi');
           setStrokeStyle(draft.strokeStyle || 'shodo');
@@ -260,13 +317,16 @@ export default function PracticePadModal({
           setGhostOpacity(0);
           setSource('free');
           setTitle('Cuaderno Libre');
+          setPages([{ id: 'page-1', strokes: [] }]);
+          setCurrentPageIndex(0);
+          setStrokes([]);
         }
       }
 
       setSavedSheets(getSavedPracticeSheets());
+      return () => clearTimeout(fitTimer);
     }
-  }, [isOpen, initialText, initialKana, initialTitle, initialSource, initialChar, initialGhostOpacity]);
-
+  }, [isOpen, initialText, initialKana, initialTitle, initialSource, initialChar, initialGhostOpacity, calculateFitZoom]);
 
   // Adjust default ink color when chalkboard paper is picked
   useEffect(() => {
@@ -277,15 +337,26 @@ export default function PracticePadModal({
     }
   }, [paperStyle]);
 
-  // Auto-save draft whenever strokes or text change
+  // Auto-save draft whenever strokes, pages or text change
   useEffect(() => {
     if (!isOpen) return;
     const timeout = setTimeout(() => {
+      const curPages = [...pagesRef.current];
+      const curIdx = currentPageIndexRef.current;
+      if (curPages[curIdx]) {
+        curPages[curIdx] = {
+          ...curPages[curIdx],
+          strokes
+        };
+      }
       savePracticeDraft({
         text,
         kana,
         title,
         source,
+        pages: curPages,
+        pageCount: curPages.length,
+        currentPageIndex: curIdx,
         strokes,
         gridType,
         paperStyle,
@@ -296,27 +367,21 @@ export default function PracticePadModal({
       });
     }, 600);
     return () => clearTimeout(timeout);
-  }, [isOpen, text, kana, title, source, strokes, gridType, paperStyle, strokeStyle, strokeWidth, inkColor, currentCharIndex]);
+  }, [isOpen, text, kana, title, source, strokes, pages, currentPageIndex, gridType, paperStyle, strokeStyle, strokeWidth, inkColor, currentCharIndex]);
 
   // -------------------------------------------------------------
   // CANVAS ENGINE (GRID & DRAWING)
   // -------------------------------------------------------------
 
-  // Resize and redraw grid canvas
+  // Resize and redraw grid canvas con proporciones estándar de cuaderno japonés
   const setupCanvases = useCallback(() => {
     const gridCanvas = gridCanvasRef.current;
     const drawCanvas = drawingCanvasRef.current;
-    const viewport = viewportRef.current;
-    if (!gridCanvas || !drawCanvas || !viewport) return;
+    if (!gridCanvas || !drawCanvas) return;
 
-    const rect = viewport.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const width = Math.round(rect.width);
-    const height = Math.round(rect.height);
-
-    if (width === 0 || height === 0) return;
-
-    setCanvasDimensions(prev => (prev.width === width && prev.height === height) ? prev : { width, height });
+    const width = PAGE_WIDTH;
+    const height = PAGE_HEIGHT;
 
     // Grid canvas
     gridCanvas.width = width * dpr;
@@ -327,7 +392,7 @@ export default function PracticePadModal({
     const gCtx = gridCanvas.getContext('2d');
     if (gCtx) {
       gCtx.scale(dpr, dpr);
-      renderGridOnCanvas(gCtx, width, height, gridType, paperStyle, 24, { text });
+      renderGridOnCanvas(gCtx, width, height, gridType, paperStyle, 32, { text });
     }
 
     // Drawing canvas
@@ -346,20 +411,13 @@ export default function PracticePadModal({
   useEffect(() => {
     if (activeTab !== 'canvas') return;
     setupCanvases();
-    const handleResize = () => setupCanvases();
+    const handleResize = () => {
+      setupCanvases();
+    };
     window.addEventListener('resize', handleResize);
-
-    let resizeObserver = null;
-    if (viewportRef.current && typeof window.ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => {
-        setupCanvases();
-      });
-      resizeObserver.observe(viewportRef.current);
-    }
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (resizeObserver) resizeObserver.disconnect();
     };
   }, [activeTab, setupCanvases, isFullscreen]);
 
@@ -440,8 +498,8 @@ export default function PracticePadModal({
 
     const rect = drawCanvas.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
-    const scaleX = canvasDimensions.width / rect.width;
-    const scaleY = canvasDimensions.height / rect.height;
+    const scaleX = PAGE_WIDTH / rect.width;
+    const scaleY = PAGE_HEIGHT / rect.height;
     const x = (e.clientX - rect.left) * scaleX;
     const y = (e.clientY - rect.top) * scaleY;
 
@@ -504,8 +562,8 @@ export default function PracticePadModal({
 
     const rect = drawCanvas.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
-    const scaleX = canvasDimensions.width / rect.width;
-    const scaleY = canvasDimensions.height / rect.height;
+    const scaleX = PAGE_WIDTH / rect.width;
+    const scaleY = PAGE_HEIGHT / rect.height;
     const x = (e.clientX - rect.left) * scaleX;
     const y = (e.clientY - rect.top) * scaleY;
 
@@ -587,7 +645,22 @@ export default function PracticePadModal({
         width: completed.width || strokeWidth,
         isEraser: Boolean(completed.isEraser)
       };
-      setStrokes(prev => [...(Array.isArray(prev) ? prev.filter(Boolean) : []), strokeToCommit]);
+      setStrokes(prev => {
+        const next = [...(Array.isArray(prev) ? prev.filter(Boolean) : []), strokeToCommit];
+        // Sincronizar trazos de la hoja activa en pages
+        setPages(prevPages => {
+          const updated = [...prevPages];
+          const curIdx = currentPageIndexRef.current;
+          if (updated[curIdx]) {
+            updated[curIdx] = {
+              ...updated[curIdx],
+              strokes: next
+            };
+          }
+          return updated;
+        });
+        return next;
+      });
       setRedoStack([]); // Clear redo stack on new action
     }
   };
@@ -873,9 +946,16 @@ export default function PracticePadModal({
   };
 
   const handleResetZoomAndPan = () => {
+    const fit = calculateFitZoom();
+    setZoom(fit);
+    setPan({ x: 0, y: 0 });
+    showNotification(`Página completa (${Math.round(fit * 100)}%)`, 'info');
+  };
+
+  const handleSetActualSize = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
-    showNotification('Vista restablecida (100%)', 'info');
+    showNotification('Tamaño real 100%', 'info');
   };
 
   // Undo / Redo
@@ -884,8 +964,17 @@ export default function PracticePadModal({
     const valid = strokes.filter(Boolean);
     if (valid.length === 0) return;
     const last = valid[valid.length - 1];
-    setStrokes(valid.slice(0, -1));
+    const nextStrokes = valid.slice(0, -1);
+    setStrokes(nextStrokes);
     setRedoStack(prev => [...(Array.isArray(prev) ? prev.filter(Boolean) : []), last]);
+    setPages(prevPages => {
+      const updated = [...prevPages];
+      const curIdx = currentPageIndexRef.current;
+      if (updated[curIdx]) {
+        updated[curIdx] = { ...updated[curIdx], strokes: nextStrokes };
+      }
+      return updated;
+    });
   };
 
   const handleRedo = () => {
@@ -893,8 +982,17 @@ export default function PracticePadModal({
     const valid = redoStack.filter(Boolean);
     if (valid.length === 0) return;
     const next = valid[valid.length - 1];
+    const nextStrokes = [...(Array.isArray(strokes) ? strokes.filter(Boolean) : []), next];
     setRedoStack(valid.slice(0, -1));
-    setStrokes(prev => [...(Array.isArray(prev) ? prev.filter(Boolean) : []), next]);
+    setStrokes(nextStrokes);
+    setPages(prevPages => {
+      const updated = [...prevPages];
+      const curIdx = currentPageIndexRef.current;
+      if (updated[curIdx]) {
+        updated[curIdx] = { ...updated[curIdx], strokes: nextStrokes };
+      }
+      return updated;
+    });
   };
 
   const handleClearCanvas = () => {
@@ -902,7 +1000,79 @@ export default function PracticePadModal({
     setStrokes([]);
     setRedoStack([]);
     setVerificationResult(null);
-    showNotification('Lienzo limpiado', 'info');
+    setPages(prevPages => {
+      const updated = [...prevPages];
+      const curIdx = currentPageIndexRef.current;
+      if (updated[curIdx]) {
+        updated[curIdx] = { ...updated[curIdx], strokes: [] };
+      }
+      return updated;
+    });
+    showNotification('Hoja actual limpiada', 'info');
+  };
+
+  // -------------------------------------------------------------
+  // SISTEMA DE PÁGINAS Y HOJAS POR CUADERNO
+  // -------------------------------------------------------------
+  const handleSwitchPage = (newIndex) => {
+    if (newIndex < 0 || newIndex >= pages.length || newIndex === currentPageIndex) return;
+    // Guardar trazos de la hoja saliente
+    setPages(prevPages => {
+      const updated = [...prevPages];
+      const curIdx = currentPageIndexRef.current;
+      if (updated[curIdx]) {
+        updated[curIdx] = {
+          ...updated[curIdx],
+          strokes: [...strokes]
+        };
+      }
+      return updated;
+    });
+    const targetStrokes = pages[newIndex]?.strokes || [];
+    setStrokes(targetStrokes);
+    setRedoStack([]);
+    setCurrentPageIndex(newIndex);
+    setVerificationResult(null);
+    showNotification(`Hoja ${newIndex + 1} de ${pages.length}`, 'info');
+  };
+
+  const handleAddPage = () => {
+    const newPageId = `page_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
+    const newPage = { id: newPageId, strokes: [] };
+    const curIdx = currentPageIndex;
+    const updated = [...pages];
+    if (updated[curIdx]) {
+      updated[curIdx] = {
+        ...updated[curIdx],
+        strokes: [...strokes]
+      };
+    }
+    const nextPages = [...updated, newPage];
+    const nextIndex = nextPages.length - 1;
+    setPages(nextPages);
+    setCurrentPageIndex(nextIndex);
+    setStrokes([]);
+    setRedoStack([]);
+    setVerificationResult(null);
+    showNotification(`Nueva hoja añadida (Hoja ${nextPages.length}) 📄`, 'success');
+  };
+
+  const handleDeleteCurrentPage = () => {
+    if (pages.length <= 1) {
+      showNotification('El cuaderno debe tener al menos una hoja', 'warning');
+      return;
+    }
+    if (strokes.length > 0 && !confirm(`¿Eliminar la hoja ${currentPageIndex + 1} de ${pages.length} y sus trazos?`)) {
+      return;
+    }
+    const updatedPages = pages.filter((_, idx) => idx !== currentPageIndex);
+    const nextIndex = Math.max(0, Math.min(currentPageIndex, updatedPages.length - 1));
+    setPages(updatedPages);
+    setCurrentPageIndex(nextIndex);
+    setStrokes(updatedPages[nextIndex]?.strokes || []);
+    setRedoStack([]);
+    setVerificationResult(null);
+    showNotification(`Hoja eliminada. Ahora en hoja ${nextIndex + 1} de ${updatedPages.length}`, 'info');
   };
 
   // -------------------------------------------------------------
@@ -930,10 +1100,10 @@ export default function PracticePadModal({
       const res = analyzeDrawingAccuracy(
         drawCanvas, 
         targetToVerify, 
-        canvasDimensions.width, 
-        canvasDimensions.height, 
+        PAGE_WIDTH, 
+        PAGE_HEIGHT, 
         gridType, 
-        24
+        32
       );
       setVerificationResult(res);
       setIsVerifying(false);
@@ -955,7 +1125,7 @@ export default function PracticePadModal({
   // -------------------------------------------------------------
 
   const handleOpenSaveDialog = () => {
-    const defaultTitle = `${title || 'Práctica'} - ${activeChar} (${new Date().toLocaleDateString()})`;
+    const defaultTitle = `${title || 'Cuaderno'} (${new Date().toLocaleDateString()})`;
     setSheetTitleInput(defaultTitle);
     setIsSaveModalOpen(true);
   };
@@ -970,11 +1140,23 @@ export default function PracticePadModal({
       thumbnail = drawCanvas.toDataURL('image/png');
     }
 
+    const curPages = [...pages];
+    const curIdx = currentPageIndex;
+    if (curPages[curIdx]) {
+      curPages[curIdx] = {
+        ...curPages[curIdx],
+        strokes: [...strokes]
+      };
+    }
+
     const newSheet = savePracticeSheet({
       title: sheetTitleInput.trim(),
       text,
       kana,
       source,
+      pages: curPages,
+      pageCount: curPages.length,
+      currentPageIndex: curIdx,
       strokes,
       gridType,
       paperStyle,
@@ -988,17 +1170,25 @@ export default function PracticePadModal({
     if (newSheet) {
       setSavedSheets(getSavedPracticeSheets());
       setIsSaveModalOpen(false);
-      showNotification(`¡Hoja "${newSheet.title}" guardada con éxito! 💾`, 'success');
+      showNotification(`¡Cuaderno "${newSheet.title}" guardado (${curPages.length} hojas) 💾`, 'success');
       if (onSaveToCloud) onSaveToCloud(newSheet);
     }
   };
 
   const handleResumeSheet = (sheet) => {
-    setText(sheet.text || '日本語');
+    setText(sheet.text || '');
     setKana(sheet.kana || '');
-    setTitle(sheet.title || 'Práctica');
+    setTitle(sheet.title || 'Cuaderno');
     setSource(sheet.source || 'custom');
-    setStrokes(sheet.strokes || []);
+    
+    const resumePages = Array.isArray(sheet.pages) && sheet.pages.length > 0
+      ? sheet.pages
+      : [{ id: 'page-1', strokes: sheet.strokes || [] }];
+    const resumeIdx = Math.max(0, Math.min(sheet.currentPageIndex || 0, resumePages.length - 1));
+    
+    setPages(resumePages);
+    setCurrentPageIndex(resumeIdx);
+    setStrokes(resumePages[resumeIdx]?.strokes || []);
     setRedoStack([]);
     setGridType(sheet.gridType || 'mizige');
     setPaperStyle(sheet.paperStyle || 'washi');
@@ -1007,15 +1197,15 @@ export default function PracticePadModal({
     setInkColor(sheet.inkColor || '#18181b');
     setCurrentCharIndex(sheet.currentCharIndex || 0);
     setIsLibraryOpen(false);
-    showNotification(`Hoja "${sheet.title}" cargada. ¡Puedes continuar donde lo dejaste! ✍️`, 'success');
+    showNotification(`Cuaderno "${sheet.title}" cargado (${resumePages.length} hojas) ✍️`, 'success');
   };
 
   const handleDeleteSheet = (id, e) => {
     e.stopPropagation();
-    if (confirm('¿Eliminar esta hoja de práctica guardada?')) {
+    if (confirm('¿Eliminar este cuaderno de práctica guardado?')) {
       deletePracticeSheet(id);
       setSavedSheets(getSavedPracticeSheets());
-      showNotification('Hoja eliminada de la biblioteca', 'info');
+      showNotification('Cuaderno eliminado de la biblioteca', 'info');
     }
   };
 
@@ -1024,10 +1214,10 @@ export default function PracticePadModal({
       strokes,
       gridType,
       paperStyle,
-      title: `${title} · ${activeChar}`,
+      title: `${title} · Hoja ${currentPageIndex + 1}/${pages.length}`,
       character: activeChar,
-      width: 900,
-      height: 900
+      width: PAGE_WIDTH,
+      height: PAGE_HEIGHT
     });
 
     if (!dataUrl) {
@@ -1296,59 +1486,166 @@ export default function PracticePadModal({
         >
           {/* MODO CUADERNO */}
           {activeTab === 'canvas' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 200, flexWrap: 'wrap' }}>
-              {(!text || !text.trim()) ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span 
-                    style={{ 
-                      fontSize: '0.8rem', 
-                      fontWeight: 700, 
-                      color: 'var(--text-main)', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: 5,
-                      background: 'var(--bg-surface)',
-                      padding: '3px 8px',
-                      borderRadius: 6,
-                      border: '1px solid var(--border)'
-                    }}
-                  >
-                    📝 Modo Libre
-                  </span>
-                  <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                    Lienzo despejado para trazos libres y caligrafía.
-                  </span>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  <span className="practice-mobile-hide" style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    {text.trim().length === 1 ? 'Carácter:' : 'Frase:'}
-                  </span>
-                  <div 
-                    className="jp-text"
-                    style={{
-                      fontSize: text.trim().length <= 6 ? '1.1rem' : '0.98rem',
-                      fontWeight: 700,
-                      color: 'var(--text-main)',
-                      background: 'var(--bg-surface)',
-                      padding: '3px 10px',
-                      borderRadius: '6px',
-                      border: '1px solid var(--border)',
-                      letterSpacing: '0.04em',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6
-                    }}
-                  >
-                    <span>{text.trim()}</span>
-                    {kana && (
-                      <span style={{ fontSize: '0.76rem', fontWeight: 500, color: 'var(--text-muted)' }}>
-                        （{kana}）
-                      </span>
-                    )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 200, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                {(!text || !text.trim()) ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span 
+                      style={{ 
+                        fontSize: '0.8rem', 
+                        fontWeight: 700, 
+                        color: 'var(--text-main)', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 5,
+                        background: 'var(--bg-surface)',
+                        padding: '3px 8px',
+                        borderRadius: 6,
+                        border: '1px solid var(--border)'
+                      }}
+                    >
+                      📝 Modo Libre
+                    </span>
+                    <span className="practice-mobile-hide" style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                      Lienzo despejado para trazos libres y caligrafía.
+                    </span>
                   </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span className="practice-mobile-hide" style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                      {text.trim().length === 1 ? 'Carácter:' : 'Frase:'}
+                    </span>
+                    <div 
+                      className="jp-text"
+                      style={{
+                        fontSize: text.trim().length <= 6 ? '1.1rem' : '0.98rem',
+                        fontWeight: 700,
+                        color: 'var(--text-main)',
+                        background: 'var(--bg-surface)',
+                        padding: '3px 10px',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border)',
+                        letterSpacing: '0.04em',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6
+                      }}
+                    >
+                      <span>{text.trim()}</span>
+                      {kana && (
+                        <span style={{ fontSize: '0.76rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+                          （{kana}）
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Sistema de Páginas y Hojas del Cuaderno */}
+              <div 
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  background: 'var(--bg-surface)',
+                  padding: '2px 6px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleSwitchPage(currentPageIndex - 1)}
+                  disabled={currentPageIndex === 0}
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    color: currentPageIndex === 0 ? 'var(--text-muted)' : 'var(--text-main)',
+                    cursor: currentPageIndex === 0 ? 'not-allowed' : 'pointer',
+                    opacity: currentPageIndex === 0 ? 0.35 : 1,
+                    padding: '3px 4px',
+                    borderRadius: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  title="Hoja anterior"
+                >
+                  <ChevronLeft size={15} />
+                </button>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 4px' }}>
+                  <BookOpen size={13} style={{ color: 'var(--primary)' }} />
+                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
+                    Hoja {currentPageIndex + 1} / {pages.length}
+                  </span>
                 </div>
-              )}
+
+                <button
+                  type="button"
+                  onClick={() => handleSwitchPage(currentPageIndex + 1)}
+                  disabled={currentPageIndex >= pages.length - 1}
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    color: currentPageIndex >= pages.length - 1 ? 'var(--text-muted)' : 'var(--text-main)',
+                    cursor: currentPageIndex >= pages.length - 1 ? 'not-allowed' : 'pointer',
+                    opacity: currentPageIndex >= pages.length - 1 ? 0.35 : 1,
+                    padding: '3px 4px',
+                    borderRadius: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  title="Hoja siguiente"
+                >
+                  <ChevronRight size={15} />
+                </button>
+
+                <div style={{ width: 1, height: 14, background: 'var(--border)', margin: '0 2px' }} />
+
+                <button
+                  type="button"
+                  onClick={handleAddPage}
+                  className="btn btn-primary btn-xs"
+                  style={{
+                    height: 24,
+                    padding: '0 7px',
+                    fontSize: '0.74rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 3,
+                    borderRadius: 5
+                  }}
+                  title="Añadir nueva hoja a este cuaderno"
+                >
+                  <Plus size={13} />
+                  <span>+ Hoja</span>
+                </button>
+
+                {pages.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteCurrentPage}
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      color: 'var(--danger)',
+                      cursor: 'pointer',
+                      padding: '3px 4px',
+                      borderRadius: 4,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    title="Eliminar hoja actual"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
@@ -1815,11 +2112,12 @@ export default function PracticePadModal({
                   ref={artboardRef}
                   style={{
                     position: 'relative',
-                    width: `${canvasDimensions.width}px`,
-                    height: `${canvasDimensions.height}px`,
+                    width: `${PAGE_WIDTH}px`,
+                    height: `${PAGE_HEIGHT}px`,
                     maxWidth: 'none',
                     maxHeight: 'none',
-                    boxShadow: '0 4px 25px rgba(0,0,0,0.15)',
+                    boxShadow: '0 8px 35px rgba(0,0,0,0.22)',
+                    borderRadius: '4px',
                     touchAction: 'none',
                     transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
                     transformOrigin: 'center center',
@@ -2093,10 +2391,10 @@ export default function PracticePadModal({
                           borderRadius: 4,
                           fontWeight: 800,
                           fontSize: '0.74rem',
-                          minWidth: 38,
+                          minWidth: 42,
                           textAlign: 'center'
                         }}
-                        title="Restablecer zoom al 100%"
+                        title="Ajustar página a la pantalla"
                       >
                         {Math.round(zoom * 100)}%
                       </button>
@@ -2122,26 +2420,42 @@ export default function PracticePadModal({
                         <ZoomIn size={15} />
                       </button>
 
-                      {(zoom !== 1 || pan.x !== 0 || pan.y !== 0) && (
-                        <button
-                          type="button"
-                          onClick={handleResetZoomAndPan}
-                          style={{
-                            border: 'none',
-                            background: 'transparent',
-                            color: 'var(--primary)',
-                            cursor: 'pointer',
-                            padding: '3px 4px',
-                            borderRadius: 4,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                          title="Centrar y reajustar lienzo"
-                        >
-                          <RotateCcw size={13} />
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        onClick={handleSetActualSize}
+                        style={{
+                          border: '1px solid var(--border)',
+                          background: Math.abs(zoom - 1) < 0.02 ? 'var(--primary)' : 'transparent',
+                          color: Math.abs(zoom - 1) < 0.02 ? '#ffffff' : 'var(--text-main)',
+                          cursor: 'pointer',
+                          padding: '2px 5px',
+                          borderRadius: 4,
+                          fontWeight: 700,
+                          fontSize: '0.72rem'
+                        }}
+                        title="Ver a tamaño real 100%"
+                      >
+                        1:1
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleResetZoomAndPan}
+                        style={{
+                          border: 'none',
+                          background: 'transparent',
+                          color: 'var(--primary)',
+                          cursor: 'pointer',
+                          padding: '3px 4px',
+                          borderRadius: 4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title="Ajustar página completa a la pantalla"
+                      >
+                        <RotateCcw size={13} />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -2376,7 +2690,7 @@ export default function PracticePadModal({
                             {sheet.title}
                           </h4>
                           <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: 6 }}>
-                            {new Date(sheet.updatedAt).toLocaleDateString()} · {sheet.strokes?.length || 0} trazos
+                            {new Date(sheet.updatedAt).toLocaleDateString()} · {sheet.pages?.length || sheet.pageCount || 1} {(sheet.pages?.length || sheet.pageCount || 1) === 1 ? 'hoja' : 'hojas'} · {sheet.strokes?.length || 0} trazos
                           </div>
                           <div style={{ display: 'flex', gap: 6 }}>
                             <span 
