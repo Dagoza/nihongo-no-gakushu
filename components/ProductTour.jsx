@@ -67,12 +67,6 @@ export default function ProductTour({
       setInternalOpen(true);
     };
     if (typeof window !== 'undefined') {
-      window.__nihongoOpenTour = (step = null) => {
-        if (step !== null && step !== undefined) {
-          setInternalInitialStep(step);
-        }
-        setInternalOpen(true);
-      };
       window.addEventListener('nihongo-open-tour', handleGlobalOpen);
       return () => {
         window.removeEventListener('nihongo-open-tour', handleGlobalOpen);
@@ -80,7 +74,7 @@ export default function ProductTour({
     }
   }, []);
 
-  const effectiveOpen = Boolean(isOpen || internalOpen);
+  const effectiveOpen = Boolean(isOpen !== undefined ? isOpen : internalOpen);
   const effectiveTargetStep = initialStep !== null ? initialStep : internalInitialStep;
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -552,6 +546,19 @@ export default function ProductTour({
           handleSkip();
         }
       }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        zIndex: 100000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        boxSizing: 'border-box'
+      }}
     >
       <div 
         className="tour-modal-container" 
@@ -560,9 +567,33 @@ export default function ProductTour({
         role="dialog"
         aria-modal="true"
         aria-label="Tour interactivo de Nihongo Master"
+        style={{
+          backgroundColor: 'var(--bg-surface, #1e293b)',
+          color: 'var(--text-main, #f8fafc)',
+          border: '1px solid var(--border, rgba(255, 255, 255, 0.1))',
+          borderRadius: 20,
+          width: '100%',
+          maxWidth: 900,
+          maxHeight: 'min(92vh, 780px)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.6)'
+        }}
       >
         {/* Top Header Row with Progress and Skip */}
-        <div className="tour-modal-header">
+        <div 
+          className="tour-modal-header"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            padding: '14px 24px 10px',
+            borderBottom: '1px solid var(--border, rgba(255, 255, 255, 0.1))',
+            backgroundColor: 'var(--bg-surface, #1e293b)',
+            flexShrink: 0
+          }}
+        >
           <div className="tour-header-main-row">
             <div className="tour-step-badge" style={{ backgroundColor: `${currentStep.categoryColor}18`, color: currentStep.categoryColor }}>
               {React.createElement(currentStep.icon, { size: 14, style: { marginRight: 6 } })}
@@ -599,6 +630,14 @@ export default function ProductTour({
           className={`tour-modal-content slide-${slideDirection}`} 
           key={currentStep.id}
           ref={contentRef}
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '20px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16
+          }}
         >
           {/* Header Title & Subtitle */}
           <div className="tour-title-area">
@@ -2815,9 +2854,30 @@ export default function ProductTour({
         </div>
 
         {/* Footer Navigation Controls */}
-        <div className="tour-modal-footer">
+        <div 
+          className="tour-modal-footer"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '14px 24px',
+            borderTop: '1px solid var(--border, rgba(255, 255, 255, 0.1))',
+            backgroundColor: 'var(--bg-surface, #1e293b)',
+            flexShrink: 0,
+            gap: 12,
+            flexWrap: 'wrap'
+          }}
+        >
           {/* Step dots navigation */}
-          <div className="tour-dots-row">
+          <div 
+            className="tour-dots-row"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              flexWrap: 'wrap'
+            }}
+          >
             {TOUR_STEPS.map((step, idx) => (
               <button
                 key={step.id}
@@ -2832,7 +2892,15 @@ export default function ProductTour({
             ))}
           </div>
 
-          <div className="tour-footer-buttons">
+          <div 
+            className="tour-footer-buttons"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginLeft: 'auto'
+            }}
+          >
             {!isFirstStep && (
               <button
                 type="button"

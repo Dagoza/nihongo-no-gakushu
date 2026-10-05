@@ -124,16 +124,35 @@ export default function PWAInstaller() {
     <>
       {/* Android / Desktop / Chrome Native Install Banner */}
       {showAndroidPrompt && (
-        <div className="pwa-install-banner" role="dialog" aria-label="Instalar aplicación">
-          <div className="pwa-install-content">
-            <div className="pwa-icon-wrapper">
-              <img src="/icons/icon-96x96.png" alt="Nihongo Master Logo" width={44} height={44} style={{ borderRadius: 10 }} />
+        <div 
+          className="pwa-install-banner" 
+          role="dialog" 
+          aria-label="Instalar aplicación"
+          style={{
+            position: 'fixed',
+            bottom: 24,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 32px)',
+            maxWidth: 480,
+            zIndex: 9999,
+            backgroundColor: 'var(--bg-surface, #ffffff)',
+            borderRadius: 18,
+            border: '1px solid var(--border, #e2e8f0)',
+            boxShadow: '0 16px 36px -4px rgba(0, 0, 0, 0.3)',
+            padding: '14px 16px',
+            boxSizing: 'border-box'
+          }}
+        >
+          <div className="pwa-install-content" style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
+            <div className="pwa-icon-wrapper" style={{ flexShrink: 0 }}>
+              <img src="/icons/icon-96x96.png" alt="Nihongo Master Logo" width={44} height={44} style={{ borderRadius: 10, display: 'block' }} />
             </div>
-            <div className="pwa-install-text">
-              <div className="pwa-install-title">Instalar Nihongo Master</div>
-              <div className="pwa-install-desc">Úsala a pantalla completa y sin conexión en tu dispositivo.</div>
+            <div className="pwa-install-text" style={{ flex: 1, minWidth: 0 }}>
+              <div className="pwa-install-title" style={{ fontWeight: 700, fontSize: '0.92rem', marginBottom: 2 }}>Instalar Nihongo Master</div>
+              <div className="pwa-install-desc" style={{ fontSize: '0.78rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.3 }}>Úsala a pantalla completa y sin conexión en tu dispositivo.</div>
             </div>
-            <div className="pwa-install-actions">
+            <div className="pwa-install-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
               <button onClick={handleInstallClick} className="pwa-btn-primary">
                 <Download size={16} />
                 <span>Instalar</span>
@@ -148,18 +167,37 @@ export default function PWAInstaller() {
 
       {/* iOS Safari Instructions Banner */}
       {showIosPrompt && (
-        <div className="pwa-install-banner pwa-ios-banner" role="dialog" aria-label="Instalar en iOS">
-          <div className="pwa-install-content">
-            <div className="pwa-icon-wrapper">
-              <img src="/icons/apple-touch-icon.png" alt="Nihongo Master" width={44} height={44} style={{ borderRadius: 10 }} />
+        <div 
+          className="pwa-install-banner pwa-ios-banner" 
+          role="dialog" 
+          aria-label="Instalar en iOS"
+          style={{
+            position: 'fixed',
+            bottom: 24,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 32px)',
+            maxWidth: 480,
+            zIndex: 9999,
+            backgroundColor: 'var(--bg-surface, #ffffff)',
+            borderRadius: 18,
+            border: '1px solid var(--border, #e2e8f0)',
+            boxShadow: '0 16px 36px -4px rgba(0, 0, 0, 0.3)',
+            padding: '14px 16px',
+            boxSizing: 'border-box'
+          }}
+        >
+          <div className="pwa-install-content" style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
+            <div className="pwa-icon-wrapper" style={{ flexShrink: 0 }}>
+              <img src="/icons/apple-touch-icon.png" alt="Nihongo Master" width={44} height={44} style={{ borderRadius: 10, display: 'block' }} />
             </div>
-            <div className="pwa-install-text">
-              <div className="pwa-install-title">Instalar en tu iPhone o iPad</div>
-              <div className="pwa-install-desc" style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
+            <div className="pwa-install-text" style={{ flex: 1, minWidth: 0 }}>
+              <div className="pwa-install-title" style={{ fontWeight: 700, fontSize: '0.92rem', marginBottom: 2 }}>Instalar en tu iPhone o iPad</div>
+              <div className="pwa-install-desc" style={{ fontSize: '0.78rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.3, display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
                 Toca <Share size={15} style={{ verticalAlign: 'middle', display: 'inline' }} /> <strong>Compartir</strong> y luego <PlusSquare size={15} style={{ verticalAlign: 'middle', display: 'inline' }} /> <strong>"Agregar a pantalla de inicio"</strong>.
               </div>
             </div>
-            <div className="pwa-install-actions">
+            <div className="pwa-install-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
               <button onClick={handleDismissIos} className="pwa-btn-close" aria-label="Entendido">
                 <X size={18} />
               </button>

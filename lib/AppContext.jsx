@@ -51,6 +51,9 @@ export function AppProvider({ children }) {
     setIsTourOpen(true);
   }, []);
 
+  const openTourRef = useRef(openTour);
+  openTourRef.current = openTour;
+
   const closeTour = useCallback(() => {
     setIsTourOpen(false);
     setTourInitialStep(null);
@@ -326,13 +329,21 @@ export function AppProvider({ children }) {
     // Global manual tour triggers (fallback for any child component or event)
     const handleCustomOpenTour = (e) => {
       const step = e?.detail?.step || null;
-      setTourInitialStep(step);
-      setIsTourOpen(true);
+      if (openTourRef.current) {
+        openTourRef.current(step);
+      } else {
+        setTourInitialStep(step);
+        setIsTourOpen(true);
+      }
     };
     if (typeof window !== 'undefined') {
       window.__nihongoOpenTour = (step = null) => {
-        setTourInitialStep(step || null);
-        setIsTourOpen(true);
+        if (openTourRef.current) {
+          openTourRef.current(step);
+        } else {
+          setTourInitialStep(step || null);
+          setIsTourOpen(true);
+        }
       };
       window.addEventListener('nihongo-open-tour', handleCustomOpenTour);
       window.__nihongoOpenPracticePad = openPracticePad;
@@ -404,10 +415,6 @@ export function AppProvider({ children }) {
       if (tourTimer) clearTimeout(tourTimer);
       if (typeof window !== 'undefined') {
         window.removeEventListener('nihongo-open-tour', handleCustomOpenTour);
-        try {
-          delete window.__nihongoOpenTour;
-          delete window.__nihongoOpenPracticePad;
-        } catch (e) {}
       }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('online', handleOnline);
