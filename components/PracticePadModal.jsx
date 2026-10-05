@@ -35,7 +35,8 @@ import {
   ZoomOut,
   Hand,
   Keyboard,
-  Plus
+  Plus,
+  Info
 } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../lib/audioManager';
@@ -1473,6 +1474,23 @@ export default function PracticePadModal({
               title={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
             >
               {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+            </button>
+
+            <button
+              type="button"
+              className="tour-info-shortcut-btn"
+              onClick={() => {
+                onClose();
+                if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                  window.__nihongoOpenTour('practice_pad');
+                }
+              }}
+              style={{ padding: '3px 8px', fontSize: '0.74rem' }}
+              title="Ver guía y explicación del Cuaderno de Caligrafía en el tour"
+              aria-label="Guía del Cuaderno"
+            >
+              <Info size={13} />
+              <span>Guía</span>
             </button>
 
             <button

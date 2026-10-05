@@ -184,7 +184,24 @@ export default function ProductTour({
             simulacros: 'jlpt',
             ruta: 'curriculum',
             historia: 'story',
-            historias: 'story'
+            historias: 'story',
+            meta: 'daily_goal',
+            meta_diaria: 'daily_goal',
+            goal: 'daily_goal',
+            daily: 'daily_goal',
+            notificaciones: 'header_badges',
+            badges: 'header_badges',
+            campana: 'header_badges',
+            racha: 'header_badges',
+            teclado: 'ime_keyboard',
+            keyboard: 'ime_keyboard',
+            ime: 'ime_keyboard',
+            audio: 'audio_bar',
+            audio_player: 'audio_bar',
+            reproductor: 'audio_bar',
+            progreso: 'progress',
+            estadisticas: 'progress',
+            stats: 'progress'
           };
           const target = STEP_ALIASES[rawTarget] || rawTarget;
           const idx = TOUR_STEPS.findIndex(s => s.id === target || s.tab === target);

@@ -18,7 +18,8 @@ import {
   RotateCcw,
   RotateCw,
   PenTool,
-  BookOpen
+  BookOpen,
+  Info
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import SaveVocabModal from './SaveVocabModal';
@@ -442,9 +443,9 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
             )}
           </div>
 
-          {/* Actions: Speed rates */}
+          {/* Actions: Speed rates & Guide */}
           {!isMinimized && (
-            <div className="audio-actions">
+            <div className="audio-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               {/* Speed rates */}
               <div className="speed-selector">
                 <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
@@ -461,6 +462,25 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                   </button>
                 ))}
               </div>
+
+              {/* Botón de Guía del reproductor persistente */}
+              <button
+                type="button"
+                className="tour-info-shortcut-btn"
+                onClick={() => {
+                  if (contextApp?.openTour) {
+                    contextApp.openTour('audio_bar');
+                  } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                    window.__nihongoOpenTour('audio_bar');
+                  }
+                }}
+                title="Ver guía de la Barra de Audio y Modo Selección en el tour"
+                aria-label="Guía de Audio"
+                style={{ padding: '3px 8px', fontSize: '0.72rem' }}
+              >
+                <Info size={12} />
+                <span>Guía</span>
+              </button>
             </div>
           )}
         </div>

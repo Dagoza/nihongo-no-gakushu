@@ -20,7 +20,8 @@ import {
   Check, 
   Settings2,
   Sliders,
-  ChevronRight
+  ChevronRight,
+  Info
 } from 'lucide-react';
 import { useApp } from '../lib/AppContext';
 import { 
@@ -105,7 +106,7 @@ const CATEGORIES = [
 const JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
 export default function DailyGoalModal({ isOpen, onClose }) {
-  const { appState, onUpdateState } = useApp();
+  const { appState, onUpdateState, openTour } = useApp();
   const appStateRef = useRef(appState);
   appStateRef.current = appState;
   const wasOpenRef = useRef(false);
@@ -492,7 +493,26 @@ export default function DailyGoalModal({ isOpen, onClose }) {
               </div>
             </div>
 
-            <div className="daily-goal-header-actions">
+            <div className="daily-goal-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button
+                type="button"
+                className="tour-info-shortcut-btn"
+                onClick={() => {
+                  onClose();
+                  if (openTour) {
+                    openTour('daily_goal');
+                  } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                    window.__nihongoOpenTour('daily_goal');
+                  }
+                }}
+                title="Ver guía y explicación de la Meta Diaria en el tour"
+                aria-label="Guía de Meta Diaria"
+                style={{ padding: '3px 8px', fontSize: '0.74rem' }}
+              >
+                <Info size={13} />
+                <span>Guía</span>
+              </button>
+
               <button
                 type="button"
                 className="btn-icon daily-goal-close-btn"

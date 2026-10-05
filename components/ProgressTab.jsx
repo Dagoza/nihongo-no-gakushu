@@ -25,7 +25,8 @@ import {
   Smartphone,
   Laptop,
   Check,
-  Brain
+  Brain,
+  Info
 } from 'lucide-react';
 import FsrsStatsModule from './FsrsStatsModule';
 import { exportData, parseImportData, getInitialState } from '../lib/storage';
@@ -277,18 +278,23 @@ export default function ProgressTab({
   } catch (e) {}
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
 
-  const handleOpenTour = (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    if (e && e.stopPropagation) e.stopPropagation();
+  const handleOpenTour = (stepOrEvent = null) => {
+    let targetStep = null;
+    if (stepOrEvent && typeof stepOrEvent === 'object' && stepOrEvent.preventDefault) {
+      stepOrEvent.preventDefault();
+      stepOrEvent.stopPropagation();
+    } else if (typeof stepOrEvent === 'string' || typeof stepOrEvent === 'number') {
+      targetStep = stepOrEvent;
+    }
 
     // 1. Direct callback prop
     try {
-      if (typeof onOpenTour === 'function') onOpenTour();
+      if (typeof onOpenTour === 'function') onOpenTour(targetStep);
     } catch (err) {}
 
     // 2. AppContext methods
     try {
-      if (typeof contextApp?.openTour === 'function') contextApp.openTour();
+      if (typeof contextApp?.openTour === 'function') contextApp.openTour(targetStep);
       if (typeof contextApp?.setIsTourOpen === 'function') contextApp.setIsTourOpen(true);
     } catch (err) {}
 
@@ -296,9 +302,9 @@ export default function ProgressTab({
     try {
       if (typeof window !== 'undefined') {
         if (typeof window.__nihongoOpenTour === 'function') {
-          window.__nihongoOpenTour();
+          window.__nihongoOpenTour(targetStep);
         }
-        window.dispatchEvent(new CustomEvent('nihongo-open-tour'));
+        window.dispatchEvent(new CustomEvent('nihongo-open-tour', { detail: { step: targetStep } }));
       }
     } catch (err) {}
   };
@@ -431,14 +437,26 @@ export default function ProgressTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header">
-        <h2 className="section-title">
-          <span style={{ flexShrink: 0 }}>📊</span>
-          <span>Mi Progreso y Estadísticas de Aprendizaje</span>
-        </h2>
-        <p className="section-desc">
-          Consulta tu rendimiento, mantén tu sesión sincronizada en tiempo real entre tu móvil, tablet y computadora, y gestiona tus copias de seguridad.
-        </p>
+      <div className="section-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h2 className="section-title">
+            <span style={{ flexShrink: 0 }}>📊</span>
+            <span>Mi Progreso y Estadísticas de Aprendizaje</span>
+          </h2>
+          <p className="section-desc">
+            Consulta tu rendimiento, mantén tu sesión sincronizada en tiempo real entre tu móvil, tablet y computadora, y gestiona tus copias de seguridad.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="tour-info-shortcut-btn"
+          onClick={() => handleOpenTour('progress')}
+          title="Ver guía y explicación de Mi Progreso y Estadísticas en el tour"
+          aria-label="Guía de Mi Progreso"
+        >
+          <Info size={14} />
+          <span>Guía</span>
+        </button>
       </div>
 
       {/* Banner de mensajes/alertas de sincronización */}
@@ -939,26 +957,39 @@ export default function ProgressTab({
             </p>
           </div>
 
-          {/* Detected OS indicator */}
-          {detectedOS && (
-            <div 
-              style={{ 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: 6, 
-                padding: '5px 12px', 
-                background: 'rgba(99, 102, 241, 0.12)', 
-                border: '1px solid rgba(99, 102, 241, 0.25)', 
-                borderRadius: 20, 
-                fontSize: '0.8rem', 
-                color: 'var(--primary)', 
-                fontWeight: 600 
-              }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="tour-info-shortcut-btn"
+              onClick={() => handleOpenTour('ime_keyboard')}
+              title="Ver guía y simulación del Teclado Japonés (IME) en el tour"
+              aria-label="Guía de Teclado Japonés"
             >
-              <Sparkles size={14} />
-              <span>Tu sistema detectado: <strong>{OS_GUIDES[detectedOS]?.name} {OS_GUIDES[detectedOS]?.icon}</strong></span>
-            </div>
-          )}
+              <Info size={14} />
+              <span>Guía IME</span>
+            </button>
+
+            {/* Detected OS indicator */}
+            {detectedOS && (
+              <div 
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: 6, 
+                  padding: '5px 12px', 
+                  background: 'rgba(99, 102, 241, 0.12)', 
+                  border: '1px solid rgba(99, 102, 241, 0.25)', 
+                  borderRadius: 20, 
+                  fontSize: '0.8rem', 
+                  color: 'var(--primary)', 
+                  fontWeight: 600 
+                }}
+              >
+                <Sparkles size={14} />
+                <span>Tu sistema detectado: <strong>{OS_GUIDES[detectedOS]?.name} {OS_GUIDES[detectedOS]?.icon}</strong></span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Operating System Selector Tabs */}

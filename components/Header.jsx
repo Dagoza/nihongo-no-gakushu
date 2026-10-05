@@ -214,18 +214,36 @@ export default function Header({
                       <Bell size={16} className="text-amber-500" />
                       <span>Ejercicios Pendientes</span>
                     </div>
-                    {pendingTopicsCount > 0 && (
-                      <span style={{
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        padding: '2px 8px',
-                        background: 'rgba(245, 158, 11, 0.15)',
-                        color: 'var(--accent, #f59e0b)',
-                        borderRadius: 999
-                      }}>
-                        {totalPendingQuestions} por resolver
-                      </span>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      {pendingTopicsCount > 0 && (
+                        <span style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          background: 'rgba(245, 158, 11, 0.15)',
+                          color: 'var(--accent, #f59e0b)',
+                          borderRadius: 999
+                        }}>
+                          {totalPendingQuestions} por resolver
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        className="tour-info-shortcut-btn"
+                        onClick={() => {
+                          setIsNotifOpen(false);
+                          if (onOpenTour) onOpenTour('header_badges');
+                          else if (contextApp?.openTour) contextApp.openTour('header_badges');
+                          else if (typeof window !== 'undefined' && window.__nihongoOpenTour) window.__nihongoOpenTour('header_badges');
+                        }}
+                        title="Ver guía de Badges y Notificaciones en el tour"
+                        aria-label="Guía de Notificaciones"
+                        style={{ padding: '2px 8px', fontSize: '0.72rem' }}
+                      >
+                        <Info size={12} />
+                        <span>Guía</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Tarjeta Destacada de Meta Diaria en Notificaciones */}
@@ -688,7 +706,16 @@ export default function Header({
         </div>
 
         <div className={`header-badges ${isMinimized ? 'minimized-mobile' : ''}`}>
-          <div className="stat-badge" title="Racha de estudio activa">
+          <div 
+            className="stat-badge" 
+            title="Racha de estudio activa: clic para ver guía de badges e indicadores"
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              if (onOpenTour) onOpenTour('header_badges');
+              else if (contextApp?.openTour) contextApp.openTour('header_badges');
+              else if (typeof window !== 'undefined' && window.__nihongoOpenTour) window.__nihongoOpenTour('header_badges');
+            }}
+          >
             <Flame size={16} className="text-amber-500" />
             <span>{stats.streak}d</span>
           </div>
@@ -750,7 +777,16 @@ export default function Header({
             <span>{stats.vocab} pal.</span>
           </div>
 
-          <div className="stat-badge hidden-sm" title="Teclado Japonés IME listo">
+          <div 
+            className="stat-badge hidden-sm" 
+            title="Teclado Japonés IME listo: clic para ver guía y consejos en el tour"
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              if (onOpenTour) onOpenTour('ime_keyboard');
+              else if (contextApp?.openTour) contextApp.openTour('ime_keyboard');
+              else if (typeof window !== 'undefined' && window.__nihongoOpenTour) window.__nihongoOpenTour('ime_keyboard');
+            }}
+          >
             <Keyboard size={16} className="text-rose-500" />
             <span>IME 🇯🇵</span>
           </div>
