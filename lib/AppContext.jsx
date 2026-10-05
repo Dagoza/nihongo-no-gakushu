@@ -280,6 +280,11 @@ export function AppProvider({ children }) {
       if (res.success) {
         setAppState(res.mergedState);
         saveState(res.mergedState, false); // Guardar en localStorage sin loop
+        if (Array.isArray(res.mergedState.savedPracticeSheets) && res.mergedState.savedPracticeSheets.length > 0) {
+          try {
+            localStorage.setItem('nihongo_saved_sheets_v2', JSON.stringify(res.mergedState.savedPracticeSheets));
+          } catch (e) {}
+        }
         setSyncStatus('synced');
         const now = new Date();
         setSyncInfo(res.message || `Sincronizado a las ${now.toLocaleTimeString()}`);
@@ -298,6 +303,20 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     const saved = loadSavedState();
+    try {
+      const localSheetsRaw = localStorage.getItem('nihongo_saved_sheets_v2');
+      if (localSheetsRaw) {
+        const localSheets = JSON.parse(localSheetsRaw);
+        if (Array.isArray(localSheets) && localSheets.length > 0) {
+          const map = new Map();
+          [...(saved.savedPracticeSheets || []), ...localSheets].forEach((s) => {
+            if (s && s.id && !map.has(s.id)) map.set(s.id, s);
+          });
+          saved.savedPracticeSheets = Array.from(map.values());
+        }
+      }
+    } catch (e) {}
+
     setAppState(saved);
     if (saved.theme) {
       document.body.setAttribute('data-theme', saved.theme);

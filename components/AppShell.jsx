@@ -147,10 +147,21 @@ function AppShellContent({ children }) {
           initialChar={practicePadState.initialChar}
           initialGhostOpacity={practicePadState.ghostOpacity}
           initialTab={practicePadState.initialTab}
+          cloudSavedSheets={appState?.savedPracticeSheets}
           onSaveToCloud={(sheet) => {
             if (appState && handleUpdateState) {
               const currentList = appState.savedPracticeSheets || [];
               const nextList = [sheet, ...currentList.filter(s => s.id !== sheet.id)];
+              handleUpdateState({
+                ...appState,
+                savedPracticeSheets: nextList
+              });
+            }
+          }}
+          onDeleteFromCloud={(sheetId) => {
+            if (appState && handleUpdateState) {
+              const currentList = appState.savedPracticeSheets || [];
+              const nextList = currentList.filter(s => s.id !== sheetId);
               handleUpdateState({
                 ...appState,
                 savedPracticeSheets: nextList

@@ -52,6 +52,7 @@ import {
   getSavedPracticeSheets,
   savePracticeSheet,
   deletePracticeSheet,
+  syncSavedPracticeSheetsWithCloud,
   getGridLayout,
   renderGridOnCanvas,
   renderStroke,
@@ -71,7 +72,9 @@ export default function PracticePadModal({
   initialChar = '',
   initialGhostOpacity,
   initialTab = 'canvas',
-  onSaveToCloud
+  onSaveToCloud,
+  onDeleteFromCloud,
+  cloudSavedSheets
 }) {
   // Main view modes
   const [activeTab, setActiveTab] = useState(initialTab || 'canvas'); // 'canvas' | 'stroke_quiz'
@@ -323,10 +326,23 @@ export default function PracticePadModal({
         }
       }
 
-      setSavedSheets(getSavedPracticeSheets());
+      if (Array.isArray(cloudSavedSheets) && cloudSavedSheets.length > 0) {
+        const synced = syncSavedPracticeSheetsWithCloud(cloudSavedSheets);
+        setSavedSheets(synced);
+      } else {
+        setSavedSheets(getSavedPracticeSheets());
+      }
       return () => clearTimeout(fitTimer);
     }
-  }, [isOpen, initialText, initialKana, initialTitle, initialSource, initialChar, initialGhostOpacity, calculateFitZoom]);
+  }, [isOpen, initialText, initialKana, initialTitle, initialSource, initialChar, initialGhostOpacity, calculateFitZoom, cloudSavedSheets]);
+
+  // Si cloudSavedSheets cambia dinámicamente mientras el modal está abierto, sincronizar
+  useEffect(() => {
+    if (isOpen && Array.isArray(cloudSavedSheets) && cloudSavedSheets.length > 0) {
+      const synced = syncSavedPracticeSheetsWithCloud(cloudSavedSheets);
+      setSavedSheets(synced);
+    }
+  }, [isOpen, cloudSavedSheets]);
 
   // Adjust default ink color when chalkboard paper is picked
   useEffect(() => {
@@ -1205,6 +1221,9 @@ export default function PracticePadModal({
     if (confirm('¿Eliminar este cuaderno de práctica guardado?')) {
       deletePracticeSheet(id);
       setSavedSheets(getSavedPracticeSheets());
+      if (onDeleteFromCloud) {
+        onDeleteFromCloud(id);
+      }
       showNotification('Cuaderno eliminado de la biblioteca', 'info');
     }
   };
