@@ -16,8 +16,10 @@ import {
   Check, 
   Radio,
   Sliders,
-  Compass
+  Compass,
+  Bell
 } from 'lucide-react';
+
 import audioManager from '../lib/audioManager';
 import { useApp } from '../lib/AppContext';
 
@@ -376,7 +378,47 @@ export default function SettingsModal({
             </div>
           </div>
 
-          {/* Section 4: Theme Toggle & Cloud Account */}
+          {/* Section 4: Recordatorios y Notificaciones Diarias */}
+          <div style={{
+            padding: '16px',
+            borderRadius: 12,
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12
+          }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Bell size={16} style={{ color: 'var(--primary)' }} />
+                <span>Recordatorios del Día</span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Configura avisos de Kanji, Vocabulario, Partículas, Reto Diario y Lectura
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => {
+                onClose();
+                if (contextApp?.openNotificationSettings) {
+                  contextApp.openNotificationSettings();
+                } else if (typeof window !== 'undefined' && window.__nihongoOpenNotifications) {
+                  window.__nihongoOpenNotifications();
+                }
+              }}
+              style={{ gap: 6, whiteSpace: 'nowrap' }}
+            >
+              <Bell size={14} />
+              <span>Configurar</span>
+            </button>
+          </div>
+
+          {/* Section 5: Theme Toggle & Cloud Account */}
+
           <div style={{
             padding: '16px',
             borderRadius: 12,

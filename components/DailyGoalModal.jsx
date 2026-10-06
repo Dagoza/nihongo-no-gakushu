@@ -106,8 +106,9 @@ const CATEGORIES = [
 const JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
 export default function DailyGoalModal({ isOpen, onClose }) {
-  const { appState, onUpdateState, openTour } = useApp();
+  const { appState, onUpdateState, openTour, openNotificationSettings } = useApp();
   const appStateRef = useRef(appState);
+
   appStateRef.current = appState;
   const wasOpenRef = useRef(false);
 
@@ -1004,15 +1005,15 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 </div>
               </div>
 
-              {/* Mobile Push Notification Opt-in Prompt */}
-              {notifPermission !== 'granted' && isNotificationSupported() && (
+              {/* Mobile Push Notification Opt-in or Configure Prompt */}
+              {isNotificationSupported() && (
                 <div style={{
                   maxWidth: 480,
                   margin: '0 auto 28px',
                   padding: '16px',
                   borderRadius: 14,
-                  background: 'rgba(99, 102, 241, 0.08)',
-                  border: '1px solid rgba(99, 102, 241, 0.25)',
+                  background: notifPermission === 'granted' ? 'rgba(16, 185, 129, 0.08)' : 'rgba(99, 102, 241, 0.08)',
+                  border: `1px solid ${notifPermission === 'granted' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(99, 102, 241, 0.25)'}`,
                   textAlign: 'left',
                   display: 'flex',
                   alignItems: 'center',
@@ -1022,7 +1023,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                     width: 42,
                     height: 42,
                     borderRadius: 10,
-                    background: 'var(--primary, #6366f1)',
+                    background: notifPermission === 'granted' ? '#10b981' : 'var(--primary, #6366f1)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1033,22 +1034,32 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)' }}>
-                      Recordatorios en Móvil y Navegador
+                      {notifPermission === 'granted' ? 'Recordatorios Diarios Activos' : 'Recordatorios en Móvil y Navegador'}
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                      Recibe una notificación cada día para mantener tu racha sin olvidar practicar.
+                      {notifPermission === 'granted'
+                        ? 'Tienes avisos programados a lo largo del día para Kanji, Vocabulario y tu Racha.'
+                        : 'Recibe avisos para tus actividades a lo largo del día sin olvidar practicar.'}
                     </div>
                   </div>
                   <button
                     type="button"
-                    className="btn btn-primary btn-sm"
+                    className={`btn ${notifPermission === 'granted' ? 'btn-outline' : 'btn-primary'} btn-sm`}
                     style={{ whiteSpace: 'nowrap' }}
-                    onClick={handleEnableNotifications}
+                    onClick={() => {
+                      if (notifPermission === 'granted') {
+                        if (openNotificationSettings) openNotificationSettings();
+                        else if (typeof window !== 'undefined' && window.__nihongoOpenNotifications) window.__nihongoOpenNotifications();
+                      } else {
+                        handleEnableNotifications();
+                      }
+                    }}
                   >
-                    Activar
+                    {notifPermission === 'granted' ? 'Horarios' : 'Activar'}
                   </button>
                 </div>
               )}
+
 
               {/* Action Buttons */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>

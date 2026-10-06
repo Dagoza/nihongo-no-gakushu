@@ -15,6 +15,8 @@ const PracticePadModal = dynamic(() => import('./PracticePadModal'), { ssr: fals
 const DictionaryModal = dynamic(() => import('./DictionaryModal'), { ssr: false });
 const SettingsModal = dynamic(() => import('./SettingsModal'), { ssr: false });
 const DailyGoalModal = dynamic(() => import('./DailyGoalModal'), { ssr: false });
+const NotificationSettingsModal = dynamic(() => import('./NotificationSettingsModal'), { ssr: false });
+
 
 function AppShellContent({ children }) {
   const {
@@ -48,8 +50,11 @@ function AppShellContent({ children }) {
     isSettingsModalOpen,
     setIsSettingsModalOpen,
     isDailyGoalModalOpen,
-    closeDailyGoalModal
+    closeDailyGoalModal,
+    isNotificationSettingsOpen,
+    closeNotificationSettings
   } = useApp();
+
 
   // Ensure horizontal scroll position is strictly locked to 0 on mobile/desktop tab navigation
   React.useEffect(() => {
@@ -196,7 +201,16 @@ function AppShellContent({ children }) {
           onClose={closeDailyGoalModal}
         />
       )}
+
+      {/* Modal de Recordatorios y Notificaciones del Día */}
+      {isNotificationSettingsOpen && (
+        <NotificationSettingsModal 
+          isOpen={isNotificationSettingsOpen}
+          onClose={closeNotificationSettings}
+        />
+      )}
     </>
+
   );
 }
 

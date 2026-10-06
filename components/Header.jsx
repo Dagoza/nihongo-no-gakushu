@@ -429,8 +429,27 @@ export default function Header({
               <Compass size={17} style={{ color: 'var(--primary, #6366f1)' }} />
             </button>
 
+            {/* Notifications Schedule Button */}
+            <button 
+              type="button"
+              className="theme-toggle-btn"
+
+              onClick={() => {
+                if (contextApp?.openNotificationSettings) {
+                  contextApp.openNotificationSettings();
+                } else if (typeof window !== 'undefined' && window.__nihongoOpenNotifications) {
+                  window.__nihongoOpenNotifications();
+                }
+              }}
+              title="Recordatorios Diarios de Estudio"
+              aria-label="Abrir recordatorios diarios de estudio"
+            >
+              <Bell size={17} style={{ color: 'var(--primary, #6366f1)' }} />
+            </button>
+
             {/* Theme Toggle Button */}
             <button 
+
               className="theme-toggle-btn"
               onClick={onToggleTheme}
               title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
@@ -596,6 +615,22 @@ export default function Header({
                         className="session-action-item"
                         onClick={() => {
                           setIsDropdownOpen(false);
+                          if (contextApp?.openNotificationSettings) {
+                            contextApp.openNotificationSettings();
+                          } else if (typeof window !== 'undefined' && window.__nihongoOpenNotifications) {
+                            window.__nihongoOpenNotifications();
+                          }
+                        }}
+                      >
+                        <Bell size={15} style={{ color: 'var(--primary)' }} />
+                        <span>Recordatorios del Día</span>
+                      </button>
+                      <button
+
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
                           if (typeof onOpenTour === 'function') onOpenTour();
                           else if (contextApp?.openTour) contextApp.openTour();
                           else if (typeof window !== 'undefined' && window.__nihongoOpenTour) window.__nihongoOpenTour();
@@ -687,6 +722,23 @@ export default function Header({
                       </button>
 
                       <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          if (contextApp?.openNotificationSettings) {
+                            contextApp.openNotificationSettings();
+                          } else if (typeof window !== 'undefined' && window.__nihongoOpenNotifications) {
+                            window.__nihongoOpenNotifications();
+                          }
+                        }}
+                      >
+                        <Bell size={15} style={{ color: 'var(--primary)' }} />
+                        <span>Recordatorios del Día</span>
+                      </button>
+
+                      <button
+
                         type="button"
                         className="session-action-item"
                         onClick={() => {

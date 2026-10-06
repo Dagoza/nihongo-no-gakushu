@@ -157,19 +157,39 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // Si ya hay una pestaña abierta, enfocarla y enviarle el mensaje
+      // Si ya hay una pestaña abierta, enfocarla y dirigirla a la ruta adecuada
       for (const client of clientList) {
         if ('focus' in client) {
-          client.postMessage({ type: 'OPEN_DAILY_GOAL' });
+          if (targetUrl.includes('daily_goal=1')) {
+            client.postMessage({ type: 'OPEN_DAILY_GOAL' });
+          } else {
+            client.postMessage({ type: 'NAVIGATE_URL', url: targetUrl });
+            if (client.navigate) {
+              client.navigate(targetUrl);
+            }
+          }
           return client.focus();
         }
       }
-      // Si no hay ventana abierta, abrir una nueva
+      // Si no hay ventana abierta, abrir una nueva con la URL de la actividad
       if (self.clients.openWindow) {
         return self.clients.openWindow(targetUrl);
       }
     })
   );
+});
+
+// Soporte de sincronización periódica en segundo plano (Periodic Background Sync PWA)
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'nihongo-daily-reminders') {
+    event.waitUntil(
+      self.clients.matchAll({ type: 'window' }).then((clientList) => {
+        for (const client of clientList) {
+          client.postMessage({ type: 'TRIGGER_NOTIFICATION_CHECK' });
+        }
+      })
+    );
+  }
 });
 
 self.addEventListener('push', (event) => {
@@ -194,7 +214,7 @@ self.addEventListener('push', (event) => {
     vibrate: [200, 100, 200],
     data: { url: data.url },
     actions: [
-      { action: 'open', title: 'Comenzar Reto' }
+      { action: 'open', title: 'Comenzar Práctica' }
     ]
   };
 
@@ -202,3 +222,4 @@ self.addEventListener('push', (event) => {
     self.registration.showNotification(data.title, options)
   );
 });
+

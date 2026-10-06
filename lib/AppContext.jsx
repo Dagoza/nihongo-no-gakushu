@@ -11,7 +11,7 @@ import {
   subscribeToAuthChanges,
   extractUserProfile 
 } from './supabaseSync';
-import { checkDailyReminderScheduled } from './notificationManager';
+import { checkDailyReminderScheduled, checkAllScheduledActivities } from './notificationManager';
 
 export const AppContext = createContext(null);
 
@@ -164,6 +164,17 @@ export function AppProvider({ children }) {
     setIsDailyGoalModalOpen(false);
   }, []);
 
+  // Modal de Recordatorios y Notificaciones del Día
+  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
+
+  const openNotificationSettings = useCallback(() => {
+    setIsNotificationSettingsOpen(true);
+  }, []);
+
+  const closeNotificationSettings = useCallback(() => {
+    setIsNotificationSettingsOpen(false);
+  }, []);
+
   // Manejar parámetro URL ?daily_goal=1 y eventos de Service Worker para notificaciones móviles
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -178,19 +189,45 @@ export function AppProvider({ children }) {
       const handleSwMessage = (event) => {
         if (event.data?.type === 'OPEN_DAILY_GOAL') {
           setIsDailyGoalModalOpen(true);
+        } else if (event.data?.type === 'NAVIGATE_URL' && event.data?.url) {
+          router.push(event.data.url);
+        } else if (event.data?.type === 'TRIGGER_NOTIFICATION_CHECK') {
+          checkAllScheduledActivities(appStateRef.current);
         }
       };
       navigator.serviceWorker.addEventListener('message', handleSwMessage);
       return () => navigator.serviceWorker.removeEventListener('message', handleSwMessage);
     }
-  }, []);
+  }, [router]);
 
-  // Verificar recordatorio diario en móvil / escritorio
+  // Verificar y programar recordatorios de estudio a lo largo del día en móvil y escritorio
   useEffect(() => {
-    if (mounted && appState) {
-      checkDailyReminderScheduled(appState);
-    }
-  }, [mounted, appState]);
+    if (!mounted) return;
+
+    // Comprobación inicial al montar
+    checkAllScheduledActivities(appStateRef.current);
+
+    // Revisar cada 60 segundos si alguna actividad cumple su hora programada
+    const intervalId = setInterval(() => {
+      checkAllScheduledActivities(appStateRef.current);
+    }, 60000);
+
+    const handleFocusOrVisible = () => {
+      if (document.visibilityState === 'visible') {
+        checkAllScheduledActivities(appStateRef.current);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleFocusOrVisible);
+    window.addEventListener('focus', handleFocusOrVisible);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleFocusOrVisible);
+      window.removeEventListener('focus', handleFocusOrVisible);
+    };
+  }, [mounted]);
+
 
   // Modal amigable para alertas, avisos y confirmaciones (Reemplazo total de alert() y confirm())
   const [uiModal, setUiModal] = useState({
@@ -348,6 +385,7 @@ export function AppProvider({ children }) {
       window.addEventListener('nihongo-open-tour', handleCustomOpenTour);
       window.__nihongoOpenPracticePad = openPracticePad;
       window.__nihongoOpenDailyGoal = openDailyGoalModal;
+      window.__nihongoOpenNotifications = openNotificationSettings;
     }
 
     let tourTimer = null;
@@ -561,8 +599,14 @@ export function AppProvider({ children }) {
     // Modal de Meta Diaria / Reto Diario
     isDailyGoalModalOpen,
     openDailyGoalModal,
-    closeDailyGoalModal
+    closeDailyGoalModal,
+    // Modal de Recordatorios y Notificaciones del Día
+    isNotificationSettingsOpen,
+    setIsNotificationSettingsOpen,
+    openNotificationSettings,
+    closeNotificationSettings
   };
+
 
   return (
     <AppContext.Provider value={contextValue}>
