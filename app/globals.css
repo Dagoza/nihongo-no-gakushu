@@ -2830,6 +2830,152 @@ rt {
   color: #ffffff;
 }
 
+/* Curriculum Module Hero Card */
+.curriculum-hero-card {
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(236, 72, 153, 0.04) 100%);
+  border: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 16px;
+  row-gap: 6px;
+  align-items: start;
+}
+
+.curriculum-hero-icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  font-size: 2.5rem;
+  width: 68px;
+  height: 68px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.curriculum-hero-meta {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.curriculum-hero-level-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--primary);
+}
+
+.curriculum-hero-step-count {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.curriculum-hero-source-badge {
+  font-size: 0.78rem;
+  background: var(--bg-surface);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.curriculum-hero-content {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.curriculum-hero-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.curriculum-hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.curriculum-hero-guide {
+  background: var(--bg-surface);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 768px) {
+  .curriculum-hero-card {
+    grid-template-columns: 52px 1fr !important;
+    grid-template-rows: auto auto !important;
+    column-gap: 12px !important;
+    row-gap: 12px !important;
+    padding: 16px 14px !important;
+  }
+
+  .curriculum-hero-icon {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 2rem !important;
+  }
+
+  .curriculum-hero-meta {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    align-self: center !important;
+    gap: 6px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .curriculum-hero-content {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+  }
+
+  .curriculum-hero-title {
+    font-size: 1.35rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
+    text-align: left !important;
+  }
+
+  .curriculum-hero-subtitle {
+    font-size: 0.95rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 12px !important;
+    text-align: left !important;
+  }
+
+  .curriculum-hero-guide {
+    padding: 14px 14px !important;
+    font-size: 0.92rem !important;
+    line-height: 1.6 !important;
+    text-align: left !important;
+  }
+}
+
 /* Curriculum Stepper & Substep Progression */
 .curriculum-stepper-container {
   background: var(--bg-surface);
@@ -3018,7 +3164,56 @@ rt {
   font-size: 1.02rem;
   font-weight: 700;
   color: var(--text-main);
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.grammar-formula-line {
+  display: inline;
+}
+
+.grammar-formula-line:not(:last-child)::after {
+  content: ' / ';
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .grammar-deep-card {
+    padding: 14px 12px !important;
+  }
+
+  .grammar-formula-box {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+  }
+
+  .grammar-formula-badge {
+    font-size: 0.72rem !important;
+    padding: 3px 8px !important;
+    display: inline-flex !important;
+    align-self: flex-start !important;
+    margin-bottom: 2px !important;
+  }
+
+  .grammar-formula-text {
+    width: 100% !important;
+    font-size: 0.96rem !important;
+    line-height: 1.5 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    text-align: left !important;
+  }
+
+  .grammar-formula-line {
+    display: block !important;
+    margin-bottom: 4px !important;
+  }
+
+  .grammar-formula-line:not(:last-child)::after {
+    content: '' !important;
+  }
 }
 
 .grammar-notes-box {
@@ -7943,7 +8138,8 @@ rt {
   }
 
   .particle-formula-box {
-    flex-wrap: wrap !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
     padding: 8px 10px !important;
     gap: 6px !important;
     font-size: 0.82rem !important;

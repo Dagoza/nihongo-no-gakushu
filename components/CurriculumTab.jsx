@@ -407,67 +407,41 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         </div>
 
         {/* Hero Card of the Module */}
-        <div className="card" style={{ marginBottom: 24, background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(236, 72, 153, 0.04) 100%)', border: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-            <div style={{ 
-              fontSize: '2.5rem', 
-              width: 68, 
-              height: 68, 
-              background: 'var(--bg-surface)', 
-              borderRadius: 'var(--radius-md)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              boxShadow: 'var(--shadow-sm)',
-              flexShrink: 0
-            }}>
-              {selectedStep.icon}
-            </div>
+        <div className="card curriculum-hero-card">
+          <div className="curriculum-hero-icon">
+            {selectedStep.icon}
+          </div>
 
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
-                <span className="step-target-tag">{selectedStep.stage}</span>
-                <span style={{ 
-                  fontSize: '0.75rem', 
-                  fontWeight: 700, 
-                  padding: '2px 8px', 
-                  borderRadius: 4, 
-                  background: 'rgba(99, 102, 241, 0.12)', 
-                  color: 'var(--primary)' 
-                }}>
-                  {selectedStep.level}
-                </span>
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                  Módulo {selectedStep.step} de {steps.length}
-                </span>
-                {selectedStep.sourcePdf && (
-                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 4, border: '1px solid var(--border)', color: 'var(--primary)' }}>
-                    📄 Extraído de: {selectedStep.sourcePdf}
-                  </span>
-                )}
-              </div>
+          <div className="curriculum-hero-meta">
+            <span className="step-target-tag">{selectedStep.stage}</span>
+            <span className="curriculum-hero-level-badge">
+              {selectedStep.level}
+            </span>
+            <span className="curriculum-hero-step-count">
+              Módulo {selectedStep.step} de {steps.length}
+            </span>
+            {selectedStep.sourcePdf && (
+              <span className="curriculum-hero-source-badge">
+                📄 Extraído de: {selectedStep.sourcePdf}
+              </span>
+            )}
+          </div>
 
-              <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: 6 }}>
-                {selectedStep.title}
-              </h1>
-              <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', marginBottom: 16 }}>
-                {selectedStep.subtitle}
-              </p>
+          <div className="curriculum-hero-content">
+            <h1 className="curriculum-hero-title">
+              {selectedStep.title}
+            </h1>
+            <p className="curriculum-hero-subtitle">
+              {selectedStep.subtitle}
+            </p>
 
-              {/* Detailed Guide Narrative */}
-              <div style={{ 
-                background: 'var(--bg-surface)', 
-                padding: '16px 20px', 
-                borderRadius: 'var(--radius-md)', 
-                borderLeft: '4px solid var(--primary)',
-                fontSize: '0.98rem',
-                lineHeight: 1.7,
-                boxShadow: 'var(--shadow-sm)'
-              }}>
+            {/* Detailed Guide Narrative */}
+            {selectedStep.detailed_guide && (
+              <div className="curriculum-hero-guide">
                 <p><strong>📖 Guía Explicativa del Módulo:</strong></p>
                 <p style={{ marginTop: 6 }}>{selectedStep.detailed_guide}</p>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -857,7 +831,17 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                             {gp.formula && (
                               <div className="grammar-formula-box">
                                 <span className="grammar-formula-badge">⚡ Fórmula</span>
-                                <span className="grammar-formula-text">{gp.formula}</span>
+                                <div className="grammar-formula-text">
+                                  {gp.formula.includes(' / ') ? (
+                                    gp.formula.split(' / ').map((part, pIdx) => (
+                                      <span key={pIdx} className="grammar-formula-line">
+                                        {part.trim()}
+                                      </span>
+                                    ))
+                                  ) : (
+                                    <span className="grammar-formula-line">{gp.formula}</span>
+                                  )}
+                                </div>
                               </div>
                             )}
 
