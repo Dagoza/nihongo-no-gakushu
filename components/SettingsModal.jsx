@@ -387,14 +387,15 @@ export default function SettingsModal({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            flexWrap: 'wrap',
             gap: 12
           }}>
-            <div>
+            <div style={{ flex: '1 1 200px' }}>
               <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Bell size={16} style={{ color: 'var(--primary)' }} />
                 <span>Recordatorios del Día</span>
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 2 }}>
                 Configura avisos de Kanji, Vocabulario, Partículas, Reto Diario y Lectura
               </div>
             </div>
@@ -416,6 +417,7 @@ export default function SettingsModal({
               <span>Configurar</span>
             </button>
           </div>
+
 
           {/* Section 5: Theme Toggle & Cloud Account */}
 

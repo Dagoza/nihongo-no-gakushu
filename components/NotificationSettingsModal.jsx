@@ -5,18 +5,13 @@ import {
   X, 
   Bell, 
   BellRing, 
-  BellOff, 
   Clock, 
   Sparkles, 
   Check, 
-  CheckCircle, 
-  Flame, 
-  Coffee, 
-  BookOpen, 
-  RotateCcw, 
-  Play, 
   ShieldCheck, 
-  AlertCircle 
+  AlertCircle, 
+  RotateCcw, 
+  Play 
 } from 'lucide-react';
 import {
   isNotificationSupported,
@@ -206,66 +201,35 @@ export default function NotificationSettingsModal({
 
   return (
     <div 
-      className="modal-backdrop" 
+      className="notif-modal-backdrop" 
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.72)',
-        backdropFilter: 'blur(5px)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '16px'
-      }}
     >
-      <div 
-        className="modal-content"
-        style={{
-          width: '100%',
-          maxWidth: '620px',
-          maxHeight: '90vh',
-          display: 'flex',
-          flexDirection: 'column',
-          background: 'var(--bg-main, #0f172a)',
-          borderRadius: '18px',
-          border: '1px solid var(--border, rgba(255,255,255,0.1))',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-          overflow: 'hidden'
-        }}
-      >
+      <div className="notif-modal-container" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '18px 22px',
-          borderBottom: '1px solid var(--border)',
-          background: 'var(--bg-card)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="notif-modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
             <div style={{
-              width: 40,
-              height: 40,
+              width: 38,
+              height: 38,
               borderRadius: 12,
               background: 'linear-gradient(135deg, #6366f1, #a855f7)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#ffffff',
-              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.35)'
+              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.35)',
+              flexShrink: 0
             }}>
-              <BellRing size={22} />
+              <BellRing size={20} />
             </div>
-            <div>
-              <h3 style={{ fontSize: '1.18rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
-                Recordatorios Diarios de Estudio
+            <div style={{ minWidth: 0 }}>
+              <h3 style={{ fontSize: '1.12rem', fontWeight: 800, margin: 0, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Recordatorios Diarios
               </h3>
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
-                Organiza tus micro-hábitos de japonés a lo largo de tu jornada
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Organiza tus micro-hábitos de estudio en japonés
               </p>
             </div>
           </div>
@@ -281,7 +245,8 @@ export default function NotificationSettingsModal({
               color: 'var(--text-muted)',
               padding: 6,
               borderRadius: '50%',
-              display: 'flex'
+              display: 'flex',
+              flexShrink: 0
             }}
           >
             <X size={20} />
@@ -289,68 +254,63 @@ export default function NotificationSettingsModal({
         </div>
 
         {/* Scrollable Content Body */}
-        <div style={{
-          padding: '20px',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px'
-        }}>
+        <div className="notif-modal-body">
           {/* Banner de Estado de Permisos */}
           {!supported ? (
             <div style={{
-              padding: '12px 16px',
+              padding: '12px 14px',
               borderRadius: 12,
               background: 'rgba(239, 68, 68, 0.1)',
               border: '1px solid rgba(239, 68, 68, 0.25)',
               display: 'flex',
               alignItems: 'center',
-              gap: 12,
-              fontSize: '0.85rem',
+              gap: 10,
+              fontSize: '0.82rem',
               color: '#ef4444'
             }}>
-              <AlertCircle size={20} />
+              <AlertCircle size={18} style={{ flexShrink: 0 }} />
               <span>Este navegador no soporta la API de notificaciones web.</span>
             </div>
           ) : permission === 'denied' ? (
             <div style={{
-              padding: '14px 16px',
+              padding: '12px 14px',
               borderRadius: 12,
               background: 'rgba(245, 158, 11, 0.1)',
               border: '1px solid rgba(245, 158, 11, 0.3)',
               display: 'flex',
               alignItems: 'flex-start',
-              gap: 12,
-              fontSize: '0.82rem',
+              gap: 10,
+              fontSize: '0.8rem',
               color: 'var(--text-main)'
             }}>
-              <AlertCircle size={20} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
+              <AlertCircle size={18} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
               <div>
                 <strong style={{ color: '#f59e0b', display: 'block', marginBottom: 2 }}>
                   Notificaciones bloqueadas por el navegador
                 </strong>
-                Para activarlas, ingresa a la configuración del sitio o navegador en tu móvil o PC y concede permiso de notificaciones para esta página.
+                Habilita los permisos del sitio en tu navegador o celular para poder recibir los recordatorios.
               </div>
             </div>
           ) : permission !== 'granted' ? (
             <div style={{
-              padding: '14px 18px',
+              padding: '12px 14px',
               borderRadius: 14,
               background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12))',
               border: '1px solid rgba(99, 102, 241, 0.3)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              gap: 14
+              flexWrap: 'wrap',
+              gap: 10
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Sparkles size={22} style={{ color: 'var(--primary)' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: '200px' }}>
+                <Sparkles size={20} style={{ color: 'var(--primary)', flexShrink: 0 }} />
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)' }}>
-                    Activa las notificaciones en este dispositivo
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-main)' }}>
+                    Activar en este celular / navegador
                   </div>
-                  <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                    Recibe tus avisos de kanji, vocabulario y racha en el horario exacto
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                    Recibe tus avisos de kanji, vocabulario y racha en el horario fijado
                   </div>
                 </div>
               </div>
@@ -358,29 +318,31 @@ export default function NotificationSettingsModal({
                 type="button"
                 className="btn btn-primary btn-sm"
                 onClick={handleRequestPermission}
-                style={{ whiteSpace: 'nowrap', borderRadius: 10, padding: '8px 14px' }}
+                style={{ whiteSpace: 'nowrap', borderRadius: 10, padding: '7px 14px', fontSize: '0.8rem' }}
               >
                 Conceder Permiso
               </button>
             </div>
           ) : (
             <div style={{
-              padding: '10px 14px',
+              padding: '9px 12px',
               borderRadius: 12,
               background: 'rgba(16, 185, 129, 0.1)',
               border: '1px solid rgba(16, 185, 129, 0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              fontSize: '0.82rem',
+              flexWrap: 'wrap',
+              gap: 6,
+              fontSize: '0.8rem',
               color: '#10b981'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <ShieldCheck size={18} />
-                <span style={{ fontWeight: 600 }}>Permisos activos en este celular / navegador</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <ShieldCheck size={16} />
+                <span style={{ fontWeight: 600 }}>Permisos activos en este dispositivo</span>
               </div>
               {nextNotif && (
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                   Próximo: <strong>{nextNotif.activity.iconEmoji} {nextNotif.time}</strong> ({nextNotif.relative})
                 </span>
               )}
@@ -389,76 +351,55 @@ export default function NotificationSettingsModal({
 
           {/* Master Toggle Card */}
           <div style={{
-            padding: '16px 18px',
+            padding: '14px 16px',
             borderRadius: 14,
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 16
+            gap: 12
           }}>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.94rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Clock size={18} style={{ color: 'var(--primary)' }} />
-                <span>Sistema de Recordatorios Diarios</span>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Clock size={16} style={{ color: 'var(--primary)' }} />
+                <span>Recordatorios Automáticos</span>
               </div>
-              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 2 }}>
                 {masterEnabled 
-                  ? 'Activo: te recordaremos tus actividades a lo largo del día' 
-                  : 'Pausado: no recibirás avisos programados'}
+                  ? 'Activo: se enviarán notificaciones según tus horarios' 
+                  : 'Pausado: no recibirás avisos'}
               </div>
             </div>
 
-            <label style={{ position: 'relative', display: 'inline-block', width: 48, height: 26, cursor: 'pointer', flexShrink: 0 }}>
+            <label className="notif-toggle-switch">
               <input 
                 type="checkbox" 
                 checked={masterEnabled} 
                 onChange={handleToggleMaster}
-                style={{ opacity: 0, width: 0, height: 0 }}
               />
-              <span style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundColor: masterEnabled ? 'var(--primary, #6366f1)' : 'rgba(255, 255, 255, 0.16)',
-                borderRadius: 26,
-                transition: '0.2s',
-                display: 'block'
-              }}>
-                <span style={{
-                  position: 'absolute',
-                  content: '""',
-                  height: 20,
-                  width: 20,
-                  left: masterEnabled ? 25 : 3,
-                  bottom: 3,
-                  backgroundColor: '#ffffff',
-                  borderRadius: '50%',
-                  transition: '0.2s',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                }} />
-              </span>
+              <span className="notif-toggle-slider" />
             </label>
           </div>
 
           {/* Plantillas / Presets Rápidos */}
-          <div style={{
+          <div className="notif-presets-bar" style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: 8,
-            padding: '4px 0'
+            padding: '2px 0'
           }}>
             <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)' }}>
               Plantillas de estudio:
             </span>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <div className="notif-presets-buttons-wrap" style={{ display: 'flex', gap: 6 }}>
               <button
                 type="button"
                 className="btn btn-outline btn-sm"
                 onClick={() => handleApplyPreset('recommended')}
-                style={{ fontSize: '0.74rem', padding: '4px 10px', borderRadius: 8 }}
+                style={{ fontSize: '0.73rem', padding: '5px 10px', borderRadius: 8 }}
                 title="Activa Kanji, Vocabulario, Partículas y Reto Diario"
               >
                 🌟 Recomendada
@@ -467,19 +408,19 @@ export default function NotificationSettingsModal({
                 type="button"
                 className="btn btn-outline btn-sm"
                 onClick={() => handleApplyPreset('light')}
-                style={{ fontSize: '0.74rem', padding: '4px 10px', borderRadius: 8 }}
+                style={{ fontSize: '0.73rem', padding: '5px 10px', borderRadius: 8 }}
                 title="Solo Kanji matutino y Reto Diario nocturno"
               >
-                ⚡ Ligera (2/día)
+                ⚡ Ligera (2)
               </button>
               <button
                 type="button"
                 className="btn btn-outline btn-sm"
                 onClick={() => handleApplyPreset('intensive')}
-                style={{ fontSize: '0.74rem', padding: '4px 10px', borderRadius: 8 }}
+                style={{ fontSize: '0.73rem', padding: '5px 10px', borderRadius: 8 }}
                 title="Activa las 5 actividades completas"
               >
-                📚 Intensiva (5/día)
+                📚 Todas (5)
               </button>
             </div>
           </div>
@@ -489,151 +430,82 @@ export default function NotificationSettingsModal({
             <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
               <span>Actividades Programadas</span>
               <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                ({schedule.filter(s => s.enabled).length} activas)
+                ({schedule.filter(s => s.enabled).length} de {schedule.length} activas)
               </span>
             </div>
 
-            {schedule.map((activity) => (
-              <div 
-                key={activity.id}
-                style={{
-                  padding: '14px 16px',
-                  borderRadius: 14,
-                  background: 'var(--bg-card)',
-                  border: `1px solid ${activity.enabled ? 'rgba(99, 102, 241, 0.3)' : 'var(--border)'}`,
-                  opacity: masterEnabled ? 1 : 0.65,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 12,
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                {/* Info & Emoji */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: '1.45rem',
-                    width: 38,
-                    height: 38,
-                    borderRadius: 10,
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}>
-                    {activity.iconEmoji}
-                  </div>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ 
-                      fontWeight: 700, 
-                      fontSize: '0.88rem', 
-                      color: 'var(--text-main)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6
-                    }}>
-                      <span>{activity.name}</span>
-                      <span style={{
-                        fontSize: '0.66rem',
-                        padding: '2px 6px',
-                        borderRadius: 6,
-                        background: 'rgba(99, 102, 241, 0.12)',
-                        color: 'var(--primary, #6366f1)',
-                        fontWeight: 600
-                      }}>
-                        {activity.url}
-                      </span>
+            {schedule.map((activity) => {
+              const isCardActive = activity.enabled && masterEnabled;
+              return (
+                <div 
+                  key={activity.id}
+                  className={`notif-activity-card ${isCardActive ? 'enabled' : 'disabled'}`}
+                >
+                  {/* Fila 1: Header con Emoji, Título, Badge de Ruta y Switch ON/OFF */}
+                  <div className="notif-activity-top-row">
+                    <div className="notif-activity-title-group">
+                      <div className="notif-activity-emoji">
+                        {activity.iconEmoji}
+                      </div>
+                      <div className="notif-activity-title-wrap">
+                        <div className="notif-activity-title">
+                          <span>{activity.name}</span>
+                          <span className="notif-activity-badge">
+                            {activity.url}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ 
-                      fontSize: '0.73rem', 
-                      color: 'var(--text-muted)',
-                      marginTop: 2,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
-                    }}>
-                      {activity.description}
+
+                    {/* Switch de activación de la actividad */}
+                    <label className="notif-toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={activity.enabled} 
+                        onChange={() => handleToggleActivity(activity.id)}
+                      />
+                      <span className="notif-toggle-slider" />
+                    </label>
+                  </div>
+
+                  {/* Fila 2: Descripción pedagógica legible */}
+                  <p className="notif-activity-desc">
+                    {activity.description}
+                  </p>
+
+                  {/* Fila 3: Barra de controles (Selector de hora y botón de prueba) */}
+                  <div className="notif-activity-controls-bar">
+                    <div className="notif-activity-time-wrap">
+                      <Clock size={14} style={{ color: 'var(--primary)' }} />
+                      <span>Hora:</span>
+                      <input
+                        type="time"
+                        value={activity.time}
+                        disabled={!activity.enabled || !masterEnabled}
+                        onChange={(e) => handleTimeChange(activity.id, e.target.value)}
+                        className="notif-activity-time-input"
+                        style={{
+                          cursor: activity.enabled && masterEnabled ? 'pointer' : 'not-allowed',
+                          opacity: activity.enabled && masterEnabled ? 1 : 0.5
+                        }}
+                      />
+                    </div>
+
+                    <div className="notif-activity-actions-wrap">
+                      <button
+                        type="button"
+                        onClick={() => handleTest(activity.id)}
+                        title={`Enviar prueba de ${activity.name}`}
+                        className="notif-test-btn"
+                      >
+                        <Play size={11} style={{ fill: 'currentColor' }} />
+                        <span>Probar</span>
+                      </button>
                     </div>
                   </div>
                 </div>
-
-                {/* Controles de Hora, Switch y Prueba */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-                  {/* Selector de Hora */}
-                  <input
-                    type="time"
-                    value={activity.time}
-                    disabled={!activity.enabled || !masterEnabled}
-                    onChange={(e) => handleTimeChange(activity.id, e.target.value)}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.07)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 8,
-                      color: 'var(--text-main)',
-                      padding: '5px 8px',
-                      fontSize: '0.82rem',
-                      fontFamily: 'inherit',
-                      outline: 'none',
-                      cursor: activity.enabled && masterEnabled ? 'pointer' : 'not-allowed',
-                      opacity: activity.enabled && masterEnabled ? 1 : 0.5
-                    }}
-                  />
-
-                  {/* Botón Probar Notificación */}
-                  <button
-                    type="button"
-                    onClick={() => handleTest(activity.id)}
-                    title={`Enviar prueba de ${activity.name}`}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.06)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 8,
-                      color: 'var(--text-muted)',
-                      padding: '6px 8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      fontSize: '0.72rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <Play size={12} style={{ fill: 'currentColor' }} />
-                    <span className="hidden-mobile">Probar</span>
-                  </button>
-
-                  {/* Switch ON/OFF de la actividad */}
-                  <label style={{ position: 'relative', display: 'inline-block', width: 38, height: 22, cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={activity.enabled} 
-                      onChange={() => handleToggleActivity(activity.id)}
-                      style={{ opacity: 0, width: 0, height: 0 }}
-                    />
-                    <span style={{
-                      position: 'absolute',
-                      inset: 0,
-                      backgroundColor: activity.enabled ? 'var(--primary, #6366f1)' : 'rgba(255, 255, 255, 0.16)',
-                      borderRadius: 22,
-                      transition: '0.2s',
-                      display: 'block'
-                    }}>
-                      <span style={{
-                        position: 'absolute',
-                        content: '""',
-                        height: 16,
-                        width: 16,
-                        left: activity.enabled ? 19 : 3,
-                        bottom: 3,
-                        backgroundColor: '#ffffff',
-                        borderRadius: '50%',
-                        transition: '0.2s'
-                      }} />
-                    </span>
-                  </label>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Feedback de prueba */}
@@ -644,7 +516,7 @@ export default function NotificationSettingsModal({
               background: testStatus === 'sent' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
               border: `1px solid ${testStatus === 'sent' ? '#10b981' : '#ef4444'}`,
               color: testStatus === 'sent' ? '#10b981' : '#ef4444',
-              fontSize: '0.82rem',
+              fontSize: '0.8rem',
               display: 'flex',
               alignItems: 'center',
               gap: 8
@@ -659,7 +531,7 @@ export default function NotificationSettingsModal({
           )}
 
           {/* Botón de Restablecer Valores */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 4 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 2 }}>
             <button
               type="button"
               onClick={handleResetDefaults}
@@ -681,20 +553,12 @@ export default function NotificationSettingsModal({
         </div>
 
         {/* Footer */}
-        <div style={{
-          padding: '14px 22px',
-          borderTop: '1px solid var(--border)',
-          background: 'var(--bg-card)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 12
-        }}>
+        <div className="notif-modal-footer">
           <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
             Los cambios se guardan automáticamente
           </span>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="notif-modal-footer-actions">
             <button
               type="button"
               className="btn btn-outline btn-sm"
@@ -702,7 +566,7 @@ export default function NotificationSettingsModal({
               style={{ borderRadius: 10, gap: 6 }}
             >
               <Bell size={14} />
-              <span>Probar Notificación</span>
+              <span>Probar</span>
             </button>
             <button
               type="button"
