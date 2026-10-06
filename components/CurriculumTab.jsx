@@ -24,10 +24,13 @@ import {
   Filter,
   Target,
   Info,
-  MessageSquare
+  MessageSquare,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import audioManager from '../lib/audioManager';
 import { useAppContext } from '../lib/AppContext';
+import FuriganaText from './FuriganaText';
 
 // Helper to structure and parse grammar points into title and Japanese pattern/content
 const parseGrammarPoint = (point) => {
@@ -87,6 +90,9 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
   const [selectedStatus, setSelectedStatus] = useState('all'); // 'all' | 'pending' | 'completed'
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Furigana visibility state (on by default for easy reading)
+  const [showFurigana, setShowFurigana] = useState(true);
   
   // Quiz interaction state for module view
   const [quizAnswers, setQuizAnswers] = useState({}); // { [exerciseId]: selectedOption }
@@ -394,7 +400,18 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             </button>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className={`btn ${showFurigana ? 'btn-primary' : 'btn-outline'} btn-sm`}
+              onClick={() => setShowFurigana(prev => !prev)}
+              title={showFurigana ? 'Ocultar Furigana' : 'Mostrar Furigana'}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+            >
+              {showFurigana ? <EyeOff size={15} /> : <Eye size={15} />}
+              <span>Furigana {showFurigana ? 'ON' : 'OFF'}</span>
+            </button>
+
             <button
               className={`btn ${isDone ? 'btn-outline' : 'btn-success'} btn-sm`}
               onClick={() => toggleStepCompleted(selectedStep.step)}
@@ -431,8 +448,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             <h1 className="curriculum-hero-title">
               {selectedStep.title}
             </h1>
-            <p className="curriculum-hero-subtitle">
-              {selectedStep.subtitle}
+            <p className="curriculum-hero-subtitle" style={{ lineHeight: 1.6 }}>
+              <FuriganaText text={selectedStep.subtitle} showFurigana={showFurigana} />
             </p>
 
             {/* Detailed Guide Narrative */}
@@ -644,8 +661,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
                             {/* Sentence with audio button */}
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '10px 0 16px', gap: 12 }}>
-                              <div className="jp-text" style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.4 }}>
-                                {ex.sentence}
+                              <div className="jp-text" style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.6 }}>
+                                <FuriganaText text={ex.sentence} showFurigana={showFurigana} />
                               </div>
                               <button
                                 type="button"
@@ -681,10 +698,11 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                       fontSize: '1.05rem', 
                                       padding: '10px 14px', 
                                       justifyContent: 'center', 
-                                      fontWeight: 600 
+                                      fontWeight: 600,
+                                      lineHeight: 1.4
                                     }}
                                   >
-                                    <span className="jp-text">{opt}</span>
+                                    <span className="jp-text"><FuriganaText text={opt} showFurigana={showFurigana} /></span>
                                     {selected && opt === ex.correct && <Check size={16} />}
                                     {selected && opt === selected && opt !== ex.correct && <X size={16} />}
                                   </button>
@@ -789,8 +807,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                           <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', marginBottom: 2 }}>
                             Objetivo del Paso {currentSection.substep}
                           </div>
-                          <p style={{ fontSize: '1.02rem', fontWeight: 600, color: 'var(--text-main)', margin: 0, lineHeight: 1.5 }}>
-                            {currentSection.objective}
+                          <p style={{ fontSize: '1.02rem', fontWeight: 600, color: 'var(--text-main)', margin: 0, lineHeight: 1.6 }}>
+                            <FuriganaText text={currentSection.objective} showFurigana={showFurigana} />
                           </p>
                         </div>
                       </div>
@@ -823,7 +841,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                 {currentSection.substep}.{gpIdx + 1}
                               </span>
                               <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>
-                                {gp.title}
+                                <FuriganaText text={gp.title} showFurigana={showFurigana} />
                               </h4>
                             </div>
 
@@ -835,11 +853,13 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                   {gp.formula.includes(' / ') ? (
                                     gp.formula.split(' / ').map((part, pIdx) => (
                                       <span key={pIdx} className="grammar-formula-line">
-                                        {part.trim()}
+                                        <FuriganaText text={part.trim()} showFurigana={showFurigana} />
                                       </span>
                                     ))
                                   ) : (
-                                    <span className="grammar-formula-line">{gp.formula}</span>
+                                    <span className="grammar-formula-line">
+                                      <FuriganaText text={gp.formula} showFurigana={showFurigana} />
+                                    </span>
                                   )}
                                 </div>
                               </div>
@@ -866,8 +886,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                 {gp.examples.map((ex, exI) => (
                                   <div key={exI} className="grammar-example-row">
                                     <div>
-                                      <div className="jp-text" style={{ fontSize: '1.06rem', fontWeight: 700, color: 'var(--primary)' }}>
-                                        {ex.jp}
+                                      <div className="jp-text" style={{ fontSize: '1.18rem', fontWeight: 700, color: 'var(--primary)', lineHeight: 1.6 }}>
+                                        <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
                                       </div>
                                       <div className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                                         {ex.kana}
@@ -943,7 +963,9 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                   <div className="cando-expression-box">
                                     <div className="cando-expression-content">
                                       <span className="cando-expression-label">💬 Frase clave</span>
-                                      <div className="cando-expression-text jp-text">{cd.sample}</div>
+                                      <div className="cando-expression-text jp-text" style={{ lineHeight: 1.6 }}>
+                                        <FuriganaText text={cd.sample} showFurigana={showFurigana} />
+                                      </div>
                                     </div>
                                     <button 
                                       type="button"
@@ -1088,8 +1110,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                             >
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
                                 <div>
-                                  <div className="jp-text" style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 4 }}>
-                                    {ex.jp}
+                                  <div className="jp-text" style={{ fontSize: '1.38rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 6, lineHeight: 1.6 }}>
+                                    <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
                                   </div>
                                   <div className="jp-text" style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: 4 }}>
                                     {ex.kana} {ex.romaji ? `· ${ex.romaji}` : ''}
@@ -1225,8 +1247,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                             ⚡ {title}
                           </span>
                         )}
-                        <span className="jp-text" style={{ fontSize: '0.96rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.45 }}>
-                          {!title && '⚡ '}{content}
+                        <span className="jp-text" style={{ fontSize: '0.96rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.5 }}>
+                          {!title && '⚡ '}<FuriganaText text={content} showFurigana={showFurigana} />
                         </span>
                       </div>
                     );
@@ -1245,7 +1267,11 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                         <span className="cando-badge"><Target size={13} /> {cd.id}</span>
                       </div>
                       <h4 className="cando-task">{cd.task}</h4>
-                      {cd.sample && <div className="cando-expression-text jp-text">{cd.sample}</div>}
+                      {cd.sample && (
+                        <div className="cando-expression-text jp-text" style={{ lineHeight: 1.5 }}>
+                          <FuriganaText text={cd.sample} showFurigana={showFurigana} />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1332,8 +1358,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                         )}
                       </div>
 
-                    <div className="jp-text" style={{ fontSize: '1.3rem', fontWeight: 700, margin: '10px 0 14px', color: 'var(--text-main)' }}>
-                      {ex.sentence}
+                    <div className="jp-text" style={{ fontSize: '1.35rem', fontWeight: 700, margin: '10px 0 14px', color: 'var(--text-main)', lineHeight: 1.6 }}>
+                      <FuriganaText text={ex.sentence} showFurigana={showFurigana} />
                     </div>
 
                     {/* Options Grid */}
@@ -1358,10 +1384,11 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                               fontSize: '1.05rem', 
                               padding: '10px 14px',
                               justifyContent: 'center',
-                              fontWeight: 600
+                              fontWeight: 600,
+                              lineHeight: 1.4
                             }}
                           >
-                            <span className="jp-text">{opt}</span>
+                            <span className="jp-text"><FuriganaText text={opt} showFurigana={showFurigana} /></span>
                             {selected && opt === ex.correct && <Check size={16} />}
                             {selected && opt === selected && opt !== ex.correct && <X size={16} />}
                           </button>
@@ -1545,8 +1572,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                       </span>
                     </div>
 
-                    <h4 className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 6px 0', lineHeight: 1.4 }}>
-                      {dlg.title_jp}
+                    <h4 className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 6px 0', lineHeight: 1.5 }}>
+                      <FuriganaText text={dlg.title_jp} showFurigana={showFurigana} />
                     </h4>
 
                     <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.4, margin: '0 0 8px 0' }}>
@@ -1644,8 +1671,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                       {st.story_title}
                     </div>
 
-                    <h4 className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 6px 0', lineHeight: 1.4 }}>
-                      {st.title}
+                    <h4 className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 6px 0', lineHeight: 1.5 }}>
+                      <FuriganaText text={st.title} showFurigana={showFurigana} />
                     </h4>
                   </div>
 
@@ -1903,6 +1930,19 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                 </button>
               ))}
             </div>
+
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              <button
+                type="button"
+                className={`btn btn-sm ${showFurigana ? 'btn-primary' : 'btn-outline'} furigana-toggle-btn`}
+                onClick={() => setShowFurigana(prev => !prev)}
+                title={showFurigana ? 'Ocultar Furigana en los módulos' : 'Mostrar Furigana en los módulos'}
+                style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+              >
+                {showFurigana ? <EyeOff size={13} /> : <Eye size={13} />}
+                <span>Furigana {showFurigana ? 'ON' : 'OFF'}</span>
+              </button>
+            </div>
           </div>
 
           <div style={{ position: 'relative', minWidth: 260, flex: '1 1 260px', maxWidth: 380 }}>
@@ -2074,7 +2114,9 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                         )}
                       </div>
                       <h3 className="step-title">{step.title}</h3>
-                      <p className="step-subtitle">{step.subtitle}</p>
+                      <p className="step-subtitle">
+                        <FuriganaText text={step.subtitle} showFurigana={showFurigana} />
+                      </p>
                     </div>
 
                     <div className="step-card-actions">
@@ -2151,7 +2193,9 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                     <span className="grammar-item-icon">⚡</span>
                                     <div className="grammar-item-body">
                                       {title && <span className="grammar-item-title">{title}</span>}
-                                      <span className="grammar-item-formula jp-text">{content}</span>
+                                      <span className="grammar-item-formula jp-text" style={{ lineHeight: 1.5 }}>
+                                        <FuriganaText text={content} showFurigana={showFurigana} />
+                                      </span>
                                     </div>
                                   </div>
                                 );

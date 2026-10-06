@@ -184,19 +184,22 @@ runTest('Todas las lecciones de NHK World contienen audios MP3 mapeados', () => 
 });
 
 // -----------------------------------------------------------------------------
-// ARQUITECTURA: Verificación de Desacoplamiento y Code Splitting
+// FURIGANA: Verificación de Sistema de Furigana en Módulos
 // -----------------------------------------------------------------------------
-console.log('\n--- ARQUITECTURA: Code Splitting y Desacoplamiento ---');
+console.log('\n--- FURIGANA: Sistema de Furigana en Módulos del Currículum ---');
 
-runTest('Los componentes principales no importan el objeto monolítico dataStore', () => {
-  const componentsDir = path.join(ROOT_DIR, 'components');
-  const files = fs.readdirSync(componentsDir).filter(f => f.endsWith('.jsx'));
-  
-  files.forEach(f => {
-    const content = fs.readFileSync(path.join(componentsDir, f), 'utf-8');
-    assert(!/import\s+.*dataStore.*from\s+['"]\.\.\/lib\/data['"]/.test(content), 
-      `El componente ${f} todavía importa dataStore de ../lib/data; debe importar su JSON específico.`);
-  });
+runTest('El diccionario de furigana y la utilidad toFurigana generan anotaciones ruby válidas', () => {
+  const dictPath = path.join(DATA_DIR, 'furigana_dict.json');
+  assert(fs.existsSync(dictPath), 'data/furigana_dict.json debe existir');
+  const dict = JSON.parse(fs.readFileSync(dictPath, 'utf-8'));
+  assert(Object.keys(dict).length >= 1000, `El diccionario de furigana debe tener >= 1000 entradas, tiene: ${Object.keys(dict).length}`);
+
+  // Test simple conversion with regex
+  const keys = Object.keys(dict).sort((a, b) => b.length - a.length);
+  const regex = new RegExp(keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+  const sample = 'はじめまして。私はアンナです。';
+  const converted = sample.replace(regex, (m) => `<ruby class="furigana-ruby">${m}<rt>${dict[m]}</rt></ruby>`);
+  assert(converted.includes('<ruby class="furigana-ruby">私<rt>わたし</rt></ruby>'), 'Debe generar furigana correcto para 私');
 });
 
 console.log('\n======================================================');

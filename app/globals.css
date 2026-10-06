@@ -1439,15 +1439,31 @@ ruby {
 }
 
 rt {
-  font-size: 0.65em;
+  font-size: 0.62em;
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
   user-select: none;
   line-height: 1;
 }
 
-.hide-furigana rt {
-  display: none;
+ruby.furigana-ruby {
+  display: inline-ruby;
+  ruby-position: over;
+  ruby-align: center;
+}
+
+ruby.furigana-ruby rt {
+  font-size: 0.58em;
+  color: var(--accent);
+  font-weight: 700;
+  user-select: none;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.hide-furigana rt,
+.hide-furigana ruby rt {
+  display: none !important;
 }
 
 /* Story Reader Component */
