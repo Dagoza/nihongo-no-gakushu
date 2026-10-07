@@ -1177,6 +1177,10 @@ body {
   box-shadow: 0 2px 10px rgba(99, 102, 241, 0.2);
 }
 
+.nav-tab-pill:active {
+  transform: scale(0.96);
+}
+
 .tab-pill-icon {
   flex-shrink: 0;
   transition: transform 0.18s ease;
@@ -4578,6 +4582,10 @@ ruby.furigana-ruby rt {
   transform: translateY(-1px);
 }
 
+.word-token-btn:active {
+  transform: scale(0.95);
+}
+
 .word-token-btn.has-kanji {
   text-decoration: underline;
   text-decoration-color: rgba(99, 102, 241, 0.4);
@@ -4623,6 +4631,10 @@ ruby.furigana-ruby rt {
   border-color: var(--border-focus);
 }
 
+.cue-action-btn:active {
+  transform: scale(0.96);
+}
+
 /* Panel de Controles de Inmersión */
 .immersion-controls-panel {
   display: flex;
@@ -4661,6 +4673,10 @@ ruby.furigana-ruby rt {
   color: var(--primary-light);
 }
 
+.control-btn:active {
+  transform: scale(0.92);
+}
+
 .control-btn-play {
   background: var(--primary);
   border-color: var(--primary);
@@ -4673,6 +4689,10 @@ ruby.furigana-ruby rt {
   background: var(--primary-light);
   border-color: var(--primary-light);
   color: #fff;
+}
+
+.control-btn-play:active {
+  transform: scale(0.92);
 }
 
 .immersion-toggle-group {
@@ -4715,6 +4735,10 @@ ruby.furigana-ruby rt {
   color: #fff;
 }
 
+.speed-btn:active {
+  transform: scale(0.92);
+}
+
 .toggle-feature-btn {
   display: inline-flex;
   align-items: center;
@@ -4738,6 +4762,10 @@ ruby.furigana-ruby rt {
   background: var(--primary-bg);
   border-color: var(--primary-light);
   color: var(--primary-light);
+}
+
+.toggle-feature-btn:active {
+  transform: scale(0.95);
 }
 
 /* Vocabulario Recomendado Section */
@@ -8603,6 +8631,21 @@ html {
   }
 }
 
+/* Offline Page Module Cards */
+.offline-module-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.offline-module-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+}
+
+.offline-module-card:active {
+  transform: scale(0.98);
+}
+
 /* User-friendly UI Modal animations */
 @keyframes uiModalFadeIn {
   from {
@@ -9921,6 +9964,9 @@ html {
     padding: 0 !important;
     touch-action: none !important;
     overscroll-behavior: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
   }
 
   .practice-pad-window {
@@ -9931,6 +9977,9 @@ html {
     max-height: 100dvh !important;
     border-radius: 0 !important;
     border: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
   }
 
   .practice-mobile-hide {

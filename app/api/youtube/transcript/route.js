@@ -269,27 +269,49 @@ export async function POST(request) {
     const xmlText = await subRes.text();
     const cues = parseXmlCues(xmlText);
 
-    // Si el idioma principal no es español y hay una pista en español disponible, descargarla para traducir
-    const esTrack = captionTracks.find(t => t.languageCode === 'es' && t !== targetTrack);
-    if (esTrack && targetTrack.languageCode !== 'es') {
-      try {
-        const esRes = await fetch(esTrack.baseUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0' }
-        });
-        if (esRes.ok) {
-          const esXml = await esRes.text();
-          const esCues = parseXmlCues(esXml);
-          if (esCues.length) {
-            for (const cue of cues) {
-              const matchEs = esCues.find(ec => Math.abs(ec.start - cue.start) <= 3.0);
-              if (matchEs) {
-                cue.translation_es = matchEs.text;
-              }
-            }
+    // Si el idioma principal no es español, buscar traducción al español (manual o autogenerada con &tlang=es)
+    if (targetTrack.languageCode !== 'es') {
+      const esTrack = captionTracks.find(t => t.languageCode === 'es' && t !== targetTrack);
+      let esCues = [];
+
+      if (esTrack) {
+        try {
+          const esRes = await fetch(esTrack.baseUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+          });
+          if (esRes.ok) {
+            const esXml = await esRes.text();
+            esCues = parseXmlCues(esXml);
+          }
+        } catch (esErr) {
+          console.warn('Error fetching secondary Spanish track:', esErr);
+        }
+      }
+
+      // Si no hubo pista manual en español, intentar descargar la pista autotraducida por YouTube con &tlang=es
+      if (!esCues.length && targetTrack.baseUrl) {
+        try {
+          const autoEsUrl = `${targetTrack.baseUrl}&tlang=es`;
+          const autoEsRes = await fetch(autoEsUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+          });
+          if (autoEsRes.ok) {
+            const autoEsXml = await autoEsRes.text();
+            esCues = parseXmlCues(autoEsXml);
+          }
+        } catch (autoErr) {
+          console.warn('Error fetching auto-translated Spanish track:', autoErr);
+        }
+      }
+
+      if (esCues.length) {
+        for (let i = 0; i < cues.length; i++) {
+          const cue = cues[i];
+          const matchEs = esCues.find(ec => Math.abs(ec.start - cue.start) <= 2.5) || (esCues.length === cues.length ? esCues[i] : null);
+          if (matchEs && matchEs.text) {
+            cue.translation_es = matchEs.text;
           }
         }
-      } catch (esErr) {
-        console.warn('Error fetching secondary Spanish track:', esErr);
       }
     }
 

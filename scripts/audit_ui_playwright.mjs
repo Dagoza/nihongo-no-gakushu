@@ -4,7 +4,7 @@
  * NIHONGO MASTER - AUTOMATED UI & MODALS AUDIT RUNNER (PLAYWRIGHT)
  * ==============================================================================
  * Automated visual and accessibility audit suite covering:
- * - 11 core application routes across Desktop (1440x900) & Mobile (390x844)
+ * - 12 application routes across Desktop (1440x900) & Mobile (390x844)
  * - 16 interactive modals and dialog components
  * - HTTP 200 status verification & console error detection
  * - Mobile horizontal overflow detection (scrollWidth > clientWidth)
@@ -78,7 +78,7 @@ const MOBILE_PROFILE = {
 };
 
 // ------------------------------------------------------------------------------
-// AUDIT INVENTORY: 11 CORE APPLICATION ROUTES
+// AUDIT INVENTORY: 12 CORE APPLICATION ROUTES
 // ------------------------------------------------------------------------------
 const ROUTES_INVENTORY = [
   { slug: 'curriculum', route: '/curriculum', name: 'Currículum General (37 Módulos)', category: 'Curriculum' },
@@ -91,7 +91,8 @@ const ROUTES_INVENTORY = [
   { slug: 'kanji', route: '/kanji', name: 'Catálogo de Kanjis & Trazos', category: 'Ideogramas' },
   { slug: 'pdf', route: '/pdf', name: 'Biblioteca de Materiales & PDFs', category: 'Materiales' },
   { slug: 'saved', route: '/saved', name: 'Mis Recursos & Vocabulario Guardado', category: 'Repaso' },
-  { slug: 'progress', route: '/progress', name: 'Progreso & Estadísticas', category: 'Estadísticas' }
+  { slug: 'progress', route: '/progress', name: 'Progreso & Estadísticas', category: 'Estadísticas' },
+  { slug: 'offline', route: '/offline', name: 'Pantalla Offline & Resiliencia PWA', category: 'PWA' }
 ];
 
 // ------------------------------------------------------------------------------

@@ -86,6 +86,7 @@ export default function YouTubeImmersionTab({
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [autoPauseAfterCue, setAutoPauseAfterCue] = useState(false);
   const [showSpanishTranslation, setShowSpanishTranslation] = useState(true);
+  const [showFurigana, setShowFurigana] = useState(true);
   const [transcriptSearch, setTranscriptSearch] = useState('');
   const [activeTrackLang, setActiveTrackLang] = useState(currentVideo?.spokenLanguage || 'ja');
   const [changingTrackLoading, setChangingTrackLoading] = useState(false);
@@ -560,7 +561,7 @@ export default function YouTubeImmersionTab({
                   }}
                   title={readingKana ? `${token.text} [${readingKana}] (${token.pos || 'palabra'}) - Clic para guardar` : `Clic para guardar: ${token.text}`}
                 >
-                  {hasKanji && readingKana ? (
+                  {showFurigana && hasKanji && readingKana ? (
                     <ruby className="furigana-ruby">
                       {token.text}
                       <rt className="furigana-rt">{readingKana}</rt>
@@ -575,7 +576,7 @@ export default function YouTubeImmersionTab({
         );
       }
 
-      // 2. Tokenización nativa inteligente como fallback
+      // 2. Tokenización nativa inteligente como fallback enriquecida con vocabulario y kanjis
       const tokens = tokenizeJapanese(sentenceText);
       return (
         <span className="interactive-sentence-tokens">
@@ -588,6 +589,12 @@ export default function YouTubeImmersionTab({
               );
             }
             const hasKanji = containsKanji(token.text);
+            const knownVocab = hasKanji ? (vocabularyData || []).find(
+              (v) => v.kanji === token.text || v.kana === token.text
+            ) : null;
+            const knownKanji = (hasKanji && !knownVocab) ? (kanjiData || []).find((k) => k.kanji === token.text) : null;
+            const readingKana = knownVocab?.kana || knownKanji?.pronunciation || null;
+
             return (
               <button
                 key={idx}
@@ -595,11 +602,18 @@ export default function YouTubeImmersionTab({
                 className={`word-token-btn ${hasKanji ? 'has-kanji' : ''}`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleOpenSaveWord(token.text, cue);
+                  handleOpenSaveWord(token.text, cue, readingKana);
                 }}
-                title={`Clic para analizar y guardar: ${token.text}`}
+                title={readingKana ? `${token.text} [${readingKana}] - Clic para analizar y guardar` : `Clic para analizar y guardar: ${token.text}`}
               >
-                {token.text}
+                {showFurigana && hasKanji && readingKana ? (
+                  <ruby className="furigana-ruby">
+                    {token.text}
+                    <rt className="furigana-rt">{readingKana}</rt>
+                  </ruby>
+                ) : (
+                  token.text
+                )}
               </button>
             );
           })}
@@ -1398,9 +1412,15 @@ export default function YouTubeImmersionTab({
                       {renderInteractiveSentence(activeCue.text, activeCue)}
                     </div>
 
-                    {showSpanishTranslation && (activeCue.translation_es || activeCue.translation_en) && (
+                    {showSpanishTranslation && (
                       <div className="active-cue-spanish">
-                        {activeCue.translation_es || activeCue.translation_en}
+                        {(activeCue.translation_es || activeCue.translation_en) ? (
+                          activeCue.translation_es || activeCue.translation_en
+                        ) : (
+                          <span style={{ fontStyle: 'italic', opacity: 0.75, fontSize: '0.85rem' }}>
+                            💡 Haz clic en cualquier palabra para ver su significado o guardarla
+                          </span>
+                        )}
                       </div>
                     )}
 
@@ -1493,14 +1513,24 @@ export default function YouTubeImmersionTab({
                     <span>Modo Shadowing {autoPauseAfterCue ? '(Activado)' : ''}</span>
                   </button>
 
-                  {/* Toggle Traducción Español */}
+                  {/* Toggle Furigana */}
                   <button
-                    className="toggle-feature-btn"
+                    className={`toggle-feature-btn ${showFurigana ? 'active' : ''}`}
+                    onClick={() => setShowFurigana(!showFurigana)}
+                    title="Activar u ocultar lectura furigana sobre los kanjis"
+                  >
+                    <Languages size={16} />
+                    <span>{showFurigana ? 'Furigana On' : 'Furigana Off'}</span>
+                  </button>
+
+                  {/* Toggle Traducción Español (Subtítulos Bilingües) */}
+                  <button
+                    className={`toggle-feature-btn ${showSpanishTranslation ? 'active' : ''}`}
                     onClick={() => setShowSpanishTranslation(!showSpanishTranslation)}
-                    title="Mostrar u ocultar traducción secundaria al español"
+                    title="Mostrar u ocultar traducción secundaria al español para modo bilingüe"
                   >
                     {showSpanishTranslation ? <Eye size={16} /> : <EyeOff size={16} />}
-                    <span>{showSpanishTranslation ? 'Traducción On' : 'Traducción Off'}</span>
+                    <span>{showSpanishTranslation ? 'Bilingüe On' : 'Solo Japonés'}</span>
                   </button>
                 </div>
               </div>

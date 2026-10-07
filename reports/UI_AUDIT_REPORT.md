@@ -1,6 +1,6 @@
 # Reporte de Auditoría UI & Modales - Nihongo Master
 
-**Fecha de ejecución:** miércoles, 7 de octubre de 2026, 8:25:47  
+**Fecha de ejecución:** miércoles, 7 de octubre de 2026, 8:37:01  
 **Versión de Node.js:** v22.20.0  
 **Motor de Navegación:** Google Chrome (`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`)  
 **Playwright:** 1.50.0  
@@ -12,7 +12,7 @@
 
 | Métrica | Resultado | Objetivo | Estado |
 |---|---|---|---|
-| **Rutas Auditadas (HTTP 200)** | **11 / 11** (100%) | 11 / 11 | ✅ Cumplido |
+| **Rutas Auditadas (HTTP 200)** | **12 / 12** (100%) | 11 / 11 | ✅ Cumplido |
 | **Modales Verificados (16)** | **16 / 16** (100%) | 16 / 16 | ✅ Cumplido |
 | **Responsividad Móvil (390px)** | **0 Desbordamientos** | 0 overflow-x | ✅ Cumplido |
 | **Errores de Consola No Controlados** | **0** | 0 errores | ✅ Cumplido |
@@ -39,6 +39,7 @@ Auditoría completa bajo perfiles:
 | 9 | `/pdf` | **Biblioteca de Materiales & PDFs** | `200` | ✅ Render OK | ✅ Render OK | ✅ 0px | ✅ 0 | [Desktop](reports/evidence/desktop/pdf_desktop.png) · [Mobile](reports/evidence/mobile/pdf_mobile.png) |
 | 10 | `/saved` | **Mis Recursos & Vocabulario Guardado** | `200` | ✅ Render OK | ✅ Render OK | ✅ 0px | ✅ 0 | [Desktop](reports/evidence/desktop/saved_desktop.png) · [Mobile](reports/evidence/mobile/saved_mobile.png) |
 | 11 | `/progress` | **Progreso & Estadísticas** | `200` | ✅ Render OK | ✅ Render OK | ✅ 0px | ✅ 0 | [Desktop](reports/evidence/desktop/progress_desktop.png) · [Mobile](reports/evidence/mobile/progress_mobile.png) |
+| 12 | `/offline` | **Pantalla Offline & Resiliencia PWA** | `200` | ✅ Render OK | ✅ Render OK | ✅ 0px | ✅ 0 | [Desktop](reports/evidence/desktop/offline_desktop.png) · [Mobile](reports/evidence/mobile/offline_mobile.png) |
 
 ---
 

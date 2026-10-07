@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-07T13:25:47.430Z",
+  "timestamp": "2026-10-07T13:37:01.704Z",
   "environment": {
     "nodeVersion": "v22.20.0",
     "platform": "darwin",
@@ -173,6 +173,20 @@
       "overflowDiff": 0,
       "desktopScreenshot": "reports/evidence/desktop/progress_desktop.png",
       "mobileScreenshot": "reports/evidence/mobile/progress_mobile.png"
+    },
+    {
+      "slug": "offline",
+      "route": "/offline",
+      "name": "Pantalla Offline & Resiliencia PWA",
+      "category": "PWA",
+      "status": 200,
+      "consoleErrors": [],
+      "desktopCaptured": true,
+      "mobileCaptured": true,
+      "mobileOverflow": false,
+      "overflowDiff": 0,
+      "desktopScreenshot": "reports/evidence/desktop/offline_desktop.png",
+      "mobileScreenshot": "reports/evidence/mobile/offline_mobile.png"
     }
   ],
   "modals": [
@@ -416,8 +430,8 @@
     }
   ],
   "summary": {
-    "totalPages": 11,
-    "pagesPassed": 11,
+    "totalPages": 12,
+    "pagesPassed": 12,
     "totalModals": 16,
     "modalsPassed": 16,
     "totalConsoleErrors": 0,

@@ -48,6 +48,30 @@ export default function PracticePadModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Bloquear scroll del body cuando el modal está abierto (evita que la página de fondo interfiera en móvil)
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    const prevTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+    
+    // Prevenir touchmove en el documento para evitar scroll bounce en iOS
+    const preventTouchMove = (e) => {
+      // Permitir scroll en elementos internos que lo necesiten (toolbar, library)
+      if (e.target.closest && (e.target.closest('.practice-toolbar') || e.target.closest('[style*="overflowY"]') || e.target.closest('[style*="overflow-y"]'))) {
+        return;
+      }
+    };
+    document.addEventListener('touchmove', preventTouchMove, { passive: true });
+    
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.touchAction = prevTouchAction;
+      document.removeEventListener('touchmove', preventTouchMove);
+    };
+  }, [isOpen]);
+
   // Target text & character navigation
   const [text, setText] = useState(initialText || '');
   const [kana, setKana] = useState(initialKana || '');
@@ -1213,7 +1237,12 @@ export default function PracticePadModal({
         alignItems: 'center',
         justifyContent: 'center',
         padding: isFullscreen ? 0 : '16px',
-        animation: 'fadeIn 0.2s ease-out'
+        animation: 'fadeIn 0.2s ease-out',
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+        overscrollBehavior: 'none'
       }}
     >
       <div 
@@ -1235,7 +1264,9 @@ export default function PracticePadModal({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          position: 'relative'
+          position: 'relative',
+          userSelect: 'none',
+          WebkitUserSelect: 'none'
         }}
       >
         {/* TOAST / BANNER NOTIFICATION */}
@@ -2092,6 +2123,8 @@ export default function PracticePadModal({
                   justifyContent: 'center',
                   background: paperStyle === 'chalkboard' ? '#090d16' : '#f1f5f9',
                   userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  WebkitTouchCallout: 'none',
                   touchAction: 'none',
                   cursor: (isPanMode || isSpacePressed)
                     ? (isPanning ? 'grabbing' : 'grab')
@@ -2140,6 +2173,7 @@ export default function PracticePadModal({
                         color: paperStyle === 'chalkboard' ? '#94a3b8' : '#64748b',
                         fontFamily: 'var(--font-jp)',
                         userSelect: 'none',
+                        WebkitUserSelect: 'none',
                         transition: 'opacity 0.2s ease'
                       }}
                     >
