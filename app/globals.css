@@ -9919,6 +9919,8 @@ html {
 @media (max-width: 768px) {
   .practice-pad-overlay {
     padding: 0 !important;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
   }
 
   .practice-pad-window {

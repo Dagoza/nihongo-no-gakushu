@@ -2088,6 +2088,7 @@ export default function PracticePadModal({
                   justifyContent: 'center',
                   background: paperStyle === 'chalkboard' ? '#090d16' : '#f1f5f9',
                   userSelect: 'none',
+                  touchAction: 'none',
                   cursor: (isPanMode || isSpacePressed)
                     ? (isPanning ? 'grabbing' : 'grab')
                     : (zoom > 1 ? 'default' : 'default')
