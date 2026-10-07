@@ -5,6 +5,7 @@ import { X, Edit3, Volume2, Check, RotateCcw, StickyNote, Sparkles, AlertCircle 
 import audioManager from '../../lib/audioManager';
 import { hiraganaToKatakana, katakanaToHiragana, containsKanji, convertKanjiToKanaSync, fetchKanjiReading, cleanKanaOnly } from '../../lib/japaneseUtils';
 import { useApp } from '../../lib/AppContext';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function EditWordModal({
   isOpen,
@@ -14,6 +15,7 @@ export default function EditWordModal({
   onReset,     // Callback (wordIdOrKanji) => void to restore default
   isCustomized = false
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   const contextApp = useApp();
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
   const showAlert = contextApp?.showAlert || ((opts) => console.log(opts));
@@ -253,6 +255,8 @@ export default function EditWordModal({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="save-vocab-modal" 
         onClick={(e) => e.stopPropagation()} 
         style={{ maxWidth: 580 }}

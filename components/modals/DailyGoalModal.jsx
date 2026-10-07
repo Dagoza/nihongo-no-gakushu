@@ -6,6 +6,7 @@ import { useApp } from '../../lib/AppContext';
 import { SRSRating, isDue, reviewQuestionCard } from '../../lib/srs';
 import { recordDailyGoalActivity, saveState } from '../../lib/storage';
 import audioManager from '../../lib/audioManager';
+import useFocusTrap from '../../lib/useFocusTrap';
 import { 
   isNotificationSupported, 
   getNotificationPermission, 
@@ -76,6 +77,7 @@ const CATEGORIES = [
 const JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
 export default function DailyGoalModal({ isOpen, onClose }) {
+  const modalCardRef = useFocusTrap(isOpen);
   const { appState, onUpdateState, openTour, openNotificationSettings } = useApp();
   const appStateRef = useRef(appState);
 
@@ -451,6 +453,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       }}
     >
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="modal-content daily-goal-modal"
         style={{ 
           maxWidth: 680, 

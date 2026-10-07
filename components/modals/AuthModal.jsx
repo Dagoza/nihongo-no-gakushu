@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Mail, Lock, AlertCircle, CheckCircle2, X, ArrowRight, Loader2 } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, signInWithGoogle } from '../../lib/supabaseSync';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
+  const modalCardRef = useFocusTrap(isOpen);
   const [activeTab, setActiveTab] = useState('signin'); // 'signin' | 'signup'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -129,6 +131,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       }}
     >
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={activeTab === 'signin' ? 'Iniciar Sesión' : 'Crear Cuenta Segura'}

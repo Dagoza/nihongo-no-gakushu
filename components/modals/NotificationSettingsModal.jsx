@@ -26,11 +26,13 @@ import {
   getNextScheduledNotification,
   DEFAULT_ACTIVITIES
 } from '../../lib/notificationManager';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function NotificationSettingsModal({
   isOpen,
   onClose
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   const [supported, setSupported] = useState(true);
   const [permission, setPermission] = useState('default');
   const [masterEnabled, setMasterEnabled] = useState(false);
@@ -203,7 +205,15 @@ export default function NotificationSettingsModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="notif-modal-container" onClick={(e) => e.stopPropagation()}>
+      <div 
+        ref={modalCardRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="notif-modal-title"
+        className="notif-modal-container" 
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="notif-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
@@ -222,7 +232,7 @@ export default function NotificationSettingsModal({
               <BellRing size={20} />
             </div>
             <div style={{ minWidth: 0 }}>
-              <h3 style={{ fontSize: '1.12rem', fontWeight: 800, margin: 0, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <h3 id="notif-modal-title" style={{ fontSize: '1.12rem', fontWeight: 800, margin: 0, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 Recordatorios Diarios
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

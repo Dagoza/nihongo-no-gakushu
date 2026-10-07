@@ -11297,3 +11297,43 @@ html {
   }
 }
 
+/* ==============================================================================
+   Skeleton Shimmer Loaders (REC-03 - Prevención de CLS)
+   ============================================================================== */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-subtle, #f1f5f9) 0%,
+    var(--border, #e2e8f0) 50%,
+    var(--bg-subtle, #f1f5f9) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerSkeleton 1.5s infinite ease-in-out;
+  border-radius: var(--radius-md, 12px);
+}
+
+[data-theme="dark"] .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #1e293b 0%,
+    #334155 50%,
+    #1e293b 100%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes shimmerSkeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-card {
+  height: 160px;
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid var(--border);
+}
+

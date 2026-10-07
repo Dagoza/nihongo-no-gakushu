@@ -6,6 +6,7 @@ import audioManager from '../../lib/audioManager';
 import { lookupJapaneseWord, analyzeJapaneseSentence, convertKanjiToKanaSync, hiraganaToKatakana, containsKanji } from '../../lib/japaneseUtils';
 import vocabularyData from '../../data/vocabulary.json';
 import { useApp } from '../../lib/AppContext';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function DictionaryModal({
   isOpen,
@@ -15,6 +16,7 @@ export default function DictionaryModal({
 }) {
   const contextApp = useApp();
   const inputRef = useRef(null);
+  const modalCardRef = useFocusTrap(isOpen);
 
   const [query, setQuery] = useState(initialSearch || '');
   const [activeTokenIndex, setActiveTokenIndex] = useState(0);
@@ -143,8 +145,10 @@ export default function DictionaryModal({
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="dict-modal-title">
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="modal-content dictionary-modal-card" 
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -181,7 +185,7 @@ export default function DictionaryModal({
               <BookOpen size={20} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
+              <h3 id="dict-modal-title" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
                 Diccionario Rápido & Análisis Morfológico
               </h3>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>

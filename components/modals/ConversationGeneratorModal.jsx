@@ -8,6 +8,7 @@ import { useApp } from '../../lib/AppContext';
 import ComprehensionQuiz from '../features/ComprehensionQuiz';
 import * as wanakana from 'wanakana';
 import { getSpeakerVoice, getSpeakerStyle } from '../tabs/ConversationTab';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export const CONVERSATION_CATEGORIES = [
   { id: 'food', label: 'Comida & Restaurantes', icon: '🍱', prompt: 'Pidiendo en un restaurante japonés, preguntando por platos e ingredientes' },
@@ -30,6 +31,7 @@ export default function ConversationGeneratorModal({
   onSelectConversation,
   authUser: propAuthUser = null
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   let contextApp = null;
   try {
     contextApp = useApp();
@@ -248,6 +250,8 @@ export default function ConversationGeneratorModal({
   return (
     <div className="conv-modal-backdrop" onClick={onClose}>
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="conv-modal-window" 
         onClick={(e) => e.stopPropagation()}
         role="dialog"

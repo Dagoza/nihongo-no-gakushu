@@ -775,8 +775,15 @@ export default function VocabTab({
           </div>
 
           {/* Cards Grid */}
-          <div className="vocab-grid">
-            {filteredVocab.slice(0, visibleCount).map((item) => {
+          {isLoading ? (
+            <div className="vocab-grid">
+              {Array.from({ length: 8 }).map((_, idx) => (
+                <div key={idx} className="vocab-card skeleton-shimmer skeleton-card" style={{ opacity: 0.75 }} />
+              ))}
+            </div>
+          ) : (
+            <div className="vocab-grid">
+              {filteredVocab.slice(0, visibleCount).map((item) => {
               const isMastered = !!appState.masteredVocab?.[item.id];
               const wordKey = item.id || item.kanji;
               const isSelected = selectedWordIds.has(wordKey);
@@ -990,6 +997,7 @@ export default function VocabTab({
               );
             })}
           </div>
+        )}
 
           {visibleCount < filteredVocab.length && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 24, marginBottom: 16 }}>

@@ -20,6 +20,7 @@ import kanjiData from '../../data/kanji.json';
 import storiesData from '../../data/stories.json';
 import { useApp } from '../../lib/AppContext';
 import PitchAccent from '../features/PitchAccent';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function SaveVocabModal({
   isOpen,
@@ -28,6 +29,7 @@ export default function SaveVocabModal({
   appState,
   onUpdateState
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   const contextApp = useApp();
   const showAlert = contextApp?.showAlert || ((opts) => console.log(opts));
   const [activeTab, setActiveTab] = useState(initialData.type || 'word'); // 'word' | 'phrase' | 'kanji'
@@ -425,6 +427,8 @@ export default function SaveVocabModal({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="save-vocab-modal" 
         onClick={(e) => e.stopPropagation()}
         role="dialog"

@@ -624,7 +624,11 @@ export default function KanjiTab({
 
           {/* Kanji Cards Grid */}
           <div className="kanji-grid">
-            {filteredKanji.length === 0 ? (
+            {isLoading ? (
+              Array.from({ length: 8 }).map((_, idx) => (
+                <div key={idx} className="kanji-card skeleton-shimmer skeleton-card" style={{ opacity: 0.75 }} />
+              ))
+            ) : filteredKanji.length === 0 ? (
               <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
                 <p style={{ fontSize: '1rem', marginBottom: 12 }}>No se encontraron kanjis con los filtros seleccionados.</p>
                 <button 

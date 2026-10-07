@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import ComprehensionQuiz from '../features/ComprehensionQuiz';
 import * as wanakana from 'wanakana';
 import { getSpeakerVoice, getSpeakerStyle } from '../tabs/ConversationTab';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export const THEME_PRESETS = [
   { id: 'daily', label: 'Vida Cotidiana', icon: '🏠', prompt: 'Vida cotidiana, rutinas en el hogar y compras' },
@@ -39,6 +40,7 @@ export default function AIGeneratorModal({
     contextApp = useApp();
   } catch {}
 
+  const modalCardRef = useFocusTrap(isOpen);
   const router = useRouter();
   const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
@@ -479,6 +481,8 @@ export default function AIGeneratorModal({
   return (
     <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 1200 }}>
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="modal-window" 
         onClick={(e) => e.stopPropagation()}
         role="dialog"

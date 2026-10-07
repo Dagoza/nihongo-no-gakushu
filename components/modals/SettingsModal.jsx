@@ -5,11 +5,13 @@ import { X, Settings, Volume2, Sparkles, Gauge, Moon, Sun, Check, Sliders, Compa
 
 import audioManager from '../../lib/audioManager';
 import { useApp } from '../../lib/AppContext';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function SettingsModal({
   isOpen,
   onClose
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   const contextApp = useApp();
   const {
     appState,
@@ -85,8 +87,10 @@ export default function SettingsModal({
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="modal-content settings-modal-card" 
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -123,7 +127,7 @@ export default function SettingsModal({
               <Settings size={20} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
+              <h3 id="settings-modal-title" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
                 Configuración del Sistema
               </h3>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>

@@ -10,6 +10,7 @@ import {
   HelpCircle, 
   X 
 } from 'lucide-react';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function UIModal({ 
   isOpen, 
@@ -24,6 +25,7 @@ export default function UIModal({
   onAction = null,
   onConfirm = null
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) {
@@ -92,6 +94,11 @@ export default function UIModal({
       }}
     >
       <div 
+        ref={modalCardRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ui-modal-title"
+        tabIndex={-1}
         className="ui-modal-card" 
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -130,13 +137,16 @@ export default function UIModal({
           </div>
 
           <div style={{ flex: 1, minWidth: 0, paddingTop: '2px' }}>
-            <h3 style={{
-              margin: '0 0 6px 0',
-              fontSize: '1.12rem',
-              fontWeight: 700,
-              color: 'var(--text-primary)',
-              lineHeight: 1.3
-            }}>
+            <h3 
+              id="ui-modal-title"
+              style={{
+                margin: '0 0 6px 0',
+                fontSize: '1.12rem',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                lineHeight: 1.3
+              }}
+            >
               {title || (type === 'confirm' ? '¿Estás seguro?' : 'Aviso')}
             </h3>
             <div style={{

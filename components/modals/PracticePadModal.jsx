@@ -6,6 +6,7 @@ import { PenTool, Eraser, RotateCcw, Undo2, Redo2, Grid, Download, Save, FolderO
 import * as wanakana from 'wanakana';
 import audioManager from '../../lib/audioManager';
 import { STROKE_STYLES, GRID_TYPES, PAPER_STYLES, INK_PALETTES, PAGE_WIDTH, PAGE_HEIGHT, savePracticeDraft, loadPracticeDraft, getSavedPracticeSheets, savePracticeSheet, deletePracticeSheet, syncSavedPracticeSheetsWithCloud, getGridLayout, renderGridOnCanvas, renderStroke, renderStrokeSegment, renderAllStrokes, analyzeDrawingAccuracy, exportPracticeSheetToImage } from '../../lib/practiceSheetManager';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function PracticePadModal({
   isOpen = false,
@@ -21,6 +22,7 @@ export default function PracticePadModal({
   onDeleteFromCloud,
   cloudSavedSheets
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   // Main view modes
   const [activeTab, setActiveTab] = useState(initialTab || 'canvas'); // 'canvas' | 'stroke_quiz'
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -1215,6 +1217,8 @@ export default function PracticePadModal({
       }}
     >
       <div 
+        ref={modalCardRef}
+        tabIndex={-1}
         className="practice-pad-window"
         role="dialog"
         aria-modal="true"

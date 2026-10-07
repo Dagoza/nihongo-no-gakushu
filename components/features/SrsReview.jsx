@@ -18,9 +18,62 @@ export default function SrsReview({
 
   const currentItem = queue[srsReviewIndex];
 
+  // Retroalimentación háptica y auditiva sutil para calificaciones FSRS (REC-02)
+  const triggerSrsFeedback = useCallback((rating) => {
+    if (typeof window === 'undefined') return;
+
+    // 1. Feedback háptico en móviles
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try {
+        if (rating === SRSRating.EASY) navigator.vibrate([15, 30, 20]);
+        else if (rating === SRSRating.GOOD) navigator.vibrate(20);
+        else if (rating === SRSRating.HARD) navigator.vibrate(30);
+        else navigator.vibrate([40, 40, 40]);
+      } catch {}
+    }
+
+    // 2. Tono auditivo sintetizado mediante Web Audio API
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+
+      if (rating === SRSRating.EASY) {
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12); // A5
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.18);
+      } else if (rating === SRSRating.GOOD) {
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.10); // E5
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } else if (rating === SRSRating.HARD) {
+        osc.frequency.setValueAtTime(440, ctx.currentTime); // A4
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+      } else { // AGAIN
+        osc.frequency.setValueAtTime(330, ctx.currentTime); // E4
+        osc.frequency.setValueAtTime(261.63, ctx.currentTime + 0.08); // C4
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.16);
+      }
+    } catch {}
+  }, []);
+
   // Calificación de tarjeta
   const handleRate = useCallback((rating) => {
     if (!currentItem) return;
+    triggerSrsFeedback(rating);
     const prevCard = getCurrentCard ? getCurrentCard(currentItem) : null;
     
     setReviewHistory(prev => [
