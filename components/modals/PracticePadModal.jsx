@@ -34,6 +34,18 @@ export default function PracticePadModal({
     }
   }, [isOpen, initialTab]);
 
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Target text & character navigation
   const [text, setText] = useState(initialText || '');
   const [kana, setKana] = useState(initialKana || '');
@@ -1204,6 +1216,9 @@ export default function PracticePadModal({
     >
       <div 
         className="practice-pad-window"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title || "Cuaderno de Caligrafía"}
         style={{
           width: isFullscreen ? '100vw' : '96vw',
           maxWidth: isFullscreen ? '100vw' : '1100px',
@@ -1431,6 +1446,7 @@ export default function PracticePadModal({
               onClick={onClose}
               style={{ padding: '4px', color: 'var(--danger)', height: 28, width: 28 }}
               title="Cerrar cuaderno"
+              aria-label="Cerrar cuaderno"
             >
               <X size={18} />
             </button>
@@ -1591,7 +1607,7 @@ export default function PracticePadModal({
                   title="Añadir nueva hoja a este cuaderno"
                 >
                   <Plus size={13} />
-                  <span>+ Hoja</span>
+                  <span>Hoja</span>
                 </button>
 
                 {pages.length > 1 && (

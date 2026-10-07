@@ -66,6 +66,18 @@ export default function ConversationGeneratorModal({
     }
   }, [isOpen, initialWords, defaultLevel]);
 
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleAddWord = () => {
     const trimmed = newWordInput.trim();
     if (!trimmed) return;
@@ -238,6 +250,9 @@ export default function ConversationGeneratorModal({
       <div 
         className="conv-modal-window" 
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Generador de Diálogos con IA"
       >
         {/* Header */}
         <div className="conv-modal-header">

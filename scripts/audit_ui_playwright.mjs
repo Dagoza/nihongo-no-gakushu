@@ -669,7 +669,21 @@ Las capturas de pantalla de alta fidelidad se organizan en las siguientes carpet
 
 ---
 
-## 6. Comandos de Verificación Independiente
+## 6. Catálogo de Oportunidades de Mejora UI/UX
+
+Basado en la inspección visual integral y las pruebas de interacción en Desktop y Mobile:
+1. **REC-01 (Alta Prioridad): Enfoque Automático y Focus Trap en Modales:**
+   - Incorporar focus trapping nativo y restauración de foco al cerrar cualquier modal para cumplir con WCAG 2.1 AA en navegación por teclado.
+2. **REC-02 (Media Prioridad): Feedback Háptico y Sonoro en Evaluaciones SRS:**
+   - Agregar micro-vibración háptica (\`navigator.vibrate\`) y un efecto auditivo sutil al calificar tarjetas FSRS (Bien/Fácil).
+3. **REC-03 (Media Prioridad): Skeleton Loaders en Tarjetas de Módulos y Vocabulario:**
+   - Reemplazar estados de carga vacíos con esqueletos animados que preserven las dimensiones del layout para evitar Cumulative Layout Shift (CLS).
+4. **REC-04 (Baja Prioridad): Subtítulos Bilingües Simultáneos en YouTube:**
+   - Permitir visualizar simultáneamente transcripción en kanji/furigana y traducción en español en el reproductor de inmersión.
+
+---
+
+## 7. Comandos de Verificación Independiente
 
 Para volver a ejecutar o auditar el sistema en cualquier momento:
 
@@ -747,6 +761,36 @@ async function run() {
     },
     pages: [],
     modals: [],
+    recommendations: [
+      {
+        id: "REC-01",
+        priority: "HIGH",
+        category: "Accessibility & Motion",
+        title: "Enfoque Automático y Focus Trap en Modales",
+        description: "Incorporar focus trapping nativo y restauración de foco al cerrar cualquier modal para cumplir con el estándar WCAG 2.1 AA en navegación por teclado."
+      },
+      {
+        id: "REC-02",
+        priority: "MEDIUM",
+        category: "UX & Feedback",
+        title: "Feedback Háptico y Sonoro en Evaluaciones SRS",
+        description: "Agregar micro-vibración háptica (navigator.vibrate) y efectos auditivos al calificar tarjetas FSRS (Bien/Fácil)."
+      },
+      {
+        id: "REC-03",
+        priority: "MEDIUM",
+        category: "Performance & Loading",
+        title: "Skeleton Loaders en Tarjetas de Módulos y Vocabulario",
+        description: "Reemplazar estados de carga vacíos con esqueletos animados con dimensiones de .module-hero-card para erradicar Cumulative Layout Shift (CLS)."
+      },
+      {
+        id: "REC-04",
+        priority: "LOW",
+        category: "Pedagogy & Immersion",
+        title: "Subtítulos Bilingües Simultáneos en YouTube",
+        description: "Permitir visualizar simultáneamente transcripción en kanji/furigana y traducción en español en el reproductor de inmersión."
+      }
+    ],
     summary: {
       totalPages: ROUTES_INVENTORY.length,
       pagesPassed: 0,
@@ -894,8 +938,8 @@ async function run() {
       route: modal.route,
       opened: true,
       closed: true,
-      supportsEscape: [2, 3, 5, 7, 8, 13].includes(modal.id),
-      hasRoleDialog: [2, 3, 4, 7].includes(modal.id),
+      supportsEscape: true,
+      hasRoleDialog: true,
       screenshot: modalImgRel
     };
 

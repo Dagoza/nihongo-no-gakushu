@@ -148,6 +148,18 @@ export default function SaveVocabModal({
     }
   }, [isOpen, initialData, appState?.savedCustomVocab]);
 
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   // Auto-completar Katakana cuando cambia Hiragana
@@ -412,7 +424,13 @@ export default function SaveVocabModal({
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="save-vocab-modal" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className="save-vocab-modal" 
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Guardar en Mi Cuaderno de Estudio"
+      >
         {/* Header */}
         <div className="modal-header">
           <div className="modal-title-group">

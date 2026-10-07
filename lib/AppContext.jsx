@@ -386,6 +386,11 @@ export function AppProvider({ children }) {
       window.__nihongoOpenPracticePad = openPracticePad;
       window.__nihongoOpenDailyGoal = openDailyGoalModal;
       window.__nihongoOpenNotifications = openNotificationSettings;
+      window.__nihongoOpenDictionary = openDictionary;
+      window.__nihongoOpenSettings = () => setIsSettingsModalOpen(true);
+      window.__nihongoOpenAuth = () => setIsAuthModalOpen(true);
+      window.__nihongoShowAlert = showAlert;
+      window.__nihongoShowConfirm = showConfirm;
     }
 
     let tourTimer = null;

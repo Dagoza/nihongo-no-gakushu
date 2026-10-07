@@ -97,6 +97,18 @@ export default function AIGeneratorModal({
     }
   }, [isOpen, initialItems, defaultLevel, initialType]);
 
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Loading animation message cycler
   useEffect(() => {
     if (!isGenerating) return;
@@ -469,6 +481,9 @@ export default function AIGeneratorModal({
       <div 
         className="modal-window" 
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Generador de Contenido con IA"
         style={{ 
           maxWidth: 780, 
           width: '92%', 

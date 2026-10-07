@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-07T02:27:56.353Z",
+  "timestamp": "2026-10-07T06:42:41.447Z",
   "environment": {
     "nodeVersion": "v22.20.0",
     "platform": "darwin",
@@ -185,8 +185,8 @@
       "route": "/curriculum",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/01_practice_pad.png"
     },
     {
@@ -224,7 +224,7 @@
       "route": "/curriculum",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
+      "supportsEscape": true,
       "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/04_daily_goal.png"
     },
@@ -238,7 +238,7 @@
       "opened": true,
       "closed": true,
       "supportsEscape": true,
-      "hasRoleDialog": false,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/05_notification_settings.png"
     },
     {
@@ -250,8 +250,8 @@
       "route": "/curriculum",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/06_auth.png"
     },
     {
@@ -277,7 +277,7 @@
       "opened": true,
       "closed": true,
       "supportsEscape": true,
-      "hasRoleDialog": false,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/08_ui_modal.png"
     },
     {
@@ -289,8 +289,8 @@
       "route": "/saved",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/09_save_vocab.png"
     },
     {
@@ -302,8 +302,8 @@
       "route": "/vocab",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/10_edit_word.png"
     },
     {
@@ -315,8 +315,8 @@
       "route": "/vocab",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/11_ai_generator.png"
     },
     {
@@ -328,8 +328,8 @@
       "route": "/nhk",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/12_conversation_generator.png"
     },
     {
@@ -342,7 +342,7 @@
       "opened": true,
       "closed": true,
       "supportsEscape": true,
-      "hasRoleDialog": false,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/13_srs_review.png"
     },
     {
@@ -354,8 +354,8 @@
       "route": "/grammar",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/14_speech_practice.png"
     },
     {
@@ -367,8 +367,8 @@
       "route": "/story",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/15_comprehension_quiz.png"
     },
     {
@@ -380,9 +380,39 @@
       "route": "/kanji?draw=日",
       "opened": true,
       "closed": true,
-      "supportsEscape": false,
-      "hasRoleDialog": false,
+      "supportsEscape": true,
+      "hasRoleDialog": true,
       "screenshot": "reports/evidence/modals/16_kanji_draw.png"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-01",
+      "priority": "HIGH",
+      "category": "Accessibility & Motion",
+      "title": "Enfoque Automático y Focus Trap en Modales",
+      "description": "Incorporar focus trapping nativo y restauración de foco al cerrar cualquier modal para cumplir con el estándar WCAG 2.1 AA en navegación por teclado."
+    },
+    {
+      "id": "REC-02",
+      "priority": "MEDIUM",
+      "category": "UX & Feedback",
+      "title": "Feedback Háptico y Sonoro en Evaluaciones SRS",
+      "description": "Agregar micro-vibración háptica (navigator.vibrate) y efectos auditivos al calificar tarjetas FSRS (Bien/Fácil)."
+    },
+    {
+      "id": "REC-03",
+      "priority": "MEDIUM",
+      "category": "Performance & Loading",
+      "title": "Skeleton Loaders en Tarjetas de Módulos y Vocabulario",
+      "description": "Reemplazar estados de carga vacíos con esqueletos animados con dimensiones de .module-hero-card para erradicar Cumulative Layout Shift (CLS)."
+    },
+    {
+      "id": "REC-04",
+      "priority": "LOW",
+      "category": "Pedagogy & Immersion",
+      "title": "Subtítulos Bilingües Simultáneos en YouTube",
+      "description": "Permitir visualizar simultáneamente transcripción en kanji/furigana y traducción en español en el reproductor de inmersión."
     }
   ],
   "summary": {

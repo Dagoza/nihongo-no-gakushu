@@ -562,7 +562,48 @@
       8
     ],
     "title_es": "Un día en Japón (私の日本での生活)",
-    "level": "N5"
+    "level": "N5",
+    "comprehension_questions": [
+      {
+        "id": "story_1_q1",
+        "question": "¿A qué hora se despierta el protagonista todos los días según el relato?",
+        "question_jp": "主人公は毎日何時に起きますか？",
+        "options": [
+          "午前六時半 (6:30 AM)",
+          "午前七時 (7:00 AM)",
+          "午前八時 (8:00 AM)",
+          "午前六時 (6:00 AM)"
+        ],
+        "correct_index": 0,
+        "explanation": "En el capítulo 1 se menciona explícitamente: «今は午前六時半です。私は毎日、早く起きます» (Ahora son las seis y media de la mañana. Me levanto temprano todos los días)."
+      },
+      {
+        "id": "story_1_q2",
+        "question": "¿Dónde y a qué hora se encuentra el protagonista con su amiga Mika?",
+        "question_jp": "主人公はどこで友達のみかに会いましたか？",
+        "options": [
+          "駅の前の店 (En la tienda frente a la estación)",
+          "学校の南口、午前八時 (En la entrada sur de la escuela, a las 8:00)",
+          "電車の中、午前七時半 (Dentro del tren, a las 7:30)",
+          "家の近くの公園 (En el parque cerca de su casa)"
+        ],
+        "correct_index": 1,
+        "explanation": "En el capítulo 2 relata: «八時に駅を出て、学校へ入ります。学校の南口で友達に会いました。彼女の名前は「みか」です» (A las ocho salgo de la estación y entro a la escuela. En la entrada sur me encontré con mi amiga)."
+      },
+      {
+        "id": "story_1_q3",
+        "question": "¿Cuál es el plan de la amiga para el fin de semana y cómo describe ese lugar?",
+        "question_jp": "友達は週末にどこへ行く予定ですか？",
+        "options": [
+          "西の川に行く（足を入れると気持ちがいい）",
+          "北の新しい店に行く（本を買う）",
+          "東の山に行く（山は低いが空気が良くて楽しい）",
+          "図書館に行く（日本語のテストの勉強をする）"
+        ],
+        "correct_index": 2,
+        "explanation": "En el capítulo 4 la amiga contesta: «東の山に行きます。山は高いですか？いいえ、低いですが、空気が良くて楽しいです» (Voy a la montaña del este. ¿Es alta? No, es baja, pero el aire es bueno y es divertido)."
+      }
+    ]
   },
   {
     "id": "story_2",

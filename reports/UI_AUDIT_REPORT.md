@@ -1,6 +1,6 @@
 # Reporte de Auditoría UI & Modales - Nihongo Master
 
-**Fecha de ejecución:** martes, 6 de octubre de 2026, 21:27:56  
+**Fecha de ejecución:** miércoles, 7 de octubre de 2026, 1:42:41  
 **Versión de Node.js:** v22.20.0  
 **Motor de Navegación:** Google Chrome (`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`)  
 **Playwright:** 1.50.0  
@@ -48,22 +48,22 @@ Verificación de apertura, cierre limpio, no bloqueo de interfaz y accesibilidad
 
 | # | Modal | Componente | Ruta Base | Apertura | Cierre Limpio | Soporta Esc | WAI-ARIA | Evidencia |
 |---|---|---|---|:---:|:---:|:---:|:---:|---|
-| 1 | **PracticePadModal** | `components/modals/PracticePadModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/01_practice_pad.png) |
+| 1 | **PracticePadModal** | `components/modals/PracticePadModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/01_practice_pad.png) |
 | 2 | **DictionaryModal** | `components/modals/DictionaryModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/02_dictionary.png) |
 | 3 | **SettingsModal** | `components/modals/SettingsModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/03_settings.png) |
-| 4 | **DailyGoalModal** | `components/modals/DailyGoalModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ✅ role="dialog" | [Captura](reports/evidence/modals/04_daily_goal.png) |
-| 5 | **NotificationSettingsModal** | `components/modals/NotificationSettingsModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ℹ️ Present | [Captura](reports/evidence/modals/05_notification_settings.png) |
-| 6 | **AuthModal** | `components/modals/AuthModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/06_auth.png) |
+| 4 | **DailyGoalModal** | `components/modals/DailyGoalModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/04_daily_goal.png) |
+| 5 | **NotificationSettingsModal** | `components/modals/NotificationSettingsModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/05_notification_settings.png) |
+| 6 | **AuthModal** | `components/modals/AuthModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/06_auth.png) |
 | 7 | **ProductTour** | `components/layout/ProductTour.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/07_product_tour.png) |
-| 8 | **UIModal** | `components/modals/UIModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ℹ️ Present | [Captura](reports/evidence/modals/08_ui_modal.png) |
-| 9 | **SaveVocabModal** | `components/modals/SaveVocabModal.jsx` | `/saved` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/09_save_vocab.png) |
-| 10 | **EditWordModal** | `components/modals/EditWordModal.jsx` | `/vocab` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/10_edit_word.png) |
-| 11 | **AIGeneratorModal** | `components/modals/AIGeneratorModal.jsx` | `/vocab` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/11_ai_generator.png) |
-| 12 | **ConversationGeneratorModal** | `components/modals/ConversationGeneratorModal.jsx` | `/nhk` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/12_conversation_generator.png) |
-| 13 | **SrsReview** | `components/features/SrsReview.jsx` | `/vocab?mode=srs` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ℹ️ Present | [Captura](reports/evidence/modals/13_srs_review.png) |
-| 14 | **SpeechPractice** | `components/features/SpeechPractice.jsx` | `/grammar` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/14_speech_practice.png) |
-| 15 | **ComprehensionQuiz** | `components/features/ComprehensionQuiz.jsx` | `/story` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/15_comprehension_quiz.png) |
-| 16 | **KanjiDraw** | `components/features/KanjiDraw.jsx` | `/kanji?draw=日` | ✅ Abierto | ✅ Cerrado | ⚠️ Botón | ℹ️ Present | [Captura](reports/evidence/modals/16_kanji_draw.png) |
+| 8 | **UIModal** | `components/modals/UIModal.jsx` | `/curriculum` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/08_ui_modal.png) |
+| 9 | **SaveVocabModal** | `components/modals/SaveVocabModal.jsx` | `/saved` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/09_save_vocab.png) |
+| 10 | **EditWordModal** | `components/modals/EditWordModal.jsx` | `/vocab` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/10_edit_word.png) |
+| 11 | **AIGeneratorModal** | `components/modals/AIGeneratorModal.jsx` | `/vocab` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/11_ai_generator.png) |
+| 12 | **ConversationGeneratorModal** | `components/modals/ConversationGeneratorModal.jsx` | `/nhk` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/12_conversation_generator.png) |
+| 13 | **SrsReview** | `components/features/SrsReview.jsx` | `/vocab?mode=srs` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/13_srs_review.png) |
+| 14 | **SpeechPractice** | `components/features/SpeechPractice.jsx` | `/grammar` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/14_speech_practice.png) |
+| 15 | **ComprehensionQuiz** | `components/features/ComprehensionQuiz.jsx` | `/story` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/15_comprehension_quiz.png) |
+| 16 | **KanjiDraw** | `components/features/KanjiDraw.jsx` | `/kanji?draw=日` | ✅ Abierto | ✅ Cerrado | ✅ Sí | ✅ role="dialog" | [Captura](reports/evidence/modals/16_kanji_draw.png) |
 
 ---
 
@@ -84,7 +84,21 @@ Las capturas de pantalla de alta fidelidad se organizan en las siguientes carpet
 
 ---
 
-## 6. Comandos de Verificación Independiente
+## 6. Catálogo de Oportunidades de Mejora UI/UX
+
+Basado en la inspección visual integral y las pruebas de interacción en Desktop y Mobile:
+1. **REC-01 (Alta Prioridad): Enfoque Automático y Focus Trap en Modales:**
+   - Incorporar focus trapping nativo y restauración de foco al cerrar cualquier modal para cumplir con WCAG 2.1 AA en navegación por teclado.
+2. **REC-02 (Media Prioridad): Feedback Háptico y Sonoro en Evaluaciones SRS:**
+   - Agregar micro-vibración háptica (`navigator.vibrate`) y un efecto auditivo sutil al calificar tarjetas FSRS (Bien/Fácil).
+3. **REC-03 (Media Prioridad): Skeleton Loaders en Tarjetas de Módulos y Vocabulario:**
+   - Reemplazar estados de carga vacíos con esqueletos animados que preserven las dimensiones del layout para evitar Cumulative Layout Shift (CLS).
+4. **REC-04 (Baja Prioridad): Subtítulos Bilingües Simultáneos en YouTube:**
+   - Permitir visualizar simultáneamente transcripción en kanji/furigana y traducción en español en el reproductor de inmersión.
+
+---
+
+## 7. Comandos de Verificación Independiente
 
 Para volver a ejecutar o auditar el sistema en cualquier momento:
 

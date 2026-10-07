@@ -302,6 +302,18 @@ export default function DailyGoalModal({ isOpen, onClose }) {
     wasOpenRef.current = isOpen;
   }, [isOpen, generateQueue, selectedCategory, selectedLevel, targetCount]);
 
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Clean option selection and feedback whenever question index changes
   useEffect(() => {
     setSelectedOption(null);
@@ -429,7 +441,15 @@ export default function DailyGoalModal({ isOpen, onClose }) {
   const currentStreak = appState?.streak || 1;
 
   return (
-    <div className="modal-backdrop" style={{ zIndex: 1200 }}>
+    <div 
+      className="modal-backdrop" 
+      style={{ zIndex: 1200 }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget && onClose) {
+          onClose();
+        }
+      }}
+    >
       <div 
         className="modal-content daily-goal-modal"
         style={{ 

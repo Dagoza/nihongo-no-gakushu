@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Mail, Lock, AlertCircle, CheckCircle2, X, ArrowRight, Loader2 } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, signInWithGoogle } from '../../lib/supabaseSync';
 
@@ -13,6 +13,18 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -98,18 +110,28 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 16,
-      background: 'rgba(0, 0, 0, 0.65)',
-      backdropFilter: 'blur(6px)'
-    }}>
+    <div 
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+        background: 'rgba(0, 0, 0, 0.65)',
+        backdropFilter: 'blur(6px)'
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget && onClose) {
+          onClose();
+        }
+      }}
+    >
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label={activeTab === 'signin' ? 'Iniciar Sesión' : 'Crear Cuenta Segura'}
         style={{
           width: '100%',
           maxWidth: 440,
@@ -155,6 +177,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           </div>
           <button
             onClick={onClose}
+            aria-label="Cerrar modal"
             style={{
               background: 'transparent',
               border: 'none',

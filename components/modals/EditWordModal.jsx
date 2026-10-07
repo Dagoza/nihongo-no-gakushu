@@ -73,6 +73,18 @@ export default function EditWordModal({
     }
   }, [isOpen, word]);
 
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !word) return null;
 
   const handleHiraganaChange = (val) => {
@@ -244,6 +256,9 @@ export default function EditWordModal({
         className="save-vocab-modal" 
         onClick={(e) => e.stopPropagation()} 
         style={{ maxWidth: 580 }}
+        role="dialog"
+        aria-modal="true"
+        aria-label={isCustomized ? 'Editar Palabra y Notas (Personalizada)' : 'Modificar Escritura o Agregar Notas'}
       >
         {/* Header */}
         <div className="modal-header">
