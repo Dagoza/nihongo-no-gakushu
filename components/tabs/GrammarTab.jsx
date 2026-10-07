@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Volume2, CheckCircle2, Circle, Search, ArrowRight, ArrowLeft, Sparkles, RotateCcw, HelpCircle, BookOpen, PenTool, Info } from 'lucide-react';
+import { Volume2, CheckCircle2, Circle, Search, ArrowLeft, RotateCcw, PenTool, Info, Target } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import particlesData from '../../data/particles.json';
 import * as wanakana from 'wanakana';
@@ -250,28 +250,43 @@ export default function GrammarTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>🎯</span>
-            <span>Partículas y Gramática</span>
-          </h2>
-          <button
-            type="button"
-            className="tour-info-shortcut-btn"
-            onClick={() => {
-              if (contextApp?.openTour) {
-                contextApp.openTour('particles');
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                window.__nihongoOpenTour('particles');
-              }
-            }}
-            title="Ver guía y explicación de Partículas y Gramática"
-            aria-label="Información de Partículas"
-          >
-            <Info size={14} />
-            <span>Guía</span>
-          </button>
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)' }}
+            >
+              <Target size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.12)' }}>
+                  Recursos & Práctica
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('particles');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('particles');
+                    }
+                  }}
+                  title="Ver guía y explicación de Partículas y Gramática"
+                  aria-label="Información de Partículas"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Partículas y Gramática</h1>
+              <p className="module-hero-subtitle">
+                Guía interactiva de partículas y estructuras gramaticales con explicaciones funcionales, oraciones de ejemplo y modo quiz.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

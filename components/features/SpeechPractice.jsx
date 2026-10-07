@@ -254,7 +254,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
       if (recognitionRef.current) {
         try {
           recognitionRef.current.abort();
-        } catch (e) {
+        } catch {
           // ignore
         }
       }
@@ -295,7 +295,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
         try {
           const hira = wanakana.toHiragana(cleaned);
           if (hira) candidates.add(hira);
-        } catch (e) {}
+        } catch {}
 
         const equivs = getNumberEquivalents(cleaned);
         for (const eq of equivs) {
@@ -303,7 +303,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
           try {
             const h = wanakana.toHiragana(eq);
             if (h) candidates.add(h);
-          } catch (e) {}
+          } catch {}
         }
       }
     };
@@ -349,7 +349,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
     let spokenHiragana = cleanSpoken;
     try {
       spokenHiragana = wanakana.toHiragana(cleanSpoken);
-    } catch (e) {}
+    } catch {}
 
     let best = candidates[0];
     let maxScore = -1;
@@ -359,7 +359,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
       let candHira = cleanCand;
       try {
         candHira = wanakana.toHiragana(cleanCand);
-      } catch (e) {}
+      } catch {}
 
       const lcsDirect = getLcsLength(cleanSpoken, cleanCand);
       const lcsHira = getLcsLength(spokenHiragana, candHira);
@@ -383,7 +383,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
     try {
       const hira = wanakana.toHiragana(cleanSpoken);
       if (hira) spokenVariants.add(hira);
-    } catch (e) {}
+    } catch {}
 
     const candidates = getCandidates();
 
@@ -392,7 +392,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
       let svHira = sv;
       try {
         svHira = wanakana.toHiragana(sv);
-      } catch (e) {}
+      } catch {}
 
       for (const cand of candidates) {
         if (!cand) continue;
@@ -400,7 +400,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
         let candHira = candClean;
         try {
           candHira = wanakana.toHiragana(candClean);
-        } catch (e) {}
+        } catch {}
 
         // Match exacto en kanji, dígitos o hiragana
         if (sv === candClean || svHira === candHira) {
@@ -439,7 +439,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
     if (isListening) {
       try {
         recognitionRef.current.stop();
-      } catch (err) {
+      } catch {
         setIsListening(false);
       }
     } else {

@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, CheckCircle2, RotateCcw, Sparkles, Check, MessageSquare, PenTool, Info } from 'lucide-react';
+import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, RotateCcw, Sparkles, Check, MessageSquare, PenTool, Info, Languages } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import kanjiData from '../../data/kanji.json';
 import * as wanakana from 'wanakana';
-import { SRSRating, getNewCard, reviewCard, isDue } from '../../lib/srs';
+import { getNewCard, reviewCard, isDue } from '../../lib/srs';
 import PitchAccent from '../features/PitchAccent';
 import { getKanjiFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
@@ -353,28 +353,43 @@ export default function KanjiTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>漢</span>
-            <span>Biblioteca de Kanji</span>
-          </h2>
-          <button
-            type="button"
-            className="tour-info-shortcut-btn"
-            onClick={() => {
-              if (contextApp?.openTour) {
-                contextApp.openTour('kanji');
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                window.__nihongoOpenTour('kanji');
-              }
-            }}
-            title="Ver guía y explicación de Kanjis y Trazos"
-            aria-label="Información de Kanjis"
-          >
-            <Info size={14} />
-            <span>Guía</span>
-          </button>
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)' }}
+            >
+              <Languages size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.12)' }}>
+                  Recursos & Práctica
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('kanji');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('kanji');
+                    }
+                  }}
+                  title="Ver guía y explicación de Kanjis y Trazos"
+                  aria-label="Información de Kanjis"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Biblioteca de Kanji</h1>
+              <p className="module-hero-subtitle">
+                Diccionario y estudio de kanjis con orden de trazos interactivo, lecturas On/Kun, radicales y nemotecnias visuales.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

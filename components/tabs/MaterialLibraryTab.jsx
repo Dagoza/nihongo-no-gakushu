@@ -82,31 +82,44 @@ export default function MaterialLibraryTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
-          <h2 className="section-title" style={{ margin: 0 }}>
-            <span>📑</span> Biblioteca y Visor de Materiales Originales
-          </h2>
-          <button
-            type="button"
-            className="tour-info-shortcut-btn"
-            onClick={() => {
-              if (contextApp?.openTour) {
-                contextApp.openTour('pdf');
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                window.__nihongoOpenTour('pdf');
-              }
-            }}
-            title="Ver guía y explicación de la Biblioteca de Materiales en el tour"
-            aria-label="Guía de Materiales"
-          >
-            <Info size={15} />
-            <span>Guía</span>
-          </button>
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)', boxShadow: '0 4px 14px rgba(6, 182, 212, 0.3)' }}
+            >
+              <FileText size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#06b6d4', background: 'rgba(6, 182, 212, 0.12)' }}>
+                  Recursos & Práctica
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('pdf');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('pdf');
+                    }
+                  }}
+                  title="Ver guía y explicación de la Biblioteca de Materiales en el tour"
+                  aria-label="Guía de Materiales"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Biblioteca y Visor de Materiales Originales</h1>
+              <p className="module-hero-subtitle">
+                Acceso centralizado a los 15 materiales de apoyo de tu carpeta <code style={{ background: 'var(--border)', padding: '2px 6px', borderRadius: 4 }}>material_de_estudio/</code>. Toda la información ha sido extraída e integrada en los ejercicios interactivos de la aplicación, y aquí puedes consultar los documentos originales siempre que lo desees.
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="section-desc">
-          Acceso centralizado a los 15 materiales de apoyo de tu carpeta <code style={{ background: 'var(--border)', padding: '2px 6px', borderRadius: 4 }}>material_de_estudio/</code>. Toda la información ha sido extraída e integrada en los ejercicios interactivos de la aplicación, y aquí puedes consultar los documentos originales siempre que lo desees.
-        </p>
       </div>
 
       {/* Filter and Search Bar */}

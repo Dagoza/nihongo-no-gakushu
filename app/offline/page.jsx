@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { WifiOff, RefreshCw, Home, BookOpen } from 'lucide-react';
+import { WifiOff, RefreshCw, Home } from 'lucide-react';
 
 export default function OfflinePage() {
   const [retrying, setRetrying] = React.useState(false);

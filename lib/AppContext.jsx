@@ -11,7 +11,7 @@ import {
   subscribeToAuthChanges,
   extractUserProfile 
 } from './supabaseSync';
-import { checkDailyReminderScheduled, checkAllScheduledActivities } from './notificationManager';
+import { checkAllScheduledActivities } from './notificationManager';
 
 export const AppContext = createContext(null);
 
@@ -68,7 +68,7 @@ export function AppProvider({ children }) {
         if (user?.id || user?.email) {
           localStorage.setItem(`nihongo_tour_seen_${user.id || user.email}_v2`, 'true');
         }
-      } catch (e) {}
+      } catch {}
     }
     setIsTourOpen(false);
   }, []);
@@ -82,7 +82,7 @@ export function AppProvider({ children }) {
         if (user?.id || user?.email) {
           localStorage.setItem(`nihongo_tour_seen_${user.id || user.email}_v2`, 'true');
         }
-      } catch (e) {}
+      } catch {}
     }
     setIsTourOpen(false);
   }, []);
@@ -101,7 +101,7 @@ export function AppProvider({ children }) {
       if (shouldShow) {
         setIsTourOpen(true);
       }
-    } catch (e) {}
+    } catch {}
   }, []);
   
   // Cuaderno de Práctica & Caligrafía (Notepad / Cuadrícula de Trazos)
@@ -183,7 +183,7 @@ export function AppProvider({ children }) {
       if (urlParams.get('daily_goal') === '1') {
         setIsDailyGoalModalOpen(true);
       }
-    } catch (e) {}
+    } catch {}
 
     if ('serviceWorker' in navigator) {
       const handleSwMessage = (event) => {
@@ -323,7 +323,7 @@ export function AppProvider({ children }) {
         if (Array.isArray(res.mergedState.savedPracticeSheets) && res.mergedState.savedPracticeSheets.length > 0) {
           try {
             localStorage.setItem('nihongo_saved_sheets_v2', JSON.stringify(res.mergedState.savedPracticeSheets));
-          } catch (e) {}
+          } catch {}
         }
         setSyncStatus('synced');
         const now = new Date();
@@ -335,7 +335,7 @@ export function AppProvider({ children }) {
         setSyncStatus('error');
         setSyncInfo(res.message || 'Error al sincronizar');
       }
-    } catch (e) {
+    } catch {
       setSyncStatus('error');
       setSyncInfo('Fallo de conexión al sincronizar');
     }
@@ -355,7 +355,7 @@ export function AppProvider({ children }) {
           saved.savedPracticeSheets = Array.from(map.values());
         }
       }
-    } catch (e) {}
+    } catch {}
 
     setAppState(saved);
     if (saved.theme) {

@@ -26,19 +26,16 @@ import {
   getNextScheduledNotification,
   DEFAULT_ACTIVITIES
 } from '../../lib/notificationManager';
-import { useApp } from '../../lib/AppContext';
 
 export default function NotificationSettingsModal({
   isOpen,
   onClose
 }) {
-  const contextApp = useApp();
   const [supported, setSupported] = useState(true);
   const [permission, setPermission] = useState('default');
   const [masterEnabled, setMasterEnabled] = useState(false);
   const [schedule, setSchedule] = useState([]);
   const [testStatus, setTestStatus] = useState(null); // 'sending' | 'sent' | 'error'
-  const [testingId, setTestingId] = useState(null);
   const [nextNotif, setNextNotif] = useState(null);
 
   const refreshState = useCallback(() => {
@@ -156,7 +153,7 @@ export default function NotificationSettingsModal({
       } else {
         setTestStatus('error');
       }
-    } catch (e) {
+    } catch {
       setTestStatus('error');
     }
 

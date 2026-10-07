@@ -1,35 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { 
-  Flame, 
-  Star, 
-  CheckCircle, 
-  BookOpen, 
-  Moon, 
-  Sun, 
-  Keyboard, 
-  CloudCheck, 
-  CloudOff, 
-  CloudSync,
-  User,
-  LogIn,
-  LogOut,
-  ChevronDown,
-  RefreshCw,
-  Mail,
-  ShieldCheck,
-  Bell,
-  AlertCircle,
-  ArrowRight,
-  X,
-  Sparkles,
-  PenTool,
-  Settings,
-  Target,
-  Compass,
-  Info
-} from 'lucide-react';
+import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync, User, LogIn, LogOut, ChevronDown, RefreshCw, Mail, Bell, ArrowRight, PenTool, Settings, Target, Compass, Info } from 'lucide-react';
 import curriculumData from '../../data/curriculum.json';
 import nhkLessonsData from '../../data/nhk_lessons.json';
 import convExercisesData from '../../data/conversation_exercises.json';

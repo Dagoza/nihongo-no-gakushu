@@ -1,34 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Bookmark, 
-  BookmarkCheck, 
-  Sparkles, 
-  Volume2, 
-  Trash2, 
-  Search, 
-  Layers, 
-  MessageSquare, 
-  BookOpen, 
-  Download, 
-  Copy, 
-  Check, 
-  ExternalLink, 
-  PlusCircle, 
-  Filter, 
-  ArrowRight, 
-  HelpCircle,
-  X,
-  FileText,
-  FileCode,
-  Share2,
-  Calendar,
-  Tag,
-  StickyNote,
-  PenTool,
-  Info
-} from 'lucide-react';
+import { Bookmark, BookmarkCheck, Sparkles, Volume2, Trash2, Search, Layers, MessageSquare, BookOpen, Download, Copy, Check, ExternalLink, PlusCircle, ArrowRight, X, FileText, FileCode, StickyNote, PenTool, Info } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import SaveVocabModal from '../modals/SaveVocabModal';
 import { 
@@ -1216,7 +1189,7 @@ export default function SavedTab({
                           className={`select-pill ${storyLevel === lvl ? 'active' : ''}`}
                           onClick={() => setStoryLevel(lvl)}
                         >
-                          {lvl} ({lvl === 'N5' ? 'Principiante' : lvl === 'N4' ? 'Básico' : 'Intermedio'})
+                          Nivel {lvl}
                         </button>
                       ))}
                     </div>

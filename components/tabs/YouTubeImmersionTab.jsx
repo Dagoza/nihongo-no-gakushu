@@ -1,40 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { 
-  Tv, 
-  Search, 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  SkipBack, 
-  SkipForward, 
-  Volume2, 
-  Bookmark, 
-  Layers, 
-  Languages, 
-  Sparkles, 
-  Filter, 
-  ExternalLink, 
-  ChevronRight, 
-  ArrowLeft, 
-  Eye, 
-  EyeOff, 
-  LogIn, 
-  Download, 
-  ListFilter,
-  CheckCircle2,
-  Clock,
-  BookOpen,
-  PlusCircle,
-  HelpCircle,
-  Link as LinkIcon,
-  Trash2,
-  Check,
-  ShieldCheck,
-  Loader2,
-  Info
-} from 'lucide-react';
+import { Tv, Search, Play, Pause, RotateCcw, SkipBack, SkipForward, Volume2, Bookmark, Layers, Languages, Sparkles, ExternalLink, ArrowLeft, Eye, EyeOff, LogIn, ListFilter, CheckCircle2, Clock, BookOpen, Link as LinkIcon, Check, ShieldCheck, Loader2, Info } from 'lucide-react';
 
 import dynamic from 'next/dynamic';
 import { useApp } from '../../lib/AppContext';
@@ -665,75 +632,85 @@ export default function YouTubeImmersionTab({
   return (
     <div className="tab-pane-container youtube-immersion-page">
       {/* Top Banner */}
-      <div className="immersion-header-bar">
-        <div className="immersion-title-group">
-          <div className="icon-badge">
-            <Tv size={24} />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <h2 className="immersion-heading" style={{ margin: 0 }}>Inmersión YouTube con Transcripciones Completas</h2>
-              <button
-                type="button"
-                className="tour-info-shortcut-btn"
-                onClick={() => {
-                  if (contextApp?.openTour) {
-                    contextApp.openTour('youtube');
-                  } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                    window.__nihongoOpenTour('youtube');
-                  }
-                }}
-                title="Ver guía y explicación de Inmersión YouTube en el tour"
-                aria-label="Guía de Inmersión YouTube"
-              >
-                <Info size={15} />
-                <span>Guía</span>
-              </button>
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', boxShadow: '0 4px 14px rgba(239, 68, 68, 0.3)' }}
+            >
+              <Tv size={28} />
             </div>
-            <p className="immersion-subheading">
-              Aprende en el idioma real en que se habla (Japonés, Inglés o Español), guarda videos enviados por URL incluso si tienen restricciones de inserción, y captura vocabulario en tu cuaderno.
-            </p>
-          </div>
-        </div>
-
-        {/* Sesión general de la aplicación */}
-        <div className="immersion-auth-status">
-          {authUser ? (
-            <div className="immersion-auth-pill connected" title={`Sesión activa: ${authUser.name || authUser.email}. Videos y cuaderno sincronizados con tu cuenta.`}>
-              {authUser.avatar ? (
-                <img
-                  src={authUser.avatar}
-                  alt={authUser.name || 'Usuario'}
-                  className="immersion-auth-avatar"
-                />
-              ) : (
-                <div className="immersion-auth-avatar-fallback">
-                  {(authUser.name || authUser.email || 'U')[0].toUpperCase()}
-                </div>
-              )}
-              <div className="immersion-auth-text">
-                <div className="immersion-auth-name-row">
-                  <span className="immersion-auth-name">{authUser.name || authUser.email.split('@')[0]}</span>
-                  <span className="immersion-auth-badge">
-                    <ShieldCheck size={11} /> Conectado
-                  </span>
-                </div>
-                <span className="immersion-auth-email">{authUser.email}</span>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.12)' }}>
+                  Aprender
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('youtube');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('youtube');
+                    }
+                  }}
+                  title="Ver guía y explicación de Inmersión YouTube en el tour"
+                  aria-label="Guía de Inmersión YouTube"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
               </div>
+              <h1 className="module-hero-title">Inmersión YouTube con Transcripciones Completas</h1>
+              <p className="module-hero-subtitle">
+                Aprende en el idioma real en que se habla (Japonés, Inglés o Español), guarda videos enviados por URL incluso si tienen restricciones de inserción, y captura vocabulario en tu cuaderno.
+              </p>
             </div>
-          ) : (
-            onOpenAuth && (
-              <button 
-                type="button"
-                className="btn-immersion-login" 
-                onClick={onOpenAuth}
-                title="Inicia sesión con tu cuenta para sincronizar videos y notas en la nube"
-              >
-                <LogIn size={15} />
-                <span>Iniciar sesión</span>
-              </button>
-            )
-          )}
+          </div>
+
+          {/* Sesión general de la aplicación */}
+          <div className="module-hero-actions">
+            <div className="immersion-auth-status">
+              {authUser ? (
+                <div className="immersion-auth-pill connected" title={`Sesión activa: ${authUser.name || authUser.email}. Videos y cuaderno sincronizados con tu cuenta.`}>
+                  {authUser.avatar ? (
+                    <img
+                      src={authUser.avatar}
+                      alt={authUser.name || 'Usuario'}
+                      className="immersion-auth-avatar"
+                    />
+                  ) : (
+                    <div className="immersion-auth-avatar-fallback">
+                      {(authUser.name || authUser.email || 'U')[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div className="immersion-auth-text">
+                    <div className="immersion-auth-name-row">
+                      <span className="immersion-auth-name">{authUser.name || authUser.email.split('@')[0]}</span>
+                      <span className="immersion-auth-badge">
+                        <ShieldCheck size={11} /> Conectado
+                      </span>
+                    </div>
+                    <span className="immersion-auth-email">{authUser.email}</span>
+                  </div>
+                </div>
+              ) : (
+                onOpenAuth && (
+                  <button 
+                    type="button"
+                    className="btn-immersion-login" 
+                    onClick={onOpenAuth}
+                    title="Inicia sesión con tu cuenta para sincronizar videos y notas en la nube"
+                  >
+                    <LogIn size={15} />
+                    <span>Iniciar sesión</span>
+                  </button>
+                )
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -895,9 +872,9 @@ export default function YouTubeImmersionTab({
                 onChange={(e) => setSelectedLevel(e.target.value)}
               >
                 <option value="all">Todos los niveles</option>
-                <option value="N5">Nivel N5 (Principiante)</option>
-                <option value="N4">Nivel N4 (Básico-Intermedio)</option>
-                <option value="N3">Nivel N3 (Intermedio)</option>
+                <option value="N5">Nivel N5</option>
+                <option value="N4">Nivel N4</option>
+                <option value="N3">Nivel N3</option>
               </select>
             </div>
 
@@ -1406,6 +1383,12 @@ export default function YouTubeImmersionTab({
                   onError={(code) => setPlayerError(code)}
                 />
               </div>
+
+              {playerError && (
+                <div style={{ background: '#fef2f2', border: '1px solid #f87171', color: '#991b1b', padding: '10px 14px', borderRadius: '8px', margin: '10px 0', fontSize: '0.88rem' }}>
+                  ⚠️ Este video no permite reproducción embebida externa (Error {playerError}). Por favor selecciona otro video del catálogo o ábrelo directamente en YouTube.
+                </div>
+              )}
 
               {/* Subtítulo Dinámico Karaoke debajo del video */}
               <div className="karaoke-subtitle-box">

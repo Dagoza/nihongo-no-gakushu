@@ -1,31 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { 
-  Volume2, 
-  CheckCircle2, 
-  Search, 
-  ArrowRight, 
-  ArrowLeft, 
-  Lightbulb, 
-  Keyboard, 
-  BookOpen, 
-  Layers,
-  Edit3,
-  StickyNote,
-  Plus,
-  RotateCcw,
-  Sparkles,
-  MessageSquare,
-  PenTool,
-  Info
-} from 'lucide-react';
+import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, BookOpen, Layers, Edit3, StickyNote, Plus, RotateCcw, Sparkles, MessageSquare, PenTool, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
 import vocabularyData from '../../data/vocabulary.json';
 import exercisesData from '../../data/exercises.json';
 import * as wanakana from 'wanakana';
-import { SRSRating, getNewCard, reviewCard, isDue } from '../../lib/srs';
+import { getNewCard, reviewCard, isDue } from '../../lib/srs';
 import PitchAccent from '../features/PitchAccent';
 import { getVocabularyFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
@@ -294,7 +276,7 @@ export default function VocabTab({
           })
         }).catch(e => console.warn('Supabase background update error:', e));
       }
-    } catch (e) {}
+    } catch {}
   };
 
   const handleResetWordEdit = (wordKey) => {
@@ -463,28 +445,43 @@ export default function VocabTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>📚</span>
-            <span>Entrenador de Vocabulario</span>
-          </h2>
-          <button
-            type="button"
-            className="tour-info-shortcut-btn"
-            onClick={() => {
-              if (contextApp?.openTour) {
-                contextApp.openTour('vocab');
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                window.__nihongoOpenTour('vocab');
-              }
-            }}
-            title="Ver guía y explicación del Banco Léxico y Pitch Accent"
-            aria-label="Información de Vocabulario"
-          >
-            <Info size={14} />
-            <span>Guía</span>
-          </button>
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)' }}
+            >
+              <Layers size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#3b82f6', background: 'rgba(59, 130, 246, 0.12)' }}>
+                  Recursos & Práctica
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('vocab');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('vocab');
+                    }
+                  }}
+                  title="Ver guía y explicación del Banco Léxico y Pitch Accent"
+                  aria-label="Información de Vocabulario"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Entrenador de Vocabulario</h1>
+              <p className="module-hero-subtitle">
+                Catálogo léxico con Pitch Accent, audio neuronal y ejercicios interactivos para dominar el vocabulario en todos los niveles JLPT.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

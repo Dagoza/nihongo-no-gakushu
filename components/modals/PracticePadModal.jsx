@@ -1,67 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import HanziWriter from 'hanzi-writer';
 import KanjiDraw from '../features/KanjiDraw';
-import { 
-  PenTool, 
-  Eraser, 
-  RotateCcw, 
-  Undo2, 
-  Redo2, 
-  Grid, 
-  Download, 
-  Save, 
-  FolderOpen, 
-  Volume2, 
-  Play, 
-  CheckCircle2, 
-  AlertCircle, 
-  Sparkles, 
-  ChevronLeft, 
-  ChevronRight, 
-  Maximize2, 
-  Minimize2, 
-  X, 
-  Eye, 
-  EyeOff, 
-  Sliders, 
-  Edit3, 
-  Trash2,
-  BookOpen,
-  FileText,
-  Check,
-  ZoomIn,
-  ZoomOut,
-  Hand,
-  Keyboard,
-  Plus,
-  Info
-} from 'lucide-react';
+import { PenTool, Eraser, RotateCcw, Undo2, Redo2, Grid, Download, Save, FolderOpen, Volume2, CheckCircle2, AlertCircle, Sparkles, ChevronLeft, ChevronRight, Maximize2, Minimize2, X, Eye, EyeOff, Edit3, Trash2, BookOpen, Check, ZoomIn, ZoomOut, Hand, Keyboard, Plus, Info } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../../lib/audioManager';
-import { 
-  STROKE_STYLES, 
-  GRID_TYPES, 
-  PAPER_STYLES, 
-  INK_PALETTES,
-  PAGE_WIDTH,
-  PAGE_HEIGHT,
-  savePracticeDraft,
-  loadPracticeDraft,
-  clearPracticeDraft,
-  getSavedPracticeSheets,
-  savePracticeSheet,
-  deletePracticeSheet,
-  syncSavedPracticeSheetsWithCloud,
-  getGridLayout,
-  renderGridOnCanvas,
-  renderStroke,
-  renderStrokeSegment,
-  renderAllStrokes,
-  analyzeDrawingAccuracy,
-  exportPracticeSheetToImage
-} from '../../lib/practiceSheetManager';
+import { STROKE_STYLES, GRID_TYPES, PAPER_STYLES, INK_PALETTES, PAGE_WIDTH, PAGE_HEIGHT, savePracticeDraft, loadPracticeDraft, getSavedPracticeSheets, savePracticeSheet, deletePracticeSheet, syncSavedPracticeSheetsWithCloud, getGridLayout, renderGridOnCanvas, renderStroke, renderStrokeSegment, renderAllStrokes, analyzeDrawingAccuracy, exportPracticeSheetToImage } from '../../lib/practiceSheetManager';
 
 export default function PracticePadModal({
   isOpen = false,
@@ -118,7 +62,6 @@ export default function PracticePadModal({
   // Canvas strokes & history for Undo/Redo
   const [strokes, setStrokes] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
-  const [isDrawing, setIsDrawing] = useState(false);
 
   // Sistema de páginas y hojas por cuaderno
   const [pages, setPages] = useState([
@@ -137,12 +80,6 @@ export default function PracticePadModal({
   const [sheetTitleInput, setSheetTitleInput] = useState('');
   const [notification, setNotification] = useState(null);
 
-  // HanziWriter interactive quiz state
-  const [quizSuccess, setQuizSuccess] = useState(false);
-  const [quizMistakes, setQuizMistakes] = useState(0);
-  const [quizLoading, setQuizLoading] = useState(false);
-  const [quizError, setQuizError] = useState(false);
-
   // Zoom & Pan state
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -156,8 +93,6 @@ export default function PracticePadModal({
   const artboardRef = useRef(null);
   const gridCanvasRef = useRef(null);
   const drawingCanvasRef = useRef(null);
-  const hanziContainerRef = useRef(null);
-  const writerRef = useRef(null);
   const currentStrokeRef = useRef(null);
   const isPointerDownRef = useRef(false);
   const isPanningRef = useRef(false);
@@ -192,9 +127,6 @@ export default function PracticePadModal({
   useEffect(() => {
     panRef.current = pan;
   }, [pan]);
-
-  // Dimensiones del área de trabajo: Proporción fija estándar de libreta/cuaderno japonés (800 x 1100 px)
-  const canvasDimensions = React.useMemo(() => ({ width: PAGE_WIDTH, height: PAGE_HEIGHT }), []);
 
   // Split text into individual characters (filtering out pure whitespace)
   const characters = React.useMemo(() => {
@@ -463,7 +395,7 @@ export default function PracticePadModal({
       if (drawingCanvasRef.current && activePointerIdRef.current !== null) {
         drawingCanvasRef.current.releasePointerCapture(activePointerIdRef.current);
       }
-    } catch (err) {}
+    } catch {}
     activePointerIdRef.current = null;
     activeTouchPointersRef.current.clear();
     redrawCommittedStrokes();
@@ -511,7 +443,7 @@ export default function PracticePadModal({
     activePointerIdRef.current = e.pointerId;
     try {
       drawCanvas.setPointerCapture(e.pointerId);
-    } catch (err) {}
+    } catch {}
 
     const rect = drawCanvas.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
@@ -622,7 +554,7 @@ export default function PracticePadModal({
         if (drawingCanvasRef.current && e?.pointerId !== undefined) {
           drawingCanvasRef.current.releasePointerCapture(e.pointerId);
         }
-      } catch (err) {}
+      } catch {}
       activePointerIdRef.current = null;
       return;
     }
@@ -636,7 +568,7 @@ export default function PracticePadModal({
         if (drawingCanvasRef.current && e?.pointerId !== undefined) {
           drawingCanvasRef.current.releasePointerCapture(e.pointerId);
         }
-      } catch (err) {}
+      } catch {}
       activePointerIdRef.current = null;
       return;
     }
@@ -648,7 +580,7 @@ export default function PracticePadModal({
       if (drawingCanvasRef.current && e?.pointerId !== undefined) {
         drawingCanvasRef.current.releasePointerCapture(e.pointerId);
       }
-    } catch (err) {}
+    } catch {}
     activePointerIdRef.current = null;
 
     const completed = currentStrokeRef.current;
@@ -1795,7 +1727,7 @@ export default function PracticePadModal({
                   if (useIme && !isComposingRef.current) {
                     try {
                       finalVal = wanakana.toKana(val, { IMEMode: true });
-                    } catch (err) {
+                    } catch {
                       finalVal = val;
                     }
                   }

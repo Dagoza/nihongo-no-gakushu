@@ -1,17 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  HelpCircle, 
-  Award, 
-  RotateCcw, 
-  Lightbulb,
-  Sparkles,
-  Check
-} from 'lucide-react';
-import audioManager from '../../lib/audioManager';
+import { CheckCircle2, XCircle, Award, RotateCcw, Lightbulb, Check } from 'lucide-react';
 
 export default function ComprehensionQuiz({ 
   questions = [], 

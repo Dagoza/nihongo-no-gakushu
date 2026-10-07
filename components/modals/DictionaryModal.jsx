@@ -1,28 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { 
-  Search, 
-  X, 
-  Volume2, 
-  BookmarkPlus, 
-  PenTool, 
-  BookOpen, 
-  Sparkles, 
-  Layers, 
-  ArrowRight,
-  Info,
-  Check
-} from 'lucide-react';
+import { Search, X, Volume2, BookmarkPlus, PenTool, BookOpen, Info } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import { 
-  lookupJapaneseWord, 
-  analyzeJapaneseSentence, 
-  convertKanjiToKanaSync,
-  hiraganaToKatakana,
-  katakanaToHiragana,
-  containsKanji
-} from '../../lib/japaneseUtils';
+import { lookupJapaneseWord, analyzeJapaneseSentence, convertKanjiToKanaSync, hiraganaToKatakana, containsKanji } from '../../lib/japaneseUtils';
 import vocabularyData from '../../data/vocabulary.json';
 import { useApp } from '../../lib/AppContext';
 

@@ -5,21 +5,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import storiesData from '../../data/stories.json';
 import audioManager from '../../lib/audioManager';
-import { 
-  Volume2, 
-  CheckCircle2, 
-  Sparkles, 
-  BookOpen, 
-  HelpCircle, 
-  PlusCircle, 
-  PenTool, 
-  Info, 
-  Search, 
-  Filter, 
-  Layers, 
-  ArrowRight, 
-  ExternalLink 
-} from 'lucide-react';
+import { Volume2, Sparkles, BookOpen, PenTool, Info, Search, ArrowRight } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import { useApp } from '../../lib/AppContext';
 
@@ -278,6 +264,60 @@ export default function StoryTab({
 
   return (
     <div>
+      {/* Top Hero Banner */}
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', boxShadow: '0 4px 14px rgba(139, 92, 246, 0.3)' }}
+            >
+              <BookOpen size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.12)' }}>
+                  Aprender & Generadores IA
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('story');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('story');
+                    }
+                  }}
+                  title="Ver guía y explicación de Historias y Generador IA en el tour"
+                  aria-label="Guía de Historias"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Historias Interactivas & Ecosistema de Generadores IA</h1>
+              <p className="module-hero-subtitle">
+                Lecturas graduadas por nivel JLPT (N5 a N1) con audio sincronizado, furigana interactivo y creación de nuevas historias personalizadas con Inteligencia Artificial.
+              </p>
+            </div>
+          </div>
+          
+          <div className="module-hero-actions">
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => onNavigate && onNavigate('saved')}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+              title="Ir a Guardados para crear una nueva historia con tus palabras"
+            >
+              <Sparkles size={14} />
+              <span>+ Crear Historia IA</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Story Selector Header & Level Filtering */}
       <div className="card" style={{ marginBottom: 20, padding: '16px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 14 }}>

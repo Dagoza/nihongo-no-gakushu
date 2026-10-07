@@ -37,3 +37,6 @@ yarn-error.log*
 
 # Root local symlink (actual files live inside /public/material_de_estudio)
 /material_de_estudio
+
+# Agents and teamwork temporary artifacts
+.agents/

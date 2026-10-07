@@ -106,7 +106,7 @@ export async function POST(request) {
         oembedTitle = oeData.title || '';
         oembedAuthor = oeData.author_name || '';
       }
-    } catch (e) {
+    } catch {
       // Ignorar fallo de oEmbed
     }
 
@@ -161,7 +161,7 @@ export async function POST(request) {
           });
         }
       }
-    } catch (hayaiErr) {
+    } catch {
       // Silenciosamente continuar con YouTube InnerTube si falla la consulta
     }
 

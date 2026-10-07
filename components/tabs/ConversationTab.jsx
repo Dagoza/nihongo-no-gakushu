@@ -2,41 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { 
-  Volume2, 
-  Play, 
-  BookOpen, 
-  MessageSquare, 
-  HelpCircle, 
-  CheckCircle2, 
-  XCircle, 
-  ArrowRight, 
-  RotateCcw,
-  Sparkles,
-  Layers,
-  Award,
-  Check,
-  CheckCheck,
-  ChevronRight,
-  Radio,
-  Eye,
-  EyeOff,
-  UserX,
-  BookmarkCheck,
-  Trash2,
-  Mic,
-  Plus,
-  Bookmark,
-  Users,
-  User,
-  Bot,
-  Calendar,
-  Tag,
-  PenTool,
-  Info,
-  Search,
-  Filter
-} from 'lucide-react';
+import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, RotateCcw, Sparkles, Award, Check, ChevronRight, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
 import nhkLessonsData from '../../data/nhk_lessons.json';
@@ -124,7 +90,7 @@ export default function ConversationTab({
   let contextApp = null;
   try {
     contextApp = useApp();
-  } catch (e) {}
+  } catch {}
 
   const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
@@ -365,9 +331,6 @@ export default function ConversationTab({
     setDialogueAnswers({});
   };
 
-  const convCompletedCount = allExercises.filter(ex => !!appState?.completedExercises?.[ex.id]).length;
-  const convPendingCount = allExercises.length - convCompletedCount;
-
   // Exercises filtered by current active dialogue, category and status
   const filteredExercises = useMemo(() => {
     return allExercises.filter(ex => {
@@ -515,28 +478,43 @@ export default function ConversationTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>📻</span>
-            <span>Conversación, Diálogos Irodori & NHK</span>
-          </h2>
-          <button
-            type="button"
-            className="tour-info-shortcut-btn"
-            onClick={() => {
-              if (contextApp?.openTour) {
-                contextApp.openTour('nhk');
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                window.__nihongoOpenTour('nhk');
-              }
-            }}
-            title="Ver guía y explicación de Conversaciones y Roleplay de Voz"
-            aria-label="Información de Conversaciones"
-          >
-            <Info size={14} />
-            <span>Guía</span>
-          </button>
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.3)' }}
+            >
+              <MessageSquare size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#ec4899', background: 'rgba(236, 72, 153, 0.12)' }}>
+                  Aprender
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('nhk');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('nhk');
+                    }
+                  }}
+                  title="Ver guía y explicación de Conversaciones y Roleplay de Voz"
+                  aria-label="Información de Conversaciones"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Conversación, Diálogos Irodori & NHK</h1>
+              <p className="module-hero-subtitle">
+                Práctica de conversación situacional, diálogos con audio nativo y roleplay interactivo con inteligencia artificial.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

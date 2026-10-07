@@ -1,25 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Sparkles, 
-  Send, 
-  Mic, 
-  MicOff, 
-  Volume2, 
-  RotateCcw, 
-  BookmarkCheck, 
-  Lightbulb, 
-  User, 
-  Bot, 
-  Check, 
-  Copy, 
-  RefreshCw,
-  HelpCircle,
-  PlayCircle,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+import { Sparkles, Send, Mic, MicOff, Volume2, RotateCcw, BookmarkCheck, Lightbulb, User, Bot } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { getAuthSession } from '../../lib/supabaseSync';
 import { useApp } from '../../lib/AppContext';
@@ -112,11 +94,10 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
   let contextApp = null;
   try {
     contextApp = useApp();
-  } catch (e) {}
+  } catch {}
 
   const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
-  const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
 
   // Scenario config
   const [selectedScenarioId, setSelectedScenarioId] = useState('cafe');
@@ -137,7 +118,6 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
   const [dictationSupported, setDictationSupported] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [suggestedReplies, setSuggestedReplies] = useState([]);
-  const [copiedDraft, setCopiedDraft] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const recognitionRef = useRef(null);
@@ -178,7 +158,7 @@ export default function RoleplayChat({ appState, onUpdateState, authUser: propAu
         };
 
         recognitionRef.current = recognition;
-      } catch (e) {
+      } catch {
         setDictationSupported(false);
       }
     }

@@ -1,39 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { 
-  X, 
-  Flame, 
-  Star, 
-  CheckCircle2, 
-  RotateCcw, 
-  Volume2, 
-  Eye, 
-  EyeOff, 
-  Sparkles, 
-  ArrowRight, 
-  Bell, 
-  Award, 
-  Languages, 
-  Layers, 
-  Target, 
-  Check, 
-  Settings2,
-  Sliders,
-  ChevronRight,
-  Info
-} from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { X, Flame, Star, CheckCircle2, RotateCcw, Volume2, Eye, EyeOff, Sparkles, ArrowRight, Bell, Award, Languages, Layers, Target, Check, Settings2, Info } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
-import { 
-  SRSRating, 
-  getNewCard, 
-  reviewCard, 
-  isDue, 
-  ensureFsrsCard, 
-  reviewQuestionCard, 
-  getIntervalPreviews,
-  getDueCounts 
-} from '../../lib/srs';
+import { SRSRating, isDue, reviewQuestionCard } from '../../lib/srs';
 import { recordDailyGoalActivity, saveState } from '../../lib/storage';
 import audioManager from '../../lib/audioManager';
 import { 
@@ -77,7 +47,7 @@ function getSavedQuizSession(cat, lvl, tgt) {
     ) {
       return parsed;
     }
-  } catch (e) {}
+  } catch {}
   return null;
 }
 
@@ -85,14 +55,14 @@ function saveQuizSession(sessionData) {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
-  } catch (e) {}
+  } catch {}
 }
 
 function clearQuizSession() {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.removeItem(SESSION_STORAGE_KEY);
-  } catch (e) {}
+  } catch {}
 }
 
 const CATEGORIES = [
@@ -128,7 +98,6 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
   // Notification state
   const [notifPermission, setNotifPermission] = useState('default');
-  const [isNotifActive, setIsNotifActive] = useState(false);
 
   // Build the questions queue based on preferences and FSRS due items
   const generateQueue = useCallback((cat = selectedCategory, lvl = selectedLevel, tgt = targetCount, forceNew = false) => {
@@ -377,7 +346,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       } else {
         audioManager.playSfx?.('wrong');
       }
-    } catch (e) {}
+    } catch {}
 
     setFeedback({
       isCorrect,
@@ -422,7 +391,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       clearQuizSession();
       try {
         audioManager.playSfx?.('complete');
-      } catch (e) {}
+      } catch {}
     }
   };
 

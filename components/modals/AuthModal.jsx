@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, Mail, Lock, AlertCircle, CheckCircle2, X, ArrowRight, Loader2, ExternalLink } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, AlertCircle, CheckCircle2, X, ArrowRight, Loader2 } from 'lucide-react';
 import { signInWithEmail, signUpWithEmail, signInWithGoogle } from '../../lib/supabaseSync';
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {

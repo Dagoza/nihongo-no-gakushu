@@ -1,40 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { 
-  Award, 
-  Clock, 
-  CheckCircle2, 
-  XCircle, 
-  HelpCircle, 
-  RotateCcw, 
-  Volume2, 
-  Eye, 
-  EyeOff, 
-  ChevronLeft, 
-  ChevronRight, 
-  Flag, 
-  Bookmark, 
-  BookmarkCheck, 
-  Play, 
-  Pause, 
-  Layers, 
-  Target, 
-  BookOpen, 
-  Headphones, 
-  Sparkles, 
-  ArrowRight, 
-  AlertTriangle,
-  Check,
-  Filter,
-  Shuffle,
-  ChevronDown,
-  ChevronUp,
-  Info
-} from 'lucide-react';
+import { Award, Clock, CheckCircle2, XCircle, HelpCircle, RotateCcw, Volume2, Eye, EyeOff, ChevronLeft, ChevronRight, Flag, Layers, Target, BookOpen, Headphones, AlertTriangle, Check, Shuffle, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
 import audioManager from '../../lib/audioManager';
-import { SRSRating, reviewQuestionCard, ensureFsrsCard } from '../../lib/srs';
+import { SRSRating, reviewQuestionCard } from '../../lib/srs';
 import { saveState, recordActivity } from '../../lib/storage';
 import jlptExamsData from '../../data/jlpt_exams.json';
 
@@ -47,11 +17,11 @@ const SECTIONS = [
 ];
 
 const JLPT_LEVELS = [
-  { id: 'N5', name: 'N5', desc: 'Principiante', passScore: 80, maxScore: 180, timeMins: 30 },
-  { id: 'N4', name: 'N4', desc: 'Básico', passScore: 90, maxScore: 180, timeMins: 35 },
-  { id: 'N3', name: 'N3', desc: 'Intermedio', passScore: 95, maxScore: 180, timeMins: 45 },
-  { id: 'N2', name: 'N2', desc: 'Intermedio Alto', passScore: 90, maxScore: 180, timeMins: 55 },
-  { id: 'N1', name: 'N1', desc: 'Avanzado', passScore: 100, maxScore: 180, timeMins: 60 }
+  { id: 'N5', name: 'N5', desc: 'Nivel N5', passScore: 80, maxScore: 180, timeMins: 30 },
+  { id: 'N4', name: 'N4', desc: 'Nivel N4', passScore: 90, maxScore: 180, timeMins: 35 },
+  { id: 'N3', name: 'N3', desc: 'Nivel N3', passScore: 95, maxScore: 180, timeMins: 45 },
+  { id: 'N2', name: 'N2', desc: 'Nivel N2', passScore: 90, maxScore: 180, timeMins: 55 },
+  { id: 'N1', name: 'N1', desc: 'Nivel N1', passScore: 100, maxScore: 180, timeMins: 60 }
 ];
 
 const SUBTYPE_LABELS = {
@@ -93,7 +63,7 @@ export default function JlptExamTab() {
   const [practiceFeedback, setPracticeFeedback] = useState({}); // { [qId]: { isCorrect, selectedIndex } }
 
   // Shuffle & Question Count Controls
-  const [isRandomOrder, setIsRandomOrder] = useState(true);
+  const [isRandomOrder] = useState(true);
   const [questionCountLimit, setQuestionCountLimit] = useState(25); // 15, 25, 0 (todas)
   const [shuffleSeed, setShuffleSeed] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -209,7 +179,7 @@ export default function JlptExamTab() {
         } else {
           audioManager.playSfx?.('wrong');
         }
-      } catch (e) {}
+      } catch {}
     } else {
       // Timed mode: record answer without giving immediate feedback
       setUserAnswers(prev => ({ ...prev, [qId]: optIndex }));
@@ -232,7 +202,7 @@ export default function JlptExamTab() {
     setExamFinished(true);
     try {
       audioManager.playSfx?.('complete');
-    } catch (e) {}
+    } catch {}
 
     // Calculate score and persist exam result in storage
     const total = filteredQuestions.length;

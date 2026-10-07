@@ -2,17 +2,7 @@
 
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import HanziWriter from 'hanzi-writer';
-import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  Target, 
-  Loader2, 
-  ChevronLeft, 
-  ChevronRight, 
-  Grid,
-  Check
-} from 'lucide-react';
+import { Play, Pause, RotateCcw, Loader2, ChevronLeft, ChevronRight, Grid, Check } from 'lucide-react';
 import { 
   fetchKanjiStrokeData, 
   computeStrokeNumbers, 
@@ -52,7 +42,7 @@ export default function KanjiDraw({
   const [quizSuccess, setQuizSuccess] = useState(false);
   const [showQuizGuideNumbers, setShowQuizGuideNumbers] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [animationSpeed, setAnimationSpeed] = useState(1.4);
+  const [animationSpeed] = useState(1.4);
 
   // Carga de datos de trazos
   useEffect(() => {
@@ -134,7 +124,7 @@ export default function KanjiDraw({
       if (writerRef.current) {
         try {
           writerRef.current.cancelQuiz();
-        } catch (e) {}
+        } catch {}
       }
       containerRef.current.innerHTML = '';
 
@@ -167,7 +157,7 @@ export default function KanjiDraw({
       if (writerRef.current) {
         try {
           writerRef.current.cancelQuiz();
-        } catch (e) {}
+        } catch {}
       }
     }
 
@@ -175,7 +165,7 @@ export default function KanjiDraw({
       if (writerRef.current) {
         try {
           writerRef.current.cancelQuiz();
-        } catch (e) {}
+        } catch {}
       }
     };
   }, [activeTab, initHanziWriter]);

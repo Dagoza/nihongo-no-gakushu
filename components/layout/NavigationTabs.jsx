@@ -299,8 +299,6 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     ? TABS 
     : TABS.filter((t) => t.category === selectedCategory);
 
-  const activeTabObj = TABS.find((t) => t.id === currentTab) || TABS[0];
-
   return (
     <nav className="nav-tabs-wrapper" aria-label="Navegación principal">
       <div className="nav-tabs-container">

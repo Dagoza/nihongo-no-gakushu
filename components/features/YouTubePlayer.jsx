@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { ExternalLink, AlertTriangle, Play, Pause, RotateCcw } from 'lucide-react';
+import { ExternalLink, AlertTriangle, Play, Pause } from 'lucide-react';
 
 const YouTubePlayer = forwardRef(function YouTubePlayer({
   videoId,
@@ -217,7 +217,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         try {
           playerRef.current.destroy();
-        } catch (e) {
+        } catch {
           // ignore
         }
         playerRef.current = null;
@@ -230,7 +230,7 @@ const YouTubePlayer = forwardRef(function YouTubePlayer({
     if (playerRef.current && typeof playerRef.current.setPlaybackRate === 'function') {
       try {
         playerRef.current.setPlaybackRate(playbackRate);
-      } catch (e) {
+      } catch {
         // ignore
       }
     }

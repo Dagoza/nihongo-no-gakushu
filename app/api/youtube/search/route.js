@@ -21,7 +21,7 @@ async function verifyVideoCandidate(vid) {
       return null;
     }
     oembedData = await oeRes.json();
-  } catch (e) {
+  } catch {
     return null;
   }
 
@@ -93,7 +93,7 @@ async function verifyVideoCandidate(vid) {
         isOriginal: t.kind === 'asr'
       }))
     };
-  } catch (err) {
+  } catch {
     return null;
   }
 }

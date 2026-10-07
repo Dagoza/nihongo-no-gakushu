@@ -2,46 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { 
-  Sparkles, 
-  Flame, 
-  Star, 
-  CheckCircle2, 
-  BookOpen, 
-  Keyboard, 
-  Compass, 
-  MessageSquare, 
-  Tv, 
-  Layers, 
-  Target, 
-  Languages, 
-  FileText, 
-  BookmarkCheck, 
-  Volume2, 
-  BarChart3, 
-  ChevronLeft, 
-  ChevronRight, 
-  X, 
-  Play, 
-  Eye, 
-  EyeOff, 
-  Lightbulb, 
-  Check, 
-  ExternalLink, 
-  RotateCcw, 
-  Mic, 
-  Award, 
-  ShieldCheck, 
-  CloudCheck, 
-  Bell,
-  VolumeX,
-  ArrowRight,
-  PenTool,
-  Bot,
-  Wand2,
-  Zap,
-  Info
-} from 'lucide-react';
+import { Sparkles, Flame, Star, CheckCircle2, BookOpen, Keyboard, Compass, MessageSquare, Tv, Layers, Target, Languages, FileText, BookmarkCheck, Volume2, BarChart3, ChevronLeft, ChevronRight, X, Play, Eye, EyeOff, Lightbulb, Check, ExternalLink, Mic, Award, CloudCheck, Bell, VolumeX, ArrowRight, PenTool } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../../lib/audioManager';
 

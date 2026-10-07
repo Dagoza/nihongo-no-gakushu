@@ -14,16 +14,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import { 
-  hiraganaToKatakana, 
-  katakanaToHiragana, 
-  extractKanjis, 
-  containsKanji,
-  lookupJapaneseWord,
-  convertKanjiToKanaSync,
-  fetchKanjiReading,
-  cleanKanaOnly
-} from '../../lib/japaneseUtils';
+import { hiraganaToKatakana, katakanaToHiragana, extractKanjis, containsKanji, convertKanjiToKanaSync, fetchKanjiReading, cleanKanaOnly } from '../../lib/japaneseUtils';
 import vocabularyData from '../../data/vocabulary.json';
 import kanjiData from '../../data/kanji.json';
 import storiesData from '../../data/stories.json';
@@ -521,11 +512,11 @@ export default function SaveVocabModal({
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
                 >
-                  <option value="N5">N5 (Principiante)</option>
-                  <option value="N4">N4 (Básico-Intermedio)</option>
-                  <option value="N3">N3 (Intermedio)</option>
-                  <option value="N2">N2 (Intermedio-Avanzado)</option>
-                  <option value="N1">N1 (Avanzado)</option>
+                  <option value="N5">N5</option>
+                  <option value="N4">N4</option>
+                  <option value="N3">N3</option>
+                  <option value="N2">N2</option>
+                  <option value="N1">N1</option>
                 </select>
               </div>
             </div>

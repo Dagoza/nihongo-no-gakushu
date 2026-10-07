@@ -1,24 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  Settings, 
-  Volume2, 
-  Sparkles, 
-  Gauge, 
-  Moon, 
-  Sun, 
-  ShieldCheck, 
-  RefreshCw, 
-  CloudCheck, 
-  CloudOff, 
-  Check, 
-  Radio,
-  Sliders,
-  Compass,
-  Bell
-} from 'lucide-react';
+import { X, Settings, Volume2, Sparkles, Gauge, Moon, Sun, Check, Sliders, Compass, Bell } from 'lucide-react';
 
 import audioManager from '../../lib/audioManager';
 import { useApp } from '../../lib/AppContext';
@@ -32,11 +15,7 @@ export default function SettingsModal({
     appState,
     handleUpdateState,
     theme,
-    onToggleTheme,
-    authUser,
-    syncStatus,
-    syncInfo,
-    handleTriggerSync
+    onToggleTheme
   } = contextApp || {};
 
   const [selectedVoice, setSelectedVoice] = useState(

@@ -1,27 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  Edit3, 
-  Volume2, 
-  Check, 
-  RotateCcw, 
-  StickyNote, 
-  Sparkles, 
-  BookOpen,
-  AlertCircle
-} from 'lucide-react';
+import { X, Edit3, Volume2, Check, RotateCcw, StickyNote, Sparkles, AlertCircle } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import { 
-  hiraganaToKatakana, 
-  katakanaToHiragana, 
-  extractKanjis,
-  containsKanji,
-  convertKanjiToKanaSync,
-  fetchKanjiReading,
-  cleanKanaOnly
-} from '../../lib/japaneseUtils';
+import { hiraganaToKatakana, katakanaToHiragana, containsKanji, convertKanjiToKanaSync, fetchKanjiReading, cleanKanaOnly } from '../../lib/japaneseUtils';
 import { useApp } from '../../lib/AppContext';
 
 export default function EditWordModal({
@@ -352,11 +334,11 @@ export default function EditWordModal({
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
               >
-                <option value="N5">N5 (Principiante)</option>
-                <option value="N4">N4 (Básico-Intermedio)</option>
-                <option value="N3">N3 (Intermedio)</option>
-                <option value="N2">N2 (Intermedio-Avanzado)</option>
-                <option value="N1">N1 (Avanzado)</option>
+                <option value="N5">N5</option>
+                <option value="N4">N4</option>
+                <option value="N3">N3</option>
+                <option value="N2">N2</option>
+                <option value="N1">N1</option>
               </select>
             </div>
           </div>

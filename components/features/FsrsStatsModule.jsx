@@ -1,35 +1,7 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
-import {
-  Brain,
-  Sparkles,
-  Layers,
-  Languages,
-  BookOpen,
-  Target,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  RotateCcw,
-  Search,
-  Filter,
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  HelpCircle,
-  Flame,
-  Zap,
-  ShieldAlert,
-  Info,
-  ExternalLink,
-  X,
-  Play,
-  TrendingUp,
-  BarChart2,
-  Calendar,
-  Eye
-} from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Brain, Layers, CheckCircle2, Clock, RotateCcw, Search, ArrowUpDown, ChevronLeft, ChevronRight, Zap, ShieldAlert, X, Play, TrendingUp, BarChart2, Calendar, Eye } from 'lucide-react';
 import {
   getFsrsOverview,
   compileFsrsItems,

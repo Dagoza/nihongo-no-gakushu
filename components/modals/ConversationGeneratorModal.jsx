@@ -1,21 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Sparkles, 
-  X, 
-  Volume2, 
-  BookOpen, 
-  BookmarkCheck, 
-  Check, 
-  Copy, 
-  Plus, 
-  Trash2, 
-  Play, 
-  User, 
-  Users,
-  Lightbulb
-} from 'lucide-react';
+import { Sparkles, X, Volume2, BookmarkCheck, Check, Copy, Plus, User, Lightbulb } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { getAuthSession } from '../../lib/supabaseSync';
 import { useApp } from '../../lib/AppContext';
@@ -47,7 +33,7 @@ export default function ConversationGeneratorModal({
   let contextApp = null;
   try {
     contextApp = useApp();
-  } catch (e) {}
+  } catch {}
 
   const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
@@ -59,7 +45,7 @@ export default function ConversationGeneratorModal({
   const [customTheme, setCustomTheme] = useState('');
   const [characterA, setCharacterA] = useState('健二 (Kenji)');
   const [characterB, setCharacterB] = useState('Elena (Estudiante)');
-  const [lineCount, setLineCount] = useState(8);
+  const lineCount = 8;
 
   // Results state
   const [isGenerating, setIsGenerating] = useState(false);

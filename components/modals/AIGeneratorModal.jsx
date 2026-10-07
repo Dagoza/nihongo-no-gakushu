@@ -1,24 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { 
-  Sparkles, 
-  X, 
-  Volume2, 
-  BookOpen, 
-  MessageSquare, 
-  Check, 
-  Copy, 
-  ExternalLink, 
-  RefreshCw, 
-  Lightbulb, 
-  Tag, 
-  Plus, 
-  Trash2,
-  BookmarkCheck,
-  PlayCircle,
-  User
-} from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Sparkles, X, Volume2, BookOpen, MessageSquare, Check, Copy, RefreshCw, Lightbulb, Tag, Plus, Trash2, BookmarkCheck, PlayCircle, User } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { getAuthSession } from '../../lib/supabaseSync';
 import { useApp } from '../../lib/AppContext';
@@ -54,12 +37,11 @@ export default function AIGeneratorModal({
   let contextApp = null;
   try {
     contextApp = useApp();
-  } catch (e) {}
+  } catch {}
 
   const router = useRouter();
   const authUser = propAuthUser || contextApp?.authUser;
   const showAlert = contextApp?.showAlert || ((opts) => alert(opts.message || opts.title));
-  const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
 
   // Configuration state
   const [contentType, setContentType] = useState(initialType); // 'story' | 'sentences' | 'conversation'
@@ -759,11 +741,11 @@ export default function AIGeneratorModal({
                 </label>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {[
-                    { id: 'N5', title: 'N5 (Principiante)', desc: 'Vocabulario básico y gramática esencial' },
-                    { id: 'N4', title: 'N4 (Elemental)', desc: 'Formas verbales y oraciones compuestas' },
-                    { id: 'N3', title: 'N3 (Intermedio)', desc: 'Contexto social y matices cotidianos' },
-                    { id: 'N2', title: 'N2 (Pre-avanzado)', desc: 'Artículos, discursos y formalidades' },
-                    { id: 'N1', title: 'N1 (Avanzado)', desc: 'Estructuras sofisticadas y literatura' }
+                    { id: 'N5', title: 'N5', desc: 'Vocabulario básico y gramática esencial' },
+                    { id: 'N4', title: 'N4', desc: 'Formas verbales y oraciones compuestas' },
+                    { id: 'N3', title: 'N3', desc: 'Contexto social y matices cotidianos' },
+                    { id: 'N2', title: 'N2', desc: 'Artículos, discursos y formalidades' },
+                    { id: 'N1', title: 'N1', desc: 'Estructuras sofisticadas y literatura' }
                   ].map((lvl) => (
                     <button
                       key={lvl.id}

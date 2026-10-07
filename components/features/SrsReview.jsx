@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, Undo2, RotateCcw, AlertCircle, Check, Zap, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Undo2, RotateCcw, AlertCircle, Check, Zap, CheckCircle2 } from 'lucide-react';
 import { SRSRating, getIntervalPreviews } from '../../lib/srs';
 
 export default function SrsReview({ 

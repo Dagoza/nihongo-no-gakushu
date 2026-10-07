@@ -1,33 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { 
-  Download, 
-  Upload, 
-  Flame, 
-  Star, 
-  Target, 
-  BookOpen, 
-  Layers, 
-  CheckCircle2, 
-  RotateCcw, 
-  Keyboard,
-  Cloud,
-  CloudOff,
-  CloudCheck,
-  CloudSync,
-  RefreshCw,
-  ShieldCheck,
-  AlertCircle,
-  Sparkles,
-  Compass,
-  Monitor,
-  Smartphone,
-  Laptop,
-  Check,
-  Brain,
-  Info
-} from 'lucide-react';
+import { Download, Upload, CheckCircle2, RotateCcw, Keyboard, Cloud, CloudOff, CloudCheck, CloudSync, RefreshCw, ShieldCheck, AlertCircle, Sparkles, Compass, Brain, Info, BarChart3 } from 'lucide-react';
 import FsrsStatsModule from '../features/FsrsStatsModule';
 import { exportData, parseImportData, getInitialState } from '../../lib/storage';
 import { 
@@ -275,7 +249,7 @@ export default function ProgressTab({
   let contextApp = null;
   try {
     contextApp = useApp();
-  } catch (e) {}
+  } catch {}
   const showConfirm = contextApp?.showConfirm || (() => Promise.resolve(true));
 
   const handleOpenTour = (stepOrEvent = null) => {
@@ -290,13 +264,13 @@ export default function ProgressTab({
     // 1. Direct callback prop
     try {
       if (typeof onOpenTour === 'function') onOpenTour(targetStep);
-    } catch (err) {}
+    } catch {}
 
     // 2. AppContext methods
     try {
       if (typeof contextApp?.openTour === 'function') contextApp.openTour(targetStep);
       if (typeof contextApp?.setIsTourOpen === 'function') contextApp.setIsTourOpen(true);
-    } catch (err) {}
+    } catch {}
 
     // 3. Global window handlers & events
     try {
@@ -306,7 +280,7 @@ export default function ProgressTab({
         }
         window.dispatchEvent(new CustomEvent('nihongo-open-tour', { detail: { step: targetStep } }));
       }
-    } catch (err) {}
+    } catch {}
   };
 
   const fileInputRef = useRef(null);
@@ -332,7 +306,17 @@ export default function ProgressTab({
       if (sec && ['fsrs', 'cloud', 'backup', 'keyboard'].includes(sec)) {
         setActiveSection(sec);
       }
-    } catch (e) {}
+
+      // Detectar sistema operativo del cliente
+      const ua = navigator.userAgent.toLowerCase();
+      let os = 'macos';
+      if (ua.includes('win')) os = 'windows';
+      else if (ua.includes('android')) os = 'android';
+      else if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod')) os = 'ios';
+      else if (ua.includes('linux')) os = 'linux';
+      setDetectedOS(os);
+      setSelectedOS(os);
+    } catch {}
   }, []);
 
   const handleGoogleSignIn = async () => {
@@ -389,7 +373,7 @@ export default function ProgressTab({
           setSyncMessage({ type: 'error', text: res.message });
         }
       }
-    } catch (e) {
+    } catch {
       setSyncMessage({ type: 'error', text: 'Error inesperado durante la sincronización.' });
     } finally {
       setIsSyncingLocal(false);
@@ -413,7 +397,7 @@ export default function ProgressTab({
           onUpdateState(restoredState);
           setSyncMessage({ type: 'success', text: '¡Progreso restaurado con éxito desde el archivo JSON!' });
         }
-      } catch (err) {
+      } catch {
         setSyncMessage({ type: 'error', text: 'El archivo JSON no es válido o está dañado.' });
       }
     };
@@ -437,26 +421,38 @@ export default function ProgressTab({
   return (
     <div className="section-panel active">
       {/* Header */}
-      <div className="section-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-        <div>
-          <h2 className="section-title">
-            <span style={{ flexShrink: 0 }}>📊</span>
-            <span>Mi Progreso y Estadísticas de Aprendizaje</span>
-          </h2>
-          <p className="section-desc">
-            Consulta tu rendimiento, mantén tu sesión sincronizada en tiempo real entre tu móvil, tablet y computadora, y gestiona tus copias de seguridad.
-          </p>
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #10b981 0%, #0d9488 100%)', boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)' }}
+            >
+              <BarChart3 size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.12)' }}>
+                  Progreso & Cuenta
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => handleOpenTour('progress')}
+                  title="Ver guía y explicación de Mi Progreso y Estadísticas en el tour"
+                  aria-label="Guía de Mi Progreso"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Mi Progreso y Estadísticas de Aprendizaje</h1>
+              <p className="module-hero-subtitle">
+                Consulta tu rendimiento, mantén tu sesión sincronizada en tiempo real entre tus dispositivos y gestiona tus copias de seguridad.
+              </p>
+            </div>
+          </div>
         </div>
-        <button
-          type="button"
-          className="tour-info-shortcut-btn"
-          onClick={() => handleOpenTour('progress')}
-          title="Ver guía y explicación de Mi Progreso y Estadísticas en el tour"
-          aria-label="Guía de Mi Progreso"
-        >
-          <Info size={14} />
-          <span>Guía</span>
-        </button>
       </div>
 
       {/* Banner de mensajes/alertas de sincronización */}

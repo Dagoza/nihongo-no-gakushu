@@ -3,31 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import curriculumData from '../../data/curriculum.json';
-import { 
-  ArrowRight, 
-  ArrowLeft,
-  CheckCircle2, 
-  BookOpen, 
-  Sparkles, 
-  Volume2, 
-  HelpCircle, 
-  FileText, 
-  ExternalLink,
-  ChevronRight,
-  ChevronDown,
-  RotateCcw,
-  Check,
-  X,
-  Layers,
-  GraduationCap,
-  Search,
-  Filter,
-  Target,
-  Info,
-  MessageSquare,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
@@ -1735,28 +1711,44 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   // DEFAULT VIEW: Overview of all Curriculum Steps
   return (
     <div>
-      <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <h2 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>🗺️</span>
-            <span>Ruta de Aprendizaje</span>
-          </h2>
-          <button
-            type="button"
-            className="tour-info-shortcut-btn"
-            onClick={() => {
-              if (contextApp?.openTour) {
-                contextApp.openTour('curriculum');
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                window.__nihongoOpenTour('curriculum');
-              }
-            }}
-            title="Ver guía y explicación del Currículum en el tour"
-            aria-label="Guía de la Ruta"
-          >
-            <Info size={15} />
-            <span>Guía de la Ruta</span>
-          </button>
+      {/* Header */}
+      <div className="module-hero-card">
+        <div className="module-hero-content">
+          <div className="module-hero-title-row">
+            <div 
+              className="module-hero-icon-badge" 
+              style={{ background: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)' }}
+            >
+              <Compass size={28} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <span className="module-category-pill" style={{ color: '#6366f1', background: 'rgba(99, 102, 241, 0.12)' }}>
+                  Aprender
+                </span>
+                <button
+                  type="button"
+                  className="tour-info-shortcut-btn"
+                  onClick={() => {
+                    if (contextApp?.openTour) {
+                      contextApp.openTour('curriculum');
+                    } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
+                      window.__nihongoOpenTour('curriculum');
+                    }
+                  }}
+                  title="Ver guía y explicación del Currículum en el tour"
+                  aria-label="Guía de la Ruta"
+                >
+                  <Info size={14} />
+                  <span>Guía</span>
+                </button>
+              </div>
+              <h1 className="module-hero-title">Ruta de Aprendizaje y Currículum</h1>
+              <p className="module-hero-subtitle">
+                Plan de estudio estructurado por niveles y lecciones progresivas con competencias Can-Do y gramática contextual.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

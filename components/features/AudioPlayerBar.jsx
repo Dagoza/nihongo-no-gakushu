@@ -1,26 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { 
-  Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  Square, 
-  Sparkles, 
-  Volume2, 
-  Gauge, 
-  BookmarkPlus, 
-  BookmarkCheck,
-  Bookmark,
-  ChevronDown,
-  ChevronUp,
-  RotateCcw,
-  RotateCw,
-  PenTool,
-  BookOpen,
-  Info
-} from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Square, Volume2, Gauge, BookmarkPlus, ChevronDown, ChevronUp, RotateCcw, RotateCw, PenTool, BookOpen, Info } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import SaveVocabModal from '../modals/SaveVocabModal';
 import { AppContext } from '../../lib/AppContext';
@@ -90,10 +71,6 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
     }
   };
 
-  const handlePlaySelection = () => {
-    audioManager.playSelection();
-  };
-
   const handleSaveSelection = () => {
     if (!audioState.selectedText) return;
     const text = audioState.selectedText.trim();
@@ -150,7 +127,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
     setDragTime(val);
     try {
       e.target.setPointerCapture(e.pointerId);
-    } catch (_) {}
+    } catch {}
   };
 
   const handlePointerMove = (e) => {
@@ -168,7 +145,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
       setIsDragging(false);
       try {
         e.target.releasePointerCapture(e.pointerId);
-      } catch (_) {}
+      } catch {}
     }
   };
 
@@ -207,8 +184,6 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     audioManager.seek(pct * duration);
   };
-
-  const totalSaved = (appState?.savedCustomVocab?.length || 0) + (appState?.savedPhrases?.length || 0);
 
   return (
     <>
