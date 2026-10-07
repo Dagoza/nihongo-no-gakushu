@@ -48,27 +48,59 @@ export default function PracticePadModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Bloquear scroll del body cuando el modal está abierto (evita que la página de fondo interfiera en móvil)
+  // Bloquear scroll del body y selección de texto cuando el modal está abierto (evita que la página de fondo interfiera en móvil y desktop)
   useEffect(() => {
     if (!isOpen) return;
     const prevOverflow = document.body.style.overflow;
     const prevTouchAction = document.body.style.touchAction;
+    const prevUserSelect = document.body.style.userSelect;
+    const prevWebkitUserSelect = document.body.style.webkitUserSelect;
+
     document.body.style.overflow = 'hidden';
     document.body.style.touchAction = 'none';
+    document.body.style.userSelect = 'none';
+    document.body.style.webkitUserSelect = 'none';
     
     // Prevenir touchmove en el documento para evitar scroll bounce en iOS
     const preventTouchMove = (e) => {
       // Permitir scroll en elementos internos que lo necesiten (toolbar, library)
-      if (e.target.closest && (e.target.closest('.practice-toolbar') || e.target.closest('[style*="overflowY"]') || e.target.closest('[style*="overflow-y"]'))) {
+      if (e.target.closest && (e.target.closest('.practice-toolbar') || e.target.closest('[style*="overflowY"]') || e.target.closest('[style*="overflow-y"]') || e.target.closest('input') || e.target.closest('textarea'))) {
         return;
       }
     };
     document.addEventListener('touchmove', preventTouchMove, { passive: true });
+
+    // Evitar menú contextual y opciones nativas de selección al mantener presionado sobre el lienzo o modal
+    const handleContextMenu = (e) => {
+      if (e.target.closest && (e.target.closest('input') || e.target.closest('textarea'))) {
+        return;
+      }
+      e.preventDefault();
+    };
+    window.addEventListener('contextmenu', handleContextMenu, { capture: true });
+
+    // Deseleccionar automáticamente cualquier texto si el navegador intenta seleccionar al arrastrar
+    const handleSelectionChange = () => {
+      const activeEl = document.activeElement;
+      const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+      if (isInput) return;
+      try {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0 && sel.toString().length > 0) {
+          sel.removeAllRanges();
+        }
+      } catch {}
+    };
+    document.addEventListener('selectionchange', handleSelectionChange);
     
     return () => {
       document.body.style.overflow = prevOverflow;
       document.body.style.touchAction = prevTouchAction;
+      document.body.style.userSelect = prevUserSelect;
+      document.body.style.webkitUserSelect = prevWebkitUserSelect;
       document.removeEventListener('touchmove', preventTouchMove);
+      window.removeEventListener('contextmenu', handleContextMenu, { capture: true });
+      document.removeEventListener('selectionchange', handleSelectionChange);
     };
   }, [isOpen]);
 
@@ -133,6 +165,10 @@ export default function PracticePadModal({
   const drawingCanvasRef = useRef(null);
   const currentStrokeRef = useRef(null);
   const isPointerDownRef = useRef(false);
+  const isDrawingRef = useRef(false);
+  const setIsDrawing = useCallback((val) => {
+    isDrawingRef.current = Boolean(val);
+  }, []);
   const isPanningRef = useRef(false);
   const panStartRef = useRef({ clientX: 0, clientY: 0, panX: 0, panY: 0 });
   const touchStateRef = useRef({ distance: 0, startPan: { x: 0, y: 0 }, startZoom: 1, startCenter: { x: 0, y: 0 } });
@@ -427,6 +463,7 @@ export default function PracticePadModal({
   // Cancel any in-progress stroke and restore canvas (crucial when a multi-touch pinch starts)
   const cancelCurrentStroke = useCallback(() => {
     isPointerDownRef.current = false;
+    isDrawingRef.current = false;
     currentStrokeRef.current = null;
     setIsDrawing(false);
     try {
@@ -437,7 +474,7 @@ export default function PracticePadModal({
     activePointerIdRef.current = null;
     activeTouchPointersRef.current.clear();
     redrawCommittedStrokes();
-  }, [redrawCommittedStrokes]);
+  }, [redrawCommittedStrokes, setIsDrawing]);
 
   useEffect(() => {
     redrawCommittedStrokes();
@@ -446,6 +483,17 @@ export default function PracticePadModal({
   // Pointer event handlers for drawing and panning
   const handlePointerDown = (e) => {
     if (activeTab !== 'canvas') return;
+
+    // Deseleccionar cualquier texto residual que el navegador haya intentado seleccionar
+    try {
+      const sel = window.getSelection();
+      if (sel && sel.removeAllRanges) sel.removeAllRanges();
+    } catch {}
+
+    // Prevenir menú contextual o selección de texto por pulsación prolongada en móvil y desktop
+    if (e.cancelable) {
+      e.preventDefault();
+    }
 
     // Prevenir cualquier dibujo si se está haciendo pinch/zoom con 2 dedos o durante el cooldown posterior
     if (isPinchZoomingRef.current || Date.now() < pinchCooldownUntilRef.current) {
@@ -491,6 +539,7 @@ export default function PracticePadModal({
     const y = (e.clientY - rect.top) * scaleY;
 
     isPointerDownRef.current = true;
+    isDrawingRef.current = true;
     setIsDrawing(true);
 
     const newStroke = {
@@ -544,6 +593,10 @@ export default function PracticePadModal({
     }
 
     if (!isPointerDownRef.current || !currentStrokeRef.current) return;
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+
     const drawCanvas = drawingCanvasRef.current;
     if (!drawCanvas) return;
 
@@ -600,6 +653,7 @@ export default function PracticePadModal({
     // Si se estaba haciendo zoom con dedos o el trazo fue cancelado/abortado, no guardar nada
     if (isPinchZoomingRef.current || !isPointerDownRef.current) {
       isPointerDownRef.current = false;
+      isDrawingRef.current = false;
       currentStrokeRef.current = null;
       setIsDrawing(false);
       try {
@@ -612,6 +666,7 @@ export default function PracticePadModal({
     }
 
     isPointerDownRef.current = false;
+    isDrawingRef.current = false;
     setIsDrawing(false);
 
     try {
@@ -1548,12 +1603,15 @@ export default function PracticePadModal({
                         letterSpacing: '0.04em',
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: 6
+                        gap: 6,
+                        userSelect: 'none',
+                        WebkitUserSelect: 'none',
+                        WebkitTouchCallout: 'none'
                       }}
                     >
-                      <span>{text.trim()}</span>
+                      <span style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>{text.trim()}</span>
                       {kana && (
-                        <span style={{ fontSize: '0.76rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+                        <span style={{ fontSize: '0.76rem', fontWeight: 500, color: 'var(--text-muted)', userSelect: 'none', WebkitUserSelect: 'none' }}>
                           （{kana}）
                         </span>
                       )}
@@ -2114,6 +2172,7 @@ export default function PracticePadModal({
               <div 
                 ref={viewportRef}
                 onPointerDown={handleViewportPointerDown}
+                onContextMenu={(e) => e.preventDefault()}
                 style={{
                   flex: 1,
                   position: 'relative',
@@ -2133,6 +2192,7 @@ export default function PracticePadModal({
               >
                 <div 
                   ref={artboardRef}
+                  onContextMenu={(e) => e.preventDefault()}
                   style={{
                     position: 'relative',
                     width: `${PAGE_WIDTH}px`,
@@ -2142,6 +2202,9 @@ export default function PracticePadModal({
                     boxShadow: '0 8px 35px rgba(0,0,0,0.22)',
                     borderRadius: '4px',
                     touchAction: 'none',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    WebkitTouchCallout: 'none',
                     transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
                     transformOrigin: 'center center',
                     transition: (isPanning || isPinching) ? 'none' : 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -2150,6 +2213,7 @@ export default function PracticePadModal({
                   {/* Layer 1: Background Grid Canvas */}
                   <canvas 
                     ref={gridCanvasRef}
+                    onContextMenu={(e) => e.preventDefault()}
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -2164,6 +2228,9 @@ export default function PracticePadModal({
                   {/* Layer 2: Ghost Reference Glyph Overlay Adaptado a la Cuadrícula */}
                   {ghostOpacity > 0 && text && text.trim().length > 0 && (
                     <div 
+                      aria-hidden="true"
+                      unselectable="on"
+                      onContextMenu={(e) => e.preventDefault()}
                       style={{
                         position: 'absolute',
                         inset: 0,
@@ -2174,6 +2241,7 @@ export default function PracticePadModal({
                         fontFamily: 'var(--font-jp)',
                         userSelect: 'none',
                         WebkitUserSelect: 'none',
+                        WebkitTouchCallout: 'none',
                         transition: 'opacity 0.2s ease'
                       }}
                     >
@@ -2184,6 +2252,8 @@ export default function PracticePadModal({
                           return (
                             <div
                               key={cell.index}
+                              aria-hidden="true"
+                              unselectable="on"
                               style={{
                                 position: 'absolute',
                                 left: cell.x,
@@ -2197,7 +2267,10 @@ export default function PracticePadModal({
                                 fontWeight: 700,
                                 lineHeight: 1,
                                 textAlign: 'center',
-                                userSelect: 'none'
+                                userSelect: 'none',
+                                WebkitUserSelect: 'none',
+                                WebkitTouchCallout: 'none',
+                                pointerEvents: 'none'
                               }}
                             >
                               {cell.char}
@@ -2213,6 +2286,8 @@ export default function PracticePadModal({
                           return (
                             <div
                               key={line.lineIndex}
+                              aria-hidden="true"
+                              unselectable="on"
                               style={{
                                 position: 'absolute',
                                 left: (gridLayout?.meta?.marginX || 64) + 16,
@@ -2226,7 +2301,10 @@ export default function PracticePadModal({
                                 letterSpacing: '0.12em',
                                 lineHeight: 1,
                                 whiteSpace: 'nowrap',
-                                userSelect: 'none'
+                                userSelect: 'none',
+                                WebkitUserSelect: 'none',
+                                WebkitTouchCallout: 'none',
+                                pointerEvents: 'none'
                               }}
                             >
                               {line.text}
@@ -2238,16 +2316,24 @@ export default function PracticePadModal({
                       {/* Caso C: Dot o Blank - Centrado armónico proporcionado */}
                       {(gridType === 'dot' || gridType === 'blank') && (
                         <div 
+                          aria-hidden="true"
+                          unselectable="on"
                           style={{
                             width: '100%',
                             height: '100%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            padding: '24px 32px'
+                            padding: '24px 32px',
+                            userSelect: 'none',
+                            WebkitUserSelect: 'none',
+                            WebkitTouchCallout: 'none',
+                            pointerEvents: 'none'
                           }}
                         >
                           <div 
+                            aria-hidden="true"
+                            unselectable="on"
                             style={{
                               maxWidth: '92%',
                               textAlign: 'center',
@@ -2264,7 +2350,10 @@ export default function PracticePadModal({
                                 ? 'min(9vh, 46px)'
                                 : 'min(6.5vh, 32px)',
                               wordBreak: 'break-word',
-                              userSelect: 'none'
+                              userSelect: 'none',
+                              WebkitUserSelect: 'none',
+                              WebkitTouchCallout: 'none',
+                              pointerEvents: 'none'
                             }}
                           >
                             {text.trim()}
@@ -2281,6 +2370,7 @@ export default function PracticePadModal({
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerUp}
+                    onContextMenu={(e) => e.preventDefault()}
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -2293,7 +2383,10 @@ export default function PracticePadModal({
                         : isEraser 
                           ? 'cell' 
                           : 'crosshair',
-                      touchAction: 'none'
+                      touchAction: 'none',
+                      userSelect: 'none',
+                      WebkitUserSelect: 'none',
+                      WebkitTouchCallout: 'none'
                     }}
                   />
                 </div>
