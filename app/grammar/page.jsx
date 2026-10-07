@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import GrammarTab from '../../components/GrammarTab';
-import PageLoader from '../../components/PageLoader';
+import GrammarTab from '../../components/tabs/GrammarTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function GrammarPageContent() {
   const { appState, handleUpdateState } = useApp();

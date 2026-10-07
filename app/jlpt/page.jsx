@@ -1,8 +1,8 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import JlptExamTab from '../../components/JlptExamTab';
-import PageLoader from '../../components/PageLoader';
+import JlptExamTab from '../../components/tabs/JlptExamTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 export default function JlptPage() {
   return (

@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import VocabTab from '../../components/VocabTab';
-import PageLoader from '../../components/PageLoader';
+import VocabTab from '../../components/tabs/VocabTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function VocabPageContent() {
   const { appState, handleUpdateState, authUser } = useApp();

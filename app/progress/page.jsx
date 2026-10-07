@@ -2,8 +2,8 @@
 
 import React, { Suspense } from 'react';
 import { useApp } from '../../lib/AppContext';
-import ProgressTab from '../../components/ProgressTab';
-import PageLoader from '../../components/PageLoader';
+import ProgressTab from '../../components/tabs/ProgressTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function ProgressPageContent() {
   const { 

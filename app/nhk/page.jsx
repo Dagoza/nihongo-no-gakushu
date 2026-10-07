@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import ConversationTab from '../../components/ConversationTab';
-import PageLoader from '../../components/PageLoader';
+import ConversationTab from '../../components/tabs/ConversationTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function NhkPageContent() {
   const { appState, handleUpdateState, authUser } = useApp();

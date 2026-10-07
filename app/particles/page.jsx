@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import PageLoader from '../../components/PageLoader';
+import PageLoader from '../../components/layout/PageLoader';
 
 function ParticlesRedirect() {
   const router = useRouter();

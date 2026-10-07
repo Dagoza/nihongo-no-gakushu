@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import SavedTab from '../../components/SavedTab';
-import PageLoader from '../../components/PageLoader';
+import SavedTab from '../../components/tabs/SavedTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function SavedPageContent() {
   const { appState, handleUpdateState, navigate, authUser, setIsAuthModalOpen } = useApp();

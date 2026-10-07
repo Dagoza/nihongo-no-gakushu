@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import KanjiTab from '../../components/KanjiTab';
-import PageLoader from '../../components/PageLoader';
+import KanjiTab from '../../components/tabs/KanjiTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function KanjiPageContent() {
   const { appState, handleUpdateState, authUser } = useApp();

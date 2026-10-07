@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import StoryTab from '../../components/StoryTab';
-import PageLoader from '../../components/PageLoader';
+import StoryTab from '../../components/tabs/StoryTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function StoryPageContent() {
   const { appState, handleUpdateState, navigate, activeStoryId, setActiveStoryId } = useApp();

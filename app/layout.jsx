@@ -1,6 +1,6 @@
 import './globals.css';
-import AppShell from '../components/AppShell';
-import PWAInstaller from '../components/PWAInstaller';
+import AppShell from '../components/layout/AppShell';
+import PWAInstaller from '../components/layout/PWAInstaller';
 
 export const viewport = {
   themeColor: [

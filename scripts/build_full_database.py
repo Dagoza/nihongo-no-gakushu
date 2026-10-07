@@ -126,7 +126,9 @@ def extract_particles():
 # 2. Extract Story from Pages & Raw text
 # ----------------------------------------------------------------------
 def extract_story():
-    raw_path = os.path.join(DATA_DIR, "raw_story_decompressed.txt")
+    raw_path = os.path.join(DATA_DIR, "raw", "raw_story_decompressed.txt")
+    if not os.path.exists(raw_path):
+        raw_path = os.path.join(DATA_DIR, "raw_story_decompressed.txt")
     if not os.path.exists(raw_path):
         print(f"Raw story file {raw_path} not found")
         return {}
@@ -240,7 +242,9 @@ def extract_story():
 def extract_kanji():
     kanji_dict = {}
 
-    kb_path = os.path.join(DATA_DIR, "kanji_book_raw.json")
+    kb_path = os.path.join(DATA_DIR, "raw", "kanji_book_raw.json")
+    if not os.path.exists(kb_path):
+        kb_path = os.path.join(DATA_DIR, "kanji_book_raw.json")
     if os.path.exists(kb_path):
         with open(kb_path, "r", encoding="utf-8") as f:
             kb_pages = json.load(f)
@@ -269,7 +273,9 @@ def extract_kanji():
                         "source": "Kanji Book"
                     }
 
-    kp_path = os.path.join(DATA_DIR, "kanji_print_raw.json")
+    kp_path = os.path.join(DATA_DIR, "raw", "kanji_print_raw.json")
+    if not os.path.exists(kp_path):
+        kp_path = os.path.join(DATA_DIR, "kanji_print_raw.json")
     if os.path.exists(kp_path):
         with open(kp_path, "r", encoding="utf-8") as f:
             kp_pages = json.load(f)

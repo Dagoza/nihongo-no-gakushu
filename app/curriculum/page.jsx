@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import CurriculumTab from '../../components/CurriculumTab';
-import PageLoader from '../../components/PageLoader';
+import CurriculumTab from '../../components/tabs/CurriculumTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function CurriculumPageContent() {
   const { appState, handleUpdateState, navigate } = useApp();

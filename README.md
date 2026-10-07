@@ -27,22 +27,36 @@ npm start
 
 ---
 
-## 📁 Organización de Archivos y Material de Estudio
+## 📁 Estructura del Proyecto y Organización de Archivos
 
-Todos los materiales de apoyo originales han sido organizados en una carpeta dedicada: `material_de_estudio/`:
+El proyecto sigue una arquitectura modular y limpia organizada por dominios y responsabilidades:
 
-- `material_de_estudio/vocabulario/`:
-  - `4. Hiragana Vocabulary Flashcard.pdf`
-  - `N5 vocabulary adjectives.pdf`, `N5 vocabulary adverbs.pdf`, `N5 vocabulary nouns.pdf`, `N5 vocabulary verbs.pdf`
-  - `N4 vocabulary adjectives.pdf`, `N4 vocabulary adverbs.pdf`
-- `material_de_estudio/gramatica_y_particulas/`:
-  - `7. N5 Japanese Particles Checklist.xlsx`
-- `material_de_estudio/kanji/`:
-  - `Kanji book.pdf`, `kanji to print.pdf`, `Nouns kanji.pdf`, `思 Practice Sheet.pdf`, `美 Practice Sheet.pdf`
-- `material_de_estudio/historias_y_lecturas/`:
-  - `Nihongo story.pages`, `preview.jpg`
-- `material_de_estudio/cursos/`:
-  - `irodori elementary.pdf`, `japones from spanish.pdf`
+```
+nihongo-master/
+├── app/                  # Next.js App Router (páginas / rutas y endpoints API)
+├── components/           # Componentes UI organizados por categoría
+│   ├── tabs/             # Vistas principales de navegación (Curriculum, Kanji, Vocab, etc.)
+│   ├── modals/           # Modales emergentes y diálogos interactivos
+│   ├── layout/           # Estructura shell (AppShell, Header, NavigationTabs, Loader)
+│   ├── features/         # Módulos de estudio (Pitch Accent, FSRS, caligrafía, audio)
+│   └── index.js          # Barrel export centralizado de componentes
+├── database/             # Esquemas SQL maestros y scripts DDL para Supabase
+├── data/                 # Bases de datos normalizadas consumidas por la app
+│   └── raw/              # Archivos fuente y volcados originales sin procesar
+├── docs/                 # Documentación técnica, análisis de mercado y temarios
+├── lib/                  # Estado global (AppContext), clientes y utilidades
+├── public/               # Activos estáticos, audios MP3 y materiales de estudio
+├── scripts/              # Suite de pruebas automáticas y scripts de automatización
+└── material_de_estudio/  # Acceso directo al repositorio de libros y PDFs
+```
+
+Todos los materiales de apoyo originales están organizados en `material_de_estudio/`:
+
+- `material_de_estudio/vocabulario/`: Flashcards y listas de vocabulario N5/N4.
+- `material_de_estudio/gramatica_y_particulas/`: Checklists de partículas y notas gramaticales.
+- `material_de_estudio/kanji/`: Libros de ideogramas, fichas de trazos e imprimibles.
+- `material_de_estudio/historias_y_lecturas/`: Historias bilingües.
+- `material_de_estudio/cursos/`: Libros de cursos oficiales (Irodori, NHK).
 
 > 💡 **Nota**: La carpeta `public/material_de_estudio` está enlazada directamente con `material_de_estudio/`, permitiendo que el visor de PDFs de la aplicación acceda a cualquier archivo de forma instantánea sin duplicar almacenamiento.
 

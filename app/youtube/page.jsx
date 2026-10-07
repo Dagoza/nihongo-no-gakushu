@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '../../lib/AppContext';
-import YouTubeImmersionTab from '../../components/YouTubeImmersionTab';
-import PageLoader from '../../components/PageLoader';
+import YouTubeImmersionTab from '../../components/tabs/YouTubeImmersionTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function YouTubePageContent() {
   const { appState, handleUpdateState, authUser, setIsAuthModalOpen } = useApp();

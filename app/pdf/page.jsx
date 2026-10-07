@@ -2,8 +2,8 @@
 
 import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import MaterialLibraryTab from '../../components/MaterialLibraryTab';
-import PageLoader from '../../components/PageLoader';
+import MaterialLibraryTab from '../../components/tabs/MaterialLibraryTab';
+import PageLoader from '../../components/layout/PageLoader';
 
 function PdfPageContent() {
   const searchParams = useSearchParams();
