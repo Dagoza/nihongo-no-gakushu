@@ -50,6 +50,4 @@ export { default as YouTubePlayer } from './features/YouTubePlayer';
 export { default as ZenDaruma3D } from './features/ZenDaruma3D';
 export { default as JapanesePillarsGuide } from './features/JapanesePillarsGuide';
 export { default as StudyStatusBento } from './features/StudyStatusBento';
-export { default as KanaKanjiMemoryGame } from './features/KanaKanjiMemoryGame';
-export { default as ParticleRushGame } from './features/ParticleRushGame';
 export { default as TerminologyDetailModal } from './modals/TerminologyDetailModal';

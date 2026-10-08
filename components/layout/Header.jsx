@@ -150,7 +150,15 @@ export default function Header({
       <div className="header-container">
         <div className="header-top-row">
           <div className="brand-wrapper" onClick={() => onNavigate('/')}>
-            <div className="brand-logo">日</div>
+            <div className="brand-logo">
+              <img 
+                src="/icons/icon.svg" 
+                alt="Nihongo Master Daruma" 
+                width={40} 
+                height={40} 
+                style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 'inherit', display: 'block' }} 
+              />
+            </div>
             <div className="brand-info">
               <div className="brand-title">日本語マスター</div>
               <div className="brand-subtitle">Nihongo Master · Japonés General</div>

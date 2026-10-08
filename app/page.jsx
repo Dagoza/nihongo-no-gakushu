@@ -5,8 +5,6 @@ import dynamic from 'next/dynamic';
 import { useApp } from '../lib/AppContext';
 import JapanesePillarsGuide from '../components/features/JapanesePillarsGuide';
 import StudyStatusBento from '../components/features/StudyStatusBento';
-import KanaKanjiMemoryGame from '../components/features/KanaKanjiMemoryGame';
-import ParticleRushGame from '../components/features/ParticleRushGame';
 import TerminologyDetailModal from '../components/modals/TerminologyDetailModal';
 import { 
   Compass, 
@@ -14,7 +12,6 @@ import {
   MessageSquare, 
   Tv, 
   Layers, 
-  Target, 
   Award, 
   ArrowRight
 } from 'lucide-react';
@@ -35,7 +32,6 @@ export default function HomePage() {
   const [isTerminologyModalOpen, setIsTerminologyModalOpen] = useState(false);
   const [selectedPillarId, setSelectedPillarId] = useState('writing');
   const [isCelebrating, setIsCelebrating] = useState(false);
-  const [activeGameTab, setActiveGameTab] = useState('memory');
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -56,17 +52,6 @@ export default function HomePage() {
       setIsCelebrating(false);
     }, 4500);
   }, []);
-
-  const handleAwardXP = useCallback((amount) => {
-    if (!handleUpdateState) return;
-    const currentXp = appState?.xp || 0;
-    const newXp = currentXp + amount;
-    handleUpdateState({
-      ...appState,
-      xp: newXp
-    });
-    triggerCelebration();
-  }, [appState, handleUpdateState, triggerCelebration]);
 
   const handleOpenPillar = (pillarId) => {
     setSelectedPillarId(pillarId);
@@ -127,7 +112,7 @@ export default function HomePage() {
         <ZenDaruma3D 
           celebrate={isCelebrating}
           size={240}
-          onInteract={() => {}}
+          onInteract={triggerCelebration}
         />
       </section>
 
@@ -142,55 +127,7 @@ export default function HomePage() {
         onOpenPillar={handleOpenPillar}
       />
 
-      {/* 4. ESTACIÓN DE MINI-JUEGOS INTERACTIVOS */}
-      <section className="home-section">
-        <div className="home-section-header">
-          <div>
-            <span className="home-section-label">
-              <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--success)' }} />
-              Práctica Táctil & Gamificación
-            </span>
-            <h2 className="home-section-title">
-              Mini-Juegos Educativos
-            </h2>
-          </div>
-
-          {/* Selector de Juego */}
-          <div className="games-tab-pills">
-            <button
-              type="button"
-              onClick={() => setActiveGameTab('memory')}
-              className={`game-tab-btn ${activeGameTab === 'memory' ? 'active' : ''}`}
-            >
-              <Layers size={15} />
-              <span>1. Memory Flash</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveGameTab('particles')}
-              className={`game-tab-btn ${activeGameTab === 'particles' ? 'active' : ''}`}
-            >
-              <Target size={15} />
-              <span>2. Desafío Partículas</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Juego Activo */}
-        {activeGameTab === 'memory' ? (
-          <KanaKanjiMemoryGame 
-            onGameWin={triggerCelebration}
-            onAwardXP={handleAwardXP}
-          />
-        ) : (
-          <ParticleRushGame 
-            onGameWin={triggerCelebration}
-            onAwardXP={handleAwardXP}
-          />
-        )}
-      </section>
-
-      {/* 5. ACCESO RÁPIDO A TODOS LOS MÓDULOS DE APRENDIZAJE */}
+      {/* 4. ACCESO RÁPIDO A TODOS LOS MÓDULOS DE APRENDIZAJE */}
       <section className="home-section">
         <div className="home-section-header">
           <div>

@@ -1,34 +1,77 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3730a3" />
-      <stop offset="45%" stop-color="#4f46e5" />
-      <stop offset="100%" stop-color="#e11d48" />
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#090d16" />
     </linearGradient>
+
+    <radialGradient id="darumaBody" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="45%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </radialGradient>
+
+    <radialGradient id="darumaFace" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="70%" stop-color="#fef9f3" />
+      <stop offset="100%" stop-color="#faeee2" />
+    </radialGradient>
+
+    <linearGradient id="goldCrest" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#090d16" flood-opacity="0.45"/>
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity="0.45"/>
     </filter>
   </defs>
 
-  <!-- Background Base -->
-  <rect width="512" height="512" rx="0" fill="url(#bgGrad)" />
-  
+  <!-- Full Bleed Background for Maskable Icon -->
+  <rect width="512" height="512" fill="url(#bgGrad)" />
 
-  <g transform="translate(256 256) scale(0.82) translate(-256 -256)">
-    <!-- Subtle Japanese Hinomaru / Sun motif -->
-    <circle cx="256" cy="256" r="155" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.12)" stroke-width="2" />
-    <circle cx="256" cy="256" r="95" fill="rgba(255,255,255,0.05)" />
+  <!-- DARUMA MASCOT (Centered within 80% Safe Zone) -->
+  <g transform="translate(256, 256) scale(0.82) translate(-256, -260)" filter="url(#shadow)">
+    <!-- Base shadow -->
+    <ellipse cx="256" cy="425" rx="150" ry="28" fill="rgba(0, 0, 0, 0.45)" />
 
-    <!-- Vector Kanji 日 -->
-    <g filter="url(#shadow)">
-      <!-- Left vertical stroke -->
-      <path d="M 148 139 L 148 387" stroke="#ffffff" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-      <!-- Top and Right stroke -->
-      <path d="M 148 139 L 364 139 L 364 387" stroke="#ffffff" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-      <!-- Middle horizontal stroke -->
-      <path d="M 148 256 L 364 256" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-      <!-- Bottom horizontal stroke -->
-      <path d="M 148 373 L 364 373" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-    </g>
+    <!-- Red Body (Plump Roly-Poly) -->
+    <ellipse cx="256" cy="272" rx="162" ry="172" fill="url(#darumaBody)" />
+
+    <!-- Dark Red Base Rim -->
+    <ellipse cx="256" cy="412" rx="90" ry="18" fill="#881337" opacity="0.9" />
+
+    <!-- Cream Face Plate -->
+    <ellipse cx="256" cy="235" rx="112" ry="95" fill="url(#darumaFace)" stroke="#fde0c2" stroke-width="2" />
+
+    <!-- Kawaii Cheeks (Rosy Blush) -->
+    <ellipse cx="190" cy="275" rx="20" ry="13" fill="#fb7185" opacity="0.6" />
+    <ellipse cx="322" cy="275" rx="20" ry="13" fill="#fb7185" opacity="0.6" />
+
+    <!-- Eyebrows (Traditional Crane Arcs) -->
+    <path d="M 185 198 Q 212 188 226 202" fill="none" stroke="#1e1b4b" stroke-width="7" stroke-linecap="round" />
+    <path d="M 327 198 Q 300 188 286 202" fill="none" stroke="#1e1b4b" stroke-width="7" stroke-linecap="round" />
+
+    <!-- Left Eye -->
+    <ellipse cx="214" cy="238" rx="21" ry="25" fill="#0f172a" />
+    <circle cx="208" cy="230" r="8.5" fill="#ffffff" />
+    <circle cx="221" cy="245" r="4.2" fill="#ffffff" />
+
+    <!-- Right Eye -->
+    <ellipse cx="298" cy="238" rx="21" ry="25" fill="#0f172a" />
+    <circle cx="292" cy="230" r="8.5" fill="#ffffff" />
+    <circle cx="305" cy="245" r="4.2" fill="#ffffff" />
+
+    <!-- Sweet Smiling Mouth -->
+    <path d="M 243 270 Q 256 280 269 270" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" />
+
+    <!-- Golden Chest Medallion (Fuku / 福) -->
+    <ellipse cx="256" cy="360" rx="46" ry="35" fill="url(#goldCrest)" stroke="#b45309" stroke-width="3" />
+    <ellipse cx="256" cy="360" rx="42" ry="31" fill="none" stroke="#fef08a" stroke-width="2" opacity="0.7" />
+
+    <!-- Kanji 福 -->
+    <text x="256" y="371" font-family="'Noto Sans JP', 'Hiragino Sans', sans-serif" font-weight="900" font-size="28" fill="#78350f" text-anchor="middle">福</text>
   </g>
 </svg>
