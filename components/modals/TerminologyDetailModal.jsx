@@ -132,7 +132,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
       sections: [
         {
           id: 'n5',
-          name: 'N5 — Nivel Principiante Esencial',
+          name: 'N5 — Nivel Oficial JLPT N5',
           role: 'Comprensión básica de la vida cotidiana',
           desc: '~100 Kanjis y ~800 palabras de vocabulario. Capacidad de leer frases sencillas escritas en hiragana, katakana y kanji de uso cotidiano.',
           examples: [
@@ -142,7 +142,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
         },
         {
           id: 'n4',
-          name: 'N4 — Nivel Elemental Sólido',
+          name: 'N4 — Nivel Oficial JLPT N4',
           role: 'Conversaciones cotidianas fluidas',
           desc: '~300 Kanjis y ~1,500 palabras. Comprensión de diálogos a velocidad moderada, conjugaciones potenciales, formas pasivas y condicionales.',
           examples: [
@@ -152,7 +152,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
         },
         {
           id: 'n3',
-          name: 'N3 — Intermedio Puente',
+          name: 'N3 — Nivel Oficial JLPT N3',
           role: 'Autonomía en la vida en Japón',
           desc: '~650 Kanjis y ~3,750 palabras. Comprensión de noticias cotidianas, situaciones laborales comunes y expresión de opiniones.',
           examples: [
@@ -161,7 +161,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
         },
         {
           id: 'n2_n1',
-          name: 'N2 y N1 — Nivel Avanzado y Fluidez Superior',
+          name: 'N2 y N1 — Niveles Oficiales JLPT N2 y N1',
           role: 'Ámbito laboral profesional y textos complejos',
           desc: 'N2 (~1,000 Kanjis, nivel requerido por empresas en Japón) y N1 (~2,000+ Kanjis, comprensión de ensayos abstractos, literatura y debates técnicos).',
           examples: [

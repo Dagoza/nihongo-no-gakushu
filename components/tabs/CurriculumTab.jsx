@@ -2185,7 +2185,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                     <span className="grammar-item-icon">⚡</span>
                                     <div className="grammar-item-body">
                                       {title && <span className="grammar-item-title">{title}</span>}
-                                      <span className="grammar-item-formula jp-text" style={{ lineHeight: 1.5 }}>
+                                      <span className="grammar-item-formula jp-text" style={{ lineHeight: 2.0 }}>
                                         <FuriganaText text={content} showFurigana={showFurigana} />
                                       </span>
                                     </div>

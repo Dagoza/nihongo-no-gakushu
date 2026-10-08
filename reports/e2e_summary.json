@@ -1,0 +1,115 @@
+{
+  "timestamp": "2026-10-08T20:45:28.132Z",
+  "durationMs": 48,
+  "total": 15,
+  "passed": 15,
+  "failed": 0,
+  "overallStatus": "PASSED",
+  "results": [
+    {
+      "id": "T1.1",
+      "name": "Arquitectura Bento Card (Estructura modular, radios y bordes)",
+      "status": "PASSED",
+      "details": "Clases .card, .bento-card y .module-hero-card configuradas con border-radius, 1px border y sombras suaves",
+      "tier": 1
+    },
+    {
+      "id": "T1.2",
+      "name": "Paleta Japandi de 8 Roles (Aizome, Shu-iro, Matcha, Kohaku, Washi, Sumi, Sakura, Slate)",
+      "status": "PASSED",
+      "details": "Los 8 roles cromáticos tradicionales japoneses están mapeados en variables CSS y selectores de tema",
+      "tier": 1
+    },
+    {
+      "id": "T1.3",
+      "name": "Márgenes de Seguridad Móvil (Safe Areas & AudioPlayerBar clearance)",
+      "status": "PASSED",
+      "details": "Variables dinámicas --audio-player-height (72px/170px) y padding seguro con env(safe-area-inset-bottom) verificados",
+      "tier": 1
+    },
+    {
+      "id": "T1.4",
+      "name": "Encabezados Modulares Universales (Hero Banners & Tour Shortcuts)",
+      "status": "PASSED",
+      "details": "Las 9 pestañas principales cuentan con Hero Banners unificados y botones .tour-info-shortcut-btn hacia sus pasos de tour correspondientes",
+      "tier": 1
+    },
+    {
+      "id": "T1.5",
+      "name": "Cobertura de los 16 Modales e Integridad de Interfaces",
+      "status": "PASSED",
+      "details": "Los 16 modales interactivos existen, tienen implementaciones válidas y se exportan correctamente",
+      "tier": 1
+    },
+    {
+      "id": "T2.1",
+      "name": "Contraste Modo Oscuro Zen & Cumplimiento WCAG AA",
+      "status": "PASSED",
+      "details": "Texto principal: 17.7:1 (excede 4.5:1), texto secundario: 7.6:1, acento índigo UI: 4.0:1 (excede 3.0:1)",
+      "tier": 2
+    },
+    {
+      "id": "T2.2",
+      "name": "Márgenes de Furigana y Prevención de Colisiones de Línea",
+      "status": "PASSED",
+      "details": "Anotaciones ruby (<ruby>/<rt>) estructuradas con line-height seguro (>= 1.85) para evitar solapamiento visual",
+      "tier": 2
+    },
+    {
+      "id": "T2.3",
+      "name": "Resiliencia Móvil Viewport 390px (Zero Overflow-X)",
+      "status": "PASSED",
+      "details": "Reglas de contención overflow-x: clip/hidden, max-width: 100% y box-sizing: border-box verificadas en las 12 rutas",
+      "tier": 2
+    },
+    {
+      "id": "T2.4",
+      "name": "Insignias JLPT e Purga de Etiquetas Genéricas (Regla 6)",
+      "status": "PASSED",
+      "details": "Cumplimiento estricto del estándar oficial JLPT N5-N1 sin menciones a CEFR ni etiquetas genéricas en selectores",
+      "tier": 2
+    },
+    {
+      "id": "T3.1",
+      "name": "Interacción Cruzada: Modo Oscuro + AudioPlayerBar + Modales (Jerarquía z-index)",
+      "status": "PASSED",
+      "details": "Jerarquía de apilamiento verificada: Header (z:50) < AudioPlayer (z:90) < Modales (z:>=1000). Adaptación dinámica a data-theme=\"dark\"",
+      "tier": 3
+    },
+    {
+      "id": "T3.2",
+      "name": "Persistencia de Audio en Navegación y Transición de Rutas",
+      "status": "PASSED",
+      "details": "AudioPlayerBar montado a nivel raíz persistente en AppShell; audioManager gestiona reproducción sin cortes entre pestañas",
+      "tier": 3
+    },
+    {
+      "id": "T3.3",
+      "name": "Descarte Accesible de Modales y Aislamiento de Capas",
+      "status": "PASSED",
+      "details": "Los modales implementan controladores de cierre onClose, soporte de tecla Escape y descarte accesible por backdrop",
+      "tier": 3
+    },
+    {
+      "id": "T4.1",
+      "name": "Trayectoria Completa de Aprendizaje (37 Módulos y Enlaces Temáticos)",
+      "status": "PASSED",
+      "details": "Los 37 módulos secuenciales cuentan con Can-Dos pedagógicos, ejercicios y enlaces navegables bidireccionales en related_topics",
+      "tier": 4
+    },
+    {
+      "id": "T4.2",
+      "name": "Sesión Interactiva de Cuestionario (ComprehensionQuiz State Machine)",
+      "status": "PASSED",
+      "details": "Esquema de preguntas verificado en stories.json; evaluación de respuestas, cálculo de puntaje y premiación de XP (+10) validados",
+      "tier": 4
+    },
+    {
+      "id": "T4.3",
+      "name": "Sesión de Repaso Espaciado SRS (Algoritmo Matemático FSRS)",
+      "status": "PASSED",
+      "details": "Modelo FSRS con 4 calificaciones (Again, Hard, Good, Easy) validado: estabilidad Easy > Hard, cálculo de intervalos y fechas de vencimiento correctos",
+      "tier": 4
+    }
+  ]
+}

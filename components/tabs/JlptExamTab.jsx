@@ -800,8 +800,22 @@ export default function JlptExamTab() {
             )}
 
             {showFurigana && currentQuestion?.furigana && (
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 20, wordBreak: 'break-word' }}>
-                {currentQuestion.furigana}
+              <div style={{ 
+                fontSize: '0.88rem', 
+                color: 'var(--primary)', 
+                background: 'var(--primary-bg)', 
+                padding: '6px 12px', 
+                borderRadius: 'var(--radius-md, 12px)', 
+                marginBottom: 20, 
+                wordBreak: 'break-word',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                fontWeight: 600,
+                fontFamily: 'var(--font-jp)'
+              }}>
+                <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Furigana:</span>
+                <span>{currentQuestion.furigana}</span>
               </div>
             )}
 

@@ -102,9 +102,9 @@ export default function UIModal({
         className="ui-modal-card" 
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: 'var(--surface)',
+          background: 'var(--bg-surface)',
           border: '1px solid var(--border)',
-          borderRadius: '16px',
+          borderRadius: 'var(--radius-bento, 20px)',
           width: '100%',
           maxWidth: '460px',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',

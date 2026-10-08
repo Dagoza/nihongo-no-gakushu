@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start -p 3000",
     "test": "node scripts/run_all_tests.js",
+    "test:e2e": "node scripts/run_e2e_tests.mjs",
     "audit:ui": "node scripts/audit_ui_playwright.mjs"
   },
   "devDependencies": {

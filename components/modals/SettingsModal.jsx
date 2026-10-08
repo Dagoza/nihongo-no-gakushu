@@ -101,7 +101,7 @@ export default function SettingsModal({
           flexDirection: 'column',
           padding: 0,
           overflow: 'hidden',
-          borderRadius: 'var(--radius-lg, 16px)'
+          borderRadius: 'var(--radius-bento, 20px)'
         }}
       >
         {/* Header */}

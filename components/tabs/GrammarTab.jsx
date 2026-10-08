@@ -68,6 +68,12 @@ export default function GrammarTab({
 
   const [visibleCount, setVisibleCount] = useState(30);
 
+  // Progressive Disclosure: Examples toggle per particle
+  const [expandedExamples, setExpandedExamples] = useState({});
+  const toggleExpandExamples = (id) => {
+    setExpandedExamples(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   useEffect(() => {
     setVisibleCount(30);
   }, [levelFilter, filterParticle, filterStatus, searchTerm]);
@@ -495,82 +501,108 @@ export default function GrammarTab({
                     </div>
                   )}
 
-                  {/* Examples Section */}
-                  <div className="particle-examples-section">
-                    <div className="particle-examples-header">
-                      <span>Ejemplos de uso ({p.examples?.length || 0})</span>
-                    </div>
+                  {/* Examples Section with Progressive Disclosure */}
+                  {p.examples && p.examples.length > 0 && (() => {
+                    const isExpanded = Boolean(expandedExamples[p.id]);
+                    const displayExamples = isExpanded || p.examples.length <= 2 ? p.examples : p.examples.slice(0, 2);
+                    const remainingCount = p.examples.length - 2;
 
-                    <div className="particle-examples-list" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      {p.examples && p.examples.map((ex, idx) => {
-                        const exJa = typeof ex === 'string' ? ex : ex.ja;
-                        const exRomaji = typeof ex === 'string' ? '' : ex.romaji;
-                        const exEs = typeof ex === 'string' ? '' : ex.es;
+                    return (
+                      <div className="particle-examples-section">
+                        <div className="particle-examples-header">
+                          <span>Ejemplos de uso ({p.examples.length})</span>
+                          {p.examples.length > 2 && (
+                            <button
+                              type="button"
+                              onClick={() => toggleExpandExamples(p.id)}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'var(--primary)',
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                padding: '2px 6px',
+                                borderRadius: '4px'
+                              }}
+                            >
+                              {isExpanded ? 'Ver menos' : `+ Ver ${remainingCount} más`}
+                            </button>
+                          )}
+                        </div>
 
-                        return (
-                          <div key={idx} className="particle-example-card">
-                            <div className="particle-example-main">
-                              <div className="jp-text particle-example-sentence">
-                                {highlightParticle(exJa, p.particle)}
-                              </div>
-                              <div className="particle-example-actions">
-                                <button 
-                                  type="button"
-                                  className="audio-btn" 
-                                  onClick={() => audioManager.speak(exJa)}
-                                  title="Escuchar pronunciación nativa"
-                                >
-                                  <Volume2 size={15} />
-                                </button>
-                                <SpeechPractice 
-                                  targetText={exJa} 
-                                  targetKana={wanakana.toKana(exRomaji || '')}
-                                  compact={true} 
-                                />
-                                <button 
-                                  type="button"
-                                  className="audio-btn" 
-                                  onClick={() => {
-                                    if (contextApp?.openPracticePad) {
-                                      contextApp.openPracticePad({
-                                        text: exJa,
-                                        kana: wanakana.toKana(exRomaji || ''),
-                                        title: `Gramática: Partícula ${p.particle}`,
-                                        source: 'grammar'
-                                      });
-                                    } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
-                                      window.__nihongoOpenPracticePad({
-                                        text: exJa,
-                                        kana: wanakana.toKana(exRomaji || ''),
-                                        title: `Gramática: Partícula ${p.particle}`,
-                                        source: 'grammar'
-                                      });
-                                    }
-                                  }}
-                                  title="Practicar caligrafía y trazos de este ejemplo en Cuaderno"
-                                >
-                                  <PenTool size={15} />
-                                </button>
-                              </div>
-                            </div>
+                        <div className="particle-examples-list" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                          {displayExamples.map((ex, idx) => {
+                            const exJa = typeof ex === 'string' ? ex : ex.ja;
+                            const exRomaji = typeof ex === 'string' ? '' : ex.romaji;
+                            const exEs = typeof ex === 'string' ? '' : ex.es;
 
-                            {exRomaji && (
-                              <div className="particle-example-romaji">
-                                {exRomaji}
-                              </div>
-                            )}
+                            return (
+                              <div key={idx} className="particle-example-card">
+                                <div className="particle-example-main">
+                                  <div className="jp-text particle-example-sentence">
+                                    {highlightParticle(exJa, p.particle)}
+                                  </div>
+                                  <div className="particle-example-actions">
+                                    <button 
+                                      type="button"
+                                      className="audio-btn" 
+                                      onClick={() => audioManager.speak(exJa)}
+                                      title="Escuchar pronunciación nativa"
+                                    >
+                                      <Volume2 size={15} />
+                                    </button>
+                                    <SpeechPractice 
+                                      targetText={exJa} 
+                                      targetKana={wanakana.toKana(exRomaji || '')}
+                                      compact={true} 
+                                    />
+                                    <button 
+                                      type="button"
+                                      className="audio-btn" 
+                                      onClick={() => {
+                                        if (contextApp?.openPracticePad) {
+                                          contextApp.openPracticePad({
+                                            text: exJa,
+                                            kana: wanakana.toKana(exRomaji || ''),
+                                            title: `Gramática: Partícula ${p.particle}`,
+                                            source: 'grammar'
+                                          });
+                                        } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                          window.__nihongoOpenPracticePad({
+                                            text: exJa,
+                                            kana: wanakana.toKana(exRomaji || ''),
+                                            title: `Gramática: Partícula ${p.particle}`,
+                                            source: 'grammar'
+                                          });
+                                        }
+                                      }}
+                                      title="Practicar caligrafía y trazos de este ejemplo en Cuaderno"
+                                    >
+                                      <PenTool size={15} />
+                                    </button>
+                                  </div>
+                                </div>
 
-                            {exEs && (
-                              <div className="particle-example-trans">
-                                <span style={{ opacity: 0.8, marginRight: 4 }}>🇪🇸</span>
-                                <span>{exEs}</span>
+                                {exRomaji && (
+                                  <div className="particle-example-romaji">
+                                    {exRomaji}
+                                  </div>
+                                )}
+
+                                {exEs && (
+                                  <div className="particle-example-trans">
+                                    <span style={{ opacity: 0.8, marginRight: 4 }}>🇪🇸</span>
+                                    <span>{exEs}</span>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             }))}

@@ -492,19 +492,19 @@ export default function VocabTab({
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '12px',
-        background: 'var(--surface)',
+        background: 'var(--bg-surface)',
         border: '1px solid var(--border)',
-        borderRadius: '12px',
+        borderRadius: 'var(--radius-bento, 20px)',
         padding: '12px 18px',
         marginBottom: '20px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)' }}>
             Fuente del Diccionario:
           </span>
           <div style={{
             display: 'inline-flex',
-            background: 'var(--background)',
+            background: 'var(--bg-main)',
             padding: '3px',
             borderRadius: '10px',
             border: '1px solid var(--border)'
@@ -529,8 +529,8 @@ export default function VocabTab({
             >
               <span>📖 Mis Recursos Propios</span>
               <span style={{
-                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
-                color: !isMassive ? '#fff' : 'var(--text-secondary)',
+                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
+                color: !isMassive ? '#fff' : 'var(--text-muted)',
                 padding: '2px 8px',
                 borderRadius: '10px',
                 fontSize: '0.75rem',
@@ -559,8 +559,8 @@ export default function VocabTab({
             >
               <span>{authUser ? '🌐 Catálogo Masivo (API)' : '🔒 Catálogo Masivo (API)'}</span>
               <span style={{
-                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
-                color: isMassive ? '#fff' : 'var(--text-secondary)',
+                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
+                color: isMassive ? '#fff' : 'var(--text-muted)',
                 padding: '2px 8px',
                 borderRadius: '10px',
                 fontSize: '0.75rem',

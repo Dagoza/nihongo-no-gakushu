@@ -78,6 +78,12 @@ export default function KanjiTab({
   // Drawing Mode
   const [drawingKanji, setDrawingKanji] = useState(initialDraw || null);
 
+  // Progressive Disclosure: Compound words toggle per kanji
+  const [expandedCompoundKanji, setExpandedCompoundKanji] = useState({});
+  const toggleExpandWords = (kanjiChar) => {
+    setExpandedCompoundKanji(prev => ({ ...prev, [kanjiChar]: !prev[kanjiChar] }));
+  };
+
   const updateParams = (newSearch, newMode, newDraw) => {
     if (onParamsChange) {
       const activeMode = newMode !== undefined 
@@ -400,19 +406,19 @@ export default function KanjiTab({
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '12px',
-        background: 'var(--surface)',
+        background: 'var(--bg-surface)',
         border: '1px solid var(--border)',
-        borderRadius: '12px',
+        borderRadius: 'var(--radius-bento, 20px)',
         padding: '12px 18px',
         marginBottom: '20px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)' }}>
             Fuente de Kanjis:
           </span>
           <div style={{
             display: 'inline-flex',
-            background: 'var(--background)',
+            background: 'var(--bg-main)',
             padding: '3px',
             borderRadius: '10px',
             border: '1px solid var(--border)'
@@ -437,8 +443,8 @@ export default function KanjiTab({
             >
               <span>📖 Mis Kanjis Propios</span>
               <span style={{
-                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
-                color: !isMassive ? '#fff' : 'var(--text-secondary)',
+                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
+                color: !isMassive ? '#fff' : 'var(--text-muted)',
                 padding: '2px 8px',
                 borderRadius: '10px',
                 fontSize: '0.75rem',
@@ -467,8 +473,8 @@ export default function KanjiTab({
             >
               <span>{authUser ? '🌐 Catálogo Masivo (API)' : '🔒 Catálogo Masivo (API)'}</span>
               <span style={{
-                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--surface)',
-                color: isMassive ? '#fff' : 'var(--text-secondary)',
+                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
+                color: isMassive ? '#fff' : 'var(--text-muted)',
                 padding: '2px 8px',
                 borderRadius: '10px',
                 fontSize: '0.75rem',
@@ -783,44 +789,70 @@ export default function KanjiTab({
                     </div>
                   )}
 
-                  {/* Compound Words */}
-                  {k.words && k.words.length > 0 && (
-                    <div className="kanji-words-list">
-                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
-                        Palabras Compuestas:
-                      </div>
-                      {k.words.map((w, idx) => (
-                        <div key={idx} className="kanji-word-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6, padding: '8px 10px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                            <span className="jp-text" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                              {w.word} <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
-                            </span>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1, marginLeft: 8 }}>{w.meaning}</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                              <button 
-                                type="button"
-                                className="audio-btn" 
-                                style={{ width: 26, height: 26, flexShrink: 0 }}
-                                onClick={() => audioManager.speak(w.reading || w.word)}
-                                title="Escuchar palabra"
-                              >
-                                <Volume2 size={13} />
-                              </button>
-                              <SpeechPractice 
-                                targetText={w.word} 
-                                targetKana={w.reading} 
-                                compact={true} 
-                              />
+                  {/* Compound Words with Progressive Disclosure */}
+                  {k.words && k.words.length > 0 && (() => {
+                    const isExpanded = Boolean(expandedCompoundKanji[k.kanji]);
+                    const displayWords = isExpanded || k.words.length <= 2 ? k.words : k.words.slice(0, 2);
+                    const remainingCount = k.words.length - 2;
+
+                    return (
+                      <div className="kanji-words-list">
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                            Palabras Compuestas ({k.words.length}):
+                          </span>
+                          {k.words.length > 2 && (
+                            <button
+                              type="button"
+                              onClick={() => toggleExpandWords(k.kanji)}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'var(--primary)',
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                padding: '2px 6px',
+                                borderRadius: '4px'
+                              }}
+                            >
+                              {isExpanded ? 'Ver menos' : `+ Ver ${remainingCount} más`}
+                            </button>
+                          )}
+                        </div>
+                        {displayWords.map((w, idx) => (
+                          <div key={idx} className="kanji-word-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6, padding: '8px 10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                              <span className="jp-text" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                                {w.word} <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
+                              </span>
+                              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1, marginLeft: 8 }}>{w.meaning}</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                                <button 
+                                  type="button"
+                                  className="audio-btn" 
+                                  style={{ width: 26, height: 26, flexShrink: 0 }}
+                                  onClick={() => audioManager.speak(w.reading || w.word)}
+                                  title="Escuchar palabra"
+                                >
+                                  <Volume2 size={13} />
+                                </button>
+                                <SpeechPractice 
+                                  targetText={w.word} 
+                                  targetKana={w.reading} 
+                                  compact={true} 
+                                />
+                              </div>
+                            </div>
+                            {/* Curva visual de Pitch Accent */}
+                            <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-start' }}>
+                              <PitchAccent word={w.word} reading={w.reading} mode="compact" size="sm" />
                             </div>
                           </div>
-                          {/* Curva visual de Pitch Accent */}
-                          <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-start' }}>
-                            <PitchAccent word={w.word} reading={w.reading} mode="compact" size="sm" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             }))}
@@ -1306,9 +1338,9 @@ export default function KanjiTab({
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 900,
-          background: 'var(--surface)',
+          background: 'var(--bg-surface)',
           border: '2px solid var(--primary)',
-          borderRadius: 16,
+          borderRadius: 'var(--radius-bento, 20px)',
           padding: '10px 18px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.28)',
           display: 'flex',

@@ -811,10 +811,10 @@ export default function SavedTab({
                             <div style={{
                               marginTop: 6,
                               fontSize: '0.82rem',
-                              color: 'var(--amber-700, #b45309)',
+                              color: 'var(--kohaku, #d97706)',
                               background: 'rgba(245, 158, 11, 0.1)',
                               padding: '5px 8px',
-                              borderRadius: '6px',
+                              borderRadius: 'var(--radius-sm, 8px)',
                               display: 'flex',
                               alignItems: 'flex-start',
                               gap: 6

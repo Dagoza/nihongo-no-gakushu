@@ -186,7 +186,7 @@ export default function Header({
                 <div className="notif-dropdown-card" role="dialog" aria-label="Temarios revisados con ejercicios pendientes">
                   <div className="notif-dropdown-header">
                     <div className="notif-dropdown-title">
-                      <Bell size={16} className="text-amber-500" />
+                      <Bell size={16} style={{ color: 'var(--kohaku, #f59e0b)' }} />
                       <span>Ejercicios Pendientes</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -224,14 +224,14 @@ export default function Header({
                   {/* Tarjeta Destacada de Meta Diaria en Notificaciones */}
                   <div style={{
                     padding: '12px 14px',
-                    borderRadius: 12,
+                    borderRadius: 'var(--radius-md, 12px)',
                     background: isGoalReached ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)',
                     border: `1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.25)' : 'rgba(245, 158, 11, 0.25)'}`,
                     margin: '8px 0 12px'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.86rem', color: 'var(--text-main)' }}>
-                        <Flame size={16} className="text-amber-500" />
+                        <Flame size={16} style={{ color: 'var(--kohaku, #f59e0b)' }} />
                         <span>Meta Diaria de Hoy</span>
                       </div>
                       <span style={{
@@ -421,7 +421,7 @@ export default function Header({
               aria-label={isMinimized ? 'Mostrar estadísticas' : 'Ocultar estadísticas'}
               aria-expanded={!isMinimized}
             >
-              <Flame size={13} className="text-amber-500" />
+              <Flame size={13} style={{ color: 'var(--kohaku, #f59e0b)' }} />
               <span>{isMinimized ? 'Stats' : 'Ocultar'}</span>
             </button>
 
@@ -512,11 +512,11 @@ export default function Header({
                       <div className="session-sync-header">
                         <div className="session-sync-title">
                           {syncStatus === 'syncing' ? (
-                            <CloudSync size={16} className="text-amber-500 animate-spin" />
+                            <CloudSync size={16} className="animate-spin" style={{ color: 'var(--kohaku, #f59e0b)' }} />
                           ) : syncStatus === 'synced' ? (
-                            <CloudCheck size={16} className="text-emerald-500" />
+                            <CloudCheck size={16} style={{ color: 'var(--matcha, #10b981)' }} />
                           ) : (
-                            <CloudOff size={16} className="text-slate-400" />
+                            <CloudOff size={16} style={{ color: 'var(--text-muted)' }} />
                           )}
                           <span>
                             {syncStatus === 'synced' ? 'Nube Sincronizada' : syncStatus === 'syncing' ? 'Sincronizando cambios...' : 'Modo Local'}
@@ -695,7 +695,7 @@ export default function Header({
               else if (typeof window !== 'undefined' && window.__nihongoOpenTour) window.__nihongoOpenTour('header_badges');
             }}
           >
-            <Flame size={16} className="text-amber-500" />
+            <Flame size={16} style={{ color: 'var(--kohaku, #f59e0b)' }} />
             <span>{stats.streak}d</span>
           </div>
 
@@ -727,12 +727,12 @@ export default function Header({
           </div>
 
           <div className="stat-badge" title="Puntos de experiencia y nivel">
-            <Star size={16} className="text-indigo-500" />
+            <Star size={16} style={{ color: 'var(--aizome, #6366f1)' }} />
             <span>Nivel {stats.level} ({stats.xp} XP)</span>
           </div>
 
           <div className="stat-badge" title="Partículas dominadas">
-            <CheckCircle size={16} className="text-emerald-500" />
+            <CheckCircle size={16} style={{ color: 'var(--matcha, #10b981)' }} />
             <span>{stats.particles}/{stats.totalParticles || 99} part.</span>
           </div>
 

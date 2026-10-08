@@ -1859,7 +1859,7 @@ export default function ProductTour({
                 {currentStep.id === 'jlpt' && (() => {
                   const jlptLevelData = {
                     N5: {
-                      title: 'JLPT N5 (Principiante)',
+                      title: 'JLPT N5',
                       section: 'Sección: 文字・語彙 (Vocabulario & Kanjis)',
                       sentence: '毎朝、新聞を [ ___ ]。',
                       meaning: '(Cada mañana leo el periódico)',
@@ -1873,7 +1873,7 @@ export default function ProductTour({
                       timeLimit: '25 min'
                     },
                     N4: {
-                      title: 'JLPT N4 (Básico Superior)',
+                      title: 'JLPT N4',
                       section: 'Sección: 文法 (Gramática)',
                       sentence: '田中さんは [ ___ ] から、あしたのパーティーに来ません。',
                       meaning: '(Como el Sr. Tanaka está ocupado, no vendrá a la fiesta de mañana)',
@@ -1887,7 +1887,7 @@ export default function ProductTour({
                       timeLimit: '30 min'
                     },
                     N3: {
-                      title: 'JLPT N3 (Intermedio)',
+                      title: 'JLPT N3',
                       section: 'Sección: 文法・表現 (Patrones Gramaticales)',
                       sentence: 'どんなに [ ___ ]、あきらめないで最後までやり抜くつもりだ。',
                       meaning: '(Por muy difícil/doloroso que sea, no me rendiré y llegaré hasta el final)',
@@ -1901,7 +1901,7 @@ export default function ProductTour({
                       timeLimit: '40 min'
                     },
                     N2: {
-                      title: 'JLPT N2 (Avanzado)',
+                      title: 'JLPT N2',
                       section: 'Sección: 語彙・コロケーション (Colocaciones Léxicas)',
                       sentence: '健康診断の [ ___ ]、特に異常は見つからなかった。',
                       meaning: '(Como resultado del chequeo médico, no se encontraron anomalías)',

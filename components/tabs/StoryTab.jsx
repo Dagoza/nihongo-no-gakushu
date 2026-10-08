@@ -394,13 +394,13 @@ export default function StoryTab({
             const isSelected = s.id === story.id;
             const lvl = s.level || s.difficulty || 'N5';
             const lvlColor = 
-              lvl === 'N5' ? '#059669' :
-              lvl === 'N4' ? '#2563eb' :
-              lvl === 'N3' ? '#d97706' : '#8b5cf6';
+              lvl === 'N5' ? 'var(--matcha, #059669)' :
+              lvl === 'N4' ? 'var(--aizome, #4338ca)' :
+              lvl === 'N3' ? 'var(--kohaku, #d97706)' : 'var(--primary)';
             const lvlBg = 
               lvl === 'N5' ? 'rgba(16, 185, 129, 0.12)' :
-              lvl === 'N4' ? 'rgba(59, 130, 246, 0.12)' :
-              lvl === 'N3' ? 'rgba(245, 158, 11, 0.12)' : 'rgba(139, 92, 246, 0.12)';
+              lvl === 'N4' ? 'rgba(99, 102, 241, 0.12)' :
+              lvl === 'N3' ? 'rgba(245, 158, 11, 0.12)' : 'rgba(99, 102, 241, 0.12)';
 
             return (
               <div
@@ -413,7 +413,7 @@ export default function StoryTab({
                 }}
                 style={{
                   padding: '12px 14px',
-                  borderRadius: 'var(--radius-md)',
+                  borderRadius: 'var(--radius-bento, 20px)',
                   border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border)',
                   background: isSelected ? 'rgba(99, 102, 241, 0.06)' : 'var(--bg-main)',
                   cursor: 'pointer',

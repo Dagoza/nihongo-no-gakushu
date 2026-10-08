@@ -141,7 +141,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           maxWidth: 440,
           background: 'var(--bg-card, #ffffff)',
           color: 'var(--text-main, #0f172a)',
-          borderRadius: 16,
+          borderRadius: 'var(--radius-bento, 20px)',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
           border: '1px solid var(--border)',
           overflow: 'hidden',
