@@ -25,13 +25,24 @@ import {
 } from 'lucide-react';
 
 export const NAV_CATEGORIES = [
-  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 11 },
-  { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 4 },
+  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 12 },
+  { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 5 },
   { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 6 },
   { id: 'progress', label: 'Progreso', shortLabel: 'Progreso', icon: BarChart3, count: 1 },
 ];
 
 export const TABS = [
+  {
+    id: 'home',
+    path: '/',
+    category: 'learn',
+    categoryName: 'Aprender',
+    shortLabel: 'Inicio',
+    fullLabel: 'Inicio & Hub Zen',
+    desc: 'Centro interactivo con Daruma 3D, terminología y juegos',
+    icon: Sparkles,
+    color: '#6366f1',
+  },
   {
     id: 'curriculum',
     path: '/curriculum',
@@ -161,7 +172,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
 
   const activeTabId = (() => {
     if (currentTab) return currentTab;
-    if (!pathname) return 'curriculum';
+    if (!pathname || pathname === '/') return 'home';
     if (pathname.startsWith('/story')) return 'story';
     if (pathname.startsWith('/nhk')) return 'nhk';
     if (pathname.startsWith('/youtube')) return 'youtube';

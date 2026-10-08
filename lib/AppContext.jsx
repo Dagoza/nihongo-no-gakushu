@@ -510,6 +510,7 @@ export function AppProvider({ children }) {
   // Unified router navigation helper
   const navigate = useCallback((tabOrPath, extraParam = null) => {
     let target = tabOrPath;
+    if (target === 'home') target = '/';
     if (target === 'particles') target = 'grammar';
     if (target === 'stories') target = 'story';
     if (!target.startsWith('/')) {
@@ -537,18 +538,19 @@ export function AppProvider({ children }) {
 
   // Determine current active tab ID from current pathname
   const currentTab = (() => {
-    if (!pathname) return 'curriculum';
+    if (!pathname || pathname === '/') return 'home';
     if (pathname.startsWith('/story')) return 'story';
     if (pathname.startsWith('/nhk')) return 'nhk';
     if (pathname.startsWith('/youtube')) return 'youtube';
     if (pathname.startsWith('/vocab')) return 'vocab';
     if (pathname.startsWith('/grammar') || pathname.startsWith('/particles')) return 'particles';
     if (pathname.startsWith('/kanji')) return 'kanji';
+    if (pathname.startsWith('/jlpt')) return 'jlpt';
     if (pathname.startsWith('/pdf')) return 'pdf';
     if (pathname.startsWith('/saved')) return 'saved';
     if (pathname.startsWith('/progress')) return 'progress';
     if (pathname.startsWith('/curriculum')) return 'curriculum';
-    return 'curriculum';
+    return 'home';
   })();
 
   const savedCount = (appState?.savedWords?.length || 0) + (appState?.savedPhrases?.length || 0);

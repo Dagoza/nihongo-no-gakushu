@@ -149,7 +149,7 @@ export default function Header({
     <header className="app-header">
       <div className="header-container">
         <div className="header-top-row">
-          <div className="brand-wrapper" onClick={() => onNavigate('curriculum')}>
+          <div className="brand-wrapper" onClick={() => onNavigate('/')}>
             <div className="brand-logo">日</div>
             <div className="brand-info">
               <div className="brand-title">日本語マスター</div>
