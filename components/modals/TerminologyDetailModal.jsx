@@ -4,18 +4,13 @@ import React, { useState } from 'react';
 import { 
   X, 
   Volume2, 
-  BookOpen, 
-  Sparkles, 
-  CheckCircle2, 
   ArrowRight, 
-  Layers, 
+  Languages, 
   Target, 
   Award, 
-  Languages, 
-  HelpCircle 
+  Sparkles 
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import FuriganaText from '../features/FuriganaText';
 
 export default function TerminologyDetailModal({ isOpen, onClose, initialPillarId = 'writing', onNavigate }) {
   const [activePillar, setActivePillar] = useState(initialPillarId);
@@ -38,7 +33,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
       badge: 'Escritura & Alfabetos',
       icon: Languages,
       color: '#6366f1',
-      summary: 'El japonés moderno no utiliza un solo alfabeto, sino una orquestación armoniosa de 3 sistemas nativos complementarios más la transcripción en caracteres latinos.',
+      summary: 'El japonés moderno no utiliza un solo abecedario, sino una combinación armoniosa de 3 sistemas nativos complementarios más la transcripción en alfabeto latino.',
       sections: [
         {
           id: 'hiragana',
@@ -100,7 +95,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
           desc: '「は」 (se pronuncia WA como partícula) define el TEMA principal de conversación ("En cuanto a X..."). 「が」 (ga) enfoca el SUJETO específico que realiza la acción o introduce nueva información.',
           examples: [
             { jp: '私は 田中 です。', romaji: 'Watashi wa Tanaka desu.', es: 'En cuanto a mí, soy Tanaka.' },
-            { jp: 'だれが 来ましたか。', romaji: 'Dare ga kimashita ka.', es: '¿Quién es el que vino? (énfasis en quién)' }
+            { jp: 'だれが 来ましたか。', romaji: 'Dare ga kimashita ka.', es: '¿Quién es el que vino?' }
           ]
         },
         {
@@ -139,7 +134,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
           id: 'n5',
           name: 'N5 — Nivel Principiante Esencial',
           role: 'Comprensión básica de la vida cotidiana',
-          desc: '~100 Kanjis y ~800 palabras de vocabulario. Capacidad de leer frases sencillas escritas en hiragana, katakana y kanji de uso cotidiano (saludos, compras, direcciones).',
+          desc: '~100 Kanjis y ~800 palabras de vocabulario. Capacidad de leer frases sencillas escritas en hiragana, katakana y kanji de uso cotidiano.',
           examples: [
             { jp: 'これは いくら ですか。', romaji: 'Kore wa ikura desu ka.', es: '¿Cuánto cuesta esto?' },
             { jp: '毎朝 パンを 食べます。', romaji: 'Maiasa pan o tabemasu.', es: 'Como pan todas las mañanas.' }
@@ -149,7 +144,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
           id: 'n4',
           name: 'N4 — Nivel Elemental Sólido',
           role: 'Conversaciones cotidianas fluidas',
-          desc: '~300 Kanjis y ~1,500 palabras. Comprensión de diálogos a velocidad moderada, conjugaciones potenciales, formas pasivas y condicionales básicas.',
+          desc: '~300 Kanjis y ~1,500 palabras. Comprensión de diálogos a velocidad moderada, conjugaciones potenciales, formas pasivas y condicionales.',
           examples: [
             { jp: '漢字を 書く ことが できます。', romaji: 'Kanji o kaku koto ga dekimasu.', es: 'Puedo escribir kanji.' },
             { jp: '雨が 降ったら、行きません。', romaji: 'Ame ga futtara, ikimasen.', es: 'Si llueve, no iré.' }
@@ -159,16 +154,16 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
           id: 'n3',
           name: 'N3 — Intermedio Puente',
           role: 'Autonomía en la vida en Japón',
-          desc: '~650 Kanjis y ~3,750 palabras. Comprensión de noticias cotidianas, situaciones de trabajo y expresión de opiniones estructuradas.',
+          desc: '~650 Kanjis y ~3,750 palabras. Comprensión de noticias cotidianas, situaciones laborales comunes y expresión de opiniones.',
           examples: [
             { jp: '日本語の 勉強を 続けて います。', romaji: 'Nihongo no benkyō o tsuzukete imasu.', es: 'Sigo estudiando japonés continuamente.' }
           ]
         },
         {
           id: 'n2_n1',
-          name: 'N2 y N1 — Intermedio Avanzado y Maestría',
-          role: 'Fluidez profesional y comprensión académica',
-          desc: 'N2 (~1,000 Kanjis, nivel laboral en Japón) y N1 (~2,000+ Kanjis, comprensión de ensayos abstractos, literatura y debates técnicos).',
+          name: 'N2 y N1 — Nivel Avanzado y Fluidez Superior',
+          role: 'Ámbito laboral profesional y textos complejos',
+          desc: 'N2 (~1,000 Kanjis, nivel requerido por empresas en Japón) y N1 (~2,000+ Kanjis, comprensión de ensayos abstractos, literatura y debates técnicos).',
           examples: [
             { jp: '日本の 文化に 深い 関心を 持って います。', romaji: 'Nihon no bunka ni fukai kanshin o motte imasu.', es: 'Tengo un profundo interés en la cultura japonesa.' }
           ]
@@ -181,13 +176,13 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
       badge: 'Pronunciación & Fonética',
       icon: Sparkles,
       color: '#ec4899',
-      summary: 'El japonés no tiene acentos de fuerza como el español (aguda, llana, esdrújula), sino un sistema de tonos altos y bajos (Pitch Accent) y un ritmo marcado por moras (unidades de tiempo idénticas).',
+      summary: 'El japonés no tiene acentos de fuerza como el español (aguda, llana, esdrújula), sino un sistema de tonos altos y bajos (Pitch Accent) y un ritmo estricto de moras (tiempos uniformes).',
       sections: [
         {
           id: 'moras',
           name: '1. El Ritmo de las Moras (拍)',
-          role: 'Cada sonido dura exactamente el mismo tiempo',
-          desc: 'Una vocal larga (おう, ああ) o una pausa pequeña (っ) cuenta como una mora completa de tiempo. Romper este compás cambia el significado de la palabra.',
+          role: 'Cada sonido dura exactamente el mismo compás',
+          desc: 'Una vocal larga (おう, ああ) o una pausa pequeña (っ) cuenta como una mora completa de tiempo. Romper este compás altera el significado de la palabra.',
           examples: [
             { jp: 'おばさん', romaji: 'O-ba-sa-n (4 moras)', es: 'Tía / Señora' },
             { jp: 'おばあさん', romaji: 'O-ba-a-sa-n (5 moras)', es: 'Abuela' },
@@ -197,8 +192,8 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
         {
           id: 'pitch',
           name: '2. Pitch Accent (Acento Tonal)',
-          role: 'Tonos altos y bajos que diferencian palabras homófonas',
-          desc: 'Palabras escritas exactamente igual en kana varían su significado según la caída del tono musical de la voz.',
+          role: 'Tonos altos y bajos que diferencian homófonos',
+          desc: 'Palabras idénticas en kana difieren únicamente según la altura del tono de la voz en cada mora.',
           examples: [
             { jp: '雨 (あめ)', romaji: 'Ame (Tono alto al inicio: Á-me)', es: 'Lluvia' },
             { jp: '飴 (あめ)', romaji: 'Ame (Tono bajo-alto plano: a-MÉ)', es: 'Dulce / Caramelo' },
@@ -214,135 +209,141 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
   const PillarIcon = currentData.icon;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+    <div className="term-modal-overlay" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-scaleUp"
+        className="term-modal-card"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Cabecera del Modal */}
-        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-900/80">
-          <div className="flex items-center gap-3">
+        {/* Cabecera */}
+        <div className="term-modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div 
-              className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm"
-              style={{ backgroundColor: `${currentData.color}15`, color: currentData.color }}
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 14,
+                background: 'rgba(99, 102, 241, 0.12)',
+                color: currentData.color,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
             >
-              <PillarIcon className="w-5 h-5" />
+              <PillarIcon size={24} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                  {currentData.badge}
-                </span>
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">
-                  Guía Esencial
-                </span>
-              </div>
-              <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.04em' }}>
+                {currentData.badge}
+              </span>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', margin: '2px 0 0' }}>
                 {currentData.title}
               </h2>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            title="Cerrar guía"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--text-muted)',
+              padding: 8,
+              borderRadius: 10
+            }}
+            title="Cerrar modal"
           >
-            <X className="w-5 h-5" />
+            <X size={20} />
           </button>
         </div>
 
-        {/* Barra de Selector Rápido de Pilares */}
-        <div className="px-6 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 flex gap-2 overflow-x-auto no-scrollbar">
+        {/* Pestañas de selector */}
+        <div className="term-modal-tabs">
           {[
-            { id: 'writing', label: '1. Escritura', icon: Languages },
-            { id: 'particles', label: '2. Partículas', icon: Target },
-            { id: 'jlpt', label: '3. Niveles JLPT', icon: Award },
-            { id: 'phonetics', label: '4. Fonética & Tono', icon: Sparkles }
+            { id: 'writing', label: '1. Escritura' },
+            { id: 'particles', label: '2. Partículas' },
+            { id: 'jlpt', label: '3. Niveles JLPT' },
+            { id: 'phonetics', label: '4. Fonética & Tono' }
           ].map(p => (
             <button
               key={p.id}
+              type="button"
               onClick={() => setActivePillar(p.id)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                activePillar === p.id 
-                  ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20' 
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
+              className={`term-modal-tab-btn ${activePillar === p.id ? 'active' : ''}`}
             >
-              <p.icon className="w-3.5 h-3.5" />
               {p.label}
             </button>
           ))}
         </div>
 
-        {/* Contenido Desplazable */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* Tarjeta de Resumen Zen */}
-          <div className="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100/80 dark:border-indigo-900/40 text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
-            <p className="font-medium">
-              💡 {currentData.summary}
-            </p>
+        {/* Cuerpo con Scroll */}
+        <div className="term-modal-body">
+          {/* Resumen */}
+          <div 
+            style={{ 
+              padding: '14px 18px', 
+              borderRadius: 16, 
+              background: 'var(--primary-bg)', 
+              border: '1px solid var(--border-focus)',
+              fontSize: '0.86rem',
+              color: 'var(--text-main)',
+              lineHeight: 1.5,
+              fontWeight: 500
+            }}
+          >
+            💡 {currentData.summary}
           </div>
 
-          {/* Lista de Secciones Detalladas */}
-          <div className="space-y-5">
+          {/* Secciones de contenido */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {currentData.sections.map((sec, idx) => (
-              <div 
-                key={sec.id}
-                className="p-5 rounded-2xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-all"
-              >
-                <div className="flex items-start justify-between gap-3 mb-2">
+              <div key={sec.id} className="term-modal-section-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
                       {sec.name}
                     </h3>
-                    <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                    <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--primary)' }}>
                       {sec.role}
-                    </p>
+                    </span>
                   </div>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">
+                  <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
                     Paso {idx + 1}
                   </span>
                 </div>
 
-                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
                   {sec.desc}
                 </p>
 
-                {/* Ejemplos interactivos con Audio */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                {/* Muestra de ejemplos con Audio */}
+                <div className="term-sample-grid">
                   {sec.examples.map((ex, exIdx) => {
                     const audioId = `${sec.id}_${exIdx}`;
                     const isPlaying = playingAudio === audioId;
 
                     return (
-                      <div 
+                      <div
                         key={exIdx}
                         onClick={() => playAudio(ex.jp, audioId)}
-                        className={`p-3 rounded-xl bg-white dark:bg-slate-900 border transition-all cursor-pointer group flex flex-col justify-between ${
-                          isPlaying 
-                            ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-indigo-50/30' 
-                            : 'border-slate-200/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 shadow-sm'
-                        }`}
+                        className={`term-sample-item ${isPlaying ? 'playing' : ''}`}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === 'Enter') playAudio(ex.jp, audioId); }}
                       >
-                        <div className="flex items-center justify-between gap-1 mb-1">
-                          <span className="jp-text text-base font-extrabold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--text-main)' }}>
                             {ex.jp}
                           </span>
-                          <button
-                            type="button"
-                            className="p-1 rounded-lg text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
-                            title="Escuchar pronunciación nativa"
-                          >
-                            <Volume2 className={`w-4 h-4 ${isPlaying ? 'animate-bounce text-indigo-600' : ''}`} />
-                          </button>
+                          <Volume2 size={16} style={{ color: isPlaying ? 'var(--primary)' : 'var(--text-light)' }} />
                         </div>
-                        <div className="text-[11px] font-medium text-slate-400 dark:text-slate-400 font-mono">
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
                           {ex.romaji}
-                        </div>
-                        <div className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-1">
+                        </span>
+                        <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-main)', marginTop: 2 }}>
                           {ex.es}
-                        </div>
+                        </span>
                       </div>
                     );
                   })}
@@ -352,16 +353,28 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
           </div>
         </div>
 
-        {/* Pie del modal con acciones */}
-        <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
-          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <Volume2 className="w-4 h-4 text-indigo-500" />
-            Toca cualquier ejemplo para escuchar su audio neuronal nativo.
+        {/* Pie del modal */}
+        <div 
+          style={{ 
+            padding: '16px 24px', 
+            borderTop: '1px solid var(--border)', 
+            background: 'var(--bg-subtle)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 12
+          }}
+        >
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Volume2 size={15} style={{ color: 'var(--primary)' }} />
+            Toca cualquier ejemplo para escuchar su pronunciación neuronal nativa.
           </span>
 
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {onNavigate && (
               <button
+                type="button"
                 onClick={() => {
                   onClose();
                   if (activePillar === 'particles') onNavigate('/grammar');
@@ -369,15 +382,18 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
                   else if (activePillar === 'writing') onNavigate('/kanji');
                   else onNavigate('/curriculum');
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-sm"
+                className="home-btn-primary"
+                style={{ padding: '8px 16px', fontSize: '0.8rem' }}
               >
-                Practicar en profundidad
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Practicar en profundidad</span>
+                <ArrowRight size={14} />
               </button>
             )}
             <button
+              type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+              className="home-btn-secondary"
+              style={{ padding: '8px 16px', fontSize: '0.8rem' }}
             >
               Cerrar
             </button>

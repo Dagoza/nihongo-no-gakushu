@@ -9,27 +9,22 @@ import KanaKanjiMemoryGame from '../components/features/KanaKanjiMemoryGame';
 import ParticleRushGame from '../components/features/ParticleRushGame';
 import TerminologyDetailModal from '../components/modals/TerminologyDetailModal';
 import { 
-  Sparkles, 
   Compass, 
   BookOpen, 
   MessageSquare, 
   Tv, 
   Layers, 
   Target, 
-  Languages, 
   Award, 
-  Gamepad2, 
-  ArrowRight,
-  Flame,
-  CheckCircle2
+  ArrowRight
 } from 'lucide-react';
 
-// Carga dinámica con code-splitting del modelo 3D para máximo rendimiento
+// Carga dinámica del modelo de mascota
 const ZenDaruma3D = dynamic(() => import('../components/features/ZenDaruma3D'), {
   ssr: false,
   loading: () => (
-    <div className="w-56 h-56 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse flex items-center justify-center">
-      <span className="text-xs text-slate-400 font-bold">Invocando Daruma 3D...</span>
+    <div style={{ width: 220, height: 220, borderRadius: '50%', background: 'var(--bg-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>Invocando Daruma...</span>
     </div>
   )
 });
@@ -37,13 +32,11 @@ const ZenDaruma3D = dynamic(() => import('../components/features/ZenDaruma3D'), 
 export default function HomePage() {
   const { appState, handleUpdateState, navigate } = useApp();
 
-  // Estados interactivos
   const [isTerminologyModalOpen, setIsTerminologyModalOpen] = useState(false);
   const [selectedPillarId, setSelectedPillarId] = useState('writing');
   const [isCelebrating, setIsCelebrating] = useState(false);
-  const [activeGameTab, setActiveGameTab] = useState('memory'); // 'memory' | 'particles'
+  const [activeGameTab, setActiveGameTab] = useState('memory');
 
-  // Saludo tradicional según hora del día
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) {
@@ -57,7 +50,6 @@ export default function HomePage() {
 
   const greeting = getGreeting();
 
-  // Activar celebración de victoria en el Daruma 3D
   const triggerCelebration = useCallback(() => {
     setIsCelebrating(true);
     setTimeout(() => {
@@ -65,7 +57,6 @@ export default function HomePage() {
     }, 4500);
   }, []);
 
-  // Adjudicar puntos de experiencia (XP) al estado global
   const handleAwardXP = useCallback((amount) => {
     if (!handleUpdateState) return;
     const currentXp = appState?.xp || 0;
@@ -82,65 +73,62 @@ export default function HomePage() {
     setIsTerminologyModalOpen(true);
   };
 
-  // Módulos destacados de la plataforma
   const quickModules = [
-    { title: 'Ruta de Aprendizaje', desc: 'Currículum paso a paso N5 a N1', path: '/curriculum', icon: Compass, color: '#6366f1' },
+    { title: 'Ruta de Aprendizaje', desc: 'Currículum guiado progresivo N5 a N1', path: '/curriculum', icon: Compass, color: '#6366f1' },
     { title: 'Historias con Furigana', desc: 'Lecturas graduadas con audio sincronizado', path: '/story', icon: BookOpen, color: '#8b5cf6' },
-    { title: 'Conversación NHK', desc: 'Diálogos de la vida cotidiana en Japón', path: '/nhk', icon: MessageSquare, color: '#ec4899' },
+    { title: 'Conversación NHK', desc: 'Diálogos de situaciones cotidianas reales', path: '/nhk', icon: MessageSquare, color: '#ec4899' },
     { title: 'Inmersión YouTube', desc: 'Videos auténticos con subtítulos duales', path: '/youtube', icon: Tv, color: '#ef4444' },
-    { title: 'Banco de Vocabulario', desc: 'Kanji, Hiragana y audios oficiales', path: '/vocab', icon: Layers, color: '#3b82f6' },
-    { title: 'Simulacros JLPT', desc: 'Exámenes cronometrados N5 a N1', path: '/jlpt', icon: Award, color: '#f59e0b' },
+    { title: 'Banco de Vocabulario', desc: 'Kanji, Hiragana, Katakana y audios', path: '/vocab', icon: Layers, color: '#3b82f6' },
+    { title: 'Simulacros JLPT', desc: 'Exámenes oficiales cronometrados N5 a N1', path: '/jlpt', icon: Award, color: '#f59e0b' },
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8 sm:space-y-12">
-      {/* 1. SECCIÓN HERO ZEN JAPANDI CON DARUMA 3D */}
-      <section className="relative overflow-hidden rounded-[2.5rem] p-6 sm:p-10 bg-gradient-to-br from-indigo-50/70 via-white to-rose-50/40 dark:from-slate-900 dark:via-slate-900/90 dark:to-indigo-950/30 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-8">
-        
-        {/* Lado izquierdo: Saludo e introducción serena */}
-        <div className="flex-1 space-y-4 text-center lg:text-left z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 jp-text">
-              {greeting.jp} · {greeting.es}
-            </span>
+    <div className="home-hub-container">
+      {/* 1. SECCIÓN HERO JAPANDI CON DARUMA */}
+      <section className="home-hero-card">
+        <div className="home-hero-content">
+          <div className="home-greeting-badge">
+            <span className="home-pulse-dot" />
+            <span className="jp-text">{greeting.jp}</span>
+            <span>· {greeting.es}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-            Aprende Japonés con <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-600">Claridad y Serenidad</span>.
+          <h1 className="home-hero-title">
+            Aprende Japonés con{' '}
+            <span className="home-hero-highlight">Claridad y Serenidad</span>.
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-            Una experiencia minimalista e interactiva donde la terminología del idioma se comprende sin saturación: audio neuronal nativo, estructura paso a paso de N5 a N1 y práctica ágil.
+          <p className="home-hero-desc">
+            Una experiencia interactiva y minimalista donde la terminología del idioma se comprende sin saturación: audio neuronal nativo, estructura paso a paso de N5 a N1 y práctica ágil.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+          <div className="home-hero-actions">
             <button
+              type="button"
               onClick={() => navigate('/curriculum')}
-              className="px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-indigo-600/40 transition-all flex items-center gap-2 transform active:scale-95"
+              className="home-btn-primary"
             >
-              <Compass className="w-4 h-4" />
-              Continuar en el Currículum
-              <ArrowRight className="w-4 h-4" />
+              <Compass size={17} />
+              <span>Continuar en el Currículum</span>
+              <ArrowRight size={16} />
             </button>
 
             <button
+              type="button"
               onClick={() => handleOpenPillar('writing')}
-              className="px-5 py-3.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm border border-slate-200 dark:border-slate-700 shadow-sm transition-all"
+              className="home-btn-secondary"
             >
-              Ver Guía de Terminología
+              <span>Ver Guía de Terminología</span>
             </button>
           </div>
         </div>
 
-        {/* Lado derecho: Mascota 3D Zen Daruma */}
-        <div className="flex flex-col items-center justify-center relative z-10 shrink-0">
-          <ZenDaruma3D 
-            celebrate={isCelebrating}
-            size={270}
-            onInteract={() => {}}
-          />
-        </div>
+        {/* Mascota Zen Daruma */}
+        <ZenDaruma3D 
+          celebrate={isCelebrating}
+          size={240}
+          onInteract={() => {}}
+        />
       </section>
 
       {/* 2. DASHBOARD BENTO: ESTADO ACTUAL DEL ESTUDIO */}
@@ -155,48 +143,40 @@ export default function HomePage() {
       />
 
       {/* 4. ESTACIÓN DE MINI-JUEGOS INTERACTIVOS */}
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+      <section className="home-section">
+        <div className="home-section-header">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
-                Práctica Táctil & Gamificación
-              </span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+            <span className="home-section-label">
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--success)' }} />
+              Práctica Táctil & Gamificación
+            </span>
+            <h2 className="home-section-title">
               Mini-Juegos Educativos
             </h2>
           </div>
 
           {/* Selector de Juego */}
-          <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl self-start sm:self-auto">
+          <div className="games-tab-pills">
             <button
+              type="button"
               onClick={() => setActiveGameTab('memory')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-                activeGameTab === 'memory' 
-                  ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-              }`}
+              className={`game-tab-btn ${activeGameTab === 'memory' ? 'active' : ''}`}
             >
-              <Layers className="w-3.5 h-3.5" />
-              1. Memory Flash
+              <Layers size={15} />
+              <span>1. Memory Flash</span>
             </button>
             <button
+              type="button"
               onClick={() => setActiveGameTab('particles')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-                activeGameTab === 'particles' 
-                  ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-white shadow-sm' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-              }`}
+              className={`game-tab-btn ${activeGameTab === 'particles' ? 'active' : ''}`}
             >
-              <Target className="w-3.5 h-3.5" />
-              2. Desafío Partículas
+              <Target size={15} />
+              <span>2. Desafío Partículas</span>
             </button>
           </div>
         </div>
 
-        {/* Tab Activo de Juego */}
+        {/* Juego Activo */}
         {activeGameTab === 'memory' ? (
           <KanaKanjiMemoryGame 
             onGameWin={triggerCelebration}
@@ -211,49 +191,66 @@ export default function HomePage() {
       </section>
 
       {/* 5. ACCESO RÁPIDO A TODOS LOS MÓDULOS DE APRENDIZAJE */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-purple-500" />
-            <span className="text-xs font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400">
+      <section className="home-section">
+        <div className="home-section-header">
+          <div>
+            <span className="home-section-label">
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#8b5cf6' }} />
               Ecosistema Integral
             </span>
+            <h2 className="home-section-title" style={{ fontSize: '1.25rem' }}>
+              Explora Todo el Catálogo de Estudio
+            </h2>
           </div>
           <button
+            type="button"
             onClick={() => navigate('/curriculum')}
-            className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--primary)',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.82rem'
+            }}
           >
-            Ver catálogo completo
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>Ver ruta completa</span>
+            <ArrowRight size={14} />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        <div className="home-modules-grid">
           {quickModules.map((mod, idx) => {
             const ModIcon = mod.icon;
             return (
               <div
                 key={idx}
                 onClick={() => navigate(mod.path)}
-                className="group p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                className="home-module-card"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter') navigate(mod.path); }}
               >
-                <div className="flex items-center gap-3.5">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div 
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shrink-0"
-                    style={{ backgroundColor: `${mod.color}15`, color: mod.color }}
+                    className="home-module-icon-wrap"
+                    style={{ background: `${mod.color}15`, color: mod.color }}
                   >
-                    <ModIcon className="w-5 h-5" />
+                    <ModIcon size={22} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    <h4 className="home-module-title">
                       {mod.title}
                     </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
+                    <p className="home-module-desc">
                       {mod.desc}
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                <ArrowRight size={16} style={{ color: 'var(--text-light)', flexShrink: 0 }} />
               </div>
             );
           })}

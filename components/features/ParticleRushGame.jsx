@@ -1,15 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Target, 
-  Sparkles, 
   RotateCcw, 
   Volume2, 
   Trophy, 
   Flame, 
-  CheckCircle2, 
-  XCircle,
   ArrowRight,
   Info
 } from 'lucide-react';
@@ -111,7 +108,6 @@ export default function ParticleRushGame({ onGameWin = null, onAwardXP = null })
     if (isCorrect) {
       setScore(prev => prev + 1);
       setStreak(prev => prev + 1);
-      // Reproducir oración completa
       const fullSentence = `${currentQ.sentenceBefore} ${option} ${currentQ.sentenceAfter}`;
       audioManager.speak(fullSentence);
     } else {
@@ -150,30 +146,54 @@ export default function ParticleRushGame({ onGameWin = null, onAwardXP = null })
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
+    <div className="bento-card">
       {/* Cabecera del Juego */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <Target className="w-5 h-5" />
+      <div className="home-section-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div 
+            style={{ 
+              width: 40, 
+              height: 40, 
+              borderRadius: 12, 
+              background: 'rgba(16, 185, 129, 0.12)', 
+              color: 'var(--success)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}
+          >
+            <Target size={20} />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+            <h3 className="home-section-title" style={{ fontSize: '1.2rem' }}>
               Desafío de Partículas (Speed Rush)
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Elige la partícula correcta y refuerza la gramática con explicaciones instantáneas.
+            <p className="home-section-desc" style={{ fontSize: '0.8rem' }}>
+              Elige la partícula correcta y afianza tu intuición gramatical con explicaciones instantáneas.
             </p>
           </div>
         </div>
 
         {/* Marcador de Racha */}
-        <div className="flex items-center gap-3 self-start sm:self-auto">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800 text-xs font-bold text-amber-700 dark:text-amber-300">
-            <Flame className="w-4 h-4 text-amber-500 animate-pulse" />
-            Racha: {streak}
-          </div>
-          <span className="text-xs font-bold text-slate-400 dark:text-slate-400">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: 4, 
+              padding: '6px 12px', 
+              borderRadius: 12, 
+              background: 'rgba(245, 158, 11, 0.15)', 
+              color: 'var(--warning)',
+              fontSize: '0.8rem',
+              fontWeight: 800
+            }}
+          >
+            <Flame size={15} />
+            <span>Racha: {streak}</span>
+          </span>
+          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)' }}>
             {currentRound + 1} / {PARTICLE_QUESTIONS.length}
           </span>
         </div>
@@ -181,84 +201,117 @@ export default function ParticleRushGame({ onGameWin = null, onAwardXP = null })
 
       {isGameFinished ? (
         /* Pantalla de Fin de Juego */
-        <div className="p-8 rounded-3xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/60 text-center space-y-4 animate-scaleUp">
-          <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-300 flex items-center justify-center shadow-md">
-            <Trophy className="w-8 h-8" />
+        <div 
+          style={{ 
+            padding: '36px 20px', 
+            borderRadius: 20, 
+            background: 'var(--success-bg)', 
+            border: '1px solid var(--success)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 14
+          }}
+        >
+          <div 
+            style={{ 
+              width: 56, 
+              height: 56, 
+              borderRadius: '50%', 
+              background: 'var(--success)', 
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'var(--shadow-md)'
+            }}
+          >
+            <Trophy size={28} />
           </div>
           <div>
-            <h4 className="text-lg font-black text-slate-900 dark:text-white">
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)' }}>
               ¡Misión Cumplida! (ミッション完了 ✨)
             </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
               Obtuviste {score} de {PARTICLE_QUESTIONS.length} aciertos. {score >= 6 ? '¡Ganaste +30 XP!' : '¡Sigue practicando para dominar las partículas!'}
             </p>
           </div>
           <button
+            type="button"
             onClick={restartGame}
-            className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all inline-flex items-center gap-2"
+            className="home-btn-primary"
+            style={{ padding: '10px 20px', backgroundColor: 'var(--success)' }}
           >
-            <RotateCcw className="w-4 h-4" />
-            Reintentar desafío
+            <RotateCcw size={15} />
+            <span>Reintentar desafío</span>
           </button>
         </div>
       ) : (
         /* Área de Pregunta */
-        <div className="space-y-4">
-          {/* Tarjeta de la Oración en Japonés */}
-          <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-center space-y-2">
-            <div className="flex items-center justify-center gap-2">
-              <div className="jp-text text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center justify-center gap-1.5 flex-wrap">
+        <div style={{ display: 'flex', flexDirecti: 'column', gap: 16 }}>
+          {/* Tarjeta de la Oración */}
+          <div className="particle-rush-sentence-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <div className="particle-rush-sentence">
                 <span>{currentQ.sentenceBefore}</span>
-                <span className={`inline-flex items-center justify-center min-w-12 h-9 px-2 rounded-xl font-bold border-2 transition-all ${
-                  !isAnswered 
-                    ? 'border-dashed border-indigo-400 bg-white dark:bg-slate-900 text-indigo-500' 
-                    : selectedOption === currentQ.correct
-                      ? 'border-emerald-500 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                      : 'border-rose-500 bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300'
-                }`}>
+                <span 
+                  className={`particle-rush-blank ${
+                    isAnswered 
+                      ? selectedOption === currentQ.correct ? 'correct' : 'wrong'
+                      : ''
+                  }`}
+                >
                   {selectedOption || '___'}
                 </span>
                 <span>{currentQ.sentenceAfter}</span>
               </div>
 
               <button
+                type="button"
                 onClick={playFullSentence}
-                className="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-700 transition-colors ml-1"
-                title="Escuchar oración completa"
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 12,
+                  padding: 8,
+                  cursor: 'pointer',
+                  color: 'var(--primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                title="Escuchar oración completa con audio neuronal"
               >
-                <Volume2 className="w-5 h-5" />
+                <Volume2 size={18} />
               </button>
             </div>
 
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>
               Traducción: {currentQ.meaning}
             </p>
           </div>
 
-          {/* Opciones de Partículas en Botones Táctiles */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {/* Opciones de Partículas */}
+          <div className="particle-options-grid">
             {currentQ.options.map((opt) => {
               const isSelected = selectedOption === opt;
               const isCorrectOpt = opt === currentQ.correct;
 
-              let btnStyle = 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-indigo-400 hover:bg-indigo-50/40 dark:hover:bg-slate-700';
-
+              let customClass = '';
               if (isAnswered) {
-                if (isCorrectOpt) {
-                  btnStyle = 'bg-emerald-600 border-emerald-600 text-white ring-2 ring-emerald-500/20';
-                } else if (isSelected && !isCorrectOpt) {
-                  btnStyle = 'bg-rose-600 border-rose-600 text-white';
-                } else {
-                  btnStyle = 'opacity-40 bg-slate-100 dark:bg-slate-800 border-transparent';
-                }
+                if (isCorrectOpt) customClass = 'selected-correct';
+                else if (isSelected && !isCorrectOpt) customClass = 'selected-wrong';
+                else customClass = 'faded';
               }
 
               return (
                 <button
                   key={opt}
+                  type="button"
                   onClick={() => handleSelectOption(opt)}
                   disabled={isAnswered}
-                  className={`py-3.5 px-4 rounded-2xl border text-lg font-black jp-text transition-all duration-200 shadow-sm flex items-center justify-center gap-1.5 ${btnStyle}`}
+                  className={`particle-choice-btn ${customClass}`}
                 >
                   {opt}
                 </button>
@@ -268,25 +321,39 @@ export default function ParticleRushGame({ onGameWin = null, onAwardXP = null })
 
           {/* Feedback Didáctico Inmediato */}
           {isAnswered && (
-            <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fadeIn">
-              <div className="flex items-start gap-2.5">
-                <Info className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+            <div 
+              style={{
+                padding: '16px 20px',
+                borderRadius: 16,
+                background: 'var(--primary-bg)',
+                border: '1px solid var(--border-focus)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 16,
+                flexWrap: 'wrap'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 240 }}>
+                <Info size={20} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: 2 }} />
                 <div>
-                  <span className="text-xs font-bold text-slate-900 dark:text-white block">
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)', display: 'block' }}>
                     {selectedOption === currentQ.correct ? '¡Correcto! 🌸' : `Respuesta correcta: ${currentQ.correct}`}
                   </span>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 0', lineHeight: 1.4 }}>
                     {currentQ.explanation}
                   </p>
                 </div>
               </div>
 
               <button
+                type="button"
                 onClick={handleNextQuestion}
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5 shrink-0 self-end sm:self-auto"
+                className="home-btn-primary"
+                style={{ padding: '8px 16px', fontSize: '0.82rem' }}
               >
-                Siguiente
-                <ArrowRight className="w-4 h-4" />
+                <span>Siguiente</span>
+                <ArrowRight size={14} />
               </button>
             </div>
           )}

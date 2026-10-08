@@ -4,16 +4,12 @@ import React from 'react';
 import { 
   Flame, 
   Sparkles, 
-  Award, 
-  BookOpen, 
-  Languages, 
-  Target, 
   Layers, 
+  Target, 
   ArrowRight, 
-  CheckCircle2, 
+  Compass,
   TrendingUp,
-  Clock,
-  Compass
+  Award
 } from 'lucide-react';
 
 export default function StudyStatusBento({ appState, onNavigate }) {
@@ -23,130 +19,161 @@ export default function StudyStatusBento({ appState, onNavigate }) {
   const xpInCurrentLevel = xp % 100;
   const xpProgressPercent = Math.min(100, xpInCurrentLevel);
 
-  // Métricas de dominio desde appState
   const masteredVocabCount = Object.values(appState?.masteredVocab || {}).filter(Boolean).length;
   const masteredKanjiCount = Object.values(appState?.masteredKanji || {}).filter(Boolean).length;
   const masteredParticlesCount = Object.values(appState?.masteredParticles || {}).filter(Boolean).length;
-
-  // Módulo actual en estudio
   const currentModuleStep = appState?.currentModuleStep || 1;
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
+    <div className="bento-card">
       {/* Cabecera del Dashboard */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-sm">
-            <TrendingUp className="w-5 h-5" />
+      <div className="home-section-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div 
+            style={{ 
+              width: 44, 
+              height: 44, 
+              borderRadius: 14, 
+              background: 'rgba(99, 102, 241, 0.12)', 
+              color: 'var(--primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}
+          >
+            <TrendingUp size={22} />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+              <span className="home-section-label" style={{ margin: 0 }}>
                 Estado de Aprendizaje
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-200/60 dark:border-emerald-800">
+              <span 
+                style={{ 
+                  fontSize: '0.68rem', 
+                  fontWeight: 800, 
+                  padding: '2px 8px', 
+                  borderRadius: 9999, 
+                  background: 'rgba(16, 185, 129, 0.15)', 
+                  color: 'var(--success)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)'
+                }}
+              >
                 Activo hoy
               </span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+            <h3 className="home-section-title" style={{ fontSize: '1.25rem' }}>
               Tu Progreso y Métricas de Estudio
             </h3>
           </div>
         </div>
 
-        {/* Botón para continuar ruta */}
         {onNavigate && (
           <button
+            type="button"
             onClick={() => onNavigate('/curriculum')}
-            className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-sm shadow-indigo-500/20 self-start sm:self-auto"
+            className="home-btn-primary"
+            style={{ padding: '9px 18px', fontSize: '0.82rem' }}
           >
-            <Compass className="w-3.5 h-3.5" />
-            Continuar en Ruta (Módulo {currentModuleStep})
-            <ArrowRight className="w-3.5 h-3.5" />
+            <Compass size={15} />
+            <span>Continuar Ruta (Módulo {currentModuleStep})</span>
+            <ArrowRight size={14} />
           </button>
         )}
       </div>
 
-      {/* Grid Bento de Métricas */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Métrica 1: Racha */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-            <Flame className="w-5 h-5" />
+      {/* Grid de 4 Métricas */}
+      <div className="study-stats-grid">
+        {/* 1. Racha diaria */}
+        <div className="study-stat-item">
+          <div 
+            className="study-stat-icon-wrap" 
+            style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--warning)' }}
+          >
+            <Flame size={22} />
           </div>
           <div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block">
-              Racha diaria
-            </span>
-            <span className="text-lg font-black text-slate-900 dark:text-white">
+            <span className="study-stat-label">Racha Diaria</span>
+            <span className="study-stat-value">
               {streak} {streak === 1 ? 'día' : 'días'} 🔥
             </span>
           </div>
         </div>
 
-        {/* Métrica 2: Nivel y XP */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-              Nivel {level}
-            </span>
-            <span className="text-[11px] font-bold font-mono text-indigo-600 dark:text-indigo-400">
+        {/* 2. Nivel y XP */}
+        <div className="study-stat-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <span className="study-stat-label">Nivel {level}</span>
+            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary)' }}>
               {xp} XP
             </span>
           </div>
-          {/* Barra de progreso */}
-          <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+          <div className="study-level-progress-bar">
             <div 
-              className="h-full bg-indigo-600 rounded-full transition-all duration-500"
-              style={{ width: `${xpProgressPercent}%` }}
+              className="study-level-progress-fill" 
+              style={{ width: `${xpProgressPercent}%` }} 
             />
           </div>
-          <span className="text-[10px] text-slate-400 block text-right font-medium">
+          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600 }}>
             {100 - xpInCurrentLevel} XP para Nivel {level + 1}
           </span>
         </div>
 
-        {/* Métrica 3: Vocabulario & Kanjis */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-            <Layers className="w-5 h-5" />
+        {/* 3. Vocabulario y Kanjis */}
+        <div className="study-stat-item">
+          <div 
+            className="study-stat-icon-wrap" 
+            style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6' }}
+          >
+            <Layers size={22} />
           </div>
           <div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block">
-              Vocabulario / Kanji
-            </span>
-            <span className="text-sm font-bold text-slate-900 dark:text-white">
+            <span className="study-stat-label">Vocabulario & Kanji</span>
+            <span className="study-stat-value" style={{ fontSize: '1rem' }}>
               {masteredVocabCount} palabras · {masteredKanjiCount} kanjis
             </span>
           </div>
         </div>
 
-        {/* Métrica 4: Partículas */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-            <Target className="w-5 h-5" />
+        {/* 4. Partículas dominadas */}
+        <div className="study-stat-item">
+          <div 
+            className="study-stat-icon-wrap" 
+            style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--success)' }}
+          >
+            <Target size={22} />
           </div>
           <div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block">
-              Partículas
-            </span>
-            <span className="text-sm font-bold text-slate-900 dark:text-white">
+            <span className="study-stat-label">Partículas Clave</span>
+            <span className="study-stat-value" style={{ fontSize: '1rem' }}>
               {masteredParticlesCount} / 99 dominadas
             </span>
           </div>
         </div>
       </div>
 
-      {/* Enlace rápido a ver estadísticas completas en /progress */}
-      <div className="pt-2 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-        <span>Datos sincronizados localmente y respaldados en tu perfil.</span>
+      {/* Pie con enlace a analítica completa */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+        <span>Datos guardados localmente y sincronizables con tu cuenta en la nube.</span>
         {onNavigate && (
           <button
+            type="button"
             onClick={() => onNavigate('/progress')}
-            className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--primary)',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.8rem'
+            }}
           >
-            Ver analítica detallada
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>Ver analítica detallada</span>
+            <ArrowRight size={14} />
           </button>
         )}
       </div>
