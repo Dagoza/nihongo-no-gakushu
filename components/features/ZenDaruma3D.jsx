@@ -95,15 +95,38 @@ export default function ZenDaruma3D({
       if (!isRunning) return;
 
       const s = state.current;
+      const now = performance.now() * 0.001;
 
-      // 1. Física de seguimiento suave del cursor (lerp)
-      s.currentTiltX += (s.targetTiltX - s.currentTiltX) * 0.1;
-      s.currentTiltY += (s.targetTiltY - s.currentTiltY) * 0.1;
+      // 1. Movimiento autónomo orgánico continuo (sin requerir pasar el mouse)
+      const isPointerActive = s.isPointerActive && (now - s.lastPointerTime < 2.0);
 
-      // 2. Respiración suave
-      s.wobblePhase += 0.035;
-      const breathe = Math.sin(s.wobblePhase) * 2;
-      const naturalTilt = Math.sin(s.wobblePhase * 0.8) * 0.03;
+      if (!isPointerActive) {
+        // Balanceo rítmico continuo de tentetieso tradicional japonés (Okiagari-koboshi)
+        const autoSwayX = Math.sin(now * 1.8) * 0.55 + Math.sin(now * 3.4) * 0.15;
+        const autoSwayY = Math.cos(now * 1.3) * 0.28 + Math.sin(now * 2.1) * 0.12;
+
+        s.targetTiltX = autoSwayX;
+        s.targetTiltY = autoSwayY;
+
+        // Saltitos alegres espontáneos cada 6 a 9 segundos
+        if (!s.nextIdleActionTime || now > s.nextIdleActionTime) {
+          s.bounceVelocity = -6.5;
+          s.nextIdleActionTime = now + 6.5 + Math.random() * 3.5;
+        }
+      }
+
+      // Parpadeo orgánico natural cada ~3.6s (dura 140ms)
+      const blinkCycle = now % 3.6;
+      s.isAutoBlink = blinkCycle < 0.14;
+
+      // Suavizado lerp (inercia orgánica)
+      s.currentTiltX += (s.targetTiltX - s.currentTiltX) * 0.09;
+      s.currentTiltY += (s.targetTiltY - s.currentTiltY) * 0.09;
+
+      // 2. Respiración suave y oscilación natural
+      s.wobblePhase += 0.045;
+      const breathe = Math.sin(s.wobblePhase) * 2.8;
+      const naturalTilt = Math.sin(s.wobblePhase * 0.8) * 0.08;
 
       // 3. Física de salto/rebote elástico
       s.bounceY += s.bounceVelocity;
@@ -143,7 +166,7 @@ export default function ZenDaruma3D({
       // --- DIBUJO DEL DARUMA ---
       const cx = size / 2;
       const cy = size / 2 + 14 + s.bounceY;
-      const tiltAngle = (s.currentTiltX * 0.22) + naturalTilt;
+      const tiltAngle = (s.currentTiltX * 0.32) + naturalTilt;
 
       ctx.save();
       ctx.translate(cx, cy);
@@ -231,33 +254,43 @@ export default function ZenDaruma3D({
       // OJO IZQUIERDO
       ctx.save();
       ctx.translate(-20, -2);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 10, 12, 0, 0, Math.PI * 2);
-      ctx.fillStyle = '#0f172a';
-      ctx.fill();
+      if (s.isAutoBlink) {
+        // Parpadeo orgánico natural (^◡^)
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, 2, 8, Math.PI * 1.15, Math.PI * 1.85);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 10, 12, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
 
-      // Brillos de luz en el ojo izquierdo (pupilas anime brillantes)
-      ctx.beginPath();
-      ctx.arc(-2.5 + eyeLookX * 0.4, -3 + eyeLookY * 0.4, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(2.5 + eyeLookX * 0.4, 3 + eyeLookY * 0.4, 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
+        // Brillos de luz en el ojo izquierdo (pupilas anime brillantes)
+        ctx.beginPath();
+        ctx.arc(-2.5 + eyeLookX * 0.4, -3 + eyeLookY * 0.4, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(2.5 + eyeLookX * 0.4, 3 + eyeLookY * 0.4, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      }
       ctx.restore();
 
       // OJO DERECHO (Normal o Guiño)
       ctx.save();
       ctx.translate(20, -2);
 
-      if (s.isWinking) {
-        // Guiño tierno (^◡^)
+      if (s.isWinking || s.isAutoBlink) {
+        // Guiño tierno o parpadeo (^◡^)
         ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 3.5;
         ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.arc(0, 2, 9, Math.PI * 1.1, Math.PI * 1.9);
+        ctx.arc(0, 2, 8, Math.PI * 1.15, Math.PI * 1.85);
         ctx.stroke();
       } else {
         ctx.beginPath();
@@ -323,11 +356,12 @@ export default function ZenDaruma3D({
       const y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
       state.current.targetTiltX = Math.max(-1, Math.min(1, x));
       state.current.targetTiltY = Math.max(-1, Math.min(1, y));
+      state.current.isPointerActive = true;
+      state.current.lastPointerTime = performance.now() * 0.001;
     };
 
     const handlePointerLeave = () => {
-      state.current.targetTiltX = 0;
-      state.current.targetTiltY = 0;
+      state.current.isPointerActive = false;
     };
 
     canvas.addEventListener('pointermove', handlePointerMove);
@@ -364,7 +398,7 @@ export default function ZenDaruma3D({
 
       <span className="zen-daruma-tip">
         <span className="home-pulse-dot" style={{ width: 6, height: 6 }} />
-        Toca el Daruma o mueve el cursor
+        Toca o haz clic en el Daruma ✨
       </span>
     </div>
   );

@@ -12188,60 +12188,57 @@ html {
   transform: scale(1.08);
 }
 
-/* 1. Balanceo Okiagari-koboshi en reposo (Roly-poly sway) */
+/* 1. Balanceo Okiagari-koboshi continuo con vida propia (Roly-poly sway) */
 .hdr-daruma-character {
   transform-origin: 256px 425px;
-  animation: hdrDarumaIdleSway 4.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation: hdrDarumaIdleSway 2.8s ease-in-out infinite;
   will-change: transform;
 }
 
 @keyframes hdrDarumaIdleSway {
-  0%, 100% {
+  0% {
     transform: rotate(0deg);
   }
-  12% {
-    transform: rotate(-3.5deg);
-  }
-  26% {
-    transform: rotate(3deg);
-  }
-  38% {
-    transform: rotate(-1.5deg);
+  25% {
+    transform: rotate(-5.5deg);
   }
   50% {
-    transform: rotate(1deg);
+    transform: rotate(0deg);
   }
-  60%, 88% {
+  75% {
+    transform: rotate(5.5deg);
+  }
+  100% {
     transform: rotate(0deg);
   }
 }
 
-/* Sombra base sincronizada con el balanceo */
+/* Sombra base sincronizada armónicamente con el balanceo */
 .hdr-daruma-base-shadow {
   transform-origin: 256px 425px;
-  animation: hdrDarumaShadowSway 4.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation: hdrDarumaShadowSway 2.8s ease-in-out infinite;
 }
 
 @keyframes hdrDarumaShadowSway {
-  0%, 60%, 88%, 100% {
+  0%, 50%, 100% {
     transform: scaleX(1);
     opacity: 0.45;
   }
-  12%, 26% {
-    transform: scaleX(0.92);
-    opacity: 0.35;
+  25%, 75% {
+    transform: scaleX(0.86);
+    opacity: 0.32;
   }
 }
 
 /* 2. Parpadeo orgánico de ojos anime */
 .hdr-daruma-eye-left {
   transform-origin: 214px 238px;
-  animation: hdrDarumaBlink 4.2s ease-in-out infinite;
+  animation: hdrDarumaBlink 3.4s ease-in-out infinite;
 }
 
 .hdr-daruma-eye-right {
   transform-origin: 298px 238px;
-  animation: hdrDarumaBlink 4.2s ease-in-out infinite;
+  animation: hdrDarumaBlink 3.4s ease-in-out infinite;
 }
 
 @keyframes hdrDarumaBlink {
