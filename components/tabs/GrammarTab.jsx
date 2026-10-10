@@ -13,6 +13,122 @@ import { recordActivity } from '../../lib/storage';
 // Lazy loading con code-splitting
 const SpeechPractice = dynamic(() => import('../features/SpeechPractice'), { ssr: false });
 
+export const PARTICLE_CATEGORIES = [
+  { id: 'all', label: 'Todas', icon: '🌐' },
+  { id: 'case', label: 'Casos & Núcleo', icon: '🏷️' },
+  { id: 'conjunctive', label: 'Conexión & Condición', icon: '🔀' },
+  { id: 'adverbial', label: 'Enfoque & Cantidad', icon: '⚖️' },
+  { id: 'sentence_final', label: 'Finales de Oración', icon: '💬' },
+  { id: 'compound', label: 'Compuestas (N3-N1)', icon: '🧩' },
+];
+
+export const TOP_PARTICLES = ['は', 'が', 'を', 'に', 'で', 'へ', 'も', 'と', 'から', 'まで', 'など', 'ね'];
+
+export const PARTICLE_METADATA = {
+  'は': { label: 'Tema principal', category: 'case' },
+  'が': { label: 'Sujeto / Cualidad', category: 'case' },
+  'を': { label: 'Objeto directo', category: 'case' },
+  'に': { label: 'Tiempo / Destino', category: 'case' },
+  'へ': { label: 'Dirección', category: 'case' },
+  'で': { label: 'Lugar / Medio', category: 'case' },
+  'と': { label: 'Compañía / Cita', category: 'case' },
+  'より': { label: 'Comparación', category: 'case' },
+  'から': { label: 'Origen / Causa', category: 'case' },
+  'まで': { label: 'Límite / Hasta', category: 'case' },
+  'までに': { label: 'Plazo tope', category: 'case' },
+  'から・まで': { label: 'Rango de-hasta', category: 'case' },
+  'の': { label: 'Posesión / De', category: 'case' },
+
+  'ので': { label: 'Puesto que (formal)', category: 'conjunctive' },
+  'のに': { label: 'A pesar de', category: 'conjunctive' },
+  'でも': { label: 'Incluso / O algo', category: 'conjunctive' },
+  'ば': { label: 'Si (lógico)', category: 'conjunctive' },
+  'たら': { label: 'Si / Cuando', category: 'conjunctive' },
+  'なら': { label: 'Si es el caso', category: 'conjunctive' },
+  'ても / でも': { label: 'Aunque', category: 'conjunctive' },
+  'ながら': { label: 'Simultaneidad', category: 'conjunctive' },
+  'し': { label: 'Además de', category: 'conjunctive' },
+  'たり〜たり': { label: 'Acciones como', category: 'conjunctive' },
+  'か / かどうか': { label: 'Si acaso o no', category: 'conjunctive' },
+
+  'も': { label: 'También / Tampoco', category: 'adverbial' },
+  'だけ': { label: 'Solo (límite)', category: 'adverbial' },
+  'しか': { label: 'Solo (+ negativo)', category: 'adverbial' },
+  'ばかり': { label: 'En exceso / Solo', category: 'adverbial' },
+  'たばかり': { label: 'Recién hecho', category: 'adverbial' },
+  'ぐらい / くらい': { label: 'Aproximadamente', category: 'adverbial' },
+  'ごろ': { label: 'Hacia las (hora)', category: 'adverbial' },
+  'ほど': { label: 'Grado / No tanto', category: 'adverbial' },
+  'や': { label: 'Lista abierta (y)', category: 'adverbial' },
+  'など': { label: 'Etcétera', category: 'adverbial' },
+
+  'か': { label: 'Pregunta / O', category: 'sentence_final' },
+  'ね': { label: '¿Verdad? (acuerdo)', category: 'sentence_final' },
+  'よ': { label: 'Aserción / Énfasis', category: 'sentence_final' },
+  'よね': { label: 'Confirmación mutua', category: 'sentence_final' },
+
+  'とおり（に）': { label: 'Tal como', category: 'compound' },
+  'まま': { label: 'Conservando estado', category: 'compound' },
+  'ために': { label: 'Propósito / Debido', category: 'compound' },
+  'ように': { label: 'Para que / Modo', category: 'compound' },
+  'やすい / にくい': { label: 'Fácil / Difícil', category: 'compound' },
+  'にとって': { label: 'Para alguien', category: 'compound' },
+  'について': { label: 'Acerca de / Sobre', category: 'compound' },
+  'に関して': { label: 'En relación con', category: 'compound' },
+  'に対して': { label: 'Frente a / Hacia', category: 'compound' },
+  'によって': { label: 'Por / Dependiendo', category: 'compound' },
+  'を通じて / を通して': { label: 'A través de', category: 'compound' },
+  'をはじめ': { label: 'Empezando por', category: 'compound' },
+  'を中心に': { label: 'Como eje central', category: 'compound' },
+  'をこめて': { label: 'Con todo cariño', category: 'compound' },
+  'にかけて': { label: 'Extendiéndose hasta', category: 'compound' },
+  'にわたって': { label: 'Abarcando todo', category: 'compound' },
+  'おかげで': { label: 'Gracias a', category: 'compound' },
+  'せいで': { label: 'Por culpa de', category: 'compound' },
+  'たびに': { label: 'Cada vez que', category: 'compound' },
+  'ついでに': { label: 'De paso', category: 'compound' },
+  '最中に': { label: 'En medio de', category: 'compound' },
+  'うちに': { label: 'Mientras / Antes', category: 'compound' },
+  '向け': { label: 'Dirigido a', category: 'compound' },
+  '向き': { label: 'Adecuado para', category: 'compound' },
+  'っぽい': { label: 'Parecido a', category: 'compound' },
+  'として': { label: 'En calidad de', category: 'compound' },
+  'わりに（は）': { label: 'Para ser / A pesar', category: 'compound' },
+  'にこたえて': { label: 'En respuesta a', category: 'compound' },
+  'に基づいて': { label: 'Basado en', category: 'compound' },
+  'に沿って': { label: 'Siguiendo norma', category: 'compound' },
+  'のもとで': { label: 'Bajo tutela de', category: 'compound' },
+  'を契機に': { label: 'Como detonante', category: 'compound' },
+  'を問わず': { label: 'Sin distinción de', category: 'compound' },
+  'にかかわらず': { label: 'Sin importar si', category: 'compound' },
+  'のみならず': { label: 'No solo... sino', category: 'compound' },
+  'はおろか': { label: 'Ni hablar de', category: 'compound' },
+  'を余儀なくされる': { label: 'Forzado a', category: 'compound' },
+  'たるもの': { label: 'Propio de su rango', category: 'compound' },
+  'ならでは': { label: 'Exclusivo y singular', category: 'compound' }
+};
+
+export const getCategoryForEntry = (p) => {
+  const symbol = p.particle;
+  const role = (p.role_es || '').toLowerCase();
+  
+  if (symbol === 'から' && (role.includes('causa') || role.includes('motivo') || role.includes('porque'))) return 'conjunctive';
+  if (symbol === 'が' && (role.includes('adversativa') || role.includes('pero') || role.includes('sin embargo') || role.includes('conjunción'))) return 'conjunctive';
+  if (symbol === 'か' && role.includes('alternativa')) return 'sentence_final';
+  
+  const caseList = ['は', 'が', 'を', 'に', 'へ', 'で', 'と', 'より', 'から', 'まで', 'までに', 'から・まで', 'の'];
+  const finalSymbols = ['か', 'ね', 'よ', 'よね'];
+  const adverbialSymbols = ['も', 'だけ', 'しか', 'ばかり', 'たばかり', 'ぐらい / くらい', 'ごろ', 'ほど', 'や', 'など'];
+  const conjunctiveSymbols = ['ので', 'のに', 'でも', 'ば', 'たら', 'なら', 'ても / でも', 'ながら', 'し', 'たり〜たり', 'か / かどうか'];
+  
+  if (finalSymbols.includes(symbol)) return 'sentence_final';
+  if (conjunctiveSymbols.includes(symbol)) return 'conjunctive';
+  if (caseList.includes(symbol) && (p.level === 'N5' || !p.level)) return 'case';
+  if (adverbialSymbols.includes(symbol)) return 'adverbial';
+  
+  return 'compound';
+};
+
 export default function GrammarTab({ 
   appState, 
   onUpdateState,
@@ -25,7 +141,9 @@ export default function GrammarTab({
   const contextApp = useApp();
 
   const [levelFilter, setLevelFilter] = useState(initialLevel || 'all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [filterParticle, setFilterParticle] = useState(initialParticle || 'all');
+  const [showAllParticles, setShowAllParticles] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'pending' | 'mastered'
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [quizActive, setQuizActive] = useState(!!initialQuiz);
@@ -44,7 +162,13 @@ export default function GrammarTab({
   }, [initialLevel]);
 
   useEffect(() => {
-    if (initialParticle) setFilterParticle(initialParticle);
+    if (initialParticle) {
+      setFilterParticle(initialParticle);
+      const meta = PARTICLE_METADATA[initialParticle];
+      if (meta && meta.category) {
+        setCategoryFilter(meta.category);
+      }
+    }
   }, [initialParticle]);
 
   useEffect(() => {
@@ -76,7 +200,7 @@ export default function GrammarTab({
 
   useEffect(() => {
     setVisibleCount(30);
-  }, [levelFilter, filterParticle, filterStatus, searchTerm]);
+  }, [levelFilter, categoryFilter, filterParticle, filterStatus, searchTerm]);
 
   const levelCounts = useMemo(() => {
     const counts = { all: particlesData.length, N5: 0, N4: 0, N3: 0, N2: 0, N1: 0 };
@@ -87,13 +211,68 @@ export default function GrammarTab({
     return counts;
   }, [particlesData]);
 
-  // Unique particle symbols filtered by selected level
-  const uniqueParticles = useMemo(() => {
+  // Counts of unique particles per category under currently active level filter
+  const categoryCounts = useMemo(() => {
     const pool = levelFilter === 'all'
       ? particlesData
       : particlesData.filter(p => (p.level || 'N5') === levelFilter);
-    return ['all', ...new Set(pool.map(p => p.particle))];
+    
+    const sets = {
+      all: new Set(),
+      case: new Set(),
+      conjunctive: new Set(),
+      adverbial: new Set(),
+      sentence_final: new Set(),
+      compound: new Set()
+    };
+
+    pool.forEach(p => {
+      sets.all.add(p.particle);
+      const cat = getCategoryForEntry(p);
+      if (sets[cat]) sets[cat].add(p.particle);
+    });
+
+    return {
+      all: sets.all.size,
+      case: sets.case.size,
+      conjunctive: sets.conjunctive.size,
+      adverbial: sets.adverbial.size,
+      sentence_final: sets.sentence_final.size,
+      compound: sets.compound.size,
+    };
   }, [particlesData, levelFilter]);
+
+  // Auto-reset category filter if currently selected category has 0 particles in new level
+  useEffect(() => {
+    if (categoryFilter !== 'all' && categoryCounts[categoryFilter] === 0) {
+      setCategoryFilter('all');
+    }
+  }, [categoryCounts, categoryFilter]);
+
+  // Visible particles for the chips row based on category and expansion state
+  const visibleParticles = useMemo(() => {
+    const pool = levelFilter === 'all'
+      ? particlesData
+      : particlesData.filter(p => (p.level || 'N5') === levelFilter);
+
+    const symbols = new Set();
+    pool.forEach(p => {
+      if (categoryFilter === 'all' || getCategoryForEntry(p) === categoryFilter) {
+        symbols.add(p.particle);
+      }
+    });
+
+    // If viewing 'all' and not expanded: show TOP_PARTICLES plus active filterParticle if not in top list
+    if (categoryFilter === 'all' && !showAllParticles) {
+      const top = TOP_PARTICLES.filter(tp => symbols.has(tp));
+      if (filterParticle !== 'all' && !top.includes(filterParticle) && symbols.has(filterParticle)) {
+        top.push(filterParticle);
+      }
+      return top;
+    }
+
+    return Array.from(symbols);
+  }, [particlesData, levelFilter, categoryFilter, showAllParticles, filterParticle]);
 
   const getLevelBadgeStyle = (level) => {
     switch (level) {
@@ -121,6 +300,11 @@ export default function GrammarTab({
       const pLevel = p.level || 'N5';
       if (levelFilter !== 'all' && pLevel !== levelFilter) return false;
 
+      if (categoryFilter !== 'all') {
+        const pCat = getCategoryForEntry(p);
+        if (pCat !== categoryFilter) return false;
+      }
+
       const matchFilter = filterParticle === 'all' || p.particle === filterParticle;
       const search = searchTerm.trim().toLowerCase();
       if (!search) return matchFilter;
@@ -138,7 +322,7 @@ export default function GrammarTab({
 
       return matchFilter && (matchParticle || matchRoleEs || matchRoleEn || matchFormula || matchExamples);
     });
-  }, [particlesData, levelFilter, filterParticle, filterStatus, searchTerm, appState.masteredParticles]);
+  }, [particlesData, levelFilter, categoryFilter, filterParticle, filterStatus, searchTerm, appState.masteredParticles]);
 
   const masteredCount = particlesData.filter(p => !!appState.masteredParticles?.[p.id]).length;
   const pendingCount = particlesData.length - masteredCount;
@@ -396,27 +580,126 @@ export default function GrammarTab({
               })}
             </div>
 
-            {/* Row 3: Particle Symbols Filter */}
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Partícula:</span>
-              {uniqueParticles.map((p) => (
-                <button
-                  key={p}
-                  className={`btn ${filterParticle === p ? 'btn-primary' : 'btn-outline'} btn-sm jp-text`}
-                  onClick={() => {
-                    setFilterParticle(p);
-                    updateParams(p, searchTerm, quizActive, levelFilter);
-                  }}
-                >
-                  {p === 'all' ? 'Todas' : p}
-                </button>
-              ))}
+            {/* Row 3: Categorized Particle Hub */}
+            <div className="particle-filter-hub">
+              {/* Category Selection Row */}
+              <div className="particle-category-row">
+                <span className="particle-filter-label">Categoría:</span>
+                {PARTICLE_CATEGORIES.map((cat) => {
+                  const count = categoryCounts[cat.id] || 0;
+                  const isActive = categoryFilter === cat.id;
+                  const isDisabled = count === 0 && cat.id !== 'all';
+
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      disabled={isDisabled}
+                      className={`particle-category-pill ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+                      onClick={() => {
+                        setCategoryFilter(cat.id);
+                        if (cat.id !== 'all' && filterParticle !== 'all') {
+                          const meta = PARTICLE_METADATA[filterParticle];
+                          if (!meta || meta.category !== cat.id) {
+                            setFilterParticle('all');
+                            updateParams('all', searchTerm, quizActive, levelFilter);
+                          }
+                        }
+                      }}
+                      title={isDisabled ? 'No hay partículas en este nivel JLPT' : `${cat.label} (${count})`}
+                    >
+                      <span>{cat.icon}</span>
+                      <span>{cat.label}</span>
+                      <span className="particle-category-count">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Particle Chips Row */}
+              <div className="particle-chips-section">
+                <div className="particle-chips-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span className="particle-filter-label">
+                      {categoryFilter === 'all'
+                        ? (!showAllParticles ? 'Partículas frecuentes:' : 'Todas las partículas:')
+                        : `Partículas de ${PARTICLE_CATEGORIES.find(c => c.id === categoryFilter)?.label}:`}
+                    </span>
+                    {filterParticle !== 'all' && (
+                      <button
+                        type="button"
+                        className="btn btn-xs btn-outline"
+                        style={{ padding: '2px 8px', fontSize: '0.75rem', height: 'auto', borderRadius: 999 }}
+                        onClick={() => {
+                          setFilterParticle('all');
+                          updateParams('all', searchTerm, quizActive, levelFilter);
+                        }}
+                      >
+                        ✕ Ver todas ({categoryFilter === 'all' ? 'este nivel' : 'esta categoría'})
+                      </button>
+                    )}
+                  </div>
+
+                  {categoryFilter === 'all' && categoryCounts.all > TOP_PARTICLES.length && (
+                    <button
+                      type="button"
+                      className="particle-toggle-expand-btn"
+                      onClick={() => setShowAllParticles(!showAllParticles)}
+                    >
+                      {showAllParticles ? (
+                        <>▴ Mostrar menos (Top 12)</>
+                      ) : (
+                        <>▾ Ver todas ({categoryCounts.all})</>
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                <div className="particle-chips-grid">
+                  <button
+                    type="button"
+                    className={`particle-chip-btn ${filterParticle === 'all' ? 'active' : ''}`}
+                    onClick={() => {
+                      setFilterParticle('all');
+                      updateParams('all', searchTerm, quizActive, levelFilter);
+                    }}
+                    title="Mostrar todas las partículas de la categoría seleccionada"
+                  >
+                    <span className="particle-chip-symbol">Todas</span>
+                    <span className="particle-chip-label">({visibleParticles.length})</span>
+                  </button>
+
+                  {visibleParticles.map((p) => {
+                    const isSelected = filterParticle === p;
+                    const meta = PARTICLE_METADATA[p];
+
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        className={`particle-chip-btn ${isSelected ? 'active' : ''}`}
+                        onClick={() => {
+                          const nextP = isSelected ? 'all' : p;
+                          setFilterParticle(nextP);
+                          updateParams(nextP, searchTerm, quizActive, levelFilter);
+                        }}
+                        title={meta ? `${p} — ${meta.label}` : p}
+                      >
+                        <span className="particle-chip-symbol jp-text">{p}</span>
+                        {meta?.label && (
+                          <span className="particle-chip-label">{meta.label}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Results count indicator */}
           <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <span>Mostrando <strong>{filteredParticles.length}</strong> de {particlesData.length} partículas</span>
+            <span>Mostrando <strong>{filteredParticles.length}</strong> de {particlesData.length} tarjetas</span>
             {levelFilter !== 'all' && (
               <span 
                 className="particle-level-tag" 
@@ -425,9 +708,36 @@ export default function GrammarTab({
                 Nivel {levelFilter}
               </span>
             )}
+            {categoryFilter !== 'all' && (
+              <span 
+                className="badge badge-subtle"
+                style={{ background: 'var(--primary-bg)', color: 'var(--primary)', borderColor: 'rgba(99, 102, 241, 0.2)', padding: '2px 8px', borderRadius: 6, fontSize: '0.8rem', fontWeight: 600 }}
+              >
+                {PARTICLE_CATEGORIES.find(c => c.id === categoryFilter)?.icon} {PARTICLE_CATEGORIES.find(c => c.id === categoryFilter)?.label}
+              </span>
+            )}
             {filterParticle !== 'all' && <span>• Partícula: <strong className="jp-text">{filterParticle}</strong></span>}
             {filterStatus !== 'all' && <span>• {filterStatus === 'mastered' ? 'Dominadas' : 'Por aprender'}</span>}
             {searchTerm.trim() && <span>• Búsqueda: &quot;{searchTerm.trim()}&quot;</span>}
+
+            {(categoryFilter !== 'all' || filterParticle !== 'all' || levelFilter !== 'all' || filterStatus !== 'all' || searchTerm.trim()) && (
+              <button 
+                type="button" 
+                className="btn btn-xs btn-outline" 
+                style={{ marginLeft: 'auto', fontSize: '0.78rem', padding: '3px 8px', height: 'auto' }}
+                onClick={() => {
+                  setLevelFilter('all');
+                  setCategoryFilter('all');
+                  setFilterParticle('all');
+                  setFilterStatus('all');
+                  setSearchTerm('');
+                  setShowAllParticles(false);
+                  updateParams('all', '', quizActive, 'all');
+                }}
+              >
+                Restablecer filtros
+              </button>
+            )}
           </div>
 
           {/* Particles Grid */}
@@ -440,9 +750,11 @@ export default function GrammarTab({
                   className="btn btn-outline btn-sm" 
                   onClick={() => {
                     setLevelFilter('all');
+                    setCategoryFilter('all');
                     setFilterParticle('all');
                     setFilterStatus('all');
                     setSearchTerm('');
+                    setShowAllParticles(false);
                     updateParams('all', '', quizActive, 'all');
                   }}
                 >

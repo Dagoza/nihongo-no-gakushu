@@ -2134,6 +2134,217 @@ ruby.furigana-ruby rt {
   line-height: 1.4;
 }
 
+/* ==========================================================================
+   Grammar & Particle Filter Hub - Hybrid Categorized UI
+   ========================================================================== */
+.particle-filter-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-bento, 20px);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+
+.particle-filter-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.particle-category-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.particle-category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg-main);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.particle-category-pill:hover:not(:disabled) {
+  border-color: var(--primary-light);
+  transform: translateY(-1px);
+  background: var(--bg-subtle);
+}
+
+.particle-category-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(67, 56, 202, 0.25);
+}
+
+.particle-category-pill.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.particle-category-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+}
+
+.particle-category-pill.active .particle-category-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .particle-category-count {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.particle-chips-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.particle-chips-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.particle-chips-grid {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.particle-chip-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-main);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  user-select: none;
+}
+
+.particle-chip-btn:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.particle-chip-btn.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(67, 56, 202, 0.35);
+  transform: translateY(-2px);
+}
+
+.particle-chip-symbol {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: var(--font-jp);
+  line-height: 1.2;
+}
+
+.particle-chip-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text-muted);
+  margin-top: 2px;
+  max-width: 85px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.particle-chip-btn.active .particle-chip-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.particle-toggle-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px dashed var(--border);
+  background: var(--bg-subtle);
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.particle-toggle-expand-btn:hover {
+  background: var(--primary-bg);
+  border-color: var(--primary);
+}
+
+@media (max-width: 640px) {
+  .particle-filter-hub {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .particle-category-pill {
+    padding: 5px 10px;
+    font-size: 0.78rem;
+  }
+  .particle-chip-btn {
+    min-width: 48px;
+    padding: 5px 8px;
+  }
+  .particle-chip-symbol {
+    font-size: 0.95rem;
+  }
+  .particle-chip-label {
+    font-size: 0.64rem;
+    max-width: 70px;
+  }
+}
+
 /* Vocabulary & Flashcards */
 .vocab-filter-bar {
   display: flex;
