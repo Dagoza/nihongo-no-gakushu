@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Bookmark, BookmarkCheck, Sparkles, Volume2, Trash2, Search, Layers, MessageSquare, BookOpen, Download, Copy, Check, ExternalLink, PlusCircle, ArrowRight, X, FileText, FileCode, StickyNote, PenTool, Info } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Sparkles, Volume2, Trash2, Search, Layers, MessageSquare, BookOpen, Download, Copy, Check, ExternalLink, PlusCircle, ArrowRight, X, FileText, FileCode, StickyNote, PenTool, Info, Edit3 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import SaveVocabModal from '../modals/SaveVocabModal';
+import EditWordModal from '../modals/EditWordModal';
 import { 
   buildStoryPrompt, 
   exportVocabularyAsJson, 
@@ -90,14 +91,25 @@ export default function SavedTab({
   const [storySpanishText, setStorySpanishText] = useState('');
   const [storySavedSuccess, setStorySavedSuccess] = useState(false);
 
-  // Manual Add Modal
+  // Manual Add Modal & Edit Modal
   const [isManualAddOpen, setIsManualAddOpen] = useState(false);
+  const [editingWord, setEditingWord] = useState(null);
 
   const savedWords = appState.savedCustomVocab || [];
   const savedPhrases = appState.savedPhrases || [];
   const customStories = appState.savedStories || [];
 
   const allCategories = useMemo(() => Array.from(new Set(savedWords.map(w => w.category).filter(Boolean))), [savedWords]);
+
+  // Handle saving edited word
+  const handleSaveEditedWord = (updated) => {
+    const updatedWords = savedWords.map((w) => (w.id === updated.id ? updated : w));
+    onUpdateState({
+      ...appState,
+      savedCustomVocab: updatedWords
+    });
+    setEditingWord(null);
+  };
 
   // Filtered words
   const filteredWords = useMemo(() => {
@@ -110,7 +122,11 @@ export default function SavedTab({
         (w.kanji && w.kanji.toLowerCase().includes(q)) ||
         (w.hiragana && w.hiragana.toLowerCase().includes(q)) ||
         (w.katakana && w.katakana.toLowerCase().includes(q)) ||
-        (w.meaning_es && w.meaning_es.toLowerCase().includes(q));
+        (w.meaning_es && w.meaning_es.toLowerCase().includes(q)) ||
+        (w.literal_translation && w.literal_translation.toLowerCase().includes(q)) ||
+        (w.breakdown && w.breakdown.toLowerCase().includes(q)) ||
+        (w.example_sentence && w.example_sentence.toLowerCase().includes(q)) ||
+        (w.example_translation && w.example_translation.toLowerCase().includes(q));
       return matchLevel && matchSearch && matchCat;
     });
   }, [savedWords, selectedLevel, selectedCategory, searchQuery]);
@@ -807,6 +823,70 @@ export default function SavedTab({
 
                           <div className="saved-word-meaning">{w.meaning_es}</div>
 
+                          {w.literal_translation && (
+                            <div style={{
+                              marginTop: 4,
+                              fontSize: '0.82rem',
+                              color: 'var(--text-secondary, #64748b)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6
+                            }}>
+                              <span className="literal-tag">Literal</span>
+                              <span>&ldquo;{w.literal_translation}&rdquo;</span>
+                            </div>
+                          )}
+
+                          {w.breakdown && (
+                            <div style={{
+                              marginTop: 6,
+                              fontSize: '0.8rem',
+                              color: 'var(--text-muted, #94a3b8)',
+                              background: 'rgba(255, 255, 255, 0.03)',
+                              padding: '4px 8px',
+                              borderRadius: 'var(--radius-sm, 6px)',
+                              border: '1px dashed var(--border)'
+                            }}>
+                              <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>🧩 Desglose: </span>
+                              <span>{w.breakdown}</span>
+                            </div>
+                          )}
+
+                          {w.example_sentence && (
+                            <div style={{
+                              marginTop: 8,
+                              padding: '8px 10px',
+                              background: 'rgba(99, 102, 241, 0.05)',
+                              borderRadius: 'var(--radius-sm, 8px)',
+                              border: '1px solid rgba(99, 102, 241, 0.15)'
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                                <span style={{ fontSize: '0.88rem', fontWeight: 600 }} className="jp-text">
+                                  {w.example_sentence}
+                                </span>
+                                <button
+                                  type="button"
+                                  className="tts-btn-small"
+                                  onClick={() => audioManager.speak(w.example_sentence)}
+                                  title="Escuchar frase de ejemplo"
+                                  style={{ padding: '2px 5px', height: 'auto', width: 'auto' }}
+                                >
+                                  <Volume2 size={13} />
+                                </button>
+                              </div>
+                              {w.example_reading && (
+                                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }} className="jp-text">
+                                  {w.example_reading}
+                                </div>
+                              )}
+                              {w.example_translation && (
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #64748b)', marginTop: 2 }}>
+                                  {w.example_translation}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
                           {w.notes && (
                             <div style={{
                               marginTop: 6,
@@ -844,6 +924,13 @@ export default function SavedTab({
                                 title="Escuchar pronunciación"
                               >
                                 <Volume2 size={16} />
+                              </button>
+                              <button
+                                className="tts-btn-small"
+                                onClick={() => setEditingWord(w)}
+                                title="Editar palabra, notas y desglose"
+                              >
+                                <Edit3 size={15} />
                               </button>
                               <button
                                 className="tts-btn-small"
@@ -1475,6 +1562,17 @@ export default function SavedTab({
         appState={appState}
         onUpdateState={onUpdateState}
       />
+
+      {/* Edit Word Modal for editing existing saved words */}
+      {editingWord && (
+        <EditWordModal
+          isOpen={!!editingWord}
+          onClose={() => setEditingWord(null)}
+          word={editingWord}
+          onSave={handleSaveEditedWord}
+          isCustomized={true}
+        />
+      )}
     </div>
   );
 }

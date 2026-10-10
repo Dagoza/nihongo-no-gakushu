@@ -14631,6 +14631,28 @@
     "notes": "Fórmula de cortesía indispensable al entrar, colgar o retirarse. Compuesta por 失礼 (descortesía) y します (hacer)."
   },
   {
+    "kanji": "先",
+    "hiragana": "さき",
+    "katakana": "サキ",
+    "romaji": "saki",
+    "meaning_es": "delante / previo / anterior / futuro / punta",
+    "category": "Sustantivo / Adverbio",
+    "level": "N5",
+    "isExpression": false,
+    "notes": "Punto delantero en el espacio o anterioridad/futuro en el tiempo."
+  },
+  {
+    "kanji": "お先",
+    "hiragana": "おさき",
+    "katakana": "オサキ",
+    "romaji": "osaki",
+    "meaning_es": "antes / por adelantado / me retiro antes",
+    "category": "Saludos y Cortesía",
+    "level": "N5",
+    "isExpression": true,
+    "notes": "Abreviatura coloquial o componente central de la fórmula 'お先に失礼します'."
+  },
+  {
     "kanji": "お先に",
     "hiragana": "おさきに",
     "katakana": "オサキニ",

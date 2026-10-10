@@ -201,6 +201,10 @@ export default function VocabTab({
       (item.katakana && item.katakana.toLowerCase().includes(search)) ||
       (item.meaning_es && item.meaning_es.toLowerCase().includes(search)) ||
       (item.meaning_en && item.meaning_en.toLowerCase().includes(search)) ||
+      (item.literal_translation && item.literal_translation.toLowerCase().includes(search)) ||
+      (item.breakdown && item.breakdown.toLowerCase().includes(search)) ||
+      (item.example_sentence && item.example_sentence.toLowerCase().includes(search)) ||
+      (item.example_translation && item.example_translation.toLowerCase().includes(search)) ||
       (item.notes && item.notes.toLowerCase().includes(search));
 
     const matchNotesOnly = !filterOnlyWithNotes || Boolean(item.notes && item.notes.trim());
@@ -933,6 +937,50 @@ export default function VocabTab({
                   <div className="vocab-meanings">
                     <div className="vocab-es">🇪🇸 {item.meaning_es}</div>
                     {item.meaning_en && <div className="vocab-en">🇬🇧 {item.meaning_en}</div>}
+
+                    {item.literal_translation && (
+                      <div style={{ marginTop: 4, fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span className="literal-tag">Literal</span>
+                        <span>&ldquo;{item.literal_translation}&rdquo;</span>
+                      </div>
+                    )}
+
+                    {item.breakdown && (
+                      <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--text-muted, #94a3b8)', background: 'rgba(255, 255, 255, 0.03)', padding: '4px 8px', borderRadius: '6px', border: '1px dashed var(--border)' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>🧩 Desglose: </span>
+                        <span>{item.breakdown}</span>
+                      </div>
+                    )}
+
+                    {item.example_sentence && (
+                      <div style={{ marginTop: 8, padding: '8px 10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '8px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                          <span style={{ fontSize: '0.88rem', fontWeight: 600 }} className="jp-text">
+                            {item.example_sentence}
+                          </span>
+                          <button
+                            type="button"
+                            className="tts-btn-small"
+                            onClick={() => audioManager.speak(item.example_sentence)}
+                            title="Escuchar frase de ejemplo"
+                            style={{ padding: '2px 5px', height: 'auto', width: 'auto' }}
+                          >
+                            <Volume2 size={13} />
+                          </button>
+                        </div>
+                        {item.example_reading && (
+                          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }} className="jp-text">
+                            {item.example_reading}
+                          </div>
+                        )}
+                        {item.example_translation && (
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #64748b)', marginTop: 2 }}>
+                            {item.example_translation}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {item.polite_masu && (
                       <div style={{ marginTop: 8, fontSize: '0.8rem', color: 'var(--primary)', background: 'var(--primary-bg)', padding: '4px 8px', borderRadius: '4px' }}>
                         Forma ます: <strong className="jp-text">{item.polite_masu}</strong> | て: <strong className="jp-text">{item.te_form}</strong>

@@ -1,4 +1,34 @@
 {
+  "お先": {
+    "reading": "おさき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "おさき": {
+    "reading": "おさき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 3
+  },
+  "さき": {
+    "reading": "さき",
+    "pattern": 0,
+    "type": "heiban",
+    "moraCount": 2
+  },
+  "失礼": {
+    "reading": "しつれい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
+  "しつれい": {
+    "reading": "しつれい",
+    "pattern": 2,
+    "type": "nakadaka",
+    "moraCount": 4
+  },
   "こんにちは": {
     "reading": "こんにちは",
     "pattern": 0,

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Edit3, Volume2, Check, RotateCcw, StickyNote, Sparkles, AlertCircle } from 'lucide-react';
+import { X, Edit3, Volume2, Check, RotateCcw, StickyNote, Sparkles, AlertCircle, Bot } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import { hiraganaToKatakana, katakanaToHiragana, containsKanji, convertKanjiToKanaSync, fetchKanjiReading, cleanKanaOnly } from '../../lib/japaneseUtils';
+import { hiraganaToKatakana, katakanaToHiragana, containsKanji, convertKanjiToKanaSync, fetchKanjiReading, cleanKanaOnly, analyzeVocabularyWithAI } from '../../lib/japaneseUtils';
 import { useApp } from '../../lib/AppContext';
 import useFocusTrap from '../../lib/useFocusTrap';
 
@@ -28,8 +28,14 @@ export default function EditWordModal({
   const [level, setLevel] = useState('N5');
   const [category, setCategory] = useState('Vocabulario General');
   const [notes, setNotes] = useState('');
+  const [literalTranslation, setLiteralTranslation] = useState('');
+  const [breakdown, setBreakdown] = useState('');
+  const [exampleSentence, setExampleSentence] = useState('');
+  const [exampleReading, setExampleReading] = useState('');
+  const [exampleTranslation, setExampleTranslation] = useState('');
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [isConvertingKana, setIsConvertingKana] = useState(false);
+  const [isAnalyzingAI, setIsAnalyzingAI] = useState(false);
   const debounceRef = React.useRef(null);
 
   useEffect(() => {
@@ -43,6 +49,11 @@ export default function EditWordModal({
       setLevel(word.level || 'N5');
       setCategory(word.category || 'Vocabulario General');
       setNotes(word.notes || '');
+      setLiteralTranslation(word.literal_translation || '');
+      setBreakdown(word.breakdown || '');
+      setExampleSentence(word.example_sentence || '');
+      setExampleReading(word.example_reading || '');
+      setExampleTranslation(word.example_translation || '');
       setSavedSuccess(false);
 
       if (rawReading && !containsKanji(rawReading)) {
@@ -222,6 +233,11 @@ export default function EditWordModal({
       level,
       category: category.trim() || 'Vocabulario General',
       notes: notes.trim(),
+      literal_translation: literalTranslation.trim(),
+      breakdown: breakdown.trim(),
+      example_sentence: exampleSentence.trim(),
+      example_reading: exampleReading.trim(),
+      example_translation: exampleTranslation.trim(),
       isCustomized: true,
       updatedAt: new Date().toISOString()
     };
@@ -235,6 +251,51 @@ export default function EditWordModal({
       setSavedSuccess(false);
       onClose();
     }, 900);
+  };
+
+  const handleAnalyzeAI = async () => {
+    const target = kanji.trim() || hiragana.trim();
+    if (!target) {
+      showAlert({
+        type: 'warning',
+        title: 'Ingresa una palabra',
+        message: 'Por favor escribe el kanji o la palabra antes de analizar con IA.'
+      });
+      return;
+    }
+
+    setIsAnalyzingAI(true);
+    try {
+      const data = await analyzeVocabularyWithAI(target, { currentReading: hiragana });
+      if (data) {
+        if (data.kanji && (!kanji || kanji === hiragana)) setKanji(data.kanji);
+        if (data.hiragana) {
+          setHiragana(data.hiragana);
+          setKatakana(data.katakana || hiraganaToKatakana(data.hiragana));
+        }
+        if (data.meaning_es && (!meaningEs || meaningEs === target)) {
+          setMeaningEs(data.meaning_es);
+        }
+        if (data.literal_translation) setLiteralTranslation(data.literal_translation);
+        if (data.breakdown) setBreakdown(data.breakdown);
+        if (data.example_sentence) setExampleSentence(data.example_sentence);
+        if (data.example_reading) setExampleReading(data.example_reading);
+        if (data.example_translation) setExampleTranslation(data.example_translation);
+        if (data.level && ['N5', 'N4', 'N3', 'N2', 'N1'].includes(data.level)) {
+          setLevel(data.level);
+        }
+        if (data.category && (!category || category === 'Vocabulario General')) {
+          setCategory(data.category);
+        }
+        if (data.nuance_note && !notes) {
+          setNotes(data.nuance_note);
+        }
+      }
+    } catch (err) {
+      console.warn('Error en análisis IA:', err);
+    } finally {
+      setIsAnalyzingAI(false);
+    }
   };
 
   const handleResetToDefault = async () => {
@@ -279,11 +340,23 @@ export default function EditWordModal({
 
         {/* Body Form */}
         <form onSubmit={handleSave} className="modal-body">
-          <div className="guideline-badge" style={{ background: 'rgba(99, 102, 241, 0.08)' }}>
-            <AlertCircle size={15} style={{ flexShrink: 0 }} />
-            <span style={{ fontSize: '0.84rem' }}>
-              Puedes corregir los kanjis (ej. cambiar de hiragana a kanji estándar como <strong>多分</strong> o <strong>明後日</strong>), afinar la traducción y registrar tus propias <strong>notas de estudio</strong>.
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
+            <div className="guideline-badge" style={{ margin: 0, flex: 1, minWidth: 260, background: 'rgba(99, 102, 241, 0.08)' }}>
+              <AlertCircle size={15} style={{ flexShrink: 0 }} />
+              <span style={{ fontSize: '0.84rem' }}>
+                Puedes corregir kanjis, afinar la traducción y registrar tus propias <strong>notas de estudio</strong>.
+              </span>
+            </div>
+            <button
+              type="button"
+              className="btn-ai-analyze"
+              onClick={handleAnalyzeAI}
+              disabled={isAnalyzingAI || (!kanji.trim() && !hiragana.trim())}
+              title="Desglosar morfológicamente y enriquecer con IA"
+            >
+              <Sparkles size={14} className={isAnalyzingAI ? 'animate-spin' : ''} />
+              <span>{isAnalyzingAI ? 'Analizando...' : '✨ Analizar con IA'}</span>
+            </button>
           </div>
 
           <div className="form-group-grid">
@@ -362,17 +435,94 @@ export default function EditWordModal({
             </div>
           </div>
 
-          {/* Meaning ES & EN */}
+          {/* Significados: Contextual vs Literal */}
+          <div className="form-group-grid">
+            <div className="form-group">
+              <label className="form-label">
+                <span>Significado Contextual (meaning_es)</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>¿Cómo se entiende?</span>
+              </label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="ej. Quizás / probablemente / tal vez"
+                value={meaningEs}
+                onChange={(e) => setMeaningEs(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span>Traducción Literal (Etimología)</span>
+                <span className="literal-tag">Literal</span>
+              </label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="ej. Mucha división / Lo previo"
+                value={literalTranslation}
+                onChange={(e) => setLiteralTranslation(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Desglose de Componentes */}
           <div className="form-group">
-            <label className="form-label">Significado en Español (meaning_es)</label>
+            <label className="form-label">Desglose de Componentes / Morfología</label>
             <input
               type="text"
               className="form-input"
-              placeholder="ej. Quizás / probablemente / tal vez"
-              value={meaningEs}
-              onChange={(e) => setMeaningEs(e.target.value)}
-              required
+              placeholder="ej. お [prefijo honorífico] + 先 [delante / anterior]"
+              value={breakdown}
+              onChange={(e) => setBreakdown(e.target.value)}
             />
+          </div>
+
+          {/* Frase Cotidiana de Ejemplo */}
+          <div className="example-sentence-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                <Sparkles size={14} style={{ color: 'var(--primary-light)' }} />
+                <span>Frase Cotidiana de Ejemplo (Uso Real)</span>
+              </div>
+              {exampleSentence && (
+                <button
+                  type="button"
+                  className="tts-mini-btn"
+                  onClick={() => audioManager.speak(exampleSentence)}
+                  title="Escuchar pronunciación de la frase"
+                >
+                  <Volume2 size={13} />
+                </button>
+              )}
+            </div>
+            <input
+              type="text"
+              className="form-input jp-text"
+              placeholder="ej. お先に失礼します。"
+              value={exampleSentence}
+              onChange={(e) => setExampleSentence(e.target.value)}
+              style={{ marginTop: 6 }}
+            />
+            <div className="example-inputs-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 6 }}>
+              <input
+                type="text"
+                className="form-input jp-text"
+                placeholder="Lectura: おさきにしつれいします"
+                value={exampleReading}
+                onChange={(e) => setExampleReading(e.target.value)}
+                style={{ fontSize: '0.82rem' }}
+              />
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Traducción: Con permiso, me retiro antes"
+                value={exampleTranslation}
+                onChange={(e) => setExampleTranslation(e.target.value)}
+                style={{ fontSize: '0.82rem' }}
+              />
+            </div>
           </div>
 
           <div className="form-group">

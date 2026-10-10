@@ -4399,6 +4399,36 @@
     "notes": "Fórmula canónica para entrar a una sala, retirarse o colgar el teléfono. Compuesta por 失礼 (descortesía) y します (hacer)."
   },
   {
+    "id": "v_n5_saki",
+    "kanji": "先",
+    "kana": "さき",
+    "meaning_es": "delante / previo / anterior / futuro / punta",
+    "meaning_en": "ahead / before / previous / future",
+    "category": "Vocabulario General",
+    "level": "N5",
+    "hiragana": "さき",
+    "katakana": "サキ",
+    "literal_translation": "Punto delantero / tiempo anterior o venidero",
+    "notes": "Kanji N5 fundamental. Se utiliza para indicar prioridad espacial o temporal."
+  },
+  {
+    "id": "v_n5_osaki",
+    "kanji": "お先",
+    "kana": "おさき",
+    "meaning_es": "antes / por adelantado / me retiro antes",
+    "meaning_en": "ahead / before / leaving first (polite)",
+    "category": "Saludos y Cortesía",
+    "level": "N5",
+    "hiragana": "おさき",
+    "katakana": "オサキ",
+    "literal_translation": "Lo previo / el frente con prefijo de cortesía (お)",
+    "breakdown": "お (prefijo honorífico de cortesía) + 先 (delante / anterior)",
+    "example_sentence": "お先に失礼します。",
+    "example_reading": "おさきにしつれいします。",
+    "example_translation": "Con su permiso, me retiro antes (fórmula canónica laboral)",
+    "notes": "Abreviatura coloquial o componente central de la fórmula 'お先に失礼します'. Indica que uno se retira o se adelanta antes que los demás."
+  },
+  {
     "id": "v_n5_osaki_ni",
     "kanji": "お先に",
     "kana": "おさきに",
@@ -4408,6 +4438,11 @@
     "level": "N5",
     "hiragana": "おさきに",
     "katakana": "オサキニ",
+    "literal_translation": "Hacia adelante / previamente con cortesía",
+    "breakdown": "お先 (antes, por delante) + に (partícula adverbial)",
+    "example_sentence": "お先にどうぞ。",
+    "example_reading": "おさきにどうぞ。",
+    "example_translation": "Pase usted primero / Adelante por favor.",
     "notes": "Formado por el prefijo honorífico お- + 先 (delante/antes) + partícula に."
   },
   {
@@ -4420,6 +4455,11 @@
     "level": "N5",
     "hiragana": "おさきにしつれいします",
     "katakana": "オサキニシツレイシマス",
+    "literal_translation": "Cometo una falta de cortesía antes que ustedes",
+    "breakdown": "お先 (antes) + に (partícula) + 失礼 (descortesía) + します (hago)",
+    "example_sentence": "お先に失礼します。お疲れさまでした。",
+    "example_reading": "おさきにしつれいします。おつかれさまでした。",
+    "example_translation": "Con su permiso me retiro antes. ¡Buen trabajo a todos!",
     "notes": "Fórmula obligatoria de cortesía al marcharse del trabajo antes que los compañeros. La respuesta estándar es お疲れさまでした (otsukaresama deshita)."
   }
 ]

@@ -11,10 +11,22 @@ import {
   Copy, 
   ExternalLink, 
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  Lightbulb,
+  BookOpen,
+  Plus
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import { hiraganaToKatakana, katakanaToHiragana, extractKanjis, containsKanji, convertKanjiToKanaSync, fetchKanjiReading, cleanKanaOnly } from '../../lib/japaneseUtils';
+import { 
+  hiraganaToKatakana, 
+  katakanaToHiragana, 
+  extractKanjis, 
+  containsKanji, 
+  convertKanjiToKanaSync, 
+  fetchKanjiReading, 
+  cleanKanaOnly,
+  analyzeVocabularyWithAI
+} from '../../lib/japaneseUtils';
 import vocabularyData from '../../data/vocabulary.json';
 import kanjiData from '../../data/kanji.json';
 import storiesData from '../../data/stories.json';
@@ -39,9 +51,15 @@ export default function SaveVocabModal({
   const [hiragana, setHiragana] = useState('');
   const [katakana, setKatakana] = useState('');
   const [meaningEs, setMeaningEs] = useState('');
+  const [literalTranslation, setLiteralTranslation] = useState('');
+  const [breakdown, setBreakdown] = useState('');
+  const [exampleSentence, setExampleSentence] = useState('');
+  const [exampleReading, setExampleReading] = useState('');
+  const [exampleTranslation, setExampleTranslation] = useState('');
   const [level, setLevel] = useState('N5');
   const [category, setCategory] = useState('Anime y Cultura');
   const [notes, setNotes] = useState('');
+  const [isAnalyzingAI, setIsAnalyzingAI] = useState(false);
 
   // Phrase state
   const [phraseJapanese, setPhraseJapanese] = useState('');
@@ -67,6 +85,13 @@ export default function SaveVocabModal({
       setActiveTab(defaultType);
       setItemSource(initialData.source || (initialData.videoId ? 'YouTube' : 'Reproductor de Audio'));
       setKanji(rawText);
+
+      // Cargar campos lingüísticos enriquecidos si ya vienen provistos
+      setLiteralTranslation(initialData.literal_translation || initialData.literalTranslation || '');
+      setBreakdown(initialData.breakdown || '');
+      setExampleSentence(initialData.example_sentence || initialData.exampleSentence || '');
+      setExampleReading(initialData.example_reading || initialData.exampleReading || '');
+      setExampleTranslation(initialData.example_translation || initialData.exampleTranslation || '');
 
       // Si se proporcionó una lectura fonética válida (sin kanjis)
       if (rawReading && !containsKanji(rawReading)) {
@@ -107,6 +132,20 @@ export default function SaveVocabModal({
               setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
               if (!initialData.translation && res.meaning_es) {
                 setMeaningEs(res.meaning_es);
+              }
+              if (res.literal_translation && !initialData.literal_translation) {
+                setLiteralTranslation(res.literal_translation);
+              }
+              if (res.breakdown && !initialData.breakdown) {
+                setBreakdown(res.breakdown);
+              }
+              if (res.example_sentence && !initialData.example_sentence) {
+                setExampleSentence(res.example_sentence);
+                setExampleReading(res.example_reading || '');
+                setExampleTranslation(res.example_translation || '');
+              }
+              if (res.nuance_notes && !initialData.notes) {
+                setNotes(res.nuance_notes);
               }
               if (!initialData.level && res.level) {
                 setLevel(res.level);
@@ -162,6 +201,75 @@ export default function SaveVocabModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Análisis inteligente profundo con IA (traducción contextual, literal, desglose y frase cotidiana)
+  const handleAnalyzeAI = async (textToAnalyze = kanji) => {
+    const target = (textToAnalyze || kanji || phraseJapanese || '').trim();
+    if (!target) return;
+
+    setIsAnalyzingAI(true);
+    try {
+      const res = await analyzeVocabularyWithAI(target, { level });
+      if (res) {
+        if (res.kanji) setKanji(res.kanji);
+        if (res.hiragana && !containsKanji(res.hiragana)) {
+          setHiragana(res.hiragana);
+          setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
+        }
+        if (res.meaning_es) setMeaningEs(res.meaning_es);
+        if (res.literal_translation) setLiteralTranslation(res.literal_translation);
+        if (res.breakdown) setBreakdown(res.breakdown);
+        if (res.example_sentence) {
+          setExampleSentence(res.example_sentence);
+          setExampleReading(res.example_reading || '');
+          setExampleTranslation(res.example_translation || '');
+        }
+        if (res.nuance_notes) {
+          setNotes((prev) => {
+            if (!prev) return res.nuance_notes;
+            if (prev.includes(res.nuance_notes)) return prev;
+            return `${prev}\n\n[Matiz cultural]: ${res.nuance_notes}`;
+          });
+        }
+        if (res.level) setLevel(res.level);
+        if (res.category) setCategory(res.category);
+      }
+    } catch (err) {
+      console.warn('Error en análisis IA:', err);
+    } finally {
+      setIsAnalyzingAI(false);
+    }
+  };
+
+  // Guardar la frase de ejemplo contextual directamente en el cuaderno de frases
+  const handleSaveExampleAsPhrase = () => {
+    if (!exampleSentence.trim()) return;
+
+    const newPhrase = {
+      id: `phrase_${Date.now()}`,
+      japanese: exampleSentence.trim(),
+      reading: exampleReading.trim(),
+      translation: exampleTranslation.trim(),
+      source: `Ejemplo contextual de: ${kanji.trim() || 'Vocabulario'}`,
+      date: new Date().toISOString()
+    };
+
+    const prevPhrases = appState.savedPhrases || [];
+    const updatedPhrases = [newPhrase, ...prevPhrases];
+
+    const newXp = (appState.xp || 0) + 15;
+    onUpdateState({
+      ...appState,
+      savedPhrases: updatedPhrases,
+      xp: newXp
+    });
+
+    showAlert({
+      type: 'success',
+      title: '¡Frase Guardada!',
+      message: `Se añadió la frase de ejemplo "${exampleSentence.trim()}" a tu Cuaderno de Estudio (+15 XP).`
+    });
+  };
+
   if (!isOpen) return null;
 
   // Auto-completar Katakana cuando cambia Hiragana
@@ -212,6 +320,14 @@ export default function SaveVocabModal({
           setHiragana(res.hiragana);
           setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
           if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
+          if (!literalTranslation && res.literal_translation) setLiteralTranslation(res.literal_translation);
+          if (!breakdown && res.breakdown) setBreakdown(res.breakdown);
+          if (!exampleSentence && res.example_sentence) {
+            setExampleSentence(res.example_sentence);
+            setExampleReading(res.example_reading || '');
+            setExampleTranslation(res.example_translation || '');
+          }
+          if (!notes && res.nuance_notes) setNotes(res.nuance_notes);
           if (res.level) setLevel(res.level);
         }
       } catch (e) {
@@ -237,6 +353,14 @@ export default function SaveVocabModal({
           setHiragana(res.hiragana);
           setKatakana(res.katakana || hiraganaToKatakana(res.hiragana));
           if (!meaningEs && res.meaning_es) setMeaningEs(res.meaning_es);
+          if (!literalTranslation && res.literal_translation) setLiteralTranslation(res.literal_translation);
+          if (!breakdown && res.breakdown) setBreakdown(res.breakdown);
+          if (!exampleSentence && res.example_sentence) {
+            setExampleSentence(res.example_sentence);
+            setExampleReading(res.example_reading || '');
+            setExampleTranslation(res.example_translation || '');
+          }
+          if (!notes && res.nuance_notes) setNotes(res.nuance_notes);
           if (res.level) setLevel(res.level);
         }
       } finally {
@@ -317,6 +441,11 @@ export default function SaveVocabModal({
       kana: cleanHiragana,
       meaning_es: meaningEs.trim(),
       meaning_en: initialData?.meaning_en || '',
+      literal_translation: literalTranslation.trim(),
+      breakdown: breakdown.trim(),
+      example_sentence: exampleSentence.trim(),
+      example_reading: exampleReading.trim(),
+      example_translation: exampleTranslation.trim(),
       category: category,
       level: level,
       notes: notes.trim(),
@@ -411,6 +540,13 @@ export default function SaveVocabModal({
       katakana: finalKatakana,
       kana: hiragana.trim(),
       meaning_es: meaningEs.trim(),
+      ...(literalTranslation.trim() ? { literal_translation: literalTranslation.trim() } : {}),
+      ...(breakdown.trim() ? { breakdown: breakdown.trim() } : {}),
+      ...(exampleSentence.trim() ? { 
+        example_sentence: exampleSentence.trim(),
+        example_reading: exampleReading.trim(),
+        example_translation: exampleTranslation.trim()
+      } : {}),
       category: category,
       level: level,
       ...(notes.trim() ? { notes: notes.trim() } : {})
@@ -467,11 +603,23 @@ export default function SaveVocabModal({
         {/* Tab 1: Guardar Palabra */}
         {activeTab === 'word' && (
           <div className="modal-body">
-            <div className="guideline-badge">
-              <AlertCircle size={14} />
-              <span>
-                Regla obligatoria: Registro simultáneo en <strong>Kanji</strong>, <strong>Hiragana</strong> y <strong>Katakana</strong> con significado en español.
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
+              <div className="guideline-badge" style={{ margin: 0, flex: 1, minWidth: 260 }}>
+                <AlertCircle size={14} />
+                <span>
+                  Registro simultáneo en <strong>Kanji</strong>, <strong>Hiragana</strong> y <strong>Katakana</strong> con significado en español.
+                </span>
+              </div>
+              <button
+                type="button"
+                className="btn-ai-analyze"
+                onClick={() => handleAnalyzeAI(kanji)}
+                disabled={isAnalyzingAI || !kanji.trim()}
+                title="Desglosar morfológicamente y autocompletar con IA"
+              >
+                <Sparkles size={14} className={isAnalyzingAI ? 'animate-spin' : ''} />
+                <span>{isAnalyzingAI ? 'Analizando...' : '✨ Analizar con IA'}</span>
+              </button>
             </div>
 
             <div className="form-group-grid">
@@ -490,7 +638,7 @@ export default function SaveVocabModal({
                 <input
                   type="text"
                   className="form-input jp-text"
-                  placeholder="ej. 先生 o アニメ"
+                  placeholder="ej. 先生 o お先"
                   value={kanji}
                   onChange={(e) => handleKanjiChange(e.target.value)}
                   onBlur={handleKanjiBlur}
@@ -510,7 +658,7 @@ export default function SaveVocabModal({
                 <input
                   type="text"
                   className="form-input jp-text"
-                  placeholder="ej. せんせい"
+                  placeholder="ej. せんせい o おさき"
                   value={hiragana}
                   onChange={(e) => handleHiraganaChange(e.target.value)}
                 />
@@ -521,7 +669,7 @@ export default function SaveVocabModal({
                 <input
                   type="text"
                   className="form-input jp-text"
-                  placeholder="ej. センセイ"
+                  placeholder="ej. センセイ o オサキ"
                   value={katakana}
                   onChange={(e) => setKatakana(e.target.value)}
                 />
@@ -545,7 +693,7 @@ export default function SaveVocabModal({
 
             {/* Previsualización en vivo de Acento Tonal (Pitch Accent) */}
             {(kanji || hiragana) && (
-              <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 6 }}>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: 4, fontWeight: 600 }}>
                   Acento Tonal (Pitch Accent de Tokio):
                 </span>
@@ -553,15 +701,115 @@ export default function SaveVocabModal({
               </div>
             )}
 
+            {/* Significados: Contextual vs Literal */}
+            <div className="form-group-grid">
+              <div className="form-group">
+                <label className="form-label">
+                  <span>Significado Contextual (meaning_es)</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>¿Cómo se entiende?</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="ej. Antes / Me adelanto (o Disculpe)"
+                  value={meaningEs}
+                  onChange={(e) => setMeaningEs(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <Lightbulb size={13} style={{ color: 'var(--primary-light)' }} />
+                    <span>Traducción Literal (Etimología)</span>
+                  </span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Palabra por palabra</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="ej. Lo previo / el frente con cortesía"
+                  value={literalTranslation}
+                  onChange={(e) => setLiteralTranslation(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Desglose de Componentes */}
             <div className="form-group">
-              <label className="form-label">Significado en Español (meaning_es)</label>
+              <label className="form-label">
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <BookOpen size={13} style={{ color: 'var(--primary-light)' }} />
+                  <span>Desglose de Componentes (Kanjis, Prefijos y Morfología)</span>
+                </span>
+              </label>
               <input
                 type="text"
                 className="form-input"
-                placeholder="ej. Profesor / Maestro"
-                value={meaningEs}
-                onChange={(e) => setMeaningEs(e.target.value)}
+                placeholder="ej. お [prefijo honorífico de cortesía] + 先 [delante / anterior]"
+                value={breakdown}
+                onChange={(e) => setBreakdown(e.target.value)}
               />
+            </div>
+
+            {/* Frase Cotidiana de Ejemplo de Alta Frecuencia */}
+            <div className="example-sentence-card">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  <Sparkles size={14} style={{ color: 'var(--primary-light)' }} />
+                  <span>Frase Cotidiana de Ejemplo (Uso Real en Japón)</span>
+                </div>
+                {exampleSentence && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <button
+                      type="button"
+                      className="tts-mini-btn"
+                      onClick={() => audioManager.speak(exampleSentence)}
+                      title="Escuchar pronunciación de la frase"
+                    >
+                      <Volume2 size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-save-example-phrase"
+                      onClick={handleSaveExampleAsPhrase}
+                      title="Guardar también esta frase de ejemplo en mi Cuaderno de Estudio (+15 XP)"
+                    >
+                      <Plus size={12} />
+                      <span>Guardar Frase (+15 XP)</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <input
+                  type="text"
+                  className="form-input jp-text"
+                  placeholder="ej. お先に失礼します。"
+                  value={exampleSentence}
+                  onChange={(e) => setExampleSentence(e.target.value)}
+                  style={{ fontWeight: 600, fontSize: '0.92rem' }}
+                />
+                <div className="form-group-grid" style={{ marginTop: 2 }}>
+                  <input
+                    type="text"
+                    className="form-input jp-text"
+                    placeholder="Lectura kana: ej. おさきにしつれいします。"
+                    value={exampleReading}
+                    onChange={(e) => setExampleReading(e.target.value)}
+                    style={{ fontSize: '0.82rem' }}
+                  />
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Traducción: ej. Con su permiso me retiro antes (fórmula laboral)"
+                    value={exampleTranslation}
+                    onChange={(e) => setExampleTranslation(e.target.value)}
+                    style={{ fontSize: '0.82rem' }}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="form-group">

@@ -1,9 +1,11 @@
 // Endpoint API para resolución y conversión morfológica precisa de kanji a hiragana y katakana
-import fs from 'fs';
-import path from 'path';
 import * as kdModule from 'kanji-data';
 import * as wanakana from 'wanakana';
 import { convertKanjiToKanaSync } from '../../../../lib/japaneseUtils';
+import vocabularyData from '../../../../data/vocabulary.json';
+import vocabularyN5Data from '../../../../data/vocabulary_n5.json';
+import kanjiData from '../../../../data/kanji.json';
+import pitchAccentsData from '../../../../data/pitch_accents.json';
 
 const kd = kdModule.default || kdModule;
 
@@ -11,21 +13,100 @@ const kd = kdModule.default || kdModule;
 const readingCache = new Map();
 const MAX_CACHE_SIZE = 2000;
 
-// Carga perezosa de datasets locales
+// Carga de datasets locales
 let localDict = null;
-let pitchAccents = null;
+let pitchAccents = pitchAccentsData || {};
 
 function getLocalData() {
-  if (localDict && pitchAccents) return { localDict, pitchAccents };
+  if (localDict) return { localDict, pitchAccents };
 
   localDict = new Map();
-  pitchAccents = {};
+  pitchAccents = pitchAccentsData || {};
 
   try {
-    const dataDir = path.resolve(process.cwd(), 'data');
-
-    // 1. Frases y expresiones esenciales curadas en español
+    // 1. Frases y expresiones esenciales curadas en español con desglose, traducción literal y frase cotidiana
     const CURATED_LIST = {
+      'お先': {
+        reading: 'おさき',
+        meaning_es: 'Antes / Me adelanto / Por delante (despedida o acción anticipada)',
+        literal_translation: 'Lo previo / el frente con prefijo de cortesía (お)',
+        breakdown: 'お (prefijo honorífico de cortesía) + 先 (delante, anterior, previo)',
+        example_sentence: 'お先に失礼します。',
+        example_reading: 'おさきにしつれいします。',
+        example_translation: 'Con su permiso, me retiro antes (fórmula canónica de despedida en el trabajo)',
+        nuance_notes: 'Fórmula de cortesía o abreviatura coloquial de "お先に失礼します". Se usa cuando uno se retira o se adelanta antes que los demás.',
+        level: 'N5',
+        category: 'Saludos y Cortesía'
+      },
+      'お先に': {
+        reading: 'おさきに',
+        meaning_es: 'Antes / Por adelantado / Con su permiso me adelanto',
+        literal_translation: 'Hacia adelante / previamente con cortesía',
+        breakdown: 'お先 (antes, por delante) + に (partícula hacia/adverbial)',
+        example_sentence: 'お先にどうぞ。',
+        example_reading: 'おさきにどうぞ。',
+        example_translation: 'Pase usted primero / Adelante por favor.',
+        nuance_notes: 'Expresión cortés para ceder el paso o avisar que uno se marcha antes.',
+        level: 'N5',
+        category: 'Saludos y Cortesía'
+      },
+      'お先に失礼します': {
+        reading: 'おさきにしつれいします',
+        meaning_es: 'Con su permiso me retiro antes / Hasta mañana (despedida laboral cotidiana)',
+        literal_translation: 'Cometo una falta de cortesía antes que ustedes',
+        breakdown: 'お先 (antes, por delante) + に (partícula) + 失礼 (falta de cortesía) + します (hago / cometo)',
+        example_sentence: 'お先に失礼します。お疲れさまでした。',
+        example_reading: 'おさきにしつれいします。おつかれさまでした。',
+        example_translation: 'Con su permiso me retiro antes. ¡Buen trabajo a todos!',
+        nuance_notes: 'Norma social obligatoria en Japón cuando un empleado se retira antes que sus compañeros o jefes.',
+        level: 'N5',
+        category: 'Saludos y Cortesía'
+      },
+      '失礼': {
+        reading: 'しつれい',
+        meaning_es: 'Disculpe / Con su permiso / Perdón (saludo formal o disculpa)',
+        literal_translation: 'Pérdida o falta de cortesía / descortesía',
+        breakdown: '失 (perder, errar) + 礼 (cortesía, etiqueta, modales)',
+        example_sentence: 'お先に失礼します。',
+        example_reading: 'おさきにしつれいします。',
+        example_translation: 'Con su permiso, me retiro antes (fórmula laboral de despedida)',
+        nuance_notes: 'Base de las fórmulas de cortesía laboral más importantes: "失礼します" (al entrar o retirarse) y "失礼しました" (al disculparse).',
+        level: 'N5',
+        category: 'Saludos y Cortesía'
+      },
+      '失礼します': {
+        reading: 'しつれいします',
+        meaning_es: 'Con su permiso / Disculpe la molestia (al entrar o despedirse)',
+        literal_translation: 'Cometo una descortesía',
+        breakdown: '失礼 (descortesía) + します (hacer cortés)',
+        example_sentence: '失礼します。山田です。',
+        example_reading: 'しつれいします。やまだです。',
+        example_translation: 'Con su permiso. Soy Yamada.',
+        level: 'N5',
+        category: 'Saludos y Cortesía'
+      },
+      '失礼しました': {
+        reading: 'しつれいしました',
+        meaning_es: 'Disculpe la molestia (al retirarse o tras un error)',
+        literal_translation: 'Cometí una descortesía',
+        breakdown: '失礼 (descortesía) + しました (hizo)',
+        example_sentence: '大変失礼しました。',
+        example_reading: 'たいへんしつれいしました。',
+        example_translation: 'Le pido una sincera disculpa por la molestia.',
+        level: 'N5',
+        category: 'Saludos y Cortesía'
+      },
+      '先': {
+        reading: 'さき',
+        meaning_es: 'delante / previo / anterior / futuro / punta',
+        literal_translation: 'Punto delantero en el espacio o tiempo',
+        breakdown: '先 (ideograma de avance, anterioridad y prioridad)',
+        example_sentence: 'お先にどうぞ。',
+        example_reading: 'おさきにどうぞ。',
+        example_translation: 'Pase usted primero / Adelante.',
+        level: 'N5',
+        category: 'Vocabulario General'
+      },
       'お疲れ様': { reading: 'おつかれさま', meaning_es: 'Muchas gracias por su trabajo / Buen trabajo', level: 'N5', category: 'Saludos y Cortesía' },
       'お疲れ様です': { reading: 'おつかれさまです', meaning_es: 'Muchas gracias por su trabajo / Buen trabajo (saludo formal habitual)', level: 'N5', category: 'Saludos y Cortesía' },
       'お疲れ様でした': { reading: 'おつかれさまでした', meaning_es: 'Muchas gracias por su trabajo / Buen trabajo (al finalizar jornada o tarea)', level: 'N5', category: 'Saludos y Cortesía' },
@@ -36,8 +117,6 @@ function getLocalData() {
       'よろしくお願いいたします': { reading: 'よろしくおねがいいたします', meaning_es: 'Por favor cuide de mí (máxima cortesía Keigo)', level: 'N4', category: 'Saludos y Cortesía' },
       'どうぞよろしく': { reading: 'どうぞよろしく', meaning_es: 'Un gran placer / Cuento con usted', level: 'N5', category: 'Saludos y Cortesía' },
       '初めまして': { reading: 'はじめまして', meaning_es: 'Mucho gusto / Encantado de conocerte', level: 'N5', category: 'Saludos y Cortesía' },
-      '失礼します': { reading: 'しつれいします', meaning_es: 'Con su permiso / Disculpe la molestia (al entrar o despedirse)', level: 'N5', category: 'Saludos y Cortesía' },
-      '失礼しました': { reading: 'しつれいしました', meaning_es: 'Disculpe la molestia (al retirarse o tras un error)', level: 'N5', category: 'Saludos y Cortesía' },
       'お世話になっております': { reading: 'おせわになっております', meaning_es: 'Agradezco sinceramente su continuo apoyo', level: 'N4', category: 'Saludos y Cortesía' },
       'いってきます': { reading: 'いってきます', meaning_es: 'Ya me voy / Salgo y regreso', level: 'N5', category: 'Saludos y Cortesía' },
       '行ってきます': { reading: 'いってきます', meaning_es: 'Ya me voy / Salgo y regreso', level: 'N5', category: 'Saludos y Cortesía' },
@@ -56,7 +135,15 @@ function getLocalData() {
       'すみません': { reading: 'すみません', meaning_es: 'Disculpe / Perdón / Gracias por la molestia', level: 'N5', category: 'Expresiones' },
       '済みません': { reading: 'すみません', meaning_es: 'Disculpe / Perdón', level: 'N5', category: 'Expresiones' },
       'ごめんなさい': { reading: 'ごめんなさい', meaning_es: 'Lo siento / Perdón', level: 'N5', category: 'Expresiones' },
-      '御免なさい': { reading: 'ごめんなさい', meaning_es: 'Lo siento / Perdón', level: 'N5', category: 'Expresiones' }
+      '御免なさい': { reading: 'ごめんなさい', meaning_es: 'Lo siento / Perdón', level: 'N5', category: 'Expresiones' },
+      'お茶': { reading: 'おちゃ', meaning_es: 'Té verde japonés (cortés)', level: 'N5', category: 'Comida y Bebida' },
+      'お金': { reading: 'おかね', meaning_es: 'Dinero (cortés)', level: 'N5', category: 'Vida Diaria' },
+      'ご飯': { reading: 'ごはん', meaning_es: 'Comida / Arroz cocido', level: 'N5', category: 'Comida y Bebida' },
+      'お水': { reading: 'おみず', meaning_es: 'Agua potable / fría (cortés)', level: 'N5', category: 'Comida y Bebida' },
+      'お酒': { reading: 'おさけ', meaning_es: 'Alcohol / Sake japonés', level: 'N5', category: 'Comida y Bebida' },
+      'お風呂': { reading: 'おふろ', meaning_es: 'Baño de tina tradicional', level: 'N5', category: 'Vida Diaria' },
+      'お腹': { reading: 'おなか', meaning_es: 'Vientre / Estómago', level: 'N5', category: 'Cuerpo y Salud' },
+      'お願い': { reading: 'おねがい', meaning_es: 'Petición / Por favor', level: 'N5', category: 'Saludos y Cortesía' }
     };
 
     for (const [k, v] of Object.entries(CURATED_LIST)) {
@@ -64,10 +151,29 @@ function getLocalData() {
     }
 
     // 2. Vocabulario del catálogo
-    const vocabPath = path.join(dataDir, 'vocabulary.json');
-    if (fs.existsSync(vocabPath)) {
-      const vocabList = JSON.parse(fs.readFileSync(vocabPath, 'utf8'));
-      vocabList.forEach(v => {
+    if (Array.isArray(vocabularyData)) {
+      vocabularyData.forEach(v => {
+        const kanji = (v.kanji || '').trim();
+        const reading = (v.hiragana || v.kana || '').trim();
+        if (kanji && reading && !localDict.has(kanji) && !/[\u4e00-\u9faf]/.test(reading)) {
+          localDict.set(kanji, {
+            reading,
+            meaning_es: v.meaning_es || '',
+            literal_translation: v.literal_translation || '',
+            breakdown: v.breakdown || '',
+            example_sentence: v.example_sentence || '',
+            example_reading: v.example_reading || '',
+            example_translation: v.example_translation || '',
+            level: v.level || 'N5',
+            category: v.category || 'Vocabulario General'
+          });
+        }
+      });
+    }
+
+    // 3. Vocabulario N5 adicional
+    if (Array.isArray(vocabularyN5Data)) {
+      vocabularyN5Data.forEach(v => {
         const kanji = (v.kanji || '').trim();
         const reading = (v.hiragana || v.kana || '').trim();
         if (kanji && reading && !localDict.has(kanji) && !/[\u4e00-\u9faf]/.test(reading)) {
@@ -81,29 +187,24 @@ function getLocalData() {
       });
     }
 
-    // 3. Vocabulario N5 y N4
-    const v5Path = path.join(dataDir, 'vocabulary_n5.json');
-    if (fs.existsSync(v5Path)) {
-      const v5List = JSON.parse(fs.readFileSync(v5Path, 'utf8'));
-      v5List.forEach(v => {
-        const kanji = (v.kanji || '').trim();
-        const reading = (v.hiragana || v.kana || '').trim();
-        if (kanji && reading && !localDict.has(kanji) && !/[\u4e00-\u9faf]/.test(reading)) {
-          localDict.set(kanji, {
-            reading,
-            meaning_es: v.meaning_es || '',
-            level: v.level || 'N5',
-            category: v.category || 'Vocabulario General'
-          });
+    // 4. Kanjis del catálogo: tanto caracteres individuales como compuestos
+    if (Array.isArray(kanjiData)) {
+      kanjiData.forEach(k => {
+        const kanjiChar = (k.kanji || '').trim();
+        if (kanjiChar && !localDict.has(kanjiChar)) {
+          const kun = (k.kunyomi || '').split(/[,\[]/)[0].replace(/[.-]/g, '').trim();
+          const on = (k.onyomi || '').split(/[,\[]/)[0].replace(/[.-]/g, '').trim();
+          const firstReading = kun ? wanakana.toHiragana(kun) : (on ? wanakana.toHiragana(on) : '');
+          if (firstReading && !/[\u4e00-\u9faf]/.test(firstReading)) {
+            localDict.set(kanjiChar, {
+              reading: firstReading,
+              meaning_es: k.meaning_es || '',
+              level: k.level || 'N5',
+              category: 'Kanji'
+            });
+          }
         }
-      });
-    }
 
-    // 4. Kanjis del catálogo
-    const kanjiPath = path.join(dataDir, 'kanji.json');
-    if (fs.existsSync(kanjiPath)) {
-      const kanjiList = JSON.parse(fs.readFileSync(kanjiPath, 'utf8'));
-      kanjiList.forEach(k => {
         if (k.words && Array.isArray(k.words)) {
           k.words.forEach(w => {
             const word = (w.word || '').trim();
@@ -119,12 +220,6 @@ function getLocalData() {
           });
         }
       });
-    }
-
-    // 5. Diccionario de Pitch Accents
-    const pitchPath = path.join(dataDir, 'pitch_accents.json');
-    if (fs.existsSync(pitchPath)) {
-      pitchAccents = JSON.parse(fs.readFileSync(pitchPath, 'utf8'));
     }
   } catch (err) {
     console.error('Error cargando datasets locales para lecturas:', err);
@@ -552,7 +647,31 @@ function resolveFullTextReading(rawText) {
     };
   }
 
-  // 1. Usar resolución morfológica síncrona avanzada (diccionario de 1500+ palabras, lematizador de verbos, adjetivos, partículas y cópulas)
+  // 1. Intentar resolver primero como término o expresión completa exacta (curada, vocabulario o kanji)
+  const direct = findWordReading(clean);
+  if (direct && direct.reading && !/[\u4e00-\u9faf]/.test(direct.reading)) {
+    const finalHira = direct.reading;
+    const finalKata = wanakana.toKatakana(finalHira);
+    const finalRom = wanakana.toRomaji(finalHira);
+    return {
+      text: clean,
+      hiragana: finalHira,
+      katakana: finalKata,
+      romaji: finalRom,
+      meaning_es: direct.meaning_es || '',
+      meaning_en: direct.meaning_en || '',
+      literal_translation: direct.literal_translation || '',
+      breakdown: direct.breakdown || '',
+      example_sentence: direct.example_sentence || '',
+      example_reading: direct.example_reading || '',
+      example_translation: direct.example_translation || '',
+      nuance_notes: direct.nuance_notes || '',
+      level: direct.level || 'N5',
+      kanjis: Array.from(new Set(clean.match(/[\u4e00-\u9faf\u3400-\u4dbf]/g) || []))
+    };
+  }
+
+  // 2. Usar resolución morfológica síncrona avanzada (diccionario de 1500+ palabras, lematizador de verbos, adjetivos, partículas y cópulas)
   const syncRes = convertKanjiToKanaSync(clean);
   if (syncRes && syncRes.isResolved && syncRes.hiragana && !/[\u4e00-\u9faf\u3400-\u4dbf]/.test(syncRes.hiragana)) {
     const finalHira = syncRes.hiragana;
@@ -570,25 +689,7 @@ function resolveFullTextReading(rawText) {
     };
   }
 
-  // 2. Intentar resolver como término o compuesto único secundario
-  const direct = findWordReading(clean);
-  if (direct && direct.reading && !/[\u4e00-\u9faf]/.test(direct.reading)) {
-    const finalHira = direct.reading;
-    const finalKata = wanakana.toKatakana(finalHira);
-    const finalRom = wanakana.toRomaji(finalHira);
-    return {
-      text: clean,
-      hiragana: finalHira,
-      katakana: finalKata,
-      romaji: finalRom,
-      meaning_es: direct.meaning_es || '',
-      meaning_en: direct.meaning_en || '',
-      level: direct.level || 'N5',
-      kanjis: Array.from(new Set(clean.match(/[\u4e00-\u9faf\u3400-\u4dbf]/g) || []))
-    };
-  }
-
-  // 2. Segmentar con Intl.Segmenter si es una frase o contiene múltiples palabras
+  // 3. Segmentar con Intl.Segmenter si es una frase o contiene múltiples palabras
   if (typeof Intl !== 'undefined' && Intl.Segmenter) {
     try {
       const segmenter = new Intl.Segmenter('ja', { granularity: 'word' });
@@ -643,7 +744,7 @@ function resolveFullTextReading(rawText) {
     }
   }
 
-  // 3. Fallback carácter a carácter usando on/kun readings de kanji-data
+  // 4. Fallback carácter a carácter usando on/kun readings de kanji-data
   let fallbackHira = '';
   for (const ch of clean) {
     if (/[\u4e00-\u9faf]/.test(ch)) {
@@ -689,9 +790,10 @@ export async function GET(request) {
 
     const result = resolveFullTextReading(textRaw);
 
-    // Adjuntar pitch accent si está registrado
+    // Adjuntar pitch accent con acceso defensivo
     const { pitchAccents: pitchMap } = getLocalData();
-    const pEntry = pitchMap[result.text] || pitchMap[result.hiragana];
+    const safePitchMap = pitchMap || {};
+    const pEntry = safePitchMap[result.text] || safePitchMap[result.hiragana];
     if (pEntry) {
       result.pitch = {
         pattern: parseInt(pEntry.pattern, 10) || 0,
@@ -718,7 +820,15 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('API Kanji Reading Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({
+      text: (request.url ? new URL(request.url).searchParams.get('text') || '' : '').trim(),
+      hiragana: '',
+      katakana: '',
+      romaji: '',
+      meaning_es: '',
+      kanjis: [],
+      error: error.message
+    }, { status: 200 }); // Retornar 200 para evitar que la UI falle y permitir degradación suave
   }
 }
 
@@ -734,7 +844,8 @@ export async function POST(request) {
     const result = resolveFullTextReading(textRaw);
 
     const { pitchAccents: pitchMap } = getLocalData();
-    const pEntry = pitchMap[result.text] || pitchMap[result.hiragana];
+    const safePitchMap = pitchMap || {};
+    const pEntry = safePitchMap[result.text] || safePitchMap[result.hiragana];
     if (pEntry) {
       result.pitch = {
         pattern: parseInt(pEntry.pattern, 10) || 0,
@@ -747,6 +858,11 @@ export async function POST(request) {
     return Response.json(result);
   } catch (error) {
     console.error('API Kanji Reading Error (POST):', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({
+      text: '',
+      hiragana: '',
+      katakana: '',
+      error: error.message
+    }, { status: 200 });
   }
 }
