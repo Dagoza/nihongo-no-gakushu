@@ -295,19 +295,24 @@ function findInKanjiData(word) {
   if (!kanjis) return null;
 
   const candidates = [];
-  for (const k of kanjis) {
-    const words = kd.getWords(k) || [];
-    for (const w of words) {
-      for (const v of w.variants) {
-        if (v.written === word) {
-          candidates.push({
-            reading: v.pronounced,
-            priorities: v.priorities || [],
-            meanings: w.meanings || []
-          });
+  try {
+    for (const k of kanjis) {
+      const words = (kd && typeof kd.getWords === 'function') ? (kd.getWords(k) || []) : [];
+      for (const w of words) {
+        for (const v of w.variants) {
+          if (v.written === word) {
+            candidates.push({
+              reading: v.pronounced,
+              priorities: v.priorities || [],
+              meanings: w.meanings || []
+            });
+          }
         }
       }
     }
+  } catch (err) {
+    // kanji-data filesystem shards may not be bundled in all serverless targets
+    return null;
   }
 
   if (candidates.length === 0) return null;
@@ -460,6 +465,12 @@ function findWordReading(term) {
     return {
       reading: l.reading,
       meaning_es: l.meaning_es || '',
+      literal_translation: l.literal_translation || '',
+      breakdown: l.breakdown || '',
+      example_sentence: l.example_sentence || '',
+      example_reading: l.example_reading || '',
+      example_translation: l.example_translation || '',
+      nuance_notes: l.nuance_notes || '',
       level: l.level || 'N5',
       category: l.category || 'Vocabulario General'
     };
@@ -611,6 +622,33 @@ function findWordReading(term) {
 }
 
 /**
+ * Obtiene la lectura fonética de un carácter kanji individual de forma segura
+ * usando kanji-data con fallback inmediato a kanji.json local en memoria
+ */
+function getKanjiCharacterReading(ch) {
+  let charReading = '';
+  try {
+    if (kd && typeof kd.get === 'function') {
+      const meta = kd.get(ch);
+      charReading = meta?.kun_readings?.[0]?.replace(/[.-]/g, '') ||
+                    meta?.on_readings?.[0] || '';
+    }
+  } catch {
+    charReading = '';
+  }
+
+  if (!charReading && Array.isArray(kanjiData)) {
+    const localK = kanjiData.find(k => k.kanji === ch);
+    if (localK) {
+      charReading = (localK.kunyomi || '').split(/[,\[]/)[0].replace(/[.-]/g, '').trim() ||
+                    (localK.onyomi || '').split(/[,\[]/)[0].replace(/[.-]/g, '').trim() || '';
+    }
+  }
+
+  return (charReading ? wanakana.toHiragana(charReading) : '') || ch;
+}
+
+/**
  * Resuelve la lectura para cualquier texto, palabra o frase larga con kanji.
  * Si es una frase compuesta, usa segmentación morfológica.
  */
@@ -713,10 +751,7 @@ function resolveFullTextReading(rawText) {
               let segHira = '';
               for (const ch of seg) {
                 if (/[\u4e00-\u9faf]/.test(ch)) {
-                  const meta = kd.get(ch);
-                  const charReading = meta?.kun_readings?.[0]?.replace(/[.-]/g, '') ||
-                                      meta?.on_readings?.[0] || '';
-                  segHira += wanakana.toHiragana(charReading) || ch;
+                  segHira += getKanjiCharacterReading(ch);
                 } else {
                   segHira += wanakana.toHiragana(ch);
                 }
@@ -744,14 +779,11 @@ function resolveFullTextReading(rawText) {
     }
   }
 
-  // 4. Fallback carácter a carácter usando on/kun readings de kanji-data
+  // 4. Fallback carácter a carácter usando on/kun readings
   let fallbackHira = '';
   for (const ch of clean) {
     if (/[\u4e00-\u9faf]/.test(ch)) {
-      const meta = kd.get(ch);
-      const r = meta?.kun_readings?.[0]?.replace(/[.-]/g, '') ||
-                meta?.on_readings?.[0] || '';
-      fallbackHira += wanakana.toHiragana(r) || ch;
+      fallbackHira += getKanjiCharacterReading(ch);
     } else {
       fallbackHira += wanakana.toHiragana(ch);
     }
