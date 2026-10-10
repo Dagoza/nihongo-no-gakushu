@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import curriculumData from '../../data/curriculum.json';
-import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
@@ -168,6 +168,11 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
       [key]: !prev[key]
     }));
   };
+
+  // Desktop view mode toggle for Kanji & Functional Bridge (grid by default on desktop)
+  const [kanjiViewMode, setKanjiViewMode] = useState('grid');
+  const [bridgeViewMode, setBridgeViewMode] = useState('grid');
+  const [expandedKanjiCards, setExpandedKanjiCards] = useState({});
 
   // Mobile Theme Dropdown state & outside click handler
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
@@ -618,28 +623,27 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                     <div
                       key={idx}
                       className="curriculum-global-vocab-item"
+                      style={{ position: 'relative', minWidth: 0, padding: '12px 14px' }}
                       onClick={() => handlePlayAudio(v.kanji, `${v.kana || v.kanji} (${v.meaning || ''})`)}
                       title="Click para escuchar pronunciación"
                     >
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                          <span className="jp-text" style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                            {v.kanji}
-                          </span>
-                          {v.kana && v.kana !== v.kanji && (
-                            <span className="jp-text" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                              {v.kana}
-                            </span>
-                          )}
+                      <div style={{ paddingRight: 64, minWidth: 0 }}>
+                        <div className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.35, wordBreak: 'break-word' }}>
+                          {v.kanji}
                         </div>
+                        {v.kana && (
+                          <div className="jp-text" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.35, marginTop: 2, wordBreak: 'break-word' }}>
+                            {v.kana}
+                          </div>
+                        )}
                         {v.meaning && (
-                          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', marginTop: 4, fontWeight: 500, lineHeight: 1.35, wordBreak: 'break-word' }}>
                             {v.meaning}
                           </div>
                         )}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 8 }}>
+                      <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
                         {contextApp?.openDictionary && (
                           <button
                             type="button"
@@ -1060,60 +1064,38 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                             </button>
                           </div>
 
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
                             {stepVocabList.map((v, idx) => (
                               <div 
                                 key={idx}
+                                className="curriculum-vocab-card"
                                 style={{
+                                  position: 'relative',
                                   display: 'flex',
-                                  alignItems: 'center',
+                                  flexDirection: 'column',
                                   justifyContent: 'space-between',
-                                  padding: '12px 14px',
-                                  borderRadius: 'var(--radius-sm)',
+                                  padding: '16px',
+                                  borderRadius: 'var(--radius-md)',
                                   background: 'var(--bg-main)',
                                   border: '1px solid var(--border)',
                                   cursor: 'pointer',
-                                  transition: 'all 0.15s ease'
+                                  transition: 'all 0.15s ease',
+                                  minWidth: 0
                                 }}
                                 onClick={() => handlePlayAudio(v.kanji, `${v.kana} (${v.meaning})`)}
                                 title="Click para escuchar pronunciación"
                               >
-                                <div>
-                                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                                    <span className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                                      {v.kanji}
-                                    </span>
-                                    <span className="jp-text" style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                                      {v.kana}
-                                    </span>
-                                  </div>
-                                  <div style={{ fontSize: '0.85rem', color: 'var(--text-main)', marginTop: 2, fontWeight: 500 }}>
-                                    {v.meaning}
-                                  </div>
-                                  <div style={{ fontSize: '0.72rem', marginTop: 2 }}>
-                                    {(() => {
-                                      const rawType = (v.type || '').toLowerCase();
-                                      let termId = null;
-                                      if (rawType.includes('godan')) termId = 'godan';
-                                      else if (rawType.includes('ichidan')) termId = 'ichidan';
-                                      else if (rawType.includes('gairaigo') || rawType.includes('katakana')) termId = 'gairaigo';
-                                      else if (rawType.includes('contador') || rawType.includes('clasificador')) termId = 'jousoushi';
-
-                                      if (termId) {
-                                        return (
-                                          <TerminologyTooltip termId={termId}>
-                                            <span className="curriculum-vocab-type-badge" style={{ cursor: 'pointer', color: 'var(--primary)', fontWeight: 700 }} title="Ver explicación lingüística">
-                                              {v.type} ℹ️
-                                            </span>
-                                          </TerminologyTooltip>
-                                        );
-                                      }
-                                      return <span className="curriculum-vocab-type-badge" style={{ color: 'var(--primary)' }}>{v.type}</span>;
-                                    })()}
-                                  </div>
-                                </div>
-
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                {/* Botones de acción en esquina superior derecha */}
+                                <div 
+                                  style={{ 
+                                    position: 'absolute', 
+                                    top: 12, 
+                                    right: 12, 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    gap: 6 
+                                  }}
+                                >
                                   {contextApp?.openDictionary && (
                                     <button
                                       type="button"
@@ -1141,6 +1123,75 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                     <Volume2 size={15} />
                                   </button>
                                 </div>
+
+                                <div style={{ paddingRight: 68, minWidth: 0 }}>
+                                  {/* Línea 1: Escritura principal / Kanji */}
+                                  <div 
+                                    className="jp-text" 
+                                    style={{ 
+                                      fontSize: '1.28rem', 
+                                      fontWeight: 700, 
+                                      color: 'var(--text-main)', 
+                                      lineHeight: 1.35,
+                                      wordBreak: 'break-word'
+                                    }}
+                                  >
+                                    {v.kanji}
+                                  </div>
+
+                                  {/* Línea 2: Lectura en Kana */}
+                                  <div 
+                                    className="jp-text" 
+                                    style={{ 
+                                      fontSize: '0.94rem', 
+                                      color: 'var(--text-muted)', 
+                                      lineHeight: 1.35, 
+                                      marginTop: 4,
+                                      wordBreak: 'break-word'
+                                    }}
+                                  >
+                                    {v.kana}
+                                  </div>
+
+                                  {/* Línea 3: Significado en español */}
+                                  <div 
+                                    style={{ 
+                                      fontSize: '0.9rem', 
+                                      color: 'var(--text-main)', 
+                                      marginTop: 6, 
+                                      fontWeight: 500, 
+                                      lineHeight: 1.4,
+                                      wordBreak: 'break-word'
+                                    }}
+                                  >
+                                    {v.meaning}
+                                  </div>
+                                </div>
+
+                                {/* Línea 4: Tipo de palabra / Glosario lingüístico */}
+                                {v.type && (
+                                  <div style={{ marginTop: 10, fontSize: '0.74rem' }}>
+                                    {(() => {
+                                      const rawType = (v.type || '').toLowerCase();
+                                      let termId = null;
+                                      if (rawType.includes('godan')) termId = 'godan';
+                                      else if (rawType.includes('ichidan')) termId = 'ichidan';
+                                      else if (rawType.includes('gairaigo') || rawType.includes('katakana')) termId = 'gairaigo';
+                                      else if (rawType.includes('contador') || rawType.includes('clasificador')) termId = 'jousoushi';
+
+                                      if (termId) {
+                                        return (
+                                          <TerminologyTooltip termId={termId}>
+                                            <span className="curriculum-vocab-type-badge" style={{ cursor: 'pointer', color: 'var(--primary)', fontWeight: 700 }} title="Ver explicación lingüística">
+                                              {v.type} ℹ️
+                                            </span>
+                                          </TerminologyTooltip>
+                                        );
+                                      }
+                                      return <span className="curriculum-vocab-type-badge" style={{ color: 'var(--primary)' }}>{v.type}</span>;
+                                    })()}
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
@@ -1149,286 +1200,539 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                     })()}
 
                     {/* 3. Kanjis y Combinaciones (Jukugo) del Paso */}
-                    {currentSection.kanji_jukugo && currentSection.kanji_jukugo.length > 0 && (
-                      <div className="card curriculum-kanji-section" style={{ marginBottom: 24 }}>
-                        <div style={{ marginBottom: 16 }}>
-                          <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <GraduationCap size={20} color="var(--accent)" />
-                            <span>Kanjis y Combinaciones (Jukugo) del Paso {currentSection.substep}</span>
-                          </h3>
-                          <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                            Ideogramas ampliados, lecturas On/Kun, desglose etimológico de <TerminologyTooltip termId="jukugo">Jukugo</TerminologyTooltip> y nemotecnias para consolidar la memoria visual.
-                          </p>
-                        </div>
-
-                        <div className="curriculum-kanji-grid">
-                          {currentSection.kanji_jukugo.map((kj, kjIdx) => (
-                            <div key={kjIdx} className="curriculum-kanji-card">
-                              <div className="curriculum-kanji-card-inner">
-                                {/* Left Column: Big Kanji Display & Action Buttons */}
-                                <div className="curriculum-kanji-side">
-                                  <div className="curriculum-kanji-char jp-text" title={kj.kanji}>
-                                    {kj.kanji}
-                                  </div>
-                                  {(() => {
-                                    const isSingle = (kj.type || '').toLowerCase().includes('kanji') || kj.kanji.length === 1;
-                                    const tId = isSingle ? 'kanji' : 'jukugo';
-                                    return (
-                                      <TerminologyTooltip termId={tId}>
-                                        <span className="curriculum-kanji-type-badge" style={{ cursor: 'pointer' }} title="Ver explicación lingüística">
-                                          {kj.type || 'Jukugo'} ℹ️
-                                        </span>
-                                      </TerminologyTooltip>
-                                    );
-                                  })()}
-                                  <div className="curriculum-kanji-actions">
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline btn-sm"
-                                      onClick={() => handlePlayAudio(kj.kanji, `${kj.kana} (${kj.meaning})`)}
-                                      title="Escuchar pronunciación"
-                                    >
-                                      <Volume2 size={14} />
-                                      <span>Audio</span>
-                                    </button>
-                                    {contextApp?.openDictionary && (
-                                      <button
-                                        type="button"
-                                        className="btn btn-outline btn-sm"
-                                        onClick={() => contextApp.openDictionary(kj.kanji)}
-                                        title="Buscar en diccionario"
-                                      >
-                                        <Search size={14} />
-                                        <span>Diccionario</span>
-                                      </button>
-                                    )}
-                                  </div>
-                                </div>
-
-                                {/* Right Column: Readings, Breakdown, and Mnemonic */}
-                                <div className="curriculum-kanji-body">
-                                  <div className="curriculum-kanji-header">
-                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-                                      <h4 className="curriculum-kanji-title jp-text">{kj.kanji}</h4>
-                                      <span className="curriculum-kanji-kana jp-text">【{kj.kana}】</span>
-                                    </div>
-                                    <div className="curriculum-kanji-meaning">
-                                      🇪🇸 {kj.meaning}
-                                    </div>
-                                  </div>
-
-                                  {/* Readings: Onyomi and Kunyomi */}
-                                  {(kj.onyomi || kj.kunyomi) && (
-                                    <div className="curriculum-kanji-readings">
-                                      {kj.onyomi && (
-                                        <div className="curriculum-kanji-reading-item">
-                                          <TerminologyTooltip termId="kango">
-                                            <span className="reading-label" style={{ cursor: 'pointer' }} title="Lectura On'yomi de origen chino (Kango)">音読み (On'yomi):</span>
-                                          </TerminologyTooltip>
-                                          <span className="reading-value jp-text">{kj.onyomi}</span>
-                                        </div>
-                                      )}
-                                      {kj.kunyomi && (
-                                        <div className="curriculum-kanji-reading-item">
-                                          <TerminologyTooltip termId="wago">
-                                            <span className="reading-label" style={{ cursor: 'pointer' }} title="Lectura Kun'yomi nativa japonesa (Wago)">訓読み (Kun'yomi):</span>
-                                          </TerminologyTooltip>
-                                          <span className="reading-value jp-text">{kj.kunyomi}</span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-
-                                  {/* Morphological Breakdown */}
-                                  {kj.breakdown && kj.breakdown.length > 0 && (
-                                    <div className="curriculum-kanji-breakdown-box">
-                                      <div className="breakdown-box-label">
-                                        🧩 Desglose Morfológico / Etimología:
-                                      </div>
-                                      <div className="breakdown-chips-row">
-                                        {kj.breakdown.map((part, pI) => (
-                                          <React.Fragment key={pI}>
-                                            <div className="breakdown-char-chip">
-                                              <span className="breakdown-char jp-text">{part.char}</span>
-                                              <span className="breakdown-reading jp-text">{part.reading}</span>
-                                              <span className="breakdown-meaning">{part.meaning}</span>
-                                            </div>
-                                            {pI < kj.breakdown.length - 1 && (
-                                              <span className="breakdown-plus">+</span>
-                                            )}
-                                          </React.Fragment>
-                                        ))}
-                                      </div>
-                                      {kj.breakdown_text && (
-                                        <p className="breakdown-explanation-text">
-                                          {kj.breakdown_text}
-                                        </p>
-                                      )}
-                                    </div>
-                                  )}
-
-                                  {/* Mnemonic Note */}
-                                  {kj.mnemonic && (
-                                    <div className="curriculum-kanji-mnemonic-box">
-                                      💡 <strong>Regla Nemotécnica:</strong> {kj.mnemonic}
-                                    </div>
-                                  )}
-                                </div>
+                    {currentSection.kanji_jukugo && currentSection.kanji_jukugo.length > 0 && (() => {
+                      const renderFullKanjiCard = (kj, kjIdx) => (
+                        <div key={kjIdx} className="curriculum-kanji-card">
+                          <div className="curriculum-kanji-card-inner">
+                            {/* Left Column: Big Kanji Display & Action Buttons */}
+                            <div className="curriculum-kanji-side">
+                              <div className="curriculum-kanji-char jp-text" title={kj.kanji}>
+                                {kj.kanji}
                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 4. Partículas, Prefijos y Componentes Funcionales (Puente Funcional) */}
-                    {currentSection.functional_bridge && currentSection.functional_bridge.length > 0 && (
-                      <div className="card curriculum-bridge-section" style={{ marginBottom: 24 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-                          <div>
-                            <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <Compass size={20} color="var(--primary)" />
-                              <span>Partículas, Prefijos y Componentes Funcionales (Paso {currentSection.substep})</span>
-                            </h3>
-                            <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                              Conectores morfológicos vivos: prefijos de cortesía (<TerminologyTooltip termId="bikougo">Bikougo</TerminologyTooltip>), sufijos honoríficos y partículas activas.
-                            </p>
-                          </div>
-
-                          <button
-                            type="button"
-                            className="btn btn-outline btn-sm"
-                            onClick={() => {
-                              if (onNavigate) {
-                                onNavigate('/grammar?filter=particles');
-                              } else if (typeof window !== 'undefined') {
-                                window.location.href = '/grammar?filter=particles';
-                              }
-                            }}
-                            title="Explorar el índice completo de partículas y cortesía en Gramática"
-                          >
-                            <span>Guía de Partículas ↗</span>
-                          </button>
-                        </div>
-
-                        <div className="curriculum-bridge-grid">
-                          {currentSection.functional_bridge.map((fb, fbIdx) => (
-                            <div key={fbIdx} className="curriculum-bridge-card">
-                              <div className="curriculum-bridge-header">
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                                  <span className="curriculum-bridge-pill jp-text">
-                                    {fb.item}
-                                  </span>
-                                  <div>
-                                    <h4 className="curriculum-bridge-title">
-                                      {fb.name}
-                                      {fb.reading && <span className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: 6 }}>({fb.reading})</span>}
-                                    </h4>
-                                    {(() => {
-                                      let matchedTerm = null;
-                                      const t = (fb.type || '').toLowerCase();
-                                      if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor')) matchedTerm = 'bikougo';
-                                      else if (t.includes('sonkeigo') || t.includes('respetuoso')) matchedTerm = 'sonkeigo';
-                                      else if (t.includes('kenjougo') || t.includes('humilde')) matchedTerm = 'kenjougo';
-                                      else if (t.includes('teineigo') || t.includes('formal')) matchedTerm = 'teineigo';
-                                      else if (t.includes('keigo') || t.includes('honorífico')) matchedTerm = 'keigo';
-                                      else if (t.includes('copula') || t.includes('cópula')) matchedTerm = 'copula';
-                                      else if (t.includes('contador') || t.includes('clasificador')) matchedTerm = 'jousoushi';
-                                      else if (t.includes('wago')) matchedTerm = 'wago';
-                                      else if (t.includes('kango')) matchedTerm = 'kango';
-                                      else if (t.includes('gairaigo')) matchedTerm = 'gairaigo';
-                                      else if (t.includes('jukugo')) matchedTerm = 'jukugo';
-                                      else if (t.includes('godan')) matchedTerm = 'godan';
-                                      else if (t.includes('ichidan')) matchedTerm = 'ichidan';
-
-                                      if (matchedTerm) {
-                                        return (
-                                          <TerminologyTooltip termId={matchedTerm}>
-                                            <span className="curriculum-bridge-type-badge" style={{ cursor: 'pointer' }} title="Ver explicación del término">
-                                              {fb.type} ℹ️
-                                            </span>
-                                          </TerminologyTooltip>
-                                        );
-                                      }
-                                      return (
-                                        <span className="curriculum-bridge-type-badge">
-                                          {fb.type}
-                                        </span>
-                                      );
-                                    })()}
-                                  </div>
-                                </div>
-
-                                {fb.link_url && (
+                              {(() => {
+                                const isSingle = (kj.type || '').toLowerCase().includes('kanji') || kj.kanji.length === 1;
+                                const tId = isSingle ? 'kanji' : 'jukugo';
+                                return (
+                                  <TerminologyTooltip termId={tId}>
+                                    <span className="curriculum-kanji-type-badge" style={{ cursor: 'pointer' }} title="Ver explicación lingüística">
+                                      {kj.type || 'Jukugo'} ℹ️
+                                    </span>
+                                  </TerminologyTooltip>
+                                );
+                              })()}
+                              <div className="curriculum-kanji-actions">
+                                <button
+                                  type="button"
+                                  className="btn btn-outline btn-sm"
+                                  onClick={() => handlePlayAudio(kj.kanji, `${kj.kana} (${kj.meaning})`)}
+                                  title="Escuchar pronunciación"
+                                >
+                                  <Volume2 size={14} />
+                                  <span>Audio</span>
+                                </button>
+                                {contextApp?.openDictionary && (
                                   <button
                                     type="button"
-                                    className="btn btn-ghost btn-sm"
-                                    style={{ fontSize: '0.8rem', padding: '4px 10px' }}
-                                    onClick={() => {
-                                      if (onNavigate) {
-                                        onNavigate(fb.link_url);
-                                      } else if (typeof window !== 'undefined') {
-                                        window.location.href = fb.link_url;
-                                      }
-                                    }}
+                                    className="btn btn-outline btn-sm"
+                                    onClick={() => contextApp.openDictionary(kj.kanji)}
+                                    title="Buscar en diccionario"
                                   >
-                                    <span>Ver en Guía ↗</span>
+                                    <Search size={14} />
+                                    <span>Diccionario</span>
                                   </button>
                                 )}
                               </div>
+                            </div>
 
-                              <p className="curriculum-bridge-function">
-                                {fb.function_es}
-                              </p>
+                            {/* Right Column: Readings, Breakdown, and Mnemonic */}
+                            <div className="curriculum-kanji-body">
+                              <div className="curriculum-kanji-header">
+                                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+                                  <h4 className="curriculum-kanji-title jp-text">{kj.kanji}</h4>
+                                  <span className="curriculum-kanji-kana jp-text">【{kj.kana}】</span>
+                                </div>
+                                <div className="curriculum-kanji-meaning">
+                                  🇪🇸 {kj.meaning}
+                                </div>
+                              </div>
 
-                              {fb.rule && (
-                                <div className="curriculum-bridge-rule-box">
-                                  📐 <strong>Regla de uso:</strong> {fb.rule}
+                              {/* Readings: Onyomi and Kunyomi */}
+                              {(kj.onyomi || kj.kunyomi) && (
+                                <div className="curriculum-kanji-readings">
+                                  {kj.onyomi && (
+                                    <div className="curriculum-kanji-reading-item">
+                                      <TerminologyTooltip termId="kango">
+                                        <span className="reading-label" style={{ cursor: 'pointer' }} title="Lectura On'yomi de origen chino (Kango)">音読み (On'yomi):</span>
+                                      </TerminologyTooltip>
+                                      <span className="reading-value jp-text">{kj.onyomi}</span>
+                                    </div>
+                                  )}
+                                  {kj.kunyomi && (
+                                    <div className="curriculum-kanji-reading-item">
+                                      <TerminologyTooltip termId="wago">
+                                        <span className="reading-label" style={{ cursor: 'pointer' }} title="Lectura Kun'yomi nativa japonesa (Wago)">訓読み (Kun'yomi):</span>
+                                      </TerminologyTooltip>
+                                      <span className="reading-value jp-text">{kj.kunyomi}</span>
+                                    </div>
+                                  )}
                                 </div>
                               )}
 
-                              {/* Contextual Example Sentences with Audio */}
-                              {fb.examples && fb.examples.length > 0 && (
-                                <div className="curriculum-bridge-examples">
-                                  <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 8 }}>
-                                    Ejemplos Contextuales con Audio:
+                              {/* Morphological Breakdown */}
+                              {kj.breakdown && kj.breakdown.length > 0 && (
+                                <div className="curriculum-kanji-breakdown-box">
+                                  <div className="breakdown-box-label">
+                                    🧩 Desglose Morfológico / Etimología:
                                   </div>
-                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                    {fb.examples.map((ex, exIdx) => (
-                                      <div key={exIdx} className="curriculum-bridge-example-row">
-                                        <div>
-                                          <div className="jp-text" style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--primary)', lineHeight: 1.5 }}>
-                                            <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
-                                          </div>
-                                          {ex.kana && ex.kana !== ex.jp && (
-                                            <div className="jp-text" style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                                              {ex.kana}
-                                            </div>
-                                          )}
-                                          <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', marginTop: 2 }}>
-                                            🇪🇸 {ex.es}
-                                          </div>
+                                  <div className="breakdown-chips-row">
+                                    {kj.breakdown.map((part, pI) => (
+                                      <React.Fragment key={pI}>
+                                        <div className="breakdown-char-chip">
+                                          <span className="breakdown-char jp-text">{part.char}</span>
+                                          <span className="breakdown-reading jp-text">{part.reading}</span>
+                                          <span className="breakdown-meaning">{part.meaning}</span>
                                         </div>
-
-                                        <button
-                                          type="button"
-                                          className="btn btn-outline btn-sm"
-                                          style={{ padding: '6px 8px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}
-                                          onClick={() => handlePlayAudio(ex.jp, ex.es)}
-                                          title="Escuchar pronunciación"
-                                        >
-                                          <Volume2 size={15} />
-                                        </button>
-                                      </div>
+                                        {pI < kj.breakdown.length - 1 && (
+                                          <span className="breakdown-plus">+</span>
+                                        )}
+                                      </React.Fragment>
                                     ))}
                                   </div>
+                                  {kj.breakdown_text && (
+                                    <p className="breakdown-explanation-text">
+                                      {kj.breakdown_text}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Mnemonic Note */}
+                              {kj.mnemonic && (
+                                <div className="curriculum-kanji-mnemonic-box">
+                                  💡 <strong>Regla Nemotécnica:</strong> {kj.mnemonic}
                                 </div>
                               )}
                             </div>
-                          ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+
+                      const renderCompactKanjiCard = (kj, kjIdx) => (
+                        <div key={kjIdx} className="curriculum-kanji-compact-card">
+                          <div className="curriculum-kanji-compact-char jp-text" title={kj.kanji}>
+                            {kj.kanji}
+                          </div>
+                          {(() => {
+                            const isSingle = (kj.type || '').toLowerCase().includes('kanji') || kj.kanji.length === 1;
+                            const tId = isSingle ? 'kanji' : 'jukugo';
+                            return (
+                              <TerminologyTooltip termId={tId}>
+                                <span className="curriculum-kanji-type-badge" style={{ cursor: 'pointer', marginBottom: 4 }} title="Ver explicación lingüística">
+                                  {kj.type || 'Jukugo'} ℹ️
+                                </span>
+                              </TerminologyTooltip>
+                            );
+                          })()}
+                          <div className="curriculum-kanji-compact-kana jp-text">
+                            【{kj.kana}】
+                          </div>
+                          <div className="curriculum-kanji-compact-meaning">
+                            🇪🇸 {kj.meaning}
+                          </div>
+                          {(kj.onyomi || kj.kunyomi) && (
+                            <div className="curriculum-kanji-compact-readings">
+                              {kj.onyomi && (
+                                <div>
+                                  <strong style={{ color: 'var(--text-muted)' }}>音:</strong> <span className="jp-text">{kj.onyomi.split('[')[0].trim()}</span>
+                                </div>
+                              )}
+                              {kj.kunyomi && (
+                                <div>
+                                  <strong style={{ color: 'var(--text-muted)' }}>訓:</strong> <span className="jp-text">{kj.kunyomi.split('[')[0].trim()}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <div className="curriculum-kanji-compact-actions">
+                            <button
+                              type="button"
+                              className="btn btn-outline btn-sm"
+                              style={{ padding: '5px 8px', fontSize: '0.78rem' }}
+                              onClick={() => handlePlayAudio(kj.kanji, `${kj.kana} (${kj.meaning})`)}
+                              title="Escuchar audio"
+                            >
+                              <Volume2 size={13} />
+                              <span>Audio</span>
+                            </button>
+                            {contextApp?.openDictionary && (
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                style={{ padding: '5px 8px', fontSize: '0.78rem' }}
+                                onClick={() => contextApp.openDictionary(kj.kanji)}
+                                title="Buscar en diccionario"
+                              >
+                                <Search size={13} />
+                                <span>Diccionario</span>
+                              </button>
+                            )}
+                          </div>
+                          {(kj.breakdown || kj.mnemonic) && (
+                            <div style={{ marginTop: 8, width: '100%' }}>
+                              <button
+                                type="button"
+                                className="btn btn-ghost btn-sm"
+                                style={{ width: '100%', fontSize: '0.74rem', padding: '3px', color: 'var(--primary)', justifyContent: 'center' }}
+                                onClick={() => setExpandedKanjiCards(prev => ({ ...prev, [kjIdx]: !prev[kjIdx] }))}
+                              >
+                                <span>{expandedKanjiCards[kjIdx] ? 'Ocultar desglose ▴' : 'Ver desglose ▾'}</span>
+                              </button>
+                              {expandedKanjiCards[kjIdx] && (
+                                <div className="curriculum-kanji-compact-details-box">
+                                  {kj.breakdown && kj.breakdown.length > 0 && (
+                                    <div style={{ marginBottom: 6 }}>
+                                      <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase' }}>
+                                        🧩 Componentes:
+                                      </div>
+                                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                                        {kj.breakdown.map((part, pI) => (
+                                          <span key={pI} style={{ fontSize: '0.76rem', background: 'var(--bg-main)', padding: '2px 6px', borderRadius: 4, border: '1px solid var(--border)' }}>
+                                            <strong className="jp-text" style={{ color: 'var(--primary)' }}>{part.char}</strong> ({part.meaning})
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {kj.mnemonic && (
+                                    <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.35 }}>
+                                      💡 {kj.mnemonic}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+
+                      return (
+                        <div className="card curriculum-kanji-section" style={{ marginBottom: 24 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+                            <div>
+                              <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <GraduationCap size={20} color="var(--accent)" />
+                                <span>Kanjis y Combinaciones (Jukugo) del Paso {currentSection.substep}</span>
+                              </h3>
+                              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                                Ideogramas de la lección, lecturas On/Kun, desglose etimológico de <TerminologyTooltip termId="jukugo">Jukugo</TerminologyTooltip> y nemotecnias visuales.
+                              </p>
+                            </div>
+
+                            <div className="curriculum-view-toggle-desktop" style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-main)', padding: '3px 4px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                              <button
+                                type="button"
+                                className={`btn btn-sm ${kanjiViewMode === 'grid' ? 'btn-primary' : 'btn-ghost'}`}
+                                style={{ padding: '4px 10px', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
+                                onClick={() => setKanjiViewMode('grid')}
+                                title="Vista en tarjetas cuadrícula compactas"
+                              >
+                                <LayoutGrid size={14} />
+                                <span>Cuadrícula</span>
+                              </button>
+                              <button
+                                type="button"
+                                className={`btn btn-sm ${kanjiViewMode === 'list' ? 'btn-primary' : 'btn-ghost'}`}
+                                style={{ padding: '4px 10px', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
+                                onClick={() => setKanjiViewMode('list')}
+                                title="Vista en lista detallada con desglose completo"
+                              >
+                                <List size={14} />
+                                <span>Lista</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Desktop Container (Compact Grid by Default or Toggled List) */}
+                          <div className="curriculum-kanji-desktop-compact">
+                            {kanjiViewMode === 'grid' ? (
+                              <div className="curriculum-kanji-grid compact-view">
+                                {currentSection.kanji_jukugo.map((kj, kjIdx) => renderCompactKanjiCard(kj, kjIdx))}
+                              </div>
+                            ) : (
+                              <div className="curriculum-kanji-grid">
+                                {currentSection.kanji_jukugo.map((kj, kjIdx) => renderFullKanjiCard(kj, kjIdx))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Mobile Container (Strict Full Detail List View Preserved) */}
+                          <div className="curriculum-kanji-mobile-full">
+                            <div className="curriculum-kanji-grid">
+                              {currentSection.kanji_jukugo.map((kj, kjIdx) => renderFullKanjiCard(kj, kjIdx))}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* 4. Partículas, Prefijos y Componentes Funcionales (Puente Funcional) */}
+                    {currentSection.functional_bridge && currentSection.functional_bridge.length > 0 && (() => {
+                      const renderFullBridgeCard = (fb, fbIdx) => (
+                        <div key={fbIdx} className="curriculum-bridge-card">
+                          <div className="curriculum-bridge-header">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                              <span className="curriculum-bridge-pill jp-text">
+                                {fb.item}
+                              </span>
+                              <div>
+                                <h4 className="curriculum-bridge-title">
+                                  {fb.name}
+                                  {fb.reading && <span className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: 6 }}>({fb.reading})</span>}
+                                </h4>
+                                {(() => {
+                                  let matchedTerm = null;
+                                  const t = (fb.type || '').toLowerCase();
+                                  if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor')) matchedTerm = 'bikougo';
+                                  else if (t.includes('sonkeigo') || t.includes('respetuoso')) matchedTerm = 'sonkeigo';
+                                  else if (t.includes('kenjougo') || t.includes('humilde')) matchedTerm = 'kenjougo';
+                                  else if (t.includes('teineigo') || t.includes('formal')) matchedTerm = 'teineigo';
+                                  else if (t.includes('keigo') || t.includes('honorífico')) matchedTerm = 'keigo';
+                                  else if (t.includes('copula') || t.includes('cópula')) matchedTerm = 'copula';
+                                  else if (t.includes('contador') || t.includes('clasificador')) matchedTerm = 'jousoushi';
+                                  else if (t.includes('wago')) matchedTerm = 'wago';
+                                  else if (t.includes('kango')) matchedTerm = 'kango';
+                                  else if (t.includes('gairaigo')) matchedTerm = 'gairaigo';
+                                  else if (t.includes('jukugo')) matchedTerm = 'jukugo';
+                                  else if (t.includes('godan')) matchedTerm = 'godan';
+                                  else if (t.includes('ichidan')) matchedTerm = 'ichidan';
+
+                                  if (matchedTerm) {
+                                    return (
+                                      <TerminologyTooltip termId={matchedTerm}>
+                                        <span className="curriculum-bridge-type-badge" style={{ cursor: 'pointer' }} title="Ver explicación del término">
+                                          {fb.type} ℹ️
+                                        </span>
+                                      </TerminologyTooltip>
+                                    );
+                                  }
+                                  return (
+                                    <span className="curriculum-bridge-type-badge">
+                                      {fb.type}
+                                    </span>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+
+                            {fb.link_url && (
+                              <button
+                                type="button"
+                                className="btn btn-ghost btn-sm"
+                                style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                                onClick={() => {
+                                  if (onNavigate) {
+                                    onNavigate(fb.link_url);
+                                  } else if (typeof window !== 'undefined') {
+                                    window.location.href = fb.link_url;
+                                  }
+                                }}
+                              >
+                                <span>Ver en Guía ↗</span>
+                              </button>
+                            )}
+                          </div>
+
+                          <p className="curriculum-bridge-function">
+                            {fb.function_es}
+                          </p>
+
+                          {fb.rule && (
+                            <div className="curriculum-bridge-rule-box">
+                              📐 <strong>Regla de uso:</strong> {fb.rule}
+                            </div>
+                          )}
+
+                          {/* Contextual Example Sentences with Audio */}
+                          {fb.examples && fb.examples.length > 0 && (
+                            <div className="curriculum-bridge-examples">
+                              <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 8 }}>
+                                Ejemplos Contextuales con Audio:
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                {fb.examples.map((ex, exIdx) => (
+                                  <div key={exIdx} className="curriculum-bridge-example-row">
+                                    <div>
+                                      <div className="jp-text" style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--primary)', lineHeight: 1.5 }}>
+                                        <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
+                                      </div>
+                                      {ex.kana && ex.kana !== ex.jp && (
+                                        <div className="jp-text" style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                                          {ex.kana}
+                                        </div>
+                                      )}
+                                      <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', marginTop: 2 }}>
+                                        🇪🇸 {ex.es}
+                                      </div>
+                                    </div>
+
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline btn-sm"
+                                      style={{ padding: '6px 8px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}
+                                      onClick={() => handlePlayAudio(ex.jp, ex.es)}
+                                      title="Escuchar pronunciación"
+                                    >
+                                      <Volume2 size={15} />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+
+                      const renderCompactBridgeCard = (fb, fbIdx) => (
+                        <div key={fbIdx} className="curriculum-bridge-compact-card">
+                          <div>
+                            <div className="curriculum-bridge-compact-top">
+                              <span className="curriculum-bridge-compact-pill jp-text">
+                                {fb.item}
+                              </span>
+                              {(() => {
+                                let matchedTerm = null;
+                                const t = (fb.type || '').toLowerCase();
+                                if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor')) matchedTerm = 'bikougo';
+                                else if (t.includes('sonkeigo') || t.includes('respetuoso')) matchedTerm = 'sonkeigo';
+                                else if (t.includes('kenjougo') || t.includes('humilde')) matchedTerm = 'kenjougo';
+                                else if (t.includes('teineigo') || t.includes('formal')) matchedTerm = 'teineigo';
+                                else if (t.includes('keigo') || t.includes('honorífico')) matchedTerm = 'keigo';
+                                else if (t.includes('copula') || t.includes('cópula')) matchedTerm = 'copula';
+                                else if (t.includes('contador') || t.includes('clasificador')) matchedTerm = 'jousoushi';
+
+                                if (matchedTerm) {
+                                  return (
+                                    <TerminologyTooltip termId={matchedTerm}>
+                                      <span className="curriculum-bridge-type-badge" style={{ cursor: 'pointer' }} title="Ver explicación del término">
+                                        {fb.type} ℹ️
+                                      </span>
+                                    </TerminologyTooltip>
+                                  );
+                                }
+                                return <span className="curriculum-bridge-type-badge">{fb.type}</span>;
+                              })()}
+                            </div>
+
+                            <h4 className="curriculum-bridge-compact-title">
+                              {fb.name}
+                              {fb.reading && <span className="jp-text" style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 6 }}>({fb.reading})</span>}
+                            </h4>
+
+                            <p className="curriculum-bridge-compact-function">
+                              {fb.function_es}
+                            </p>
+                          </div>
+
+                          {fb.examples && fb.examples.length > 0 && (
+                            <div className="curriculum-bridge-compact-example">
+                              <div style={{ minWidth: 0, flex: 1 }}>
+                                <div className="jp-text" style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--primary)', lineHeight: 1.35 }}>
+                                  <FuriganaText text={fb.examples[0].jp} kana={fb.examples[0].kana} showFurigana={showFurigana} />
+                                </div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-main)', marginTop: 2 }}>
+                                  🇪🇸 {fb.examples[0].es}
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                style={{ padding: '5px', borderRadius: '50%', flexShrink: 0 }}
+                                onClick={() => handlePlayAudio(fb.examples[0].jp, fb.examples[0].es)}
+                                title="Escuchar pronunciación"
+                              >
+                                <Volume2 size={13} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+
+                      return (
+                        <div className="card curriculum-bridge-section" style={{ marginBottom: 24 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+                            <div>
+                              <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <Compass size={20} color="var(--primary)" />
+                                <span>Partículas, Prefijos y Componentes Funcionales (Paso {currentSection.substep})</span>
+                              </h3>
+                              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                                Conectores morfológicos vivos: prefijos de cortesía (<TerminologyTooltip termId="bikougo">Bikougo</TerminologyTooltip>), sufijos honoríficos y partículas activas.
+                              </p>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                              <div className="curriculum-view-toggle-desktop" style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-main)', padding: '3px 4px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                                <button
+                                  type="button"
+                                  className={`btn btn-sm ${bridgeViewMode === 'grid' ? 'btn-primary' : 'btn-ghost'}`}
+                                  style={{ padding: '4px 10px', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
+                                  onClick={() => setBridgeViewMode('grid')}
+                                  title="Vista en tarjetas cuadrícula compactas"
+                                >
+                                  <LayoutGrid size={14} />
+                                  <span>Cuadrícula</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`btn btn-sm ${bridgeViewMode === 'list' ? 'btn-primary' : 'btn-ghost'}`}
+                                  style={{ padding: '4px 10px', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
+                                  onClick={() => setBridgeViewMode('list')}
+                                  title="Vista en lista detallada con ejemplos completos"
+                                >
+                                  <List size={14} />
+                                  <span>Lista</span>
+                                </button>
+                              </div>
+
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => {
+                                  if (onNavigate) {
+                                    onNavigate('/grammar?filter=particles');
+                                  } else if (typeof window !== 'undefined') {
+                                    window.location.href = '/grammar?filter=particles';
+                                  }
+                                }}
+                                title="Explorar el índice completo de partículas y cortesía en Gramática"
+                              >
+                                <span>Guía de Partículas ↗</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Desktop Container (Compact Grid by Default or Toggled List) */}
+                          <div className="curriculum-bridge-desktop-compact">
+                            {bridgeViewMode === 'grid' ? (
+                              <div className="curriculum-bridge-grid compact-view">
+                                {currentSection.functional_bridge.map((fb, fbIdx) => renderCompactBridgeCard(fb, fbIdx))}
+                              </div>
+                            ) : (
+                              <div className="curriculum-bridge-grid">
+                                {currentSection.functional_bridge.map((fb, fbIdx) => renderFullBridgeCard(fb, fbIdx))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Mobile Container (Strict Full Detail List View Preserved) */}
+                          <div className="curriculum-bridge-mobile-full">
+                            <div className="curriculum-bridge-grid">
+                              {currentSection.functional_bridge.map((fb, fbIdx) => renderFullBridgeCard(fb, fbIdx))}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* 5. Puntos Clave de Gramática con Explicación Profunda, Fórmulas y Progressive Disclosure */}
                     <div className="card" style={{ marginBottom: 24 }}>

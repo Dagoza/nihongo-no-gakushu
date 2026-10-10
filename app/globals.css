@@ -3943,6 +3943,164 @@ ruby.furigana-ruby rt {
   border-color: var(--primary);
 }
 
+/* Compact Kanji Grid Styles (Desktop) */
+@media (min-width: 769px) {
+  .curriculum-kanji-grid.compact-view {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+    gap: 14px !important;
+  }
+}
+
+.curriculum-kanji-compact-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.curriculum-kanji-compact-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.curriculum-kanji-compact-char {
+  font-size: 2.6rem;
+  font-weight: 800;
+  font-family: var(--font-jp);
+  color: var(--primary);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.curriculum-kanji-compact-kana {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: var(--font-jp);
+}
+
+.curriculum-kanji-compact-meaning {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+.curriculum-kanji-compact-readings {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: var(--bg-main);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.curriculum-kanji-compact-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.curriculum-kanji-compact-details-box {
+  margin-top: 10px;
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  text-align: left;
+}
+
+/* Compact Functional Bridge Grid Styles (Desktop) */
+@media (min-width: 769px) {
+  .curriculum-bridge-grid.compact-view {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+    gap: 14px !important;
+  }
+}
+
+.curriculum-bridge-compact-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.curriculum-bridge-compact-card:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.curriculum-bridge-compact-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.curriculum-bridge-compact-pill {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-family: var(--font-jp);
+  color: var(--primary);
+  padding: 3px 10px;
+  background: var(--primary-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.curriculum-bridge-compact-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.curriculum-bridge-compact-function {
+  font-size: 0.86rem;
+  color: var(--text-main);
+  margin: 6px 0 8px 0;
+  line-height: 1.4;
+}
+
+.curriculum-bridge-compact-example {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 @media (max-width: 768px) {
   .curriculum-kanji-card-inner {
     flex-direction: column !important;
@@ -3955,6 +4113,45 @@ ruby.furigana-ruby rt {
 
   .curriculum-kanji-actions {
     flex-direction: row !important;
+  }
+
+  /* Strict preservation of full list view on mobile for both Kanji and Bridge */
+  .curriculum-kanji-grid,
+  .curriculum-kanji-grid.compact-view {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .curriculum-bridge-grid,
+  .curriculum-bridge-grid.compact-view {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+
+  /* Strict preservation of full list view on mobile for both Kanji and Bridge */
+  .curriculum-kanji-desktop-compact,
+  .curriculum-bridge-desktop-compact {
+    display: none !important;
+  }
+
+  .curriculum-kanji-mobile-full,
+  .curriculum-bridge-mobile-full {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .curriculum-view-toggle-desktop {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .curriculum-kanji-mobile-full,
+  .curriculum-bridge-mobile-full {
+    display: none !important;
   }
 }
 
