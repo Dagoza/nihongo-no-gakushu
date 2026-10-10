@@ -4352,5 +4352,74 @@
         "es": "El tren sale a las 9."
       }
     ]
+  },
+  {
+    "id": "v_n5_shitsurei",
+    "kanji": "失礼",
+    "kana": "しつれい",
+    "meaning_es": "Descortesía / Falta de respeto / Con permiso",
+    "meaning_en": "Discourtesy / Impoliteness / Excuse me",
+    "category": "Fórmulas y Cortesía",
+    "level": "N5",
+    "hiragana": "しつれい",
+    "katakana": "シツレイ",
+    "notes": "Literalmente pérdida de cortesía. Base de la fórmula fija 失礼します.",
+    "tatoeba_sentences": [
+      {
+        "jp": "失礼ですが、お名前は何とおっしゃいますか。",
+        "es": "Disculpe, pero ¿cómo se llama usted?"
+      }
+    ]
+  },
+  {
+    "id": "v_n5_shitsurei_suru",
+    "kanji": "失礼する",
+    "kana": "しつれいする",
+    "meaning_es": "Cometer una descortesía / Retirarse / Pedir disculpas",
+    "meaning_en": "To be rude / To leave / To excuse oneself",
+    "category": "Verbos",
+    "group": "Grupo 3 (Irregular / Suru)",
+    "polite_masu": "失礼します",
+    "te_form": "失礼して",
+    "level": "N5",
+    "hiragana": "しつれいする",
+    "katakana": "シツレイスル",
+    "notes": "Verbo Suru de cortesía. En su forma cortés 失礼します se traduce como \"con permiso\" o \"disculpe las molestias\"."
+  },
+  {
+    "id": "v_n5_shitsurei_shimasu",
+    "kanji": "失礼します",
+    "kana": "しつれいします",
+    "meaning_es": "Con permiso / Disculpe las molestias (lit. cometo una descortesía)",
+    "meaning_en": "Excuse me / Pardon me (lit. I am being impolite)",
+    "category": "Fórmulas y Cortesía",
+    "level": "N5",
+    "hiragana": "しつれいします",
+    "katakana": "シツレイシマス",
+    "notes": "Fórmula canónica para entrar a una sala, retirarse o colgar el teléfono. Compuesta por 失礼 (descortesía) y します (hacer)."
+  },
+  {
+    "id": "v_n5_osaki_ni",
+    "kanji": "お先に",
+    "kana": "おさきに",
+    "meaning_es": "Antes / Por adelantado / Me retiro antes (cortés)",
+    "meaning_en": "Before / Ahead (polite)",
+    "category": "Fórmulas y Cortesía",
+    "level": "N5",
+    "hiragana": "おさきに",
+    "katakana": "オサキニ",
+    "notes": "Formado por el prefijo honorífico お- + 先 (delante/antes) + partícula に."
+  },
+  {
+    "id": "v_n5_osaki_ni_shitsurei_shimasu",
+    "kanji": "お先に失礼します",
+    "kana": "おさきにしつれいします",
+    "meaning_es": "Con permiso, me retiro antes / Hasta mañana (despedida laboral)",
+    "meaning_en": "Excuse me for leaving before you (formal workplace farewell)",
+    "category": "Fórmulas y Cortesía",
+    "level": "N5",
+    "hiragana": "おさきにしつれいします",
+    "katakana": "オサキニシツレイシマス",
+    "notes": "Fórmula obligatoria de cortesía al marcharse del trabajo antes que los compañeros. La respuesta estándar es お疲れさまでした (otsukaresama deshita)."
   }
 ]

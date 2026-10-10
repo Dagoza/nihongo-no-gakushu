@@ -328,6 +328,73 @@ export default function DictionaryModal({
                 </div>
               )}
 
+              {/* Full Phrase / Expression Summary Card (When the whole search query is a known formula or set expression) */}
+              {directLookup && directLookup.meaning_es && analysis.length > 1 && (
+                <div style={{
+                  padding: '14px 18px',
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.06))',
+                  border: '1.5px solid rgba(99, 102, 241, 0.25)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '2px 8px',
+                        borderRadius: 4,
+                        background: 'rgba(99, 102, 241, 0.15)',
+                        color: 'var(--primary)'
+                      }}>
+                        {directLookup.level || 'N5'}
+                      </span>
+                      <span style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        padding: '2px 8px',
+                        borderRadius: 4,
+                        background: 'var(--bg-main)',
+                        color: 'var(--text-muted)',
+                        border: '1px solid var(--border)'
+                      }}>
+                        {directLookup.category || 'Fórmula / Expresión Completa'}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveToVocab(directLookup)}
+                        className="btn btn-outline btn-sm"
+                        style={{ padding: '3px 10px', fontSize: '0.74rem', gap: 4 }}
+                        title="Guardar expresión completa a mi vocabulario"
+                      >
+                        <BookmarkPlus size={13} />
+                        <span>Guardar Frase</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: 2 }}>
+                      Significado Global de la Expresión:
+                    </span>
+                    <div style={{ fontSize: '1.08rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.35 }}>
+                      {directLookup.meaning_es}
+                    </div>
+                  </div>
+
+                  {directLookup.notes && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', borderTop: '1px dashed var(--border)', paddingTop: 6, lineHeight: 1.4 }}>
+                      💡 {directLookup.notes}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Morphological Breakdown Chips (When multiple words/tokens exist) */}
               {analysis.length > 0 && (
                 <div>
@@ -392,7 +459,16 @@ export default function DictionaryModal({
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap'
                           }}>
-                            {token.meaning_es ? token.meaning_es.split('/')[0].trim() : (token.category || 'Palabra')}
+                            {(() => {
+                              if (token.category === 'Prefijo de Cortesía' || token.category?.includes('Prefijo')) {
+                                return 'Prefijo Keigo';
+                              }
+                              if (token.baseForm === 'する' || token.text === 'します') {
+                                return 'hacer';
+                              }
+                              const raw = token.meaning_es ? token.meaning_es.split('[')[0].split('/')[0].trim() : (token.category || 'Palabra');
+                              return raw || token.category || 'Palabra';
+                            })()}
                           </span>
                         </button>
                       );

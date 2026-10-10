@@ -1962,6 +1962,16 @@
         "word": "連絡先",
         "reading": "れんらくさき",
         "meaning": "datos de contacto"
+      },
+      {
+        "word": "お先に",
+        "reading": "おさきに",
+        "meaning": "antes / por adelantado (cortés)"
+      },
+      {
+        "word": "お先に失礼します",
+        "reading": "おさきにしつれいします",
+        "meaning": "con permiso, me retiro antes"
       }
     ],
     "source": "Kanji Book"
@@ -3922,5 +3932,83 @@
       }
     ],
     "source": "Vocabulario Nihongo"
+  },
+  {
+    "kanji": "失",
+    "level": "N4",
+    "meaning_es": "perder, error, falla",
+    "meaning_en": "lose, fault, error",
+    "pronunciation": "しつ, うしな",
+    "strokes": 5,
+    "onyomi": "SHITSU [しつ]",
+    "kunyomi": "ushina(u) [うしな(う)]",
+    "mnemonic": "Una persona (大) a la que se le resbala algo de la mano y lo pierde.",
+    "words": [
+      {
+        "word": "失礼",
+        "reading": "しつれい",
+        "meaning": "descortesía / con permiso"
+      },
+      {
+        "word": "失礼する",
+        "reading": "しつれいする",
+        "meaning": "cometer una incorrección / retirarse"
+      },
+      {
+        "word": "失礼します",
+        "reading": "しつれいします",
+        "meaning": "con permiso / disculpe las molestias"
+      },
+      {
+        "word": "お先に失礼します",
+        "reading": "おさきにしつれいします",
+        "meaning": "con permiso, me retiro antes"
+      }
+    ],
+    "source": "Kanji Book"
+  },
+  {
+    "kanji": "礼",
+    "level": "N4",
+    "meaning_es": "cortesía, saludo, gratitud, etiqueta",
+    "meaning_en": "salute, bow, ceremony, courtesy",
+    "pronunciation": "れい, らい",
+    "strokes": 5,
+    "onyomi": "REI, RAI [れい, らい]",
+    "kunyomi": "orei [おれい]",
+    "mnemonic": "El radical de altar sagrado (礻) junto a una persona haciendo una reverencia con cortesía y respeto.",
+    "words": [
+      {
+        "word": "失礼",
+        "reading": "しつれい",
+        "meaning": "descortesía / con permiso"
+      },
+      {
+        "word": "失礼する",
+        "reading": "しつれいする",
+        "meaning": "cometer una incorrección / retirarse"
+      },
+      {
+        "word": "失礼します",
+        "reading": "しつれいします",
+        "meaning": "con permiso / disculpe las molestias"
+      },
+      {
+        "word": "お先に失礼します",
+        "reading": "おさきにしつれいします",
+        "meaning": "con permiso, me retiro antes"
+      },
+      {
+        "word": "お礼",
+        "reading": "おれい",
+        "meaning": "agradecimiento / gratitud"
+      },
+      {
+        "word": "礼金",
+        "reading": "れいきん",
+        "meaning": "gratificación al propietario (no reembolsable)"
+      }
+    ],
+    "source": "Kanji Book"
   }
 ]

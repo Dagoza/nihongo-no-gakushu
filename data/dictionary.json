@@ -14597,5 +14597,59 @@
     "category": "Sustantivo verbal",
     "level": "N3",
     "isKanaIndex": true
+  },
+  {
+    "kanji": "失礼",
+    "hiragana": "しつれい",
+    "katakana": "シツレイ",
+    "romaji": "shitsurei",
+    "meaning_es": "Descortesía / Falta de respeto / Mala educación; Con permiso",
+    "category": "Sustantivo / Adjetivo-na",
+    "level": "N5",
+    "notes": "Literalmente \"pérdida de cortesía\". Base de la fórmula fija 失礼します (\"cometo una descortesía\" -> \"con permiso\")."
+  },
+  {
+    "kanji": "失礼する",
+    "hiragana": "しつれいする",
+    "katakana": "シツレイスル",
+    "romaji": "shitsurei suru",
+    "meaning_es": "Cometer una descortesía / Retirarse / Pedir disculpas",
+    "category": "Verbo Irregular (Suru)",
+    "level": "N5",
+    "verbType": "suru",
+    "notes": "Verbo Suru de cortesía. En su forma cortés 失礼します se traduce habitualmente como \"con permiso\"."
+  },
+  {
+    "kanji": "失礼します",
+    "hiragana": "しつれいします",
+    "katakana": "シツレイシマス",
+    "romaji": "shitsurei shimasu",
+    "meaning_es": "Con permiso / Disculpe las molestias (lit. cometo una descortesía)",
+    "category": "Fórmula de Cortesía / Expresión",
+    "level": "N5",
+    "isExpression": true,
+    "notes": "Fórmula de cortesía indispensable al entrar, colgar o retirarse. Compuesta por 失礼 (descortesía) y します (hacer)."
+  },
+  {
+    "kanji": "お先に",
+    "hiragana": "おさきに",
+    "katakana": "オサキニ",
+    "romaji": "osaki ni",
+    "meaning_es": "Antes / Por adelantado / Me retiro antes (cortés)",
+    "category": "Adverbio / Expresión",
+    "level": "N5",
+    "isExpression": true,
+    "notes": "Formado por el prefijo de cortesía お- + 先 (delante/antes) + partícula に."
+  },
+  {
+    "kanji": "お先に失礼します",
+    "hiragana": "おさきにしつれいします",
+    "katakana": "オサキニシツレイシマス",
+    "romaji": "osaki ni shitsurei shimasu",
+    "meaning_es": "Con permiso, me retiro antes / Hasta mañana (despedida formal en el trabajo)",
+    "category": "Fórmula de Cortesía / Expresión",
+    "level": "N5",
+    "isExpression": true,
+    "notes": "Fórmula de cortesía laboral imprescindible al finalizar la jornada y marcharse antes que los compañeros. La respuesta estándar es お疲れさまでした (otsukaresama deshita)."
   }
 ]
