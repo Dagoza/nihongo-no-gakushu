@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, X, Volume2, BookmarkPlus, PenTool, BookOpen, Info } from 'lucide-react';
+import { Search, X, Volume2, BookmarkPlus, PenTool, BookOpen, Info, Check, Edit3 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import { lookupJapaneseWord, analyzeJapaneseSentence, convertKanjiToKanaSync, hiraganaToKatakana, containsKanji } from '../../lib/japaneseUtils';
+import { lookupJapaneseWord, analyzeJapaneseSentence, convertKanjiToKanaSync, hiraganaToKatakana, containsKanji, extractKanjis, cleanKanaOnly } from '../../lib/japaneseUtils';
 import vocabularyData from '../../data/vocabulary.json';
+import kanjiData from '../../data/kanji.json';
 import { useApp } from '../../lib/AppContext';
 import useFocusTrap from '../../lib/useFocusTrap';
 
@@ -20,6 +21,7 @@ export default function DictionaryModal({
 
   const [query, setQuery] = useState(initialSearch || '');
   const [activeTokenIndex, setActiveTokenIndex] = useState(0);
+  const [justSavedKey, setJustSavedKey] = useState(null);
 
   // Sync initialSearch when modal opens
   useEffect(() => {
@@ -97,33 +99,185 @@ export default function DictionaryModal({
     audioManager.speak(text);
   };
 
-  const handleSaveToVocab = (wordItem) => {
+  const isWordSaved = (text) => {
+    if (!text) return false;
+    const clean = text.trim();
+    return customVocab.some(v => 
+      (v.kanji && v.kanji === clean) ||
+      (v.hiragana && v.hiragana === clean) ||
+      (v.text && v.text === clean)
+    );
+  };
+
+  const savedPhrases = contextApp?.appState?.savedPhrases || [];
+  const isPhraseSaved = (phraseText) => {
+    if (!phraseText) return false;
+    const clean = phraseText.trim();
+    return isWordSaved(clean) || savedPhrases.some(p => p.japanese === clean);
+  };
+
+  const handleSaveToVocab = (wordItem, e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
     if (!wordItem) return;
-    const text = wordItem.text || wordItem.kanji || query;
-    const hira = wordItem.hiragana || '';
-    const kata = wordItem.katakana || hiraganaToKatakana(hira || text);
-    const meaning = wordItem.meaning_es || '';
+
+    const rawText = (wordItem.text || wordItem.kanji || query || '').trim();
+    if (!rawText) return;
+
+    const hasKanjis = containsKanji(rawText);
+    const cleanKanji = hasKanjis ? rawText : '';
+    let cleanHiragana = (wordItem.hiragana || wordItem.kana || '').trim();
+    
+    if (!cleanHiragana) {
+      if (!hasKanjis) {
+        cleanHiragana = rawText;
+      } else {
+        const syncMatch = convertKanjiToKanaSync(rawText, customVocab, externalVocab);
+        if (syncMatch && syncMatch.hiragana && !containsKanji(syncMatch.hiragana)) {
+          cleanHiragana = syncMatch.hiragana;
+        }
+      }
+    }
+    
+    let cleanKatakana = (wordItem.katakana || '').trim();
+    if (!cleanKatakana || containsKanji(cleanKatakana)) {
+      cleanKatakana = hiraganaToKatakana(cleanHiragana || rawText);
+    }
+    if (containsKanji(cleanKatakana)) {
+      cleanKatakana = cleanKanaOnly(cleanKatakana);
+    }
+
+    const meaning = (wordItem.meaning_es || '').trim();
+    const level = wordItem.level || 'N5';
+    const category = wordItem.category || 'Diccionario Rápido';
+    const notes = (wordItem.notes || '').trim();
+
+    if (onSaveWord) {
+      onSaveWord({
+        kanji: cleanKanji || rawText,
+        hiragana: cleanHiragana,
+        katakana: cleanKatakana,
+        meaning_es: meaning,
+        level: level,
+        category: category,
+        notes: notes
+      });
+    }
+
+    if (contextApp?.handleUpdateState && contextApp?.appState) {
+      const prevVocab = contextApp.appState.savedCustomVocab || [];
+      const wordKey = cleanKanji || cleanHiragana || rawText;
+      
+      const newWord = {
+        id: `v_custom_${Date.now()}`,
+        kanji: cleanKanji || (hasKanjis ? rawText : ''),
+        hiragana: cleanHiragana || rawText,
+        katakana: cleanKatakana,
+        kana: cleanHiragana || rawText,
+        meaning_es: meaning || 'Guardado desde Diccionario',
+        meaning_en: wordItem.meaning_en || '',
+        category: category,
+        level: level,
+        notes: notes,
+        source: 'Diccionario Rápido',
+        date: new Date().toISOString()
+      };
+
+      let updatedPhrases = contextApp.appState.savedPhrases || [];
+      if (rawText.length > 5 || rawText.includes(' ') || wordItem.category?.includes('Fórmula') || wordItem.category?.includes('Expresión')) {
+        const newPhrase = {
+          id: `phrase_${Date.now()}`,
+          japanese: rawText,
+          translation: meaning || 'Expresión guardada desde diccionario',
+          source: 'Diccionario Rápido',
+          date: new Date().toISOString()
+        };
+        updatedPhrases = [newPhrase, ...updatedPhrases.filter(p => p.japanese !== rawText)];
+      }
+
+      const updatedVocab = [newWord, ...prevVocab.filter(v => (v.kanji || v.hiragana) !== wordKey)];
+
+      // Sincronización en memoria con catálogo de kanjis
+      const detectedKanjis = extractKanjis(rawText);
+      if (kanjiData && detectedKanjis.length > 0) {
+        detectedKanjis.forEach(kChar => {
+          const targetKanji = kanjiData.find(k => k.kanji === kChar);
+          if (targetKanji) {
+            if (!targetKanji.words) targetKanji.words = [];
+            if (!targetKanji.words.some(w => w.word === newWord.kanji)) {
+              targetKanji.words.push({
+                word: newWord.kanji,
+                reading: cleanHiragana,
+                meaning: newWord.meaning_es
+              });
+            }
+          }
+        });
+      }
+
+      const updatedKanjiMap = { ...(contextApp.appState.masteredKanji || {}) };
+      detectedKanjis.forEach(kChar => {
+        if (updatedKanjiMap[kChar] === undefined) {
+          updatedKanjiMap[kChar] = false;
+        }
+      });
+
+      const newXp = (contextApp.appState.xp || 0) + 15;
+
+      contextApp.handleUpdateState({
+        ...contextApp.appState,
+        savedCustomVocab: updatedVocab,
+        savedPhrases: updatedPhrases,
+        masteredKanji: updatedKanjiMap,
+        xp: newXp
+      });
+
+      setJustSavedKey(rawText);
+      setTimeout(() => setJustSavedKey(null), 3000);
+
+      if (contextApp.showAlert) {
+        contextApp.showAlert({
+          type: 'success',
+          title: '¡Guardada en tu Vocabulario! 🎉',
+          message: `"${rawText}" se ha guardado correctamente (+15 XP).`
+        });
+      }
+    } else if (contextApp?.openSaveModal) {
+      contextApp.openSaveModal({
+        type: (rawText.length > 15 || /[。！？]/.test(rawText)) ? 'phrase' : 'word',
+        text: rawText,
+        kanji: cleanKanji,
+        hiragana: cleanHiragana,
+        katakana: cleanKatakana,
+        meaning_es: meaning,
+        level: level,
+        category: category,
+        source: 'Diccionario Rápido'
+      });
+    }
+  };
+
+  const handleOpenEditModal = (wordItem, e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (!wordItem) return;
+    const rawText = (wordItem.text || wordItem.kanji || query || '').trim();
+    const hasKanjis = containsKanji(rawText);
+    const cleanKanji = hasKanjis ? rawText : '';
+    let cleanHiragana = (wordItem.hiragana || wordItem.kana || '').trim();
+    if (!cleanHiragana && !hasKanjis) cleanHiragana = rawText;
+    let cleanKatakana = (wordItem.katakana || '').trim() || hiraganaToKatakana(cleanHiragana || rawText);
 
     if (contextApp?.openSaveModal) {
       contextApp.openSaveModal({
-        type: 'word',
-        text: text,
-        kanji: containsKanji(text) ? text : '',
-        hiragana: hira,
-        katakana: kata,
-        meaning_es: meaning,
+        type: (rawText.length > 15 || /[。！？]/.test(rawText)) ? 'phrase' : 'word',
+        text: rawText,
+        kanji: cleanKanji,
+        hiragana: cleanHiragana,
+        katakana: cleanKatakana,
+        meaning_es: wordItem.meaning_es || '',
         level: wordItem.level || 'N5',
         category: wordItem.category || 'Diccionario Rápido',
+        notes: wordItem.notes || '',
         source: 'Diccionario Rápido'
-      });
-    } else if (onSaveWord) {
-      onSaveWord({
-        kanji: text,
-        hiragana: hira,
-        katakana: kata,
-        meaning_es: meaning,
-        level: wordItem.level || 'N5',
-        category: wordItem.category || 'Diccionario Rápido'
       });
     }
   };
@@ -367,14 +521,47 @@ export default function DictionaryModal({
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <button
                         type="button"
-                        onClick={() => handleSaveToVocab(directLookup)}
-                        className="btn btn-outline btn-sm"
-                        style={{ padding: '3px 10px', fontSize: '0.74rem', gap: 4 }}
+                        onClick={(e) => handleSaveToVocab(directLookup, e)}
+                        className="btn btn-sm"
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: '0.76rem',
+                          fontWeight: 600,
+                          gap: 5,
+                          background: (isPhraseSaved(query) || justSavedKey === query) ? '#10b981' : 'var(--primary)',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 6,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          transition: 'all 0.2s ease'
+                        }}
                         title="Guardar expresión completa a mi vocabulario"
                       >
-                        <BookmarkPlus size={13} />
-                        <span>Guardar Frase</span>
+                        {(isPhraseSaved(query) || justSavedKey === query) ? (
+                          <>
+                            <Check size={14} />
+                            <span>¡Frase Guardada!</span>
+                          </>
+                        ) : (
+                          <>
+                            <BookmarkPlus size={14} />
+                            <span>Guardar Frase (+15 XP)</span>
+                          </>
+                        )}
                       </button>
+                      {contextApp?.openSaveModal && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleOpenEditModal(directLookup, e)}
+                          className="btn btn-outline btn-sm"
+                          style={{ padding: '4px 8px', fontSize: '0.74rem', borderRadius: 6 }}
+                          title="Personalizar detalles en cuaderno"
+                        >
+                          <Edit3 size={13} />
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -596,20 +783,76 @@ export default function DictionaryModal({
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                     <button
                       type="button"
-                      onClick={() => handleSaveToVocab(currentToken)}
-                      className="btn btn-outline btn-sm"
-                      style={{ flex: 1, justifyContent: 'center', gap: 6 }}
+                      onClick={(e) => handleSaveToVocab(currentToken, e)}
+                      className="btn btn-sm"
+                      style={{
+                        flex: 1.2,
+                        justifyContent: 'center',
+                        gap: 6,
+                        padding: '8px 14px',
+                        fontSize: '0.84rem',
+                        fontWeight: 600,
+                        borderRadius: 8,
+                        border: (isWordSaved(currentToken.text) || justSavedKey === currentToken.text)
+                          ? '1.5px solid #10b981'
+                          : '1.5px solid var(--primary)',
+                        background: (isWordSaved(currentToken.text) || justSavedKey === currentToken.text)
+                          ? '#10b981'
+                          : 'var(--primary)',
+                        color: '#ffffff',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 8px rgba(99, 102, 241, 0.2)'
+                      }}
                       title="Guardar palabra en tu vocabulario personal"
                     >
-                      <BookmarkPlus size={14} />
-                      <span>Guardar Palabra</span>
+                      {(isWordSaved(currentToken.text) || justSavedKey === currentToken.text) ? (
+                        <>
+                          <Check size={16} />
+                          <span>✓ ¡Guardada!</span>
+                        </>
+                      ) : (
+                        <>
+                          <BookmarkPlus size={16} />
+                          <span>Guardar Palabra (+15 XP)</span>
+                        </>
+                      )}
                     </button>
+
+                    {contextApp?.openSaveModal && (
+                      <button
+                        type="button"
+                        onClick={(e) => handleOpenEditModal(currentToken, e)}
+                        className="btn btn-outline btn-sm"
+                        style={{
+                          padding: '8px 10px',
+                          fontSize: '0.8rem',
+                          borderRadius: 8,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 4
+                        }}
+                        title="Personalizar categoría, notas o detalles"
+                      >
+                        <Edit3 size={15} />
+                      </button>
+                    )}
 
                     <button
                       type="button"
                       onClick={() => handleOpenPracticePad(currentToken)}
                       className="btn btn-outline btn-sm"
-                      style={{ flex: 1, justifyContent: 'center', gap: 6 }}
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        gap: 6,
+                        padding: '8px 12px',
+                        fontSize: '0.82rem',
+                        borderRadius: 8
+                      }}
                       title="Escribir caracteres en el cuaderno de práctica"
                     >
                       <PenTool size={14} />

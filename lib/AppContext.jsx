@@ -150,6 +150,23 @@ export function AppProvider({ children }) {
     setDictionaryState(prev => ({ ...prev, isOpen: false }));
   }, []);
 
+  // Modal Global para Guardar Vocabulario / Frases (SaveVocabModal)
+  const [saveModalState, setSaveModalState] = useState({
+    isOpen: false,
+    data: null
+  });
+
+  const openSaveModal = useCallback((initialData = null) => {
+    setSaveModalState({
+      isOpen: true,
+      data: initialData || {}
+    });
+  }, []);
+
+  const closeSaveModal = useCallback(() => {
+    setSaveModalState(prev => ({ ...prev, isOpen: false, data: null }));
+  }, []);
+
   // Modal de Configuración Global (Voz TTS, velocidad, motor)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
@@ -600,6 +617,10 @@ export function AppProvider({ children }) {
     dictionaryState,
     openDictionary,
     closeDictionary,
+    // Modal Global para Guardar Vocabulario / Frases (SaveVocabModal)
+    saveModalState,
+    openSaveModal,
+    closeSaveModal,
     // Modal de Configuración Global
     isSettingsModalOpen,
     setIsSettingsModalOpen,

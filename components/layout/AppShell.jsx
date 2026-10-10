@@ -13,6 +13,7 @@ const AuthModal = dynamic(() => import('../modals/AuthModal'), { ssr: false });
 const ProductTour = dynamic(() => import('./ProductTour'), { ssr: false });
 const PracticePadModal = dynamic(() => import('../modals/PracticePadModal'), { ssr: false });
 const DictionaryModal = dynamic(() => import('../modals/DictionaryModal'), { ssr: false });
+const SaveVocabModal = dynamic(() => import('../modals/SaveVocabModal'), { ssr: false });
 const SettingsModal = dynamic(() => import('../modals/SettingsModal'), { ssr: false });
 const DailyGoalModal = dynamic(() => import('../modals/DailyGoalModal'), { ssr: false });
 const NotificationSettingsModal = dynamic(() => import('../modals/NotificationSettingsModal'), { ssr: false });
@@ -47,6 +48,8 @@ function AppShellContent({ children }) {
     closePracticePad,
     dictionaryState,
     closeDictionary,
+    saveModalState,
+    closeSaveModal,
     isSettingsModalOpen,
     setIsSettingsModalOpen,
     isDailyGoalModalOpen,
@@ -183,6 +186,17 @@ function AppShellContent({ children }) {
           isOpen={dictionaryState.isOpen}
           onClose={closeDictionary}
           initialSearch={dictionaryState.search}
+        />
+      )}
+
+      {/* Modal Global para Guardar Vocabulario / Frases */}
+      {saveModalState?.isOpen && (
+        <SaveVocabModal 
+          isOpen={saveModalState.isOpen}
+          onClose={closeSaveModal}
+          initialData={saveModalState.data}
+          appState={appState}
+          onUpdateState={handleUpdateState}
         />
       )}
 
