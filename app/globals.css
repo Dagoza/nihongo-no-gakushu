@@ -3207,29 +3207,60 @@ ruby.furigana-ruby rt {
 }
 
 @media (max-width: 768px) {
+  .curriculum-stepper-container {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+
   .curriculum-stepper-tabs {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    scroll-padding: 0 14px;
     -webkit-overflow-scrolling: touch;
-    gap: 10px;
+    gap: 8px;
     padding-bottom: 8px;
     scrollbar-width: thin;
+    scrollbar-color: var(--primary-light) var(--border);
   }
 
   .curriculum-stepper-tabs::-webkit-scrollbar {
-    height: 4px;
+    height: 3px;
   }
 
-  .curriculum-stepper-tabs::-webkit-scrollbar-thumb {
+  .curriculum-stepper-tabs::-webkit-scrollbar-track {
     background: var(--border);
     border-radius: 4px;
   }
 
+  .curriculum-stepper-tabs::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 4px;
+  }
+
   .curriculum-step-tab {
-    flex: 0 0 240px;
-    min-width: 240px;
+    flex: 0 0 calc(82% - 8px);
+    min-width: 190px;
+    max-width: 260px;
     scroll-snap-align: start;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .step-tab-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .step-tab-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+  }
+
+  .step-tab-title {
+    font-size: 0.82rem;
+    line-height: 1.25;
   }
 }
 
@@ -3450,7 +3481,7 @@ ruby.furigana-ruby rt {
 
 .grammar-notes-box {
   background: var(--bg-main);
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--color-kohaku, var(--warning));
   padding: 10px 14px;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: 0.88rem;
@@ -3490,16 +3521,45 @@ ruby.furigana-ruby rt {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  margin-bottom: calc(var(--audio-player-height, 72px) + env(safe-area-inset-bottom, 16px) + 24px);
+  margin-bottom: 24px;
   box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 768px) {
   .step-action-bar {
-    margin-bottom: calc(var(--audio-player-height, 170px) + env(safe-area-inset-bottom, 16px) + 24px);
+    margin-bottom: 24px !important;
+    padding: 14px 16px;
   }
   .curriculum-detail-view {
-    padding-bottom: calc(var(--audio-player-height, 170px) + env(safe-area-inset-bottom, 16px) + 20px);
+    padding-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-action-bar {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  .step-action-bar > .btn-success,
+  .step-action-bar > .btn-outline:not(:first-child):not(:last-child) {
+    grid-column: 1 / -1 !important;
+    order: 1;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 16px !important;
+    font-size: 0.92rem !important;
+  }
+
+  .step-action-bar > .btn-outline:first-child {
+    order: 2;
+    justify-content: center !important;
+  }
+
+  .step-action-bar > .btn-primary:last-child {
+    order: 3;
+    justify-content: center !important;
   }
 }
 
@@ -3761,8 +3821,8 @@ ruby.furigana-ruby rt {
 }
 
 .curriculum-kanji-mnemonic-box {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.03) 100%);
-  border-left: 3px solid #f59e0b;
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(245, 158, 11, 0.03) 100%);
+  border-left: 3px solid var(--color-kohaku, var(--warning));
   padding: 10px 14px;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: 0.88rem;
@@ -3863,6 +3923,12 @@ ruby.furigana-ruby rt {
   background: var(--bg-main);
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
+}
+
+.curriculum-bridge-example-row > div:first-child {
+  min-width: 0;
+  flex: 1;
+  word-break: break-word;
 }
 
 .grammar-examples-toggle-btn {

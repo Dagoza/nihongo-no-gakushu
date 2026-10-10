@@ -41,6 +41,76 @@ const parseGrammarPoint = (point) => {
   };
 };
 
+// Helper to parse text and dynamically annotate linguistic terminology mentions with <TerminologyTooltip>
+const renderWithTerminology = (text, keyPrefix = 'term', showFurigana = false) => {
+  if (!text || typeof text !== 'string') return text;
+
+  const pattern = new RegExp(
+    `\\b(bikougo|lenguaje embellecedor|sonkeigo|lenguaje respetuoso|kenjougo|lenguaje humilde|teineigo|lenguaje cort[eé]s|keigo|c[oó]pulas?|part[ií]culas?|verbos?\\s+godan|godan|verbos?\\s+ichidan|ichidan|jukugos?|kangos?|wagos?|gairaigos?|okurigana|furigana|jousoushi|contadores|contador|pitch\\s+accent|joshi)\\b`,
+    'gi'
+  );
+
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      const chunk = text.substring(lastIndex, match.index);
+      if (showFurigana) {
+        parts.push(<FuriganaText key={`${keyPrefix}_fg_${lastIndex}`} text={chunk} showFurigana={showFurigana} />);
+      } else {
+        parts.push(chunk);
+      }
+    }
+
+    const matchedWord = match[0];
+    const lowerWord = matchedWord.toLowerCase();
+    let termId = 'keigo';
+
+    if (lowerWord.includes('bikougo') || lowerWord.includes('embellecedor')) termId = 'bikougo';
+    else if (lowerWord.includes('sonkeigo') || lowerWord.includes('respetuoso')) termId = 'sonkeigo';
+    else if (lowerWord.includes('kenjougo') || lowerWord.includes('humilde')) termId = 'kenjougo';
+    else if (lowerWord.includes('teineigo') || lowerWord.includes('cort')) termId = 'teineigo';
+    else if (lowerWord.includes('keigo')) termId = 'keigo';
+    else if (lowerWord.includes('pula')) termId = 'copula';
+    else if (lowerWord.includes('part') || lowerWord.includes('joshi')) termId = 'particula';
+    else if (lowerWord.includes('godan')) termId = 'godan';
+    else if (lowerWord.includes('ichidan')) termId = 'ichidan';
+    else if (lowerWord.includes('jukugo')) termId = 'jukugo';
+    else if (lowerWord.includes('kango')) termId = 'kango';
+    else if (lowerWord.includes('wago')) termId = 'wago';
+    else if (lowerWord.includes('gairaigo')) termId = 'gairaigo';
+    else if (lowerWord.includes('okurigana')) termId = 'okurigana';
+    else if (lowerWord.includes('furigana')) termId = 'furigana';
+    else if (lowerWord.includes('jousoushi') || lowerWord.includes('contador')) termId = 'jousoushi';
+    else if (lowerWord.includes('pitch')) termId = 'pitch_accent';
+
+    parts.push(
+      <TerminologyTooltip key={`${keyPrefix}_${match.index}`} termId={termId}>
+        {matchedWord}
+      </TerminologyTooltip>
+    );
+
+    lastIndex = pattern.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    const chunk = text.substring(lastIndex);
+    if (showFurigana) {
+      parts.push(<FuriganaText key={`${keyPrefix}_fg_${lastIndex}`} text={chunk} showFurigana={showFurigana} />);
+    } else {
+      parts.push(chunk);
+    }
+  }
+
+  if (parts.length === 0) {
+    return showFurigana ? <FuriganaText text={text} showFurigana={showFurigana} /> : text;
+  }
+
+  return parts;
+};
+
 export default function CurriculumTab({ onNavigate, userState, onUpdateState, initialStep = null, onStepChange }) {
   const contextApp = useAppContext();
   const steps = curriculumData || [];
@@ -475,7 +545,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             {selectedStep.detailed_guide && (
               <div className="curriculum-hero-guide">
                 <p><strong>📖 Guía Explicativa del Módulo:</strong></p>
-                <p style={{ marginTop: 6 }}>{selectedStep.detailed_guide}</p>
+                <p style={{ marginTop: 6 }}>{renderWithTerminology(selectedStep.detailed_guide, `guide_${selectedStep.step}`)}</p>
               </div>
             )}
 
@@ -704,7 +774,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                               Paso {currentSection.substep} · Evaluación y Práctica del Módulo
                             </div>
                             <p style={{ fontSize: '1.02rem', fontWeight: 600, color: 'var(--text-main)', margin: 0, lineHeight: 1.5 }}>
-                              {currentSection.objective}
+                              {renderWithTerminology(currentSection.objective, `ex_obj_${currentSection.substep}`)}
                             </p>
                           </div>
                         </div>
@@ -951,7 +1021,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                             Objetivo del Paso {currentSection.substep}
                           </div>
                           <p style={{ fontSize: '1.02rem', fontWeight: 600, color: 'var(--text-main)', margin: 0, lineHeight: 1.6 }}>
-                            <FuriganaText text={currentSection.objective} showFurigana={showFurigana} />
+                            {renderWithTerminology(currentSection.objective, `csobj_${currentSection.substep}`, showFurigana)}
                           </p>
                         </div>
                       </div>
@@ -1020,8 +1090,26 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                   <div style={{ fontSize: '0.85rem', color: 'var(--text-main)', marginTop: 2, fontWeight: 500 }}>
                                     {v.meaning}
                                   </div>
-                                  <div style={{ fontSize: '0.72rem', color: 'var(--primary)', marginTop: 2 }}>
-                                    {v.type}
+                                  <div style={{ fontSize: '0.72rem', marginTop: 2 }}>
+                                    {(() => {
+                                      const rawType = (v.type || '').toLowerCase();
+                                      let termId = null;
+                                      if (rawType.includes('godan')) termId = 'godan';
+                                      else if (rawType.includes('ichidan')) termId = 'ichidan';
+                                      else if (rawType.includes('gairaigo') || rawType.includes('katakana')) termId = 'gairaigo';
+                                      else if (rawType.includes('contador') || rawType.includes('clasificador')) termId = 'jousoushi';
+
+                                      if (termId) {
+                                        return (
+                                          <TerminologyTooltip termId={termId}>
+                                            <span className="curriculum-vocab-type-badge" style={{ cursor: 'pointer', color: 'var(--primary)', fontWeight: 700 }} title="Ver explicación lingüística">
+                                              {v.type} ℹ️
+                                            </span>
+                                          </TerminologyTooltip>
+                                        );
+                                      }
+                                      return <span className="curriculum-vocab-type-badge" style={{ color: 'var(--primary)' }}>{v.type}</span>;
+                                    })()}
                                   </div>
                                 </div>
 
@@ -1375,7 +1463,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                   {currentSection.substep}.{gpIdx + 1}
                                 </span>
                                 <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>
-                                  <FuriganaText text={gp.title} showFurigana={showFurigana} />
+                                  {renderWithTerminology(gp.title, `gpt_${currentSection.substep}_${gpIdx}`, showFurigana)}
                                 </h4>
                               </div>
 
@@ -1401,13 +1489,13 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
                               {/* Theoretical Deep Explanation */}
                               <p style={{ fontSize: '0.94rem', lineHeight: 1.65, color: 'var(--text-main)', margin: '10px 0' }}>
-                                {gp.explanation}
+                                {renderWithTerminology(gp.explanation, `gpe_${currentSection.substep}_${gpIdx}`)}
                               </p>
 
                               {/* Cultural / Usage Notes */}
                               {gp.usage_notes && (
                                 <div className="grammar-notes-box">
-                                  💡 <strong>Notas de uso y contexto:</strong> {gp.usage_notes}
+                                  💡 <strong>Notas de uso y contexto:</strong> {renderWithTerminology(gp.usage_notes, `gpun_${currentSection.substep}_${gpIdx}`)}
                                 </div>
                               )}
 
@@ -1505,7 +1593,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                   </button>
                                 </div>
 
-                                <h4 className="cando-task">{cd.task}</h4>
+                                <h4 className="cando-task">{renderWithTerminology(cd.task, `cd_${cd.id || idx}`)}</h4>
 
                                 {cd.sample && (
                                   <div className="cando-expression-box">

@@ -316,6 +316,26 @@
     ]
   },
   {
+    "id": "particula",
+    "term": "Partículas (Joshi)",
+    "kanji": "助詞",
+    "kana": "じょし",
+    "romaji": "Joshi",
+    "category": "Gramática y Morfología",
+    "short_definition": "Conectores postpuestos invariables que indican la función gramatical de las palabras (tema, sujeto, objeto, lugar).",
+    "full_explanation": "Las partículas son pilares estructurales del japonés sin correspondencia literal directa en español. Definen quién realiza la acción (が), el tema principal (は), el objeto directo (を), el destino o tiempo (に), el lugar o medio (で), o la compañía (と).",
+    "examples": [
+      {
+        "jp": "私はパンを食べます。",
+        "es": "Yo como pan (は marca el tema, を marca el objeto directo)."
+      },
+      {
+        "jp": "学校へ行きます。",
+        "es": "Voy a la escuela (へ marca la dirección del movimiento)."
+      }
+    ]
+  },
+  {
     "id": "kanji",
     "term": "Kanji",
     "kanji": "漢字",
