@@ -4461,5 +4461,3285 @@
     "example_reading": "おさきにしつれいします。おつかれさまでした。",
     "example_translation": "Con su permiso me retiro antes. ¡Buen trabajo a todos!",
     "notes": "Fórmula obligatoria de cortesía al marcharse del trabajo antes que los compañeros. La respuesta estándar es お疲れさまでした (otsukaresama deshita)."
+  },
+  {
+    "id": "v_curr_1_1_329",
+    "kanji": "おはようございます",
+    "hiragana": "おはようございます",
+    "katakana": "オハヨウゴザイマス",
+    "romaji": "ohayougozaimasu",
+    "meaning_es": "Buenos días (formal)",
+    "category": "Saludo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_1_330",
+    "kanji": "どうぞ",
+    "hiragana": "どうぞ",
+    "katakana": "ドウゾ",
+    "romaji": "douzo",
+    "meaning_es": "Por favor / Adelante",
+    "category": "Saludos y Cortesía",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_1_331",
+    "kanji": "お疲れさまでした",
+    "hiragana": "おつかれさまでした",
+    "katakana": "オツカレサマデシタ",
+    "romaji": "otsukaresamadeshita",
+    "meaning_es": "Gracias por su esfuerzo / Buen trabajo",
+    "category": "Saludos y Cortesía",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_1_332",
+    "kanji": "じゃあまた",
+    "hiragana": "じゃあまた",
+    "katakana": "ジャアマタ",
+    "romaji": "jaa mata",
+    "meaning_es": "Hasta luego / Nos vemos",
+    "category": "Saludos y Cortesía",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_2_333",
+    "kanji": "学生",
+    "hiragana": "がくせい",
+    "katakana": "ガクセイ",
+    "romaji": "gakusei",
+    "meaning_es": "Estudiante",
+    "category": "Personas y Profesiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_2_334",
+    "kanji": "はじめまして",
+    "hiragana": "はじめまして",
+    "katakana": "ハジメマシテ",
+    "romaji": "hajimemashite",
+    "meaning_es": "Mucho gusto (primera vez)",
+    "category": "Expresión",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_2_335",
+    "kanji": "会社員",
+    "hiragana": "かいしゃいん",
+    "katakana": "カイシャイン",
+    "romaji": "kaishain",
+    "meaning_es": "Empleado de empresa / Oficinista",
+    "category": "Personas y Profesiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_2_336",
+    "kanji": "日本人",
+    "hiragana": "にほんじん",
+    "katakana": "ニホンジン",
+    "romaji": "nihonjin",
+    "meaning_es": "Persona japonesa / Japonés",
+    "category": "Nacionalidades",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_2_337",
+    "kanji": "こちら",
+    "hiragana": "こちら",
+    "katakana": "コチラ",
+    "romaji": "kochira",
+    "meaning_es": "Éste / Ésta (presentación de personas)",
+    "category": "Pronombres",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_2_338",
+    "kanji": "名前",
+    "hiragana": "なまえ",
+    "katakana": "ナマエ",
+    "romaji": "namae",
+    "meaning_es": "Nombre",
+    "category": "Identidad",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_3_339",
+    "kanji": "人",
+    "hiragana": "ひと",
+    "katakana": "ヒト",
+    "romaji": "hito",
+    "meaning_es": "Persona / Sufijo nacionalidad",
+    "category": "Personas",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_3_340",
+    "kanji": "はい",
+    "hiragana": "はい",
+    "katakana": "ハイ",
+    "romaji": "hai",
+    "meaning_es": "Sí / Afirmativo",
+    "category": "Expresión",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_3_341",
+    "kanji": "いいえ",
+    "hiragana": "いいえ",
+    "katakana": "イイエ",
+    "romaji": "iie",
+    "meaning_es": "No / Negativo",
+    "category": "Expresión",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_3_342",
+    "kanji": "どこ",
+    "hiragana": "どこ",
+    "katakana": "ドコ",
+    "romaji": "doko",
+    "meaning_es": "Dónde / Qué lugar",
+    "category": "Preguntas",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_3_343",
+    "kanji": "どちら",
+    "hiragana": "どちら",
+    "katakana": "ドチラ",
+    "romaji": "dochira",
+    "meaning_es": "Dónde (forma cortés)",
+    "category": "Preguntas",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_3_344",
+    "kanji": "アメリカ",
+    "hiragana": "あめりか",
+    "katakana": "アメリカ",
+    "romaji": "amerika",
+    "meaning_es": "Estados Unidos",
+    "category": "Países",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_1_3_345",
+    "kanji": "中国",
+    "hiragana": "ちゅうごく",
+    "katakana": "チュウゴク",
+    "romaji": "chuugoku",
+    "meaning_es": "China",
+    "category": "Países",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_346",
+    "kanji": "日本語",
+    "hiragana": "にほんご",
+    "katakana": "ニホンゴ",
+    "romaji": "nihongo",
+    "meaning_es": "Idioma japonés",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_347",
+    "kanji": "英語",
+    "hiragana": "えいご",
+    "katakana": "エイゴ",
+    "romaji": "eigo",
+    "meaning_es": "Idioma inglés",
+    "category": "Educación",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_348",
+    "kanji": "何",
+    "hiragana": "なに",
+    "katakana": "ナニ",
+    "romaji": "nani",
+    "meaning_es": "¿Qué?",
+    "category": "Interrogativos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_349",
+    "kanji": "ゆっくり",
+    "hiragana": "ゆっくり",
+    "katakana": "ユックリ",
+    "romaji": "yukkuri",
+    "meaning_es": "Despacio / Con calma",
+    "category": "Adverbios",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_350",
+    "kanji": "分かります",
+    "hiragana": "わかります",
+    "katakana": "ワカリマス",
+    "romaji": "wakarimasu",
+    "meaning_es": "Entender / Comprender",
+    "category": "Comunicación",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_351",
+    "kanji": "言います",
+    "hiragana": "いいます",
+    "katakana": "イイマス",
+    "romaji": "iimasu",
+    "meaning_es": "Decir",
+    "category": "Comunicación",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_352",
+    "kanji": "言葉",
+    "hiragana": "ことば",
+    "katakana": "コトバ",
+    "romaji": "kotoba",
+    "meaning_es": "Palabra / Idioma",
+    "category": "Comunicación",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_2_1_353",
+    "kanji": "話します",
+    "hiragana": "はなします",
+    "katakana": "ハナシマス",
+    "romaji": "hanashimasu",
+    "meaning_es": "Hablar",
+    "category": "Comunicación",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_1_354",
+    "kanji": "住む",
+    "hiragana": "すむ",
+    "katakana": "スム",
+    "romaji": "sumu",
+    "meaning_es": "Vivir / Residir",
+    "category": "Verbo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_1_355",
+    "kanji": "住所",
+    "hiragana": "じゅうしょ",
+    "katakana": "ジュウショ",
+    "romaji": "juusho",
+    "meaning_es": "Dirección / Domicilio",
+    "category": "Identidad",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_1_356",
+    "kanji": "アパート",
+    "hiragana": "あぱーと",
+    "katakana": "アパート",
+    "romaji": "apaato",
+    "meaning_es": "Apartamento",
+    "category": "Vivienda",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_1_357",
+    "kanji": "東京",
+    "hiragana": "とうきょう",
+    "katakana": "トウキョウ",
+    "romaji": "toukyou",
+    "meaning_es": "Tokio",
+    "category": "Ciudades",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_1_358",
+    "kanji": "京都",
+    "hiragana": "きょうと",
+    "katakana": "キョウト",
+    "romaji": "kyouto",
+    "meaning_es": "Kioto",
+    "category": "Ciudades",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_359",
+    "kanji": "家族",
+    "hiragana": "かぞく",
+    "katakana": "カゾク",
+    "romaji": "kazoku",
+    "meaning_es": "Familia",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_360",
+    "kanji": "父",
+    "hiragana": "ちち",
+    "katakana": "チチ",
+    "romaji": "chichi",
+    "meaning_es": "Mi padre",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_361",
+    "kanji": "母",
+    "hiragana": "はは",
+    "katakana": "ハハ",
+    "romaji": "haha",
+    "meaning_es": "Mi madre",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_362",
+    "kanji": "兄",
+    "hiragana": "あに",
+    "katakana": "アニ",
+    "romaji": "ani",
+    "meaning_es": "Mi hermano mayor",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_363",
+    "kanji": "姉",
+    "hiragana": "あね",
+    "katakana": "アネ",
+    "romaji": "ane",
+    "meaning_es": "Hermana mayor",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_364",
+    "kanji": "弟",
+    "hiragana": "おとうと",
+    "katakana": "オトウト",
+    "romaji": "otouto",
+    "meaning_es": "Hermano menor",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_365",
+    "kanji": "妹",
+    "hiragana": "いもうと",
+    "katakana": "イモウト",
+    "romaji": "imouto",
+    "meaning_es": "Hermana menor",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_3_2_366",
+    "kanji": "子ども",
+    "hiragana": "こども",
+    "katakana": "コドモ",
+    "romaji": "kodomo",
+    "meaning_es": "Hijo / Niño",
+    "category": "Familia",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_4_1_367",
+    "kanji": "パン",
+    "hiragana": "ぱん",
+    "katakana": "パン",
+    "romaji": "pan",
+    "meaning_es": "Pan",
+    "category": "Comida y Bebida",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_4_2_368",
+    "kanji": "友達",
+    "hiragana": "ともだち",
+    "katakana": "トモダチ",
+    "romaji": "tomodachi",
+    "meaning_es": "Amigo / Amiga",
+    "category": "Personas",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_4_2_369",
+    "kanji": "食べます",
+    "hiragana": "たべます",
+    "katakana": "タベマス",
+    "romaji": "tabemasu",
+    "meaning_es": "Comer",
+    "category": "Verbo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_4_2_370",
+    "kanji": "飲みます",
+    "hiragana": "のみます",
+    "katakana": "ノミマス",
+    "romaji": "nomimasu",
+    "meaning_es": "Beber",
+    "category": "Verbo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_4_2_371",
+    "kanji": "晩ご飯",
+    "hiragana": "ばんごはん",
+    "katakana": "バンゴハン",
+    "romaji": "bangohan",
+    "meaning_es": "Cena",
+    "category": "Comida y Bebida",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_4_2_372",
+    "kanji": "果物",
+    "hiragana": "くだもの",
+    "katakana": "クダモノ",
+    "romaji": "kudamono",
+    "meaning_es": "Fruta",
+    "category": "Comida y Bebida",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_1_373",
+    "kanji": "メニュー",
+    "hiragana": "めにゅー",
+    "katakana": "メニュー",
+    "romaji": "menyuu",
+    "meaning_es": "Menú / Carta",
+    "category": "Restaurante",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_1_374",
+    "kanji": "ビール",
+    "hiragana": "びーる",
+    "katakana": "ビール",
+    "romaji": "biiru",
+    "meaning_es": "Cerveza",
+    "category": "Comida y Bebida",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_1_375",
+    "kanji": "ラーメン",
+    "hiragana": "らーめん",
+    "katakana": "ラーメン",
+    "romaji": "raamen",
+    "meaning_es": "Ramen",
+    "category": "Comida y Bebida",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_1_376",
+    "kanji": "店員",
+    "hiragana": "てんいん",
+    "katakana": "テンイン",
+    "romaji": "ten'in",
+    "meaning_es": "Camarero / Dependiente",
+    "category": "Personas y Profesiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_1_377",
+    "kanji": "注文",
+    "hiragana": "ちゅうもん",
+    "katakana": "チュウモン",
+    "romaji": "chuumon",
+    "meaning_es": "Pedido / Orden",
+    "category": "Restaurante",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_1_378",
+    "kanji": "おすすめ",
+    "hiragana": "おすすめ",
+    "katakana": "オススメ",
+    "romaji": "osusume",
+    "meaning_es": "Recomendación de la casa",
+    "category": "Restaurante",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_379",
+    "kanji": "一つ",
+    "hiragana": "ひとつ",
+    "katakana": "ヒトツ",
+    "romaji": "hitotsu",
+    "meaning_es": "Uno (contador general)",
+    "category": "Contador",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_380",
+    "kanji": "三つ",
+    "hiragana": "みっつ",
+    "katakana": "ミッツ",
+    "romaji": "mittsu",
+    "meaning_es": "Tres (contador nativo general)",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_381",
+    "kanji": "四つ",
+    "hiragana": "よっつ",
+    "katakana": "ヨッツ",
+    "romaji": "yottsu",
+    "meaning_es": "Cuatro (contador nativo general)",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_382",
+    "kanji": "五つ",
+    "hiragana": "いつつ",
+    "katakana": "イツツ",
+    "romaji": "itsutsu",
+    "meaning_es": "Cinco (contador nativo general)",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_383",
+    "kanji": "六つ",
+    "hiragana": "むっつ",
+    "katakana": "ムッツ",
+    "romaji": "muttsu",
+    "meaning_es": "Seis (contador nativo general)",
+    "category": "Números y Contadores",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_384",
+    "kanji": "全部",
+    "hiragana": "ぜんぶ",
+    "katakana": "ゼンブ",
+    "romaji": "zenbu",
+    "meaning_es": "Todo / En conjunto",
+    "category": "Cantidad",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_385",
+    "kanji": "お会計",
+    "hiragana": "おかいけい",
+    "katakana": "オカイケイ",
+    "romaji": "okaikei",
+    "meaning_es": "La cuenta (en restaurante)",
+    "category": "Restaurante",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_5_2_386",
+    "kanji": "別々",
+    "hiragana": "べつべつ",
+    "katakana": "ベツベツ",
+    "romaji": "betsubetsu",
+    "meaning_es": "Por separado",
+    "category": "Restaurante",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_6_1_387",
+    "kanji": "台所",
+    "hiragana": "だいどころ",
+    "katakana": "ダイドコロ",
+    "romaji": "daidokoro",
+    "meaning_es": "Cocina",
+    "category": "Vivienda",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_6_1_388",
+    "kanji": "風呂",
+    "hiragana": "ふろ",
+    "katakana": "フロ",
+    "romaji": "furo",
+    "meaning_es": "Baño / Tina de baño",
+    "category": "Vivienda",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_6_1_389",
+    "kanji": "冷蔵庫",
+    "hiragana": "れいぞうこ",
+    "katakana": "レイゾウコ",
+    "romaji": "reizouko",
+    "meaning_es": "Nevera / Frigorífico",
+    "category": "Electrodomésticos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_6_1_390",
+    "kanji": "明るい",
+    "hiragana": "あかるい",
+    "katakana": "アカルイ",
+    "romaji": "akarui",
+    "meaning_es": "Luminoso / Claro",
+    "category": "Cualidades",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_1_391",
+    "kanji": "机",
+    "hiragana": "つくえ",
+    "katakana": "ツクエ",
+    "romaji": "tsukue",
+    "meaning_es": "Escritorio / Mesa de estudio",
+    "category": "Hogar",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_1_392",
+    "kanji": "猫",
+    "hiragana": "ねこ",
+    "katakana": "ネコ",
+    "romaji": "neko",
+    "meaning_es": "Gato",
+    "category": "Animales",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_1_393",
+    "kanji": "本",
+    "hiragana": "ほん",
+    "katakana": "ホン",
+    "romaji": "hon",
+    "meaning_es": "Libro",
+    "category": "Objetos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_1_394",
+    "kanji": "ペン",
+    "hiragana": "ぺん",
+    "katakana": "ペン",
+    "romaji": "pen",
+    "meaning_es": "Bolígrafo / Pluma",
+    "category": "Objetos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_1_395",
+    "kanji": "パソコン",
+    "hiragana": "ぱそこん",
+    "katakana": "パソコン",
+    "romaji": "pasokon",
+    "meaning_es": "Ordenador / Computadora",
+    "category": "Objetos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_1_396",
+    "kanji": "下",
+    "hiragana": "した",
+    "katakana": "シタ",
+    "romaji": "shita",
+    "meaning_es": "Abajo / Debajo",
+    "category": "Posición",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_2_397",
+    "kanji": "犬",
+    "hiragana": "いぬ",
+    "katakana": "イヌ",
+    "romaji": "inu",
+    "meaning_es": "Perro",
+    "category": "Animales",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_2_398",
+    "kanji": "上",
+    "hiragana": "うえ",
+    "katakana": "ウエ",
+    "romaji": "ue",
+    "meaning_es": "Arriba / Encima",
+    "category": "Posición",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_2_399",
+    "kanji": "中",
+    "hiragana": "なか",
+    "katakana": "ナカ",
+    "romaji": "naka",
+    "meaning_es": "Dentro / En medio",
+    "category": "Posición",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_2_400",
+    "kanji": "前",
+    "hiragana": "まえ",
+    "katakana": "マエ",
+    "romaji": "mae",
+    "meaning_es": "Delante / Frente",
+    "category": "Posición",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_2_401",
+    "kanji": "後ろ",
+    "hiragana": "うしろ",
+    "katakana": "ウシロ",
+    "romaji": "ushiro",
+    "meaning_es": "Detrás",
+    "category": "Posición",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_7_2_402",
+    "kanji": "近く",
+    "hiragana": "ちかく",
+    "katakana": "チカク",
+    "romaji": "chikaku",
+    "meaning_es": "Cerca",
+    "category": "Posición",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_1_403",
+    "kanji": "月曜日",
+    "hiragana": "げつようび",
+    "katakana": "ゲツヨウビ",
+    "romaji": "getsuyoubi",
+    "meaning_es": "Lunes (Día de la Luna)",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_1_404",
+    "kanji": "何時",
+    "hiragana": "なんじ",
+    "katakana": "ナンジ",
+    "romaji": "nanji",
+    "meaning_es": "Qué hora",
+    "category": "Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_2_405",
+    "kanji": "日曜日",
+    "hiragana": "にちようび",
+    "katakana": "ニチヨウビ",
+    "romaji": "nichiyoubi",
+    "meaning_es": "Domingo (Día del Sol)",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_2_406",
+    "kanji": "今日",
+    "hiragana": "きょう",
+    "katakana": "キョウ",
+    "romaji": "kyou",
+    "meaning_es": "Hoy",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_2_407",
+    "kanji": "金曜日",
+    "hiragana": "きんようび",
+    "katakana": "キンヨウビ",
+    "romaji": "kinyoubi",
+    "meaning_es": "Viernes",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_2_408",
+    "kanji": "火曜日",
+    "hiragana": "かようび",
+    "katakana": "カヨウビ",
+    "romaji": "kayoubi",
+    "meaning_es": "Martes",
+    "category": "Días de la Semana",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_2_409",
+    "kanji": "水曜日",
+    "hiragana": "すいようび",
+    "katakana": "スイヨウビ",
+    "romaji": "suiyoubi",
+    "meaning_es": "Miércoles",
+    "category": "Días de la Semana",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_8_2_410",
+    "kanji": "木曜日",
+    "hiragana": "もくようび",
+    "katakana": "モクヨウビ",
+    "romaji": "mokuyoubi",
+    "meaning_es": "Jueves",
+    "category": "Días de la Semana",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_9_1_411",
+    "kanji": "枚",
+    "hiragana": "まい",
+    "katakana": "マイ",
+    "romaji": "mai",
+    "meaning_es": "Contador de hojas o cosas planas",
+    "category": "Contador",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_9_1_412",
+    "kanji": "コピー",
+    "hiragana": "こぴー",
+    "katakana": "コピー",
+    "romaji": "kopii",
+    "meaning_es": "Fotocopia",
+    "category": "Trabajo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_9_1_413",
+    "kanji": "書類",
+    "hiragana": "しょるい",
+    "katakana": "ショルイ",
+    "romaji": "shorui",
+    "meaning_es": "Documento / Papeles",
+    "category": "Trabajo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_9_1_414",
+    "kanji": "お願いします",
+    "hiragana": "おねがいします",
+    "katakana": "オネガイシマス",
+    "romaji": "onegaishimasu",
+    "meaning_es": "Por favor",
+    "category": "Saludos y Cortesía",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_9_1_415",
+    "kanji": "貸す",
+    "hiragana": "かす",
+    "katakana": "カス",
+    "romaji": "kasu",
+    "meaning_es": "Prestar",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_1_416",
+    "kanji": "読みます",
+    "hiragana": "よみます",
+    "katakana": "ヨミマス",
+    "romaji": "yomimasu",
+    "meaning_es": "Leer",
+    "category": "Verbo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_1_417",
+    "kanji": "聞きます",
+    "hiragana": "ききます",
+    "katakana": "キキマス",
+    "romaji": "kikimasu",
+    "meaning_es": "Escuchar",
+    "category": "Verbo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_1_418",
+    "kanji": "音楽",
+    "hiragana": "おんがく",
+    "katakana": "オンガク",
+    "romaji": "ongaku",
+    "meaning_es": "Música",
+    "category": "Aficiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_1_419",
+    "kanji": "写真",
+    "hiragana": "しゃしん",
+    "katakana": "シャシン",
+    "romaji": "shashin",
+    "meaning_es": "Fotografía",
+    "category": "Aficiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_1_420",
+    "kanji": "スポーツ",
+    "hiragana": "すぽーつ",
+    "katakana": "スポーツ",
+    "romaji": "supootsu",
+    "meaning_es": "Deporte",
+    "category": "Aficiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_1_421",
+    "kanji": "撮ります",
+    "hiragana": "とります",
+    "katakana": "トリマス",
+    "romaji": "torimasu",
+    "meaning_es": "Tomar (fotos) / Grabar",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_422",
+    "kanji": "見ます",
+    "hiragana": "みます",
+    "katakana": "ミマス",
+    "romaji": "mimasu",
+    "meaning_es": "Ver / Mirar",
+    "category": "Verbo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_423",
+    "kanji": "友だち",
+    "hiragana": "ともだち",
+    "katakana": "トモダチ",
+    "romaji": "tomodachi",
+    "meaning_es": "Amigo",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_424",
+    "kanji": "歌",
+    "hiragana": "うた",
+    "katakana": "ウタ",
+    "romaji": "uta",
+    "meaning_es": "Canción",
+    "category": "Aficiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_425",
+    "kanji": "料理",
+    "hiragana": "りょうり",
+    "katakana": "リョウリ",
+    "romaji": "ryouri",
+    "meaning_es": "Cocina / Comida preparada",
+    "category": "Aficiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_426",
+    "kanji": "ゲーム",
+    "hiragana": "げーむ",
+    "katakana": "ゲーム",
+    "romaji": "geemu",
+    "meaning_es": "Videojuego / Juego",
+    "category": "Aficiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_427",
+    "kanji": "週末",
+    "hiragana": "しゅうまつ",
+    "katakana": "シュウマツ",
+    "romaji": "shuumatsu",
+    "meaning_es": "Fin de semana",
+    "category": "Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_428",
+    "kanji": "します",
+    "hiragana": "します",
+    "katakana": "シマス",
+    "romaji": "shimasu",
+    "meaning_es": "Hacer",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_10_2_429",
+    "kanji": "遊びます",
+    "hiragana": "あそびます",
+    "katakana": "アソビマス",
+    "romaji": "asobimasu",
+    "meaning_es": "Jugar / Divertirse / Pasar el rato",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_11_1_430",
+    "kanji": "今週",
+    "hiragana": "こんしゅう",
+    "katakana": "コンシュウ",
+    "romaji": "konshuu",
+    "meaning_es": "Esta semana",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_11_1_431",
+    "kanji": "今度",
+    "hiragana": "こんど",
+    "katakana": "コンド",
+    "romaji": "kondo",
+    "meaning_es": "La próxima vez / Esta vez",
+    "category": "Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_11_1_432",
+    "kanji": "明日",
+    "hiragana": "あした",
+    "katakana": "アシタ",
+    "romaji": "ashita",
+    "meaning_es": "Mañana",
+    "category": "Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_11_1_433",
+    "kanji": "昨日",
+    "hiragana": "きのう",
+    "katakana": "キノウ",
+    "romaji": "kinou",
+    "meaning_es": "Ayer",
+    "category": "Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_11_1_434",
+    "kanji": "来週",
+    "hiragana": "らいしゅう",
+    "katakana": "ライシュウ",
+    "romaji": "raishuu",
+    "meaning_es": "La próxima semana",
+    "category": "Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_11_1_435",
+    "kanji": "コンサート",
+    "hiragana": "こんさーと",
+    "katakana": "コンサート",
+    "romaji": "konsaato",
+    "meaning_es": "Concierto",
+    "category": "Eventos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_11_1_436",
+    "kanji": "イベント",
+    "hiragana": "いべんと",
+    "katakana": "イベント",
+    "romaji": "ibento",
+    "meaning_es": "Evento",
+    "category": "Eventos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_1_437",
+    "kanji": "電車",
+    "hiragana": "でんしゃ",
+    "katakana": "デンシャ",
+    "romaji": "densha",
+    "meaning_es": "Tren eléctrico",
+    "category": "Transporte y Viajes",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_1_438",
+    "kanji": "地下鉄",
+    "hiragana": "ちかてつ",
+    "katakana": "チカテツ",
+    "romaji": "chikatetsu",
+    "meaning_es": "Metro / Subterráneo",
+    "category": "Transporte",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_1_439",
+    "kanji": "自転車",
+    "hiragana": "じてんしゃ",
+    "katakana": "ジテンシャ",
+    "romaji": "jitensha",
+    "meaning_es": "Bicicleta",
+    "category": "Transporte",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_1_440",
+    "kanji": "歩いて",
+    "hiragana": "あるいて",
+    "katakana": "アルイテ",
+    "romaji": "aruite",
+    "meaning_es": "A pie / Caminando",
+    "category": "Transporte",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_1_441",
+    "kanji": "空港",
+    "hiragana": "くうこう",
+    "katakana": "クウコウ",
+    "romaji": "kuukou",
+    "meaning_es": "Aeropuerto",
+    "category": "Lugares",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_2_442",
+    "kanji": "車",
+    "hiragana": "くるま",
+    "katakana": "クルマ",
+    "romaji": "kuruma",
+    "meaning_es": "Automóvil / Carro",
+    "category": "Transporte y Viajes",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_2_443",
+    "kanji": "時間",
+    "hiragana": "じかん",
+    "katakana": "ジカン",
+    "romaji": "jikan",
+    "meaning_es": "Tiempo / Hora",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_2_444",
+    "kanji": "午後",
+    "hiragana": "ごご",
+    "katakana": "ゴゴ",
+    "romaji": "gogo",
+    "meaning_es": "p.m. / Tarde",
+    "category": "Días, Horas y Tiempo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_2_445",
+    "kanji": "東",
+    "hiragana": "ひがし",
+    "katakana": "ヒガシ",
+    "romaji": "higashi",
+    "meaning_es": "Este",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_2_446",
+    "kanji": "どのくらい",
+    "hiragana": "どのくらい",
+    "katakana": "ドノクライ",
+    "romaji": "dono kurai",
+    "meaning_es": "Cuánto tiempo (aproximadamente)",
+    "category": "Preguntas",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_3_447",
+    "kanji": "西",
+    "hiragana": "にし",
+    "katakana": "ニシ",
+    "romaji": "nishi",
+    "meaning_es": "Oeste",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_3_448",
+    "kanji": "南",
+    "hiragana": "みなみ",
+    "katakana": "ミナミ",
+    "romaji": "minami",
+    "meaning_es": "Sur",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_3_449",
+    "kanji": "北",
+    "hiragana": "きた",
+    "katakana": "キタ",
+    "romaji": "kita",
+    "meaning_es": "Norte",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_3_450",
+    "kanji": "乗ります",
+    "hiragana": "のります",
+    "katakana": "ノリマス",
+    "romaji": "norimasu",
+    "meaning_es": "Subir a transporte",
+    "category": "Verbo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_3_451",
+    "kanji": "改札",
+    "hiragana": "かいさつ",
+    "katakana": "カイサツ",
+    "romaji": "kaisatsu",
+    "meaning_es": "Torniquete / Barrera de boletos",
+    "category": "Transporte",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_12_3_452",
+    "kanji": "番線",
+    "hiragana": "ばんせん",
+    "katakana": "バンセン",
+    "romaji": "bansen",
+    "meaning_es": "Vía / Andén número...",
+    "category": "Transporte",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_13_1_453",
+    "kanji": "信号",
+    "hiragana": "しんごう",
+    "katakana": "シンゴウ",
+    "romaji": "shingou",
+    "meaning_es": "Semáforo",
+    "category": "Ciudad",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_13_1_454",
+    "kanji": "橋",
+    "hiragana": "はし",
+    "katakana": "ハシ",
+    "romaji": "hashi",
+    "meaning_es": "Puente",
+    "category": "Ciudad",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_13_1_455",
+    "kanji": "渡る",
+    "hiragana": "わたる",
+    "katakana": "ワタル",
+    "romaji": "wataru",
+    "meaning_es": "Cruzar (una calle o puente)",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_14_1_456",
+    "kanji": "服",
+    "hiragana": "ふく",
+    "katakana": "フク",
+    "romaji": "fuku",
+    "meaning_es": "Ropa / Vestimenta",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_14_1_457",
+    "kanji": "靴",
+    "hiragana": "くつ",
+    "katakana": "クツ",
+    "romaji": "kutsu",
+    "meaning_es": "Zapatos / Calzado",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_14_1_458",
+    "kanji": "鞄",
+    "hiragana": "かばん",
+    "katakana": "カバン",
+    "romaji": "kaban",
+    "meaning_es": "Bolso / Maletín",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_14_1_459",
+    "kanji": "見せてください",
+    "hiragana": "みせてください",
+    "katakana": "ミセテクダサイ",
+    "romaji": "misete kudasai",
+    "meaning_es": "Muéstreme por favor",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_15_1_460",
+    "kanji": "半額",
+    "hiragana": "はんがく",
+    "katakana": "ハンガク",
+    "romaji": "hangaku",
+    "meaning_es": "Mitad de precio / 50% descuento",
+    "category": "Sustantivo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_15_1_461",
+    "kanji": "円",
+    "hiragana": "えん",
+    "katakana": "エン",
+    "romaji": "en",
+    "meaning_es": "Yen (moneda japonesa)",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_15_1_462",
+    "kanji": "いくら",
+    "hiragana": "いくら",
+    "katakana": "イクラ",
+    "romaji": "ikura",
+    "meaning_es": "Cuánto cuesta",
+    "category": "Preguntas",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_15_1_463",
+    "kanji": "袋",
+    "hiragana": "ふくろ",
+    "katakana": "フクロ",
+    "romaji": "fukuro",
+    "meaning_es": "Bolsa de plástico / compras",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_15_1_464",
+    "kanji": "レシート",
+    "hiragana": "れしーと",
+    "katakana": "レシート",
+    "romaji": "reshiito",
+    "meaning_es": "Recibo / Ticket",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_15_1_465",
+    "kanji": "お釣り",
+    "hiragana": "おつり",
+    "katakana": "オツリ",
+    "romaji": "otsuri",
+    "meaning_es": "Cambio / Vuelto",
+    "category": "Compras",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_15_1_466",
+    "kanji": "温める",
+    "hiragana": "あたためる",
+    "katakana": "アタタメル",
+    "romaji": "atatameru",
+    "meaning_es": "Calentar (comida en combini)",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_1_467",
+    "kanji": "高かった",
+    "hiragana": "たかかった",
+    "katakana": "タカカッタ",
+    "romaji": "takakatta",
+    "meaning_es": "Estuvo caro / Fue caro",
+    "category": "Cualidades",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_1_468",
+    "kanji": "安かった",
+    "hiragana": "やすかった",
+    "katakana": "ヤスカッタ",
+    "romaji": "yasukatta",
+    "meaning_es": "Estuvo barato / Fue barato",
+    "category": "Cualidades",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_1_469",
+    "kanji": "賑やかでした",
+    "hiragana": "にぎやかでした",
+    "katakana": "ニギヤカデシタ",
+    "romaji": "nigiyakadeshita",
+    "meaning_es": "Estuvo animado / concurrido",
+    "category": "Cualidades",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_2_470",
+    "kanji": "今年",
+    "hiragana": "ことし",
+    "katakana": "コトシ",
+    "romaji": "kotoshi",
+    "meaning_es": "Este año",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_2_471",
+    "kanji": "四月一日",
+    "hiragana": "しがつついたち",
+    "katakana": "シガツツイタチ",
+    "romaji": "shigatsu tsuitachi",
+    "meaning_es": "Primero de abril",
+    "category": "Fecha",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_2_472",
+    "kanji": "天気",
+    "hiragana": "てんき",
+    "katakana": "テンキ",
+    "romaji": "tenki",
+    "meaning_es": "Clima / Tiempo meteorológico",
+    "category": "Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_2_473",
+    "kanji": "雪",
+    "hiragana": "ゆき",
+    "katakana": "ユキ",
+    "romaji": "yuki",
+    "meaning_es": "Nieve",
+    "category": "Clima",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_2_474",
+    "kanji": "曇り",
+    "hiragana": "くもり",
+    "katakana": "クモリ",
+    "romaji": "kumori",
+    "meaning_es": "Nublado",
+    "category": "Clima",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_3_475",
+    "kanji": "空",
+    "hiragana": "そら",
+    "katakana": "ソラ",
+    "romaji": "sora",
+    "meaning_es": "Cielo",
+    "category": "Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_3_476",
+    "kanji": "白い雲",
+    "hiragana": "しろいくも",
+    "katakana": "シロイクモ",
+    "romaji": "shiroi kumo",
+    "meaning_es": "Nubes blancas",
+    "category": "Naturaleza",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_3_477",
+    "kanji": "休み",
+    "hiragana": "やすみ",
+    "katakana": "ヤスミ",
+    "romaji": "yasumi",
+    "meaning_es": "Descanso / Vacaciones",
+    "category": "Vocabulario con Kanji",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_16_3_478",
+    "kanji": "散歩",
+    "hiragana": "さんぽ",
+    "katakana": "サンポ",
+    "romaji": "sanpo",
+    "meaning_es": "Paseo / Caminata",
+    "category": "Ocio",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_17_1_479",
+    "kanji": "先生方",
+    "hiragana": "せんせいがた",
+    "katakana": "センセイガタ",
+    "romaji": "senseigata",
+    "meaning_es": "Los profesores (plural honorífico)",
+    "category": "Sustantivo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_17_1_480",
+    "kanji": "空気",
+    "hiragana": "くうき",
+    "katakana": "クウキ",
+    "romaji": "kuuki",
+    "meaning_es": "Aire / Atmósfera",
+    "category": "Sustantivo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_17_2_481",
+    "kanji": "気持ちがいい",
+    "hiragana": "きもちがいい",
+    "katakana": "キモチガイイ",
+    "romaji": "kimochi ga ii",
+    "meaning_es": "Agradable / Qué bien se siente",
+    "category": "Expresión",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_17_2_482",
+    "kanji": "計画",
+    "hiragana": "けいかく",
+    "katakana": "ケイカク",
+    "romaji": "keikaku",
+    "meaning_es": "Plan / Planificación",
+    "category": "Viajes",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_17_2_483",
+    "kanji": "荷物",
+    "hiragana": "にもつ",
+    "katakana": "ニモツ",
+    "romaji": "nimotsu",
+    "meaning_es": "Equipaje / Maleta",
+    "category": "Viajes",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_18_1_484",
+    "kanji": "お腹",
+    "hiragana": "おなか",
+    "katakana": "オナカ",
+    "romaji": "onaka",
+    "meaning_es": "Estómago / Vientre",
+    "category": "Cuerpo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_18_1_485",
+    "kanji": "喉",
+    "hiragana": "のど",
+    "katakana": "ノド",
+    "romaji": "nodo",
+    "meaning_es": "Garganta",
+    "category": "Cuerpo",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_18_1_486",
+    "kanji": "薬",
+    "hiragana": "くすり",
+    "katakana": "クスリ",
+    "romaji": "kusuri",
+    "meaning_es": "Medicina / Medicamento",
+    "category": "Salud",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_18_1_487",
+    "kanji": "病院",
+    "hiragana": "びょういん",
+    "katakana": "ビョウイン",
+    "romaji": "byouin",
+    "meaning_es": "Hospital / Clínica",
+    "category": "Lugares",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_18_1_488",
+    "kanji": "医者",
+    "hiragana": "いしゃ",
+    "katakana": "イシャ",
+    "romaji": "isha",
+    "meaning_es": "Médico / Doctor",
+    "category": "Personas y Profesiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_18_2_489",
+    "kanji": "休む",
+    "hiragana": "やすむ",
+    "katakana": "ヤスム",
+    "romaji": "yasumu",
+    "meaning_es": "Descansar / Faltar al trabajo",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_19_1_490",
+    "kanji": "教師",
+    "hiragana": "きょうし",
+    "katakana": "キョウシ",
+    "romaji": "kyoushi",
+    "meaning_es": "Profesor / Docente",
+    "category": "Personas y Profesiones",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_19_1_491",
+    "kanji": "送る",
+    "hiragana": "おくる",
+    "katakana": "オクル",
+    "romaji": "okuru",
+    "meaning_es": "Enviar (mensajes) / Despedir o acompañar",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_19_1_492",
+    "kanji": "お世話",
+    "hiragana": "おせわ",
+    "katakana": "オセワ",
+    "romaji": "osewa",
+    "meaning_es": "Atenciones / Cuidados / Ayuda recibida",
+    "category": "Saludos y Cortesía",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_19_1_493",
+    "kanji": "がんばる",
+    "hiragana": "がんばる",
+    "katakana": "ガンバル",
+    "romaji": "ganbaru",
+    "meaning_es": "Esforzarse / Dar lo mejor de uno mismo",
+    "category": "Verbos",
+    "level": "N5"
+  },
+  {
+    "id": "v_curr_20_1_494",
+    "kanji": "生活",
+    "hiragana": "せいかつ",
+    "katakana": "セイカツ",
+    "romaji": "seikatsu",
+    "meaning_es": "vida cotidiana",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_20_1_495",
+    "kanji": "到着",
+    "hiragana": "とうちゃく",
+    "katakana": "トウチャク",
+    "romaji": "touchaku",
+    "meaning_es": "Llegada",
+    "category": "Viajes",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_20_1_496",
+    "kanji": "職場",
+    "hiragana": "しょくば",
+    "katakana": "ショクバ",
+    "romaji": "shokuba",
+    "meaning_es": "Lugar de trabajo",
+    "category": "Trabajo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_20_1_497",
+    "kanji": "同僚",
+    "hiragana": "どうりょう",
+    "katakana": "ドウリョウ",
+    "romaji": "douryou",
+    "meaning_es": "Compañero de trabajo / Colega",
+    "category": "Personas",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_20_2_498",
+    "kanji": "大変",
+    "hiragana": "たいへん",
+    "katakana": "タイヘン",
+    "romaji": "taihen",
+    "meaning_es": "duro / difícil",
+    "category": "Adjetivo -na",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_20_2_499",
+    "kanji": "働く",
+    "hiragana": "はたらく",
+    "katakana": "ハタラク",
+    "romaji": "hataraku",
+    "meaning_es": "Trabajar / Laborar",
+    "category": "Trabajo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_1_500",
+    "kanji": "アレルギー",
+    "hiragana": "あれるぎー",
+    "katakana": "アレルギー",
+    "romaji": "arerugi-",
+    "meaning_es": "alergia",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_1_501",
+    "kanji": "牛肉",
+    "hiragana": "ぎゅうにく",
+    "katakana": "ギュウニク",
+    "romaji": "gyuuniku",
+    "meaning_es": "Carne de vacuno",
+    "category": "Comida",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_1_502",
+    "kanji": "食べられる",
+    "hiragana": "たべられる",
+    "katakana": "タベラレル",
+    "romaji": "taberareru",
+    "meaning_es": "Poder comer (forma potencial)",
+    "category": "Comida",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_1_503",
+    "kanji": "確認",
+    "hiragana": "かくにん",
+    "katakana": "カクニン",
+    "romaji": "kakunin",
+    "meaning_es": "Confirmación / Verificación",
+    "category": "Comunicación",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_1_504",
+    "kanji": "苦手",
+    "hiragana": "にがて",
+    "katakana": "ニガテ",
+    "romaji": "nigate",
+    "meaning_es": "No ser afín a / Darse mal / No tolerar",
+    "category": "Cualidades",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_2_505",
+    "kanji": "かける",
+    "hiragana": "かける",
+    "katakana": "カケル",
+    "romaji": "kakeru",
+    "meaning_es": "echar encima / rociar",
+    "category": "Verbo Ichidan",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_2_506",
+    "kanji": "醤油",
+    "hiragana": "しょうゆ",
+    "katakana": "ショウユ",
+    "romaji": "shouyu",
+    "meaning_es": "Salsa de soja",
+    "category": "Gastronomía",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_2_507",
+    "kanji": "味",
+    "hiragana": "あじ",
+    "katakana": "アジ",
+    "romaji": "aji",
+    "meaning_es": "Sabor / Gusto",
+    "category": "Gastronomía",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_21_2_508",
+    "kanji": "召し上がる",
+    "hiragana": "めしあがる",
+    "katakana": "メシアガル",
+    "romaji": "meshiagaru",
+    "meaning_es": "Comer / Degustar (lenguaje honorífico)",
+    "category": "Restaurante",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_22_1_509",
+    "kanji": "新幹線",
+    "hiragana": "しんかんせん",
+    "katakana": "シンカンセン",
+    "romaji": "shinkansen",
+    "meaning_es": "Tren bala (Shinkansen)",
+    "category": "Transporte",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_22_1_510",
+    "kanji": "ホテル",
+    "hiragana": "ほてる",
+    "katakana": "ホテル",
+    "romaji": "hoteru",
+    "meaning_es": "Hotel",
+    "category": "Viajes",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_22_2_511",
+    "kanji": "案内",
+    "hiragana": "あんない",
+    "katakana": "アンナイ",
+    "romaji": "annai",
+    "meaning_es": "guía / aviso",
+    "category": "Sustantivo verbal",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_22_2_512",
+    "kanji": "地元",
+    "hiragana": "じもと",
+    "katakana": "ジモト",
+    "romaji": "jimoto",
+    "meaning_es": "Local / De la zona",
+    "category": "Lugares",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_22_2_513",
+    "kanji": "思い出",
+    "hiragana": "おもいで",
+    "katakana": "オモイデ",
+    "romaji": "omoide",
+    "meaning_es": "Recuerdo / Memoria",
+    "category": "Viajes",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_22_2_514",
+    "kanji": "満足",
+    "hiragana": "まんぞく",
+    "katakana": "マンゾク",
+    "romaji": "manzoku",
+    "meaning_es": "Satisfacción",
+    "category": "Sentimientos",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_1_515",
+    "kanji": "雨天",
+    "hiragana": "うてん",
+    "katakana": "ウテン",
+    "romaji": "uten",
+    "meaning_es": "Tiempo lluvioso",
+    "category": "Clima",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_1_516",
+    "kanji": "延期",
+    "hiragana": "えんき",
+    "katakana": "エンキ",
+    "romaji": "enki",
+    "meaning_es": "Aplazamiento / Postergación",
+    "category": "Eventos",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_1_517",
+    "kanji": "集合",
+    "hiragana": "しゅうごう",
+    "katakana": "シュウゴウ",
+    "romaji": "shuugou",
+    "meaning_es": "Reunión / Encuentro",
+    "category": "Eventos",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_1_518",
+    "kanji": "場所",
+    "hiragana": "ばしょ",
+    "katakana": "バショ",
+    "romaji": "basho",
+    "meaning_es": "Lugar / Sitio",
+    "category": "Lugares",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_2_519",
+    "kanji": "案内所",
+    "hiragana": "あんないじょ",
+    "katakana": "アンナイジョ",
+    "romaji": "annaijo",
+    "meaning_es": "centro de información",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_2_520",
+    "kanji": "ボランティア",
+    "hiragana": "ぼらんてぃあ",
+    "katakana": "ボランティア",
+    "romaji": "boranteia",
+    "meaning_es": "voluntariado",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_2_521",
+    "kanji": "ごみ箱",
+    "hiragana": "ごみばこ",
+    "katakana": "ゴミバコ",
+    "romaji": "gomibako",
+    "meaning_es": "Papelera / Contenedor de basura",
+    "category": "Vida Diaria",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_2_522",
+    "kanji": "手伝い",
+    "hiragana": "てつだい",
+    "katakana": "テツダイ",
+    "romaji": "tetsudai",
+    "meaning_es": "Ayuda / Asistencia",
+    "category": "Sociedad",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_2_523",
+    "kanji": "受付",
+    "hiragana": "うけつけ",
+    "katakana": "ウケツケ",
+    "romaji": "uketsuke",
+    "meaning_es": "Recepción / Mostrador de entrada",
+    "category": "Lugares",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_2_524",
+    "kanji": "無料",
+    "hiragana": "むりょう",
+    "katakana": "ムリョウ",
+    "romaji": "muryou",
+    "meaning_es": "Gratuito / Sin costo",
+    "category": "Economía",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_23_2_525",
+    "kanji": "探す",
+    "hiragana": "さがす",
+    "katakana": "サガス",
+    "romaji": "sagasu",
+    "meaning_es": "Buscar",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_1_526",
+    "kanji": "スーツ",
+    "hiragana": "すーつ",
+    "katakana": "スーツ",
+    "romaji": "su-tsu",
+    "meaning_es": "traje occidental formal",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_1_527",
+    "kanji": "ネクタイ",
+    "hiragana": "ねくたい",
+    "katakana": "ネクタイ",
+    "romaji": "nekutai",
+    "meaning_es": "Corbata",
+    "category": "Ropa",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_1_528",
+    "kanji": "締める",
+    "hiragana": "しめる",
+    "katakana": "シメル",
+    "romaji": "shimeru",
+    "meaning_es": "Atar / Ajustarse la corbata",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_1_529",
+    "kanji": "礼儀",
+    "hiragana": "れいぎ",
+    "katakana": "レイギ",
+    "romaji": "reigi",
+    "meaning_es": "Cortesía / Etiqueta social",
+    "category": "Cultura",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_2_530",
+    "kanji": "おせち",
+    "hiragana": "おせち",
+    "katakana": "オセチ",
+    "romaji": "osechi",
+    "meaning_es": "comida tradicional de Año Nuevo",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_2_531",
+    "kanji": "手袋",
+    "hiragana": "てぶくろ",
+    "katakana": "テブクロ",
+    "romaji": "tebukuro",
+    "meaning_es": "Guantes",
+    "category": "Ropa",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_2_532",
+    "kanji": "はめる",
+    "hiragana": "はめる",
+    "katakana": "ハメル",
+    "romaji": "hameru",
+    "meaning_es": "Ponerse guantes / anillo",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_2_533",
+    "kanji": "新年",
+    "hiragana": "しんねん",
+    "katakana": "シンネン",
+    "romaji": "shinnen",
+    "meaning_es": "Año Nuevo",
+    "category": "Tradición",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_2_534",
+    "kanji": "挨拶",
+    "hiragana": "あいさつ",
+    "katakana": "アイサツ",
+    "romaji": "aisatsu",
+    "meaning_es": "Saludo ceremonial",
+    "category": "Cortesía",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_24_2_535",
+    "kanji": "出かける",
+    "hiragana": "でかける",
+    "katakana": "デカケル",
+    "romaji": "dekakeru",
+    "meaning_es": "Salir de casa",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_1_536",
+    "kanji": "性能",
+    "hiragana": "せいのう",
+    "katakana": "セイノウ",
+    "romaji": "seinou",
+    "meaning_es": "rendimiento / prestaciones",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_1_537",
+    "kanji": "滑る",
+    "hiragana": "すべる",
+    "katakana": "スベル",
+    "romaji": "suberu",
+    "meaning_es": "Resbalar / Deslizarse",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_1_538",
+    "kanji": "値段",
+    "hiragana": "ねだん",
+    "katakana": "ネダン",
+    "romaji": "nedan",
+    "meaning_es": "Precio / Coste",
+    "category": "Compras",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_2_539",
+    "kanji": "アプリ",
+    "hiragana": "あぷり",
+    "katakana": "アプリ",
+    "romaji": "apuri",
+    "meaning_es": "aplicación",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_2_540",
+    "kanji": "鍵",
+    "hiragana": "かぎ",
+    "katakana": "カギ",
+    "romaji": "kagi",
+    "meaning_es": "Llave / Cerradura",
+    "category": "Hogar",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_2_541",
+    "kanji": "ポイント",
+    "hiragana": "ぽいんと",
+    "katakana": "ポイント",
+    "romaji": "pointo",
+    "meaning_es": "Puntos de fidelidad de compra",
+    "category": "Compras",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_2_542",
+    "kanji": "レジ",
+    "hiragana": "れじ",
+    "katakana": "レジ",
+    "romaji": "reji",
+    "meaning_es": "Caja registradora",
+    "category": "Compras",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_25_2_543",
+    "kanji": "失くす",
+    "hiragana": "なくす",
+    "katakana": "ナクス",
+    "romaji": "nakusu",
+    "meaning_es": "Extraviar / Perder un objeto",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_1_544",
+    "kanji": "資料",
+    "hiragana": "しりょう",
+    "katakana": "シリョウ",
+    "romaji": "shiryou",
+    "meaning_es": "Documentos / Material informativo",
+    "category": "Oficina",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_1_545",
+    "kanji": "並べる",
+    "hiragana": "ならべる",
+    "katakana": "ナラベル",
+    "romaji": "naraberu",
+    "meaning_es": "Ordenar / Disponer en fila",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_1_546",
+    "kanji": "窓口",
+    "hiragana": "まどぐち",
+    "katakana": "マドグチ",
+    "romaji": "madoguchi",
+    "meaning_es": "Ventanilla de atención al público",
+    "category": "Servicios",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_1_547",
+    "kanji": "提出",
+    "hiragana": "ていしゅつ",
+    "katakana": "テイシュツ",
+    "romaji": "teishutsu",
+    "meaning_es": "Entrega / Presentación de trámites",
+    "category": "Servicios",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_2_548",
+    "kanji": "前髪",
+    "hiragana": "まえがみ",
+    "katakana": "マエガミ",
+    "romaji": "maegami",
+    "meaning_es": "flequillo",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_2_549",
+    "kanji": "短く",
+    "hiragana": "みじかく",
+    "katakana": "ミジカク",
+    "romaji": "mijikaku",
+    "meaning_es": "de forma corta",
+    "category": "Adverbio",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_2_550",
+    "kanji": "髪",
+    "hiragana": "かみ",
+    "katakana": "カミ",
+    "romaji": "kami",
+    "meaning_es": "Cabello / Pelo",
+    "category": "Cuerpo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_2_551",
+    "kanji": "すく",
+    "hiragana": "すく",
+    "katakana": "スク",
+    "romaji": "suku",
+    "meaning_es": "Vaciar / Entresacar cabello",
+    "category": "Estética",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_26_2_552",
+    "kanji": "希望",
+    "hiragana": "きぼう",
+    "katakana": "キボウ",
+    "romaji": "kibou",
+    "meaning_es": "Preferencia / Deseo",
+    "category": "Comunicación",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_553",
+    "kanji": "消す",
+    "hiragana": "けす",
+    "katakana": "ケス",
+    "romaji": "kesu",
+    "meaning_es": "apagar",
+    "category": "Verbo Godan",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_554",
+    "kanji": "ごみ",
+    "hiragana": "ごみ",
+    "katakana": "ゴミ",
+    "romaji": "gomi",
+    "meaning_es": "basura",
+    "category": "Sustantivo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_555",
+    "kanji": "もったいない",
+    "hiragana": "もったいない",
+    "katakana": "モッタイナイ",
+    "romaji": "mottainai",
+    "meaning_es": "desperdicio / qué lástima",
+    "category": "Adjetivo い",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_556",
+    "kanji": "ドア",
+    "hiragana": "どあ",
+    "katakana": "ドア",
+    "romaji": "doa",
+    "meaning_es": "Puerta",
+    "category": "Hogar",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_557",
+    "kanji": "開ける",
+    "hiragana": "あける",
+    "katakana": "アケル",
+    "romaji": "akeru",
+    "meaning_es": "Abrir",
+    "category": "Acciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_558",
+    "kanji": "電気",
+    "hiragana": "でんき",
+    "katakana": "デンキ",
+    "romaji": "denki",
+    "meaning_es": "Electricidad / Luz eléctrica",
+    "category": "Hogar",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_559",
+    "kanji": "資源",
+    "hiragana": "しげん",
+    "katakana": "シゲン",
+    "romaji": "shigen",
+    "meaning_es": "Recursos naturales / reciclables",
+    "category": "Medio Ambiente",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_1_560",
+    "kanji": "節約",
+    "hiragana": "せつやく",
+    "katakana": "セツヤク",
+    "romaji": "setsuyaku",
+    "meaning_es": "Ahorro / Consumo moderado",
+    "category": "Sostenibilidad",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_2_561",
+    "kanji": "頭",
+    "hiragana": "あたま",
+    "katakana": "アタマ",
+    "romaji": "atama",
+    "meaning_es": "Cabeza",
+    "category": "Cuerpo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_2_562",
+    "kanji": "保護",
+    "hiragana": "ほご",
+    "katakana": "ホゴ",
+    "romaji": "hogo",
+    "meaning_es": "Protección / Amparo",
+    "category": "Seguridad",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_2_563",
+    "kanji": "収まる",
+    "hiragana": "おさまる",
+    "katakana": "オサマル",
+    "romaji": "osamaru",
+    "meaning_es": "Calmarse / Cesar (un temblor)",
+    "category": "Naturaleza",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_27_2_564",
+    "kanji": "非常口",
+    "hiragana": "ひじょうぐち",
+    "katakana": "ヒジョウグチ",
+    "romaji": "hijouguchi",
+    "meaning_es": "Salida de emergencia",
+    "category": "Seguridad",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_1_565",
+    "kanji": "習慣",
+    "hiragana": "しゅうかん",
+    "katakana": "シュウカン",
+    "romaji": "shuukan",
+    "meaning_es": "Costumbre / Hábito sociocultural",
+    "category": "Cultura",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_1_566",
+    "kanji": "理解",
+    "hiragana": "りかい",
+    "katakana": "リカイ",
+    "romaji": "rikai",
+    "meaning_es": "Comprensión / Entendimiento",
+    "category": "Mente",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_1_567",
+    "kanji": "できる",
+    "hiragana": "できる",
+    "katakana": "デキル",
+    "romaji": "dekiru",
+    "meaning_es": "Ser capaz / Lograr hacer",
+    "category": "Capacidades",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_1_568",
+    "kanji": "独立",
+    "hiragana": "どくりつ",
+    "katakana": "ドクリツ",
+    "romaji": "dokuritsu",
+    "meaning_es": "Independencia laboral o personal",
+    "category": "Metas",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_1_569",
+    "kanji": "努力",
+    "hiragana": "どりょく",
+    "katakana": "ドリョク",
+    "romaji": "doryoku",
+    "meaning_es": "Esfuerzo continuado",
+    "category": "Metas",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_2_570",
+    "kanji": "感謝",
+    "hiragana": "かんしゃ",
+    "katakana": "カンシャ",
+    "romaji": "kansha",
+    "meaning_es": "agradecimiento sincero",
+    "category": "Sustantivo verbal",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_2_571",
+    "kanji": "来年",
+    "hiragana": "らいねん",
+    "katakana": "ライネン",
+    "romaji": "rainen",
+    "meaning_es": "El año próximo",
+    "category": "Tiempo",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_2_572",
+    "kanji": "受験",
+    "hiragana": "じゅけん",
+    "katakana": "ジュケン",
+    "romaji": "juken",
+    "meaning_es": "Presentarse a examen oficial",
+    "category": "Educación",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_2_573",
+    "kanji": "応援",
+    "hiragana": "おうえん",
+    "katakana": "オウエン",
+    "romaji": "ouen",
+    "meaning_es": "Apoyo / Aliento moral",
+    "category": "Relaciones",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_28_2_574",
+    "kanji": "成功",
+    "hiragana": "せいこう",
+    "katakana": "セイコウ",
+    "romaji": "seikou",
+    "meaning_es": "Éxito / Triunfo",
+    "category": "Metas",
+    "level": "N4"
+  },
+  {
+    "id": "v_curr_29_1_575",
+    "kanji": "ライブ",
+    "hiragana": "らいぶ",
+    "katakana": "ライブ",
+    "romaji": "raibu",
+    "meaning_es": "Concierto en vivo",
+    "category": "Música",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_1_576",
+    "kanji": "チケット",
+    "hiragana": "ちけっと",
+    "katakana": "チケット",
+    "romaji": "chiketto",
+    "meaning_es": "Entrada / Boleto de espectáculo",
+    "category": "Ocio",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_1_577",
+    "kanji": "取る",
+    "hiragana": "とる",
+    "katakana": "トル",
+    "romaji": "toru",
+    "meaning_es": "Conseguir / Adquirir boletos",
+    "category": "Acciones",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_1_578",
+    "kanji": "話題",
+    "hiragana": "わだい",
+    "katakana": "ワダイ",
+    "romaji": "wadai",
+    "meaning_es": "Tema de conversación de moda",
+    "category": "Comunicación",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_1_579",
+    "kanji": "ファン",
+    "hiragana": "ふぁん",
+    "katakana": "ファン",
+    "romaji": "fan",
+    "meaning_es": "Aficionado / Seguidor / Fan",
+    "category": "Ocio",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_2_580",
+    "kanji": "意外",
+    "hiragana": "いがい",
+    "katakana": "イガイ",
+    "romaji": "igai",
+    "meaning_es": "inesperado / sorprendente",
+    "category": "Adjetivo な",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_2_581",
+    "kanji": "結末",
+    "hiragana": "けつまつ",
+    "katakana": "ケツマツ",
+    "romaji": "ketsumatsu",
+    "meaning_es": "desenlace / final",
+    "category": "Sustantivo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_2_582",
+    "kanji": "漫画",
+    "hiragana": "まんが",
+    "katakana": "マンガ",
+    "romaji": "manga",
+    "meaning_es": "Cómic japonés / Manga",
+    "category": "Cultura Pop",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_2_583",
+    "kanji": "主人公",
+    "hiragana": "しゅじんこう",
+    "katakana": "シュジンコウ",
+    "romaji": "shujinkou",
+    "meaning_es": "Personaje protagonista",
+    "category": "Narrativa",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_2_584",
+    "kanji": "成長",
+    "hiragana": "せいちょう",
+    "katakana": "セイチョウ",
+    "romaji": "seichou",
+    "meaning_es": "Maduración / Crecimiento personal",
+    "category": "Narrativa",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_2_585",
+    "kanji": "描く",
+    "hiragana": "えがく",
+    "katakana": "エガク",
+    "romaji": "egaku",
+    "meaning_es": "Retratar / Dibujar una historia",
+    "category": "Arte",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_29_2_586",
+    "kanji": "監督",
+    "hiragana": "かんとく",
+    "katakana": "カントク",
+    "romaji": "kantoku",
+    "meaning_es": "Director de cine o animación",
+    "category": "Cine",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_1_587",
+    "kanji": "業者",
+    "hiragana": "ぎょうしゃ",
+    "katakana": "ギョウシャ",
+    "romaji": "gyousha",
+    "meaning_es": "técnico / contratista",
+    "category": "Sustantivo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_1_588",
+    "kanji": "苦情",
+    "hiragana": "くじょう",
+    "katakana": "クジョウ",
+    "romaji": "kujou",
+    "meaning_es": "queja / reclamación",
+    "category": "Sustantivo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_1_589",
+    "kanji": "調子",
+    "hiragana": "ちょうし",
+    "katakana": "チョウシ",
+    "romaji": "choushi",
+    "meaning_es": "Estado de funcionamiento",
+    "category": "Condición",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_1_590",
+    "kanji": "不動産",
+    "hiragana": "ふどうさん",
+    "katakana": "フドウサン",
+    "romaji": "fudousan",
+    "meaning_es": "Agencia inmobiliaria",
+    "category": "Vivienda",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_1_591",
+    "kanji": "水漏れ",
+    "hiragana": "みずもれ",
+    "katakana": "ミズモレ",
+    "romaji": "mizumore",
+    "meaning_es": "Fuga de agua / Gotera",
+    "category": "Averías",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_2_592",
+    "kanji": "南向き",
+    "hiragana": "みなみむき",
+    "katakana": "ミナミムキ",
+    "romaji": "minamimuki",
+    "meaning_es": "Orientación sur (máxima luz solar)",
+    "category": "Vivienda",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_2_593",
+    "kanji": "日当たり",
+    "hiragana": "ひあたり",
+    "katakana": "ヒアタリ",
+    "romaji": "hiatari",
+    "meaning_es": "Exposición y entrada de sol",
+    "category": "Vivienda",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_30_2_594",
+    "kanji": "契約",
+    "hiragana": "けいやく",
+    "katakana": "ケイヤク",
+    "romaji": "keiyaku",
+    "meaning_es": "Firma de contrato de arrendamiento",
+    "category": "Legal",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_1_595",
+    "kanji": "塩分",
+    "hiragana": "えんぶん",
+    "katakana": "エンブン",
+    "romaji": "enbun",
+    "meaning_es": "Salinidad / Cantidad de sal",
+    "category": "Nutrición",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_1_596",
+    "kanji": "気をつける",
+    "hiragana": "きをつける",
+    "katakana": "キヲツケル",
+    "romaji": "ki o tsukeru",
+    "meaning_es": "Tener cuidado / Prestar atención",
+    "category": "Salud",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_1_597",
+    "kanji": "レシピ",
+    "hiragana": "れしぴ",
+    "katakana": "レシピ",
+    "romaji": "reshipi",
+    "meaning_es": "Receta de cocina",
+    "category": "Cocina",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_1_598",
+    "kanji": "味付け",
+    "hiragana": "あじつけ",
+    "katakana": "アジツケ",
+    "romaji": "ajitsuke",
+    "meaning_es": "Sazón / Condimento culinario",
+    "category": "Cocina",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_2_599",
+    "kanji": "本場",
+    "hiragana": "ほんば",
+    "katakana": "ホンバ",
+    "romaji": "honba",
+    "meaning_es": "lugar de origen auténtico",
+    "category": "Sustantivo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_2_600",
+    "kanji": "うどん",
+    "hiragana": "うどん",
+    "katakana": "ウドン",
+    "romaji": "udon",
+    "meaning_es": "Fideos gruesos udon",
+    "category": "Gastronomía",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_2_601",
+    "kanji": "コシ",
+    "hiragana": "こし",
+    "katakana": "コシ",
+    "romaji": "koshi",
+    "meaning_es": "Firmeza y elasticidad al dente de los fideos",
+    "category": "Gastronomía",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_2_602",
+    "kanji": "味わう",
+    "hiragana": "あじわう",
+    "katakana": "アジワウ",
+    "romaji": "ajiwau",
+    "meaning_es": "Saborear / Degustar con deleite",
+    "category": "Gastronomía",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_2_603",
+    "kanji": "旬",
+    "hiragana": "しゅん",
+    "katakana": "シュン",
+    "romaji": "shun",
+    "meaning_es": "Temporada óptima de un alimento",
+    "category": "Gastronomía",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_31_2_604",
+    "kanji": "食文化",
+    "hiragana": "しょくぶんか",
+    "katakana": "ショクブンカ",
+    "romaji": "shokubunka",
+    "meaning_es": "Cultura gastronómica autóctona",
+    "category": "Cultura",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_32_1_605",
+    "kanji": "親しい",
+    "hiragana": "したしい",
+    "katakana": "シタシイ",
+    "romaji": "shitashii",
+    "meaning_es": "cercano / íntimo",
+    "category": "Adjetivo い",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_32_1_606",
+    "kanji": "気軽",
+    "hiragana": "きがる",
+    "katakana": "キガル",
+    "romaji": "kigaru",
+    "meaning_es": "despreocupado / accesible",
+    "category": "Adjetivo な",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_32_1_607",
+    "kanji": "助け合う",
+    "hiragana": "たすけあう",
+    "katakana": "タスケアウ",
+    "romaji": "tasukeau",
+    "meaning_es": "Ayudarse y cooperar mutuamente",
+    "category": "Comunidad",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_32_1_608",
+    "kanji": "関係",
+    "hiragana": "かんけい",
+    "katakana": "カンケイ",
+    "romaji": "kankei",
+    "meaning_es": "Vínculo / Relación humana",
+    "category": "Sociedad",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_32_1_609",
+    "kanji": "サークル",
+    "hiragana": "さーくる",
+    "katakana": "サークル",
+    "romaji": "saakuru",
+    "meaning_es": "Club o agrupación aficionada",
+    "category": "Comunidad",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_32_2_610",
+    "kanji": "使う",
+    "hiragana": "つかう",
+    "katakana": "ツカウ",
+    "romaji": "tsukau",
+    "meaning_es": "Utilizar / Disponer de",
+    "category": "Acciones",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_32_2_611",
+    "kanji": "お礼",
+    "hiragana": "おれい",
+    "katakana": "オレイ",
+    "romaji": "orei",
+    "meaning_es": "Muestra de gratitud / Agradecimiento",
+    "category": "Cortesía",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_1_612",
+    "kanji": "きっかけ",
+    "hiragana": "きっかけ",
+    "katakana": "キッカケ",
+    "romaji": "kikkake",
+    "meaning_es": "detonante / ocasión",
+    "category": "Sustantivo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_1_613",
+    "kanji": "友人",
+    "hiragana": "ゆうじん",
+    "katakana": "ユウジン",
+    "romaji": "yuujin",
+    "meaning_es": "Amigo / Conocido",
+    "category": "Personas",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_1_614",
+    "kanji": "誘う",
+    "hiragana": "さそう",
+    "katakana": "サソウ",
+    "romaji": "sasou",
+    "meaning_es": "Invitar / Animar a acompañar",
+    "category": "Comunicación",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_1_615",
+    "kanji": "茶道",
+    "hiragana": "さどう",
+    "katakana": "サドウ",
+    "romaji": "sadou",
+    "meaning_es": "Ceremonia japonesa del té",
+    "category": "Tradición",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_1_616",
+    "kanji": "習う",
+    "hiragana": "ならう",
+    "katakana": "ナラウ",
+    "romaji": "narau",
+    "meaning_es": "Aprender mediante práctica y guía",
+    "category": "Educación",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_1_617",
+    "kanji": "始める",
+    "hiragana": "はじめる",
+    "katakana": "ハジメル",
+    "romaji": "hajimeru",
+    "meaning_es": "Comenzar una disciplina",
+    "category": "Acciones",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_2_618",
+    "kanji": "方法",
+    "hiragana": "ほうほう",
+    "katakana": "ホウホウ",
+    "romaji": "houhou",
+    "meaning_es": "método / vía",
+    "category": "Sustantivo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_2_619",
+    "kanji": "活用",
+    "hiragana": "かつよう",
+    "katakana": "カツヨウ",
+    "romaji": "katsuyou",
+    "meaning_es": "Aprovechamiento práctico / Uso eficaz",
+    "category": "Estudio",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_2_620",
+    "kanji": "隙間時間",
+    "hiragana": "すきまじかん",
+    "katakana": "スキマジカン",
+    "romaji": "sukimajikan",
+    "meaning_es": "Tiempos muertos / Huecos de tiempo libre",
+    "category": "Gestión",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_2_621",
+    "kanji": "有効",
+    "hiragana": "ゆうこう",
+    "katakana": "ユウコウ",
+    "romaji": "yuukou",
+    "meaning_es": "Eficaz / Válido / Provechoso",
+    "category": "Cualidades",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_33_2_622",
+    "kanji": "集中",
+    "hiragana": "しゅうちゅう",
+    "katakana": "シュウチュウ",
+    "romaji": "shuuchuu",
+    "meaning_es": "Concentración mental",
+    "category": "Estudio",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_1_623",
+    "kanji": "警察",
+    "hiragana": "けいさつ",
+    "katakana": "ケイサツ",
+    "romaji": "keisatsu",
+    "meaning_es": "policía",
+    "category": "Sustantivo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_1_624",
+    "kanji": "届ける",
+    "hiragana": "とどける",
+    "katakana": "トドケル",
+    "romaji": "todokeru",
+    "meaning_es": "entregar / reportar",
+    "category": "Verbo Ichidan",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_1_625",
+    "kanji": "離れる",
+    "hiragana": "はなれる",
+    "katakana": "ハナレル",
+    "romaji": "hanareru",
+    "meaning_es": "Alejarse / Distanciarse de un lugar",
+    "category": "Seguridad",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_1_626",
+    "kanji": "事故",
+    "hiragana": "じこ",
+    "katakana": "ジコ",
+    "romaji": "jiko",
+    "meaning_es": "Accidente vial o laboral",
+    "category": "Emergencias",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_1_627",
+    "kanji": "通報",
+    "hiragana": "つうほう",
+    "katakana": "ツウホウ",
+    "romaji": "tsuuhou",
+    "meaning_es": "Aviso urgente a la policía o bomberos",
+    "category": "Emergencias",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_2_628",
+    "kanji": "請求",
+    "hiragana": "せいきゅう",
+    "katakana": "セイキュウ",
+    "romaji": "seikyuu",
+    "meaning_es": "Cobro / Facturación exigida",
+    "category": "Finanzas",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_2_629",
+    "kanji": "身に覚え",
+    "hiragana": "みにおぼえ",
+    "katakana": "ミニオボエ",
+    "romaji": "minioboe",
+    "meaning_es": "Recuerdo de haber incurrido en algo",
+    "category": "Legal",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_34_2_630",
+    "kanji": "消費者センター",
+    "hiragana": "しょうひしゃせんたー",
+    "katakana": "ショウヒシャセンター",
+    "romaji": "shouhisha sentaa",
+    "meaning_es": "Oficina de defensa del consumidor",
+    "category": "Instituciones",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_1_631",
+    "kanji": "末永く",
+    "hiragana": "すえながく",
+    "katakana": "スエナガク",
+    "romaji": "suenagaku",
+    "meaning_es": "Por siempre / Por dilatados años venideros",
+    "category": "Cortesía",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_1_632",
+    "kanji": "幸せ",
+    "hiragana": "しあわせ",
+    "katakana": "シアワセ",
+    "romaji": "shiawase",
+    "meaning_es": "Felicidad y dicha conyugal",
+    "category": "Vida",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_1_633",
+    "kanji": "招待",
+    "hiragana": "しょうたい",
+    "katakana": "ショウタイ",
+    "romaji": "shoutai",
+    "meaning_es": "Invitación a ceremonia",
+    "category": "Eventos",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_1_634",
+    "kanji": "プレゼント",
+    "hiragana": "ぷれぜんと",
+    "katakana": "プレゼント",
+    "romaji": "purezento",
+    "meaning_es": "Obsequio / Regalo nupcial",
+    "category": "Costumbres",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_2_635",
+    "kanji": "大切",
+    "hiragana": "たいせつ",
+    "katakana": "タイセツ",
+    "romaji": "taisetsu",
+    "meaning_es": "importante / preciado",
+    "category": "Adjetivo -na",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_2_636",
+    "kanji": "困る",
+    "hiragana": "こまる",
+    "katakana": "コマル",
+    "romaji": "komaru",
+    "meaning_es": "Encontrarse en aprietos o dificultades",
+    "category": "Emociones",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_2_637",
+    "kanji": "いつでも",
+    "hiragana": "いつでも",
+    "katakana": "イツデモ",
+    "romaji": "itsudemo",
+    "meaning_es": "En cualquier momento / Siempre que haga falta",
+    "category": "Tiempo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_2_638",
+    "kanji": "気持ち",
+    "hiragana": "きもち",
+    "katakana": "キモチ",
+    "romaji": "kimochi",
+    "meaning_es": "Sentimientos y ánimo interior",
+    "category": "Psicología",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_35_2_639",
+    "kanji": "アドバイス",
+    "hiragana": "あどばいす",
+    "katakana": "アドバイス",
+    "romaji": "adobaisu",
+    "meaning_es": "Consejo prudencial y orientación",
+    "category": "Relaciones",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_1_640",
+    "kanji": "城下町",
+    "hiragana": "じょうかまち",
+    "katakana": "ジョウカマチ",
+    "romaji": "joukamachi",
+    "meaning_es": "Ciudad histórica construida al pie de un castillo",
+    "category": "Geografía",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_1_641",
+    "kanji": "街並み",
+    "hiragana": "まちなみ",
+    "katakana": "マチナミ",
+    "romaji": "machinami",
+    "meaning_es": "Paisaje urbano y fisonomía de las calles",
+    "category": "Turismo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_1_642",
+    "kanji": "散策",
+    "hiragana": "さんさく",
+    "katakana": "サンサク",
+    "romaji": "sansaku",
+    "meaning_es": "Paseo relajado para disfrutar del entorno",
+    "category": "Turismo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_1_643",
+    "kanji": "観光",
+    "hiragana": "かんこう",
+    "katakana": "カンコウ",
+    "romaji": "kankou",
+    "meaning_es": "Turismo e itinerario de visitas",
+    "category": "Turismo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_2_644",
+    "kanji": "桜島",
+    "hiragana": "さくらじま",
+    "katakana": "サクラジマ",
+    "romaji": "sakurajima",
+    "meaning_es": "Sakurajima",
+    "category": "Nombre propio",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_2_645",
+    "kanji": "露天風呂",
+    "hiragana": "ろてんぶろ",
+    "katakana": "ロテンブロ",
+    "romaji": "rotenburo",
+    "meaning_es": "Baño termal onsen al aire libre",
+    "category": "Viajes",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_2_646",
+    "kanji": "グレードアップ",
+    "hiragana": "ぐれーどあっぷ",
+    "katakana": "グレードアップ",
+    "romaji": "gureedoappu",
+    "meaning_es": "Mejora de categoría de habitación o servicio",
+    "category": "Hotelería",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_36_2_647",
+    "kanji": "旅館",
+    "hiragana": "りょかん",
+    "katakana": "リョカン",
+    "romaji": "ryokan",
+    "meaning_es": "Posada de hospitalidad tradicional japonesa",
+    "category": "Turismo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_1_648",
+    "kanji": "指示",
+    "hiragana": "しじ",
+    "katakana": "シジ",
+    "romaji": "shiji",
+    "meaning_es": "instrucción",
+    "category": "Sustantivo verbal",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_1_649",
+    "kanji": "衛生",
+    "hiragana": "えいせい",
+    "katakana": "エイセイ",
+    "romaji": "eisei",
+    "meaning_es": "Higiene y prevención de riesgos laborales",
+    "category": "Normativas",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_1_650",
+    "kanji": "業務",
+    "hiragana": "ぎょうむ",
+    "katakana": "ギョウム",
+    "romaji": "gyoumu",
+    "meaning_es": "Funciones y responsabilidades asignadas",
+    "category": "Trabajo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_1_651",
+    "kanji": "報告",
+    "hiragana": "ほうこく",
+    "katakana": "ホウコク",
+    "romaji": "houkoku",
+    "meaning_es": "Informe de estado al superior jerárquico",
+    "category": "Comunicación Corporativa",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_2_652",
+    "kanji": "本日",
+    "hiragana": "ほんじつ",
+    "katakana": "ホンジツ",
+    "romaji": "honjitsu",
+    "meaning_es": "El día de hoy (registro formal y solemne)",
+    "category": "Keigo Corporativo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_2_653",
+    "kanji": "機会",
+    "hiragana": "きかい",
+    "katakana": "キカイ",
+    "romaji": "kikai",
+    "meaning_es": "Oportunidad o coyuntura otorgada",
+    "category": "Protocolo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_2_654",
+    "kanji": "誠に",
+    "hiragana": "まことに",
+    "katakana": "マコトニ",
+    "romaji": "makotoni",
+    "meaning_es": "Sinceramente / En verdad / Con la máxima deferencia",
+    "category": "Keigo Corporativo",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_2_655",
+    "kanji": "自己PR",
+    "hiragana": "じこぴーあーる",
+    "katakana": "ジコピーアール",
+    "romaji": "jiko piiaaru",
+    "meaning_es": "Exposición personal de virtudes y méritos laborales",
+    "category": "Entrevistas",
+    "level": "N3"
+  },
+  {
+    "id": "v_curr_37_2_656",
+    "kanji": "採用",
+    "hiragana": "さいよう",
+    "katakana": "サイヨウ",
+    "romaji": "saiyou",
+    "meaning_es": "Contratación e incorporación formal a la plantilla",
+    "category": "Recursos Humanos",
+    "level": "N3"
   }
 ]

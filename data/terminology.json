@@ -1,0 +1,434 @@
+[
+  {
+    "id": "keigo",
+    "term": "Keigo",
+    "kanji": "敬語",
+    "kana": "けいご",
+    "romaji": "Keigo",
+    "category": "Cortesía y Registro",
+    "short_definition": "Sistema general de lenguaje honorífico y respetuoso del japonés.",
+    "full_explanation": "El Keigo engloba los distintos niveles de cortesía que ajustan la relación jerárquica y social entre hablante, oyente y la persona de quien se habla. Se divide formalmente en Teineigo (cortés estándar), Sonkeigo (respetuoso hacia superiores), Kenjougo (humilde sobre uno mismo) y Bikougo (embellecedor).",
+    "examples": [
+      {
+        "jp": "いらっしゃいます",
+        "es": "Estar / Ir / Venir (Sonkeigo de います/いきます/きます)"
+      },
+      {
+        "jp": "参ります",
+        "es": "Ir / Venir (Kenjougo humilde de いきます/きます)"
+      }
+    ]
+  },
+  {
+    "id": "bikougo",
+    "term": "Bikougo",
+    "kanji": "美化語",
+    "kana": "びかご",
+    "romaji": "Bikougo",
+    "category": "Cortesía y Registro",
+    "short_definition": "Lenguaje embellecedor mediante los prefijos お (o-) y ご (go-).",
+    "full_explanation": "Prefijos de cortesía que suavizan, refinan o elevan la elegancia de una palabra sin necesariamente cambiar su significado ni su jerarquía social. Por regla general, 「お」 se antepone a palabras de origen japonés autóctono (wago), mientras que 「ご」 se antepone a palabras compuestas de origen sino-japonés (kango).",
+    "examples": [
+      {
+        "jp": "お茶 (おちゃ)",
+        "es": "Té verde (con prefijo de cortesía お)"
+      },
+      {
+        "jp": "お名前 (おなまえ)",
+        "es": "Su nombre (cortés)"
+      },
+      {
+        "jp": "ご飯 (ごはん)",
+        "es": "Arroz cocido / Comida (con prefijo ご)"
+      },
+      {
+        "jp": "ご連絡 (ごれんらく)",
+        "es": "Comunicación / Contacto (cortés con ご)"
+      }
+    ]
+  },
+  {
+    "id": "sonkeigo",
+    "term": "Sonkeigo",
+    "kanji": "尊敬語",
+    "kana": "そんけいご",
+    "romaji": "Sonkeigo",
+    "category": "Cortesía y Registro",
+    "short_definition": "Lenguaje respetuoso que eleva las acciones y estado del interlocutor o superior.",
+    "full_explanation": "Se emplea para hablar de las acciones, posesiones o cualidades de personas a quienes se desea mostrar respeto (jefes, clientes, profesores, ancianos). Jamás se utiliza para describir acciones de uno mismo.",
+    "examples": [
+      {
+        "jp": "先生がおっしゃいました。",
+        "es": "El profesor dijo. (おっしゃる es el Sonkeigo de 言う)"
+      },
+      {
+        "jp": "社長は召し上がりました。",
+        "es": "El presidente comió. (召し上がる es el Sonkeigo de 食べる)"
+      }
+    ]
+  },
+  {
+    "id": "kenjougo",
+    "term": "Kenjougo",
+    "kanji": "謙譲語",
+    "kana": "けんじょうご",
+    "romaji": "Kenjougo",
+    "category": "Cortesía y Registro",
+    "short_definition": "Lenguaje humilde que rebaja las acciones propias para honrar al oyente.",
+    "full_explanation": "Se utiliza al hablar de las acciones propias o del grupo al que uno pertenece (familia, compañeros de empresa) cuando dichas acciones están dirigidas hacia un superior o cliente.",
+    "examples": [
+      {
+        "jp": "明日伺います。",
+        "es": "Mañana iré a visitarle. (伺う es el Kenjougo de 行く/訪問する)"
+      },
+      {
+        "jp": "資料を拝見しました。",
+        "es": "Revisé los documentos. (拝見する es el Kenjougo de 見る)"
+      }
+    ]
+  },
+  {
+    "id": "teineigo",
+    "term": "Teineigo",
+    "kanji": "丁寧語",
+    "kana": "ていねいご",
+    "romaji": "Teineigo",
+    "category": "Cortesía y Registro",
+    "short_definition": "Lenguaje cortés estándar utilizando las terminaciones です y 〜ます.",
+    "full_explanation": "Es el registro cortés de cortesía general que se enseña a principiantes. Denota respeto neutral hacia cualquier persona con la que no se tiene total familiaridad (compañeros de trabajo, dependientes, desconocidos).",
+    "examples": [
+      {
+        "jp": "日本語を勉強します。",
+        "es": "Estudio japonés."
+      },
+      {
+        "jp": "今日はいい天気ですね。",
+        "es": "Hoy hace buen tiempo, ¿verdad?"
+      }
+    ]
+  },
+  {
+    "id": "wago",
+    "term": "Wago / Yamato Kotoba",
+    "kanji": "和語",
+    "kana": "わご",
+    "romaji": "Wago",
+    "category": "Etimología y Vocabulario",
+    "short_definition": "Palabras autóctonas originarias del japonés tradicional previo a la influencia china.",
+    "full_explanation": "Tienen típicamente lectura Kun'yomi (訓読み) cuando se escriben con kanji. Suelen referirse a conceptos cotidianos, partes del cuerpo, fenómenos naturales y emociones. Al aplicar prefijos de cortesía, suelen tomar 「お」 (ej. お水, お花).",
+    "examples": [
+      {
+        "jp": "水 (みず)",
+        "es": "Agua"
+      },
+      {
+        "jp": "花 (はな)",
+        "es": "Flor"
+      },
+      {
+        "jp": "桜 (さくら)",
+        "es": "Cerezo"
+      }
+    ]
+  },
+  {
+    "id": "kango",
+    "term": "Kango",
+    "kanji": "漢語",
+    "kana": "かんご",
+    "romaji": "Kango",
+    "category": "Etimología y Vocabulario",
+    "short_definition": "Palabras de origen chino compuestas por dos o más kanjis (jukugo).",
+    "full_explanation": "Se leen con lectura On'yomi (音読み). Constituyen alrededor del 60% del vocabulario culto, técnico, formal y académico del japonés moderno. Al recibir prefijos de cortesía, suelen tomar 「ご」 (ej. ご案内, ご家族).",
+    "examples": [
+      {
+        "jp": "案内 (あんない)",
+        "es": "Guía / Orientación"
+      },
+      {
+        "jp": "家族 (かぞく)",
+        "es": "Familia"
+      },
+      {
+        "jp": "時間 (じかん)",
+        "es": "Tiempo / Hora"
+      }
+    ]
+  },
+  {
+    "id": "gairaigo",
+    "term": "Gairaigo",
+    "kanji": "外来語",
+    "kana": "がいらいご",
+    "romaji": "Gairaigo",
+    "category": "Etimología y Vocabulario",
+    "short_definition": "Préstamos lingüísticos procedentes de lenguas occidentales escritos en katakana.",
+    "full_explanation": "Palabras adoptadas principalmente a partir de la era Meiji del inglés, portugués, alemán, francés y holandés. Adaptan su fonética al sistema de silabario japonés.",
+    "examples": [
+      {
+        "jp": "パン (pan)",
+        "es": "Pan (del portugués pão)"
+      },
+      {
+        "jp": "コーヒー (kōhī)",
+        "es": "Café (del holandés koffie / inglés coffee)"
+      },
+      {
+        "jp": "アルバイト (arubaito)",
+        "es": "Trabajo a tiempo parcial (del alemán Arbeit)"
+      }
+    ]
+  },
+  {
+    "id": "jukugo",
+    "term": "Jukugo",
+    "kanji": "熟語",
+    "kana": "じゅくご",
+    "romaji": "Jukugo",
+    "category": "Morfología y Kanji",
+    "short_definition": "Palabra compuesta formada por la unión de dos o más ideogramas kanji.",
+    "full_explanation": "En un jukugo, cada kanji aporta una raíz de significado que se fusiona con la del siguiente para crear un concepto nuevo y preciso. La inmensa mayoría se leen con lectura On'yomi.",
+    "examples": [
+      {
+        "jp": "先生 (せんせい)",
+        "es": "先 (antes) + 生 (nacer) = Maestro / El que nació antes"
+      },
+      {
+        "jp": "学生 (がくせい)",
+        "es": "学 (estudio) + 生 (vida/persona) = Estudiante"
+      },
+      {
+        "jp": "日本 (にほん)",
+        "es": "日 (sol) + 本 (origen) = Japón (El origen del sol)"
+      }
+    ]
+  },
+  {
+    "id": "okurigana",
+    "term": "Okurigana",
+    "kanji": "送り仮名",
+    "kana": "おくりがな",
+    "romaji": "Okurigana",
+    "category": "Morfología y Escritura",
+    "short_definition": "Caracteres hiragana que siguen a la raíz en kanji para indicar conjugación.",
+    "full_explanation": "El kanji contiene la raíz semántica invariable, mientras que el okurigana refleja el tiempo gramatical, la polaridad (afirmativo/negativo) o la voz del verbo o adjetivo.",
+    "examples": [
+      {
+        "jp": "食べる (たべる) → 食べた (たべた)",
+        "es": "El kanji 食 mantiene la raíz; べる / た es el okurigana que conjuga."
+      },
+      {
+        "jp": "高い (たかい) → 高かった (たかかった)",
+        "es": "El kanji 高 aporta el significado; い / かった es el okurigana."
+      }
+    ]
+  },
+  {
+    "id": "godan",
+    "term": "Verbos Godan",
+    "kanji": "五段動詞",
+    "kana": "ごだんどうし",
+    "romaji": "Godan Doushi",
+    "category": "Gramática y Verbos",
+    "short_definition": "Verbos del Grupo 1 cuya raíz conjuga a través de las cinco vocales (a, i, u, e, o).",
+    "full_explanation": "Son la clase verbal más numerosa del japonés. Su terminación consonántica previa a la vocal cambia de fila en la tabla de silabario según la forma (ej. 書く: ka-ka-nai, ka-ki-masu, ka-ku, ka-ke-ru, ka-ko-u).",
+    "examples": [
+      {
+        "jp": "行く (いく)",
+        "es": "Ir (ik-u, ik-imasu, ik-anai)"
+      },
+      {
+        "jp": "話す (はなす)",
+        "es": "Hablar (hanas-u, hanash-imasu)"
+      },
+      {
+        "jp": "飲む (のむ)",
+        "es": "Beber (nom-u, nom-imasu)"
+      }
+    ]
+  },
+  {
+    "id": "ichidan",
+    "term": "Verbos Ichidan",
+    "kanji": "一段動詞",
+    "kana": "いちだんどうし",
+    "romaji": "Ichidan Doushi",
+    "category": "Gramática y Verbos",
+    "short_definition": "Verbos del Grupo 2 terminados en -iru o -eru con raíz constante.",
+    "full_explanation": "Para conjugar estos verbos, simplemente se retira la terminación る final y se añade la desinencia deseada (ej. たべる → たべます, たべない, たべた).",
+    "examples": [
+      {
+        "jp": "食べる (たべる)",
+        "es": "Comer (raíz tabe- + masu/nai/ta)"
+      },
+      {
+        "jp": "見る (みる)",
+        "es": "Ver (raíz mi- + masu/nai/ta)"
+      },
+      {
+        "jp": "起きる (おきる)",
+        "es": "Despertarse (raíz oki- + masu/nai/ta)"
+      }
+    ]
+  },
+  {
+    "id": "copula",
+    "term": "Cópula (Da / Desu)",
+    "kanji": "コピュラ",
+    "kana": "コピュラ",
+    "romaji": "Kopyura (Da / Desu)",
+    "category": "Gramática y Verbos",
+    "short_definition": "Palabra gramatical que enlaza el sujeto con su predicado nominal o adjetival.",
+    "full_explanation": "Funciona similar al verbo 'ser' en español en oraciones declarativas [A は B です] ('A es B'). Su forma informal/plana es だ (da) y su forma formal/cortés es です (desu). Su negativo cortés es ではありません (dewa arimasen).",
+    "examples": [
+      {
+        "jp": "私は学生です。",
+        "es": "Yo soy estudiante."
+      },
+      {
+        "jp": "田中さんは日本人ではありません。",
+        "es": "El Sr. Tanaka no es japonés."
+      }
+    ]
+  },
+  {
+    "id": "jousoushi",
+    "term": "Contadores (Jousoushi)",
+    "kanji": "助数詞",
+    "kana": "じょすうし",
+    "romaji": "Jousoushi",
+    "category": "Gramática y Morfología",
+    "short_definition": "Sufijos clasificadores obligatorios al contar objetos según su forma o naturaleza.",
+    "full_explanation": "En japonés no se puede decir simplemente 'dos cervezas' o 'tres personas' con solo el número; se debe añadir el clasificador correspondiente: 〜人 para personas, 〜本 para objetos cilíndricos/alargados, 〜枚 para cosas planas, etc.",
+    "examples": [
+      {
+        "jp": "二人 (ふたり)",
+        "es": "Dos personas (contador 〜人)"
+      },
+      {
+        "jp": "ビール二本 (にほん)",
+        "es": "Dos botellas de cerveza (contador 〜本)"
+      },
+      {
+        "jp": "切符二枚 (にまい)",
+        "es": "Dos billetes/boletos (contador 〜枚)"
+      }
+    ]
+  },
+  {
+    "id": "kanji",
+    "term": "Kanji",
+    "kanji": "漢字",
+    "kana": "かんじ",
+    "romaji": "Kanji",
+    "category": "Morfología y Escritura",
+    "short_definition": "Caracteres ideográficos conceptuales originarios de China.",
+    "full_explanation": "Cada kanji representa una raíz conceptual o significado en sí mismo. Suelen contar con lecturas On'yomi (chinas) y Kun'yomi (japonesas autóctonas).",
+    "examples": [
+      {
+        "jp": "日 (ひ / にち)",
+        "es": "Sol / Día"
+      },
+      {
+        "jp": "本 (ほん / もと)",
+        "es": "Libro / Origen"
+      }
+    ]
+  },
+  {
+    "id": "hiragana",
+    "term": "Hiragana",
+    "kanji": "平仮名",
+    "kana": "ひらがな",
+    "romaji": "Hiragana",
+    "category": "Morfología y Escritura",
+    "short_definition": "Silabario fonético base del idioma japonés (46 caracteres principales redondeados).",
+    "full_explanation": "Se emplea para palabras nativas de origen japonés, okurigana (terminaciones de verbos y adjetivos) y partículas gramaticales.",
+    "examples": [
+      {
+        "jp": "ありがとう",
+        "es": "Gracias"
+      },
+      {
+        "jp": "たべます",
+        "es": "Comer (formal)"
+      }
+    ]
+  },
+  {
+    "id": "katakana",
+    "term": "Katakana",
+    "kanji": "片仮名",
+    "kana": "かたかな",
+    "romaji": "Katakana",
+    "category": "Morfología y Escritura",
+    "short_definition": "Silabario fonético anguloso para préstamos extranjeros y onomatopeyas.",
+    "full_explanation": "Comparte los mismos 46 sonidos del hiragana con trazos rectos. Se usa para extranjerismos (gairaigo), nombres de personas y países no asiáticos, y énfasis.",
+    "examples": [
+      {
+        "jp": "コーヒー",
+        "es": "Café"
+      },
+      {
+        "jp": "スペイン",
+        "es": "España"
+      }
+    ]
+  },
+  {
+    "id": "romaji",
+    "term": "Rōmaji",
+    "kanji": "ローマ字",
+    "kana": "ローマじ",
+    "romaji": "Rōmaji",
+    "category": "Morfología y Escritura",
+    "short_definition": "Transcripción fonética del japonés en alfabeto latino occidental.",
+    "full_explanation": "Facilita el ingreso de texto en computadoras y smartphones mediante el método IME (Input Method Editor) y sirve de soporte para principiantes.",
+    "examples": [
+      {
+        "jp": "Nihon",
+        "es": "Japón"
+      },
+      {
+        "jp": "Tokyo",
+        "es": "Tokio"
+      }
+    ]
+  },
+  {
+    "id": "furigana",
+    "term": "Furigana / Ruby",
+    "kanji": "振り仮名",
+    "kana": "ふりがな",
+    "romaji": "Furigana",
+    "category": "Morfología y Escritura",
+    "short_definition": "Pequeños caracteres kana situados sobre los kanjis para indicar su lectura.",
+    "full_explanation": "Guía de pronunciación fundamental para estudiantes y en publicaciones infantiles, periódicos para nombres propios raros y manga.",
+    "examples": [
+      {
+        "jp": "日本 (にほん)",
+        "es": "El kana にほん sobre 日本 es el furigana."
+      }
+    ]
+  },
+  {
+    "id": "pitch_accent",
+    "term": "Pitch Accent",
+    "kanji": "高低アクセント",
+    "kana": "こうていアクセント",
+    "romaji": "Kōtei Akusento",
+    "category": "Pronunciación y Fonética",
+    "short_definition": "Sistema de entonación musical basado en alturas tonales altas y bajas.",
+    "full_explanation": "El japonés no utiliza acento de intensidad (fuerza vocal como en español), sino variaciones tonales que permiten distinguir palabras con la misma escritura kana (ej. 雨 [lluvia: alto-bajo] vs 飴 [dulce: bajo-alto]).",
+    "examples": [
+      {
+        "jp": "雨 (あめ)",
+        "es": "Lluvia (tono alto al inicio)"
+      },
+      {
+        "jp": "飴 (あめ)",
+        "es": "Caramelo (tono bajo inicial y subida)"
+      }
+    ]
+  }
+]

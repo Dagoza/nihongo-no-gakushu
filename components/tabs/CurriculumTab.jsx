@@ -7,6 +7,7 @@ import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpC
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
+import TerminologyTooltip from '../common/TerminologyTooltip';
 
 // Helper to structure and parse grammar points into title and Japanese pattern/content
 const parseGrammarPoint = (point) => {
@@ -80,6 +81,19 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const toggleSection = (stepNum, sectionType) => {
     const key = `${stepNum}_${sectionType}`;
     setOpenSections(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  // Global module vocabulary panel toggle state in module hero card
+  const [showGlobalVocab, setShowGlobalVocab] = useState(false);
+
+  // Progressive disclosure state for grammar point examples
+  const [expandedGrammarExamples, setExpandedGrammarExamples] = useState({});
+
+  const toggleGrammarExamples = (key) => {
+    setExpandedGrammarExamples(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
@@ -161,6 +175,31 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
   const selectedStep = steps.find(s => s.step === selectedStepNum) || null;
 
+  // Aggregate vocabulary list for the selected module
+  const moduleVocabList = React.useMemo(() => {
+    if (!selectedStep) return [];
+    const map = new Map();
+    // 1. From vocab_details
+    (selectedStep.vocab_details || []).forEach(v => {
+      if (v && v.kanji) map.set(v.kanji, v);
+    });
+    // 2. From all sections
+    (selectedStep.sections || []).forEach(sec => {
+      (sec.vocab || sec.vocabulary || []).forEach(v => {
+        if (v && v.kanji && !map.has(v.kanji)) {
+          map.set(v.kanji, v);
+        }
+      });
+    });
+    // 3. From included_vocab
+    (selectedStep.included_vocab || []).forEach(w => {
+      if (w && !map.has(w)) {
+        map.set(w, { kanji: w, kana: w, meaning: 'Vocabulario del módulo', type: 'Término' });
+      }
+    });
+    return Array.from(map.values());
+  }, [selectedStep]);
+
   // Temarios revisados con ejercicios pendientes
   const reviewedStepsWithPendingExercises = React.useMemo(() => {
     return steps.filter(step => {
@@ -200,6 +239,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
   const handleOpenModule = (stepNum) => {
     setSelectedStepNum(stepNum);
+    setShowGlobalVocab(false);
+    setExpandedGrammarExamples({});
     const saved = userState?.moduleProgress?.[stepNum]?.currentSubStep;
     setActiveSubStep(typeof saved === 'number' && saved >= 1 ? saved : 1);
     if (typeof window !== 'undefined') {
@@ -213,6 +254,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
   const handleCloseModule = () => {
     setSelectedStepNum(null);
+    setShowGlobalVocab(false);
+    setExpandedGrammarExamples({});
     if (typeof window !== 'undefined') {
       if (window.location.search.includes('step=')) {
         window.history.pushState(null, '', '/curriculum');
@@ -433,6 +476,130 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               <div className="curriculum-hero-guide">
                 <p><strong>📖 Guía Explicativa del Módulo:</strong></p>
                 <p style={{ marginTop: 6 }}>{selectedStep.detailed_guide}</p>
+              </div>
+            )}
+
+            {/* Global Module Vocabulary Bar & Panel */}
+            {moduleVocabList.length > 0 && (
+              <div className="curriculum-hero-vocab-bar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <BookOpen size={18} color="var(--primary)" />
+                  <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                    Vocabulario Global del Módulo
+                  </span>
+                  <span className="badge" style={{ fontSize: '0.78rem', background: 'var(--bg-main)', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
+                    {moduleVocabList.length} términos
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={() => {
+                      const playlist = moduleVocabList.map(v => ({
+                        text: v.kanji,
+                        desc: `${v.kana || v.kanji} - ${v.meaning || ''}`
+                      }));
+                      if (playlist.length > 0) {
+                        audioManager.setPlaylist(playlist, 0);
+                        audioManager.speak(playlist[0].text, { autoAdvance: true });
+                      }
+                    }}
+                    title="Reproducir todo el vocabulario del módulo en continuo"
+                  >
+                    <Volume2 size={15} />
+                    <span>Reproducción Continua</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`btn ${showGlobalVocab ? 'btn-secondary' : 'btn-outline'} btn-sm`}
+                    onClick={() => setShowGlobalVocab(prev => !prev)}
+                    aria-expanded={showGlobalVocab}
+                  >
+                    <span>{showGlobalVocab ? 'Ocultar Lista' : 'Explorar Vocabulario'}</span>
+                    <ChevronDown size={14} style={{ transform: showGlobalVocab ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Collapsible Panel for Global Vocabulary */}
+            {showGlobalVocab && moduleVocabList.length > 0 && (
+              <div className="curriculum-global-vocab-panel">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                    Léxico integral acumulado en los pasos del Módulo {selectedStep.step} ({moduleVocabList.length} términos)
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    style={{ padding: '4px 8px', fontSize: '0.8rem' }}
+                    onClick={() => setShowGlobalVocab(false)}
+                  >
+                    <X size={14} />
+                    <span>Cerrar</span>
+                  </button>
+                </div>
+
+                <div className="curriculum-global-vocab-grid">
+                  {moduleVocabList.map((v, idx) => (
+                    <div
+                      key={idx}
+                      className="curriculum-global-vocab-item"
+                      onClick={() => handlePlayAudio(v.kanji, `${v.kana || v.kanji} (${v.meaning || ''})`)}
+                      title="Click para escuchar pronunciación"
+                    >
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                          <span className="jp-text" style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                            {v.kanji}
+                          </span>
+                          {v.kana && v.kana !== v.kanji && (
+                            <span className="jp-text" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              {v.kana}
+                            </span>
+                          )}
+                        </div>
+                        {v.meaning && (
+                          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {v.meaning}
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 8 }}>
+                        {contextApp?.openDictionary && (
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            style={{ padding: '5px', borderRadius: '50%' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              contextApp.openDictionary(v.kanji);
+                            }}
+                            title="Buscar en diccionario"
+                          >
+                            <Search size={13} />
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="btn btn-outline btn-sm"
+                          style={{ padding: '5px', borderRadius: '50%' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePlayAudio(v.kanji, `${v.kana || v.kanji} (${v.meaning || ''})`);
+                          }}
+                          title="Escuchar audio"
+                        >
+                          <Volume2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -773,7 +940,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                     </div>
                   </div>
                 ) : (
-                  /* CONTENT STEP: Objectives, Grammar Points, Can-Dos, Vocab, Examples */
+                  /* CONTENT STEP: Objectives -> Vocab -> Kanji/Jukugo -> Functional Bridge -> Grammar Points -> Can-Dos */
                   <div>
                     {/* 1. Objetivo de este Paso */}
                     <div className="card" style={{ marginBottom: 20, background: 'var(--bg-surface)', borderLeft: '4px solid var(--primary)' }}>
@@ -790,177 +957,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                       </div>
                     </div>
 
-                    {/* 2. Puntos Clave de Gramática con Explicación Profunda, Fórmulas y Notas */}
-                    <div className="card" style={{ marginBottom: 24 }}>
-                      <div style={{ marginBottom: 16 }}>
-                        <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <Sparkles size={20} color="var(--accent)" />
-                          <span>Puntos Clave de Gramática (Paso {currentSection.substep})</span>
-                        </h3>
-                        <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                          Estructuras explicadas con fundamentos teóricos y fórmulas extraídas de los manuales de referencia.
-                        </p>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                        {currentSection.grammar_points?.map((gp, gpIdx) => (
-                          <div key={gpIdx} className="grammar-deep-card">
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                              <span style={{ 
-                                fontSize: '0.76rem', 
-                                fontWeight: 800, 
-                                padding: '2px 8px', 
-                                background: 'var(--primary-bg)', 
-                                color: 'var(--primary)', 
-                                borderRadius: 4 
-                              }}>
-                                {currentSection.substep}.{gpIdx + 1}
-                              </span>
-                              <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>
-                                <FuriganaText text={gp.title} showFurigana={showFurigana} />
-                              </h4>
-                            </div>
-
-                            {/* Formula box */}
-                            {gp.formula && (
-                              <div className="grammar-formula-box">
-                                <span className="grammar-formula-badge">⚡ Fórmula</span>
-                                <div className="grammar-formula-text">
-                                  {gp.formula.includes(' / ') ? (
-                                    gp.formula.split(' / ').map((part, pIdx) => (
-                                      <span key={pIdx} className="grammar-formula-line">
-                                        <FuriganaText text={part.trim()} showFurigana={showFurigana} />
-                                      </span>
-                                    ))
-                                  ) : (
-                                    <span className="grammar-formula-line">
-                                      <FuriganaText text={gp.formula} showFurigana={showFurigana} />
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Theoretical Deep Explanation */}
-                            <p style={{ fontSize: '0.94rem', lineHeight: 1.65, color: 'var(--text-main)', margin: '10px 0' }}>
-                              {gp.explanation}
-                            </p>
-
-                            {/* Cultural / Usage Notes */}
-                            {gp.usage_notes && (
-                              <div className="grammar-notes-box">
-                                💡 <strong>Notas de uso y contexto:</strong> {gp.usage_notes}
-                              </div>
-                            )}
-
-                            {/* Examples for this grammar point with audio */}
-                            {gp.examples && gp.examples.length > 0 && (
-                              <div className="grammar-examples-list">
-                                <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
-                                  Ejemplos con Audio:
-                                </div>
-                                {gp.examples.map((ex, exI) => (
-                                  <div key={exI} className="grammar-example-row">
-                                    <div>
-                                      <div className="jp-text" style={{ fontSize: '1.18rem', fontWeight: 700, color: 'var(--primary)', lineHeight: 1.6 }}>
-                                        <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
-                                      </div>
-                                      <div className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                                        {ex.kana}
-                                      </div>
-                                      <div style={{ fontSize: '0.88rem', color: 'var(--text-main)', marginTop: 2, fontWeight: 500 }}>
-                                        🇪🇸 {ex.es}
-                                      </div>
-                                    </div>
-
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline btn-sm"
-                                      style={{ padding: '6px 8px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}
-                                      onClick={() => handlePlayAudio(ex.jp, ex.es)}
-                                      title="Escuchar pronunciación"
-                                    >
-                                      <Volume2 size={15} />
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 3. Competencias Can-Do del Paso */}
-                    {currentSection.can_dos && currentSection.can_dos.length > 0 && (
-                      <div className="card cando-section" style={{ marginBottom: 24 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
-                          <div>
-                            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <span>🎯</span>
-                              <span>Competencias Can-Do de este Paso</span>
-                            </h3>
-                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                              Valida las competencias comunicativas prácticas que dominas en este paso (+10 XP cada una).
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="cando-grid">
-                          {currentSection.can_dos.map((cd, idx) => {
-                            const isCanDoDone = !!userState?.completedCanDos?.[cd.id];
-                            return (
-                              <div key={idx} className={`cando-card ${isCanDoDone ? 'completed-cando' : ''}`}>
-                                <div className="cando-card-header">
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <span className={`cando-badge ${isCanDoDone ? 'badge-completed' : ''}`}>
-                                      <Target size={13} />
-                                      {cd.id}
-                                    </span>
-                                    <span className="cando-tag">Irodori / MCER</span>
-                                  </div>
-
-                                  <button
-                                    type="button"
-                                    onClick={() => toggleCanDoCompleted(cd.id)}
-                                    className={`cando-check-btn ${isCanDoDone ? 'checked' : ''}`}
-                                    title={isCanDoDone ? 'Desmarcar competencia' : 'Validar competencia como dominada (+10 XP)'}
-                                  >
-                                    <div className={`cando-checkbox-square ${isCanDoDone ? 'checked' : ''}`}>
-                                      {isCanDoDone && <Check size={12} strokeWidth={3} />}
-                                    </div>
-                                    <span>{isCanDoDone ? 'Dominada ✓' : 'Autoevaluar'}</span>
-                                  </button>
-                                </div>
-
-                                <h4 className="cando-task">{cd.task}</h4>
-
-                                {cd.sample && (
-                                  <div className="cando-expression-box">
-                                    <div className="cando-expression-content">
-                                      <span className="cando-expression-label">💬 Frase clave</span>
-                                      <div className="cando-expression-text jp-text" style={{ lineHeight: 1.6 }}>
-                                        <FuriganaText text={cd.sample} showFurigana={showFurigana} />
-                                      </div>
-                                    </div>
-                                    <button 
-                                      type="button"
-                                      className="cando-audio-btn" 
-                                      onClick={() => handlePlayAudio(cd.sample.replace(/\//g, '、'))}
-                                      title="Escuchar pronunciación"
-                                    >
-                                      <Volume2 size={14} />
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 4. Vocabulario Esencial del Paso */}
+                    {/* 2. Vocabulario Esencial del Paso */}
                     {(currentSection.vocab || currentSection.vocabulary) && (currentSection.vocab || currentSection.vocabulary).length > 0 && (() => {
                       const stepVocabList = currentSection.vocab || currentSection.vocabulary;
                       return (
@@ -981,8 +978,12 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                               className="btn btn-outline btn-sm"
                               onClick={() => {
                                 const playlist = stepVocabList.map(v => ({ text: v.kanji, desc: `${v.kana} - ${v.meaning}` }));
-                                audioManager.setPlaylist(playlist, 0);
+                                if (playlist.length > 0) {
+                                  audioManager.setPlaylist(playlist, 0);
+                                  audioManager.speak(playlist[0].text, { autoAdvance: true });
+                                }
                               }}
+                              title="Reproducción secuencial continua de todo el vocabulario del paso"
                             >
                               <Volume2 size={16} />
                               <span>Reproducir Vocabulario del Paso</span>
@@ -1059,70 +1060,474 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                       );
                     })()}
 
-                    {/* 5. Ejemplos Reales en Contexto del Paso */}
-                    {currentSection.examples && currentSection.examples.length > 0 && (
-                      <div className="card" style={{ marginBottom: 24 }}>
+                    {/* 3. Kanjis y Combinaciones (Jukugo) del Paso */}
+                    {currentSection.kanji_jukugo && currentSection.kanji_jukugo.length > 0 && (
+                      <div className="card curriculum-kanji-section" style={{ marginBottom: 24 }}>
                         <div style={{ marginBottom: 16 }}>
                           <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span>💬</span>
-                            <span>Ejemplos Reales en Contexto (Paso {currentSection.substep})</span>
+                            <GraduationCap size={20} color="var(--accent)" />
+                            <span>Kanjis y Combinaciones (Jukugo) del Paso {currentSection.substep}</span>
                           </h3>
                           <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                            Diálogos y frases contextuales para interiorizar los patrones aprendidos en este paso.
+                            Ideogramas ampliados, lecturas On/Kun, desglose etimológico de <TerminologyTooltip termId="jukugo">Jukugo</TerminologyTooltip> y nemotecnias para consolidar la memoria visual.
                           </p>
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                          {currentSection.examples.map((ex, i) => (
-                            <div 
-                              key={i} 
-                              style={{ 
-                                padding: 16, 
-                                borderRadius: 'var(--radius-md)', 
-                                background: 'var(--bg-surface)', 
-                                border: '1px solid var(--border)',
-                                boxShadow: 'var(--shadow-sm)'
-                              }}
-                            >
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-                                <div>
-                                  <div className="jp-text" style={{ fontSize: '1.38rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 6, lineHeight: 1.6 }}>
-                                    <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
+                        <div className="curriculum-kanji-grid">
+                          {currentSection.kanji_jukugo.map((kj, kjIdx) => (
+                            <div key={kjIdx} className="curriculum-kanji-card">
+                              <div className="curriculum-kanji-card-inner">
+                                {/* Left Column: Big Kanji Display & Action Buttons */}
+                                <div className="curriculum-kanji-side">
+                                  <div className="curriculum-kanji-char jp-text" title={kj.kanji}>
+                                    {kj.kanji}
                                   </div>
-                                  <div className="jp-text" style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: 4 }}>
-                                    {ex.kana} {ex.romaji ? `· ${ex.romaji}` : ''}
-                                  </div>
-                                  <div style={{ fontSize: '0.98rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
-                                    🇪🇸 {ex.es}
+                                  {(() => {
+                                    const isSingle = (kj.type || '').toLowerCase().includes('kanji') || kj.kanji.length === 1;
+                                    const tId = isSingle ? 'kanji' : 'jukugo';
+                                    return (
+                                      <TerminologyTooltip termId={tId}>
+                                        <span className="curriculum-kanji-type-badge" style={{ cursor: 'pointer' }} title="Ver explicación lingüística">
+                                          {kj.type || 'Jukugo'} ℹ️
+                                        </span>
+                                      </TerminologyTooltip>
+                                    );
+                                  })()}
+                                  <div className="curriculum-kanji-actions">
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline btn-sm"
+                                      onClick={() => handlePlayAudio(kj.kanji, `${kj.kana} (${kj.meaning})`)}
+                                      title="Escuchar pronunciación"
+                                    >
+                                      <Volume2 size={14} />
+                                      <span>Audio</span>
+                                    </button>
+                                    {contextApp?.openDictionary && (
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline btn-sm"
+                                        onClick={() => contextApp.openDictionary(kj.kanji)}
+                                        title="Buscar en diccionario"
+                                      >
+                                        <Search size={14} />
+                                        <span>Diccionario</span>
+                                      </button>
+                                    )}
                                   </div>
                                 </div>
 
-                                <button 
-                                  type="button"
-                                  className="btn btn-outline btn-sm"
-                                  onClick={() => handlePlayAudio(ex.jp, ex.es)}
-                                  title="Escuchar oración completa"
-                                  style={{ flexShrink: 0 }}
-                                >
-                                  <Volume2 size={16} />
-                                  <span>Audio</span>
-                                </button>
+                                {/* Right Column: Readings, Breakdown, and Mnemonic */}
+                                <div className="curriculum-kanji-body">
+                                  <div className="curriculum-kanji-header">
+                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+                                      <h4 className="curriculum-kanji-title jp-text">{kj.kanji}</h4>
+                                      <span className="curriculum-kanji-kana jp-text">【{kj.kana}】</span>
+                                    </div>
+                                    <div className="curriculum-kanji-meaning">
+                                      🇪🇸 {kj.meaning}
+                                    </div>
+                                  </div>
+
+                                  {/* Readings: Onyomi and Kunyomi */}
+                                  {(kj.onyomi || kj.kunyomi) && (
+                                    <div className="curriculum-kanji-readings">
+                                      {kj.onyomi && (
+                                        <div className="curriculum-kanji-reading-item">
+                                          <TerminologyTooltip termId="kango">
+                                            <span className="reading-label" style={{ cursor: 'pointer' }} title="Lectura On'yomi de origen chino (Kango)">音読み (On'yomi):</span>
+                                          </TerminologyTooltip>
+                                          <span className="reading-value jp-text">{kj.onyomi}</span>
+                                        </div>
+                                      )}
+                                      {kj.kunyomi && (
+                                        <div className="curriculum-kanji-reading-item">
+                                          <TerminologyTooltip termId="wago">
+                                            <span className="reading-label" style={{ cursor: 'pointer' }} title="Lectura Kun'yomi nativa japonesa (Wago)">訓読み (Kun'yomi):</span>
+                                          </TerminologyTooltip>
+                                          <span className="reading-value jp-text">{kj.kunyomi}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {/* Morphological Breakdown */}
+                                  {kj.breakdown && kj.breakdown.length > 0 && (
+                                    <div className="curriculum-kanji-breakdown-box">
+                                      <div className="breakdown-box-label">
+                                        🧩 Desglose Morfológico / Etimología:
+                                      </div>
+                                      <div className="breakdown-chips-row">
+                                        {kj.breakdown.map((part, pI) => (
+                                          <React.Fragment key={pI}>
+                                            <div className="breakdown-char-chip">
+                                              <span className="breakdown-char jp-text">{part.char}</span>
+                                              <span className="breakdown-reading jp-text">{part.reading}</span>
+                                              <span className="breakdown-meaning">{part.meaning}</span>
+                                            </div>
+                                            {pI < kj.breakdown.length - 1 && (
+                                              <span className="breakdown-plus">+</span>
+                                            )}
+                                          </React.Fragment>
+                                        ))}
+                                      </div>
+                                      {kj.breakdown_text && (
+                                        <p className="breakdown-explanation-text">
+                                          {kj.breakdown_text}
+                                        </p>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {/* Mnemonic Note */}
+                                  {kj.mnemonic && (
+                                    <div className="curriculum-kanji-mnemonic-box">
+                                      💡 <strong>Regla Nemotécnica:</strong> {kj.mnemonic}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 4. Partículas, Prefijos y Componentes Funcionales (Puente Funcional) */}
+                    {currentSection.functional_bridge && currentSection.functional_bridge.length > 0 && (
+                      <div className="card curriculum-bridge-section" style={{ marginBottom: 24 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+                          <div>
+                            <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <Compass size={20} color="var(--primary)" />
+                              <span>Partículas, Prefijos y Componentes Funcionales (Paso {currentSection.substep})</span>
+                            </h3>
+                            <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                              Conectores morfológicos vivos: prefijos de cortesía (<TerminologyTooltip termId="bikougo">Bikougo</TerminologyTooltip>), sufijos honoríficos y partículas activas.
+                            </p>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            onClick={() => {
+                              if (onNavigate) {
+                                onNavigate('/grammar?filter=particles');
+                              } else if (typeof window !== 'undefined') {
+                                window.location.href = '/grammar?filter=particles';
+                              }
+                            }}
+                            title="Explorar el índice completo de partículas y cortesía en Gramática"
+                          >
+                            <span>Guía de Partículas ↗</span>
+                          </button>
+                        </div>
+
+                        <div className="curriculum-bridge-grid">
+                          {currentSection.functional_bridge.map((fb, fbIdx) => (
+                            <div key={fbIdx} className="curriculum-bridge-card">
+                              <div className="curriculum-bridge-header">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                                  <span className="curriculum-bridge-pill jp-text">
+                                    {fb.item}
+                                  </span>
+                                  <div>
+                                    <h4 className="curriculum-bridge-title">
+                                      {fb.name}
+                                      {fb.reading && <span className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: 6 }}>({fb.reading})</span>}
+                                    </h4>
+                                    {(() => {
+                                      let matchedTerm = null;
+                                      const t = (fb.type || '').toLowerCase();
+                                      if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor')) matchedTerm = 'bikougo';
+                                      else if (t.includes('sonkeigo') || t.includes('respetuoso')) matchedTerm = 'sonkeigo';
+                                      else if (t.includes('kenjougo') || t.includes('humilde')) matchedTerm = 'kenjougo';
+                                      else if (t.includes('teineigo') || t.includes('formal')) matchedTerm = 'teineigo';
+                                      else if (t.includes('keigo') || t.includes('honorífico')) matchedTerm = 'keigo';
+                                      else if (t.includes('copula') || t.includes('cópula')) matchedTerm = 'copula';
+                                      else if (t.includes('contador') || t.includes('clasificador')) matchedTerm = 'jousoushi';
+                                      else if (t.includes('wago')) matchedTerm = 'wago';
+                                      else if (t.includes('kango')) matchedTerm = 'kango';
+                                      else if (t.includes('gairaigo')) matchedTerm = 'gairaigo';
+                                      else if (t.includes('jukugo')) matchedTerm = 'jukugo';
+                                      else if (t.includes('godan')) matchedTerm = 'godan';
+                                      else if (t.includes('ichidan')) matchedTerm = 'ichidan';
+
+                                      if (matchedTerm) {
+                                        return (
+                                          <TerminologyTooltip termId={matchedTerm}>
+                                            <span className="curriculum-bridge-type-badge" style={{ cursor: 'pointer' }} title="Ver explicación del término">
+                                              {fb.type} ℹ️
+                                            </span>
+                                          </TerminologyTooltip>
+                                        );
+                                      }
+                                      return (
+                                        <span className="curriculum-bridge-type-badge">
+                                          {fb.type}
+                                        </span>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+
+                                {fb.link_url && (
+                                  <button
+                                    type="button"
+                                    className="btn btn-ghost btn-sm"
+                                    style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                                    onClick={() => {
+                                      if (onNavigate) {
+                                        onNavigate(fb.link_url);
+                                      } else if (typeof window !== 'undefined') {
+                                        window.location.href = fb.link_url;
+                                      }
+                                    }}
+                                  >
+                                    <span>Ver en Guía ↗</span>
+                                  </button>
+                                )}
                               </div>
 
-                              {ex.explanation && (
-                                <div style={{ 
-                                  fontSize: '0.86rem', 
-                                  background: 'var(--bg-main)', 
-                                  padding: '8px 12px', 
-                                  borderRadius: 'var(--radius-sm)', 
-                                  color: 'var(--text-muted)',
-                                  borderLeft: '3px solid var(--accent)'
-                                }}>
-                                  💡 <strong>Análisis:</strong> {ex.explanation}
+                              <p className="curriculum-bridge-function">
+                                {fb.function_es}
+                              </p>
+
+                              {fb.rule && (
+                                <div className="curriculum-bridge-rule-box">
+                                  📐 <strong>Regla de uso:</strong> {fb.rule}
+                                </div>
+                              )}
+
+                              {/* Contextual Example Sentences with Audio */}
+                              {fb.examples && fb.examples.length > 0 && (
+                                <div className="curriculum-bridge-examples">
+                                  <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', marginBottom: 8 }}>
+                                    Ejemplos Contextuales con Audio:
+                                  </div>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    {fb.examples.map((ex, exIdx) => (
+                                      <div key={exIdx} className="curriculum-bridge-example-row">
+                                        <div>
+                                          <div className="jp-text" style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--primary)', lineHeight: 1.5 }}>
+                                            <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
+                                          </div>
+                                          {ex.kana && ex.kana !== ex.jp && (
+                                            <div className="jp-text" style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                                              {ex.kana}
+                                            </div>
+                                          )}
+                                          <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', marginTop: 2 }}>
+                                            🇪🇸 {ex.es}
+                                          </div>
+                                        </div>
+
+                                        <button
+                                          type="button"
+                                          className="btn btn-outline btn-sm"
+                                          style={{ padding: '6px 8px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}
+                                          onClick={() => handlePlayAudio(ex.jp, ex.es)}
+                                          title="Escuchar pronunciación"
+                                        >
+                                          <Volume2 size={15} />
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               )}
                             </div>
                           ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 5. Puntos Clave de Gramática con Explicación Profunda, Fórmulas y Progressive Disclosure */}
+                    <div className="card" style={{ marginBottom: 24 }}>
+                      <div style={{ marginBottom: 16 }}>
+                        <h3 style={{ fontSize: '1.22rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <Sparkles size={20} color="var(--accent)" />
+                          <span>Puntos Clave de Gramática (Paso {currentSection.substep})</span>
+                        </h3>
+                        <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                          Estructuras explicadas con fundamentos teóricos y fórmulas extraídas de los manuales de referencia.
+                        </p>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        {currentSection.grammar_points?.map((gp, gpIdx) => {
+                          const examplesKey = `${currentSection.substep}_${gpIdx}`;
+                          const isExpanded = !!expandedGrammarExamples[examplesKey];
+                          const hasManyExamples = gp.examples && gp.examples.length > 3;
+                          const visibleExamples = hasManyExamples && !isExpanded ? gp.examples.slice(0, 3) : (gp.examples || []);
+
+                          return (
+                            <div key={gpIdx} className="grammar-deep-card">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                                <span style={{ 
+                                  fontSize: '0.76rem', 
+                                  fontWeight: 800, 
+                                  padding: '2px 8px', 
+                                  background: 'var(--primary-bg)', 
+                                  color: 'var(--primary)', 
+                                  borderRadius: 4 
+                                }}>
+                                  {currentSection.substep}.{gpIdx + 1}
+                                </span>
+                                <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>
+                                  <FuriganaText text={gp.title} showFurigana={showFurigana} />
+                                </h4>
+                              </div>
+
+                              {/* Formula box */}
+                              {gp.formula && (
+                                <div className="grammar-formula-box">
+                                  <span className="grammar-formula-badge">⚡ Fórmula</span>
+                                  <div className="grammar-formula-text">
+                                    {gp.formula.includes(' / ') ? (
+                                      gp.formula.split(' / ').map((part, pIdx) => (
+                                        <span key={pIdx} className="grammar-formula-line">
+                                          <FuriganaText text={part.trim()} showFurigana={showFurigana} />
+                                        </span>
+                                      ))
+                                    ) : (
+                                      <span className="grammar-formula-line">
+                                        <FuriganaText text={gp.formula} showFurigana={showFurigana} />
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Theoretical Deep Explanation */}
+                              <p style={{ fontSize: '0.94rem', lineHeight: 1.65, color: 'var(--text-main)', margin: '10px 0' }}>
+                                {gp.explanation}
+                              </p>
+
+                              {/* Cultural / Usage Notes */}
+                              {gp.usage_notes && (
+                                <div className="grammar-notes-box">
+                                  💡 <strong>Notas de uso y contexto:</strong> {gp.usage_notes}
+                                </div>
+                              )}
+
+                              {/* Examples for this grammar point with progressive disclosure */}
+                              {gp.examples && gp.examples.length > 0 && (
+                                <div className="grammar-examples-list">
+                                  <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
+                                    Ejemplos con Audio ({gp.examples.length}):
+                                  </div>
+                                  {visibleExamples.map((ex, exI) => (
+                                    <div key={exI} className="grammar-example-row">
+                                      <div>
+                                        <div className="jp-text" style={{ fontSize: '1.18rem', fontWeight: 700, color: 'var(--primary)', lineHeight: 1.6 }}>
+                                          <FuriganaText text={ex.jp} kana={ex.kana} showFurigana={showFurigana} />
+                                        </div>
+                                        <div className="jp-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                          {ex.kana}
+                                        </div>
+                                        <div style={{ fontSize: '0.88rem', color: 'var(--text-main)', marginTop: 2, fontWeight: 500 }}>
+                                          🇪🇸 {ex.es}
+                                        </div>
+                                      </div>
+
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline btn-sm"
+                                        style={{ padding: '6px 8px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}
+                                        onClick={() => handlePlayAudio(ex.jp, ex.es)}
+                                        title="Escuchar pronunciación"
+                                      >
+                                        <Volume2 size={15} />
+                                      </button>
+                                    </div>
+                                  ))}
+
+                                  {/* Progressive disclosure toggle button if more than 3 examples */}
+                                  {hasManyExamples && (
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline btn-sm grammar-examples-toggle-btn"
+                                      style={{ alignSelf: 'flex-start', marginTop: 4, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.82rem' }}
+                                      onClick={() => toggleGrammarExamples(examplesKey)}
+                                    >
+                                      <ChevronDown size={14} style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                                      <span>{isExpanded ? 'Ver menos ejemplos' : `Ver más ejemplos (+${gp.examples.length - 3})`}</span>
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 6. Competencias Can-Do del Paso */}
+                    {currentSection.can_dos && currentSection.can_dos.length > 0 && (
+                      <div className="card cando-section" style={{ marginBottom: 24 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                          <div>
+                            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <span>🎯</span>
+                              <span>Competencias Can-Do de este Paso</span>
+                            </h3>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                              Valida las competencias comunicativas prácticas que dominas en este paso (+10 XP cada una).
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="cando-grid">
+                          {currentSection.can_dos.map((cd, idx) => {
+                            const isCanDoDone = !!userState?.completedCanDos?.[cd.id];
+                            return (
+                              <div key={idx} className={`cando-card ${isCanDoDone ? 'completed-cando' : ''}`}>
+                                <div className="cando-card-header">
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <span className={`cando-badge ${isCanDoDone ? 'badge-completed' : ''}`}>
+                                      <Target size={13} />
+                                      {cd.id}
+                                    </span>
+                                    <span className="cando-tag">Irodori / MCER</span>
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleCanDoCompleted(cd.id)}
+                                    className={`cando-check-btn ${isCanDoDone ? 'checked' : ''}`}
+                                    title={isCanDoDone ? 'Desmarcar competencia' : 'Validar competencia como dominada (+10 XP)'}
+                                  >
+                                    <div className={`cando-checkbox-square ${isCanDoDone ? 'checked' : ''}`}>
+                                      {isCanDoDone && <Check size={12} strokeWidth={3} />}
+                                    </div>
+                                    <span>{isCanDoDone ? 'Dominada ✓' : 'Autoevaluar'}</span>
+                                  </button>
+                                </div>
+
+                                <h4 className="cando-task">{cd.task}</h4>
+
+                                {cd.sample && (
+                                  <div className="cando-expression-box">
+                                    <div className="cando-expression-content">
+                                      <span className="cando-expression-label">💬 Frase clave</span>
+                                      <div className="cando-expression-text jp-text" style={{ lineHeight: 1.6 }}>
+                                        <FuriganaText text={cd.sample} showFurigana={showFurigana} />
+                                      </div>
+                                    </div>
+                                    <button 
+                                      type="button"
+                                      className="cando-audio-btn" 
+                                      onClick={() => handlePlayAudio(cd.sample.replace(/\//g, '、'))}
+                                      title="Escuchar pronunciación"
+                                    >
+                                      <Volume2 size={14} />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -2153,6 +2558,49 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                   </ul>
 
                   <div className="step-card-details">
+                    {/* Collapsible Vocabulary */}
+                    {step.included_vocab && step.included_vocab.length > 0 && (() => {
+                      const isVocabOpen = !!openSections[`${step.step}_vocab`];
+
+                      return (
+                        <div className="step-collapsible-group">
+                          <button
+                            type="button"
+                            className={`step-collapsible-trigger ${isVocabOpen ? 'open' : ''}`}
+                            onClick={() => toggleSection(step.step, 'vocab')}
+                            aria-expanded={isVocabOpen}
+                          >
+                            <div className="step-collapsible-title">
+                              <BookOpen size={14} color="var(--primary)" />
+                              <span>Vocabulario Integrado ({step.included_vocab.length} palabras)</span>
+                            </div>
+                            <div className="step-collapsible-status">
+                              <span>{isVocabOpen ? 'Ocultar' : 'Ver palabras'}</span>
+                              <ChevronDown size={14} className={`collapsible-chevron ${isVocabOpen ? 'rotate' : ''}`} />
+                            </div>
+                          </button>
+
+                          {isVocabOpen && (
+                            <div className="step-vocab-container">
+                              <div className="step-chips">
+                                {step.included_vocab.map((w, idx) => (
+                                  <span 
+                                    key={idx} 
+                                    className="step-chip jp-text"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => handlePlayAudio(w)}
+                                    title="Click para escuchar pronunciación"
+                                  >
+                                    {w}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+
                     {/* Collapsible Grammar Points */}
                     {step.grammar_focus && step.grammar_focus.length > 0 && (() => {
                       const isGrammarOpen = !!openSections[`${step.step}_grammar`];
@@ -2192,49 +2640,6 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                   </div>
                                 );
                               })}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()}
-
-                    {/* Collapsible Vocabulary */}
-                    {step.included_vocab && step.included_vocab.length > 0 && (() => {
-                      const isVocabOpen = !!openSections[`${step.step}_vocab`];
-
-                      return (
-                        <div className="step-collapsible-group">
-                          <button
-                            type="button"
-                            className={`step-collapsible-trigger ${isVocabOpen ? 'open' : ''}`}
-                            onClick={() => toggleSection(step.step, 'vocab')}
-                            aria-expanded={isVocabOpen}
-                          >
-                            <div className="step-collapsible-title">
-                              <BookOpen size={14} color="var(--primary)" />
-                              <span>Vocabulario Integrado ({step.included_vocab.length} palabras)</span>
-                            </div>
-                            <div className="step-collapsible-status">
-                              <span>{isVocabOpen ? 'Ocultar' : 'Ver palabras'}</span>
-                              <ChevronDown size={14} className={`collapsible-chevron ${isVocabOpen ? 'rotate' : ''}`} />
-                            </div>
-                          </button>
-
-                          {isVocabOpen && (
-                            <div className="step-vocab-container">
-                              <div className="step-chips">
-                                {step.included_vocab.map((w, idx) => (
-                                  <span 
-                                    key={idx} 
-                                    className="step-chip jp-text"
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() => handlePlayAudio(w)}
-                                    title="Click para escuchar pronunciación"
-                                  >
-                                    {w}
-                                  </span>
-                                ))}
-                              </div>
                             </div>
                           )}
                         </div>

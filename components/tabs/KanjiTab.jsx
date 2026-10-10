@@ -10,6 +10,7 @@ import { getNewCard, reviewCard, isDue } from '../../lib/srs';
 import PitchAccent from '../features/PitchAccent';
 import { getKanjiFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
+import TerminologyTooltip from '../common/TerminologyTooltip';
 
 // Lazy loading con code-splitting para componentes interactivos de alto impacto
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
@@ -753,10 +754,10 @@ export default function KanjiTab({
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                       <div style={{ flex: 1 }}>
                         {k.kunyomi && (
-                          <div><strong>Kun (japonesa):</strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{k.kunyomi}</span></div>
+                          <div><strong><TerminologyTooltip termId="wago">Kun (japonesa):</TerminologyTooltip></strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{k.kunyomi}</span></div>
                         )}
                         {k.onyomi && (
-                          <div><strong>On (china):</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.onyomi}</span></div>
+                          <div><strong><TerminologyTooltip termId="kango">On (china):</TerminologyTooltip></strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.onyomi}</span></div>
                         )}
                         {!k.kunyomi && !k.onyomi && k.pronunciation && (
                           <div><strong>Lectura:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.pronunciation}</span></div>
@@ -799,7 +800,9 @@ export default function KanjiTab({
                       <div className="kanji-words-list">
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                           <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                            Palabras Compuestas ({k.words.length}):
+                            <TerminologyTooltip termId="jukugo">
+                              <span>Palabras Compuestas (Jukugo) ({k.words.length}):</span>
+                            </TerminologyTooltip>
                           </span>
                           {k.words.length > 2 && (
                             <button

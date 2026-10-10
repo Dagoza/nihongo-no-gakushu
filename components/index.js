@@ -51,3 +51,4 @@ export { default as ZenDaruma3D } from './features/ZenDaruma3D';
 export { default as JapanesePillarsGuide } from './features/JapanesePillarsGuide';
 export { default as StudyStatusBento } from './features/StudyStatusBento';
 export { default as TerminologyDetailModal } from './modals/TerminologyDetailModal';
+export { default as TerminologyTooltip } from './common/TerminologyTooltip';

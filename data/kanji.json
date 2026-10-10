@@ -24,6 +24,16 @@
         "word": "一度",
         "reading": "いちど",
         "meaning": "Una vez"
+      },
+      {
+        "word": "一つ",
+        "reading": "ひとつ",
+        "meaning": "Uno (contador general)"
+      },
+      {
+        "word": "四月一日",
+        "reading": "しがつついたち",
+        "meaning": "Primero de abril"
       }
     ],
     "source": "Kanji Book"
@@ -67,6 +77,11 @@
         "word": "三",
         "reading": "さん",
         "meaning": "tres"
+      },
+      {
+        "word": "三つ",
+        "reading": "みっつ",
+        "meaning": "Tres (contador nativo general)"
       }
     ],
     "source": "Kanji Book"
@@ -91,6 +106,16 @@
         "word": "四人",
         "reading": "よにん",
         "meaning": "four persons"
+      },
+      {
+        "word": "四つ",
+        "reading": "よっつ",
+        "meaning": "Cuatro (contador nativo general)"
+      },
+      {
+        "word": "四月一日",
+        "reading": "しがつついたち",
+        "meaning": "Primero de abril"
       }
     ],
     "source": "Kanji Book"
@@ -110,6 +135,11 @@
         "word": "五",
         "reading": "ご",
         "meaning": "cinco"
+      },
+      {
+        "word": "五つ",
+        "reading": "いつつ",
+        "meaning": "Cinco (contador nativo general)"
       }
     ],
     "source": "Kanji Book"
@@ -129,6 +159,11 @@
         "word": "六",
         "reading": "ろく",
         "meaning": "seis"
+      },
+      {
+        "word": "六つ",
+        "reading": "むっつ",
+        "meaning": "Seis (contador nativo general)"
       }
     ],
     "source": "Kanji Book"
@@ -259,6 +294,16 @@
         "word": "求人",
         "reading": "きゅうじん",
         "meaning": "oferta de empleo / búsqueda de personal"
+      },
+      {
+        "word": "主人公",
+        "reading": "しゅじんこう",
+        "meaning": "Personaje protagonista"
+      },
+      {
+        "word": "友人",
+        "reading": "ゆうじん",
+        "meaning": "Amigo / Conocido"
       }
     ],
     "source": "Kanji Book"
@@ -312,6 +357,21 @@
         "word": "今にも",
         "reading": "いまにも",
         "meaning": "en cualquier momento / a punto de"
+      },
+      {
+        "word": "今日",
+        "reading": "きょう",
+        "meaning": "Hoy"
+      },
+      {
+        "word": "今度",
+        "reading": "こんど",
+        "meaning": "La próxima vez / Esta vez"
+      },
+      {
+        "word": "今年",
+        "reading": "ことし",
+        "meaning": "Este año"
       }
     ],
     "source": "Kanji Book"
@@ -365,6 +425,21 @@
         "word": "出発",
         "reading": "しゅっぱつ",
         "meaning": "salida / partida"
+      },
+      {
+        "word": "思い出",
+        "reading": "おもいで",
+        "meaning": "Recuerdo / Memoria"
+      },
+      {
+        "word": "出かける",
+        "reading": "でかける",
+        "meaning": "Salir de casa"
+      },
+      {
+        "word": "提出",
+        "reading": "ていしゅつ",
+        "meaning": "Entrega / Presentación de trámites"
       }
     ],
     "source": "Kanji Book"
@@ -389,6 +464,11 @@
         "word": "上手",
         "reading": "じょうず",
         "meaning": "habilidoso / bueno para"
+      },
+      {
+        "word": "召し上がる",
+        "reading": "めしあがる",
+        "meaning": "Comer / Degustar (lenguaje honorífico)"
       }
     ],
     "source": "Kanji Book"
@@ -408,6 +488,16 @@
         "word": "下",
         "reading": "した",
         "meaning": "under, below"
+      },
+      {
+        "word": "地下鉄",
+        "reading": "ちかてつ",
+        "meaning": "Metro / Subterráneo"
+      },
+      {
+        "word": "城下町",
+        "reading": "じょうかまち",
+        "meaning": "Ciudad histórica construida al pie de un castillo"
       }
     ],
     "source": "Kanji Book"
@@ -437,6 +527,16 @@
         "word": "中止",
         "reading": "ちゅうし",
         "meaning": "cancelación / suspensión"
+      },
+      {
+        "word": "中国",
+        "reading": "ちゅうごく",
+        "meaning": "China"
+      },
+      {
+        "word": "集中",
+        "reading": "しゅうちゅう",
+        "meaning": "Concentración mental"
       }
     ],
     "source": "Kanji Book"
@@ -494,6 +594,11 @@
         "word": "道",
         "reading": "みち",
         "meaning": "street"
+      },
+      {
+        "word": "茶道",
+        "reading": "さどう",
+        "meaning": "Ceremonia japonesa del té"
       }
     ],
     "source": "Kanji Book"
@@ -532,6 +637,11 @@
         "word": "南",
         "reading": "みなみ",
         "meaning": "south"
+      },
+      {
+        "word": "南向き",
+        "reading": "みなみむき",
+        "meaning": "Orientación sur (máxima luz solar)"
       }
     ],
     "source": "Kanji Book"
@@ -604,6 +714,16 @@
         "word": "大勢",
         "reading": "おおぜい",
         "meaning": "mucha gente / en multitud"
+      },
+      {
+        "word": "大変",
+        "reading": "たいへん",
+        "meaning": "duro / difícil"
+      },
+      {
+        "word": "大切",
+        "reading": "たいせつ",
+        "meaning": "importante / preciado"
       }
     ],
     "source": "Kanji Book"
@@ -695,6 +815,16 @@
         "word": "新しい",
         "reading": "あたらしい",
         "meaning": "nuevo"
+      },
+      {
+        "word": "新幹線",
+        "reading": "しんかんせん",
+        "meaning": "Tren bala (Shinkansen)"
+      },
+      {
+        "word": "新年",
+        "reading": "しんねん",
+        "meaning": "Año Nuevo"
       }
     ],
     "source": "Kanji Book"
@@ -719,6 +849,16 @@
         "word": "先週",
         "reading": "せんしゅう",
         "meaning": "la semana pasada"
+      },
+      {
+        "word": "週末",
+        "reading": "しゅうまつ",
+        "meaning": "Fin de semana"
+      },
+      {
+        "word": "今週",
+        "reading": "こんしゅう",
+        "meaning": "Esta semana"
       }
     ],
     "source": "Kanji Book"
@@ -748,6 +888,16 @@
         "word": "正月",
         "reading": "しょうがつ",
         "meaning": "Año Nuevo japonés"
+      },
+      {
+        "word": "月曜日",
+        "reading": "げつようび",
+        "meaning": "Lunes (Día de la Luna)"
+      },
+      {
+        "word": "四月一日",
+        "reading": "しがつついたち",
+        "meaning": "Primero de abril"
       }
     ],
     "source": "Kanji Book"
@@ -772,6 +922,11 @@
         "word": "来年",
         "reading": "らいねん",
         "meaning": "el próximo año"
+      },
+      {
+        "word": "新年",
+        "reading": "しんねん",
+        "meaning": "Año Nuevo"
       }
     ],
     "source": "Kanji Book"
@@ -801,6 +956,11 @@
         "word": "将来",
         "reading": "しょうらい",
         "meaning": "futuro (próximo o profesional)"
+      },
+      {
+        "word": "来週",
+        "reading": "らいしゅう",
+        "meaning": "La próxima semana"
       }
     ],
     "source": "Kanji Book"
@@ -825,6 +985,21 @@
         "word": "定食",
         "reading": "ていしょく",
         "meaning": "menú del día / combo cerrado"
+      },
+      {
+        "word": "食べます",
+        "reading": "たべます",
+        "meaning": "Comer"
+      },
+      {
+        "word": "食べられる",
+        "reading": "たべられる",
+        "meaning": "Poder comer (forma potencial)"
+      },
+      {
+        "word": "食文化",
+        "reading": "しょくぶんか",
+        "meaning": "Cultura gastronómica autóctona"
       }
     ],
     "source": "Kanji Book"
@@ -859,6 +1034,76 @@
         "word": "明後日",
         "reading": "あさって",
         "meaning": "pasado mañana"
+      },
+      {
+        "word": "日本人",
+        "reading": "にほんじん",
+        "meaning": "Persona japonesa / Japonés"
+      },
+      {
+        "word": "日本語",
+        "reading": "にほんご",
+        "meaning": "Idioma japonés"
+      },
+      {
+        "word": "月曜日",
+        "reading": "げつようび",
+        "meaning": "Lunes (Día de la Luna)"
+      },
+      {
+        "word": "日曜日",
+        "reading": "にちようび",
+        "meaning": "Domingo (Día del Sol)"
+      },
+      {
+        "word": "今日",
+        "reading": "きょう",
+        "meaning": "Hoy"
+      },
+      {
+        "word": "金曜日",
+        "reading": "きんようび",
+        "meaning": "Viernes"
+      },
+      {
+        "word": "火曜日",
+        "reading": "かようび",
+        "meaning": "Martes"
+      },
+      {
+        "word": "水曜日",
+        "reading": "すいようび",
+        "meaning": "Miércoles"
+      },
+      {
+        "word": "木曜日",
+        "reading": "もくようび",
+        "meaning": "Jueves"
+      },
+      {
+        "word": "明日",
+        "reading": "あした",
+        "meaning": "Mañana"
+      },
+      {
+        "word": "昨日",
+        "reading": "きのう",
+        "meaning": "Ayer"
+      },
+      {
+        "word": "四月一日",
+        "reading": "しがつついたち",
+        "meaning": "Primero de abril"
+      },
+      {
+        "word": "日当たり",
+        "reading": "ひあたり",
+        "meaning": "Exposición y entrada de sol"
+      },
+      {
+        "word": "本日",
+        "reading": "ほんじつ",
+        "meaning": "El día de hoy (registro formal y solemne)"
       }
     ],
     "source": "Kanji Book"
@@ -883,6 +1128,26 @@
         "word": "日本",
         "reading": "にほん",
         "meaning": "Japón"
+      },
+      {
+        "word": "日本人",
+        "reading": "にほんじん",
+        "meaning": "Persona japonesa / Japonés"
+      },
+      {
+        "word": "日本語",
+        "reading": "にほんご",
+        "meaning": "Idioma japonés"
+      },
+      {
+        "word": "本場",
+        "reading": "ほんば",
+        "meaning": "lugar de origen auténtico"
+      },
+      {
+        "word": "本日",
+        "reading": "ほんじつ",
+        "meaning": "El día de hoy (registro formal y solemne)"
       }
     ],
     "source": "Kanji Book"
@@ -902,6 +1167,11 @@
         "word": "木",
         "reading": "き",
         "meaning": "árbol"
+      },
+      {
+        "word": "木曜日",
+        "reading": "もくようび",
+        "meaning": "Jueves"
       }
     ],
     "source": "Kanji Book"
@@ -926,6 +1196,16 @@
         "word": "救急車",
         "reading": "きゅうきゅうしゃ",
         "meaning": "ambulancia"
+      },
+      {
+        "word": "電車",
+        "reading": "でんしゃ",
+        "meaning": "Tren eléctrico"
+      },
+      {
+        "word": "自転車",
+        "reading": "じてんしゃ",
+        "meaning": "Bicicleta"
       }
     ],
     "source": "Kanji Book"
@@ -1002,6 +1282,11 @@
         "word": "雨",
         "reading": "あめ",
         "meaning": "lluvia"
+      },
+      {
+        "word": "雨天",
+        "reading": "うてん",
+        "meaning": "Tiempo lluvioso"
       }
     ],
     "source": "Kanji Book"
@@ -1055,6 +1340,16 @@
         "word": "天気",
         "reading": "てんき",
         "meaning": "weather"
+      },
+      {
+        "word": "雨天",
+        "reading": "うてん",
+        "meaning": "Tiempo lluvioso"
+      },
+      {
+        "word": "露天風呂",
+        "reading": "ろてんぶろ",
+        "meaning": "Baño termal onsen al aire libre"
       }
     ],
     "source": "Kanji Book"
@@ -1074,6 +1369,16 @@
         "word": "見る",
         "reading": "みる",
         "meaning": "ver"
+      },
+      {
+        "word": "見ます",
+        "reading": "みます",
+        "meaning": "Ver / Mirar"
+      },
+      {
+        "word": "見せてください",
+        "reading": "みせてください",
+        "meaning": "Muéstreme por favor"
       }
     ],
     "source": "Kanji Book"
@@ -1093,6 +1398,16 @@
         "word": "言う",
         "reading": "いう",
         "meaning": "to say"
+      },
+      {
+        "word": "言います",
+        "reading": "いいます",
+        "meaning": "Decir"
+      },
+      {
+        "word": "言葉",
+        "reading": "ことば",
+        "meaning": "Palabra / Idioma"
       }
     ],
     "source": "Kanji Book"
@@ -1117,6 +1432,21 @@
         "word": "電話番号",
         "reading": "でんわばんごう",
         "meaning": "Número de teléfono"
+      },
+      {
+        "word": "話します",
+        "reading": "はなします",
+        "meaning": "Hablar"
+      },
+      {
+        "word": "お世話",
+        "reading": "おせわ",
+        "meaning": "Atenciones / Cuidados / Ayuda recibida"
+      },
+      {
+        "word": "話題",
+        "reading": "わだい",
+        "meaning": "Tema de conversación de moda"
       }
     ],
     "source": "Kanji Book"
@@ -1141,6 +1471,11 @@
         "word": "語彙",
         "reading": "ごい",
         "meaning": "vocabulario / léxico"
+      },
+      {
+        "word": "英語",
+        "reading": "えいご",
+        "meaning": "Idioma inglés"
       }
     ],
     "source": "Kanji Book"
@@ -1170,6 +1505,11 @@
         "word": "読解",
         "reading": "どっかい",
         "meaning": "comprensión lectora"
+      },
+      {
+        "word": "読みます",
+        "reading": "よみます",
+        "meaning": "Leer"
       }
     ],
     "source": "Kanji Book"
@@ -1204,6 +1544,11 @@
         "word": "履歴書",
         "reading": "りれきしょ",
         "meaning": "currículum vitae / hoja de vida"
+      },
+      {
+        "word": "書類",
+        "reading": "しょるい",
+        "meaning": "Documento / Papeles"
       }
     ],
     "source": "Kanji Book"
@@ -1228,6 +1573,11 @@
         "word": "新聞",
         "reading": "しんぶん",
         "meaning": "news paper"
+      },
+      {
+        "word": "聞きます",
+        "reading": "ききます",
+        "meaning": "Escuchar"
       }
     ],
     "source": "Kanji Book"
@@ -1247,6 +1597,11 @@
         "word": "飲む",
         "reading": "のむ",
         "meaning": "beber"
+      },
+      {
+        "word": "飲みます",
+        "reading": "のみます",
+        "meaning": "Beber"
       }
     ],
     "source": "Kanji Book"
@@ -1266,6 +1621,11 @@
         "word": "立つ",
         "reading": "たつ",
         "meaning": "levantarse / estar de pie"
+      },
+      {
+        "word": "独立",
+        "reading": "どくりつ",
+        "meaning": "Independencia laboral o personal"
       }
     ],
     "source": "Kanji Book"
@@ -1309,6 +1669,16 @@
         "word": "午前",
         "reading": "ごぜん",
         "meaning": "morning, A.M"
+      },
+      {
+        "word": "名前",
+        "reading": "なまえ",
+        "meaning": "Nombre"
+      },
+      {
+        "word": "前髪",
+        "reading": "まえがみ",
+        "meaning": "flequillo"
       }
     ],
     "source": "Kanji Book"
@@ -1391,6 +1761,11 @@
         "word": "仲間",
         "reading": "なかま",
         "meaning": "compañero / camarada / colega"
+      },
+      {
+        "word": "隙間時間",
+        "reading": "すきまじかん",
+        "meaning": "Tiempos muertos / Huecos de tiempo libre"
       }
     ],
     "source": "Kanji Book"
@@ -1439,6 +1814,11 @@
         "word": "白",
         "reading": "しろ",
         "meaning": "blanco"
+      },
+      {
+        "word": "白い雲",
+        "reading": "しろいくも",
+        "meaning": "Nubes blancas"
       }
     ],
     "source": "Kanji Book"
@@ -1458,6 +1838,11 @@
         "word": "高い",
         "reading": "たかい",
         "meaning": "alto / caro"
+      },
+      {
+        "word": "高かった",
+        "reading": "たかかった",
+        "meaning": "Estuvo caro / Fue caro"
       }
     ],
     "source": "Kanji Book"
@@ -1482,6 +1867,11 @@
         "word": "安全",
         "reading": "あんぜん",
         "meaning": "seguro"
+      },
+      {
+        "word": "安かった",
+        "reading": "やすかった",
+        "meaning": "Estuvo barato / Fue barato"
       }
     ],
     "source": "Kanji Book"
@@ -1501,6 +1891,11 @@
         "word": "長い",
         "reading": "ながい",
         "meaning": "long"
+      },
+      {
+        "word": "成長",
+        "reading": "せいちょう",
+        "meaning": "Maduración / Crecimiento personal"
       }
     ],
     "source": "Kanji Book"
@@ -1630,6 +2025,11 @@
         "word": "子ども",
         "reading": "こども",
         "meaning": "kid"
+      },
+      {
+        "word": "調子",
+        "reading": "ちょうし",
+        "meaning": "Estado de funcionamiento"
       }
     ],
     "source": "Kanji Book"
@@ -1721,6 +2121,11 @@
         "word": "一万円",
         "reading": "いちまんえん",
         "meaning": "ten thousand Yen"
+      },
+      {
+        "word": "円",
+        "reading": "えん",
+        "meaning": "Yen (moneda japonesa)"
       }
     ],
     "source": "Kanji Book"
@@ -1755,6 +2160,11 @@
         "word": "礼金",
         "reading": "れいきん",
         "meaning": "gratificación al propietario (no reembolsable)"
+      },
+      {
+        "word": "金曜日",
+        "reading": "きんようび",
+        "meaning": "Viernes"
       }
     ],
     "source": "Kanji Book"
@@ -1808,6 +2218,36 @@
         "word": "元気",
         "reading": "げんき",
         "meaning": "con energía / sano / bien"
+      },
+      {
+        "word": "空気",
+        "reading": "くうき",
+        "meaning": "Aire / Atmósfera"
+      },
+      {
+        "word": "気持ちがいい",
+        "reading": "きもちがいい",
+        "meaning": "Agradable / Qué bien se siente"
+      },
+      {
+        "word": "電気",
+        "reading": "でんき",
+        "meaning": "Electricidad / Luz eléctrica"
+      },
+      {
+        "word": "気をつける",
+        "reading": "きをつける",
+        "meaning": "Tener cuidado / Prestar atención"
+      },
+      {
+        "word": "気軽",
+        "reading": "きがる",
+        "meaning": "despreocupado / accesible"
+      },
+      {
+        "word": "気持ち",
+        "reading": "きもち",
+        "meaning": "Sentimientos y ánimo interior"
       }
     ],
     "source": "Kanji Book"
@@ -1856,6 +2296,16 @@
         "word": "水よう日",
         "reading": "すいようび",
         "meaning": "Wednesday"
+      },
+      {
+        "word": "水曜日",
+        "reading": "すいようび",
+        "meaning": "Miércoles"
+      },
+      {
+        "word": "水漏れ",
+        "reading": "みずもれ",
+        "meaning": "Fuga de agua / Gotera"
       }
     ],
     "source": "Kanji Book"
@@ -1880,6 +2330,11 @@
         "word": "花火",
         "reading": "はなび",
         "meaning": "fuegos artificiales"
+      },
+      {
+        "word": "火曜日",
+        "reading": "かようび",
+        "meaning": "Martes"
       }
     ],
     "source": "Kanji Book"
@@ -1982,6 +2437,11 @@
         "word": "お先に失礼します",
         "reading": "おさきにしつれいします",
         "meaning": "con permiso, me retiro antes"
+      },
+      {
+        "word": "先生方",
+        "reading": "せんせいがた",
+        "meaning": "Los profesores (plural honorífico)"
       }
     ],
     "source": "Kanji Book"
@@ -2016,6 +2476,21 @@
         "word": "先生",
         "reading": "せんせい",
         "meaning": "Profesor / Maestro"
+      },
+      {
+        "word": "先生方",
+        "reading": "せんせいがた",
+        "meaning": "Los profesores (plural honorífico)"
+      },
+      {
+        "word": "生活",
+        "reading": "せいかつ",
+        "meaning": "vida cotidiana"
+      },
+      {
+        "word": "衛生",
+        "reading": "えいせい",
+        "meaning": "Higiene y prevención de riesgos laborales"
       }
     ],
     "source": "Kanji Book"
@@ -2040,6 +2515,16 @@
         "word": "親友",
         "reading": "しんゆう",
         "meaning": "mejor amigo / amigo íntimo"
+      },
+      {
+        "word": "友達",
+        "reading": "ともだち",
+        "meaning": "Amigo / Amiga"
+      },
+      {
+        "word": "友人",
+        "reading": "ゆうじん",
+        "meaning": "Amigo / Conocido"
       }
     ],
     "source": "Kanji Book"
@@ -2098,6 +2583,11 @@
         "word": "神社",
         "reading": "じんじゃ",
         "meaning": "santuario sintoísta"
+      },
+      {
+        "word": "会社員",
+        "reading": "かいしゃいん",
+        "meaning": "Empleado de empresa / Oficinista"
       }
     ],
     "source": "Kanji Book"
@@ -2116,12 +2606,27 @@
       {
         "word": "会う",
         "reading": "あう",
-        "meaning": "to meet"
+        "meaning": "encontrarse con / ver a alguien"
       },
       {
         "word": "会社",
         "reading": "かいしゃ",
         "meaning": "empresa / compañía"
+      },
+      {
+        "word": "会社員",
+        "reading": "かいしゃいん",
+        "meaning": "Empleado de empresa / Oficinista"
+      },
+      {
+        "word": "お会計",
+        "reading": "おかいけい",
+        "meaning": "La cuenta (en restaurante)"
+      },
+      {
+        "word": "機会",
+        "reading": "きかい",
+        "meaning": "Oportunidad o coyuntura otorgada"
       }
     ],
     "source": "Kanji Book"
@@ -2180,6 +2685,11 @@
         "word": "連休",
         "reading": "れんきゅう",
         "meaning": "puente festivo / días libres consecutivos"
+      },
+      {
+        "word": "休む",
+        "reading": "やすむ",
+        "meaning": "Descansar / Faltar al trabajo"
       }
     ],
     "source": "Kanji Book"
@@ -2199,6 +2709,16 @@
         "word": "時間",
         "reading": "じかん",
         "meaning": "tiempo / hora"
+      },
+      {
+        "word": "何時",
+        "reading": "なんじ",
+        "meaning": "Qué hora"
+      },
+      {
+        "word": "隙間時間",
+        "reading": "すきまじかん",
+        "meaning": "Tiempos muertos / Huecos de tiempo libre"
       }
     ],
     "source": "Kanji Book"
@@ -2243,6 +2763,16 @@
         "word": "分ける",
         "reading": "わける",
         "meaning": "separar / clasificar"
+      },
+      {
+        "word": "分かります",
+        "reading": "わかります",
+        "meaning": "Entender / Comprender"
+      },
+      {
+        "word": "塩分",
+        "reading": "えんぶん",
+        "meaning": "Salinidad / Cantidad de sal"
       }
     ],
     "source": "Kanji Book"
@@ -2262,6 +2792,11 @@
         "word": "二時半",
         "reading": "にじはん",
         "meaning": "at half past two"
+      },
+      {
+        "word": "半額",
+        "reading": "はんがく",
+        "meaning": "Mitad de precio / 50% descuento"
       }
     ],
     "source": "Kanji Book"
@@ -2281,6 +2816,11 @@
         "word": "無理",
         "reading": "むり",
         "meaning": "imposible"
+      },
+      {
+        "word": "無料",
+        "reading": "むりょう",
+        "meaning": "Gratuito / Sin costo"
       }
     ],
     "source": "Kanji to Print"
@@ -2305,6 +2845,16 @@
         "word": "作文",
         "reading": "さくぶん",
         "meaning": "redacción"
+      },
+      {
+        "word": "注文",
+        "reading": "ちゅうもん",
+        "meaning": "Pedido / Orden"
+      },
+      {
+        "word": "食文化",
+        "reading": "しょくぶんか",
+        "meaning": "Cultura gastronómica autóctona"
       }
     ],
     "source": "Kanji to Print"
@@ -2324,6 +2874,11 @@
         "word": "店",
         "reading": "みせ",
         "meaning": "tienda"
+      },
+      {
+        "word": "店員",
+        "reading": "てんいん",
+        "meaning": "Camarero / Dependiente"
       }
     ],
     "source": "Kanji to Print"
@@ -2348,6 +2903,11 @@
         "word": "外国",
         "reading": "がいこく",
         "meaning": "país extranjero"
+      },
+      {
+        "word": "意外",
+        "reading": "いがい",
+        "meaning": "inesperado / sorprendente"
       }
     ],
     "source": "Kanji to Print"
@@ -2372,6 +2932,11 @@
         "word": "外国",
         "reading": "がいこく",
         "meaning": "país extranjero"
+      },
+      {
+        "word": "中国",
+        "reading": "ちゅうごく",
+        "meaning": "China"
       }
     ],
     "source": "Kanji to Print"
@@ -2502,6 +3067,11 @@
         "word": "土産",
         "reading": "みやげ",
         "meaning": "Recuerdo / Souvenir"
+      },
+      {
+        "word": "不動産",
+        "reading": "ふどうさん",
+        "meaning": "Agencia inmobiliaria"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2526,6 +3096,11 @@
         "word": "教える",
         "reading": "おしえる",
         "meaning": "enseñar"
+      },
+      {
+        "word": "教師",
+        "reading": "きょうし",
+        "meaning": "Profesor / Docente"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2588,6 +3163,11 @@
         "word": "体育館",
         "reading": "たいいくかん",
         "meaning": "gimnasio / pabellón cubierto"
+      },
+      {
+        "word": "旅館",
+        "reading": "りょかん",
+        "meaning": "Posada de hospitalidad tradicional japonesa"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2660,6 +3240,16 @@
         "word": "名物",
         "reading": "めいぶつ",
         "meaning": "producto típico / especialidad local"
+      },
+      {
+        "word": "果物",
+        "reading": "くだもの",
+        "meaning": "Fruta"
+      },
+      {
+        "word": "荷物",
+        "reading": "にもつ",
+        "meaning": "Equipaje / Maleta"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2679,6 +3269,11 @@
         "word": "電話番号",
         "reading": "でんわばんごう",
         "meaning": "Número de teléfono"
+      },
+      {
+        "word": "番線",
+        "reading": "ばんせん",
+        "meaning": "Vía / Andén número..."
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2698,6 +3293,11 @@
         "word": "電話番号",
         "reading": "でんわばんごう",
         "meaning": "Número de teléfono"
+      },
+      {
+        "word": "信号",
+        "reading": "しんごう",
+        "meaning": "Semáforo"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2751,6 +3351,11 @@
         "word": "体験",
         "reading": "たいけん",
         "meaning": "experiencia vivencial en primera persona"
+      },
+      {
+        "word": "受験",
+        "reading": "じゅけん",
+        "meaning": "Presentarse a examen oficial"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2770,6 +3375,11 @@
         "word": "一度",
         "reading": "いちど",
         "meaning": "Una vez"
+      },
+      {
+        "word": "今度",
+        "reading": "こんど",
+        "meaning": "La próxima vez / Esta vez"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2832,6 +3442,11 @@
         "word": "安全",
         "reading": "あんぜん",
         "meaning": "seguro"
+      },
+      {
+        "word": "全部",
+        "reading": "ぜんぶ",
+        "meaning": "Todo / En conjunto"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2851,6 +3466,16 @@
         "word": "全員",
         "reading": "ぜんいん",
         "meaning": "Todos los miembros / Todos"
+      },
+      {
+        "word": "会社員",
+        "reading": "かいしゃいん",
+        "meaning": "Empleado de empresa / Oficinista"
+      },
+      {
+        "word": "店員",
+        "reading": "てんいん",
+        "meaning": "Camarero / Dependiente"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2870,6 +3495,36 @@
         "word": "土曜日",
         "reading": "どようび",
         "meaning": "Sábado"
+      },
+      {
+        "word": "月曜日",
+        "reading": "げつようび",
+        "meaning": "Lunes (Día de la Luna)"
+      },
+      {
+        "word": "日曜日",
+        "reading": "にちようび",
+        "meaning": "Domingo (Día del Sol)"
+      },
+      {
+        "word": "金曜日",
+        "reading": "きんようび",
+        "meaning": "Viernes"
+      },
+      {
+        "word": "火曜日",
+        "reading": "かようび",
+        "meaning": "Martes"
+      },
+      {
+        "word": "水曜日",
+        "reading": "すいようび",
+        "meaning": "Miércoles"
+      },
+      {
+        "word": "木曜日",
+        "reading": "もくようび",
+        "meaning": "Jueves"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -2927,6 +3582,11 @@
         "word": "階段",
         "reading": "かいだん",
         "meaning": "Escalera"
+      },
+      {
+        "word": "値段",
+        "reading": "ねだん",
+        "meaning": "Precio / Coste"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -3104,6 +3764,16 @@
         "word": "予約",
         "reading": "よやく",
         "meaning": "reserva"
+      },
+      {
+        "word": "節約",
+        "reading": "せつやく",
+        "meaning": "Ahorro / Consumo moderado"
+      },
+      {
+        "word": "契約",
+        "reading": "けいやく",
+        "meaning": "Firma de contrato de arrendamiento"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -3451,6 +4121,11 @@
         "word": "何枚",
         "reading": "なんまい",
         "meaning": "¿cuántas hojas?"
+      },
+      {
+        "word": "枚",
+        "reading": "まい",
+        "meaning": "Contador de hojas o cosas planas"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -3480,6 +4155,11 @@
         "word": "乗客",
         "reading": "じょうきゃく",
         "meaning": "pasajero"
+      },
+      {
+        "word": "乗ります",
+        "reading": "のります",
+        "meaning": "Subir a transporte"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -3572,6 +4252,16 @@
         "word": "口コミ",
         "reading": "くちこみ",
         "meaning": "reseña de usuarios / boca a boca"
+      },
+      {
+        "word": "窓口",
+        "reading": "まどぐち",
+        "meaning": "Ventanilla de atención al público"
+      },
+      {
+        "word": "非常口",
+        "reading": "ひじょうぐち",
+        "meaning": "Salida de emergencia"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -3678,6 +4368,11 @@
         "word": "画面",
         "reading": "がめん",
         "meaning": "pantalla"
+      },
+      {
+        "word": "漫画",
+        "reading": "まんが",
+        "meaning": "Cómic japonés / Manga"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -3760,6 +4455,11 @@
         "word": "温度",
         "reading": "おんど",
         "meaning": "temperatura"
+      },
+      {
+        "word": "温める",
+        "reading": "あたためる",
+        "meaning": "Calentar (comida en combini)"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -3900,6 +4600,11 @@
         "word": "疲労",
         "reading": "ひろう",
         "meaning": "fatiga / agotamiento"
+      },
+      {
+        "word": "お疲れさまでした",
+        "reading": "おつかれさまでした",
+        "meaning": "Gracias por su esfuerzo / Buen trabajo"
       }
     ],
     "source": "Vocabulario Nihongo"
@@ -3973,6 +4678,11 @@
         "word": "お先に失礼します",
         "reading": "おさきにしつれいします",
         "meaning": "con permiso, me retiro antes"
+      },
+      {
+        "word": "失くす",
+        "reading": "なくす",
+        "meaning": "Extraviar / Perder un objeto"
       }
     ],
     "source": "Kanji Book"
@@ -4017,6 +4727,11 @@
         "word": "礼金",
         "reading": "れいきん",
         "meaning": "gratificación al propietario (no reembolsable)"
+      },
+      {
+        "word": "礼儀",
+        "reading": "れいぎ",
+        "meaning": "Cortesía / Etiqueta social"
       }
     ],
     "source": "Kanji Book"

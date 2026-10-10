@@ -3206,6 +3206,33 @@ ruby.furigana-ruby rt {
   gap: 10px;
 }
 
+@media (max-width: 768px) {
+  .curriculum-stepper-tabs {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+  }
+
+  .curriculum-stepper-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .curriculum-stepper-tabs::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+
+  .curriculum-step-tab {
+    flex: 0 0 240px;
+    min-width: 240px;
+    scroll-snap-align: start;
+  }
+}
+
 .curriculum-step-tab {
   display: flex;
   align-items: center;
@@ -3463,8 +3490,406 @@ ruby.furigana-ruby rt {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  margin-bottom: 28px;
+  margin-bottom: calc(var(--audio-player-height, 72px) + env(safe-area-inset-bottom, 16px) + 24px);
   box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 768px) {
+  .step-action-bar {
+    margin-bottom: calc(var(--audio-player-height, 170px) + env(safe-area-inset-bottom, 16px) + 24px);
+  }
+  .curriculum-detail-view {
+    padding-bottom: calc(var(--audio-player-height, 170px) + env(safe-area-inset-bottom, 16px) + 20px);
+  }
+}
+
+/* ==========================================================================
+   Curriculum Bento Grid & Interactive Sections (Milestone 2)
+   ========================================================================== */
+
+/* Global Module Vocabulary Panel in Hero Card */
+.curriculum-hero-vocab-bar {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.curriculum-global-vocab-panel {
+  margin-top: 16px;
+  padding: 18px;
+  background: var(--bg-main);
+  border-radius: var(--radius-bento, 20px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.curriculum-global-vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+
+.curriculum-global-vocab-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.curriculum-global-vocab-item:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+/* Kanjis & Jukugo Bento Cards */
+.curriculum-kanji-section {
+  border-radius: var(--radius-bento, 20px);
+}
+
+.curriculum-kanji-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.curriculum-kanji-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-bento, 20px);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.curriculum-kanji-card:hover {
+  border-color: var(--primary-light);
+}
+
+.curriculum-kanji-card-inner {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.curriculum-kanji-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 14px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  min-width: 135px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.curriculum-kanji-char {
+  font-size: 3rem;
+  font-weight: 800;
+  font-family: var(--font-jp);
+  color: var(--primary);
+  line-height: 1.1;
+  text-align: center;
+}
+
+.curriculum-kanji-type-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: var(--radius-sm);
+}
+
+.curriculum-kanji-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.curriculum-kanji-actions .btn {
+  width: 100%;
+  justify-content: center;
+  padding: 5px 8px;
+  font-size: 0.78rem;
+}
+
+.curriculum-kanji-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.curriculum-kanji-header {
+  margin-bottom: 12px;
+}
+
+.curriculum-kanji-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.curriculum-kanji-kana {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.curriculum-kanji-meaning {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-top: 4px;
+}
+
+.curriculum-kanji-readings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--bg-main);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+  font-size: 0.88rem;
+}
+
+.curriculum-kanji-reading-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.reading-label {
+  font-weight: 700;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.reading-value {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.curriculum-kanji-breakdown-box {
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.breakdown-box-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.breakdown-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.breakdown-char-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.breakdown-char {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-jp);
+}
+
+.breakdown-reading {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-family: var(--font-jp);
+}
+
+.breakdown-meaning {
+  font-size: 0.82rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.breakdown-plus {
+  font-weight: 800;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.breakdown-explanation-text {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.curriculum-kanji-mnemonic-box {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.03) 100%);
+  border-left: 3px solid #f59e0b;
+  padding: 10px 14px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* Functional Bridge Bento Cards */
+.curriculum-bridge-section {
+  border-radius: var(--radius-bento, 20px);
+}
+
+.curriculum-bridge-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.curriculum-bridge-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-bento, 20px);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.curriculum-bridge-card:hover {
+  border-color: var(--primary-light);
+}
+
+.curriculum-bridge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.curriculum-bridge-pill {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-family: var(--font-jp);
+  color: var(--primary);
+  padding: 4px 12px;
+  background: var(--primary-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.curriculum-bridge-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.curriculum-bridge-type-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  background: var(--bg-main);
+  color: var(--text-muted);
+  border-radius: 4px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+}
+
+.curriculum-bridge-function {
+  font-size: 0.94rem;
+  color: var(--text-main);
+  font-weight: 500;
+  margin: 8px 0 10px 0;
+  line-height: 1.5;
+}
+
+.curriculum-bridge-rule-box {
+  background: var(--bg-main);
+  border-left: 3px solid var(--primary);
+  padding: 10px 14px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.curriculum-bridge-example-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-main);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.grammar-examples-toggle-btn {
+  font-weight: 600;
+  color: var(--primary);
+  border-color: var(--border);
+  transition: all 0.2s ease;
+}
+
+.grammar-examples-toggle-btn:hover {
+  background: var(--bg-main);
+  border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .curriculum-kanji-card-inner {
+    flex-direction: column !important;
+  }
+
+  .curriculum-kanji-side {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .curriculum-kanji-actions {
+    flex-direction: row !important;
+  }
 }
 
 .ruta-progress-banner {

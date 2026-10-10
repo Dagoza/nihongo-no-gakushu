@@ -8,6 +8,7 @@ import vocabularyData from '../../data/vocabulary.json';
 import kanjiData from '../../data/kanji.json';
 import { useApp } from '../../lib/AppContext';
 import useFocusTrap from '../../lib/useFocusTrap';
+import TerminologyTooltip from '../common/TerminologyTooltip';
 
 export default function DictionaryModal({
   isOpen,
@@ -820,7 +821,18 @@ export default function DictionaryModal({
                         }}>
                           {(() => {
                             if ((currentToken.category === 'Texto' || !currentToken.category) && componentKanjis.length > 0) {
-                              return 'Palabra Compuesta (Jukugo 熟語)';
+                              return (
+                                <TerminologyTooltip termId="jukugo">
+                                  <span>Palabra Compuesta (Jukugo 熟語)</span>
+                                </TerminologyTooltip>
+                              );
+                            }
+                            if (currentToken.category?.includes('Prefijo')) {
+                              return (
+                                <TerminologyTooltip termId="bikougo">
+                                  <span>{currentToken.category}</span>
+                                </TerminologyTooltip>
+                              );
                             }
                             return currentToken.category || 'Vocabulario General';
                           })()}

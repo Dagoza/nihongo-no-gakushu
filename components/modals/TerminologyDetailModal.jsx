@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   X, 
   Volume2, 
@@ -8,19 +8,73 @@ import {
   Languages, 
   Target, 
   Award, 
-  Sparkles 
+  Sparkles,
+  BookOpen,
+  Search,
+  Filter,
+  Check
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
+import terminologyList from '../../data/terminology.json';
 
-export default function TerminologyDetailModal({ isOpen, onClose, initialPillarId = 'writing', onNavigate }) {
-  const [activePillar, setActivePillar] = useState(initialPillarId);
+/**
+ * Normalizes Japanese text for speech synthesis by removing parenthetical readings
+ * (e.g. "お茶 (おちゃ)" -> "お茶") so the TTS does not speak redundantly.
+ */
+function cleanTextForAudio(text) {
+  if (!text || typeof text !== 'string') return '';
+  const cleaned = text.replace(/\s*[\(\（][^\)\）]*[\)\）]/g, '').trim();
+  return cleaned || text.trim();
+}
+
+export default function TerminologyDetailModal({
+  isOpen,
+  onClose,
+  initialPillarId = 'writing',
+  initialTermId = null,
+  onNavigate
+}) {
+  const [activePillar, setActivePillar] = useState(initialTermId ? 'glossary' : initialPillarId);
+  const [highlightedTermId, setHighlightedTermId] = useState(initialTermId);
   const [playingAudio, setPlayingAudio] = useState(null);
+
+  // Glossary search & filtering state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Todas');
+
+  // Synchronize pillar and highlighted term on prop updates
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (initialTermId) {
+      setActivePillar('glossary');
+      setHighlightedTermId(initialTermId);
+    } else if (initialPillarId) {
+      setActivePillar(initialPillarId);
+    }
+  }, [initialPillarId, initialTermId, isOpen]);
+
+  // Deep-linking scroll to target term card
+  useEffect(() => {
+    if (isOpen && activePillar === 'glossary' && highlightedTermId) {
+      const timer = setTimeout(() => {
+        const targetElement = document.getElementById(`term-card-${highlightedTermId}`);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 250);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, activePillar, highlightedTermId]);
 
   if (!isOpen) return null;
 
   const playAudio = (text, id) => {
+    const clean = cleanTextForAudio(text);
+    if (!clean) return;
+
     setPlayingAudio(id);
-    audioManager.speak(text);
+    audioManager.speak(clean);
     setTimeout(() => {
       setPlayingAudio(null);
     }, 1800);
@@ -202,11 +256,65 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
           ]
         }
       ]
+    },
+    glossary: {
+      title: 'Glosario de Terminología Lingüística',
+      subtitle: 'Conceptos morfológicos, etimológicos y de cortesía: Keigo, Bikougo, Wago, Kango y más',
+      badge: 'Glosario & Lingüística',
+      icon: BookOpen,
+      color: '#8b5cf6',
+      summary: 'Diccionario técnico con definiciones completas, desgloses etimológicos y ejemplos reales pronunciados con audio neuronal.',
+      isDynamicGlossary: true
     }
   };
 
   const currentData = pillarsData[activePillar] || pillarsData.writing;
   const PillarIcon = currentData.icon;
+
+  // Categories list for filtering
+  const categoryPills = useMemo(() => {
+    const list = [
+      'Todas',
+      'Cortesía y Registro',
+      'Etimología y Vocabulario',
+      'Morfología y Kanji',
+      'Morfología y Escritura',
+      'Gramática y Verbos',
+      'Gramática y Morfología'
+    ];
+    return list;
+  }, []);
+
+  // Filter glossary items by search term and category
+  const filteredTerms = useMemo(() => {
+    if (!Array.isArray(terminologyList)) return [];
+    const query = searchTerm.trim().toLowerCase();
+
+    return terminologyList.filter((item) => {
+      const matchCat =
+        selectedCategory === 'Todas' || item.category === selectedCategory;
+      if (!matchCat) return false;
+      if (!query) return true;
+
+      const termName = (item.term || '').toLowerCase();
+      const kanji = (item.kanji || '').toLowerCase();
+      const kana = (item.kana || '').toLowerCase();
+      const romaji = (item.romaji || '').toLowerCase();
+      const shortDef = (item.short_definition || '').toLowerCase();
+      const fullExp = (item.full_explanation || '').toLowerCase();
+      const category = (item.category || '').toLowerCase();
+
+      return (
+        termName.includes(query) ||
+        kanji.includes(query) ||
+        kana.includes(query) ||
+        romaji.includes(query) ||
+        shortDef.includes(query) ||
+        fullExp.includes(query) ||
+        category.includes(query)
+      );
+    });
+  }, [searchTerm, selectedCategory]);
 
   return (
     <div className="term-modal-overlay" onClick={onClose}>
@@ -222,17 +330,18 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
                 width: 44,
                 height: 44,
                 borderRadius: 14,
-                background: 'rgba(99, 102, 241, 0.12)',
+                background: `${currentData.color}20`,
                 color: currentData.color,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                flexShrink: 0
               }}
             >
               <PillarIcon size={24} />
             </div>
             <div>
-              <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: currentData.color, letterSpacing: '0.04em' }}>
                 {currentData.badge}
               </span>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', margin: '2px 0 0' }}>
@@ -258,18 +367,24 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
           </button>
         </div>
 
-        {/* Pestañas de selector */}
+        {/* Pestañas de selector (5 Pilares) */}
         <div className="term-modal-tabs">
           {[
             { id: 'writing', label: '1. Escritura' },
             { id: 'particles', label: '2. Partículas' },
             { id: 'jlpt', label: '3. Niveles JLPT' },
-            { id: 'phonetics', label: '4. Fonética & Tono' }
-          ].map(p => (
+            { id: 'phonetics', label: '4. Fonética & Tono' },
+            { id: 'glossary', label: '5. Glosario Lingüístico' }
+          ].map((p) => (
             <button
               key={p.id}
               type="button"
-              onClick={() => setActivePillar(p.id)}
+              onClick={() => {
+                setActivePillar(p.id);
+                if (p.id !== 'glossary') {
+                  setHighlightedTermId(null);
+                }
+              }}
               className={`term-modal-tab-btn ${activePillar === p.id ? 'active' : ''}`}
             >
               {p.label}
@@ -279,7 +394,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
 
         {/* Cuerpo con Scroll */}
         <div className="term-modal-body">
-          {/* Resumen */}
+          {/* Resumen Superior */}
           <div 
             style={{ 
               padding: '14px 18px', 
@@ -295,62 +410,393 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
             💡 {currentData.summary}
           </div>
 
-          {/* Secciones de contenido */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {currentData.sections.map((sec, idx) => (
-              <div key={sec.id} className="term-modal-section-card">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
-                      {sec.name}
-                    </h3>
-                    <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--primary)' }}>
-                      {sec.role}
-                    </span>
-                  </div>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
-                    Paso {idx + 1}
-                  </span>
+          {/* VISTA DEL 5.º PILAR: GLOSARIO LINGÜÍSTICO DINÁMICO */}
+          {activePillar === 'glossary' ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {/* Controles de Búsqueda y Filtro */}
+              <div 
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                  background: 'var(--bg-subtle)',
+                  padding: '16px',
+                  borderRadius: 18,
+                  border: '1px solid var(--border)'
+                }}
+              >
+                {/* Input de Búsqueda */}
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <Search 
+                    size={18} 
+                    style={{ position: 'absolute', left: 14, color: 'var(--text-muted)', pointerEvents: 'none' }} 
+                  />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Buscar término, kanji, lectura, concepto o definición..."
+                    aria-label="Buscar en el glosario"
+                    style={{
+                      width: '100%',
+                      padding: '10px 40px 10px 42px',
+                      borderRadius: 12,
+                      border: '1px solid var(--border)',
+                      background: 'var(--bg-card)',
+                      color: 'var(--text-main)',
+                      fontSize: '0.88rem',
+                      fontWeight: 500,
+                      outline: 'none',
+                      transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+                    }}
+                  />
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchTerm('')}
+                      style={{
+                        position: 'absolute',
+                        right: 12,
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: 4
+                      }}
+                      title="Limpiar búsqueda"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
                 </div>
 
-                <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
-                  {sec.desc}
-                </p>
+                {/* Filtros de Categoría */}
+                <div 
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    overflowX: 'auto',
+                    paddingBottom: 4
+                  }}
+                >
+                  <Filter size={15} style={{ color: 'var(--text-muted)', flexShrink: 0, marginRight: 2 }} />
+                  {categoryPills.map((cat) => {
+                    const isSelected = selectedCategory === cat;
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat)}
+                        style={{
+                          padding: '6px 12px',
+                          borderRadius: 20,
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          whiteSpace: 'nowrap',
+                          cursor: 'pointer',
+                          transition: 'all 0.18s ease',
+                          border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
+                          background: isSelected ? 'var(--primary)' : 'var(--bg-card)',
+                          color: isSelected ? '#ffffff' : 'var(--text-muted)'
+                        }}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
+                </div>
 
-                {/* Muestra de ejemplos con Audio */}
-                <div className="term-sample-grid">
-                  {sec.examples.map((ex, exIdx) => {
-                    const audioId = `${sec.id}_${exIdx}`;
-                    const isPlaying = playingAudio === audioId;
+                {/* Contador de Resultados */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)', padding: '0 4px' }}>
+                  <span>
+                    Mostrando <strong>{filteredTerms.length}</strong> de {terminologyList.length} términos lingüísticos
+                  </span>
+                  {(searchTerm || selectedCategory !== 'Todas') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setSelectedCategory('Todas');
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--primary)',
+                        cursor: 'pointer',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        padding: 0
+                      }}
+                    >
+                      Restablecer filtros
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Estado Vacío */}
+              {filteredTerms.length === 0 ? (
+                <div 
+                  style={{
+                    padding: '36px 20px',
+                    textAlign: 'center',
+                    background: 'var(--bg-subtle)',
+                    borderRadius: 20,
+                    border: '1px dashed var(--border)'
+                  }}
+                >
+                  <Search size={32} style={{ color: 'var(--text-muted)', margin: '0 auto 12px' }} />
+                  <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', margin: '0 0 6px' }}>
+                    No se encontraron términos
+                  </h4>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0 0 16px' }}>
+                    No hay resultados coincidentes con &quot;{searchTerm}&quot; en la categoría seleccionada.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchTerm('');
+                      setSelectedCategory('Todas');
+                    }}
+                    className="home-btn-secondary"
+                    style={{ padding: '8px 16px', fontSize: '0.8rem', margin: '0 auto' }}
+                  >
+                    Ver todos los términos
+                  </button>
+                </div>
+              ) : (
+                /* Cuadrícula de Tarjetas de Términos */
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {filteredTerms.map((term) => {
+                    const isHighlighted = highlightedTermId === term.id;
 
                     return (
                       <div
-                        key={exIdx}
-                        onClick={() => playAudio(ex.jp, audioId)}
-                        className={`term-sample-item ${isPlaying ? 'playing' : ''}`}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === 'Enter') playAudio(ex.jp, audioId); }}
+                        key={term.id}
+                        id={`term-card-${term.id}`}
+                        className="term-modal-section-card"
+                        style={{
+                          transition: 'all 0.25s ease',
+                          ...(isHighlighted
+                            ? {
+                                border: '2px solid var(--primary)',
+                                boxShadow: '0 0 0 4px rgba(99, 102, 241, 0.18)',
+                                background: 'var(--primary-bg)'
+                              }
+                            : {})
+                        }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <span className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                            {ex.jp}
+                        {/* Cabecera del Término */}
+                        <div 
+                          style={{ 
+                            display: 'flex', 
+                            alignItems: 'flex-start', 
+                            justifyContent: 'space-between', 
+                            gap: 12, 
+                            flexWrap: 'wrap' 
+                          }}
+                        >
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                              <h3 style={{ fontSize: '1.12rem', fontWeight: 900, color: 'var(--text-main)', margin: 0 }}>
+                                {term.term}
+                              </h3>
+                              {term.kanji && (
+                                <span 
+                                  className="jp-text" 
+                                  style={{ 
+                                    fontSize: '1rem', 
+                                    fontWeight: 900, 
+                                    color: 'var(--primary)', 
+                                    background: 'var(--bg-card)', 
+                                    padding: '2px 8px', 
+                                    borderRadius: 8, 
+                                    border: '1px solid var(--border)' 
+                                  }}
+                                >
+                                  {term.kanji}
+                                </span>
+                              )}
+                              {term.kana && (
+                                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                                  「{term.kana}」
+                                </span>
+                              )}
+                              {term.romaji && (
+                                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                                  ({term.romaji})
+                                </span>
+                              )}
+                            </div>
+
+                            <span 
+                              style={{ 
+                                fontSize: '0.72rem', 
+                                fontWeight: 800, 
+                                textTransform: 'uppercase', 
+                                letterSpacing: '0.04em',
+                                color: 'var(--primary)', 
+                                display: 'inline-block', 
+                                marginTop: 6 
+                              }}
+                            >
+                              {term.category}
+                            </span>
+                          </div>
+
+                          <span 
+                            style={{ 
+                              fontSize: '0.7rem', 
+                              fontWeight: 800, 
+                              padding: '3px 8px', 
+                              borderRadius: 6, 
+                              background: 'var(--bg-card)', 
+                              border: '1px solid var(--border)', 
+                              color: 'var(--text-muted)' 
+                            }}
+                          >
+                            #{term.id}
                           </span>
-                          <Volume2 size={16} style={{ color: isPlaying ? 'var(--primary)' : 'var(--text-light)' }} />
                         </div>
-                        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-                          {ex.romaji}
-                        </span>
-                        <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-main)', marginTop: 2 }}>
-                          {ex.es}
-                        </span>
+
+                        {/* Definición Corta Destacada */}
+                        <div 
+                          style={{ 
+                            padding: '10px 14px', 
+                            background: 'var(--bg-card)', 
+                            borderRadius: 12, 
+                            borderLeft: '3px solid var(--primary)', 
+                            fontSize: '0.86rem', 
+                            fontWeight: 600, 
+                            color: 'var(--text-main)', 
+                            lineHeight: 1.45 
+                          }}
+                        >
+                          {term.short_definition}
+                        </div>
+
+                        {/* Explicación Pedagógica Completa */}
+                        <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+                          {term.full_explanation}
+                        </p>
+
+                        {/* Ejemplos con Audio Individual */}
+                        {term.examples && term.examples.length > 0 && (
+                          <div style={{ marginTop: 2 }}>
+                            <span 
+                              style={{ 
+                                fontSize: '0.72rem', 
+                                fontWeight: 800, 
+                                textTransform: 'uppercase', 
+                                letterSpacing: '0.04em',
+                                color: 'var(--text-muted)', 
+                                display: 'block', 
+                                marginBottom: 8 
+                              }}
+                            >
+                              Ejemplos prácticos y pronunciación
+                            </span>
+
+                            <div className="term-sample-grid">
+                              {term.examples.map((ex, exIdx) => {
+                                const audioId = `glossary_${term.id}_${exIdx}`;
+                                const isPlaying = playingAudio === audioId;
+
+                                return (
+                                  <div
+                                    key={exIdx}
+                                    onClick={() => playAudio(ex.jp, audioId)}
+                                    className={`term-sample-item ${isPlaying ? 'playing' : ''}`}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') playAudio(ex.jp, audioId); }}
+                                    title="Reproducir audio neuronal"
+                                  >
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                                      <span className="jp-text" style={{ fontSize: '1.02rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                                        {ex.jp}
+                                      </span>
+                                      <Volume2 size={16} style={{ color: isPlaying ? 'var(--primary)' : 'var(--text-light)', flexShrink: 0 }} />
+                                    </div>
+                                    {ex.romaji && (
+                                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                                        {ex.romaji}
+                                      </span>
+                                    )}
+                                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-main)', marginTop: 2 }}>
+                                      {ex.es}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
                 </div>
-              </div>
-            ))}
-          </div>
+              )}
+            </div>
+          ) : (
+            /* VISTAS DE LOS PILARES 1 A 4 */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {currentData.sections.map((sec, idx) => (
+                <div key={sec.id} className="term-modal-section-card">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+                        {sec.name}
+                      </h3>
+                      <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--primary)' }}>
+                        {sec.role}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                      Paso {idx + 1}
+                    </span>
+                  </div>
+
+                  <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
+                    {sec.desc}
+                  </p>
+
+                  {/* Muestra de ejemplos con Audio */}
+                  <div className="term-sample-grid">
+                    {sec.examples.map((ex, exIdx) => {
+                      const audioId = `${sec.id}_${exIdx}`;
+                      const isPlaying = playingAudio === audioId;
+
+                      return (
+                        <div
+                          key={exIdx}
+                          onClick={() => playAudio(ex.jp, audioId)}
+                          className={`term-sample-item ${isPlaying ? 'playing' : ''}`}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => { if (e.key === 'Enter') playAudio(ex.jp, audioId); }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <span className="jp-text" style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                              {ex.jp}
+                            </span>
+                            <Volume2 size={16} style={{ color: isPlaying ? 'var(--primary)' : 'var(--text-light)' }} />
+                          </div>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                            {ex.romaji}
+                          </span>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-main)', marginTop: 2 }}>
+                            {ex.es}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Pie del modal */}
@@ -380,6 +826,7 @@ export default function TerminologyDetailModal({ isOpen, onClose, initialPillarI
                   if (activePillar === 'particles') onNavigate('/grammar');
                   else if (activePillar === 'jlpt') onNavigate('/jlpt');
                   else if (activePillar === 'writing') onNavigate('/kanji');
+                  else if (activePillar === 'glossary') onNavigate('/curriculum');
                   else onNavigate('/curriculum');
                 }}
                 className="home-btn-primary"

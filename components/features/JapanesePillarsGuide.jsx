@@ -6,6 +6,7 @@ import {
   Target, 
   Award, 
   Sparkles, 
+  BookOpen,
   ArrowUpRight 
 } from 'lucide-react';
 
@@ -58,6 +59,18 @@ export default function JapanesePillarsGuide({ onOpenPillar }) {
       color: '#ec4899',
       bgLight: 'rgba(236, 72, 153, 0.12)',
       tag: 'Acento Tonal'
+    },
+    {
+      id: 'glossary',
+      title: 'Glosario Lingüístico',
+      badge: 'Terminología Técnica',
+      watermark: '語',
+      kanjiSample: '敬語 · 和語 · 漢語 · 熟語',
+      desc: 'Conceptos morfológicos y de registro: Keigo, Bikougo, Wago, Kango y verbos Godan/Ichidan.',
+      icon: BookOpen,
+      color: '#8b5cf6',
+      bgLight: 'rgba(139, 92, 246, 0.12)',
+      tag: '14+ Términos'
     }
   ];
 
@@ -71,7 +84,7 @@ export default function JapanesePillarsGuide({ onOpenPillar }) {
             Arquitectura del Idioma
           </span>
           <h2 className="home-section-title">
-            Los 4 Pilares del Japonés
+            Los 5 Pilares del Japonés
           </h2>
         </div>
         <p className="home-section-desc">
@@ -79,8 +92,8 @@ export default function JapanesePillarsGuide({ onOpenPillar }) {
         </p>
       </div>
 
-      {/* Grid de 4 Pilares */}
-      <div className="pillars-grid">
+      {/* Grid de 5 Pilares */}
+      <div className="pillars-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}>
         {pillars.map((pillar) => {
           const Icon = pillar.icon;
           return (
