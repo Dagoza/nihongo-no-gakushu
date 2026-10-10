@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, X, Volume2, BookmarkPlus, PenTool, BookOpen, Info, Check, Edit3 } from 'lucide-react';
+import { Search, X, Volume2, BookmarkPlus, PenTool, BookOpen, Info, Check, Edit3, Sparkles, Layers } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { lookupJapaneseWord, analyzeJapaneseSentence, convertKanjiToKanaSync, hiraganaToKatakana, containsKanji, extractKanjis, cleanKanaOnly } from '../../lib/japaneseUtils';
 import vocabularyData from '../../data/vocabulary.json';
@@ -91,6 +91,93 @@ export default function DictionaryModal({
     if (!clean) return null;
     return lookupJapaneseWord(clean, customVocab, externalVocab);
   }, [query, customVocab, externalVocab]);
+
+  // Detalles de kanjis remotos resueltos en segundo plano si no están en catálogo
+  const [remoteKanjiDetails, setRemoteKanjiDetails] = useState({});
+
+  // Desglose de los kanjis que componen el término seleccionado
+  const componentKanjis = useMemo(() => {
+    const textToInspect = currentToken?.text || query || '';
+    if (!textToInspect) return [];
+    const chars = extractKanjis(textToInspect);
+    if (chars.length === 0) return [];
+
+    return chars.map(char => {
+      const kInfo = kanjiData?.find(k => k.kanji === char);
+      if (kInfo) {
+        return {
+          char,
+          found: true,
+          meaning_es: kInfo.meaning_es,
+          meaning_en: kInfo.meaning_en || '',
+          level: kInfo.level || 'N5',
+          onyomi: kInfo.onyomi || '',
+          kunyomi: kInfo.kunyomi || '',
+          mnemonic: kInfo.mnemonic || '',
+          strokes: kInfo.strokes || null,
+          pronunciation: kInfo.pronunciation || ''
+        };
+      }
+      const remote = remoteKanjiDetails[char];
+      if (remote) {
+        return {
+          char,
+          found: true,
+          meaning_es: remote.meaning_es,
+          meaning_en: remote.meaning_en || '',
+          level: remote.level || 'N5',
+          onyomi: remote.onyomi || '',
+          kunyomi: remote.kunyomi || '',
+          mnemonic: remote.mnemonic || '',
+          strokes: remote.strokes || null,
+          pronunciation: remote.pronunciation || ''
+        };
+      }
+      return {
+        char,
+        found: false,
+        meaning_es: '',
+        meaning_en: '',
+        level: 'N5',
+        onyomi: '',
+        kunyomi: '',
+        mnemonic: '',
+        strokes: null,
+        pronunciation: ''
+      };
+    });
+  }, [currentToken?.text, query, remoteKanjiDetails]);
+
+  // Si hay kanjis sin información local, consultar endpoint /api/kanji/reading en segundo plano
+  useEffect(() => {
+    if (!componentKanjis || componentKanjis.length === 0) return;
+    const missing = componentKanjis.filter(k => !k.found && !remoteKanjiDetails[k.char]);
+    if (missing.length === 0) return;
+
+    missing.forEach(async (k) => {
+      try {
+        const res = await fetch(`/api/kanji/reading?text=${encodeURIComponent(k.char)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            setRemoteKanjiDetails(prev => ({
+              ...prev,
+              [k.char]: {
+                meaning_es: data.meaning_es || data.meaning_en || 'Ideograma kanji',
+                meaning_en: data.meaning_en || '',
+                level: data.level || 'N5',
+                onyomi: data.katakana || '',
+                kunyomi: data.hiragana || '',
+                strokes: null
+              }
+            }));
+          }
+        }
+      } catch (e) {
+        console.warn('Error resolviendo kanji remoto:', e);
+      }
+    });
+  }, [componentKanjis, remoteKanjiDetails]);
 
   if (!isOpen) return null;
 
@@ -653,7 +740,20 @@ export default function DictionaryModal({
                               if (token.baseForm === 'する' || token.text === 'します') {
                                 return 'hacer';
                               }
+                              if (token.hasInferredKanjiMeaning && token.meaning_es) {
+                                return token.meaning_es.split('+')[0].trim();
+                              }
+                              if (!token.meaning_es && containsKanji(token.text)) {
+                                const kChars = extractKanjis(token.text);
+                                const found = kChars.map(c => kanjiData?.find(k => k.kanji === c)?.meaning_es).filter(Boolean);
+                                if (found.length > 0) {
+                                  return found.map(m => m.split(',')[0].trim()).join('·');
+                                }
+                              }
                               const raw = token.meaning_es ? token.meaning_es.split('[')[0].split('/')[0].trim() : (token.category || 'Palabra');
+                              if (raw === 'Texto' && containsKanji(token.text)) {
+                                return 'Jukugo 熟語';
+                              }
                               return raw || token.category || 'Palabra';
                             })()}
                           </span>
@@ -703,7 +803,11 @@ export default function DictionaryModal({
                           background: 'rgba(99, 102, 241, 0.12)',
                           color: 'var(--primary)'
                         }}>
-                          {currentToken.level || 'N5'}
+                          {(() => {
+                            if (currentToken.level && currentToken.level !== 'N5') return currentToken.level;
+                            const nonN5 = componentKanjis.find(k => k.level && k.level !== 'N5');
+                            return nonN5?.level || currentToken.level || 'N5';
+                          })()}
                         </span>
                         <span style={{
                           fontSize: '0.72rem',
@@ -714,7 +818,12 @@ export default function DictionaryModal({
                           color: 'var(--text-muted)',
                           border: '1px solid var(--border)'
                         }}>
-                          {currentToken.category || 'Vocabulario General'}
+                          {(() => {
+                            if ((currentToken.category === 'Texto' || !currentToken.category) && componentKanjis.length > 0) {
+                              return 'Palabra Compuesta (Jukugo 熟語)';
+                            }
+                            return currentToken.category || 'Vocabulario General';
+                          })()}
                         </span>
                         {currentToken.baseForm && currentToken.baseForm !== currentToken.text && (
                           <span style={{
@@ -757,27 +866,205 @@ export default function DictionaryModal({
 
                   {/* Meaning & Definition */}
                   <div style={{
-                    padding: '12px 14px',
-                    borderRadius: 8,
+                    padding: '14px 16px',
+                    borderRadius: 10,
                     background: 'var(--bg-main)',
-                    border: '1px solid var(--border)'
+                    border: '1px solid var(--border)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 6
                   }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 4 }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                       Significado en Español:
                     </div>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.4 }}>
-                      {currentToken.meaning_es || (
+                    <div style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.45 }}>
+                      {currentToken.meaning_es ? (
+                        currentToken.meaning_es
+                      ) : componentKanjis.length > 0 && componentKanjis.some(k => k.meaning_es || k.meaning_en) ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#f59e0b', fontSize: '0.82rem', fontWeight: 700 }}>
+                            <Sparkles size={14} color="#f59e0b" />
+                            <span>Significado inferido por sus Kanjis:</span>
+                          </div>
+                          <div style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.35 }}>
+                            {componentKanjis.map(k => `${k.char}「${k.meaning_es || k.meaning_en || 'ideograma'}」`).join(' + ')}
+                          </div>
+                          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>
+                            Esta palabra no tiene entrada directa en el glosario base, pero se deduce de la suma de sus ideogramas componentes.
+                          </p>
+                        </div>
+                      ) : (
                         <span style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>
                           No se encontró definición directa. Puede ser un nombre propio o término no catalogado.
                         </span>
                       )}
                     </div>
                     {currentToken.notes && (
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 6, borderTop: '1px dashed var(--border)', paddingTop: 6 }}>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 4, borderTop: '1px dashed var(--border)', paddingTop: 6 }}>
                         💡 {currentToken.notes}
                       </div>
                     )}
                   </div>
+
+                  {/* Component Kanjis Breakdown Section */}
+                  {componentKanjis.length > 0 && (
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 10,
+                      padding: '12px 14px',
+                      borderRadius: 10,
+                      background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.03))',
+                      border: '1px solid rgba(99, 102, 241, 0.2)'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <Sparkles size={15} color="var(--primary)" />
+                          <span style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--primary)' }}>
+                            Kanjis que componen esta palabra ({componentKanjis.length})
+                          </span>
+                        </div>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                          Toca un kanji para consultarlo
+                        </span>
+                      </div>
+
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: componentKanjis.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: 10
+                      }}>
+                        {componentKanjis.map((k, kIdx) => (
+                          <div
+                            key={kIdx}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: 10,
+                              padding: '10px 12px',
+                              borderRadius: 8,
+                              background: 'var(--bg-card)',
+                              border: '1px solid var(--border)',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                            }}
+                          >
+                            {/* Kanji Large Button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setQuery(k.char);
+                                setActiveTokenIndex(0);
+                              }}
+                              title={`Consultar kanji ${k.char}`}
+                              style={{
+                                width: 44,
+                                height: 44,
+                                borderRadius: 8,
+                                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12))',
+                                border: '1.5px solid var(--primary)',
+                                color: 'var(--primary)',
+                                fontSize: '1.6rem',
+                                fontWeight: 800,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                flexShrink: 0,
+                                padding: 0
+                              }}
+                              className="jp-text"
+                            >
+                              {k.char}
+                            </button>
+
+                            {/* Kanji Details */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                                <span style={{
+                                  fontSize: '0.84rem',
+                                  fontWeight: 700,
+                                  color: 'var(--text-main)',
+                                  lineHeight: 1.2
+                                }}>
+                                  {k.meaning_es || k.meaning_en || 'Ideograma'}
+                                </span>
+                                <span style={{
+                                  fontSize: '0.68rem',
+                                  fontWeight: 800,
+                                  padding: '1px 6px',
+                                  borderRadius: 4,
+                                  background: 'rgba(99, 102, 241, 0.12)',
+                                  color: 'var(--primary)',
+                                  flexShrink: 0
+                                }}>
+                                  {k.level || 'N5'}
+                                </span>
+                              </div>
+
+                              {/* Readings On / Kun */}
+                              {(k.onyomi || k.kunyomi) && (
+                                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.3 }}>
+                                  {k.onyomi && <span><strong>On:</strong> {k.onyomi} </span>}
+                                  {k.kunyomi && <span><strong>Kun:</strong> {k.kunyomi}</span>}
+                                </div>
+                              )}
+
+                              {/* Mnemonic snippet if exists */}
+                              {k.mnemonic && (
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.25, marginTop: 2 }}>
+                                  💡 {k.mnemonic}
+                                </div>
+                              )}
+
+                              {/* Quick actions */}
+                              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenPracticePad({ text: k.char, hiragana: k.onyomi || k.kunyomi })}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--primary)',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    padding: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 3
+                                  }}
+                                >
+                                  <span>✍️ Trazos</span>
+                                </button>
+                                <span style={{ color: 'var(--border)' }}>·</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setQuery(k.char);
+                                    setActiveTokenIndex(0);
+                                  }}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--primary)',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    padding: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 3
+                                  }}
+                                >
+                                  <span>🔍 Ver kanji</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Actions Bar for the Word */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
