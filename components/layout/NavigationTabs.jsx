@@ -25,8 +25,8 @@ import {
 } from 'lucide-react';
 
 export const NAV_CATEGORIES = [
-  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 12 },
-  { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 5 },
+  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 13 },
+  { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 6 },
   { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 6 },
   { id: 'progress', label: 'Progreso', shortLabel: 'Progreso', icon: BarChart3, count: 1 },
 ];
@@ -53,6 +53,17 @@ export const TABS = [
     desc: 'Plan guiado progresivo con objetivos por nivel',
     icon: Compass,
     color: '#6366f1',
+  },
+  {
+    id: 'terminology',
+    path: '/terminology',
+    category: 'learn',
+    categoryName: 'Aprender',
+    shortLabel: 'Terminología',
+    fullLabel: 'Guía de Terminología',
+    desc: 'Arquitectura lingüística, 5 pilares y glosario técnico',
+    icon: BookOpen,
+    color: '#8b5cf6',
   },
   {
     id: 'story',
@@ -183,6 +194,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     if (pathname.startsWith('/pdf')) return 'pdf';
     if (pathname.startsWith('/saved')) return 'saved';
     if (pathname.startsWith('/progress')) return 'progress';
+    if (pathname.startsWith('/terminology')) return 'terminology';
     if (pathname.startsWith('/curriculum')) return 'curriculum';
     return 'curriculum';
   })();
@@ -372,7 +384,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                   <div className="mega-menu-section">
                     <div className="mega-section-header">
                       <Sparkles size={14} className="text-indigo-400" />
-                      <span>Aprender (4)</span>
+                      <span>Aprender ({TABS.filter((t) => t.category === 'learn').length})</span>
                     </div>
                     <div className="mega-items-grid">
                       {TABS.filter((t) => t.category === 'learn').map((t) => {

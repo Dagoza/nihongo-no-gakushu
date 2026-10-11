@@ -827,7 +827,16 @@ export default function KanjiTab({
                           <div key={idx} className="kanji-word-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6, padding: '8px 10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                               <span className="jp-text" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                                {w.word} <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
+                                {w.word === '美化語' ? (
+                                  <TerminologyTooltip termId="bikougo">
+                                    <span style={{ cursor: 'pointer', borderBottom: '1.5px dashed var(--primary)' }}>
+                                      {w.word}
+                                    </span>
+                                  </TerminologyTooltip>
+                                ) : (
+                                  w.word
+                                )}{' '}
+                                <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
                               </span>
                               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1, marginLeft: 8 }}>{w.meaning}</span>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>

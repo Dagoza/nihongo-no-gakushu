@@ -7741,5 +7741,26 @@
     "meaning_es": "Contratación e incorporación formal a la plantilla",
     "category": "Recursos Humanos",
     "level": "N3"
+  },
+  {
+    "id": "v_ling_bikougo",
+    "kanji": "美化語",
+    "kana": "びかご",
+    "hiragana": "びかご",
+    "katakana": "ビカゴ",
+    "meaning_es": "Lenguaje embellecedor (prefijos de cortesía お- y ご-)",
+    "meaning_en": "Beautifying speech (polite prefixes o- and go-)",
+    "category": "Cortesía y Registro",
+    "level": "N4",
+    "tatoeba_sentences": [
+      {
+        "jp": "「お茶」や「ご飯」の「お」と「ご」は美化語です。",
+        "es": "El «o» y «go» de «ocha» y «gohan» son lenguaje embellecedor (bikougo)."
+      },
+      {
+        "jp": "美化語を使うと、言葉が上品で丁寧になります。",
+        "es": "Al usar bikougo, las palabras se vuelven refinadas y educadas."
+      }
+    ]
   }
 ]

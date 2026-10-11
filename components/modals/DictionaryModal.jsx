@@ -827,10 +827,21 @@ export default function DictionaryModal({
                                 </TerminologyTooltip>
                               );
                             }
-                            if (currentToken.category?.includes('Prefijo')) {
+                            if (currentToken.category?.includes('Prefijo') || currentToken.text === 'お' || currentToken.text === 'ご' || currentToken.text === '御') {
                               return (
                                 <TerminologyTooltip termId="bikougo">
-                                  <span>{currentToken.category}</span>
+                                  <span style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    {currentToken.category || 'Prefijo de Cortesía'} (Bikougo 美化語) ℹ️
+                                  </span>
+                                </TerminologyTooltip>
+                              );
+                            }
+                            if (currentToken.text === '美化語' || currentToken.baseForm === '美化語') {
+                              return (
+                                <TerminologyTooltip termId="bikougo">
+                                  <span style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                    美化語 (Bikougo) ℹ️
+                                  </span>
                                 </TerminologyTooltip>
                               );
                             }

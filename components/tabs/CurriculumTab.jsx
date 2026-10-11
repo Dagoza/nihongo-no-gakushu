@@ -46,7 +46,7 @@ const renderWithTerminology = (text, keyPrefix = 'term', showFurigana = false) =
   if (!text || typeof text !== 'string') return text;
 
   const pattern = new RegExp(
-    `\\b(bikougo|lenguaje embellecedor|sonkeigo|lenguaje respetuoso|kenjougo|lenguaje humilde|teineigo|lenguaje cort[eé]s|keigo|c[oó]pulas?|part[ií]culas?|verbos?\\s+godan|godan|verbos?\\s+ichidan|ichidan|jukugos?|kangos?|wagos?|gairaigos?|okurigana|furigana|jousoushi|contadores|contador|pitch\\s+accent|joshi)\\b`,
+    `(美化語|bikougo|lenguaje embellecedor|prefijos?\\s+de\\s+cortes[ií]a|prefijo\\s+[おご]|sonkeigo|尊敬語|lenguaje respetuoso|kenjougo|謙譲語|lenguaje humilde|teineigo|丁寧語|lenguaje cort[eé]s|keigo|敬語|c[oó]pulas?|part[ií]culas?|verbos?\\s+godan|godan|verbos?\\s+ichidan|ichidan|jukugos?|熟語|kangos?|漢語|wagos?|和語|gairaigos?|外来語|okurigana|送り仮名|furigana|振り仮名|jousoushi|助数詞|contadores|contador|pitch\\s+accent|joshi|助詞)`,
     'gi'
   );
 
@@ -68,7 +68,7 @@ const renderWithTerminology = (text, keyPrefix = 'term', showFurigana = false) =
     const lowerWord = matchedWord.toLowerCase();
     let termId = 'keigo';
 
-    if (lowerWord.includes('bikougo') || lowerWord.includes('embellecedor')) termId = 'bikougo';
+    if (lowerWord.includes('bikougo') || lowerWord.includes('embellecedor') || lowerWord.includes('prefijo') || lowerWord.includes('美化語')) termId = 'bikougo';
     else if (lowerWord.includes('sonkeigo') || lowerWord.includes('respetuoso')) termId = 'sonkeigo';
     else if (lowerWord.includes('kenjougo') || lowerWord.includes('humilde')) termId = 'kenjougo';
     else if (lowerWord.includes('teineigo') || lowerWord.includes('cort')) termId = 'teineigo';
@@ -1492,7 +1492,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                 {(() => {
                                   let matchedTerm = null;
                                   const t = (fb.type || '').toLowerCase();
-                                  if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor')) matchedTerm = 'bikougo';
+                                  const nameLower = (fb.name || '').toLowerCase();
+                                  if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor') || nameLower.includes('bikougo') || nameLower.includes('cortesía') || fb.item?.includes('お-') || fb.item?.includes('ご-')) matchedTerm = 'bikougo';
                                   else if (t.includes('sonkeigo') || t.includes('respetuoso')) matchedTerm = 'sonkeigo';
                                   else if (t.includes('kenjougo') || t.includes('humilde')) matchedTerm = 'kenjougo';
                                   else if (t.includes('teineigo') || t.includes('formal')) matchedTerm = 'teineigo';
@@ -1602,7 +1603,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                               {(() => {
                                 let matchedTerm = null;
                                 const t = (fb.type || '').toLowerCase();
-                                if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor')) matchedTerm = 'bikougo';
+                                const nameLower = (fb.name || '').toLowerCase();
+                                if (t.includes('bikougo') || t.includes('cortesía') || t.includes('embellecedor') || nameLower.includes('bikougo') || nameLower.includes('cortesía') || fb.item?.includes('お-') || fb.item?.includes('ご-')) matchedTerm = 'bikougo';
                                 else if (t.includes('sonkeigo') || t.includes('respetuoso')) matchedTerm = 'sonkeigo';
                                 else if (t.includes('kenjougo') || t.includes('humilde')) matchedTerm = 'kenjougo';
                                 else if (t.includes('teineigo') || t.includes('formal')) matchedTerm = 'teineigo';

@@ -67,6 +67,51 @@ export default function TerminologyDetailModal({
     }
   }, [isOpen, activePillar, highlightedTermId]);
 
+  // Categories list for filtering
+  const categoryPills = useMemo(() => {
+    return [
+      'Todas',
+      'Cortesía y Registro',
+      'Etimología y Vocabulario',
+      'Morfología y Kanji',
+      'Morfología y Escritura',
+      'Gramática y Verbos',
+      'Gramática y Morfología',
+      'Pronunciación y Fonética'
+    ];
+  }, []);
+
+  // Filter glossary items by search term and category
+  const filteredTerms = useMemo(() => {
+    if (!Array.isArray(terminologyList)) return [];
+    const query = searchTerm.trim().toLowerCase();
+
+    return terminologyList.filter((item) => {
+      const matchCat =
+        selectedCategory === 'Todas' || item.category === selectedCategory;
+      if (!matchCat) return false;
+      if (!query) return true;
+
+      const termName = (item.term || '').toLowerCase();
+      const kanji = (item.kanji || '').toLowerCase();
+      const kana = (item.kana || '').toLowerCase();
+      const romaji = (item.romaji || '').toLowerCase();
+      const shortDef = (item.short_definition || '').toLowerCase();
+      const fullExp = (item.full_explanation || '').toLowerCase();
+      const category = (item.category || '').toLowerCase();
+
+      return (
+        termName.includes(query) ||
+        kanji.includes(query) ||
+        kana.includes(query) ||
+        romaji.includes(query) ||
+        shortDef.includes(query) ||
+        fullExp.includes(query) ||
+        category.includes(query)
+      );
+    });
+  }, [searchTerm, selectedCategory]);
+
   if (!isOpen) return null;
 
   const playAudio = (text, id) => {
@@ -271,50 +316,6 @@ export default function TerminologyDetailModal({
   const currentData = pillarsData[activePillar] || pillarsData.writing;
   const PillarIcon = currentData.icon;
 
-  // Categories list for filtering
-  const categoryPills = useMemo(() => {
-    const list = [
-      'Todas',
-      'Cortesía y Registro',
-      'Etimología y Vocabulario',
-      'Morfología y Kanji',
-      'Morfología y Escritura',
-      'Gramática y Verbos',
-      'Gramática y Morfología'
-    ];
-    return list;
-  }, []);
-
-  // Filter glossary items by search term and category
-  const filteredTerms = useMemo(() => {
-    if (!Array.isArray(terminologyList)) return [];
-    const query = searchTerm.trim().toLowerCase();
-
-    return terminologyList.filter((item) => {
-      const matchCat =
-        selectedCategory === 'Todas' || item.category === selectedCategory;
-      if (!matchCat) return false;
-      if (!query) return true;
-
-      const termName = (item.term || '').toLowerCase();
-      const kanji = (item.kanji || '').toLowerCase();
-      const kana = (item.kana || '').toLowerCase();
-      const romaji = (item.romaji || '').toLowerCase();
-      const shortDef = (item.short_definition || '').toLowerCase();
-      const fullExp = (item.full_explanation || '').toLowerCase();
-      const category = (item.category || '').toLowerCase();
-
-      return (
-        termName.includes(query) ||
-        kanji.includes(query) ||
-        kana.includes(query) ||
-        romaji.includes(query) ||
-        shortDef.includes(query) ||
-        fullExp.includes(query) ||
-        category.includes(query)
-      );
-    });
-  }, [searchTerm, selectedCategory]);
 
   return (
     <div className="term-modal-overlay" onClick={onClose}>

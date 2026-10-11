@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Volume2, BookOpen, ArrowRight } from 'lucide-react';
 import terminologyList from '../../data/terminology.json';
 import audioManager from '../../lib/audioManager';
@@ -48,6 +49,7 @@ export function TerminologyTooltip({
   onOpenFullGlossary,
   className = ''
 }) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [horizontalShift, setHorizontalShift] = useState(0);
@@ -176,6 +178,8 @@ export function TerminologyTooltip({
     setIsOpen(false);
     if (typeof onOpenFullGlossary === 'function') {
       onOpenFullGlossary(term?.id || termId);
+    } else {
+      router.push(`/terminology?pillar=glossary&term=${encodeURIComponent(term?.id || termId)}`);
     }
   };
 
@@ -410,36 +414,34 @@ export function TerminologyTooltip({
           )}
 
           {/* Link to Full Glossary */}
-          {onOpenFullGlossary && (
-            <div
+          <div
+            style={{
+              paddingTop: 8,
+              borderTop: '1px solid var(--border)',
+              display: 'flex',
+              justifyContent: 'flex-end'
+            }}
+          >
+            <button
+              type="button"
+              onClick={handleGlossaryLink}
               style={{
-                paddingTop: 8,
-                borderTop: '1px solid var(--border)',
-                display: 'flex',
-                justifyContent: 'flex-end'
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                color: 'var(--primary)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0
               }}
             >
-              <button
-                type="button"
-                onClick={handleGlossaryLink}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  fontSize: '0.74rem',
-                  fontWeight: 700,
-                  color: 'var(--primary)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0
-                }}
-              >
-                <span>Ver en Glosario Completo</span>
-                <ArrowRight size={13} />
-              </button>
-            </div>
-          )}
+              <span>Ver en Guía de Terminología</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
         </div>
       )}
     </span>

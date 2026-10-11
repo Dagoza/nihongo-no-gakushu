@@ -12,6 +12,7 @@ import PitchAccent from '../features/PitchAccent';
 import { getVocabularyFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
 import { getAuthSession } from '../../lib/supabaseSync';
+import TerminologyTooltip from '../common/TerminologyTooltip';
 
 // Lazy loading con code-splitting para componentes de alto peso e interactividad
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
@@ -838,7 +839,14 @@ export default function VocabTab({
                           <span>IA</span>
                         </label>
 
-                        <span className="vocab-tag">{item.level} · {item.category}</span>
+                        <span className="vocab-tag">
+                          {item.level} · {item.category}
+                          {(item.kanji === '美化語' || item.category === 'Cortesía y Registro') && (
+                            <TerminologyTooltip termId="bikougo">
+                              <span style={{ marginLeft: 5, cursor: 'help' }} title="Ver explicación de Bikougo / Cortesía">ℹ️</span>
+                            </TerminologyTooltip>
+                          )}
+                        </span>
                         {item.isCustomized && (
                           <span 
                             style={{ 

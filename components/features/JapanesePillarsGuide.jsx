@@ -70,7 +70,7 @@ export default function JapanesePillarsGuide({ onOpenPillar }) {
       icon: BookOpen,
       color: '#8b5cf6',
       bgLight: 'rgba(139, 92, 246, 0.12)',
-      tag: '14+ Términos'
+      tag: '39 Términos'
     }
   ];
 

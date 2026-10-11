@@ -1476,6 +1476,11 @@
         "word": "英語",
         "reading": "えいご",
         "meaning": "Idioma inglés"
+      },
+      {
+        "word": "美化語",
+        "reading": "びかご",
+        "meaning": "lenguaje embellecedor (prefijos お y ご)"
       }
     ],
     "source": "Kanji Book"
@@ -3024,6 +3029,11 @@
         "word": "美容院",
         "reading": "びよういん",
         "meaning": "salón de belleza / peluquería"
+      },
+      {
+        "word": "美化語",
+        "reading": "びかご",
+        "meaning": "lenguaje embellecedor (prefijos お y ご)"
       }
     ],
     "source": "美 Practice Sheet"
@@ -4735,5 +4745,44 @@
       }
     ],
     "source": "Kanji Book"
+  },
+  {
+    "kanji": "化",
+    "level": "N4",
+    "meaning_es": "cambiar, transformar, influencia",
+    "meaning_en": "change, transform, take the form of",
+    "pronunciation": "か, け, ば",
+    "strokes": 4,
+    "onyomi": "KA, KE [か, け]",
+    "kunyomi": "ba(keru) [ば(ける)]",
+    "mnemonic": "Una persona イ al lado de otra invertida 匕: transformación o cambio de estado.",
+    "words": [
+      {
+        "word": "文化",
+        "reading": "ぶんか",
+        "meaning": "cultura"
+      },
+      {
+        "word": "変化",
+        "reading": "へんか",
+        "meaning": "cambio / variación"
+      },
+      {
+        "word": "美化語",
+        "reading": "びかご",
+        "meaning": "lenguaje embellecedor (prefijos お y ご)"
+      },
+      {
+        "word": "化学",
+        "reading": "かがく",
+        "meaning": "química"
+      },
+      {
+        "word": "食文化",
+        "reading": "しょくぶんか",
+        "meaning": "cultura gastronómica"
+      }
+    ],
+    "source": "JLPT N4 Kanji Master"
   }
 ]

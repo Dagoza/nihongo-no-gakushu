@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import { useApp } from '../lib/AppContext';
 import JapanesePillarsGuide from '../components/features/JapanesePillarsGuide';
 import StudyStatusBento from '../components/features/StudyStatusBento';
-import TerminologyDetailModal from '../components/modals/TerminologyDetailModal';
 import { 
   Compass, 
   BookOpen, 
@@ -29,8 +28,6 @@ const ZenDaruma3D = dynamic(() => import('../components/features/ZenDaruma3D'), 
 export default function HomePage() {
   const { appState, handleUpdateState, navigate } = useApp();
 
-  const [isTerminologyModalOpen, setIsTerminologyModalOpen] = useState(false);
-  const [selectedPillarId, setSelectedPillarId] = useState('writing');
   const [isCelebrating, setIsCelebrating] = useState(false);
 
   const getGreeting = () => {
@@ -54,8 +51,7 @@ export default function HomePage() {
   }, []);
 
   const handleOpenPillar = (pillarId) => {
-    setSelectedPillarId(pillarId);
-    setIsTerminologyModalOpen(true);
+    navigate(`/terminology?pillar=${pillarId}`);
   };
 
   const quickModules = [
@@ -100,9 +96,10 @@ export default function HomePage() {
 
             <button
               type="button"
-              onClick={() => handleOpenPillar('writing')}
+              onClick={() => navigate('/terminology')}
               className="home-btn-secondary"
             >
+              <BookOpen size={16} />
               <span>Ver Guía de Terminología</span>
             </button>
           </div>
@@ -193,14 +190,6 @@ export default function HomePage() {
           })}
         </div>
       </section>
-
-      {/* Modal de Revelación Progresiva para Terminología Japonesa */}
-      <TerminologyDetailModal 
-        isOpen={isTerminologyModalOpen}
-        onClose={() => setIsTerminologyModalOpen(false)}
-        initialPillarId={selectedPillarId}
-        onNavigate={navigate}
-      />
     </div>
   );
 }
