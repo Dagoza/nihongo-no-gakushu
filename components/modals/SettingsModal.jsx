@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Settings, Volume2, Sparkles, Gauge, Moon, Sun, Check, Sliders, Compass, Bell } from 'lucide-react';
+import { X, Settings, Volume2, Sparkles, Gauge, Moon, Sun, Check, Sliders, Compass, Bell, PartyPopper } from 'lucide-react';
 
 import audioManager from '../../lib/audioManager';
+import { triggerCheerConfetti } from '../../lib/confetti';
 import { useApp } from '../../lib/AppContext';
 import useFocusTrap from '../../lib/useFocusTrap';
 
@@ -29,12 +30,16 @@ export default function SettingsModal({
   const [selectedEngine, setSelectedEngine] = useState(
     audioManager.engine || 'neural'
   );
+  const [confettiEnabled, setConfettiEnabled] = useState(
+    appState?.confettiEnabled !== false
+  );
 
   useEffect(() => {
     if (isOpen) {
       setSelectedVoice(appState?.preferredVoice || audioManager.voiceName || 'ja-JP-NanamiNeural');
       setSelectedRate(appState?.audioRate || audioManager.rate || 0.9);
       setSelectedEngine(audioManager.engine || 'neural');
+      setConfettiEnabled(appState?.confettiEnabled !== false);
     }
   }, [isOpen, appState]);
 
@@ -84,6 +89,25 @@ export default function SettingsModal({
       ? 'はじめまして、七海です。日本語の勉強を一緒に頑張りましょう！'
       : 'こんにちは、恵太です。毎日の積み重ねが上達の近道です。';
     audioManager.speak(sample, { voice: voiceToTest, rate: selectedRate });
+  };
+
+  const handleToggleConfetti = () => {
+    const nextVal = !confettiEnabled;
+    setConfettiEnabled(nextVal);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('nihongo_confetti_enabled', String(nextVal));
+      } catch {}
+    }
+    if (handleUpdateState && appState) {
+      handleUpdateState({
+        ...appState,
+        confettiEnabled: nextVal
+      });
+    }
+    if (nextVal) {
+      triggerCheerConfetti({ force: true });
+    }
   };
 
   return (
@@ -401,6 +425,38 @@ export default function SettingsModal({
             </button>
           </div>
 
+          {/* Section: Celebración y Confeti */}
+          <div style={{
+            padding: '16px',
+            borderRadius: 12,
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 12
+          }}>
+            <div style={{ flex: '1 1 200px' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <PartyPopper size={16} style={{ color: 'var(--primary)' }} />
+                <span>Efectos de Confeti 🎉</span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                Celebración con confeti al terminar módulos, aprender palabras o sumar puntos (XP)
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className={`btn btn-sm ${confettiEnabled ? 'btn-primary' : 'btn-outline'}`}
+              onClick={handleToggleConfetti}
+              style={{ gap: 6, minWidth: 105, justifyContent: 'center' }}
+            >
+              {confettiEnabled ? <Check size={14} /> : null}
+              <span>{confettiEnabled ? 'Activado' : 'Desactivado'}</span>
+            </button>
+          </div>
 
           {/* Section 5: Theme Toggle & Cloud Account */}
 

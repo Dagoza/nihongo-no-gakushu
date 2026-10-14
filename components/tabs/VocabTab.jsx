@@ -13,6 +13,7 @@ import { getVocabularyFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
 import { getAuthSession } from '../../lib/supabaseSync';
 import TerminologyTooltip from '../common/TerminologyTooltip';
+import { triggerCheerConfetti } from '../../lib/confetti';
 
 // Lazy loading con code-splitting para componentes de alto peso e interactividad
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
@@ -303,6 +304,9 @@ export default function VocabTab({
       ...(appState.masteredVocab || {}),
       [id]: !isMastered
     };
+    if (!isMastered) {
+      triggerCheerConfetti();
+    }
     onUpdateState({
       ...appState,
       masteredVocab: newMastered

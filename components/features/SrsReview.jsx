@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, Undo2, RotateCcw, AlertCircle, Check, Zap, CheckCircle2 } from 'lucide-react';
 import { SRSRating, getIntervalPreviews } from '../../lib/srs';
+import { triggerCheerConfetti } from '../../lib/confetti';
 
 export default function SrsReview({ 
   queue = [], 
@@ -157,6 +158,13 @@ export default function SrsReview({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [srsRevealed, srsReviewIndex, queue.length, reviewHistory.length, handleRate, handleUndo, onExit]);
+
+  // Celebración con confeti al completar la sesión de repaso
+  useEffect(() => {
+    if (queue.length > 0 && srsReviewIndex >= queue.length && reviewHistory.length > 0) {
+      triggerCheerConfetti();
+    }
+  }, [srsReviewIndex, queue.length, reviewHistory.length]);
 
   // Pantalla cuando el repaso está terminado o no hay tarjetas
   if (queue.length === 0 || srsReviewIndex >= queue.length) {

@@ -8,6 +8,7 @@ import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
 import TerminologyTooltip from '../common/TerminologyTooltip';
+import { triggerGrandConfetti } from '../../lib/confetti';
 
 // Helper to structure and parse grammar points into title and Japanese pattern/content
 const parseGrammarPoint = (point) => {
@@ -410,6 +411,10 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
       ...(allDone ? { [stepNum]: true } : {})
     };
 
+    if (allDone && !userState.completedSteps?.[stepNum]) {
+      triggerGrandConfetti();
+    }
+
     onUpdateState({
       ...userState,
       completedSubSteps: updatedSubSteps,
@@ -426,6 +431,10 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
       ...currentCompleted,
       [stepNum]: !isDone
     };
+
+    if (!isDone) {
+      triggerGrandConfetti();
+    }
 
     const targetStep = steps.find(s => s.step === stepNum);
     let updatedSubSteps = { ...(userState.completedSubSteps || {}) };

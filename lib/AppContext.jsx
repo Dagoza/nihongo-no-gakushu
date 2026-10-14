@@ -12,6 +12,7 @@ import {
   extractUserProfile 
 } from './supabaseSync';
 import { checkAllScheduledActivities } from './notificationManager';
+import { triggerCheerConfetti, triggerGrandConfetti, isConfettiEnabled } from './confetti';
 
 export const AppContext = createContext(null);
 
@@ -408,6 +409,8 @@ export function AppProvider({ children }) {
       window.__nihongoOpenAuth = () => setIsAuthModalOpen(true);
       window.__nihongoShowAlert = showAlert;
       window.__nihongoShowConfirm = showConfirm;
+      window.__nihongoTriggerCheerConfetti = triggerCheerConfetti;
+      window.__nihongoTriggerGrandConfetti = triggerGrandConfetti;
     }
 
     let tourTimer = null;
@@ -484,9 +487,37 @@ export function AppProvider({ children }) {
     };
   }, [handleTriggerSync, triggerAutoTourIfNeeded]);
 
-  const handleUpdateState = useCallback((newState) => {
-    setAppState(newState);
-    saveState(newState, true);
+  const handleUpdateState = useCallback((updaterOrState) => {
+    setAppState(prev => {
+      const nextState = typeof updaterOrState === 'function' ? updaterOrState(prev) : updaterOrState;
+
+      if (nextState && nextState.confettiEnabled !== false && isConfettiEnabled(nextState)) {
+        const prevXp = Number(prev?.xp) || 0;
+        const nextXp = Number(nextState?.xp) || 0;
+
+        // 1. ¿Se terminó/completó un módulo del currículum?
+        const prevSteps = prev?.completedSteps || {};
+        const nextSteps = nextState?.completedSteps || {};
+        const moduleCompleted = Object.keys(nextSteps).some(k => Boolean(nextSteps[k]) && !prevSteps[k]);
+
+        // 2. ¿Se aprendió o dominó una palabra de vocabulario?
+        const prevMastered = prev?.masteredVocab || {};
+        const nextMastered = nextState?.masteredVocab || {};
+        const wordLearned = Object.keys(nextMastered).some(k => Boolean(nextMastered[k]) && !prevMastered[k]);
+
+        // 3. ¿Cualquier cosa que sume puntos (XP)?
+        const pointsAdded = nextXp > prevXp;
+
+        if (moduleCompleted) {
+          triggerGrandConfetti();
+        } else if (wordLearned || pointsAdded) {
+          triggerCheerConfetti();
+        }
+      }
+
+      saveState(nextState, true);
+      return nextState;
+    });
   }, []);
 
   const handleToggleTheme = useCallback(() => {
@@ -632,7 +663,10 @@ export function AppProvider({ children }) {
     isNotificationSettingsOpen,
     setIsNotificationSettingsOpen,
     openNotificationSettings,
-    closeNotificationSettings
+    closeNotificationSettings,
+    // Funciones de Confeti & Celebración
+    triggerCheerConfetti,
+    triggerGrandConfetti
   };
 
 
