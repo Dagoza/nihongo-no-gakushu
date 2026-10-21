@@ -1546,6 +1546,10 @@ body {
   text-decoration: none;
 }
 
+.btn svg {
+  flex-shrink: 0;
+}
+
 .btn-primary {
   background: var(--primary);
   color: #fff;
@@ -6826,6 +6830,173 @@ ruby.furigana-ruby rt {
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 4px;
+}
+
+/* ==================== DICCIONARIO RÁPIDO & ANÁLISIS MORFOLÓGICO ==================== */
+.dictionary-modal-card {
+  max-width: 620px;
+  width: 94%;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-bento, 20px);
+  background: var(--bg-card);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+}
+
+.dict-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.dict-modal-search {
+  padding: 14px 20px;
+  background: var(--bg-main);
+  border-bottom: 1px solid var(--border);
+}
+
+.dict-modal-body {
+  padding: 18px 20px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dict-token-card {
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dict-actions-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.dict-btn-save {
+  flex: 1.4;
+  min-width: 0;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 14px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+.dict-actions-row svg,
+.dict-btn-save svg,
+.dict-btn-edit svg,
+.dict-btn-practice svg {
+  flex-shrink: 0 !important;
+}
+
+.dict-btn-edit {
+  padding: 9px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dict-btn-practice {
+  flex: 1;
+  min-width: 0;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.dict-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 560px) {
+  .dictionary-modal-card {
+    width: 96%;
+    max-height: 92vh;
+    border-radius: 16px;
+  }
+
+  .dict-modal-header {
+    padding: 12px 14px;
+  }
+
+  .dict-modal-search {
+    padding: 10px 14px;
+  }
+
+  .dict-modal-body {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .dict-token-card {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+
+  .dict-actions-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  .dict-btn-save {
+    grid-column: 1 / 2;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+
+  .dict-btn-edit {
+    grid-column: 2 / 3;
+    padding: 10px 12px;
+  }
+
+  .dict-btn-practice {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+  }
+
+  .dict-modal-footer {
+    padding: 10px 14px;
+  }
 }
 
 /* ==================== ESTILOS DE VERIFICACIÓN Y FALLBACK DE INSERCIÓN ==================== */

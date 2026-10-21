@@ -393,27 +393,10 @@ export default function DictionaryModal({
         tabIndex={-1}
         className="modal-content dictionary-modal-card" 
         onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: 620,
-          width: '94%',
-          maxHeight: '88vh',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 0,
-          overflow: 'hidden',
-          borderRadius: 'var(--radius-bento, 20px)'
-        }}
       >
         {/* Modal Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '16px 20px',
-          borderBottom: '1px solid var(--border)',
-          background: 'var(--bg-card)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div className="dict-modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1 }}>
             <div style={{
               width: 36,
               height: 36,
@@ -422,16 +405,17 @@ export default function DictionaryModal({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--primary)'
+              color: 'var(--primary)',
+              flexShrink: 0
             }}>
-              <BookOpen size={20} />
+              <BookOpen size={20} style={{ flexShrink: 0 }} />
             </div>
-            <div>
-              <h3 id="dict-modal-title" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <h3 id="dict-modal-title" style={{ fontSize: '1.08rem', fontWeight: 800, margin: 0, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 Diccionario Rápido & Análisis Morfológico
               </h3>
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
-                Búsqueda en Español y Japonés · Segmentación morfológica, partículas y lematización
+              <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Búsqueda en Español y Japonés · Segmentación y lematización
               </p>
             </div>
           </div>
@@ -448,21 +432,22 @@ export default function DictionaryModal({
               color: 'var(--text-muted)',
               padding: 6,
               borderRadius: '50%',
-              display: 'flex'
+              display: 'flex',
+              flexShrink: 0
             }}
           >
-            <X size={20} />
+            <X size={20} style={{ flexShrink: 0 }} />
           </button>
         </div>
 
         {/* Search Bar Input */}
-        <div style={{ padding: '16px 20px', background: 'var(--bg-main)', borderBottom: '1px solid var(--border)' }}>
+        <div className="dict-modal-search">
           <div style={{
             position: 'relative',
             display: 'flex',
             alignItems: 'center'
           }}>
-            <Search size={18} style={{ position: 'absolute', left: 14, color: 'var(--text-muted)' }} />
+            <Search size={18} style={{ position: 'absolute', left: 14, color: 'var(--text-muted)', flexShrink: 0, pointerEvents: 'none' }} />
             <input
               ref={inputRef}
               type="text"
@@ -474,12 +459,12 @@ export default function DictionaryModal({
               placeholder="Busca en Español, Kanji, Hiragana o Romaji (ej. comer, amigo, 食べました, 先生)..."
               style={{
                 width: '100%',
-                padding: '12px 38px 12px 42px',
+                padding: '11px 38px 11px 42px',
                 borderRadius: 10,
                 border: '1.5px solid var(--border)',
                 background: 'var(--bg-card)',
                 color: 'var(--text-main)',
-                fontSize: '1rem',
+                fontSize: '0.98rem',
                 outline: 'none',
                 transition: 'border-color 0.2s ease'
               }}
@@ -502,18 +487,21 @@ export default function DictionaryModal({
                   color: 'var(--text-muted)',
                   cursor: 'pointer',
                   display: 'flex',
-                  padding: 4
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 4,
+                  flexShrink: 0
                 }}
                 title="Borrar texto"
               >
-                <X size={16} />
+                <X size={16} style={{ flexShrink: 0 }} />
               </button>
             )}
           </div>
         </div>
 
         {/* Modal Scrollable Body */}
-        <div style={{ padding: '20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div className="dict-modal-body">
           {!query.trim() ? (
             <div style={{ textAlign: 'center', padding: '36px 12px', color: 'var(--text-muted)' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🔍</div>
@@ -529,7 +517,7 @@ export default function DictionaryModal({
               {/* Full sentence reading banner if sentence contains kanji */}
               {fullSentenceKana && (
                 <div style={{
-                  padding: '12px 16px',
+                  padding: '12px 14px',
                   borderRadius: 10,
                   background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.08))',
                   border: '1.5px solid rgba(99, 102, 241, 0.25)',
@@ -538,11 +526,11 @@ export default function DictionaryModal({
                   justifyContent: 'space-between',
                   gap: 12
                 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
                     <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Lectura Fonética Completa (Hiragana)
                     </span>
-                    <span className="jp-text" style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '0.5px' }}>
+                    <span className="jp-text" style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '0.5px', wordBreak: 'break-all' }}>
                       {fullSentenceKana}
                     </span>
                   </div>
@@ -565,7 +553,7 @@ export default function DictionaryModal({
                       flexShrink: 0
                     }}
                   >
-                    <Volume2 size={16} />
+                    <Volume2 size={16} style={{ flexShrink: 0 }} />
                   </button>
                 </div>
               )}
@@ -573,7 +561,7 @@ export default function DictionaryModal({
               {/* Full Phrase / Expression Summary Card (When the whole search query is a known formula or set expression) */}
               {directLookup && directLookup.meaning_es && analysis.length > 1 && (
                 <div style={{
-                  padding: '14px 18px',
+                  padding: '14px 16px',
                   borderRadius: 12,
                   background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.06))',
                   border: '1.5px solid rgba(99, 102, 241, 0.25)',
@@ -581,7 +569,7 @@ export default function DictionaryModal({
                   flexDirection: 'column',
                   gap: 10
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                       <span style={{
                         fontSize: '0.72rem',
@@ -606,14 +594,14 @@ export default function DictionaryModal({
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                       <button
                         type="button"
                         onClick={(e) => handleSaveToVocab(directLookup, e)}
                         className="btn btn-sm"
                         style={{
-                          padding: '4px 12px',
-                          fontSize: '0.76rem',
+                          padding: '6px 12px',
+                          fontSize: '0.78rem',
                           fontWeight: 600,
                           gap: 5,
                           background: (isPhraseSaved(query) || justSavedKey === query) ? '#10b981' : 'var(--primary)',
@@ -623,18 +611,19 @@ export default function DictionaryModal({
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
+                          whiteSpace: 'nowrap',
                           transition: 'all 0.2s ease'
                         }}
                         title="Guardar expresión completa a mi vocabulario"
                       >
                         {(isPhraseSaved(query) || justSavedKey === query) ? (
                           <>
-                            <Check size={14} />
+                            <Check size={14} style={{ flexShrink: 0 }} />
                             <span>¡Frase Guardada!</span>
                           </>
                         ) : (
                           <>
-                            <BookmarkPlus size={14} />
+                            <BookmarkPlus size={14} style={{ flexShrink: 0 }} />
                             <span>Guardar Frase (+15 XP)</span>
                           </>
                         )}
@@ -644,10 +633,10 @@ export default function DictionaryModal({
                           type="button"
                           onClick={(e) => handleOpenEditModal(directLookup, e)}
                           className="btn btn-outline btn-sm"
-                          style={{ padding: '4px 8px', fontSize: '0.74rem', borderRadius: 6 }}
+                          style={{ padding: '6px 8px', fontSize: '0.74rem', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
                           title="Personalizar detalles en cuaderno"
                         >
-                          <Edit3 size={13} />
+                          <Edit3 size={13} style={{ flexShrink: 0 }} />
                         </button>
                       )}
                     </div>
@@ -767,20 +756,11 @@ export default function DictionaryModal({
 
               {/* Active Token Detail Card */}
               {currentToken && (
-                <div style={{
-                  padding: '18px 20px',
-                  borderRadius: 12,
-                  background: 'var(--bg-card)',
-                  border: '1.5px solid var(--border)',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 12
-                }}>
+                <div className="dict-token-card">
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-                        <span className="jp-text" style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1 }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+                        <span className="jp-text" style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1, wordBreak: 'break-word' }}>
                           {currentToken.text}
                         </span>
                         {currentToken.hiragana && currentToken.hiragana !== currentToken.text && (
@@ -795,7 +775,7 @@ export default function DictionaryModal({
                         )}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
                         <span style={{
                           fontSize: '0.72rem',
                           fontWeight: 700,
@@ -883,7 +863,7 @@ export default function DictionaryModal({
                         flexShrink: 0
                       }}
                     >
-                      <Volume2 size={18} />
+                      <Volume2 size={18} style={{ flexShrink: 0 }} />
                     </button>
                   </div>
 
@@ -906,7 +886,7 @@ export default function DictionaryModal({
                       ) : componentKanjis.length > 0 && componentKanjis.some(k => k.meaning_es || k.meaning_en) ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#f59e0b', fontSize: '0.82rem', fontWeight: 700 }}>
-                            <Sparkles size={14} color="#f59e0b" />
+                            <Sparkles size={14} color="#f59e0b" style={{ flexShrink: 0 }} />
                             <span>Significado inferido por sus Kanjis:</span>
                           </div>
                           <div style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.35 }}>
@@ -942,7 +922,7 @@ export default function DictionaryModal({
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <Sparkles size={15} color="var(--primary)" />
+                          <Sparkles size={15} color="var(--primary)" style={{ flexShrink: 0 }} />
                           <span style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--primary)' }}>
                             Kanjis que componen esta palabra ({componentKanjis.length})
                           </span>
@@ -954,7 +934,7 @@ export default function DictionaryModal({
 
                       <div style={{
                         display: 'grid',
-                        gridTemplateColumns: componentKanjis.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gridTemplateColumns: componentKanjis.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))',
                         gap: 10
                       }}>
                         {componentKanjis.map((k, kIdx) => (
@@ -968,7 +948,8 @@ export default function DictionaryModal({
                               borderRadius: 8,
                               background: 'var(--bg-card)',
                               border: '1px solid var(--border)',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                              overflow: 'hidden'
                             }}
                           >
                             {/* Kanji Large Button */}
@@ -1007,7 +988,10 @@ export default function DictionaryModal({
                                   fontSize: '0.84rem',
                                   fontWeight: 700,
                                   color: 'var(--text-main)',
-                                  lineHeight: 1.2
+                                  lineHeight: 1.2,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
                                 }}>
                                   {k.meaning_es || k.meaning_en || 'Ideograma'}
                                 </span>
@@ -1090,42 +1074,30 @@ export default function DictionaryModal({
                   )}
 
                   {/* Actions Bar for the Word */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                  <div className="dict-actions-row">
                     <button
                       type="button"
                       onClick={(e) => handleSaveToVocab(currentToken, e)}
-                      className="btn btn-sm"
+                      className="btn btn-sm dict-btn-save"
                       style={{
-                        flex: 1.2,
-                        justifyContent: 'center',
-                        gap: 6,
-                        padding: '8px 14px',
-                        fontSize: '0.84rem',
-                        fontWeight: 600,
-                        borderRadius: 8,
                         border: (isWordSaved(currentToken.text) || justSavedKey === currentToken.text)
                           ? '1.5px solid #10b981'
                           : '1.5px solid var(--primary)',
                         background: (isWordSaved(currentToken.text) || justSavedKey === currentToken.text)
                           ? '#10b981'
                           : 'var(--primary)',
-                        color: '#ffffff',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 8px rgba(99, 102, 241, 0.2)'
+                        color: '#ffffff'
                       }}
                       title="Guardar palabra en tu vocabulario personal"
                     >
                       {(isWordSaved(currentToken.text) || justSavedKey === currentToken.text) ? (
                         <>
-                          <Check size={16} />
-                          <span>✓ ¡Guardada!</span>
+                          <Check size={16} style={{ flexShrink: 0 }} />
+                          <span>¡Guardada!</span>
                         </>
                       ) : (
                         <>
-                          <BookmarkPlus size={16} />
+                          <BookmarkPlus size={16} style={{ flexShrink: 0 }} />
                           <span>Guardar Palabra (+15 XP)</span>
                         </>
                       )}
@@ -1135,38 +1107,21 @@ export default function DictionaryModal({
                       <button
                         type="button"
                         onClick={(e) => handleOpenEditModal(currentToken, e)}
-                        className="btn btn-outline btn-sm"
-                        style={{
-                          padding: '8px 10px',
-                          fontSize: '0.8rem',
-                          borderRadius: 8,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: 4
-                        }}
+                        className="btn btn-outline btn-sm dict-btn-edit"
                         title="Personalizar categoría, notas o detalles"
                       >
-                        <Edit3 size={15} />
+                        <Edit3 size={15} style={{ flexShrink: 0 }} />
                       </button>
                     )}
 
                     <button
                       type="button"
                       onClick={() => handleOpenPracticePad(currentToken)}
-                      className="btn btn-outline btn-sm"
-                      style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        gap: 6,
-                        padding: '8px 12px',
-                        fontSize: '0.82rem',
-                        borderRadius: 8
-                      }}
+                      className="btn btn-outline btn-sm dict-btn-practice"
                       title="Escribir caracteres en el cuaderno de práctica"
                     >
-                      <PenTool size={14} />
-                      <span>Cuaderno ✍️</span>
+                      <PenTool size={15} style={{ flexShrink: 0 }} />
+                      <span>Cuaderno de Práctica</span>
                     </button>
                   </div>
                 </div>
@@ -1195,21 +1150,15 @@ export default function DictionaryModal({
         </div>
 
         {/* Modal Footer */}
-        <div style={{
-          padding: '12px 20px',
-          borderTop: '1px solid var(--border)',
-          background: 'var(--bg-card)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+        <div className="dict-modal-footer">
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flex: 1, marginRight: 8 }}>
             Nihongo Master · Diccionario Pedagógico Inteligente
           </span>
           <button
             type="button"
             className="btn btn-primary btn-sm"
             onClick={onClose}
+            style={{ flexShrink: 0 }}
           >
             Cerrar
           </button>
