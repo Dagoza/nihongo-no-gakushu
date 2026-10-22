@@ -1,24 +1,23 @@
 'use client';
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   PenTool, 
   ChevronRight, 
   ChevronLeft, 
   CheckCircle2, 
-  Sparkles, 
   Layers, 
-  BookOpen, 
   Grid, 
   Brain, 
   Star, 
   Volume2, 
   Check, 
   ArrowRight,
-  RotateCcw
+  BookOpen
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useApp } from '../../lib/AppContext';
+import audioManager from '../../lib/audioManager';
 import { 
   getScriptpadUnits, 
   getLessonById, 
@@ -33,7 +32,7 @@ const ScriptpadWriter = dynamic(() => import('../features/ScriptpadWriter'), {
   ssr: false,
   loading: () => (
     <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando lienzo táctil de escritura...</p>
+      <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>Cargando lienzo táctil de escritura...</p>
     </div>
   )
 });
@@ -41,7 +40,7 @@ const ScriptpadFlashcards = dynamic(() => import('../features/ScriptpadFlashcard
   ssr: false,
   loading: () => (
     <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando tarjetas Flashcards...</p>
+      <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>Cargando tarjetas Flashcards...</p>
     </div>
   )
 });
@@ -49,7 +48,7 @@ const ScriptpadWordMatch = dynamic(() => import('../features/ScriptpadWordMatch'
   ssr: false,
   loading: () => (
     <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando Word Match...</p>
+      <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>Cargando Word Match...</p>
     </div>
   )
 });
@@ -57,7 +56,7 @@ const ScriptpadSrsReview = dynamic(() => import('../features/ScriptpadSrsReview'
   ssr: false,
   loading: () => (
     <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando Repaso SRS...</p>
+      <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>Cargando Repaso SRS...</p>
     </div>
   )
 });
@@ -97,7 +96,6 @@ export default function ScriptpadTab({
       if (!lessonId && sp.get('lesson')) lessonId = sp.get('lesson');
       if (!mode && sp.get('mode')) mode = sp.get('mode');
 
-      // Si no hay parámetros en la URL, revisar localStorage por si hubo una recarga sin query
       if (!unitId && !lessonId && !mode) {
         try {
           const saved = JSON.parse(localStorage.getItem('nihongo_scriptpad_active') || '{}');
@@ -170,13 +168,12 @@ export default function ScriptpadTab({
     return getScriptpadUnits(levelFilter, activeTab === 'curriculum' ? 'curriculum' : 'all');
   }, [levelFilter, activeTab]);
 
-  // Unidad actualmente seleccionada (con fallback en caso de cambio de pestaña o filtro)
+  // Unidad actualmente seleccionada
   const selectedUnit = useMemo(() => {
     if (!selectedUnitId) return null;
     const found = units.find(u => u.id === selectedUnitId);
     if (found) return found;
 
-    // Búsqueda en todas las unidades si no coincide con los filtros actuales
     const allUnits = getScriptpadUnits('all', selectedUnitId.startsWith('curriculum-mod-') ? 'curriculum' : 'all');
     return allUnits.find(u => u.id === selectedUnitId) || null;
   }, [units, selectedUnitId]);
@@ -195,7 +192,7 @@ export default function ScriptpadTab({
     }
   };
 
-  // Finalizar lección y guardar progreso en appState y Supabase
+  // Finalizar lección y guardar progreso
   const handleCompleteStudy = (stats) => {
     if (activeLesson && onUpdateState) {
       recordLessonCompletion(activeLesson.id, stats, appState, onUpdateState);
@@ -207,12 +204,25 @@ export default function ScriptpadTab({
     setActiveLesson(null);
   };
 
+  // Reproducir audio de palabra
+  const handlePlayWordAudio = (e, word) => {
+    e.stopPropagation();
+    if (!word) return;
+    if (typeof audioManager?.playWord === 'function') {
+      audioManager.playWord(word);
+    } else if (typeof audioManager?.speak === 'function') {
+      audioManager.speak(word.hiragana || word.kana || word.kanji || '', {
+        audioUrl: word.audio_url
+      });
+    }
+  };
+
   // ==========================================
   // RENDERIZADO DE MODOS DE ESTUDIO ACTIVOS
   // ==========================================
   if (activeMode === 'write' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
         <ScriptpadWriter
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -226,7 +236,7 @@ export default function ScriptpadTab({
 
   if (activeMode === 'flashcards' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
         <ScriptpadFlashcards
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -240,7 +250,7 @@ export default function ScriptpadTab({
 
   if (activeMode === 'match' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
         <ScriptpadWordMatch
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -263,11 +273,10 @@ export default function ScriptpadTab({
       : srsQueue;
 
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
         <ScriptpadSrsReview
           queue={queueToReview}
           onClose={handleCloseStudy}
-          onComplete={handleCompleteStudy}
           appState={appState}
           onUpdateState={onUpdateState}
         />
@@ -276,85 +285,122 @@ export default function ScriptpadTab({
   }
 
   // ==========================================
-  // VISTA 2: DETALLE DE UNIDAD Y LECCIONES (ESTILO SCREENSHOTS 2, 3, 4)
+  // VISTA 2: DETALLE DE UNIDAD Y LECCIONES (ESTILO SCREENSHOTS)
   // ==========================================
   if (selectedUnit) {
     return (
-      <div className="section-panel active" style={{ maxWidth: 650, margin: '0 auto', padding: '16px 8px' }}>
-        {/* Barra de cabecera con botón de retorno */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+      <div className="section-panel active" style={{ maxWidth: 620, margin: '0 auto', padding: '12px 6px' }}>
+        {/* Barra superior con botón volver y título de unidad */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
           <button
             type="button"
             onClick={() => setSelectedUnitId(null)}
             className="btn btn-outline btn-sm"
             style={{
-              width: 40,
-              height: 40,
+              width: 36,
+              height: 36,
               borderRadius: '50%',
               padding: 0,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              flexShrink: 0
             }}
             aria-label="Volver a unidades"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
-            {selectedUnit.title}
-          </h2>
+          <div style={{ overflow: 'hidden' }}>
+            <h2 style={{ 
+              fontSize: '1.05rem', 
+              fontWeight: 800, 
+              margin: 0, 
+              color: 'var(--text-main)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}>
+              {selectedUnit.title}
+            </h2>
+          </div>
         </div>
 
-        {/* Tarjeta Banner de la Unidad (como en Screenshot 2) */}
+        {/* Tarjeta Banner de la Unidad (Estilo Screenshots de Referencia) */}
         <div style={{
           background: selectedUnit.bg_gradient || 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-          borderRadius: 22,
-          padding: '20px 22px',
+          borderRadius: 18,
+          padding: '14px 16px',
           color: '#fff',
           display: 'flex',
           alignItems: 'center',
-          gap: 18,
-          marginBottom: 20,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.18)'
+          gap: 14,
+          marginBottom: 16,
+          boxShadow: '0 6px 18px rgba(0,0,0,0.16)'
         }}>
           <div style={{
-            width: 58,
-            height: 58,
-            borderRadius: 16,
+            width: 46,
+            height: 46,
+            borderRadius: 14,
             background: 'rgba(255, 255, 255, 0.22)',
-            backdropFilter: 'blur(8px)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.8rem',
+            fontSize: '1.45rem',
             fontWeight: 900,
             flexShrink: 0
           }}>
             {selectedUnit.kanji_icon}
           </div>
-          <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 4px 0' }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ 
+              fontSize: '0.68rem', 
+              fontWeight: 800, 
+              textTransform: 'uppercase', 
+              letterSpacing: 0.8,
+              opacity: 0.85,
+              marginBottom: 2
+            }}>
+              {selectedUnit.track === 'curriculum' ? 'Módulo de Currículum' : 'Unidad Temática'}
+            </div>
+            <h3 style={{ 
+              fontSize: '0.98rem', 
+              fontWeight: 800, 
+              margin: '0 0 2px 0',
+              lineHeight: 1.25,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}>
               {selectedUnit.title}
             </h3>
-            <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.9, lineHeight: 1.35 }}>
+            <p style={{ 
+              margin: 0, 
+              fontSize: '0.78rem', 
+              opacity: 0.92, 
+              lineHeight: 1.3,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}>
               {selectedUnit.subtitle}
             </p>
             <span style={{
               display: 'inline-block',
               marginTop: 6,
-              fontSize: '0.75rem',
+              fontSize: '0.7rem',
               fontWeight: 700,
-              background: 'rgba(255,255,255,0.25)',
+              background: 'rgba(255,255,255,0.24)',
               padding: '2px 8px',
-              borderRadius: 8
+              borderRadius: 6
             }}>
               {selectedUnit.lessons.length} lecciones • {selectedUnit.total_words} palabras
             </span>
           </div>
         </div>
 
-        {/* Lista de Lecciones Desplegables (Acordeón) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Lista de Lecciones Desplegables con TÍTULO DE CONTEXTO EXCLUSIVO */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           {selectedUnit.lessons.map((lesson) => {
             const isExpanded = expandedLessonId === lesson.id;
             const status = getLessonStatus(lesson.id, appState);
@@ -370,29 +416,30 @@ export default function ScriptpadTab({
                 style={{
                   background: 'var(--bg-surface)',
                   border: isExpanded ? '2px solid var(--primary)' : '1px solid var(--border)',
-                  borderRadius: 18,
+                  borderRadius: 16,
                   overflow: 'hidden',
-                  transition: 'all 0.2s ease',
-                  boxShadow: isExpanded ? '0 6px 20px rgba(99, 102, 241, 0.15)' : 'var(--shadow-sm)'
+                  transition: 'all 0.15s ease',
+                  boxShadow: isExpanded ? '0 4px 14px rgba(99, 102, 241, 0.12)' : 'var(--shadow-sm)'
                 }}
               >
                 {/* Cabecera de la Lección */}
                 <div 
                   onClick={() => setExpandedLessonId(isExpanded ? null : lesson.id)}
                   style={{
-                    padding: '16px 18px',
+                    padding: '12px 14px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     cursor: 'pointer',
-                    userSelect: 'none'
+                    userSelect: 'none',
+                    gap: 10
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
                     {/* Badge numérico o de completado */}
                     <div style={{
-                      width: 40,
-                      height: 40,
+                      width: 34,
+                      height: 34,
                       borderRadius: '50%',
                       background: status.isCompleted 
                         ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
@@ -402,50 +449,76 @@ export default function ScriptpadTab({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1rem',
+                      fontSize: '0.85rem',
                       fontWeight: 800,
                       flexShrink: 0
                     }}>
-                      {status.isCompleted ? <Check size={20} strokeWidth={3} /> : lesson.number}
+                      {status.isCompleted ? <Check size={16} strokeWidth={3} /> : lesson.number}
                     </div>
 
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                          Lesson {lesson.number}: {lesson.title}
+                    {/* TÍTULO DE CONTEXTO PURO (Requisito clave del usuario: solo contexto de las palabras) */}
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        <span style={{ 
+                          fontSize: '0.68rem', 
+                          fontWeight: 700, 
+                          color: 'var(--text-muted)',
+                          textTransform: 'uppercase',
+                          letterSpacing: 0.5
+                        }}>
+                          Lección {lesson.number}
                         </span>
                         {status.isCompleted && (
                           <span style={{
-                            fontSize: '0.7rem',
+                            fontSize: '0.65rem',
                             fontWeight: 800,
                             background: 'rgba(16, 185, 129, 0.15)',
                             color: '#10b981',
-                            padding: '2px 8px',
-                            borderRadius: 8,
+                            padding: '1px 6px',
+                            borderRadius: 6,
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 4
+                            gap: 3
                           }}>
-                            <Check size={12} strokeWidth={3} /> Completada
+                            <Check size={10} strokeWidth={3} /> Hecha
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      <div style={{ 
+                        fontSize: '0.92rem', 
+                        fontWeight: 800, 
+                        color: 'var(--text-main)', 
+                        lineHeight: 1.25,
+                        marginTop: 1,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
+                        {lesson.title}
+                      </div>
+                      <div style={{ 
+                        fontSize: '0.74rem', 
+                        color: 'var(--text-muted)',
+                        marginTop: 2,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
                         {lesson.words.length} palabras • {lesson.description}
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     {status.isCompleted && (
                       <div style={{ display: 'flex', gap: 2, color: '#f59e0b' }}>
                         {[...Array(status.stars || 3)].map((_, i) => (
-                          <Star key={i} size={14} fill="#f59e0b" />
+                          <Star key={i} size={12} fill="#f59e0b" />
                         ))}
                       </div>
                     )}
                     <ChevronRight 
-                      size={20} 
+                      size={18} 
                       style={{
                         transform: isExpanded ? 'rotate(90deg)' : 'none',
                         transition: 'transform 0.2s ease',
@@ -455,10 +528,10 @@ export default function ScriptpadTab({
                   </div>
                 </div>
 
-                {/* Bloque expandido: LEARN (Estilo exacto de Screenshot 2) */}
+                {/* Bloque expandido: Modos de Estudio y Previsualización de Vocabulario */}
                 {isExpanded && (
                   <div style={{
-                    padding: '8px 18px 20px',
+                    padding: '8px 14px 16px',
                     borderTop: '1px solid var(--border)',
                     background: 'var(--bg-main)'
                   }}>
@@ -466,39 +539,40 @@ export default function ScriptpadTab({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      margin: '12px 0 12px'
+                      margin: '10px 0 10px'
                     }}>
                       <div style={{
-                        fontSize: '0.75rem',
+                        fontSize: '0.7rem',
                         fontWeight: 800,
                         color: 'var(--text-muted)',
                         textTransform: 'uppercase',
-                        letterSpacing: 1.2
+                        letterSpacing: 1
                       }}>
-                        LEARN • Modos de Estudio
+                        Modos de Estudio y Práctica
                       </div>
                       {completedModes.length > 0 && (
                         <div style={{
-                          fontSize: '0.75rem',
+                          fontSize: '0.7rem',
                           fontWeight: 700,
                           color: '#10b981',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 4
+                          gap: 3
                         }}>
-                          <CheckCircle2 size={14} />
-                          <span>{completedModes.length}/4 modos completados</span>
+                          <CheckCircle2 size={12} />
+                          <span>{completedModes.length}/4 completados</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Tarjetas cuadradas de acción LEARN */}
+                    {/* Botones de acción compactos (optimizados para móvil) */}
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(115px, 1fr))',
-                      gap: 12
+                      gridTemplateColumns: 'repeat(4, 1fr)',
+                      gap: 8,
+                      marginBottom: 14
                     }}>
-                      {/* 1. ESCRIBIR (Write - Scriptpad) */}
+                      {/* 1. ESCRIBIR */}
                       <button
                         type="button"
                         onClick={() => handleStartStudy(lesson, 'write')}
@@ -506,61 +580,50 @@ export default function ScriptpadTab({
                           position: 'relative',
                           background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
                           border: isWriteDone ? '2px solid #10b981' : 'none',
-                          borderRadius: 16,
-                          padding: '16px 12px',
+                          borderRadius: 14,
+                          padding: '10px 6px',
                           color: '#fff',
                           cursor: 'pointer',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          gap: 8,
-                          boxShadow: isWriteDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(139, 92, 246, 0.3)',
+                          gap: 6,
+                          boxShadow: isWriteDone ? '0 3px 10px rgba(16, 185, 129, 0.35)' : '0 3px 10px rgba(139, 92, 246, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
                         {isWriteDone && (
-                          <div 
-                            title="Modo completado"
-                            style={{
-                              position: 'absolute',
-                              top: 6,
-                              right: 6,
-                              background: '#10b981',
-                              color: '#fff',
-                              borderRadius: '50%',
-                              width: 22,
-                              height: 22,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                              border: '1.5px solid #fff'
-                            }}
-                          >
-                            <Check size={13} strokeWidth={3} />
+                          <div style={{
+                            position: 'absolute',
+                            top: 4,
+                            right: 4,
+                            background: '#10b981',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: 16,
+                            height: 16,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1px solid #fff'
+                          }}>
+                            <Check size={10} strokeWidth={3} />
                           </div>
                         )}
                         <div style={{
-                          width: 38,
-                          height: 38,
-                          borderRadius: 10,
+                          width: 28,
+                          height: 28,
+                          borderRadius: 8,
                           background: 'rgba(255,255,255,0.25)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '1.2rem',
+                          fontSize: '0.95rem',
                           fontWeight: 900
                         }}>
                           あ
                         </div>
-                        <div style={{ textAlign: 'center' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Escribir ✍️</span>
-                          {isWriteDone && (
-                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
-                              ✓ Completado
-                            </div>
-                          )}
-                        </div>
+                        <span style={{ fontSize: '0.74rem', fontWeight: 800 }}>Escribir</span>
                       </button>
 
                       {/* 2. FLASHCARDS */}
@@ -571,59 +634,48 @@ export default function ScriptpadTab({
                           position: 'relative',
                           background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
                           border: isFlashDone ? '2px solid #10b981' : 'none',
-                          borderRadius: 16,
-                          padding: '16px 12px',
+                          borderRadius: 14,
+                          padding: '10px 6px',
                           color: '#fff',
                           cursor: 'pointer',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          gap: 8,
-                          boxShadow: isFlashDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(6, 182, 212, 0.3)',
+                          gap: 6,
+                          boxShadow: isFlashDone ? '0 3px 10px rgba(16, 185, 129, 0.35)' : '0 3px 10px rgba(6, 182, 212, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
                         {isFlashDone && (
-                          <div 
-                            title="Modo completado"
-                            style={{
-                              position: 'absolute',
-                              top: 6,
-                              right: 6,
-                              background: '#10b981',
-                              color: '#fff',
-                              borderRadius: '50%',
-                              width: 22,
-                              height: 22,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                              border: '1.5px solid #fff'
-                            }}
-                          >
-                            <Check size={13} strokeWidth={3} />
+                          <div style={{
+                            position: 'absolute',
+                            top: 4,
+                            right: 4,
+                            background: '#10b981',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: 16,
+                            height: 16,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1px solid #fff'
+                          }}>
+                            <Check size={10} strokeWidth={3} />
                           </div>
                         )}
                         <div style={{
-                          width: 38,
-                          height: 38,
-                          borderRadius: 10,
+                          width: 28,
+                          height: 28,
+                          borderRadius: 8,
                           background: 'rgba(255,255,255,0.25)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
                         }}>
-                          <Layers size={20} />
+                          <Layers size={15} />
                         </div>
-                        <div style={{ textAlign: 'center' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Flashcards</span>
-                          {isFlashDone && (
-                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
-                              ✓ Completado
-                            </div>
-                          )}
-                        </div>
+                        <span style={{ fontSize: '0.74rem', fontWeight: 800 }}>Tarjetas</span>
                       </button>
 
                       {/* 3. WORD MATCH */}
@@ -634,59 +686,48 @@ export default function ScriptpadTab({
                           position: 'relative',
                           background: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
                           border: isMatchDone ? '2px solid #10b981' : 'none',
-                          borderRadius: 16,
-                          padding: '16px 12px',
+                          borderRadius: 14,
+                          padding: '10px 6px',
                           color: '#fff',
                           cursor: 'pointer',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          gap: 8,
-                          boxShadow: isMatchDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(244, 63, 94, 0.3)',
+                          gap: 6,
+                          boxShadow: isMatchDone ? '0 3px 10px rgba(16, 185, 129, 0.35)' : '0 3px 10px rgba(244, 63, 94, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
                         {isMatchDone && (
-                          <div 
-                            title="Modo completado"
-                            style={{
-                              position: 'absolute',
-                              top: 6,
-                              right: 6,
-                              background: '#10b981',
-                              color: '#fff',
-                              borderRadius: '50%',
-                              width: 22,
-                              height: 22,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                              border: '1.5px solid #fff'
-                            }}
-                          >
-                            <Check size={13} strokeWidth={3} />
+                          <div style={{
+                            position: 'absolute',
+                            top: 4,
+                            right: 4,
+                            background: '#10b981',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: 16,
+                            height: 16,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1px solid #fff'
+                          }}>
+                            <Check size={10} strokeWidth={3} />
                           </div>
                         )}
                         <div style={{
-                          width: 38,
-                          height: 38,
-                          borderRadius: 10,
+                          width: 28,
+                          height: 28,
+                          borderRadius: 8,
                           background: 'rgba(255,255,255,0.25)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
                         }}>
-                          <Grid size={20} />
+                          <Grid size={15} />
                         </div>
-                        <div style={{ textAlign: 'center' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Word Match</span>
-                          {isMatchDone && (
-                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
-                              ✓ Completado
-                            </div>
-                          )}
-                        </div>
+                        <span style={{ fontSize: '0.74rem', fontWeight: 800 }}>Emparejar</span>
                       </button>
 
                       {/* 4. REPASO SRS */}
@@ -697,59 +738,165 @@ export default function ScriptpadTab({
                           position: 'relative',
                           background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                           border: isSrsDone ? '2px solid #10b981' : 'none',
-                          borderRadius: 16,
-                          padding: '16px 12px',
+                          borderRadius: 14,
+                          padding: '10px 6px',
                           color: '#fff',
                           cursor: 'pointer',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          gap: 8,
-                          boxShadow: isSrsDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(245, 158, 11, 0.3)',
+                          gap: 6,
+                          boxShadow: isSrsDone ? '0 3px 10px rgba(16, 185, 129, 0.35)' : '0 3px 10px rgba(245, 158, 11, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
                         {isSrsDone && (
-                          <div 
-                            title="Modo completado"
-                            style={{
-                              position: 'absolute',
-                              top: 6,
-                              right: 6,
-                              background: '#10b981',
-                              color: '#fff',
-                              borderRadius: '50%',
-                              width: 22,
-                              height: 22,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                              border: '1.5px solid #fff'
-                            }}
-                          >
-                            <Check size={13} strokeWidth={3} />
+                          <div style={{
+                            position: 'absolute',
+                            top: 4,
+                            right: 4,
+                            background: '#10b981',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: 16,
+                            height: 16,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1px solid #fff'
+                          }}>
+                            <Check size={10} strokeWidth={3} />
                           </div>
                         )}
                         <div style={{
-                          width: 38,
-                          height: 38,
-                          borderRadius: 10,
+                          width: 28,
+                          height: 28,
+                          borderRadius: 8,
                           background: 'rgba(255,255,255,0.25)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
                         }}>
-                          <Brain size={20} />
+                          <Brain size={15} />
                         </div>
-                        <div style={{ textAlign: 'center' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Repaso SRS</span>
-                          {isSrsDone && (
-                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
-                              ✓ Completado
+                        <span style={{ fontSize: '0.74rem', fontWeight: 800 }}>Repaso</span>
+                      </button>
+                    </div>
+
+                    {/* Previsualización de Palabras de la Lección */}
+                    <div style={{
+                      background: 'var(--bg-surface)',
+                      borderRadius: 14,
+                      border: '1px solid var(--border)',
+                      padding: '10px 12px'
+                    }}>
+                      <div style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 800,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.8,
+                        marginBottom: 8,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}>
+                        <span>Vocabulario ({lesson.words.length} palabras)</span>
+                        <span>Español / Kanji</span>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 220, overflowY: 'auto' }}>
+                        {lesson.words.map((w, wIdx) => (
+                          <div 
+                            key={w.id || wIdx}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '6px 8px',
+                              borderRadius: 8,
+                              background: 'var(--bg-main)',
+                              border: '1px solid var(--border)'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                              <button
+                                type="button"
+                                onClick={(e) => handlePlayWordAudio(e, w)}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  padding: 0,
+                                  cursor: 'pointer',
+                                  color: 'var(--primary)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0
+                                }}
+                                title="Escuchar pronunciación"
+                                aria-label="Escuchar pronunciación"
+                              >
+                                <Volume2 size={15} />
+                              </button>
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                                  <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                                    {w.kanji}
+                                  </span>
+                                  {w.hiragana && w.hiragana !== w.kanji && (
+                                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                                      {w.hiragana}
+                                    </span>
+                                  )}
+                                </div>
+                                <div style={{ 
+                                  fontSize: '0.74rem', 
+                                  color: 'var(--text-muted)',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}>
+                                  {w.meaning_es}
+                                </div>
+                              </div>
                             </div>
-                          )}
-                        </div>
+
+                            <span style={{
+                              fontSize: '0.62rem',
+                              fontWeight: 800,
+                              background: 'rgba(99, 102, 241, 0.12)',
+                              color: 'var(--primary)',
+                              padding: '1px 5px',
+                              borderRadius: 4,
+                              flexShrink: 0
+                            }}>
+                              {w.level || 'N5'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Botón rápido para empezar a escribir */}
+                      <button
+                        type="button"
+                        onClick={() => handleStartStudy(lesson, 'write')}
+                        className="btn btn-primary btn-sm"
+                        style={{
+                          width: '100%',
+                          marginTop: 10,
+                          padding: '7px 12px',
+                          borderRadius: 10,
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 6
+                        }}
+                      >
+                        <PenTool size={14} />
+                        <span>Comenzar a escribir esta lección ✍️</span>
                       </button>
                     </div>
                   </div>
@@ -763,72 +910,91 @@ export default function ScriptpadTab({
   }
 
   // ==========================================
-  // VISTA 1: CATÁLOGO DE UNIDADES PRINCIPALES (ESTILO SCREENSHOT 1)
+  // VISTA 1: CATÁLOGO DE UNIDADES PRINCIPALES (TOTALMENTE EN ESPAÑOL)
   // ==========================================
   return (
-    <div className="section-panel active" style={{ maxWidth: 680, margin: '0 auto', padding: '16px 8px' }}>
-      {/* Hero Card */}
-      <div className="module-hero-card" style={{ marginBottom: 18 }}>
+    <div className="section-panel active" style={{ maxWidth: 640, margin: '0 auto', padding: '12px 6px' }}>
+      {/* Tarjeta de Encabezado */}
+      <div className="module-hero-card" style={{ marginBottom: 14, padding: '14px 16px' }}>
         <div className="module-hero-content">
-          <div className="module-hero-title-row">
+          <div className="module-hero-title-row" style={{ gap: 12 }}>
             <div 
               className="module-hero-icon-badge" 
-              style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)', boxShadow: '0 4px 14px rgba(139, 92, 246, 0.3)' }}
+              style={{ 
+                width: 44,
+                height: 44,
+                borderRadius: 14,
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)', 
+                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
             >
-              <PenTool size={28} />
+              <PenTool size={22} color="#fff" />
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <span className="module-category-pill" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.12)' }}>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                <span className="module-category-pill" style={{ 
+                  color: '#8b5cf6', 
+                  background: 'rgba(139, 92, 246, 0.12)',
+                  fontSize: '0.68rem',
+                  padding: '2px 8px',
+                  borderRadius: 6
+                }}>
                   Escritura & Vocabulario
                 </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  Mobile-First Touchscreen ✍️
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  Caligrafía Táctil ✍️
                 </span>
               </div>
-              <h1 className="module-hero-title">Scriptpad & Unidades</h1>
-              <p className="module-hero-subtitle">
-                Escribe palabras y kanji a mano en pantalla táctil con trazos guiados, caligrafía libre y repaso espaciado FSRS.
+              <h1 className="module-hero-title" style={{ fontSize: '1.2rem', fontWeight: 800, margin: '2px 0' }}>
+                Scriptpad: Unidades y Caligrafía
+              </h1>
+              <p className="module-hero-subtitle" style={{ fontSize: '0.78rem', margin: 0, lineHeight: 1.35 }}>
+                Escribe palabras y kanji a mano con trazos guiados, tarjetas flashcards y repaso espaciado FSRS.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Botón Destacado de Repaso SRS Inteligente (si hay palabras pendientes) */}
+      {/* Tarjeta de Repaso SRS de Escritura */}
       <div style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border)',
-        borderRadius: 20,
-        padding: '14px 18px',
-        marginBottom: 20,
+        borderRadius: 16,
+        padding: '10px 14px',
+        marginBottom: 14,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: 12
+        gap: 10
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
-            width: 44,
-            height: 44,
-            borderRadius: 12,
+            width: 36,
+            height: 36,
+            borderRadius: 10,
             background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
             color: '#fff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)'
+            boxShadow: '0 3px 8px rgba(245, 158, 11, 0.25)',
+            flexShrink: 0
           }}>
-            <Brain size={22} />
+            <Brain size={18} />
           </div>
           <div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)' }}>
+            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)' }}>
               Repaso SRS de Escritura (FSRS)
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
               {srsQueue.length > 0 
-                ? `${srsQueue.length} palabras listas para practicar de memoria` 
+                ? `${srsQueue.length} palabras listas para practicar` 
                 : '¡Al día con tus repasos de escritura!'}
             </div>
           </div>
@@ -838,37 +1004,37 @@ export default function ScriptpadTab({
           type="button"
           className="btn btn-primary btn-sm"
           onClick={() => setActiveMode('srs')}
-          style={{ padding: '8px 16px', borderRadius: 12, fontWeight: 700 }}
+          style={{ padding: '6px 12px', borderRadius: 10, fontSize: '0.76rem', fontWeight: 700 }}
         >
           <span>Practicar Repaso</span>
-          <ArrowRight size={14} />
+          <ArrowRight size={13} />
         </button>
       </div>
 
-      {/* Pestañas de Track: Unidades Temáticas vs Currículum */}
+      {/* Pestañas de Track y Filtros de Nivel JLPT */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: 12,
-        marginBottom: 16
+        gap: 8,
+        marginBottom: 12
       }}>
         <div style={{
           display: 'inline-flex',
           background: 'var(--bg-surface)',
-          padding: 3,
-          borderRadius: 12,
+          padding: 2,
+          borderRadius: 10,
           border: '1px solid var(--border)'
         }}>
           <button
             type="button"
             onClick={() => setActiveTab('thematic')}
             style={{
-              padding: '6px 14px',
-              borderRadius: 9,
+              padding: '5px 11px',
+              borderRadius: 8,
               border: 'none',
-              fontSize: '0.85rem',
+              fontSize: '0.78rem',
               fontWeight: activeTab === 'thematic' ? 700 : 500,
               background: activeTab === 'thematic' ? 'var(--primary)' : 'transparent',
               color: activeTab === 'thematic' ? '#fff' : 'var(--text-muted)',
@@ -881,10 +1047,10 @@ export default function ScriptpadTab({
             type="button"
             onClick={() => setActiveTab('curriculum')}
             style={{
-              padding: '6px 14px',
-              borderRadius: 9,
+              padding: '5px 11px',
+              borderRadius: 8,
               border: 'none',
-              fontSize: '0.85rem',
+              fontSize: '0.78rem',
               fontWeight: activeTab === 'curriculum' ? 700 : 500,
               background: activeTab === 'curriculum' ? 'var(--primary)' : 'transparent',
               color: activeTab === 'curriculum' ? '#fff' : 'var(--text-muted)',
@@ -895,16 +1061,16 @@ export default function ScriptpadTab({
           </button>
         </div>
 
-        {/* Filtros rápidos por nivel JLPT */}
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>Nivel:</span>
+        {/* Filtros por nivel JLPT */}
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>Nivel:</span>
           {['all', 'N5', 'N4', 'N3'].map(lvl => (
             <button
               key={lvl}
               type="button"
               onClick={() => setLevelFilter(lvl)}
               className={`btn ${levelFilter === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
-              style={{ padding: '3px 9px', fontSize: '0.75rem', borderRadius: 8, minWidth: 36 }}
+              style={{ padding: '2px 7px', fontSize: '0.7rem', borderRadius: 6, minWidth: 30 }}
             >
               {lvl === 'all' ? 'Todos' : lvl}
             </button>
@@ -913,18 +1079,18 @@ export default function ScriptpadTab({
       </div>
 
       <div style={{
-        fontSize: '0.75rem',
+        fontSize: '0.7rem',
         fontWeight: 800,
         color: 'var(--text-muted)',
         textTransform: 'uppercase',
-        letterSpacing: 1.2,
-        marginBottom: 12
+        letterSpacing: 1,
+        marginBottom: 10
       }}>
-        {activeTab === 'thematic' ? 'Vocabulary Units — Learn • Write' : 'Módulos del Currículum — Práctica de Vocabulario'}
+        {activeTab === 'thematic' ? 'Unidades Temáticas de Vocabulario' : 'Módulos del Currículum para Escritura'}
       </div>
 
-      {/* Lista de Unidades (Estilo exacto de Screenshot 1) */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* Lista de Unidades en Español con tipografía optimizada */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
         {units.map((unit) => (
           <div
             key={unit.id}
@@ -932,17 +1098,18 @@ export default function ScriptpadTab({
             style={{
               background: 'var(--bg-surface)',
               border: '1px solid var(--border)',
-              borderRadius: 20,
-              padding: '16px 20px',
+              borderRadius: 16,
+              padding: '12px 14px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               cursor: 'pointer',
               transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-              boxShadow: 'var(--shadow-sm)'
+              boxShadow: 'var(--shadow-sm)',
+              gap: 12
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
               e.currentTarget.style.boxShadow = 'var(--shadow-md)';
             }}
             onMouseLeave={(e) => {
@@ -950,48 +1117,64 @@ export default function ScriptpadTab({
               e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              {/* Badge con ideograma kanji numérico */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
+              {/* Badge con kanji temático */}
               <div style={{
-                width: 52,
-                height: 52,
-                borderRadius: 16,
+                width: 44,
+                height: 44,
+                borderRadius: 13,
                 background: unit.color || '#6366f1',
                 color: '#fff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '1.6rem',
+                fontSize: '1.35rem',
                 fontWeight: 900,
                 flexShrink: 0,
-                boxShadow: `0 4px 14px ${unit.color ? unit.color + '44' : 'rgba(99, 102, 241, 0.3)'}`
+                boxShadow: `0 3px 10px ${unit.color ? unit.color + '33' : 'rgba(99, 102, 241, 0.25)'}`
               }}>
                 {unit.kanji_icon}
               </div>
 
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 3px 0', color: 'var(--text-main)' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <h3 style={{ 
+                  fontSize: '0.94rem', 
+                  fontWeight: 800, 
+                  margin: '0 0 2px 0', 
+                  color: 'var(--text-main)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
                   {unit.title}
                 </h3>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '0.76rem', 
+                  color: 'var(--text-muted)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
                   {unit.subtitle}
                 </p>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
               <span style={{
                 background: 'var(--bg-main)',
                 border: '1px solid var(--border)',
                 color: 'var(--text-muted)',
-                fontSize: '0.78rem',
+                fontSize: '0.7rem',
                 fontWeight: 700,
-                padding: '4px 10px',
-                borderRadius: 12
+                padding: '3px 8px',
+                borderRadius: 8,
+                whiteSpace: 'nowrap'
               }}>
-                {unit.total_words} words
+                {unit.lessons.length} lec • {unit.total_words} pal
               </span>
-              <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
+              <ChevronRight size={16} style={{ color: 'var(--text-muted)' }} />
             </div>
           </div>
         ))}
