@@ -82,7 +82,17 @@ export default function ScriptpadWriter({
   // Audio de la palabra actual
   const playCurrentWordAudio = useCallback(() => {
     if (!currentWord) return;
-    audioManager.playWord(currentWord);
+    try {
+      if (typeof audioManager?.playWord === 'function') {
+        audioManager.playWord(currentWord);
+      } else if (typeof audioManager?.speak === 'function') {
+        audioManager.speak(currentWord.hiragana || currentWord.kana || currentWord.kanji || '', {
+          audioUrl: currentWord.audio_url
+        });
+      }
+    } catch (e) {
+      console.warn('Audio playback error:', e);
+    }
   }, [currentWord]);
 
   // Al cambiar de palabra
@@ -124,15 +134,20 @@ export default function ScriptpadWriter({
         drawingColor: '#4f46e5',
         drawingWidth: 16,
         showCharacter: false,
-        charDataLoader: (char, onComplete) => {
+        charDataLoader: (char, onComplete, onErr) => {
           fetchKanjiStrokeData(char)
             .then(data => {
-              if (isMounted) onComplete(data);
-            })
-            .catch(() => {
               if (isMounted) {
+                onComplete(data);
+                setWriterLoaded(true);
+              }
+            })
+            .catch(err => {
+              if (isMounted) {
+                console.warn(`No stroke data for ${char}, fallback to free canvas:`, err);
                 setHasWriterData(false);
-                // Si falla o no hay datos SVG (ej. kanji raro), permitir modo libre
+                setEngineMode('free');
+                if (onErr) onErr(err);
               }
             });
         }
@@ -785,17 +800,37 @@ export default function ScriptpadWriter({
 
           {/* Contenedor de Dibujo */}
           {engineMode === 'guided' && hasWriterData ? (
-            <div 
-              ref={writerContainerRef} 
-              style={{ 
-                width: 270, 
-                height: 270, 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                touchAction: 'none'
-              }} 
-            />
+            <div style={{ position: 'relative', width: 270, height: 270 }}>
+              {!writerLoaded && (
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#faf6ee',
+                  borderRadius: 16,
+                  color: 'var(--text-muted)',
+                  fontSize: '0.85rem',
+                  gap: 8,
+                  zIndex: 2
+                }}>
+                  <span>Cargando trazos del carácter...</span>
+                </div>
+              )}
+              <div 
+                ref={writerContainerRef} 
+                style={{ 
+                  width: 270, 
+                  height: 270, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  touchAction: 'none'
+                }} 
+              />
+            </div>
           ) : (
             <canvas
               ref={canvasRef}

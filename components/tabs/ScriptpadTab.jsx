@@ -26,12 +26,41 @@ import {
   recordLessonCompletion, 
   getScriptpadSrsQueue 
 } from '../../lib/scriptpadData';
+import { getNewCard } from '../../lib/srs';
 
-// Modos de estudio lazy-loaded
-const ScriptpadWriter = dynamic(() => import('../features/ScriptpadWriter'), { ssr: false });
-const ScriptpadFlashcards = dynamic(() => import('../features/ScriptpadFlashcards'), { ssr: false });
-const ScriptpadWordMatch = dynamic(() => import('../features/ScriptpadWordMatch'), { ssr: false });
-const ScriptpadSrsReview = dynamic(() => import('../features/ScriptpadSrsReview'), { ssr: false });
+// Modos de estudio con loading visual elegante
+const ScriptpadWriter = dynamic(() => import('../features/ScriptpadWriter'), { 
+  ssr: false,
+  loading: () => (
+    <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
+      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando lienzo táctil de escritura...</p>
+    </div>
+  )
+});
+const ScriptpadFlashcards = dynamic(() => import('../features/ScriptpadFlashcards'), { 
+  ssr: false,
+  loading: () => (
+    <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
+      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando tarjetas Flashcards...</p>
+    </div>
+  )
+});
+const ScriptpadWordMatch = dynamic(() => import('../features/ScriptpadWordMatch'), { 
+  ssr: false,
+  loading: () => (
+    <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
+      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando Word Match...</p>
+    </div>
+  )
+});
+const ScriptpadSrsReview = dynamic(() => import('../features/ScriptpadSrsReview'), { 
+  ssr: false,
+  loading: () => (
+    <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
+      <p style={{ fontWeight: 700, fontSize: '1.1rem' }}>Cargando Repaso SRS...</p>
+    </div>
+  )
+});
 
 export default function ScriptpadTab({
   appState: propAppState,
@@ -132,10 +161,19 @@ export default function ScriptpadTab({
   }
 
   if (activeMode === 'srs') {
+    const queueToReview = (activeLesson && Array.isArray(activeLesson.words) && activeLesson.words.length > 0)
+      ? activeLesson.words.map(w => ({
+          ...w,
+          cardKey: `sp_write_${w.kanji || w.hiragana || w.id}`,
+          card: appState?.srsQuestions?.[`sp_write_${w.kanji || w.hiragana || w.id}`] || getNewCard(),
+          isNew: !appState?.srsQuestions?.[`sp_write_${w.kanji || w.hiragana || w.id}`]
+        }))
+      : srsQueue;
+
     return (
       <div className="section-panel active" style={{ padding: '20px 12px' }}>
         <ScriptpadSrsReview
-          queue={srsQueue}
+          queue={queueToReview}
           onClose={handleCloseStudy}
           appState={appState}
           onUpdateState={onUpdateState}
@@ -430,9 +468,7 @@ export default function ScriptpadTab({
                       {/* 4. REPASO SRS */}
                       <button
                         type="button"
-                        onClick={() => {
-                          setActiveMode('srs');
-                        }}
+                        onClick={() => handleStartStudy(lesson, 'srs')}
                         style={{
                           background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                           border: 'none',

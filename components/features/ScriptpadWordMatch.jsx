@@ -42,7 +42,17 @@ export default function ScriptpadWordMatch({
 
   const handleSelectLeft = (item) => {
     if (matchedIds.has(item.id)) return;
-    audioManager.playWord(item.word);
+    try {
+      if (typeof audioManager?.playWord === 'function') {
+        audioManager.playWord(item.word);
+      } else if (typeof audioManager?.speak === 'function') {
+        audioManager.speak(item.word?.hiragana || item.word?.kana || item.word?.kanji || '', {
+          audioUrl: item.word?.audio_url
+        });
+      }
+    } catch (e) {
+      console.warn('Audio playback error:', e);
+    }
     setSelectedLeft(item);
     if (selectedRight) {
       checkMatch(item, selectedRight);

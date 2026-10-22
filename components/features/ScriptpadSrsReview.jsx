@@ -37,7 +37,17 @@ export default function ScriptpadSrsReview({
 
   const playAudio = useCallback(() => {
     if (!currentItem) return;
-    audioManager.playWord(currentItem);
+    try {
+      if (typeof audioManager?.playWord === 'function') {
+        audioManager.playWord(currentItem);
+      } else if (typeof audioManager?.speak === 'function') {
+        audioManager.speak(currentItem.hiragana || currentItem.kana || currentItem.kanji || '', {
+          audioUrl: currentItem.audio_url
+        });
+      }
+    } catch (e) {
+      console.warn('Audio playback error:', e);
+    }
   }, [currentItem]);
 
   useEffect(() => {

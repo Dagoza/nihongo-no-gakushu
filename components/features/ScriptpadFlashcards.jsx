@@ -19,7 +19,17 @@ export default function ScriptpadFlashcards({
 
   const playAudio = useCallback(() => {
     if (!currentWord) return;
-    audioManager.playWord(currentWord);
+    try {
+      if (typeof audioManager?.playWord === 'function') {
+        audioManager.playWord(currentWord);
+      } else if (typeof audioManager?.speak === 'function') {
+        audioManager.speak(currentWord.hiragana || currentWord.kana || currentWord.kanji || '', {
+          audioUrl: currentWord.audio_url
+        });
+      }
+    } catch (e) {
+      console.warn('Audio playback error:', e);
+    }
   }, [currentWord]);
 
   useEffect(() => {
