@@ -53,7 +53,8 @@ const datasetsToCheck = [
   'stories.json',
   'pdf_catalog.json',
   'irodori_dialogues.json',
-  'nhk_lessons.json'
+  'nhk_lessons.json',
+  'scriptpad_units.json'
 ];
 
 datasetsToCheck.forEach(filename => {
@@ -73,8 +74,43 @@ datasetsToCheck.forEach(filename => {
 });
 
 // -----------------------------------------------------------------------------
-// REGLA 1: Vocabulario Completo (Kanji, Hiragana, Katakana, Español, Nivel)
+// SCRIPTPAD: Integridad del Catálogo de Unidades y Lecciones de Escritura
 // -----------------------------------------------------------------------------
+console.log('\n--- SCRIPTPAD: Integridad de Unidades y Lecciones de Escritura ---');
+
+runTest('Catálogo scriptpad_units.json tiene unidades, lecciones y palabras completas', () => {
+  const unitsPath = path.join(DATA_DIR, 'scriptpad_units.json');
+  assert(fs.existsSync(unitsPath), 'El archivo scriptpad_units.json debe existir');
+  const units = JSON.parse(fs.readFileSync(unitsPath, 'utf-8'));
+  assert(Array.isArray(units) && units.length >= 8, `Se esperaban al menos 8 unidades en Scriptpad, encontradas: ${units.length}`);
+
+  let totalWords = 0;
+  let totalLessons = 0;
+
+  units.forEach(unit => {
+    assert(unit.id && unit.title && unit.kanji_icon, `Unidad "${unit.title}" debe tener id, title y kanji_icon`);
+    assert(Array.isArray(unit.lessons) && unit.lessons.length > 0, `Unidad "${unit.title}" debe tener lecciones`);
+
+    unit.lessons.forEach(lesson => {
+      totalLessons++;
+      assert(lesson.id && lesson.title, `Lección en unidad "${unit.title}" sin id o título`);
+      assert(Array.isArray(lesson.words) && lesson.words.length > 0, `Lección "${lesson.title}" debe tener palabras`);
+
+      lesson.words.forEach(w => {
+        totalWords++;
+        assert(w.kanji && w.kanji.trim().length > 0, `Palabra en lección "${lesson.title}" sin kanji`);
+        assert(w.hiragana && w.hiragana.trim().length > 0, `Palabra "${w.kanji}" sin hiragana`);
+        assert(w.katakana && w.katakana.trim().length > 0, `Palabra "${w.kanji}" sin katakana`);
+        assert(w.meaning_es && w.meaning_es.trim().length > 0, `Palabra "${w.kanji}" sin traducción`);
+        assert(VALID_JLPT_LEVELS.has(w.level), `Palabra "${w.kanji}" con nivel inválido: ${w.level}`);
+        assert(!CEFR_FORBIDDEN.has(w.level), `Palabra "${w.kanji}" usa CEFR prohibido`);
+      });
+    });
+  });
+
+  assert(totalLessons >= 30, `Se esperaban al menos 30 lecciones, encontradas: ${totalLessons}`);
+  assert(totalWords >= 300, `Se esperaban al menos 300 palabras en el catálogo de Scriptpad, encontradas: ${totalWords}`);
+});
 console.log('\n--- REGLA 1: Integridad y Forma de Vocabulario ---');
 
 runTest('Cada palabra en vocabulary.json tiene Kanji, Hiragana, Katakana, Español y Nivel', () => {

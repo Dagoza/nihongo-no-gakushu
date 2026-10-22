@@ -21,13 +21,14 @@ import {
   Check,
   X,
   BookmarkCheck,
-  Award
+  Award,
+  PenTool
 } from 'lucide-react';
 
 export const NAV_CATEGORIES = [
-  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 13 },
+  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 14 },
   { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 6 },
-  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 6 },
+  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 7 },
   { id: 'progress', label: 'Progreso', shortLabel: 'Progreso', icon: BarChart3, count: 1 },
 ];
 
@@ -110,6 +111,17 @@ export const TABS = [
     color: '#3b82f6',
   },
   {
+    id: 'scriptpad',
+    path: '/scriptpad',
+    category: 'practice',
+    categoryName: 'Recursos & Práctica',
+    shortLabel: 'Scriptpad ✍️',
+    fullLabel: 'Scriptpad & Escritura',
+    desc: 'Unidades de vocabulario y caligrafía táctil a mano',
+    icon: PenTool,
+    color: '#8b5cf6',
+  },
+  {
     id: 'particles',
     path: '/grammar',
     category: 'practice',
@@ -187,6 +199,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     if (pathname.startsWith('/story')) return 'story';
     if (pathname.startsWith('/nhk')) return 'nhk';
     if (pathname.startsWith('/youtube')) return 'youtube';
+    if (pathname.startsWith('/scriptpad')) return 'scriptpad';
     if (pathname.startsWith('/vocab')) return 'vocab';
     if (pathname.startsWith('/grammar') || pathname.startsWith('/particles')) return 'particles';
     if (pathname.startsWith('/jlpt')) return 'jlpt';

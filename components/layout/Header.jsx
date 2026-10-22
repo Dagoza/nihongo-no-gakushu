@@ -770,7 +770,7 @@ export default function Header({
             <span>IME 🇯🇵</span>
           </div>
 
-          {/* Acceso sutil a Cuaderno de Trazos */}
+          {/* Acceso directo a Scriptpad y Unidades */}
           <div 
             className="stat-badge" 
             style={{ 
@@ -778,17 +778,16 @@ export default function Header({
               transition: 'all 0.15s ease'
             }}
             onClick={() => {
-              const opts = { text: '', kana: '', title: 'Cuaderno Libre', source: 'free', ghostOpacity: 0 };
-              if (contextApp?.openPracticePad) {
-                contextApp.openPracticePad(opts);
-              } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
-                window.__nihongoOpenPracticePad(opts);
+              if (onNavigate) {
+                onNavigate('scriptpad');
+              } else if (typeof window !== 'undefined') {
+                window.location.href = '/scriptpad';
               }
             }}
-            title="Cuaderno libre sin guía: dibuja y escribe con total libertad"
+            title="Scriptpad & Unidades de Escritura: practica palabras y kanji a mano"
           >
             <PenTool size={15} className="text-indigo-500" />
-            <span style={{ fontWeight: 600 }}>Cuaderno ✍️</span>
+            <span style={{ fontWeight: 600 }}>Scriptpad ✍️</span>
           </div>
 
           {/* Cloud Sync Status in Badges */}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import Link from 'next/link';
 import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, BookOpen, Layers, Edit3, StickyNote, Plus, RotateCcw, Sparkles, MessageSquare, PenTool, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
@@ -492,6 +493,60 @@ export default function VocabTab({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Acceso Rápido al nuevo Scriptpad Táctil */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(99, 102, 241, 0.08) 100%)',
+        border: '1px solid rgba(139, 92, 246, 0.28)',
+        borderRadius: 'var(--radius-bento, 20px)',
+        padding: '14px 18px',
+        marginBottom: '18px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: 40,
+            height: 40,
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
+          }}>
+            <PenTool size={20} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)' }}>
+              ¿Prefieres practicar escribiendo a mano en tu celular o tablet?
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              Prueba el nuevo <strong>Scriptpad por Unidades</strong> con trazos guiados, caligrafía libre y repaso espaciado.
+            </div>
+          </div>
+        </div>
+        <Link
+          href="/scriptpad"
+          className="btn btn-primary btn-sm"
+          style={{
+            padding: '8px 16px',
+            borderRadius: '12px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            textDecoration: 'none'
+          }}
+        >
+          <span>Ir a Scriptpad ✍️</span>
+          <ArrowRight size={15} />
+        </Link>
       </div>
 
       {/* Selector de Fuente: Recursos Propios vs Catálogo Masivo API */}
