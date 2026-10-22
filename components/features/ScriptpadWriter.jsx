@@ -27,6 +27,58 @@ import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
 import { STROKE_COLORS, fetchKanjiStrokeData } from '../../lib/kanjiStrokeUtils';
 
+// Estilos de papel tradicionales para delimitar claramente los límites del lienzo
+export const SCRIPT_PAPER_STYLES = {
+  washi: {
+    id: 'washi',
+    label: 'Washi Tradicional (和紙)',
+    shortLabel: 'Washi',
+    icon: '📜',
+    bg: '#faf6ee',
+    border: '2.5px solid #d4c7b0',
+    shadow: '0 10px 30px rgba(0, 0, 0, 0.45), inset 0 0 20px rgba(180, 83, 9, 0.05)',
+    gridColor: 'rgba(180, 83, 9, 0.28)',
+    strokeColor: '#18181b', // Tinta Sumi negra auténtica
+    outlineColor: 'rgba(100, 116, 139, 0.38)',
+    drawingColor: '#2563eb', // Trazo azul real vivo
+    highlightColor: '#d97706', // Ámbar dorado cálido
+    highlightCompleteColor: '#b45309',
+    isDark: false
+  },
+  white: {
+    id: 'white',
+    label: 'Papel Blanco Puro (白紙)',
+    shortLabel: 'Blanco',
+    icon: '📄',
+    bg: '#ffffff',
+    border: '2.5px solid #cbd5e1',
+    shadow: '0 10px 30px rgba(0, 0, 0, 0.38)',
+    gridColor: 'rgba(148, 163, 184, 0.45)',
+    strokeColor: '#0f172a',
+    outlineColor: 'rgba(100, 116, 139, 0.38)',
+    drawingColor: '#2563eb',
+    highlightColor: '#d97706',
+    highlightCompleteColor: '#b45309',
+    isDark: false
+  },
+  chalkboard: {
+    id: 'chalkboard',
+    label: 'Pizarra Oscura (黒板)',
+    shortLabel: 'Pizarra',
+    icon: '⬛',
+    bg: '#0a0f1d',
+    border: '2.5px solid #334155',
+    shadow: '0 10px 30px rgba(0, 0, 0, 0.65), inset 0 0 20px rgba(0, 0, 0, 0.6)',
+    gridColor: 'rgba(148, 163, 184, 0.35)',
+    strokeColor: '#ffffff', // Tiza blanca luminosa
+    outlineColor: 'rgba(224, 231, 255, 0.40)',
+    drawingColor: '#22d3ee', // Cyan neón eléctrico
+    highlightColor: '#fbbf24', // Oro radiante
+    highlightCompleteColor: '#f59e0b',
+    isDark: true
+  }
+};
+
 export default function ScriptpadWriter({
   lesson,
   onClose,
@@ -38,24 +90,10 @@ export default function ScriptpadWriter({
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const currentWord = words[currentWordIndex] || words[0];
 
-  // Soporte de tema y estilo de lienzo (Pizarra oscura / Papel washi claro)
-  let appTheme = appState?.theme || 'dark';
-  try {
-    const app = useApp();
-    if (app?.theme) appTheme = app.theme;
-  } catch {}
-
-  const [padStyle, setPadStyle] = useState('auto'); // 'auto' | 'dark' | 'light'
-
-  const isDark = useMemo(() => {
-    if (padStyle === 'dark') return true;
-    if (padStyle === 'light') return false;
-    if (typeof document !== 'undefined') {
-      const bodyTheme = document.body?.getAttribute('data-theme');
-      if (bodyTheme) return bodyTheme === 'dark';
-    }
-    return appTheme === 'dark';
-  }, [padStyle, appTheme]);
+  // Estilo de papel (Washi tradicional por defecto para delimitar claramente los límites físicos del lienzo)
+  const [paperStyle, setPaperStyle] = useState('washi');
+  const currentPaper = SCRIPT_PAPER_STYLES[paperStyle] || SCRIPT_PAPER_STYLES.washi;
+  const isDark = currentPaper.isDark;
 
   // Dimensiones dinámicas del tablero para máxima adaptabilidad en móvil / desktop
   const [padSize, setPadSize] = useState(280);
@@ -162,13 +200,13 @@ export default function ScriptpadWriter({
         strokeAnimationSpeed: 1.3,
         strokeHighlightSpeed: 1.8,
         delayBetweenStrokes: 150,
-        // Colores de alto contraste adaptados al tema (Pizarra oscura / Papel washi claro)
-        strokeColor: isDark ? '#ffffff' : '#0f172a', // Trazos completados: Blanco puro brillante en dark / Tinta sumi en light
-        outlineColor: isDark ? 'rgba(224, 231, 255, 0.40)' : 'rgba(99, 102, 241, 0.28)', // Silueta guía nítida y visible
-        highlightColor: '#fbbf24', // Pistas luminosas: Oro radiante de alto contraste
-        highlightCompleteColor: '#f59e0b',
-        drawingColor: isDark ? '#22d3ee' : '#2563eb', // Lo que el usuario dibuja: Cyan eléctrico neón / Azul intenso
-        drawingWidth: 22, // Trazo grueso y visible bajo el dedo en touchscreens
+        // Colores adaptados al estilo de papel seleccionado (Washi, Blanco o Pizarra)
+        strokeColor: currentPaper.strokeColor,
+        outlineColor: currentPaper.outlineColor,
+        highlightColor: currentPaper.highlightColor,
+        highlightCompleteColor: currentPaper.highlightCompleteColor,
+        drawingColor: currentPaper.drawingColor,
+        drawingWidth: 22,
         showCharacter: false,
         charDataLoader: (char, onComplete, onErr) => {
           fetchKanjiStrokeData(char)
@@ -230,7 +268,7 @@ export default function ScriptpadWriter({
         } catch {}
       }
     };
-  }, [activeChar, engineMode, flowMode, showGhostGuide, isDark, padSize]);
+  }, [activeChar, engineMode, flowMode, showGhostGuide, paperStyle, padSize]);
 
   // Actualizar visibilidad de silueta en HanziWriter si cambia toggle
   useEffect(() => {
@@ -311,29 +349,27 @@ export default function ScriptpadWriter({
     const height = canvas.height;
     ctx.clearRect(0, 0, width, height);
 
-    // 1. Dibujar cuadrícula japonesa tradicional (米字格 Mizige)
+    // 1. Dibujar cuadrícula japonesa tradicional (米字格 Mizige) con marco perimetral para delimitar el lienzo
     ctx.save();
-    ctx.strokeStyle = isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(99, 102, 241, 0.2)';
+    ctx.strokeStyle = currentPaper.gridColor;
     ctx.lineWidth = 1.5;
-    ctx.setLineDash([5, 4]);
 
+    // Marco exterior para delimitar físicamente el lienzo
+    ctx.strokeRect(8, 8, width - 16, height - 16);
+
+    ctx.setLineDash([5, 4]);
     // Cruz central
     ctx.beginPath();
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
+    ctx.moveTo(width / 2, 8);
+    ctx.lineTo(width / 2, height - 8);
+    ctx.moveTo(8, height / 2);
+    ctx.lineTo(width - 8, height / 2);
     // Diagonales
-    ctx.moveTo(0, 0);
-    ctx.lineTo(width, height);
-    ctx.moveTo(width, 0);
-    ctx.lineTo(0, height);
+    ctx.moveTo(8, 8);
+    ctx.lineTo(width - 8, height - 8);
+    ctx.moveTo(width - 8, 8);
+    ctx.lineTo(8, height - 8);
     ctx.stroke();
-
-    // Borde exterior
-    ctx.setLineDash([]);
-    ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)';
-    ctx.strokeRect(1, 1, width - 2, height - 2);
     ctx.restore();
 
     // 2. Silueta de fondo (Ghost outline) si está habilitada
@@ -342,7 +378,7 @@ export default function ScriptpadWriter({
       ctx.font = `bold ${Math.floor(height * 0.72)}px "Noto Sans JP", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = isDark ? 'rgba(224, 231, 255, 0.28)' : 'rgba(99, 102, 241, 0.15)';
+      ctx.fillStyle = currentPaper.isDark ? 'rgba(224, 231, 255, 0.28)' : 'rgba(100, 116, 139, 0.22)';
       ctx.fillText(activeChar, width / 2, height / 2 + 8);
       ctx.restore();
     }
@@ -351,7 +387,7 @@ export default function ScriptpadWriter({
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = isDark ? '#ffffff' : '#0f172a';
+    ctx.strokeStyle = currentPaper.strokeColor;
 
     strokes.forEach(stroke => {
       if (stroke.length < 2) return;
@@ -364,7 +400,7 @@ export default function ScriptpadWriter({
       ctx.stroke();
     });
     ctx.restore();
-  }, [strokes, showGhostGuide, activeChar, isDark]);
+  }, [strokes, showGhostGuide, activeChar, currentPaper]);
 
   useEffect(() => {
     if (engineMode === 'free') {
@@ -836,26 +872,67 @@ export default function ScriptpadWriter({
             ))}
           </div>
 
-          {/* Contenedor de Tablero de Dibujo con Alto Contraste y Cuadrícula Mizige */}
+          {/* Selector de Estilo de Papel para Delimitar los Bordes del Lienzo */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            marginBottom: 12
+          }}>
+            <span style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+              Estilo de Papel:
+            </span>
+            {Object.values(SCRIPT_PAPER_STYLES).map(p => {
+              const isSelected = paperStyle === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setPaperStyle(p.id)}
+                  style={{
+                    padding: '4px 11px',
+                    borderRadius: 9,
+                    border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border)',
+                    background: isSelected ? 'var(--primary)' : 'var(--bg-main)',
+                    color: isSelected ? '#ffffff' : 'var(--text-main)',
+                    fontSize: '0.78rem',
+                    fontWeight: isSelected ? 800 : 500,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    boxShadow: isSelected ? '0 2px 8px rgba(99, 102, 241, 0.28)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                  title={p.label}
+                >
+                  <span>{p.icon}</span>
+                  <span>{p.shortLabel}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Contenedor de Hoja de Papel con Límites Físicos Definidos */}
           <div
             style={{
               position: 'relative',
               width: padSize,
               height: padSize,
-              borderRadius: 22,
-              background: isDark ? '#070b14' : '#faf8f5',
-              border: `2px solid ${isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)'}`,
-              boxShadow: isDark
-                ? 'inset 0 2px 14px rgba(0,0,0,0.7), 0 4px 24px rgba(0,0,0,0.45)'
-                : 'inset 0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(99, 102, 241, 0.08)',
+              borderRadius: 20,
+              background: currentPaper.bg,
+              border: currentPaper.border,
+              boxShadow: currentPaper.shadow,
               overflow: 'hidden',
               userSelect: 'none',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              margin: '0 auto'
             }}
           >
-            {/* Cuadrícula japonesa Mizige (米字格) visible por debajo del lienzo */}
+            {/* Cuadrícula japonesa Mizige (米字格) con marco perimetral bien delimitado */}
             <svg
               width={padSize}
               height={padSize}
@@ -866,33 +943,48 @@ export default function ScriptpadWriter({
                 zIndex: 1
               }}
             >
-              <line
-                x1={padSize / 2} y1={0}
-                x2={padSize / 2} y2={padSize}
-                stroke={isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.45)'}
+              {/* Marco perimetral del límite del lienzo */}
+              <rect
+                x={8}
+                y={8}
+                width={padSize - 16}
+                height={padSize - 16}
+                fill="none"
+                stroke={currentPaper.gridColor}
                 strokeWidth={1.5}
+                rx={10}
+              />
+              {/* Cruz central punteada */}
+              <line
+                x1={padSize / 2} y1={8}
+                x2={padSize / 2} y2={padSize - 8}
+                stroke={currentPaper.gridColor}
+                strokeWidth={1.4}
                 strokeDasharray="6 4"
               />
               <line
-                x1={0} y1={padSize / 2}
-                x2={padSize} y2={padSize / 2}
-                stroke={isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.45)'}
-                strokeWidth={1.5}
+                x1={8} y1={padSize / 2}
+                x2={padSize - 8} y2={padSize / 2}
+                stroke={currentPaper.gridColor}
+                strokeWidth={1.4}
                 strokeDasharray="6 4"
               />
+              {/* Diagonales sutiles */}
               <line
-                x1={0} y1={0}
-                x2={padSize} y2={padSize}
-                stroke={isDark ? 'rgba(148, 163, 184, 0.18)' : 'rgba(203, 213, 225, 0.35)'}
+                x1={8} y1={8}
+                x2={padSize - 8} y2={padSize - 8}
+                stroke={currentPaper.gridColor}
                 strokeWidth={1}
                 strokeDasharray="4 4"
+                opacity={0.6}
               />
               <line
-                x1={padSize} y1={0}
-                x2={0} y2={padSize}
-                stroke={isDark ? 'rgba(148, 163, 184, 0.18)' : 'rgba(203, 213, 225, 0.35)'}
+                x1={padSize - 8} y1={8}
+                x2={8} y2={padSize - 8}
+                stroke={currentPaper.gridColor}
                 strokeWidth={1}
                 strokeDasharray="4 4"
+                opacity={0.6}
               />
             </svg>
 
@@ -907,9 +999,9 @@ export default function ScriptpadWriter({
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: isDark ? 'rgba(7, 11, 20, 0.9)' : 'rgba(250, 248, 245, 0.9)',
+                    background: currentPaper.bg,
                     backdropFilter: 'blur(4px)',
-                    color: 'var(--text-muted)',
+                    color: currentPaper.isDark ? '#94a3b8' : '#64748b',
                     fontSize: '0.85rem',
                     gap: 8,
                     zIndex: 10
@@ -1018,8 +1110,9 @@ export default function ScriptpadWriter({
                   height: 170,
                   borderRadius: 16,
                   overflow: 'hidden',
-                  background: isDark ? '#070b14' : '#faf8f5',
-                  border: idx === continuousActiveIndex ? '2px solid var(--primary)' : isDark ? '1.5px solid rgba(148, 163, 184, 0.25)' : '1px solid var(--border)'
+                  background: currentPaper.bg,
+                  border: idx === continuousActiveIndex ? '2px solid var(--primary)' : currentPaper.border,
+                  boxShadow: currentPaper.shadow
                 }}>
                   {/* Silueta tenue de ayuda en la casilla */}
                   {showGhostGuide && (
@@ -1031,7 +1124,7 @@ export default function ScriptpadWriter({
                       justifyContent: 'center',
                       fontSize: '5rem',
                       fontWeight: 800,
-                      color: isDark ? 'rgba(224, 231, 255, 0.35)' : 'rgba(99, 102, 241, 0.16)',
+                      color: currentPaper.isDark ? 'rgba(224, 231, 255, 0.35)' : 'rgba(100, 116, 139, 0.22)',
                       userSelect: 'none',
                       pointerEvents: 'none'
                     }}>
@@ -1128,16 +1221,20 @@ export default function ScriptpadWriter({
             <span>Guía</span>
           </button>
 
-          {/* Toggle de estilo de lienzo: Pizarra oscura vs Papel claro */}
+          {/* Botón de cambio rápido de estilo de papel */}
           <button
             type="button"
             className="btn btn-outline btn-sm"
-            onClick={() => setPadStyle(isDark ? 'light' : 'dark')}
-            title="Alternar fondo de lienzo: Pizarra oscura o Papel claro"
+            onClick={() => {
+              const styles = ['washi', 'white', 'chalkboard'];
+              const nextIdx = (styles.indexOf(paperStyle) + 1) % styles.length;
+              setPaperStyle(styles[nextIdx]);
+            }}
+            title="Alternar estilo de papel (Washi, Blanco, Pizarra)"
             style={{ borderRadius: 10, display: 'flex', alignItems: 'center', gap: 5 }}
           >
-            {isDark ? <Sun size={15} style={{ color: '#f59e0b' }} /> : <Moon size={15} style={{ color: '#6366f1' }} />}
-            <span>{isDark ? 'Papel' : 'Pizarra'}</span>
+            <span>{currentPaper.icon}</span>
+            <span>{currentPaper.shortLabel}</span>
           </button>
         </div>
 
