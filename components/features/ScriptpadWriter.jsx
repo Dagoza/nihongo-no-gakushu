@@ -79,6 +79,252 @@ export const SCRIPT_PAPER_STYLES = {
   }
 };
 
+// Casilla individual táctil para el modo Tira Continua
+function ContinuousCharBox({
+  char,
+  charIndex,
+  isActive,
+  onSelect,
+  strokes = [],
+  onStrokesChange,
+  currentPaper,
+  showGhostGuide,
+  size = 170
+}) {
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const currentStrokeRef = useRef([]);
+
+  // Redibujar el contenido completo de la casilla
+  const redraw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, size, size);
+
+    // 1. Fondo de papel físico
+    ctx.fillStyle = currentPaper.bg;
+    ctx.fillRect(0, 0, size, size);
+
+    // 2. Cuadrícula Mizige con marco delimitador
+    ctx.save();
+    ctx.strokeStyle = currentPaper.gridColor;
+    ctx.lineWidth = 1.3;
+
+    // Marco exterior con margen físico
+    ctx.strokeRect(6, 6, size - 12, size - 12);
+
+    ctx.setLineDash([4, 4]);
+    // Cruz central
+    ctx.beginPath();
+    ctx.moveTo(size / 2, 6);
+    ctx.lineTo(size / 2, size - 6);
+    ctx.moveTo(6, size / 2);
+    ctx.lineTo(size - 6, size / 2);
+    // Diagonales
+    ctx.moveTo(6, 6);
+    ctx.lineTo(size - 6, size - 6);
+    ctx.moveTo(size - 6, 6);
+    ctx.lineTo(6, size - 6);
+    ctx.stroke();
+    ctx.restore();
+
+    // 3. Silueta del modelo para copiar / calcar (Ghost guide)
+    if (showGhostGuide && char) {
+      ctx.save();
+      ctx.font = `bold ${Math.floor(size * 0.72)}px "Noto Sans JP", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = currentPaper.isDark ? 'rgba(224, 231, 255, 0.35)' : 'rgba(100, 116, 139, 0.25)';
+      ctx.fillText(char, size / 2, size / 2 + 6);
+      ctx.restore();
+    }
+
+    // 4. Renderizar trazos dibujados por el usuario
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = currentPaper.strokeColor;
+
+    strokes.forEach(stroke => {
+      if (!stroke || stroke.length < 2) return;
+      ctx.beginPath();
+      ctx.lineWidth = stroke[0].w || 10;
+      ctx.moveTo(stroke[0].x, stroke[0].y);
+      for (let i = 1; i < stroke.length; i++) {
+        ctx.lineTo(stroke[i].x, stroke[i].y);
+      }
+      ctx.stroke();
+    });
+    ctx.restore();
+  }, [char, currentPaper, showGhostGuide, size, strokes]);
+
+  useEffect(() => {
+    redraw();
+  }, [redraw]);
+
+  // Manejo de eventos Pointer para pantalla táctil y ratón
+  const handlePointerDown = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    try {
+      canvas.setPointerCapture(e.pointerId);
+    } catch {}
+
+    onSelect();
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setIsDrawing(true);
+    currentStrokeRef.current = [{ x, y, w: 10 }];
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    currentStrokeRef.current.push({ x, y, w: 10 });
+
+    // Trazado en tiempo real sin latencia visual
+    const ctx = canvas.getContext('2d');
+    if (ctx && currentStrokeRef.current.length >= 2) {
+      const len = currentStrokeRef.current.length;
+      const p1 = currentStrokeRef.current[len - 2];
+      const p2 = currentStrokeRef.current[len - 1];
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = currentPaper.drawingColor || currentPaper.strokeColor;
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+    if (currentStrokeRef.current.length > 0) {
+      onStrokesChange([...strokes, currentStrokeRef.current]);
+      currentStrokeRef.current = [];
+    }
+  };
+
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 8,
+      flexShrink: 0
+    }}>
+      {/* Cabecera con modelo claro para copiar */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: size,
+        padding: '0 4px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{
+            fontSize: '0.8rem',
+            fontWeight: 800,
+            color: isActive ? 'var(--primary)' : 'var(--text-muted)',
+            background: isActive ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
+            padding: '2px 6px',
+            borderRadius: 6
+          }}>
+            #{charIndex + 1}
+          </span>
+          <span style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-main)' }}>
+            {char}
+          </span>
+        </div>
+
+        {strokes.length > 0 && (
+          <span style={{
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            color: '#10b981',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 3
+          }}>
+            <CheckCircle2 size={13} />
+            <span>{strokes.length}</span>
+          </span>
+        )}
+      </div>
+
+      {/* Casilla de lienzo físico con bordes definidos */}
+      <div style={{
+        position: 'relative',
+        width: size,
+        height: size,
+        borderRadius: 18,
+        overflow: 'hidden',
+        border: isActive ? '2.5px solid var(--primary)' : currentPaper.border,
+        boxShadow: isActive ? '0 0 0 3px rgba(99, 102, 241, 0.25), ' + currentPaper.shadow : currentPaper.shadow,
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+      }}>
+        <canvas
+          ref={canvasRef}
+          width={size}
+          height={size}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            cursor: 'crosshair',
+            touchAction: 'none'
+          }}
+        />
+      </div>
+
+      {/* Botón rápido para borrar solo esta casilla */}
+      {strokes.length > 0 && (
+        <button
+          type="button"
+          onClick={() => onStrokesChange([])}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--text-muted)',
+            fontSize: '0.72rem',
+            cursor: 'pointer',
+            padding: '2px 6px',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4
+          }}
+          title={`Borrar trazos de ${char}`}
+        >
+          <RotateCcw size={11} />
+          <span>Limpiar</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function ScriptpadWriter({
   lesson,
   onClose,
@@ -448,6 +694,19 @@ export default function ScriptpadWriter({
   };
 
   const handleClearStrokes = () => {
+    if (flowMode === 'continuous') {
+      setContinuousStrokes(prev => {
+        const copy = { ...prev };
+        if (copy[continuousActiveIndex]?.length > 0) {
+          copy[continuousActiveIndex] = [];
+        } else {
+          return {};
+        }
+        return copy;
+      });
+      return;
+    }
+
     setStrokes([]);
     if (writerRef.current) {
       try {
@@ -458,6 +717,18 @@ export default function ScriptpadWriter({
   };
 
   const handleUndoStroke = () => {
+    if (flowMode === 'continuous') {
+      setContinuousStrokes(prev => {
+        const currentList = prev[continuousActiveIndex] || [];
+        if (currentList.length === 0) return prev;
+        return {
+          ...prev,
+          [continuousActiveIndex]: currentList.slice(0, -1)
+        };
+      });
+      return;
+    }
+
     if (strokes.length > 0) {
       setStrokes(prev => prev.slice(0, -1));
     }
@@ -1080,74 +1351,100 @@ export default function ScriptpadWriter({
           boxShadow: 'var(--shadow-md)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 12
+          gap: 14
         }}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-            Escribe todos los caracteres de la palabra de seguido sobre las casillas:
-          </div>
-
+          {/* Selector de Estilo de Papel para la Tira Continua */}
           <div style={{
             display: 'flex',
-            gap: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8
+          }}>
+            <span style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+              Estilo de Papel:
+            </span>
+            {Object.values(SCRIPT_PAPER_STYLES).map(p => {
+              const isSelected = paperStyle === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setPaperStyle(p.id)}
+                  style={{
+                    padding: '4px 11px',
+                    borderRadius: 9,
+                    border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border)',
+                    background: isSelected ? 'var(--primary)' : 'var(--bg-main)',
+                    color: isSelected ? '#ffffff' : 'var(--text-main)',
+                    fontSize: '0.78rem',
+                    fontWeight: isSelected ? 800 : 500,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    boxShadow: isSelected ? '0 2px 8px rgba(99, 102, 241, 0.28)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                  title={p.label}
+                >
+                  <span>{p.icon}</span>
+                  <span>{p.shortLabel}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+            Copia o calca cada carácter de la palabra sobre su casilla con el dedo o lápiz:
+          </div>
+
+          {/* Tira horizontal interactiva de casillas táctiles */}
+          <div style={{
+            display: 'flex',
+            gap: 16,
             overflowX: 'auto',
-            paddingBottom: 8,
-            justifyContent: characters.length <= 3 ? 'center' : 'flex-start'
+            padding: '8px 4px 12px',
+            justifyContent: characters.length <= 3 ? 'center' : 'flex-start',
+            WebkitOverflowScrolling: 'touch'
           }}>
             {characters.map((ch, idx) => (
-              <div 
-                key={idx}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 6,
-                  flexShrink: 0
+              <ContinuousCharBox
+                key={`${currentWordIndex}_${idx}_${ch}`}
+                char={ch}
+                charIndex={idx}
+                isActive={idx === continuousActiveIndex}
+                onSelect={() => setContinuousActiveIndex(idx)}
+                strokes={continuousStrokes[idx] || []}
+                onStrokesChange={(newStrokes) => {
+                  setContinuousStrokes(prev => ({
+                    ...prev,
+                    [idx]: newStrokes
+                  }));
                 }}
-              >
-                <div style={{
-                  position: 'relative',
-                  width: 170,
-                  height: 170,
-                  borderRadius: 16,
-                  overflow: 'hidden',
-                  background: currentPaper.bg,
-                  border: idx === continuousActiveIndex ? '2px solid var(--primary)' : currentPaper.border,
-                  boxShadow: currentPaper.shadow
-                }}>
-                  {/* Silueta tenue de ayuda en la casilla */}
-                  {showGhostGuide && (
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '5rem',
-                      fontWeight: 800,
-                      color: currentPaper.isDark ? 'rgba(224, 231, 255, 0.35)' : 'rgba(100, 116, 139, 0.22)',
-                      userSelect: 'none',
-                      pointerEvents: 'none'
-                    }}>
-                      {ch}
-                    </div>
-                  )}
-
-                  <canvas
-                    width={170}
-                    height={170}
-                    onPointerDown={() => setContinuousActiveIndex(idx)}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      touchAction: 'none'
-                    }}
-                  />
-                </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                  Carácter {idx + 1} ({ch})
-                </span>
-              </div>
+                currentPaper={currentPaper}
+                showGhostGuide={showGhostGuide}
+                size={characters.length <= 2 ? 190 : 170}
+              />
             ))}
+          </div>
+
+          {/* Barra de progreso de la palabra */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '8px 14px',
+            background: 'var(--bg-main)',
+            borderRadius: 14,
+            border: '1px solid var(--border)',
+            fontSize: '0.82rem'
+          }}>
+            <span style={{ color: 'var(--text-muted)' }}>
+              Palabra: <strong style={{ color: 'var(--text-main)' }}>{currentWord.kanji || currentWord.hiragana}</strong>
+            </span>
+            <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+              {Object.values(continuousStrokes).filter(s => s && s.length > 0).length} de {characters.length} escritos
+            </span>
           </div>
         </div>
       )}
@@ -1171,7 +1468,7 @@ export default function ScriptpadWriter({
               type="button"
               className="btn btn-outline btn-sm"
               onClick={handleUndoStroke}
-              disabled={strokes.length === 0}
+              disabled={flowMode === 'continuous' ? (continuousStrokes[continuousActiveIndex] || []).length === 0 : strokes.length === 0}
               title="Deshacer trazo"
               style={{ borderRadius: 10 }}
             >
@@ -1183,7 +1480,7 @@ export default function ScriptpadWriter({
             type="button"
             className="btn btn-outline btn-sm"
             onClick={handleClearStrokes}
-            title="Borrar lienzo"
+            title={flowMode === 'continuous' ? "Borrar casilla activa (o todas si ya está vacía)" : "Borrar lienzo"}
             style={{ borderRadius: 10 }}
           >
             <RotateCcw size={16} />
