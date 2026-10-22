@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { 
   PenTool, 
   ChevronRight, 
@@ -85,15 +85,100 @@ export default function ScriptpadTab({
   const [activeMode, setActiveMode] = useState(initialMode);
   const [activeLesson, setActiveLesson] = useState(null);
 
+  // Restaurar estado si se recarga la página o se navega con query params
+  useEffect(() => {
+    let unitId = initialUnitId;
+    let lessonId = initialLessonId;
+    let mode = initialMode;
+
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search);
+      if (!unitId && sp.get('unit')) unitId = sp.get('unit');
+      if (!lessonId && sp.get('lesson')) lessonId = sp.get('lesson');
+      if (!mode && sp.get('mode')) mode = sp.get('mode');
+
+      // Si no hay parámetros en la URL, revisar localStorage por si hubo una recarga sin query
+      if (!unitId && !lessonId && !mode) {
+        try {
+          const saved = JSON.parse(localStorage.getItem('nihongo_scriptpad_active') || '{}');
+          if (saved.lessonId) lessonId = saved.lessonId;
+          if (saved.unitId) unitId = saved.unitId;
+          if (saved.mode) mode = saved.mode;
+        } catch (e) {}
+      }
+    }
+
+    if (lessonId) {
+      const lesson = getLessonById(lessonId);
+      if (lesson) {
+        setActiveLesson(lesson);
+        if (mode) setActiveMode(mode);
+        if (lesson.unitId) {
+          setSelectedUnitId(lesson.unitId);
+          if (lesson.unitId.startsWith('curriculum-mod-')) {
+            setActiveTab('curriculum');
+          }
+        }
+        setExpandedLessonId(lesson.id);
+        return;
+      }
+    }
+
+    if (unitId) {
+      setSelectedUnitId(unitId);
+      if (unitId.startsWith('curriculum-mod-')) {
+        setActiveTab('curriculum');
+      }
+    }
+
+    if (mode === 'srs') {
+      setActiveMode('srs');
+    }
+  }, [initialUnitId, initialLessonId, initialMode]);
+
+  // Sincronizar URL y localStorage ante cualquier cambio de navegación
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams();
+    if (selectedUnitId) params.set('unit', selectedUnitId);
+    if (activeLesson?.id) params.set('lesson', activeLesson.id);
+    if (activeMode) params.set('mode', activeMode);
+
+    const queryString = params.toString();
+    const targetUrl = queryString ? `/scriptpad?${queryString}` : '/scriptpad';
+
+    if (window.location.pathname + window.location.search !== targetUrl) {
+      window.history.replaceState(null, '', targetUrl);
+    }
+
+    try {
+      if (selectedUnitId || activeLesson?.id || activeMode) {
+        localStorage.setItem('nihongo_scriptpad_active', JSON.stringify({
+          unitId: selectedUnitId || null,
+          lessonId: activeLesson?.id || null,
+          mode: activeMode || null
+        }));
+      } else {
+        localStorage.removeItem('nihongo_scriptpad_active');
+      }
+    } catch (e) {}
+  }, [selectedUnitId, activeLesson, activeMode]);
+
   // Obtener unidades filtradas
   const units = useMemo(() => {
     return getScriptpadUnits(levelFilter, activeTab === 'curriculum' ? 'curriculum' : 'all');
   }, [levelFilter, activeTab]);
 
-  // Unidad actualmente seleccionada
+  // Unidad actualmente seleccionada (con fallback en caso de cambio de pestaña o filtro)
   const selectedUnit = useMemo(() => {
     if (!selectedUnitId) return null;
-    return units.find(u => u.id === selectedUnitId) || null;
+    const found = units.find(u => u.id === selectedUnitId);
+    if (found) return found;
+
+    // Búsqueda en todas las unidades si no coincide con los filtros actuales
+    const allUnits = getScriptpadUnits('all', selectedUnitId.startsWith('curriculum-mod-') ? 'curriculum' : 'all');
+    return allUnits.find(u => u.id === selectedUnitId) || null;
   }, [units, selectedUnitId]);
 
   // Cola de repaso SRS de escritura
@@ -105,6 +190,9 @@ export default function ScriptpadTab({
   const handleStartStudy = (lesson, mode) => {
     setActiveLesson(lesson);
     setActiveMode(mode);
+    if (lesson?.unitId) {
+      setSelectedUnitId(lesson.unitId);
+    }
   };
 
   // Finalizar lección y guardar progreso en appState y Supabase
@@ -124,7 +212,7 @@ export default function ScriptpadTab({
   // ==========================================
   if (activeMode === 'write' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px' }}>
+      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
         <ScriptpadWriter
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -138,11 +226,13 @@ export default function ScriptpadTab({
 
   if (activeMode === 'flashcards' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px' }}>
+      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
         <ScriptpadFlashcards
           lesson={activeLesson}
           onClose={handleCloseStudy}
           onComplete={handleCompleteStudy}
+          appState={appState}
+          onUpdateState={onUpdateState}
         />
       </div>
     );
@@ -150,11 +240,13 @@ export default function ScriptpadTab({
 
   if (activeMode === 'match' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px' }}>
+      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
         <ScriptpadWordMatch
           lesson={activeLesson}
           onClose={handleCloseStudy}
           onComplete={handleCompleteStudy}
+          appState={appState}
+          onUpdateState={onUpdateState}
         />
       </div>
     );
@@ -171,10 +263,11 @@ export default function ScriptpadTab({
       : srsQueue;
 
     return (
-      <div className="section-panel active" style={{ padding: '20px 12px' }}>
+      <div className="section-panel active" style={{ padding: '20px 12px 140px', overflowY: 'auto' }}>
         <ScriptpadSrsReview
           queue={queueToReview}
           onClose={handleCloseStudy}
+          onComplete={handleCompleteStudy}
           appState={appState}
           onUpdateState={onUpdateState}
         />
@@ -265,6 +358,11 @@ export default function ScriptpadTab({
           {selectedUnit.lessons.map((lesson) => {
             const isExpanded = expandedLessonId === lesson.id;
             const status = getLessonStatus(lesson.id, appState);
+            const completedModes = status.completedModes || [];
+            const isWriteDone = completedModes.includes('write');
+            const isFlashDone = completedModes.includes('flashcards');
+            const isMatchDone = completedModes.includes('match');
+            const isSrsDone = completedModes.includes('srs');
 
             return (
               <div 
@@ -312,8 +410,25 @@ export default function ScriptpadTab({
                     </div>
 
                     <div>
-                      <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                        Lesson {lesson.number}: {lesson.title}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                          Lesson {lesson.number}: {lesson.title}
+                        </span>
+                        {status.isCompleted && (
+                          <span style={{
+                            fontSize: '0.7rem',
+                            fontWeight: 800,
+                            background: 'rgba(16, 185, 129, 0.15)',
+                            color: '#10b981',
+                            padding: '2px 8px',
+                            borderRadius: 8,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}>
+                            <Check size={12} strokeWidth={3} /> Completada
+                          </span>
+                        )}
                       </div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                         {lesson.words.length} palabras • {lesson.description}
@@ -348,14 +463,33 @@ export default function ScriptpadTab({
                     background: 'var(--bg-main)'
                   }}>
                     <div style={{
-                      fontSize: '0.75rem',
-                      fontWeight: 800,
-                      color: 'var(--text-muted)',
-                      textTransform: 'uppercase',
-                      letterSpacing: 1.2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                       margin: '12px 0 12px'
                     }}>
-                      LEARN • Modo de Estudio
+                      <div style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 800,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: 1.2
+                      }}>
+                        LEARN • Modos de Estudio
+                      </div>
+                      {completedModes.length > 0 && (
+                        <div style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          color: '#10b981',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4
+                        }}>
+                          <CheckCircle2 size={14} />
+                          <span>{completedModes.length}/4 modos completados</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Tarjetas cuadradas de acción LEARN */}
@@ -369,8 +503,9 @@ export default function ScriptpadTab({
                         type="button"
                         onClick={() => handleStartStudy(lesson, 'write')}
                         style={{
+                          position: 'relative',
                           background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-                          border: 'none',
+                          border: isWriteDone ? '2px solid #10b981' : 'none',
                           borderRadius: 16,
                           padding: '16px 12px',
                           color: '#fff',
@@ -379,10 +514,32 @@ export default function ScriptpadTab({
                           flexDirection: 'column',
                           alignItems: 'center',
                           gap: 8,
-                          boxShadow: '0 4px 14px rgba(139, 92, 246, 0.3)',
+                          boxShadow: isWriteDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(139, 92, 246, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
+                        {isWriteDone && (
+                          <div 
+                            title="Modo completado"
+                            style={{
+                              position: 'absolute',
+                              top: 6,
+                              right: 6,
+                              background: '#10b981',
+                              color: '#fff',
+                              borderRadius: '50%',
+                              width: 22,
+                              height: 22,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                              border: '1.5px solid #fff'
+                            }}
+                          >
+                            <Check size={13} strokeWidth={3} />
+                          </div>
+                        )}
                         <div style={{
                           width: 38,
                           height: 38,
@@ -396,7 +553,14 @@ export default function ScriptpadTab({
                         }}>
                           あ
                         </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Escribir ✍️</span>
+                        <div style={{ textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Escribir ✍️</span>
+                          {isWriteDone && (
+                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
+                              ✓ Completado
+                            </div>
+                          )}
+                        </div>
                       </button>
 
                       {/* 2. FLASHCARDS */}
@@ -404,8 +568,9 @@ export default function ScriptpadTab({
                         type="button"
                         onClick={() => handleStartStudy(lesson, 'flashcards')}
                         style={{
+                          position: 'relative',
                           background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-                          border: 'none',
+                          border: isFlashDone ? '2px solid #10b981' : 'none',
                           borderRadius: 16,
                           padding: '16px 12px',
                           color: '#fff',
@@ -414,10 +579,32 @@ export default function ScriptpadTab({
                           flexDirection: 'column',
                           alignItems: 'center',
                           gap: 8,
-                          boxShadow: '0 4px 14px rgba(6, 182, 212, 0.3)',
+                          boxShadow: isFlashDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(6, 182, 212, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
+                        {isFlashDone && (
+                          <div 
+                            title="Modo completado"
+                            style={{
+                              position: 'absolute',
+                              top: 6,
+                              right: 6,
+                              background: '#10b981',
+                              color: '#fff',
+                              borderRadius: '50%',
+                              width: 22,
+                              height: 22,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                              border: '1.5px solid #fff'
+                            }}
+                          >
+                            <Check size={13} strokeWidth={3} />
+                          </div>
+                        )}
                         <div style={{
                           width: 38,
                           height: 38,
@@ -429,7 +616,14 @@ export default function ScriptpadTab({
                         }}>
                           <Layers size={20} />
                         </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Flashcards</span>
+                        <div style={{ textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Flashcards</span>
+                          {isFlashDone && (
+                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
+                              ✓ Completado
+                            </div>
+                          )}
+                        </div>
                       </button>
 
                       {/* 3. WORD MATCH */}
@@ -437,8 +631,9 @@ export default function ScriptpadTab({
                         type="button"
                         onClick={() => handleStartStudy(lesson, 'match')}
                         style={{
+                          position: 'relative',
                           background: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
-                          border: 'none',
+                          border: isMatchDone ? '2px solid #10b981' : 'none',
                           borderRadius: 16,
                           padding: '16px 12px',
                           color: '#fff',
@@ -447,10 +642,32 @@ export default function ScriptpadTab({
                           flexDirection: 'column',
                           alignItems: 'center',
                           gap: 8,
-                          boxShadow: '0 4px 14px rgba(244, 63, 94, 0.3)',
+                          boxShadow: isMatchDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(244, 63, 94, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
+                        {isMatchDone && (
+                          <div 
+                            title="Modo completado"
+                            style={{
+                              position: 'absolute',
+                              top: 6,
+                              right: 6,
+                              background: '#10b981',
+                              color: '#fff',
+                              borderRadius: '50%',
+                              width: 22,
+                              height: 22,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                              border: '1.5px solid #fff'
+                            }}
+                          >
+                            <Check size={13} strokeWidth={3} />
+                          </div>
+                        )}
                         <div style={{
                           width: 38,
                           height: 38,
@@ -462,7 +679,14 @@ export default function ScriptpadTab({
                         }}>
                           <Grid size={20} />
                         </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Word Match</span>
+                        <div style={{ textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Word Match</span>
+                          {isMatchDone && (
+                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
+                              ✓ Completado
+                            </div>
+                          )}
+                        </div>
                       </button>
 
                       {/* 4. REPASO SRS */}
@@ -470,8 +694,9 @@ export default function ScriptpadTab({
                         type="button"
                         onClick={() => handleStartStudy(lesson, 'srs')}
                         style={{
+                          position: 'relative',
                           background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                          border: 'none',
+                          border: isSrsDone ? '2px solid #10b981' : 'none',
                           borderRadius: 16,
                           padding: '16px 12px',
                           color: '#fff',
@@ -480,10 +705,32 @@ export default function ScriptpadTab({
                           flexDirection: 'column',
                           alignItems: 'center',
                           gap: 8,
-                          boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)',
+                          boxShadow: isSrsDone ? '0 4px 14px rgba(16, 185, 129, 0.35)' : '0 4px 14px rgba(245, 158, 11, 0.3)',
                           transition: 'transform 0.15s ease'
                         }}
                       >
+                        {isSrsDone && (
+                          <div 
+                            title="Modo completado"
+                            style={{
+                              position: 'absolute',
+                              top: 6,
+                              right: 6,
+                              background: '#10b981',
+                              color: '#fff',
+                              borderRadius: '50%',
+                              width: 22,
+                              height: 22,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                              border: '1.5px solid #fff'
+                            }}
+                          >
+                            <Check size={13} strokeWidth={3} />
+                          </div>
+                        )}
                         <div style={{
                           width: 38,
                           height: 38,
@@ -495,7 +742,14 @@ export default function ScriptpadTab({
                         }}>
                           <Brain size={20} />
                         </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Repaso SRS</span>
+                        <div style={{ textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Repaso SRS</span>
+                          {isSrsDone && (
+                            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#a7f3d0', marginTop: 2 }}>
+                              ✓ Completado
+                            </div>
+                          )}
+                        </div>
                       </button>
                     </div>
                   </div>

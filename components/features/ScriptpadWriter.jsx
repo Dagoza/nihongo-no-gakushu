@@ -573,6 +573,7 @@ export default function ScriptpadWriter({
       setIsLessonFinished(true);
       if (onComplete) {
         onComplete({
+          mode: 'write',
           score: 100,
           totalWords: words.length,
           stars: 3,
@@ -826,7 +827,7 @@ export default function ScriptpadWriter({
       display: 'flex',
       flexDirection: 'column',
       gap: 16,
-      touchAction: 'none' // Prevenir scroll y bounce mientras se dibuja
+      paddingBottom: 140 // Espacio para scroll nativo fluido en móvil por encima del reproductor de audio
     }}>
       {/* Barra superior de progreso */}
       <div style={{

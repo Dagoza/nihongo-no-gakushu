@@ -21,11 +21,13 @@ export default function ScriptpadSrsReview({
   queue = [],
   onClose,
   appState = {},
-  onUpdateState
+  onUpdateState,
+  onComplete
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
   const [reviewHistory, setReviewHistory] = useState([]);
+  const [isFinished, setIsFinished] = useState(false);
 
   const isDark = (typeof document !== 'undefined' && document.body?.getAttribute('data-theme') === 'dark') || appState?.theme === 'dark';
 
@@ -184,7 +186,14 @@ export default function ScriptpadSrsReview({
       setCurrentIndex(prev => prev + 1);
     } else {
       triggerCheerConfetti();
-      setIsRevealed(true);
+      setIsFinished(true);
+      if (onComplete) {
+        onComplete({
+          mode: 'srs',
+          totalWords: queue.length,
+          wordsPracticed: queue
+        });
+      }
     }
   };
 
@@ -195,12 +204,13 @@ export default function ScriptpadSrsReview({
   }, [currentItem]);
 
   // Pantalla de finalización
-  if (currentIndex >= queue.length && reviewHistory.length > 0) {
+  if (isFinished || (currentIndex >= queue.length && reviewHistory.length > 0)) {
     return (
       <div className="srs-finish-card" style={{
         maxWidth: 500,
         margin: '0 auto',
         padding: '32px 20px',
+        paddingBottom: 140,
         textAlign: 'center',
         background: 'var(--bg-surface)',
         borderRadius: 24,
@@ -230,7 +240,7 @@ export default function ScriptpadSrsReview({
           type="button"
           className="btn btn-primary"
           onClick={onClose}
-          style={{ padding: '10px 24px', borderRadius: 12, fontWeight: 700 }}
+          style={{ padding: '12px 28px', borderRadius: 14, fontWeight: 700 }}
         >
           Volver al Scriptpad
         </button>
@@ -256,7 +266,8 @@ export default function ScriptpadSrsReview({
       margin: '0 auto',
       display: 'flex',
       flexDirection: 'column',
-      gap: 16
+      gap: 16,
+      paddingBottom: 140
     }}>
       {/* Header superior */}
       <div style={{

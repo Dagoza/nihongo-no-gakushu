@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, RotateCcw, CheckCircle2, Sparkles, Volume2 } from 'lucide-react';
+import { ChevronLeft, RotateCcw, CheckCircle2, Sparkles, Volume2, ArrowRight, Grid } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
 
@@ -16,6 +16,7 @@ export default function ScriptpadWordMatch({
 }) {
   const allWords = lesson?.words || [];
   const [round, setRound] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
   const roundSize = 5;
 
   const currentBatch = React.useMemo(() => {
@@ -80,7 +81,15 @@ export default function ScriptpadWordMatch({
               setRound(r => r + 1);
             } else {
               triggerCheerConfetti();
-              if (onComplete) onComplete({ score: 100, totalWords: allWords.length });
+              setIsFinished(true);
+              if (onComplete) {
+                onComplete({
+                  mode: 'match',
+                  score: 100,
+                  totalWords: allWords.length,
+                  wordsPracticed: allWords
+                });
+              }
             }
           }, 600);
         }
@@ -99,13 +108,77 @@ export default function ScriptpadWordMatch({
     }
   };
 
+  // Pantalla de finalización
+  if (isFinished) {
+    return (
+      <div className="scriptpad-finish-view" style={{
+        maxWidth: 540,
+        margin: '0 auto',
+        padding: '32px 20px',
+        paddingBottom: 140,
+        textAlign: 'center',
+        background: 'var(--bg-surface)',
+        borderRadius: 24,
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-lg)'
+      }}>
+        <div style={{
+          width: 76,
+          height: 76,
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
+          color: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 18px',
+          boxShadow: '0 8px 24px rgba(244, 63, 94, 0.35)'
+        }}>
+          <Grid size={40} />
+        </div>
+
+        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-main)' }}>
+          ¡Word Match Completado!
+        </h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: 24 }}>
+          Has emparejado con éxito todas las <strong>{allWords.length} palabras</strong> de {lesson?.title}.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="btn btn-outline"
+            style={{ borderRadius: 12, padding: '10px 20px', fontWeight: 700 }}
+            onClick={() => {
+              setIsFinished(false);
+              setRound(0);
+            }}
+          >
+            <RotateCcw size={16} />
+            <span>Jugar de Nuevo</span>
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{ borderRadius: 12, padding: '10px 24px', fontWeight: 700 }}
+            onClick={onClose}
+          >
+            <span>Volver a la Lección</span>
+            <ArrowRight size={16} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="scriptpad-match-container" style={{
       maxWidth: 580,
       margin: '0 auto',
       display: 'flex',
       flexDirection: 'column',
-      gap: 16
+      gap: 16,
+      paddingBottom: 140 // Espacio para scroll y barra inferior móvil
     }}>
       {/* Header */}
       <div style={{
