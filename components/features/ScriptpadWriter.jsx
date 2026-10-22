@@ -18,8 +18,11 @@ import {
   ArrowRight,
   Info,
   Maximize2,
-  X
+  X,
+  Sun,
+  Moon
 } from 'lucide-react';
+import { useApp } from '../../lib/AppContext';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
 import { STROKE_COLORS, fetchKanjiStrokeData } from '../../lib/kanjiStrokeUtils';
@@ -34,6 +37,39 @@ export default function ScriptpadWriter({
   const words = useMemo(() => lesson?.words || [], [lesson]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const currentWord = words[currentWordIndex] || words[0];
+
+  // Soporte de tema y estilo de lienzo (Pizarra oscura / Papel washi claro)
+  let appTheme = appState?.theme || 'dark';
+  try {
+    const app = useApp();
+    if (app?.theme) appTheme = app.theme;
+  } catch {}
+
+  const [padStyle, setPadStyle] = useState('auto'); // 'auto' | 'dark' | 'light'
+
+  const isDark = useMemo(() => {
+    if (padStyle === 'dark') return true;
+    if (padStyle === 'light') return false;
+    if (typeof document !== 'undefined') {
+      const bodyTheme = document.body?.getAttribute('data-theme');
+      if (bodyTheme) return bodyTheme === 'dark';
+    }
+    return appTheme === 'dark';
+  }, [padStyle, appTheme]);
+
+  // Dimensiones dinámicas del tablero para máxima adaptabilidad en móvil / desktop
+  const [padSize, setPadSize] = useState(280);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const updateSize = () => {
+      const available = Math.min(320, window.innerWidth - 48);
+      setPadSize(Math.max(260, available));
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   // Desglosar caracteres de la palabra activa
   const characters = useMemo(() => {
@@ -117,22 +153,22 @@ export default function ScriptpadWriter({
     // Limpiar contenedor previo
     writerContainerRef.current.innerHTML = '';
 
-    const containerWidth = Math.min(320, window.innerWidth - 48);
-    const size = Math.max(240, containerWidth);
-
     try {
       const writer = HanziWriter.create(writerContainerRef.current, activeChar, {
-        width: size,
-        height: size,
+        width: padSize,
+        height: padSize,
         padding: 16,
         showOutline: showGhostGuide,
-        strokeAnimationSpeed: 1.2,
+        strokeAnimationSpeed: 1.3,
+        strokeHighlightSpeed: 1.8,
         delayBetweenStrokes: 150,
-        strokeColor: '#1e1b4b',
-        outlineColor: 'rgba(99, 102, 241, 0.22)',
-        highlightColor: '#6366f1',
-        drawingColor: '#4f46e5',
-        drawingWidth: 16,
+        // Colores de alto contraste adaptados al tema (Pizarra oscura / Papel washi claro)
+        strokeColor: isDark ? '#ffffff' : '#0f172a', // Trazos completados: Blanco puro brillante en dark / Tinta sumi en light
+        outlineColor: isDark ? 'rgba(224, 231, 255, 0.40)' : 'rgba(99, 102, 241, 0.28)', // Silueta guía nítida y visible
+        highlightColor: '#fbbf24', // Pistas luminosas: Oro radiante de alto contraste
+        highlightCompleteColor: '#f59e0b',
+        drawingColor: isDark ? '#22d3ee' : '#2563eb', // Lo que el usuario dibuja: Cyan eléctrico neón / Azul intenso
+        drawingWidth: 22, // Trazo grueso y visible bajo el dedo en touchscreens
         showCharacter: false,
         charDataLoader: (char, onComplete, onErr) => {
           fetchKanjiStrokeData(char)
@@ -155,8 +191,10 @@ export default function ScriptpadWriter({
 
       writerRef.current = writer;
 
-      // Iniciar modo Quiz interactivo
+      // Iniciar modo Quiz interactivo con asistencia amigable
       writer.quiz({
+        showHintAfterMisses: 2,
+        leniency: 1.15,
         onMistake: (strokeData) => {
           // Vibración háptica suave si está soportada
           if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -192,7 +230,7 @@ export default function ScriptpadWriter({
         } catch {}
       }
     };
-  }, [activeChar, engineMode, flowMode, showGhostGuide]);
+  }, [activeChar, engineMode, flowMode, showGhostGuide, isDark, padSize]);
 
   // Actualizar visibilidad de silueta en HanziWriter si cambia toggle
   useEffect(() => {
@@ -275,9 +313,9 @@ export default function ScriptpadWriter({
 
     // 1. Dibujar cuadrícula japonesa tradicional (米字格 Mizige)
     ctx.save();
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.15)';
+    ctx.strokeStyle = isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(99, 102, 241, 0.2)';
     ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
+    ctx.setLineDash([5, 4]);
 
     // Cruz central
     ctx.beginPath();
@@ -294,7 +332,7 @@ export default function ScriptpadWriter({
 
     // Borde exterior
     ctx.setLineDash([]);
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.25)';
+    ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)';
     ctx.strokeRect(1, 1, width - 2, height - 2);
     ctx.restore();
 
@@ -304,7 +342,7 @@ export default function ScriptpadWriter({
       ctx.font = `bold ${Math.floor(height * 0.72)}px "Noto Sans JP", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = 'rgba(99, 102, 241, 0.12)';
+      ctx.fillStyle = isDark ? 'rgba(224, 231, 255, 0.28)' : 'rgba(99, 102, 241, 0.15)';
       ctx.fillText(activeChar, width / 2, height / 2 + 8);
       ctx.restore();
     }
@@ -313,12 +351,12 @@ export default function ScriptpadWriter({
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#1e1b4b';
+    ctx.strokeStyle = isDark ? '#ffffff' : '#0f172a';
 
     strokes.forEach(stroke => {
       if (stroke.length < 2) return;
       ctx.beginPath();
-      ctx.lineWidth = stroke[0].w || 10;
+      ctx.lineWidth = stroke[0].w || 12;
       ctx.moveTo(stroke[0].x, stroke[0].y);
       for (let i = 1; i < stroke.length; i++) {
         ctx.lineTo(stroke[i].x, stroke[i].y);
@@ -326,7 +364,7 @@ export default function ScriptpadWriter({
       ctx.stroke();
     });
     ctx.restore();
-  }, [strokes, showGhostGuide, activeChar]);
+  }, [strokes, showGhostGuide, activeChar, isDark]);
 
   useEffect(() => {
     if (engineMode === 'free') {
@@ -348,7 +386,7 @@ export default function ScriptpadWriter({
     const y = e.clientY - rect.top;
 
     setIsDrawing(true);
-    currentStrokeRef.current = [{ x, y, w: 10 }];
+    currentStrokeRef.current = [{ x, y, w: 12 }];
   };
 
   const handlePointerMove = (e) => {
@@ -360,7 +398,7 @@ export default function ScriptpadWriter({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    currentStrokeRef.current.push({ x, y, w: 10 });
+    currentStrokeRef.current.push({ x, y, w: 12 });
     setStrokes([...strokes, [...currentStrokeRef.current]]);
   };
 
@@ -798,82 +836,147 @@ export default function ScriptpadWriter({
             ))}
           </div>
 
-          {/* Contenedor de Dibujo */}
-          {engineMode === 'guided' && hasWriterData ? (
-            <div style={{ position: 'relative', width: 270, height: 270 }}>
-              {!writerLoaded && (
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: '#faf6ee',
-                  borderRadius: 16,
-                  color: 'var(--text-muted)',
-                  fontSize: '0.85rem',
-                  gap: 8,
-                  zIndex: 2
-                }}>
-                  <span>Cargando trazos del carácter...</span>
-                </div>
-              )}
-              <div 
-                ref={writerContainerRef} 
-                style={{ 
-                  width: 270, 
-                  height: 270, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  touchAction: 'none'
-                }} 
-              />
-            </div>
-          ) : (
-            <canvas
-              ref={canvasRef}
-              width={270}
-              height={270}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
-              style={{
-                width: 270,
-                height: 270,
-                borderRadius: 16,
-                background: '#faf6ee', // Papel Washi tradicional
-                cursor: 'crosshair',
-                touchAction: 'none'
-              }}
-            />
-          )}
-
-          {/* Feedback de completitud del carácter */}
-          {charCompleted && (
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: 'rgba(16, 185, 129, 0.92)',
-              color: '#fff',
-              padding: '10px 20px',
-              borderRadius: 30,
-              fontSize: '1rem',
-              fontWeight: 800,
+          {/* Contenedor de Tablero de Dibujo con Alto Contraste y Cuadrícula Mizige */}
+          <div
+            style={{
+              position: 'relative',
+              width: padSize,
+              height: padSize,
+              borderRadius: 22,
+              background: isDark ? '#070b14' : '#faf8f5',
+              border: `2px solid ${isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)'}`,
+              boxShadow: isDark
+                ? 'inset 0 2px 14px rgba(0,0,0,0.7), 0 4px 24px rgba(0,0,0,0.45)'
+                : 'inset 0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(99, 102, 241, 0.08)',
+              overflow: 'hidden',
+              userSelect: 'none',
               display: 'flex',
               alignItems: 'center',
-              gap: 8,
-              boxShadow: '0 6px 20px rgba(16, 185, 129, 0.4)',
-              pointerEvents: 'none'
-            }}>
-              <CheckCircle2 size={20} />
-              <span>¡Correcto!</span>
-            </div>
-          )}
+              justifyContent: 'center'
+            }}
+          >
+            {/* Cuadrícula japonesa Mizige (米字格) visible por debajo del lienzo */}
+            <svg
+              width={padSize}
+              height={padSize}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                zIndex: 1
+              }}
+            >
+              <line
+                x1={padSize / 2} y1={0}
+                x2={padSize / 2} y2={padSize}
+                stroke={isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.45)'}
+                strokeWidth={1.5}
+                strokeDasharray="6 4"
+              />
+              <line
+                x1={0} y1={padSize / 2}
+                x2={padSize} y2={padSize / 2}
+                stroke={isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.45)'}
+                strokeWidth={1.5}
+                strokeDasharray="6 4"
+              />
+              <line
+                x1={0} y1={0}
+                x2={padSize} y2={padSize}
+                stroke={isDark ? 'rgba(148, 163, 184, 0.18)' : 'rgba(203, 213, 225, 0.35)'}
+                strokeWidth={1}
+                strokeDasharray="4 4"
+              />
+              <line
+                x1={padSize} y1={0}
+                x2={0} y2={padSize}
+                stroke={isDark ? 'rgba(148, 163, 184, 0.18)' : 'rgba(203, 213, 225, 0.35)'}
+                strokeWidth={1}
+                strokeDasharray="4 4"
+              />
+            </svg>
+
+            {/* Motor HanziWriter (Trazo Guiado) */}
+            {engineMode === 'guided' && hasWriterData ? (
+              <>
+                {!writerLoaded && (
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: isDark ? 'rgba(7, 11, 20, 0.9)' : 'rgba(250, 248, 245, 0.9)',
+                    backdropFilter: 'blur(4px)',
+                    color: 'var(--text-muted)',
+                    fontSize: '0.85rem',
+                    gap: 8,
+                    zIndex: 10
+                  }}>
+                    <span>Cargando trazos del carácter...</span>
+                  </div>
+                )}
+                <div 
+                  ref={writerContainerRef} 
+                  style={{ 
+                    position: 'relative',
+                    width: padSize, 
+                    height: padSize, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    zIndex: 2,
+                    touchAction: 'none'
+                  }} 
+                />
+              </>
+            ) : (
+              /* Motor Libre (Canvas) */
+              <canvas
+                ref={canvasRef}
+                width={padSize}
+                height={padSize}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                style={{
+                  position: 'relative',
+                  width: padSize,
+                  height: padSize,
+                  zIndex: 2,
+                  cursor: 'crosshair',
+                  touchAction: 'none'
+                }}
+              />
+            )}
+
+            {/* Feedback animado al completar el carácter */}
+            {charCompleted && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: 'rgba(16, 185, 129, 0.95)',
+                color: '#ffffff',
+                padding: '10px 22px',
+                borderRadius: 30,
+                fontSize: '1rem',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                boxShadow: '0 8px 25px rgba(16, 185, 129, 0.5)',
+                zIndex: 20,
+                pointerEvents: 'none'
+              }}>
+                <CheckCircle2 size={20} />
+                <span>¡Correcto!</span>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         // MODO TIRA CONTINUA MULTI-CASILLA (Escribir todas de seguido)
@@ -915,8 +1018,8 @@ export default function ScriptpadWriter({
                   height: 170,
                   borderRadius: 16,
                   overflow: 'hidden',
-                  background: '#faf6ee',
-                  border: idx === continuousActiveIndex ? '2px solid var(--primary)' : '1px solid var(--border)'
+                  background: isDark ? '#070b14' : '#faf8f5',
+                  border: idx === continuousActiveIndex ? '2px solid var(--primary)' : isDark ? '1.5px solid rgba(148, 163, 184, 0.25)' : '1px solid var(--border)'
                 }}>
                   {/* Silueta tenue de ayuda en la casilla */}
                   {showGhostGuide && (
@@ -928,7 +1031,7 @@ export default function ScriptpadWriter({
                       justifyContent: 'center',
                       fontSize: '5rem',
                       fontWeight: 800,
-                      color: 'rgba(99, 102, 241, 0.14)',
+                      color: isDark ? 'rgba(224, 231, 255, 0.35)' : 'rgba(99, 102, 241, 0.16)',
                       userSelect: 'none',
                       pointerEvents: 'none'
                     }}>
@@ -1000,8 +1103,14 @@ export default function ScriptpadWriter({
               className="btn btn-outline btn-sm"
               onClick={handleAnimateHint}
               disabled={isAnimating}
-              title="Ver animación de trazo"
-              style={{ borderRadius: 10 }}
+              title="Ver animación del orden de trazos (Pista dorada)"
+              style={{
+                borderRadius: 10,
+                borderColor: '#f59e0b',
+                color: '#f59e0b',
+                background: 'rgba(245, 158, 11, 0.08)',
+                fontWeight: 700
+              }}
             >
               <Sparkles size={16} />
               <span>Pista</span>
@@ -1017,6 +1126,18 @@ export default function ScriptpadWriter({
           >
             {showGhostGuide ? <Eye size={15} /> : <EyeOff size={15} />}
             <span>Guía</span>
+          </button>
+
+          {/* Toggle de estilo de lienzo: Pizarra oscura vs Papel claro */}
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => setPadStyle(isDark ? 'light' : 'dark')}
+            title="Alternar fondo de lienzo: Pizarra oscura o Papel claro"
+            style={{ borderRadius: 10, display: 'flex', alignItems: 'center', gap: 5 }}
+          >
+            {isDark ? <Sun size={15} style={{ color: '#f59e0b' }} /> : <Moon size={15} style={{ color: '#6366f1' }} />}
+            <span>{isDark ? 'Papel' : 'Pizarra'}</span>
           </button>
         </div>
 

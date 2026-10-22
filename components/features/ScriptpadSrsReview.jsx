@@ -27,6 +27,8 @@ export default function ScriptpadSrsReview({
   const [isRevealed, setIsRevealed] = useState(false);
   const [reviewHistory, setReviewHistory] = useState([]);
 
+  const isDark = (typeof document !== 'undefined' && document.body?.getAttribute('data-theme') === 'dark') || appState?.theme === 'dark';
+
   const currentItem = queue[currentIndex];
 
   // Lienzo de escritura táctil para el repaso
@@ -65,13 +67,14 @@ export default function ScriptpadSrsReview({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const isDark = (typeof document !== 'undefined' && document.body?.getAttribute('data-theme') === 'dark') || appState?.theme === 'dark';
     const width = canvas.width;
     const height = canvas.height;
     ctx.clearRect(0, 0, width, height);
 
     // Cuadrícula cruzada
     ctx.save();
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.15)';
+    ctx.strokeStyle = isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(99, 102, 241, 0.15)';
     ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 4]);
 
@@ -83,7 +86,7 @@ export default function ScriptpadSrsReview({
     ctx.stroke();
 
     ctx.setLineDash([]);
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.25)';
+    ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)';
     ctx.strokeRect(1, 1, width - 2, height - 2);
     ctx.restore();
 
@@ -93,7 +96,7 @@ export default function ScriptpadSrsReview({
       ctx.font = `bold ${Math.floor(height * 0.65)}px "Noto Sans JP", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = 'rgba(99, 102, 241, 0.2)';
+      ctx.fillStyle = isDark ? 'rgba(224, 231, 255, 0.35)' : 'rgba(99, 102, 241, 0.2)';
       ctx.fillText(currentItem.kanji || currentItem.hiragana, width / 2, height / 2 + 6);
       ctx.restore();
     }
@@ -102,12 +105,12 @@ export default function ScriptpadSrsReview({
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#1e1b4b';
+    ctx.strokeStyle = isDark ? '#ffffff' : '#0f172a';
 
     strokes.forEach(stroke => {
       if (stroke.length < 2) return;
       ctx.beginPath();
-      ctx.lineWidth = stroke[0].w || 10;
+      ctx.lineWidth = stroke[0].w || 12;
       ctx.moveTo(stroke[0].x, stroke[0].y);
       for (let i = 1; i < stroke.length; i++) {
         ctx.lineTo(stroke[i].x, stroke[i].y);
@@ -115,7 +118,7 @@ export default function ScriptpadSrsReview({
       ctx.stroke();
     });
     ctx.restore();
-  }, [strokes, isRevealed, currentItem]);
+  }, [strokes, isRevealed, currentItem, appState?.theme]);
 
   // Manejadores Pointer para dibujar de memoria
   const handlePointerDown = (e) => {
@@ -339,8 +342,10 @@ export default function ScriptpadSrsReview({
           style={{
             width: 280,
             height: 280,
-            borderRadius: 16,
-            background: '#faf6ee',
+            borderRadius: 20,
+            background: isDark ? '#070b14' : '#faf6ee',
+            border: `2px solid ${isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)'}`,
+            boxShadow: isDark ? 'inset 0 2px 14px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.4)' : 'inset 0 1px 4px rgba(0,0,0,0.04)',
             cursor: 'crosshair',
             touchAction: 'none'
           }}
