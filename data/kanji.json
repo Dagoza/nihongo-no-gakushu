@@ -79,6 +79,16 @@
         "word": "一昨日",
         "reading": "おととい",
         "meaning": "Anteayer"
+      },
+      {
+        "word": "一番目",
+        "reading": "いちばんめ",
+        "meaning": "El primer lugar"
+      },
+      {
+        "word": "五分の一",
+        "reading": "ごぶんのいち",
+        "meaning": "Un quinto (1/5)"
       }
     ],
     "source": "Kanji Book"
@@ -138,6 +148,16 @@
         "word": "二十日",
         "reading": "はつか",
         "meaning": "Día veinte / Veinte días"
+      },
+      {
+        "word": "第二",
+        "reading": "だいに",
+        "meaning": "Segundo / Número dos"
+      },
+      {
+        "word": "二倍",
+        "reading": "にばい",
+        "meaning": "El doble (2x)"
       }
     ],
     "source": "Kanji Book"
@@ -202,6 +222,26 @@
         "word": "三角",
         "reading": "さんかく",
         "meaning": "Triángulo"
+      },
+      {
+        "word": "第三",
+        "reading": "だいさん",
+        "meaning": "Tercero / Número tres"
+      },
+      {
+        "word": "三番目",
+        "reading": "さんばんめ",
+        "meaning": "Tercero en turno"
+      },
+      {
+        "word": "三倍",
+        "reading": "さんばい",
+        "meaning": "El triple (3x)"
+      },
+      {
+        "word": "三つ編み",
+        "reading": "みつあみ",
+        "meaning": "Trenza"
       }
     ],
     "source": "Kanji Book"
@@ -266,6 +306,11 @@
         "word": "四角",
         "reading": "しかく",
         "meaning": "Cuadrado / Rectángulo"
+      },
+      {
+        "word": "第四",
+        "reading": "だいよん",
+        "meaning": "Cuarto / Número cuatro"
       }
     ],
     "source": "Kanji Book"
@@ -310,6 +355,16 @@
         "word": "五日",
         "reading": "いつか",
         "meaning": "Día cinco / Cinco días"
+      },
+      {
+        "word": "第五",
+        "reading": "だいご",
+        "meaning": "Quinto / Número cinco"
+      },
+      {
+        "word": "五分の一",
+        "reading": "ごぶんのいち",
+        "meaning": "Un quinto (1/5)"
       }
     ],
     "source": "Kanji Book"
@@ -393,6 +448,11 @@
         "word": "七日",
         "reading": "なのか",
         "meaning": "Día siete / Siete días"
+      },
+      {
+        "word": "七面鳥",
+        "reading": "しちめんちょう",
+        "meaning": "Pavo"
       }
     ],
     "source": "Kanji Book"
@@ -585,6 +645,11 @@
         "word": "二十日",
         "reading": "はつか",
         "meaning": "Día veinte / Veinte días"
+      },
+      {
+        "word": "十分",
+        "reading": "じゅうぶん",
+        "meaning": "Suficiente / Bastante"
       }
     ],
     "source": "Kanji Book"
@@ -644,6 +709,11 @@
         "word": "料理人",
         "reading": "りょうりにん",
         "meaning": "Cocinero / Chef"
+      },
+      {
+        "word": "ご主人",
+        "reading": "ごしゅじん",
+        "meaning": "Esposo ajeno"
       }
     ],
     "source": "Kanji Book"
@@ -741,6 +811,26 @@
         "word": "入口",
         "reading": "いりぐち",
         "meaning": "Entrada"
+      },
+      {
+        "word": "押入れ",
+        "reading": "おしいれ",
+        "meaning": "Armario empotrado tradicional"
+      },
+      {
+        "word": "調味料入れ",
+        "reading": "ちょうみりょういれ",
+        "meaning": "Especiero"
+      },
+      {
+        "word": "塩入れ",
+        "reading": "しおいれ",
+        "meaning": "Salero"
+      },
+      {
+        "word": "胡椒入れ",
+        "reading": "こしょういれ",
+        "meaning": "Pimentero"
       }
     ],
     "source": "Kanji Book"
@@ -858,6 +948,21 @@
         "word": "靴下",
         "reading": "くつした",
         "meaning": "Calcetines"
+      },
+      {
+        "word": "脇の下",
+        "reading": "わきのした",
+        "meaning": "Axila"
+      },
+      {
+        "word": "廊下",
+        "reading": "ろうか",
+        "meaning": "Pasillo"
+      },
+      {
+        "word": "下ごしらえ",
+        "reading": "したごしらえ",
+        "meaning": "Preparación previa de ingredientes"
       }
     ],
     "source": "Kanji Book"
@@ -902,6 +1007,16 @@
         "word": "背中",
         "reading": "せなか",
         "meaning": "Espalda"
+      },
+      {
+        "word": "真夜中",
+        "reading": "まよなか",
+        "meaning": "Medianoche"
+      },
+      {
+        "word": "中火",
+        "reading": "ちゅうび",
+        "meaning": "Fuego medio"
       }
     ],
     "source": "Kanji Book"
@@ -974,6 +1089,16 @@
         "word": "茶道",
         "reading": "さどう",
         "meaning": "Ceremonia japonesa del té"
+      },
+      {
+        "word": "水道",
+        "reading": "すいどう",
+        "meaning": "Suministro de agua potable"
+      },
+      {
+        "word": "道具箱",
+        "reading": "どうぐばこ",
+        "meaning": "Caja de herramientas"
       }
     ],
     "source": "Kanji Book"
@@ -1114,6 +1239,11 @@
         "word": "大好き",
         "reading": "だいすき",
         "meaning": "Encantar / Fascinar"
+      },
+      {
+        "word": "大皿",
+        "reading": "おおざら",
+        "meaning": "Fuente grande para compartir"
       }
     ],
     "source": "Kanji Book"
@@ -1153,6 +1283,11 @@
         "word": "小麦粉",
         "reading": "こむぎこ",
         "meaning": "Harina de trigo"
+      },
+      {
+        "word": "小皿",
+        "reading": "こざら",
+        "meaning": "Platillo pequeño para salsas"
       }
     ],
     "source": "Kanji Book"
@@ -1177,6 +1312,11 @@
         "word": "少し",
         "reading": "すこし",
         "meaning": "un poco"
+      },
+      {
+        "word": "少数",
+        "reading": "しょうすう",
+        "meaning": "Minoría / Cantidad pequeña"
       }
     ],
     "source": "Kanji Book"
@@ -1475,6 +1615,31 @@
         "word": "食文化",
         "reading": "しょくぶんか",
         "meaning": "Cultura gastronómica autóctona"
+      },
+      {
+        "word": "離乳食",
+        "reading": "りにゅうしょく",
+        "meaning": "Comida para destete / Papilla"
+      },
+      {
+        "word": "食堂",
+        "reading": "しょくどう",
+        "meaning": "Comedor / Sala para comer"
+      },
+      {
+        "word": "食卓",
+        "reading": "しょくたく",
+        "meaning": "Mesa de comedor"
+      },
+      {
+        "word": "食器棚",
+        "reading": "しょっきだな",
+        "meaning": "Alacena / Armario de platos"
+      },
+      {
+        "word": "食器洗い機",
+        "reading": "しょっきあらいき",
+        "meaning": "Lavavajillas"
       }
     ],
     "source": "Kanji Book"
@@ -1644,6 +1809,11 @@
         "word": "一昨日",
         "reading": "おととい",
         "meaning": "Anteayer"
+      },
+      {
+        "word": "日焼け止め",
+        "reading": "ひやけどめ",
+        "meaning": "Protector solar"
       }
     ],
     "source": "Kanji Book"
@@ -1722,6 +1892,16 @@
         "word": "木曜日",
         "reading": "もくようび",
         "meaning": "Jueves"
+      },
+      {
+        "word": "植木",
+        "reading": "うえき",
+        "meaning": "Planta de jardín / Arbusto"
+      },
+      {
+        "word": "植木鉢",
+        "reading": "うえきばち",
+        "meaning": "Maceta para plantas"
       }
     ],
     "source": "Kanji Book"
@@ -1886,6 +2066,11 @@
         "word": "郷土料理",
         "reading": "きょうどりょうり",
         "meaning": "plato regional tradicional"
+      },
+      {
+        "word": "土",
+        "reading": "つち",
+        "meaning": "Tierra / Sustrato vegetal"
       }
     ],
     "source": "Kanji Book"
@@ -1920,6 +2105,11 @@
         "word": "天ぷら",
         "reading": "てんぷら",
         "meaning": "Tempura de verduras o mariscos"
+      },
+      {
+        "word": "天井",
+        "reading": "てんじょう",
+        "meaning": "Techo interior / Raso"
       }
     ],
     "source": "Kanji Book"
@@ -1954,6 +2144,11 @@
         "word": "意見",
         "reading": "いけん",
         "meaning": "Opinión / Punto de vista"
+      },
+      {
+        "word": "味見する",
+        "reading": "あじみする",
+        "meaning": "Probar / Degustar"
       }
     ],
     "source": "Kanji Book"
@@ -2095,6 +2290,11 @@
         "word": "読みます",
         "reading": "よみます",
         "meaning": "Leer"
+      },
+      {
+        "word": "読書灯",
+        "reading": "どくしょとう",
+        "meaning": "Lámpara de lectura"
       }
     ],
     "source": "Kanji Book"
@@ -2144,6 +2344,11 @@
         "word": "辞書",
         "reading": "じしょ",
         "meaning": "Diccionario"
+      },
+      {
+        "word": "読書灯",
+        "reading": "どくしょとう",
+        "meaning": "Lámpara de lectura"
       }
     ],
     "source": "Kanji Book"
@@ -2221,6 +2426,21 @@
         "word": "独立",
         "reading": "どくりつ",
         "meaning": "Independencia laboral o personal"
+      },
+      {
+        "word": "立方体",
+        "reading": "りっぽうたい",
+        "meaning": "Cubo geométrico"
+      },
+      {
+        "word": "泡立て器",
+        "reading": "あわだてき",
+        "meaning": "Batidor de varillas"
+      },
+      {
+        "word": "泡立てる",
+        "reading": "あわだてる",
+        "meaning": "Batir / Montar nata"
       }
     ],
     "source": "Kanji Book"
@@ -2337,6 +2557,11 @@
         "word": "午後",
         "reading": "ごご",
         "meaning": "afternoon, P.M"
+      },
+      {
+        "word": "正午",
+        "reading": "しょうご",
+        "meaning": "Mediodía exacto"
       }
     ],
     "source": "Kanji Book"
@@ -2439,6 +2664,21 @@
         "word": "白鳥",
         "reading": "はくちょう",
         "meaning": "Cisne"
+      },
+      {
+        "word": "白熊",
+        "reading": "しろくま",
+        "meaning": "Oso polar"
+      },
+      {
+        "word": "漂白剤",
+        "reading": "ひょうはくざい",
+        "meaning": "Lejía / Blanqueador textil"
+      },
+      {
+        "word": "白髪",
+        "reading": "しらが",
+        "meaning": "Canas / Pelo blanco"
       }
     ],
     "source": "Kanji Book"
@@ -2526,6 +2766,16 @@
         "word": "社長",
         "reading": "しゃちょう",
         "meaning": "Presidente / Director de empresa"
+      },
+      {
+        "word": "長さ",
+        "reading": "ながさ",
+        "meaning": "Longitud"
+      },
+      {
+        "word": "長髪",
+        "reading": "ちょうはつ",
+        "meaning": "Pelo largo"
       }
     ],
     "source": "Kanji Book"
@@ -2550,6 +2800,11 @@
         "word": "多分",
         "reading": "たぶん",
         "meaning": "quizás / probablemente"
+      },
+      {
+        "word": "多数",
+        "reading": "たすう",
+        "meaning": "Mayoría / Gran cantidad"
       }
     ],
     "source": "Kanji Book"
@@ -2720,6 +2975,11 @@
         "word": "茄子",
         "reading": "なす",
         "meaning": "Berenjena"
+      },
+      {
+        "word": "障子",
+        "reading": "しょうじ",
+        "meaning": "Puerta corredera de papel shoji"
       }
     ],
     "source": "Kanji Book"
@@ -2836,6 +3096,16 @@
         "word": "円",
         "reading": "えん",
         "meaning": "Yen (moneda japonesa)"
+      },
+      {
+        "word": "円形",
+        "reading": "えんけい",
+        "meaning": "Forma circular"
+      },
+      {
+        "word": "楕円",
+        "reading": "だえん",
+        "meaning": "Elipse / Óvalo"
       }
     ],
     "source": "Kanji Book"
@@ -2890,6 +3160,16 @@
         "word": "税金",
         "reading": "ぜいきん",
         "meaning": "Impuestos"
+      },
+      {
+        "word": "金色",
+        "reading": "きんいろ",
+        "meaning": "Color dorado"
+      },
+      {
+        "word": "金槌",
+        "reading": "かなづち",
+        "meaning": "Martillo"
       }
     ],
     "source": "Kanji Book"
@@ -2929,6 +3209,11 @@
         "word": "電子レンジ",
         "reading": "でんしれんじ",
         "meaning": "Horno microondas"
+      },
+      {
+        "word": "電気ケトル",
+        "reading": "でんきけとる",
+        "meaning": "Hervidor de agua eléctrico"
       }
     ],
     "source": "Kanji Book"
@@ -3003,6 +3288,16 @@
         "word": "勇気",
         "reading": "ゆうき",
         "meaning": "Coraje / Valentía"
+      },
+      {
+        "word": "換気扇",
+        "reading": "かんきせん",
+        "meaning": "Extractor de humos / Ventilador"
+      },
+      {
+        "word": "電気ケトル",
+        "reading": "でんきけとる",
+        "meaning": "Hervidor de agua eléctrico"
       }
     ],
     "source": "Kanji Book"
@@ -3032,6 +3327,16 @@
         "word": "花屋",
         "reading": "はなや",
         "meaning": "Floristería"
+      },
+      {
+        "word": "花瓶",
+        "reading": "かびん",
+        "meaning": "Jarrón / Florero"
+      },
+      {
+        "word": "花壇",
+        "reading": "かだん",
+        "meaning": "Arriate / Cantero de flores"
       }
     ],
     "source": "Kanji Book"
@@ -3086,6 +3391,31 @@
         "word": "水泳",
         "reading": "すいえい",
         "meaning": "Natación"
+      },
+      {
+        "word": "水色",
+        "reading": "みずいろ",
+        "meaning": "Celeste / Azul claro"
+      },
+      {
+        "word": "水道",
+        "reading": "すいどう",
+        "meaning": "Suministro de agua potable"
+      },
+      {
+        "word": "化粧水",
+        "reading": "けしょうすい",
+        "meaning": "Loción facial hidratante / Tónico"
+      },
+      {
+        "word": "香水",
+        "reading": "こうすい",
+        "meaning": "Perfume"
+      },
+      {
+        "word": "水切りかご",
+        "reading": "みずきりかご",
+        "meaning": "Escurridor de platos"
       }
     ],
     "source": "Kanji Book"
@@ -3115,6 +3445,26 @@
         "word": "火曜日",
         "reading": "かようび",
         "meaning": "Martes"
+      },
+      {
+        "word": "強火",
+        "reading": "つよび",
+        "meaning": "Fuego fuerte"
+      },
+      {
+        "word": "中火",
+        "reading": "ちゅうび",
+        "meaning": "Fuego medio"
+      },
+      {
+        "word": "弱火",
+        "reading": "よわび",
+        "meaning": "Fuego lento / suave"
+      },
+      {
+        "word": "とろ火",
+        "reading": "とろび",
+        "meaning": "Fuego muy bajo"
       }
     ],
     "source": "Kanji Book"
@@ -3227,6 +3577,11 @@
         "word": "先月",
         "reading": "せんげつ",
         "meaning": "El mes pasado"
+      },
+      {
+        "word": "つま先",
+        "reading": "つまさき",
+        "meaning": "Punta del pie"
       }
     ],
     "source": "Kanji Book"
@@ -3276,6 +3631,11 @@
         "word": "衛生",
         "reading": "えいせい",
         "meaning": "Higiene y prevención de riesgos laborales"
+      },
+      {
+        "word": "芝生",
+        "reading": "しばふ",
+        "meaning": "Césped"
       }
     ],
     "source": "Kanji Book"
@@ -3564,6 +3924,21 @@
         "word": "休み時間",
         "reading": "やすみじかん",
         "meaning": "Hora del recreo / Descanso"
+      },
+      {
+        "word": "壁掛け時計",
+        "reading": "かべかけとけい",
+        "meaning": "Reloj de pared"
+      },
+      {
+        "word": "目覚まし時計",
+        "reading": "めざましどけい",
+        "meaning": "Reloj despertador"
+      },
+      {
+        "word": "腕時計",
+        "reading": "うでどけい",
+        "meaning": "Reloj de pulsera"
       }
     ],
     "source": "Kanji Book"
@@ -3648,6 +4023,16 @@
         "word": "気分",
         "reading": "きぶん",
         "meaning": "Estado de ánimo / Sentirse bien o mal"
+      },
+      {
+        "word": "五分の一",
+        "reading": "ごぶんのいち",
+        "meaning": "Un quinto (1/5)"
+      },
+      {
+        "word": "十分",
+        "reading": "じゅうぶん",
+        "meaning": "Suficiente / Bastante"
       }
     ],
     "source": "Kanji Book"
@@ -3929,6 +4314,11 @@
         "word": "美術館",
         "reading": "びじゅつかん",
         "meaning": "Museo de arte"
+      },
+      {
+        "word": "美容液",
+        "reading": "びようえき",
+        "meaning": "Sérum de belleza facial"
       }
     ],
     "source": "美 Practice Sheet"
@@ -4195,6 +4585,16 @@
         "word": "博物館",
         "reading": "はくぶつかん",
         "meaning": "Museo"
+      },
+      {
+        "word": "洗濯物",
+        "reading": "せんたくもの",
+        "meaning": "Ropa para lavar / Colada"
+      },
+      {
+        "word": "物干し竿",
+        "reading": "ものほしざお",
+        "meaning": "Barra para colgar la colada"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -4234,6 +4634,16 @@
         "word": "交番",
         "reading": "こうばん",
         "meaning": "Caseta policial de barrio (Koban)"
+      },
+      {
+        "word": "一番目",
+        "reading": "いちばんめ",
+        "meaning": "El primer lugar"
+      },
+      {
+        "word": "三番目",
+        "reading": "さんばんめ",
+        "meaning": "Tercero en turno"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -4672,6 +5082,11 @@
         "word": "再配達",
         "reading": "さいはいたつ",
         "meaning": "reentrega de paquete"
+      },
+      {
+        "word": "配管",
+        "reading": "はいかん",
+        "meaning": "Fontanería / Tuberías"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -4715,6 +5130,11 @@
         "word": "遅刻",
         "reading": "ちこく",
         "meaning": "Llegada tarde / Retraso"
+      },
+      {
+        "word": "刻む",
+        "reading": "きざむ",
+        "meaning": "Picar fino"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -4835,6 +5255,11 @@
         "word": "明るい",
         "reading": "あかるい",
         "meaning": "brillante, alegre"
+      },
+      {
+        "word": "照明",
+        "reading": "しょうめい",
+        "meaning": "Iluminación / Lámpara de techo"
       }
     ],
     "source": "Kanji Book"
@@ -5092,6 +5517,11 @@
         "word": "夜中",
         "reading": "よなか",
         "meaning": "medianoche"
+      },
+      {
+        "word": "真夜中",
+        "reading": "まよなか",
+        "meaning": "Medianoche"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5257,6 +5687,16 @@
         "word": "非常口",
         "reading": "ひじょうぐち",
         "meaning": "Salida de emergencia"
+      },
+      {
+        "word": "口紅",
+        "reading": "くちべに",
+        "meaning": "Pintalabios / Lápiz labial"
+      },
+      {
+        "word": "蛇口",
+        "reading": "じゃぐち",
+        "meaning": "Grifo"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5310,6 +5750,11 @@
         "word": "割引",
         "reading": "わりびき",
         "meaning": "descuento comercial"
+      },
+      {
+        "word": "引き算",
+        "reading": "ひきざん",
+        "meaning": "Resta"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5368,6 +5813,11 @@
         "word": "漫画",
         "reading": "まんが",
         "meaning": "Cómic japonés / Manga"
+      },
+      {
+        "word": "絵画",
+        "reading": "かいが",
+        "meaning": "Cuadro / Pintura decorativa"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5421,6 +5871,11 @@
         "word": "勉強する",
         "reading": "べんきょうする",
         "meaning": "estudiar"
+      },
+      {
+        "word": "強火",
+        "reading": "つよび",
+        "meaning": "Fuego fuerte"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5537,6 +5992,11 @@
         "word": "定規",
         "reading": "じょうぎ",
         "meaning": "Regla de medir"
+      },
+      {
+        "word": "剪定ばさみ",
+        "reading": "せんていばさみ",
+        "meaning": "Tijeras de podar"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5771,6 +6231,16 @@
         "word": "食文化",
         "reading": "しょくぶんか",
         "meaning": "cultura gastronómica"
+      },
+      {
+        "word": "化粧",
+        "reading": "けしょう",
+        "meaning": "Maquillaje"
+      },
+      {
+        "word": "化粧水",
+        "reading": "けしょうすい",
+        "meaning": "Loción facial hidratante / Tónico"
       }
     ],
     "source": "JLPT N4 Kanji Master"

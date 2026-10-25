@@ -165,7 +165,7 @@ export default function ScriptpadTab({
 
   // Obtener unidades filtradas
   const units = useMemo(() => {
-    return getScriptpadUnits(levelFilter, activeTab === 'curriculum' ? 'curriculum' : 'all');
+    return getScriptpadUnits(levelFilter, activeTab === 'curriculum' ? 'curriculum' : activeTab === 'standard' ? 'standard' : 'all');
   }, [levelFilter, activeTab]);
 
   // Unidad actualmente seleccionada
@@ -174,7 +174,7 @@ export default function ScriptpadTab({
     const found = units.find(u => u.id === selectedUnitId);
     if (found) return found;
 
-    const allUnits = getScriptpadUnits('all', selectedUnitId.startsWith('curriculum-mod-') ? 'curriculum' : 'all');
+    const allUnits = getScriptpadUnits('all', selectedUnitId.startsWith('curriculum-mod-') ? 'curriculum' : (selectedUnitId.startsWith('unit-') && (selectedUnitId === 'unit-1-basics' || selectedUnitId === 'unit-2-everyday')) ? 'standard' : 'all');
     return allUnits.find(u => u.id === selectedUnitId) || null;
   }, [units, selectedUnitId]);
 
@@ -1113,6 +1113,22 @@ export default function ScriptpadTab({
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab('standard')}
+            style={{
+              padding: '5px 11px',
+              borderRadius: 8,
+              border: 'none',
+              fontSize: '0.78rem',
+              fontWeight: activeTab === 'standard' ? 700 : 500,
+              background: activeTab === 'standard' ? 'var(--primary)' : 'transparent',
+              color: activeTab === 'standard' ? '#fff' : 'var(--text-muted)',
+              cursor: 'pointer'
+            }}
+          >
+            Ruta Estándar (44 Lecc.)
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab('curriculum')}
             style={{
               padding: '5px 11px',
@@ -1154,7 +1170,11 @@ export default function ScriptpadTab({
         letterSpacing: 1,
         marginBottom: 10
       }}>
-        {activeTab === 'thematic' ? 'Unidades Temáticas de Vocabulario' : 'Módulos del Currículum para Escritura'}
+        {activeTab === 'thematic' 
+          ? 'Unidades Temáticas de Vocabulario' 
+          : activeTab === 'standard'
+          ? 'Ruta de Referencia Estándar (Unit 1 & Unit 2 - 44 Lecciones)'
+          : 'Módulos del Currículum para Escritura'}
       </div>
 
       {/* Lista de Unidades en Español con tipografía optimizada */}
