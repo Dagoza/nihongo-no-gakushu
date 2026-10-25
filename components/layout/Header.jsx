@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync, User, LogIn, LogOut, ChevronDown, RefreshCw, Mail, Bell, ArrowRight, PenTool, Settings, Target, Compass, Info } from 'lucide-react';
+import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync, User, LogIn, LogOut, ChevronDown, RefreshCw, Mail, Bell, ArrowRight, PenTool, Settings, Target, Compass, Info, Menu, X } from 'lucide-react';
 import curriculumData from '../../data/curriculum.json';
 import nhkLessonsData from '../../data/nhk_lessons.json';
 import convExercisesData from '../../data/conversation_exercises.json';
@@ -31,7 +31,10 @@ export default function Header({
   onSignOut = null, 
   onTriggerSync = null, 
   userState = null,
-  onOpenTour = null
+  onOpenTour = null,
+  isMobileNavOpen = false,
+  onOpenMobileNav = null,
+  onCloseMobileNav = null
 }) {
   const [isMinimized, setIsMinimized] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -681,6 +684,26 @@ export default function Header({
                 )}
               </div>
             )}
+
+            {/* Mobile Navigation Drawer Trigger Button */}
+            <button 
+              type="button"
+              className={`mobile-menu-trigger-btn ${isMobileNavOpen ? 'active' : ''}`}
+              onClick={() => {
+                if (isMobileNavOpen) {
+                  if (onCloseMobileNav) onCloseMobileNav();
+                  else if (contextApp?.closeMobileNav) contextApp.closeMobileNav();
+                } else {
+                  if (onOpenMobileNav) onOpenMobileNav();
+                  else if (contextApp?.openMobileNav) contextApp.openMobileNav();
+                }
+              }}
+              title={isMobileNavOpen ? 'Cerrar menú' : 'Abrir menú de navegación y módulos'}
+              aria-label={isMobileNavOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+              aria-expanded={isMobileNavOpen}
+            >
+              {isMobileNavOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
 

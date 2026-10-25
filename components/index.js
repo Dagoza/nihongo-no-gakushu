@@ -32,6 +32,7 @@ export { default as UIModal } from './modals/UIModal';
 export { default as AppShell } from './layout/AppShell';
 export { default as Header } from './layout/Header';
 export { default as NavigationTabs } from './layout/NavigationTabs';
+export { default as MobileNavDrawer } from './layout/MobileNavDrawer';
 export { default as PageLoader } from './layout/PageLoader';
 export { default as ProductTour } from './layout/ProductTour';
 export { default as PWAInstaller } from './layout/PWAInstaller';

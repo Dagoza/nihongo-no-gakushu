@@ -25,6 +25,8 @@ import {
   PenTool
 } from 'lucide-react';
 
+export { default as MobileNavDrawer } from './MobileNavDrawer';
+
 export const NAV_CATEGORIES = [
   { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 14 },
   { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 6 },

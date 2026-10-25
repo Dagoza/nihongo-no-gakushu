@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { AppProvider, useApp } from '../../lib/AppContext';
 import Header from './Header';
 import NavigationTabs from './NavigationTabs';
+import MobileNavDrawer from './MobileNavDrawer';
 import AudioPlayerBar from '../features/AudioPlayerBar';
 import UIModal from '../modals/UIModal';
 
@@ -55,7 +56,10 @@ function AppShellContent({ children }) {
     isDailyGoalModalOpen,
     closeDailyGoalModal,
     isNotificationSettingsOpen,
-    closeNotificationSettings
+    closeNotificationSettings,
+    isMobileNavOpen,
+    openMobileNav,
+    closeMobileNav
   } = useApp();
 
 
@@ -89,12 +93,27 @@ function AppShellContent({ children }) {
         onTriggerSync={handleTriggerSync}
         userState={appState}
         onOpenTour={openTour}
+        isMobileNavOpen={isMobileNavOpen}
+        onOpenMobileNav={openMobileNav}
+        onCloseMobileNav={closeMobileNav}
       />
 
-      {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls */}
+      {/* Modern Navigation Tab Bar with Categories, Mega-Menu & Overflow Controls (Desktop) */}
       <NavigationTabs 
         currentTab={currentTab} 
         savedCount={savedCount}
+      />
+
+      {/* Slide-out Mobile Navigation Drawer (Right Side) */}
+      <MobileNavDrawer
+        isOpen={isMobileNavOpen}
+        onClose={closeMobileNav}
+        currentTab={currentTab}
+        savedCount={savedCount}
+        onNavigate={navigate}
+        userState={appState}
+        onOpenTour={openTour}
+        onOpenSettings={() => setIsSettingsModalOpen(true)}
       />
 
       {/* Main Container */}

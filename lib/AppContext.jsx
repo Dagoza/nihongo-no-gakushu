@@ -193,6 +193,17 @@ export function AppProvider({ children }) {
     setIsNotificationSettingsOpen(false);
   }, []);
 
+  // Menú de Navegación Deslizable para Dispositivos Móviles (Drawer Derecho)
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  const openMobileNav = useCallback(() => {
+    setIsMobileNavOpen(true);
+  }, []);
+
+  const closeMobileNav = useCallback(() => {
+    setIsMobileNavOpen(false);
+  }, []);
+
   // Manejar parámetro URL ?daily_goal=1 y eventos de Service Worker para notificaciones móviles
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -407,6 +418,8 @@ export function AppProvider({ children }) {
       window.__nihongoOpenDictionary = openDictionary;
       window.__nihongoOpenSettings = () => setIsSettingsModalOpen(true);
       window.__nihongoOpenAuth = () => setIsAuthModalOpen(true);
+      window.__nihongoOpenMobileNav = openMobileNav;
+      window.__nihongoCloseMobileNav = closeMobileNav;
       window.__nihongoShowAlert = showAlert;
       window.__nihongoShowConfirm = showConfirm;
       window.__nihongoTriggerCheerConfetti = triggerCheerConfetti;
@@ -557,6 +570,7 @@ export function AppProvider({ children }) {
 
   // Unified router navigation helper
   const navigate = useCallback((tabOrPath, extraParam = null) => {
+    setIsMobileNavOpen(false);
     let target = tabOrPath;
     if (target === 'home') target = '/';
     if (target === 'particles') target = 'grammar';
@@ -590,8 +604,10 @@ export function AppProvider({ children }) {
     if (pathname.startsWith('/story')) return 'story';
     if (pathname.startsWith('/nhk')) return 'nhk';
     if (pathname.startsWith('/youtube')) return 'youtube';
+    if (pathname.startsWith('/scriptpad')) return 'scriptpad';
     if (pathname.startsWith('/vocab')) return 'vocab';
     if (pathname.startsWith('/grammar') || pathname.startsWith('/particles')) return 'particles';
+    if (pathname.startsWith('/terminology')) return 'terminology';
     if (pathname.startsWith('/kanji')) return 'kanji';
     if (pathname.startsWith('/jlpt')) return 'jlpt';
     if (pathname.startsWith('/pdf')) return 'pdf';
@@ -664,6 +680,11 @@ export function AppProvider({ children }) {
     setIsNotificationSettingsOpen,
     openNotificationSettings,
     closeNotificationSettings,
+    // Menú de Navegación Deslizable para Móviles (Drawer Derecho)
+    isMobileNavOpen,
+    setIsMobileNavOpen,
+    openMobileNav,
+    closeMobileNav,
     // Funciones de Confeti & Celebración
     triggerCheerConfetti,
     triggerGrandConfetti
