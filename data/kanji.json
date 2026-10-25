@@ -242,6 +242,11 @@
         "word": "三つ編み",
         "reading": "みつあみ",
         "meaning": "Trenza"
+      },
+      {
+        "word": "三角コーナー",
+        "reading": "さんかくこーなー",
+        "meaning": "Recipiente esquinero para restos de comida"
       }
     ],
     "source": "Kanji Book"
@@ -311,6 +316,16 @@
         "word": "第四",
         "reading": "だいよん",
         "meaning": "Cuarto / Número cuatro"
+      },
+      {
+        "word": "四倍",
+        "reading": "よんばい",
+        "meaning": "El cuádruple (4x)"
+      },
+      {
+        "word": "四季",
+        "reading": "しき",
+        "meaning": "Las cuatro estaciones"
       }
     ],
     "source": "Kanji Book"
@@ -1099,6 +1114,16 @@
         "word": "道具箱",
         "reading": "どうぐばこ",
         "meaning": "Caja de herramientas"
+      },
+      {
+        "word": "柔道",
+        "reading": "じゅうどう",
+        "meaning": "Arte marcial Judo"
+      },
+      {
+        "word": "華道",
+        "reading": "かどう",
+        "meaning": "Arte del arreglo floral (Ikebana / Kado)"
       }
     ],
     "source": "Kanji Book"
@@ -1640,6 +1665,11 @@
         "word": "食器洗い機",
         "reading": "しょっきあらいき",
         "meaning": "Lavavajillas"
+      },
+      {
+        "word": "食器かご",
+        "reading": "しょっきかご",
+        "meaning": "Cesta para cubiertos y loza"
       }
     ],
     "source": "Kanji Book"
@@ -1814,6 +1844,11 @@
         "word": "日焼け止め",
         "reading": "ひやけどめ",
         "meaning": "Protector solar"
+      },
+      {
+        "word": "日本酒",
+        "reading": "にほんしゅ",
+        "meaning": "Sake tradicional japonés"
       }
     ],
     "source": "Kanji Book"
@@ -1868,6 +1903,11 @@
         "word": "本屋",
         "reading": "ほんや",
         "meaning": "Librería"
+      },
+      {
+        "word": "日本酒",
+        "reading": "にほんしゅ",
+        "meaning": "Sake tradicional japonés"
       }
     ],
     "source": "Kanji Book"
@@ -1936,6 +1976,11 @@
         "word": "自転車",
         "reading": "じてんしゃ",
         "meaning": "Bicicleta"
+      },
+      {
+        "word": "自動車",
+        "reading": "じどうしゃ",
+        "meaning": "Automóvil / Coche"
       }
     ],
     "source": "Kanji Book"
@@ -1960,6 +2005,21 @@
         "word": "金魚",
         "reading": "きんぎょ",
         "meaning": "Pez dorado"
+      },
+      {
+        "word": "焼き魚",
+        "reading": "やきざかな",
+        "meaning": "Pescado asado a la parrilla"
+      },
+      {
+        "word": "煮魚",
+        "reading": "にざかな",
+        "meaning": "Pescado estofado en salsa"
+      },
+      {
+        "word": "秋刀魚",
+        "reading": "さんま",
+        "meaning": "Paparda del Pacífico"
       }
     ],
     "source": "Kanji Book"
@@ -2737,6 +2797,11 @@
         "word": "安心",
         "reading": "あんしん",
         "meaning": "Alivio / Tranquilidad de ánimo"
+      },
+      {
+        "word": "不安",
+        "reading": "ふあん",
+        "meaning": "Ansiedad / Inquietud"
       }
     ],
     "source": "Kanji Book"
@@ -2776,6 +2841,11 @@
         "word": "長髪",
         "reading": "ちょうはつ",
         "meaning": "Pelo largo"
+      },
+      {
+        "word": "部長",
+        "reading": "ぶちょう",
+        "meaning": "Director de departamento / Jefe de división"
       }
     ],
     "source": "Kanji Book"
@@ -2980,6 +3050,11 @@
         "word": "障子",
         "reading": "しょうじ",
         "meaning": "Puerta corredera de papel shoji"
+      },
+      {
+        "word": "餃子",
+        "reading": "ぎょうざ",
+        "meaning": "Empanadillas gyoza al vapor o a la plancha"
       }
     ],
     "source": "Kanji Book"
@@ -3019,6 +3094,11 @@
         "word": "八百",
         "reading": "はっぴゃく",
         "meaning": "Ochocientos (800)"
+      },
+      {
+        "word": "百分率",
+        "reading": "ひゃくぶんりつ",
+        "meaning": "Porcentaje"
       }
     ],
     "source": "Kanji Book"
@@ -3494,6 +3574,16 @@
         "word": "留学生",
         "reading": "りゅうがくせい",
         "meaning": "Estudiante extranjero"
+      },
+      {
+        "word": "数学",
+        "reading": "すうがく",
+        "meaning": "Matemáticas"
+      },
+      {
+        "word": "大学",
+        "reading": "だいがく",
+        "meaning": "Universidad / Centro de estudios superiores"
       }
     ],
     "source": "Kanji Book"
@@ -3841,6 +3931,11 @@
         "word": "銀行",
         "reading": "ぎんこう",
         "meaning": "Banco financiero"
+      },
+      {
+        "word": "銀行員",
+        "reading": "ぎんこういん",
+        "meaning": "Empleado de banca"
       }
     ],
     "source": "Kanji Book"
@@ -4033,6 +4128,11 @@
         "word": "十分",
         "reading": "じゅうぶん",
         "meaning": "Suficiente / Bastante"
+      },
+      {
+        "word": "百分率",
+        "reading": "ひゃくぶんりつ",
+        "meaning": "Porcentaje"
       }
     ],
     "source": "Kanji Book"
@@ -4846,6 +4946,11 @@
         "word": "店員",
         "reading": "てんいん",
         "meaning": "Camarero / Dependiente"
+      },
+      {
+        "word": "銀行員",
+        "reading": "ぎんこういん",
+        "meaning": "Empleado de banca"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -5000,6 +5105,11 @@
         "word": "便利",
         "reading": "べんり",
         "meaning": "conveniente / práctico"
+      },
+      {
+        "word": "便",
+        "reading": "びん",
+        "meaning": "Vuelo / Línea de transporte regular"
       }
     ],
     "source": "NHK Spanish Lessons / Material de Estudio"
@@ -5207,6 +5317,11 @@
         "word": "経験",
         "reading": "けいけん",
         "meaning": "Experiencia"
+      },
+      {
+        "word": "経済",
+        "reading": "けいざい",
+        "meaning": "Economía nacional"
       }
     ],
     "source": "Kanji Book"
@@ -5343,6 +5458,11 @@
         "word": "焼き肉",
         "reading": "やきにく",
         "meaning": "Carne asada a la parrilla"
+      },
+      {
+        "word": "挽肉",
+        "reading": "ひきにく",
+        "meaning": "Carne picada"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5372,6 +5492,11 @@
         "word": "好物",
         "reading": "こうぶつ",
         "meaning": "plato favorito"
+      },
+      {
+        "word": "お好み焼き",
+        "reading": "おこのみやき",
+        "meaning": "Tortilla salada okonomiyaki"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5585,6 +5710,11 @@
         "word": "乗ります",
         "reading": "のります",
         "meaning": "Subir a transporte"
+      },
+      {
+        "word": "乗り換え",
+        "reading": "のりかえ",
+        "meaning": "Transbordo / Cambio de línea"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"
@@ -5997,6 +6127,16 @@
         "word": "剪定ばさみ",
         "reading": "せんていばさみ",
         "meaning": "Tijeras de podar"
+      },
+      {
+        "word": "お勘定",
+        "reading": "おかんじょう",
+        "meaning": "La cuenta por favor"
+      },
+      {
+        "word": "定期券",
+        "reading": "ていきけん",
+        "meaning": "Abono de transporte mensual"
       }
     ],
     "source": "Irodori Elementary / JLPT N5"

@@ -111,6 +111,27 @@ runTest('Catálogo scriptpad_units.json tiene unidades, lecciones y palabras com
   assert(totalLessons >= 30, `Se esperaban al menos 30 lecciones, encontradas: ${totalLessons}`);
   assert(totalWords >= 300, `Se esperaban al menos 300 palabras en el catálogo de Scriptpad, encontradas: ${totalWords}`);
 });
+
+runTest('No existen palabras duplicadas en todo el temario unificado de Scriptpad', () => {
+  const unitsPath = path.join(DATA_DIR, 'scriptpad_units.json');
+  const units = JSON.parse(fs.readFileSync(unitsPath, 'utf-8'));
+  const seenWords = new Map();
+
+  units.forEach(u => {
+    (u.lessons || []).forEach(l => {
+      (l.words || []).forEach(w => {
+        const key = (w.kanji || w.hiragana || '').trim();
+        if (seenWords.has(key)) {
+          const prev = seenWords.get(key);
+          assert.fail(`Palabra duplicada detectada: "${key}" en [${l.id}] (${l.title}), ya vista en [${prev.lessonId}] (${prev.lessonTitle})`);
+        }
+        seenWords.set(key, { lessonId: l.id, lessonTitle: l.title });
+      });
+    });
+  });
+
+  assert(seenWords.size >= 1000, `Se esperaban más de 1000 palabras únicas, encontradas: ${seenWords.size}`);
+});
 console.log('\n--- REGLA 1: Integridad y Forma de Vocabulario ---');
 
 runTest('Cada palabra en vocabulary.json tiene Kanji, Hiragana, Katakana, Español y Nivel', () => {

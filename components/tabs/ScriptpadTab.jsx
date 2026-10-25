@@ -165,17 +165,21 @@ export default function ScriptpadTab({
 
   // Obtener unidades filtradas
   const units = useMemo(() => {
-    return getScriptpadUnits(levelFilter, activeTab === 'curriculum' ? 'curriculum' : activeTab === 'standard' ? 'standard' : 'all');
+    return getScriptpadUnits(levelFilter, activeTab === 'curriculum' ? 'curriculum' : 'all');
   }, [levelFilter, activeTab]);
 
   // Unidad actualmente seleccionada
   const selectedUnit = useMemo(() => {
     if (!selectedUnitId) return null;
-    const found = units.find(u => u.id === selectedUnitId);
+    let targetId = selectedUnitId;
+    if (targetId === 'unit-1-basics') targetId = 'unit-1-fundamentos';
+    if (targetId === 'unit-2-everyday') targetId = 'unit-4-familia-hogar';
+
+    const found = units.find(u => u.id === targetId);
     if (found) return found;
 
-    const allUnits = getScriptpadUnits('all', selectedUnitId.startsWith('curriculum-mod-') ? 'curriculum' : (selectedUnitId.startsWith('unit-') && (selectedUnitId === 'unit-1-basics' || selectedUnitId === 'unit-2-everyday')) ? 'standard' : 'all');
-    return allUnits.find(u => u.id === selectedUnitId) || null;
+    const allUnits = getScriptpadUnits('all', targetId.startsWith('curriculum-mod-') ? 'curriculum' : 'all');
+    return allUnits.find(u => u.id === targetId) || null;
   }, [units, selectedUnitId]);
 
   // Cola de repaso SRS de escritura
@@ -1099,39 +1103,23 @@ export default function ScriptpadTab({
             type="button"
             onClick={() => setActiveTab('thematic')}
             style={{
-              padding: '5px 11px',
+              padding: '5px 12px',
               borderRadius: 8,
               border: 'none',
               fontSize: '0.78rem',
-              fontWeight: activeTab === 'thematic' ? 700 : 500,
-              background: activeTab === 'thematic' ? 'var(--primary)' : 'transparent',
-              color: activeTab === 'thematic' ? '#fff' : 'var(--text-muted)',
+              fontWeight: activeTab !== 'curriculum' ? 700 : 500,
+              background: activeTab !== 'curriculum' ? 'var(--primary)' : 'transparent',
+              color: activeTab !== 'curriculum' ? '#fff' : 'var(--text-muted)',
               cursor: 'pointer'
             }}
           >
-            Unidades Temáticas
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('standard')}
-            style={{
-              padding: '5px 11px',
-              borderRadius: 8,
-              border: 'none',
-              fontSize: '0.78rem',
-              fontWeight: activeTab === 'standard' ? 700 : 500,
-              background: activeTab === 'standard' ? 'var(--primary)' : 'transparent',
-              color: activeTab === 'standard' ? '#fff' : 'var(--text-muted)',
-              cursor: 'pointer'
-            }}
-          >
-            Ruta Estándar (44 Lecc.)
+            Ruta Unificada (10 Unidades)
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('curriculum')}
             style={{
-              padding: '5px 11px',
+              padding: '5px 12px',
               borderRadius: 8,
               border: 'none',
               fontSize: '0.78rem',
@@ -1170,10 +1158,8 @@ export default function ScriptpadTab({
         letterSpacing: 1,
         marginBottom: 10
       }}>
-        {activeTab === 'thematic' 
-          ? 'Unidades Temáticas de Vocabulario' 
-          : activeTab === 'standard'
-          ? 'Ruta de Referencia Estándar (Unit 1 & Unit 2 - 44 Lecciones)'
+        {activeTab !== 'curriculum' 
+          ? 'Ruta de Aprendizaje Unificada (95 Lecciones • 1,153 Palabras Únicas)' 
           : 'Módulos del Currículum para Escritura'}
       </div>
 
