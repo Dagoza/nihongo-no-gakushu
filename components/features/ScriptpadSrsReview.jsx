@@ -628,7 +628,7 @@ export default function ScriptpadSrsReview({
     }
   };
 
-  // Temporizador de auto-avance (4 segundos, solo en modo guiado automático)
+  // Temporizador de auto-avance (2 segundos, solo en modo guiado automático)
   useEffect(() => {
     if (isFinished || isFinishedRef.current) return;
     if (!hasWriterData) return; // En modo libre sin datos no hay auto-avance para permitir comparar con calma
