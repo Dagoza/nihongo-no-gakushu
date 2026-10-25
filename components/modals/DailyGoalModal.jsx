@@ -960,10 +960,10 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 <Check size={36} strokeWidth={3} />
               </div>
 
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: '0 0 8px', color: 'var(--text-main)' }}>
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-main)' }}>
                 ¡Meta Diaria Cumplida! 🎉
               </h2>
-              <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', maxWidth: 460, margin: '0 auto 24px' }}>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', maxWidth: 460, margin: '0 auto 20px', lineHeight: 1.45 }}>
                 Has completado tu cuota de práctica para hoy. Tu racha de estudio se ha mantenido y los intervalos de repetición FSRS se han reprogramado con éxito.
               </p>
 

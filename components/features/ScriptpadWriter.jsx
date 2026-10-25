@@ -1281,10 +1281,10 @@ export default function ScriptpadWriter({
           <Award size={44} />
         </div>
 
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-main)' }}>
+        <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 6, color: 'var(--text-main)' }}>
           ¡Lección Completada!
         </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: 24 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginBottom: 20 }}>
           Has practicado la escritura a mano de <strong>{words.length} palabras</strong> en {lesson.title}.
         </p>
 

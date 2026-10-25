@@ -196,10 +196,10 @@ export default function SrsReview({
 
         <div style={{ textAlign: 'center', padding: '36px 20px' }}>
           <div style={{ fontSize: '3.6rem', marginBottom: 16 }}>🎉</div>
-          <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 12 }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 6 }}>
             {completedCount > 0 ? '¡Sesión de Repaso Completada!' : '¡Estás al día!'}
           </h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', maxWidth: 480, margin: '0 auto 24px auto', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', maxWidth: 480, margin: '0 auto 20px auto', lineHeight: 1.45 }}>
             {completedCount > 0 
               ? `Has repasado ${completedCount} ${completedCount === 1 ? 'tarjeta' : 'tarjetas'} exitosamente con el algoritmo FSRS.`
               : 'No tienes más tarjetas pendientes para repasar hoy en este mazo.'}

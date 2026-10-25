@@ -406,14 +406,14 @@ export default function TerminologyGuideView({
               <span>Arquitectura Lingüística del Japonés</span>
             </div>
 
-            <h1 className="home-hero-title" style={{ fontSize: '2.1rem', marginBottom: 12, lineHeight: 1.25 }}>
+            <h1 className="home-hero-title" style={{ fontSize: '1.2rem', marginBottom: 6, lineHeight: 1.25 }}>
               Guía de Terminología y{' '}
               <span className="home-hero-highlight" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Pilares del Idioma
               </span>
             </h1>
 
-            <p className="home-hero-desc" style={{ fontSize: '0.98rem', lineHeight: 1.6, color: 'var(--text-muted)', marginBottom: 0 }}>
+            <p className="home-hero-desc" style={{ fontSize: '0.78rem', lineHeight: 1.35, color: 'var(--text-muted)', marginBottom: 0 }}>
               Una experiencia clara, sin saturación y fundamentada para comprender la estructura del japonés: los 5 pilares estructurales y el glosario completo con más de 39 explicaciones etimológicas, fórmulas de cortesía (Keigo, Bikougo) y audio nativo neuronal.
             </p>
           </div>

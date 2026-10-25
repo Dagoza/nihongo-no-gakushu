@@ -137,10 +137,10 @@ export default function ScriptpadWordMatch({
           <Grid size={40} />
         </div>
 
-        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-main)' }}>
+        <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 6, color: 'var(--text-main)' }}>
           ¡Word Match Completado!
         </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: 24 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginBottom: 20 }}>
           Has emparejado con éxito todas las <strong>{allWords.length} palabras</strong> de {lesson?.title}.
         </p>
 

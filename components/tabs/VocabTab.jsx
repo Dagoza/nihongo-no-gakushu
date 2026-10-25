@@ -1683,11 +1683,11 @@ export default function VocabTab({
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-              <div style={{ fontSize: '3.6rem', marginBottom: 14 }}>🏆</div>
-              <h3 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: 12, color: 'var(--text-main)' }}>
+              <div style={{ fontSize: '3rem', marginBottom: 12 }}>🏆</div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-main)' }}>
                 ¡Todo el vocabulario aprendido!
               </h3>
-              <p style={{ color: 'var(--text-muted)', marginBottom: 24, maxWidth: 440, margin: '0 auto 24px auto', lineHeight: 1.5 }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginBottom: 20, maxWidth: 440, margin: '0 auto 20px auto', lineHeight: 1.45 }}>
                 No quedan palabras por aprender con los filtros actuales. Pásate al Repaso SRS para consolidarlas en tu memoria a largo plazo.
               </p>
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
