@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync, User, LogIn, LogOut, ChevronDown, RefreshCw, Mail, Bell, ArrowRight, PenTool, NotebookPen, Settings, Target, Compass, Info, Menu, X } from 'lucide-react';
+import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync, User, LogIn, LogOut, ChevronDown, RefreshCw, Mail, Bell, ArrowRight, PenTool, NotebookPen, Settings, Target, Compass, Info, Menu, X, Brain } from 'lucide-react';
 import curriculumData from '../../data/curriculum.json';
 import nhkLessonsData from '../../data/nhk_lessons.json';
 import convExercisesData from '../../data/conversation_exercises.json';
@@ -275,22 +275,42 @@ export default function Header({
                         : `Te faltan ${Math.max(1, dailyGoalTarget - answeredToday)} preguntas para cumplir tu meta de hoy.`}
                     </div>
 
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-sm"
-                      style={{ width: '100%', justifyContent: 'center', fontSize: '0.78rem', padding: '6px 10px', borderRadius: 8 }}
-                      onClick={() => {
-                        setIsNotifOpen(false);
-                        if (contextApp?.openDailyGoalModal) {
-                          contextApp.openDailyGoalModal();
-                        } else if (onNavigate) {
-                          onNavigate('srs');
-                        }
-                      }}
-                    >
-                      <Target size={14} />
-                      <span>{isGoalReached ? 'Ver o Seguir Practicando' : 'Resolver Preguntas de Hoy'}</span>
-                    </button>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        style={{ flex: 1, justifyContent: 'center', fontSize: '0.78rem', padding: '6px 10px', borderRadius: 8 }}
+                        onClick={() => {
+                          setIsNotifOpen(false);
+                          if (contextApp?.openDailyGoalModal) {
+                            contextApp.openDailyGoalModal();
+                          } else if (onNavigate) {
+                            onNavigate('srs');
+                          }
+                        }}
+                      >
+                        <Target size={14} />
+                        <span>{isGoalReached ? 'Seguir Practicando' : 'Resolver Preguntas'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        style={{ justifyContent: 'center', fontSize: '0.78rem', padding: '6px 10px', borderRadius: 8, whiteSpace: 'nowrap', gap: 4 }}
+                        onClick={() => {
+                          setIsNotifOpen(false);
+                          if (onNavigate) {
+                            onNavigate('srs');
+                          } else if (typeof window !== 'undefined') {
+                            window.location.href = '/srs';
+                          }
+                        }}
+                        title="Ir al Centro de Repaso SRS en página completa"
+                      >
+                        <Brain size={13} />
+                        <span>Página SRS</span>
+                      </button>
+                    </div>
                   </div>
 
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 8px', lineHeight: 1.35 }}>
@@ -565,6 +585,17 @@ export default function Header({
                         className="session-action-item"
                         onClick={() => {
                           setIsDropdownOpen(false);
+                          onNavigate('srs');
+                        }}
+                      >
+                        <Brain size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+                        <span>Centro de Repaso SRS</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
                           const opts = { text: '', kana: '', title: 'Cuaderno Libre', source: 'free', ghostOpacity: 0 };
                           if (contextApp?.openPracticePad) {
                             contextApp.openPracticePad(opts);
@@ -658,6 +689,18 @@ export default function Header({
                     </div>
 
                     <div className="session-card-actions">
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onNavigate('srs');
+                        }}
+                      >
+                        <Brain size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+                        <span>Centro de Repaso SRS</span>
+                      </button>
+
                       <button
                         type="button"
                         className="session-action-item"

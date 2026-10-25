@@ -125,6 +125,9 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
   };
 }
 
+// Duración del temporizador de auto-avance al completar una palabra (2 segundos para un ritmo ágil)
+const AUTO_ADVANCE_SECONDS = 2;
+
 export default function ScriptpadSrsReview({
   queue = [],
   onClose,
@@ -176,9 +179,9 @@ export default function ScriptpadSrsReview({
   const fallbackCanvasRef = useRef(null);
   const currentFallbackStrokeRef = useRef([]);
 
-  // Auto-avance: 6 segundos para dar tiempo suficiente a observar el resultado
+  // Auto-avance: 2 segundos para dar ritmo ágil y tiempo de confirmar el resultado
   const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
-  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(6);
+  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(AUTO_ADVANCE_SECONDS);
 
   // Ref mutable para mantener siempre sincronizado appState
   const appStateRef = useRef(appState);
@@ -311,7 +314,7 @@ export default function ScriptpadSrsReview({
         isWordCompletedRef.current = false;
         setAssignedRatingInfo(null);
         setAutoAdvancePaused(false);
-        setAutoAdvanceTimeLeft(6);
+        setAutoAdvanceTimeLeft(AUTO_ADVANCE_SECONDS);
         setFallbackStrokesByChar({});
         setComparisonMode('both');
         setHasWriterData(true);
@@ -347,7 +350,7 @@ export default function ScriptpadSrsReview({
         wordMistakesRef.current = 0;
         setFallbackStrokesByChar({});
         setHasWriterData(true);
-        setAutoAdvanceTimeLeft(6);
+        setAutoAdvanceTimeLeft(AUTO_ADVANCE_SECONDS);
         setTimeout(() => {
           isRatingInProgressRef.current = false;
         }, 100);
@@ -368,7 +371,7 @@ export default function ScriptpadSrsReview({
     if (isFinishedRef.current) return;
     setIsWordCompleted(true);
     isWordCompletedRef.current = true;
-    setAutoAdvanceTimeLeft(6); // 6 segundos de avance
+    setAutoAdvanceTimeLeft(AUTO_ADVANCE_SECONDS); // 2 segundos de avance ágil
     const ratingInfo = getRatingInfoFromMistakes(totalMistakes, guideUsed);
     setAssignedRatingInfo(ratingInfo);
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { X, Flame, Star, CheckCircle2, RotateCcw, Volume2, Eye, EyeOff, Sparkles, ArrowRight, Bell, Award, Languages, Layers, Target, Check, Settings2, Info } from 'lucide-react';
+import { X, Flame, Star, CheckCircle2, RotateCcw, Volume2, Eye, EyeOff, Sparkles, ArrowRight, Bell, Award, Languages, Layers, Target, Check, Settings2, Info, Maximize2 } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
 import { SRSRating, isDue, reviewQuestionCard } from '../../lib/srs';
 import { recordDailyGoalActivity, saveState } from '../../lib/storage';
@@ -489,6 +489,23 @@ export default function DailyGoalModal({ isOpen, onClose }) {
             </div>
 
             <div className="daily-goal-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button
+                type="button"
+                className="tour-info-shortcut-btn"
+                onClick={() => {
+                  onClose();
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/srs';
+                  }
+                }}
+                title="Abrir Centro de Repaso SRS en pantalla completa"
+                aria-label="Abrir Centro de Repaso SRS en pantalla completa"
+                style={{ padding: '3px 8px', fontSize: '0.74rem', display: 'flex', alignItems: 'center', gap: 4 }}
+              >
+                <Maximize2 size={13} />
+                <span>Página Completa</span>
+              </button>
+
               <button
                 type="button"
                 className="tour-info-shortcut-btn"

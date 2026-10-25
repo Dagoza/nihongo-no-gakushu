@@ -22,15 +22,16 @@ import {
   X,
   BookmarkCheck,
   Award,
-  PenTool
+  PenTool,
+  Brain
 } from 'lucide-react';
 
 export { default as MobileNavDrawer } from './MobileNavDrawer';
 
 export const NAV_CATEGORIES = [
-  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 14 },
+  { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 15 },
   { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 6 },
-  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 7 },
+  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 8 },
   { id: 'progress', label: 'Progreso', shortLabel: 'Progreso', icon: BarChart3, count: 1 },
 ];
 
@@ -122,6 +123,17 @@ export const TABS = [
     desc: 'Unidades de vocabulario y caligrafía táctil a mano',
     icon: PenTool,
     color: '#8b5cf6',
+  },
+  {
+    id: 'srs',
+    path: '/srs',
+    category: 'practice',
+    categoryName: 'Recursos & Práctica',
+    shortLabel: 'Repaso SRS',
+    fullLabel: 'Centro de Repaso SRS',
+    desc: 'Preguntas inteligentes FSRS, tarjetas y curvas de olvido',
+    icon: Brain,
+    color: '#6366f1',
   },
   {
     id: 'particles',
