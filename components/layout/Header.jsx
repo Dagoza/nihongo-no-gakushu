@@ -826,7 +826,7 @@ export default function Header({
             title="Cuaderno libre sin guía: dibuja y escribe con total libertad"
           >
             <NotebookPen size={15} style={{ color: 'var(--primary, #6366f1)' }} />
-            <span style={{ fontWeight: 600 }}>Cuaderno ✍️</span>
+            <span style={{ fontWeight: 600 }}>Cuaderno</span>
           </div>
 
           {/* Acceso directo a Scriptpad y Unidades */}
@@ -846,7 +846,7 @@ export default function Header({
             title="Scriptpad & Unidades de Escritura: practica palabras y kanji a mano"
           >
             <PenTool size={15} className="text-indigo-500" />
-            <span style={{ fontWeight: 600 }}>Scriptpad ✍️</span>
+            <span style={{ fontWeight: 600 }}>Scriptpad</span>
           </div>
 
           {/* Cloud Sync Status in Badges */}

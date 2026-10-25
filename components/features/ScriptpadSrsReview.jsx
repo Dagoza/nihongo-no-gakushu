@@ -66,7 +66,7 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
       rating: SRSRating.AGAIN,
       name: 'Otra vez',
       tag: 'Guía consultada',
-      badge: '🔄 Requiere repaso (Consultaste la guía)',
+      badge: 'Requiere repaso (Guía consultada)',
       color: '#ef4444',
       bg: 'rgba(239, 68, 68, 0.12)',
       border: 'rgba(239, 68, 68, 0.5)',
@@ -79,7 +79,7 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
       rating: SRSRating.EASY,
       name: 'Fácil',
       tag: '0 errores',
-      badge: '🎯 ¡Impecable! 0 errores de trazo',
+      badge: 'Impecable: 0 errores de trazo',
       color: '#10b981',
       bg: 'rgba(16, 185, 129, 0.12)',
       border: 'rgba(16, 185, 129, 0.5)',
@@ -92,7 +92,7 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
       rating: SRSRating.GOOD,
       name: 'Bueno',
       tag: '1 error',
-      badge: '✨ ¡Muy bien! Solo 1 error leve',
+      badge: 'Muy bien: 1 error leve',
       color: '#3b82f6',
       bg: 'rgba(59, 130, 246, 0.12)',
       border: 'rgba(59, 130, 246, 0.5)',
@@ -105,7 +105,7 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
       rating: SRSRating.HARD,
       name: 'Difícil',
       tag: `${mistakes} errores`,
-      badge: `💪 Buen esfuerzo: ${mistakes} errores`,
+      badge: `Buen esfuerzo: ${mistakes} errores`,
       color: '#f59e0b',
       bg: 'rgba(245, 158, 11, 0.12)',
       border: 'rgba(245, 158, 11, 0.5)',
@@ -117,7 +117,7 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
     rating: SRSRating.AGAIN,
     name: 'Otra vez',
     tag: `${mistakes} errores`,
-    badge: `🔄 Necesitas repasar: ${mistakes} errores`,
+    badge: `Necesitas repasar: ${mistakes} errores`,
     color: '#ef4444',
     bg: 'rgba(239, 68, 68, 0.12)',
     border: 'rgba(239, 68, 68, 0.5)',
@@ -792,7 +792,7 @@ export default function ScriptpadSrsReview({
             padding: '14px 16px'
           }}>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#10b981', textTransform: 'uppercase' }}>
-              🎯 Trazos Perfectos
+              Trazos Perfectos
             </div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 2 }}>
               {perfectCount} <span style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.7 }}>/ {reviewHistory.length}</span>
@@ -809,7 +809,7 @@ export default function ScriptpadSrsReview({
             padding: '14px 16px'
           }}>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase' }}>
-              🔄 A Reforzar
+              A Reforzar
             </div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 2 }}>
               {hardOrAgainCount} <span style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.7 }}>palabras</span>
@@ -843,7 +843,7 @@ export default function ScriptpadSrsReview({
   if (!currentItem) {
     return (
       <div style={{ textAlign: 'center', padding: 40, background: 'var(--bg-surface)', borderRadius: 24 }}>
-        <h3>No hay palabras pendientes para repasar ahora 🎉</h3>
+        <h3>No hay palabras pendientes para repasar ahora</h3>
         <p style={{ color: 'var(--text-muted)' }}>¡Estás al día con tus repasos de escritura a mano!</p>
         <button type="button" className="btn btn-primary btn-sm" onClick={onClose} style={{ marginTop: 14 }}>
           Volver

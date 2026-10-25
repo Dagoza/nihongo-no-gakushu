@@ -897,7 +897,7 @@ export default function ScriptpadTab({
                         }}
                       >
                         <PenTool size={14} />
-                        <span>Comenzar a escribir esta lección ✍️</span>
+                        <span>Comenzar a escribir</span>
                       </button>
                     </div>
                   </div>
@@ -936,26 +936,20 @@ export default function ScriptpadTab({
               <PenTool size={22} color="#fff" />
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                <span className="module-category-pill" style={{ 
-                  color: '#8b5cf6', 
-                  background: 'rgba(139, 92, 246, 0.12)',
-                  fontSize: '0.68rem',
-                  padding: '2px 8px',
-                  borderRadius: 6
-                }}>
-                  Escritura & Vocabulario
-                </span>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                  Caligrafía Táctil ✍️
-                </span>
-              </div>
+              <span className="module-category-pill" style={{ 
+                color: '#8b5cf6', 
+                background: 'rgba(139, 92, 246, 0.12)',
+                fontSize: '0.68rem',
+                padding: '2px 8px',
+                borderRadius: 6,
+                display: 'inline-block',
+                marginBottom: 2
+              }}>
+                Escritura & Vocabulario
+              </span>
               <h1 className="module-hero-title" style={{ fontSize: '1.2rem', fontWeight: 800, margin: '2px 0' }}>
                 Scriptpad: Unidades y Caligrafía
               </h1>
-              <p className="module-hero-subtitle" style={{ fontSize: '0.78rem', margin: 0, lineHeight: 1.35 }}>
-                Escribe palabras y kanji a mano con trazos guiados, tarjetas flashcards y repaso espaciado FSRS.
-              </p>
             </div>
           </div>
         </div>

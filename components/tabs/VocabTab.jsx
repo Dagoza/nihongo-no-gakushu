@@ -544,7 +544,7 @@ export default function VocabTab({
             textDecoration: 'none'
           }}
         >
-          <span>Ir a Scriptpad ✍️</span>
+          <span>Ir a Scriptpad</span>
           <ArrowRight size={15} />
         </Link>
       </div>

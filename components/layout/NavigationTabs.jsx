@@ -117,7 +117,7 @@ export const TABS = [
     path: '/scriptpad',
     category: 'practice',
     categoryName: 'Recursos & Práctica',
-    shortLabel: 'Scriptpad ✍️',
+    shortLabel: 'Scriptpad',
     fullLabel: 'Scriptpad & Escritura',
     desc: 'Unidades de vocabulario y caligrafía táctil a mano',
     icon: PenTool,
