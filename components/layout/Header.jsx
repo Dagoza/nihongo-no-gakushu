@@ -283,6 +283,8 @@ export default function Header({
                         setIsNotifOpen(false);
                         if (contextApp?.openDailyGoalModal) {
                           contextApp.openDailyGoalModal();
+                        } else if (onNavigate) {
+                          onNavigate('srs');
                         }
                       }}
                     >
@@ -749,11 +751,13 @@ export default function Header({
             onClick={() => {
               if (contextApp?.openDailyGoalModal) {
                 contextApp.openDailyGoalModal();
+              } else if (onNavigate) {
+                onNavigate('srs');
               }
             }}
             title={isGoalReached 
-              ? '¡Meta diaria cumplida! Clic para revisar o seguir practicando.' 
-              : `Meta diaria: ${answeredToday}/${dailyGoalTarget} preguntas hoy. Clic para practicar.`}
+              ? '¡Meta diaria cumplida! Clic para revisar o seguir practicando con FSRS.' 
+              : `Meta diaria: ${answeredToday}/${dailyGoalTarget} preguntas hoy. Clic para practicar con FSRS.`}
           >
             <Target size={15} style={{ color: isGoalReached ? 'var(--success, #10b981)' : 'var(--accent, #f59e0b)' }} />
             <span style={{ 

@@ -176,9 +176,13 @@ export default function ScriptpadSrsReview({
   const fallbackCanvasRef = useRef(null);
   const currentFallbackStrokeRef = useRef([]);
 
-  // Auto-avance: 4 segundos para dar tiempo suficiente a observar el resultado
+  // Auto-avance: 6 segundos para dar tiempo suficiente a observar el resultado
   const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
-  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(4);
+  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(6);
+
+  // Ref mutable para mantener siempre sincronizado appState
+  const appStateRef = useRef(appState);
+  appStateRef.current = appState;
 
   // Referencias HanziWriter
   const writerContainerRef = useRef(null);
@@ -241,7 +245,7 @@ export default function ScriptpadSrsReview({
 
   // Previsualizaciones de intervalos FSRS
   const intervals = useMemo(() => {
-    if (!currentItem?.card) return { 1: '< 10m', 2: '1d', 3: '3d', 4: '7d' };
+    if (!currentItem?.card) return { 1: '1d', 2: '2d', 3: '3d', 4: '8d' };
     return getIntervalPreviews(currentItem.card);
   }, [currentItem]);
 
@@ -253,18 +257,19 @@ export default function ScriptpadSrsReview({
     try {
       const currentCard = currentItem.card;
       const updatedCard = reviewCard(currentCard, rating);
+      const latestAppState = appStateRef.current || {};
 
       // Guardar en srsQuestions y registrar progreso en Scriptpad
       if (onUpdateState) {
         const nextQuestions = {
-          ...(appState?.srsQuestions || {}),
+          ...(latestAppState?.srsQuestions || {}),
           [currentItem.cardKey]: updatedCard
         };
 
         const wordKey = currentItem.kanji || currentItem.hiragana || currentItem.id;
-        const prevWordProgress = appState?.scriptpadWordProgress?.[wordKey] || { practices: 0, completed: true };
+        const prevWordProgress = latestAppState?.scriptpadWordProgress?.[wordKey] || { practices: 0, completed: true };
         const nextWordProgress = {
-          ...(appState?.scriptpadWordProgress || {}),
+          ...(latestAppState?.scriptpadWordProgress || {}),
           [wordKey]: {
             ...prevWordProgress,
             practices: (prevWordProgress.practices || 0) + 1,
@@ -274,7 +279,7 @@ export default function ScriptpadSrsReview({
         };
 
         onUpdateState({
-          ...appState,
+          ...latestAppState,
           srsQuestions: nextQuestions,
           scriptpadWordProgress: nextWordProgress
         });
@@ -306,7 +311,7 @@ export default function ScriptpadSrsReview({
         isWordCompletedRef.current = false;
         setAssignedRatingInfo(null);
         setAutoAdvancePaused(false);
-        setAutoAdvanceTimeLeft(4);
+        setAutoAdvanceTimeLeft(6);
         setFallbackStrokesByChar({});
         setComparisonMode('both');
         setHasWriterData(true);

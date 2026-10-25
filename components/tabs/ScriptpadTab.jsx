@@ -272,6 +272,49 @@ export default function ScriptpadTab({
         }))
       : srsQueue;
 
+    if (!queueToReview || queueToReview.length === 0) {
+      return (
+        <div className="section-panel active" style={{ 
+          width: '100%', 
+          maxWidth: 520, 
+          margin: '40px auto', 
+          padding: '36px 20px', 
+          textAlign: 'center', 
+          background: 'var(--bg-surface)', 
+          borderRadius: 20, 
+          border: '1px solid var(--border)' 
+        }}>
+          <div style={{
+            width: 56,
+            height: 56,
+            borderRadius: '50%',
+            background: 'rgba(16, 185, 129, 0.15)',
+            color: '#10b981',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 16px'
+          }}>
+            <CheckCircle2 size={32} />
+          </div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-main)' }}>
+            ¡Estás al día con tus repasos!
+          </h3>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 22, lineHeight: 1.5 }}>
+            No tienes palabras pendientes de repaso en este momento. Completa nuevas lecciones de escritura o regresa cuando se cumpla el intervalo espaciado.
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleCloseStudy}
+            style={{ padding: '9px 24px', borderRadius: 12, fontWeight: 700 }}
+          >
+            Volver a Unidades
+          </button>
+        </div>
+      );
+    }
+
     return (
       <div className="section-panel active" style={{ width: '100%', maxWidth: 580, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
         <ScriptpadSrsReview
@@ -987,10 +1030,14 @@ export default function ScriptpadTab({
             <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)' }}>
               Repaso SRS de Escritura (FSRS)
             </div>
-            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+            <div style={{ 
+              fontSize: '0.74rem', 
+              color: srsQueue.length > 0 ? 'var(--text-muted)' : 'var(--accent-matcha, #10b981)',
+              fontWeight: srsQueue.length > 0 ? 500 : 700
+            }}>
               {srsQueue.length > 0 
-                ? `${srsQueue.length} palabras listas para practicar` 
-                : '¡Al día con tus repasos de escritura!'}
+                ? `${srsQueue.length} ${srsQueue.length === 1 ? 'palabra lista' : 'palabras listas'} para repasar` 
+                : '¡Al día con tus repasos! (0 pendientes)'}
             </div>
           </div>
         </div>
@@ -998,11 +1045,37 @@ export default function ScriptpadTab({
         <button
           type="button"
           className="btn btn-primary btn-sm"
-          onClick={() => setActiveMode('srs')}
-          style={{ padding: '6px 12px', borderRadius: 10, fontSize: '0.76rem', fontWeight: 700 }}
+          disabled={srsQueue.length === 0}
+          onClick={() => {
+            if (srsQueue.length > 0) setActiveMode('srs');
+          }}
+          style={{ 
+            padding: '7px 14px', 
+            borderRadius: 10, 
+            fontSize: '0.76rem', 
+            fontWeight: 700,
+            opacity: srsQueue.length === 0 ? 0.55 : 1,
+            cursor: srsQueue.length === 0 ? 'not-allowed' : 'pointer',
+            pointerEvents: srsQueue.length === 0 ? 'none' : 'auto',
+            background: srsQueue.length === 0 ? 'var(--bg-surface-elevated, #374151)' : undefined,
+            borderColor: srsQueue.length === 0 ? 'transparent' : undefined,
+            color: srsQueue.length === 0 ? 'var(--text-muted, #9ca3af)' : undefined,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6
+          }}
         >
-          <span>Practicar Repaso</span>
-          <ArrowRight size={13} />
+          {srsQueue.length === 0 ? (
+            <>
+              <CheckCircle2 size={13} />
+              <span>Al día</span>
+            </>
+          ) : (
+            <>
+              <span>Practicar Repaso</span>
+              <ArrowRight size={13} />
+            </>
+          )}
         </button>
       </div>
 

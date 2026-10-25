@@ -100,6 +100,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
   // Notification state
   const [notifPermission, setNotifPermission] = useState('default');
+  const [isNotifActive, setIsNotifActive] = useState(false);
 
   // Build the questions queue based on preferences and FSRS due items
   const generateQueue = useCallback((cat = selectedCategory, lvl = selectedLevel, tgt = targetCount, forceNew = false) => {

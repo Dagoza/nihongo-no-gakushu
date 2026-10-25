@@ -33,6 +33,16 @@ const nextConfig = {
         destination: '/story',
         permanent: true,
       },
+      {
+        source: '/questions',
+        destination: '/srs',
+        permanent: true,
+      },
+      {
+        source: '/daily-goal',
+        destination: '/srs',
+        permanent: true,
+      },
     ];
   },
 };

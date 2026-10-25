@@ -288,6 +288,15 @@ export default function ConversationTab({
   const [practiceDialogueFilter, setPracticeDialogueFilter] = useState('all'); // 'all' | dialogueId
 
   useEffect(() => {
+    if (initialLesson) {
+      const match = allDialogues.find(d => d.lessonNum === parseInt(initialLesson, 10));
+      if (match) {
+        setPracticeDialogueFilter(match.id);
+      }
+    }
+  }, [initialLesson, allDialogues]);
+
+  useEffect(() => {
     setDialogueAnswers({});
   }, [selectedDialogueId]);
 

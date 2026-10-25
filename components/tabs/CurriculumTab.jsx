@@ -124,6 +124,14 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   // Sync activeSubStep whenever selectedStepNum or userState changes
   React.useEffect(() => {
     if (selectedStepNum) {
+      if (typeof window !== 'undefined' && window.location.hash.includes('exercises')) {
+        const mod = steps.find(s => s.step === selectedStepNum);
+        const exSec = mod?.sections?.find(s => s.is_exercise_step);
+        if (exSec) {
+          setActiveSubStep(exSec.substep);
+          return;
+        }
+      }
       const savedSubStep = userState?.moduleProgress?.[selectedStepNum]?.currentSubStep;
       if (typeof savedSubStep === 'number' && savedSubStep >= 1) {
         setActiveSubStep(savedSubStep);
@@ -131,7 +139,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         setActiveSubStep(1);
       }
     }
-  }, [selectedStepNum, userState?.moduleProgress]);
+  }, [selectedStepNum, userState?.moduleProgress, steps]);
   
   // Theme, Level and Status filter state
   const [selectedTheme, setSelectedTheme] = useState('all'); // 'all' | 'vida' | 'trabajo' | 'ciudad' | 'ocio'

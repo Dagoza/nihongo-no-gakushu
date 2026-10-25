@@ -389,10 +389,6 @@ function ContinuousCharBox({
       const updated = [...strokes, currentStrokeRef.current];
       onStrokesChange(updated);
       currentStrokeRef.current = [];
-      if (!isCompleted && updated.length >= 1) {
-        setIsCompleted(true);
-        onCharComplete?.(charIndex, { isFreeHand: true });
-      }
     }
   };
 
@@ -434,23 +430,23 @@ function ContinuousCharBox({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {isCompleted ? (
-            <span style={{
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              color: '#10b981',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              background: 'rgba(16, 185, 129, 0.12)',
-              padding: '3px 8px',
-              borderRadius: 8
-            }}>
-              <CheckCircle2 size={13} />
-              <span>Listo</span>
-            </span>
-          ) : (
-            hasWriterData ? (
+          {hasWriterData ? (
+            isCompleted ? (
+              <span style={{
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                color: '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                background: 'rgba(16, 185, 129, 0.12)',
+                padding: '3px 8px',
+                borderRadius: 8
+              }}>
+                <CheckCircle2 size={13} />
+                <span>Listo</span>
+              </span>
+            ) : (
               <button
                 type="button"
                 className="btn btn-outline btn-sm"
@@ -476,8 +472,22 @@ function ContinuousCharBox({
                 <Sparkles size={12} />
                 <span>Pista</span>
               </button>
-            ) : (
-              strokes.length > 0 && (
+            )
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {strokes.length > 0 && (
+                <span style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  color: 'var(--text-muted)',
+                  background: 'var(--bg-main)',
+                  padding: '2px 7px',
+                  borderRadius: 6
+                }}>
+                  {strokes.length} {strokes.length === 1 ? 'trazo' : 'trazos'}
+                </span>
+              )}
+              {strokes.length > 0 && (
                 <button
                   type="button"
                   onClick={(e) => {
@@ -501,8 +511,8 @@ function ContinuousCharBox({
                   <RotateCcw size={12} />
                   <span>Limpiar</span>
                 </button>
-              )
-            )
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -515,10 +525,10 @@ function ContinuousCharBox({
         borderRadius: 20,
         overflow: 'hidden',
         background: currentPaper.bg,
-        border: isCompleted 
+        border: (hasWriterData && isCompleted) 
           ? '2.5px solid #10b981' 
           : (isActive ? '2.5px solid var(--primary)' : currentPaper.border),
-        boxShadow: isCompleted 
+        boxShadow: (hasWriterData && isCompleted) 
           ? '0 0 0 3px rgba(16, 185, 129, 0.25), ' + currentPaper.shadow 
           : (isActive ? '0 0 0 3px rgba(99, 102, 241, 0.25), ' + currentPaper.shadow : currentPaper.shadow),
         transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
@@ -629,8 +639,8 @@ function ContinuousCharBox({
           />
         )}
 
-        {/* Feedback visual al completar */}
-        {isCompleted && (
+        {/* Feedback visual al completar (solo para trazo guiado interactivo) */}
+        {hasWriterData && isCompleted && (
           <div style={{
             position: 'absolute',
             top: '50%',

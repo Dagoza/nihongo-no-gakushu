@@ -211,6 +211,7 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
     if (pathname.startsWith('/progress')) return 'progress';
     if (pathname.startsWith('/terminology')) return 'terminology';
     if (pathname.startsWith('/curriculum')) return 'curriculum';
+    if (pathname.startsWith('/srs')) return 'srs';
     return 'curriculum';
   })();
 

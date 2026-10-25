@@ -589,6 +589,11 @@ export function AppProvider({ children }) {
     if (target === 'home') target = '/';
     if (target === 'particles') target = 'grammar';
     if (target === 'stories') target = 'story';
+    if (target === 'questions' || target === 'srs-questions') target = 'srs';
+    if (target === 'daily_goal' || target === 'daily-goal') {
+      openDailyGoalModal();
+      return;
+    }
     if (!target.startsWith('/')) {
       target = '/' + target;
     }
@@ -628,6 +633,7 @@ export function AppProvider({ children }) {
     if (pathname.startsWith('/saved')) return 'saved';
     if (pathname.startsWith('/progress')) return 'progress';
     if (pathname.startsWith('/curriculum')) return 'curriculum';
+    if (pathname.startsWith('/srs')) return 'srs';
     return 'home';
   })();
 
