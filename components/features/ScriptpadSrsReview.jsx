@@ -148,6 +148,19 @@ export default function ScriptpadSrsReview({
   const [reviewHistory, setReviewHistory] = useState([]);
   const [isFinished, setIsFinished] = useState(false);
 
+  // Referencias mutables para evitar re-crear HanziWriter al equivocarse o usar guía
+  const wordMistakesRef = useRef(0);
+  const wasGuideUsedRef = useRef(false);
+  const showGhostGuideRef = useRef(false);
+  const currentCharIndexRef = useRef(0);
+  const isWordCompletedRef = useRef(false);
+
+  wordMistakesRef.current = wordMistakes;
+  wasGuideUsedRef.current = wasGuideUsed;
+  showGhostGuideRef.current = showGhostGuide;
+  currentCharIndexRef.current = currentCharIndex;
+  isWordCompletedRef.current = isWordCompleted;
+
   // Estados de carga de trazos y fallback libre
   const [writerLoaded, setWriterLoaded] = useState(false);
   const [hasWriterData, setHasWriterData] = useState(true);
@@ -160,9 +173,9 @@ export default function ScriptpadSrsReview({
   const fallbackCanvasRef = useRef(null);
   const currentFallbackStrokeRef = useRef([]);
 
-  // Auto-avance con barra de progreso (solo para modo guiado automático)
+  // Auto-avance: 6 segundos para dar tiempo suficiente a observar el resultado
   const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
-  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(3);
+  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(6);
 
   // Referencias HanziWriter
   const writerContainerRef = useRef(null);
@@ -268,8 +281,8 @@ export default function ScriptpadSrsReview({
         { 
           item: currentItem, 
           rating, 
-          mistakes: wordMistakes,
-          wasGuideUsed,
+          mistakes: wordMistakesRef.current,
+          wasGuideUsed: wasGuideUsedRef.current,
           hasWriterData
         }
       ]);
@@ -279,13 +292,16 @@ export default function ScriptpadSrsReview({
         setCurrentIndex(prev => prev + 1);
         setCurrentCharIndex(0);
         setWordMistakes(0);
+        wordMistakesRef.current = 0;
         setCharMistakes(0);
         setShowGhostGuide(false);
+        showGhostGuideRef.current = false;
         setWasGuideUsed(false);
+        wasGuideUsedRef.current = false;
         setIsWordCompleted(false);
         setAssignedRatingInfo(null);
         setAutoAdvancePaused(false);
-        setAutoAdvanceTimeLeft(3);
+        setAutoAdvanceTimeLeft(6);
         setFallbackStrokesByChar({});
         setComparisonMode('both');
         setHasWriterData(true);
@@ -308,17 +324,20 @@ export default function ScriptpadSrsReview({
         setCurrentCharIndex(0);
         setIsWordCompleted(false);
         setWordMistakes(0);
+        wordMistakesRef.current = 0;
         setFallbackStrokesByChar({});
         setHasWriterData(true);
+        setAutoAdvanceTimeLeft(6);
       } else {
         setIsFinished(true);
       }
     }
-  }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, wordMistakes, wasGuideUsed, hasWriterData]);
+  }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, hasWriterData]);
 
   // Completar palabra con seguimiento vectorial y asignar dificultad
   const handleCompleteWord = useCallback((totalMistakes, guideUsed) => {
     setIsWordCompleted(true);
+    setAutoAdvanceTimeLeft(6); // 6 segundos de avance
     const ratingInfo = getRatingInfoFromMistakes(totalMistakes, guideUsed);
     setAssignedRatingInfo(ratingInfo);
 
@@ -334,9 +353,10 @@ export default function ScriptpadSrsReview({
     playAudio();
   }, [playAudio]);
 
-  // Inicializar o recargar HanziWriter en modo Quiz SIN GUÍA
+  // Inicializar HanziWriter en modo Quiz SIN GUÍA
+  // NOTA CRÍTICA: NO debe depender de wordMistakes, wasGuideUsed ni showGhostGuide
+  // para que un error o activación de guía NUNCA borre los trazos ya completados.
   useEffect(() => {
-    if (isWordCompleted) return;
     if (!writerContainerRef.current || !activeChar) return;
 
     let isMounted = true;
@@ -352,7 +372,7 @@ export default function ScriptpadSrsReview({
         width: padSize,
         height: padSize,
         padding: 18,
-        showOutline: showGhostGuide, // "Sin guía" por defecto
+        showOutline: showGhostGuideRef.current,
         showCharacter: false,
         strokeAnimationSpeed: 1.4,
         strokeHighlightSpeed: 2.0,
@@ -391,7 +411,9 @@ export default function ScriptpadSrsReview({
         leniency: 1.15,
         onMistake: (strokeData) => {
           if (!isMounted) return;
-          setWordMistakes(prev => prev + 1);
+          // Actualizar ref y estado sin re-montar el componente
+          wordMistakesRef.current += 1;
+          setWordMistakes(wordMistakesRef.current);
           setCharMistakes(prev => prev + 1);
 
           if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -413,7 +435,7 @@ export default function ScriptpadSrsReview({
           if (!isMounted) return;
 
           // Si la palabra tiene más caracteres pendientes
-          if (currentCharIndex < characters.length - 1) {
+          if (currentCharIndexRef.current < characters.length - 1) {
             setTimeout(() => {
               if (isMounted) {
                 setCurrentCharIndex(prev => prev + 1);
@@ -423,8 +445,8 @@ export default function ScriptpadSrsReview({
             // Palabra completa de principio a fin
             setTimeout(() => {
               if (isMounted) {
-                const totalWordMistakes = wordMistakes + (summary?.totalMistakes || 0);
-                handleCompleteWord(totalWordMistakes, wasGuideUsed || showGhostGuide);
+                const totalWordMistakes = wordMistakesRef.current;
+                handleCompleteWord(totalWordMistakes, wasGuideUsedRef.current || showGhostGuideRef.current);
               }
             }, 250);
           }
@@ -450,23 +472,69 @@ export default function ScriptpadSrsReview({
     currentCharIndex, 
     characters.length, 
     currentIndex, 
-    isWordCompleted, 
     padSize, 
     currentPaper, 
-    showGhostGuide, 
-    handleCompleteWord, 
-    wasGuideUsed, 
-    wordMistakes
+    handleCompleteWord
   ]);
 
-  // Manejo de silueta / guía si el usuario la activa
+  // Manejo de silueta / guía: TOGGLE interactivo (Permite activar Y desactivar)
   const handleToggleGuide = () => {
-    setShowGhostGuide(true);
-    setWasGuideUsed(true);
+    const nextState = !showGhostGuide;
+    setShowGhostGuide(nextState);
+    showGhostGuideRef.current = nextState;
+    if (nextState) {
+      setWasGuideUsed(true);
+      wasGuideUsedRef.current = true;
+    }
     if (hasWriterData && writerRef.current) {
       try {
-        writerRef.current.showOutline();
+        if (nextState) {
+          writerRef.current.showOutline();
+        } else {
+          writerRef.current.hideOutline();
+        }
       } catch {}
+    }
+  };
+
+  // Botón "Sí era": el usuario indica que su trazo sí era correcto (error de lápiz, dedo, sensibilidad)
+  // Anula el error registrado, dibuja el trazo automáticamente y avanza al siguiente trazo sin penalización
+  const handleAcceptStroke = () => {
+    // 1. Descontar el error registrado
+    if (wordMistakesRef.current > 0) {
+      wordMistakesRef.current -= 1;
+      setWordMistakes(wordMistakesRef.current);
+    }
+    setCharMistakes(prev => Math.max(0, prev - 1));
+
+    // 2. Si estamos en modo HanziWriter interactivo:
+    if (hasWriterData && writerRef.current) {
+      try {
+        // Reducir totalMistakes interno de HanziWriter si existe
+        if (writerRef.current._quiz) {
+          if (typeof writerRef.current._quiz._totalMistakes === 'number' && writerRef.current._quiz._totalMistakes > 0) {
+            writerRef.current._quiz._totalMistakes -= 1;
+          }
+          if (typeof writerRef.current._quiz._mistakesOnStroke === 'number') {
+            writerRef.current._quiz._mistakesOnStroke = 0;
+          }
+        }
+
+        // Aceptar y dibujar el trazo actual
+        writerRef.current.skipQuizStroke();
+
+        // Actualizar indicador de trazo activo
+        setStrokeProgress(prev => ({
+          ...prev,
+          current: Math.min(prev.total, prev.current + 1)
+        }));
+
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          try { navigator.vibrate(25); } catch {}
+        }
+      } catch (err) {
+        console.warn('Error in skipQuizStroke:', err);
+      }
     }
   };
 
@@ -501,26 +569,28 @@ export default function ScriptpadSrsReview({
   // Rendirse / No me acuerdo: muestra la animación y asigna "Otra vez"
   const handleGiveUp = () => {
     setWasGuideUsed(true);
+    wasGuideUsedRef.current = true;
     if (hasWriterData && writerRef.current) {
       try {
         writerRef.current.cancelQuiz();
         writerRef.current.showOutline();
         writerRef.current.animateCharacter({
           onComplete: () => {
-            handleCompleteWord(wordMistakes + 4, true);
+            handleCompleteWord(wordMistakesRef.current + 4, true);
           }
         });
       } catch {
-        handleCompleteWord(wordMistakes + 4, true);
+        handleCompleteWord(wordMistakesRef.current + 4, true);
       }
     } else {
       // En modo libre revela el modelo y completa para autoevaluación
       setShowGhostGuide(true);
+      showGhostGuideRef.current = true;
       handleCompleteFallbackWord();
     }
   };
 
-  // Temporizador de auto-avance (únicamente en modo guiado automático)
+  // Temporizador de auto-avance (6 segundos, solo en modo guiado automático)
   useEffect(() => {
     if (!hasWriterData) return; // En modo libre sin datos no hay auto-avance para permitir comparar con calma
     if (!isWordCompleted || autoAdvancePaused || !assignedRatingInfo) return;
@@ -630,7 +700,6 @@ export default function ScriptpadSrsReview({
       ctx.font = `bold ${Math.floor(canvas.height * 0.68)}px "Noto Sans JP", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      // Si está completado y comparando, usar un tono suave pero visible
       ctx.fillStyle = isWordCompleted && comparisonMode === 'model'
         ? (currentPaper.isDark ? '#38bdf8' : '#2563eb')
         : currentPaper.outlineColor;
@@ -1063,33 +1132,6 @@ export default function ScriptpadSrsReview({
             />
           )}
 
-          {/* Badge de modo en la esquina inferior */}
-          {!isWordCompleted && (
-            <div style={{
-              position: 'absolute',
-              bottom: 8,
-              left: 10,
-              zIndex: 3,
-              fontSize: '0.68rem',
-              fontWeight: 800,
-              padding: '2px 8px',
-              borderRadius: 6,
-              background: isDark ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)',
-              color: hasWriterData ? 'var(--text-muted)' : '#f59e0b',
-              backdropFilter: 'blur(4px)',
-              pointerEvents: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4
-            }}>
-              {hasWriterData ? (
-                <span>✍️ Sin guía · De memoria</span>
-              ) : (
-                <span>🖌️ Caligrafía Libre (Sin vector)</span>
-              )}
-            </div>
-          )}
-
           {/* Indicador de trazo activo cuando hay motor HanziWriter */}
           {hasWriterData && !isWordCompleted && strokeProgress.total > 0 && (
             <div style={{
@@ -1111,14 +1153,15 @@ export default function ScriptpadSrsReview({
           )}
         </div>
 
-        {/* 4. Barra de Acciones según el modo de dibujo */}
+        {/* 4. Barra de Acciones durante el trazo */}
         {!isWordCompleted ? (
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
             width: '100%',
-            maxWidth: padSize,
+            maxWidth: padSize + 20,
             marginTop: 12,
             gap: 6
           }}>
@@ -1149,23 +1192,38 @@ export default function ScriptpadSrsReview({
               </button>
             )}
 
-            {/* Botón Ver Guía */}
-            {!showGhostGuide ? (
-              <button
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={handleToggleGuide}
-                style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
-                title="Mostrar silueta tenue de guía si no recuerdas la forma"
-              >
-                <Eye size={13} />
-                <span>Ver Guía</span>
-              </button>
-            ) : (
-              <span style={{ fontSize: '0.72rem', color: '#f59e0b', fontWeight: 700 }}>
-                💡 Guía activa
-              </span>
-            )}
+            {/* Botón Toggle Ver Guía / Ocultar Guía */}
+            <button
+              type="button"
+              className={`btn btn-sm ${showGhostGuide ? 'btn-primary' : 'btn-outline'}`}
+              onClick={handleToggleGuide}
+              style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
+              title={showGhostGuide ? "Ocultar silueta de guía" : "Mostrar silueta de guía"}
+            >
+              {showGhostGuide ? <EyeOff size={13} /> : <Eye size={13} />}
+              <span>{showGhostGuide ? 'Ocultar Guía' : 'Ver Guía'}</span>
+            </button>
+
+            {/* Botón SÍ ERA: anula error de trazo, acepta y dibuja el trazo si hubo fallo de dedo o lápiz */}
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleAcceptStroke}
+              style={{
+                borderRadius: 10,
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                color: '#10b981',
+                borderColor: 'rgba(16, 185, 129, 0.4)',
+                background: 'rgba(16, 185, 129, 0.08)'
+              }}
+            >
+              <Check size={13} strokeWidth={2.5} />
+              <span>Sí era</span>
+            </button>
 
             {/* Botón No me acuerdo */}
             <button
@@ -1259,9 +1317,12 @@ export default function ScriptpadSrsReview({
                 setIsWordCompleted(false);
                 setCurrentCharIndex(0);
                 setWordMistakes(0);
+                wordMistakesRef.current = 0;
                 setCharMistakes(0);
                 setShowGhostGuide(false);
+                showGhostGuideRef.current = false;
                 setWasGuideUsed(false);
+                wasGuideUsedRef.current = false;
                 setAssignedRatingInfo(null);
                 setFallbackStrokesByChar({});
               }}
@@ -1348,7 +1409,7 @@ export default function ScriptpadSrsReview({
         </div>
       )}
 
-      {/* 6. Botón Principal Continuar (Modo Guiado Vectorial) */}
+      {/* 6. Botón Principal Continuar (Modo Guiado Vectorial, 6s) */}
       {isWordCompleted && hasWriterData && assignedRatingInfo && (
         <button
           type="button"
