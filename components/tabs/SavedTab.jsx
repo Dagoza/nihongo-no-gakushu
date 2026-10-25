@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Bookmark, BookmarkCheck, Sparkles, Volume2, Trash2, Search, Layers, MessageSquare, BookOpen, Download, Copy, Check, ExternalLink, PlusCircle, ArrowRight, X, FileText, FileCode, StickyNote, PenTool, Info, Edit3 } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Sparkles, Volume2, Trash2, Search, Layers, MessageSquare, BookOpen, Download, Copy, Check, ExternalLink, PlusCircle, ArrowRight, X, FileText, FileCode, StickyNote, PenTool, Info, Edit3, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import SaveVocabModal from '../modals/SaveVocabModal';
 import EditWordModal from '../modals/EditWordModal';
@@ -41,6 +41,20 @@ export default function SavedTab({
   const [searchQuery, setSearchQuery] = useState(initialSearch || '');
   const [selectedLevel, setSelectedLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | 'N3'
   const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'all');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (selectedLevel !== 'all') count++;
+    if (selectedCategory !== 'all') count++;
+    return count;
+  }, [selectedLevel, selectedCategory]);
+
+  const handleResetFilters = () => {
+    setSelectedLevel('all');
+    setSelectedCategory('all');
+    updateParams(subView, searchQuery, 'all', 'all');
+  };
 
   const updateParams = (newView, newSearch, newLevel, newCat) => {
     if (onParamsChange) {
@@ -643,64 +657,123 @@ export default function SavedTab({
         </div>
 
         {subView !== 'stories' && (
-          <div className="saved-filter-controls">
-            {/* Search Input */}
-            <div className="saved-search-wrapper">
-              <Search size={15} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Buscar por Kanji, Kana o significado..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  updateParams(subView, e.target.value, selectedLevel, selectedCategory);
-                }}
-                className="saved-search-input"
-              />
-              {searchQuery && (
-                <button
-                  className="clear-search-btn"
-                  onClick={() => {
-                    setSearchQuery('');
-                    updateParams(subView, '', selectedLevel, selectedCategory);
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="vocab-filter-bar" style={{ marginBottom: 0 }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+                <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  type="text"
+                  placeholder="Buscar por Kanji, Kana o significado..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    updateParams(subView, e.target.value, selectedLevel, selectedCategory);
                   }}
-                  aria-label="Limpiar búsqueda"
-                >
-                  <X size={14} />
-                </button>
-              )}
+                  className="search-input"
+                  style={{ paddingLeft: 38, width: '100%' }}
+                />
+                {searchQuery && (
+                  <button
+                    className="clear-search-btn"
+                    onClick={() => {
+                      setSearchQuery('');
+                      updateParams(subView, '', selectedLevel, selectedCategory);
+                    }}
+                    aria-label="Limpiar búsqueda"
+                    style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              <button
+                type="button"
+                className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+                onClick={() => setShowFilters(prev => !prev)}
+                aria-expanded={showFilters}
+                title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+              >
+                <SlidersHorizontal size={15} />
+                <span>Filtros</span>
+                {activeFilterCount > 0 && (
+                  <span className="filter-toggle-badge">
+                    {activeFilterCount}
+                  </span>
+                )}
+                {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+              </button>
             </div>
 
-            {/* JLPT Level Filter */}
-            <div className="saved-level-filter" style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              {['all', 'N5', 'N4', 'N3'].map((lvl) => (
-                <button
-                  key={lvl}
-                  className={`level-filter-pill ${selectedLevel === lvl ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedLevel(lvl);
-                    updateParams(subView, searchQuery, lvl, selectedCategory);
-                  }}
-                >
-                  {lvl === 'all' ? 'Todos' : lvl}
-                </button>
-              ))}
-              
-              <select 
-                className="form-select" 
-                style={{ width: 'auto', padding: '4px 8px', fontSize: '0.85rem' }}
-                value={selectedCategory}
-                onChange={(e) => {
-                  setSelectedCategory(e.target.value);
-                  updateParams(subView, searchQuery, selectedLevel, e.target.value);
-                }}
-              >
-                <option value="all">Todas las Categorías</option>
-                {allCategories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
+            {/* Collapsible filter card */}
+            {showFilters && (
+              <div className="card filter-card-animated" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {activeFilterCount > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--primary)',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        padding: '2px 4px'
+                      }}
+                    >
+                      Limpiar todos
+                    </button>
+                  </div>
+                )}
+
+                <div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                    Nivel JLPT:
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                    {['all', 'N5', 'N4', 'N3'].map((lvl) => (
+                      <button
+                        key={lvl}
+                        type="button"
+                        className={`btn ${selectedLevel === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                        style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                        onClick={() => {
+                          setSelectedLevel(lvl);
+                          updateParams(subView, searchQuery, lvl, selectedCategory);
+                        }}
+                      >
+                        {lvl === 'all' ? 'Todos' : lvl}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                    Categoría:
+                  </div>
+                  <select 
+                    className="form-select" 
+                    style={{ width: '100%', maxWidth: 280, padding: '6px 10px', fontSize: '0.85rem' }}
+                    value={selectedCategory}
+                    onChange={(e) => {
+                      setSelectedCategory(e.target.value);
+                      updateParams(subView, searchQuery, selectedLevel, e.target.value);
+                    }}
+                  >
+                    <option value="all">Todas las Categorías</option>
+                    {allCategories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

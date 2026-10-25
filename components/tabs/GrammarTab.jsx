@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Volume2, CheckCircle2, Circle, Search, ArrowLeft, RotateCcw, PenTool, Info, Target } from 'lucide-react';
+import { Volume2, CheckCircle2, Circle, Search, ArrowLeft, RotateCcw, PenTool, Info, Target, SlidersHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import particlesData from '../../data/particles.json';
 import * as wanakana from 'wanakana';
@@ -146,6 +146,24 @@ export default function GrammarTab({
   const [showAllParticles, setShowAllParticles] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'pending' | 'mastered'
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (filterStatus !== 'all') count++;
+    if (levelFilter !== 'all') count++;
+    if (categoryFilter !== 'all') count++;
+    if (filterParticle !== 'all') count++;
+    return count;
+  }, [filterStatus, levelFilter, categoryFilter, filterParticle]);
+
+  const handleResetFilters = () => {
+    setFilterStatus('all');
+    setLevelFilter('all');
+    setCategoryFilter('all');
+    setFilterParticle('all');
+    updateParams('all', searchTerm, quizActive, 'all');
+  };
   const [quizActive, setQuizActive] = useState(!!initialQuiz);
   const [quizFilter, setQuizFilter] = useState('all'); // 'all' | 'pending'
   const [quizLevelFilter, setQuizLevelFilter] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
@@ -509,193 +527,270 @@ export default function GrammarTab({
             </button>
           </div>
 
-          {/* Filter Bar */}
-          <div className="vocab-filter-bar" style={{ minWidth: 0, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {/* Row 1: Search & Status */}
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', width: '100%' }}>
-              <div style={{ position: 'relative', flex: 1, minWidth: 220, maxWidth: '100%' }}>
-                <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                <input 
-                  type="text" 
-                  className="search-input" 
-                  style={{ paddingLeft: 38 }}
-                  placeholder="Buscar función, fórmula, ejemplo o traducción..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    updateParams(filterParticle, e.target.value, quizActive, levelFilter);
+          {/* Search Bar & Botón de Filtros */}
+          <div className="vocab-filter-bar" style={{ marginBottom: 12 }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+              <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input 
+                type="text" 
+                className="search-input" 
+                style={{ paddingLeft: 38, width: '100%' }}
+                placeholder="Buscar función, fórmula, ejemplo o traducción..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  updateParams(filterParticle, e.target.value, quizActive, levelFilter);
+                }}
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('');
+                    updateParams(filterParticle, '', quizActive, levelFilter);
                   }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
-                {[
-                  { id: 'all', label: `Todas (${particlesData.length})` },
-                  { id: 'pending', label: `Por aprender (${pendingCount})` },
-                  { id: 'mastered', label: `Dominadas (${masteredCount})` }
-                ].map(st => (
-                  <button
-                    key={st.id}
-                    className={`btn ${filterStatus === st.id ? 'btn-primary' : 'btn-outline'} btn-sm`}
-                    onClick={() => setFilterStatus(st.id)}
-                    style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
-                  >
-                    {st.label}
-                  </button>
-                ))}
-              </div>
+                  aria-label="Limpiar búsqueda"
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              )}
             </div>
 
-            {/* Row 2: JLPT Level Filters */}
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', paddingTop: 4, borderTop: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Nivel JLPT:</span>
-              {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => {
-                const count = levelCounts[lvl] || 0;
-                const isActive = levelFilter === lvl;
-                const badgeStyle = lvl !== 'all' ? getLevelBadgeStyle(lvl) : null;
-                return (
-                  <button
-                    key={lvl}
-                    className={`btn ${isActive ? 'btn-primary' : 'btn-outline'} btn-sm`}
-                    style={{
-                      minWidth: 44,
-                      padding: '4px 10px',
-                      ...(isActive && badgeStyle ? { background: badgeStyle.color, borderColor: badgeStyle.color, color: '#fff' } : {})
-                    }}
-                    onClick={() => {
-                      setLevelFilter(lvl);
-                      const pool = lvl === 'all' ? particlesData : particlesData.filter(p => (p.level || 'N5') === lvl);
-                      const hasCurrent = pool.some(p => p.particle === filterParticle);
-                      const nextPart = hasCurrent ? filterParticle : 'all';
-                      if (nextPart !== filterParticle) {
-                        setFilterParticle('all');
-                      }
-                      updateParams(nextPart, searchTerm, quizActive, lvl);
-                    }}
-                  >
-                    {lvl === 'all' ? `Todas (${count})` : `${lvl} (${count})`}
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              type="button"
+              className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+              onClick={() => setShowFilters(prev => !prev)}
+              aria-expanded={showFilters}
+              title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+            >
+              <SlidersHorizontal size={15} />
+              <span>Filtros</span>
+              {activeFilterCount > 0 && (
+                <span className="filter-toggle-badge">
+                  {activeFilterCount}
+                </span>
+              )}
+              {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+            </button>
+          </div>
 
-            {/* Row 3: Categorized Particle Hub */}
-            <div className="particle-filter-hub">
-              {/* Category Selection Row */}
-              <div className="particle-category-row">
-                <span className="particle-filter-label">Categoría:</span>
-                {PARTICLE_CATEGORIES.map((cat) => {
-                  const count = categoryCounts[cat.id] || 0;
-                  const isActive = categoryFilter === cat.id;
-                  const isDisabled = count === 0 && cat.id !== 'all';
-
-                  return (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      disabled={isDisabled}
-                      className={`particle-category-pill ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
-                      onClick={() => {
-                        setCategoryFilter(cat.id);
-                        if (cat.id !== 'all' && filterParticle !== 'all') {
-                          const meta = PARTICLE_METADATA[filterParticle];
-                          if (!meta || meta.category !== cat.id) {
-                            setFilterParticle('all');
-                            updateParams('all', searchTerm, quizActive, levelFilter);
-                          }
-                        }
-                      }}
-                      title={isDisabled ? 'No hay partículas en este nivel JLPT' : `${cat.label} (${count})`}
-                    >
-                      <span>{cat.icon}</span>
-                      <span>{cat.label}</span>
-                      <span className="particle-category-count">{count}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Particle Chips Row */}
-              <div className="particle-chips-section">
-                <div className="particle-chips-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    <span className="particle-filter-label">
-                      {categoryFilter === 'all'
-                        ? (!showAllParticles ? 'Partículas frecuentes:' : 'Todas las partículas:')
-                        : `Partículas de ${PARTICLE_CATEGORIES.find(c => c.id === categoryFilter)?.label}:`}
-                    </span>
-                    {filterParticle !== 'all' && (
-                      <button
-                        type="button"
-                        className="btn btn-xs btn-outline"
-                        style={{ padding: '2px 8px', fontSize: '0.75rem', height: 'auto', borderRadius: 999 }}
-                        onClick={() => {
-                          setFilterParticle('all');
-                          updateParams('all', searchTerm, quizActive, levelFilter);
-                        }}
-                      >
-                        ✕ Ver todas ({categoryFilter === 'all' ? 'este nivel' : 'esta categoría'})
-                      </button>
-                    )}
-                  </div>
-
-                  {categoryFilter === 'all' && categoryCounts.all > TOP_PARTICLES.length && (
-                    <button
-                      type="button"
-                      className="particle-toggle-expand-btn"
-                      onClick={() => setShowAllParticles(!showAllParticles)}
-                    >
-                      {showAllParticles ? (
-                        <>▴ Mostrar menos (Top 12)</>
-                      ) : (
-                        <>▾ Ver todas ({categoryCounts.all})</>
-                      )}
-                    </button>
-                  )}
-                </div>
-
-                <div className="particle-chips-grid">
+          {/* Filtros Integrados (Colapsable) */}
+          {showFilters && (
+            <div className="card filter-card-animated" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {activeFilterCount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+                  </span>
                   <button
                     type="button"
-                    className={`particle-chip-btn ${filterParticle === 'all' ? 'active' : ''}`}
-                    onClick={() => {
-                      setFilterParticle('all');
-                      updateParams('all', searchTerm, quizActive, levelFilter);
+                    onClick={handleResetFilters}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--primary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      padding: '2px 4px'
                     }}
-                    title="Mostrar todas las partículas de la categoría seleccionada"
                   >
-                    <span className="particle-chip-symbol">Todas</span>
-                    <span className="particle-chip-label">({visibleParticles.length})</span>
+                    Limpiar todos
                   </button>
+                </div>
+              )}
 
-                  {visibleParticles.map((p) => {
-                    const isSelected = filterParticle === p;
-                    const meta = PARTICLE_METADATA[p];
+              {/* Filtro de Estado */}
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Estado:
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {[
+                    { id: 'all', label: `Todas (${particlesData.length})` },
+                    { id: 'pending', label: `Por aprender (${pendingCount})` },
+                    { id: 'mastered', label: `Dominadas (${masteredCount})` }
+                  ].map(st => (
+                    <button
+                      key={st.id}
+                      className={`btn ${filterStatus === st.id ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                      onClick={() => setFilterStatus(st.id)}
+                      style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
+              {/* Selector de Nivel JLPT */}
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Nivel JLPT:
+                </div>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                  {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => {
+                    const count = levelCounts[lvl] || 0;
+                    const isActive = levelFilter === lvl;
+                    const badgeStyle = lvl !== 'all' ? getLevelBadgeStyle(lvl) : null;
                     return (
                       <button
-                        key={p}
-                        type="button"
-                        className={`particle-chip-btn ${isSelected ? 'active' : ''}`}
-                        onClick={() => {
-                          const nextP = isSelected ? 'all' : p;
-                          setFilterParticle(nextP);
-                          updateParams(nextP, searchTerm, quizActive, levelFilter);
+                        key={lvl}
+                        className={`btn ${isActive ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                        style={{
+                          minWidth: 44,
+                          padding: '4px 10px',
+                          ...(isActive && badgeStyle ? { background: badgeStyle.color, borderColor: badgeStyle.color, color: '#fff' } : {})
                         }}
-                        title={meta ? `${p} — ${meta.label}` : p}
+                        onClick={() => {
+                          setLevelFilter(lvl);
+                          const pool = lvl === 'all' ? particlesData : particlesData.filter(p => (p.level || 'N5') === lvl);
+                          const hasCurrent = pool.some(p => p.particle === filterParticle);
+                          const nextPart = hasCurrent ? filterParticle : 'all';
+                          if (nextPart !== filterParticle) {
+                            setFilterParticle('all');
+                          }
+                          updateParams(nextPart, searchTerm, quizActive, lvl);
+                        }}
                       >
-                        <span className="particle-chip-symbol jp-text">{p}</span>
-                        {meta?.label && (
-                          <span className="particle-chip-label">{meta.label}</span>
-                        )}
+                        {lvl === 'all' ? `Todas (${count})` : `${lvl} (${count})`}
                       </button>
                     );
                   })}
                 </div>
               </div>
+
+              {/* Hub de Categorías y Partículas */}
+              <div className="particle-filter-hub" style={{ paddingTop: 10, borderTop: '1px solid var(--border)' }}>
+                {/* Category Selection Row */}
+                <div className="particle-category-row">
+                  <span className="particle-filter-label">Categoría:</span>
+                  {PARTICLE_CATEGORIES.map((cat) => {
+                    const count = categoryCounts[cat.id] || 0;
+                    const isActive = categoryFilter === cat.id;
+                    const isDisabled = count === 0 && cat.id !== 'all';
+
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        disabled={isDisabled}
+                        className={`particle-category-pill ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+                        onClick={() => {
+                          setCategoryFilter(cat.id);
+                          if (cat.id !== 'all' && filterParticle !== 'all') {
+                            const meta = PARTICLE_METADATA[filterParticle];
+                            if (!meta || meta.category !== cat.id) {
+                              setFilterParticle('all');
+                              updateParams('all', searchTerm, quizActive, levelFilter);
+                            }
+                          }
+                        }}
+                        title={isDisabled ? 'No hay partículas en este nivel JLPT' : `${cat.label} (${count})`}
+                      >
+                        <span>{cat.icon}</span>
+                        <span>{cat.label}</span>
+                        <span className="particle-category-count">{count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Particle Chips Row */}
+                <div className="particle-chips-section">
+                  <div className="particle-chips-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span className="particle-filter-label">
+                        {categoryFilter === 'all'
+                          ? (!showAllParticles ? 'Partículas frecuentes:' : 'Todas las partículas:')
+                          : `Partículas de ${PARTICLE_CATEGORIES.find(c => c.id === categoryFilter)?.label}:`}
+                      </span>
+                      {filterParticle !== 'all' && (
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-outline"
+                          style={{ padding: '2px 8px', fontSize: '0.75rem', height: 'auto', borderRadius: 999 }}
+                          onClick={() => {
+                            setFilterParticle('all');
+                            updateParams('all', searchTerm, quizActive, levelFilter);
+                          }}
+                        >
+                          ✕ Ver todas ({categoryFilter === 'all' ? 'este nivel' : 'esta categoría'})
+                        </button>
+                      )}
+                    </div>
+
+                    {categoryFilter === 'all' && categoryCounts.all > TOP_PARTICLES.length && (
+                      <button
+                        type="button"
+                        className="particle-toggle-expand-btn"
+                        onClick={() => setShowAllParticles(!showAllParticles)}
+                      >
+                        {showAllParticles ? (
+                          <>▴ Mostrar menos (Top 12)</>
+                        ) : (
+                          <>▾ Ver todas ({categoryCounts.all})</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="particle-chips-grid">
+                    <button
+                      type="button"
+                      className={`particle-chip-btn ${filterParticle === 'all' ? 'active' : ''}`}
+                      onClick={() => {
+                        setFilterParticle('all');
+                        updateParams('all', searchTerm, quizActive, levelFilter);
+                      }}
+                      title="Mostrar todas las partículas de la categoría seleccionada"
+                    >
+                      <span className="particle-chip-symbol">Todas</span>
+                      <span className="particle-chip-label">({visibleParticles.length})</span>
+                    </button>
+
+                    {visibleParticles.map((p) => {
+                      const isSelected = filterParticle === p;
+                      const meta = PARTICLE_METADATA[p];
+
+                      return (
+                        <button
+                          key={p}
+                          type="button"
+                          className={`particle-chip-btn ${isSelected ? 'active' : ''}`}
+                          onClick={() => {
+                            const nextP = isSelected ? 'all' : p;
+                            setFilterParticle(nextP);
+                            updateParams(nextP, searchTerm, quizActive, levelFilter);
+                          }}
+                          title={meta ? `${p} — ${meta.label}` : p}
+                        >
+                          <span className="particle-chip-symbol jp-text">{p}</span>
+                          {meta?.label && (
+                            <span className="particle-chip-label">{meta.label}</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Results count indicator */}
           <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>

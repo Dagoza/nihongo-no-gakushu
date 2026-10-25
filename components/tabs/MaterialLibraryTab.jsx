@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, ExternalLink, Eye, X, FileText, BookOpen, FileSpreadsheet, Info } from 'lucide-react';
+import { Search, ExternalLink, Eye, X, FileText, BookOpen, FileSpreadsheet, Info, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
 import pdfCatalogData from '../../data/pdf_catalog.json';
 
@@ -14,7 +14,14 @@ export default function MaterialLibraryTab({
   const contextApp = useApp();
   const [currentCategory, setCurrentCategory] = useState(initialCategory || 'all');
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+  const [showFilters, setShowFilters] = useState(false);
   const [activeModal, setActiveModal] = useState(null); // { title, url }
+
+  const activeFilterCount = currentCategory !== 'all' ? 1 : 0;
+  const handleResetFilters = () => {
+    setCurrentCategory('all');
+    updateParams('all', searchTerm, activeModal?.filename);
+  };
 
   const catalog = pdfCatalogData || [];
 
@@ -122,14 +129,14 @@ export default function MaterialLibraryTab({
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="vocab-filter-bar">
-        <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
+      {/* Search Bar & Botón de Filtros */}
+      <div className="vocab-filter-bar" style={{ marginBottom: 12 }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
           <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input 
             type="text" 
             className="search-input" 
-            style={{ paddingLeft: 38 }}
+            style={{ paddingLeft: 38, width: '100%' }}
             placeholder="Buscar por nombre de archivo o tema..."
             value={searchTerm}
             onChange={(e) => {
@@ -137,23 +144,99 @@ export default function MaterialLibraryTab({
               updateParams(currentCategory, e.target.value, activeModal?.filename);
             }}
           />
-        </div>
-
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          {categories.map(cat => (
+          {searchTerm && (
             <button
-              key={cat.id}
-              className={`btn ${currentCategory === cat.id ? 'btn-primary' : 'btn-outline'} btn-sm`}
+              type="button"
               onClick={() => {
-                setCurrentCategory(cat.id);
-                updateParams(cat.id, searchTerm, activeModal?.filename);
+                setSearchTerm('');
+                updateParams(currentCategory, '', activeModal?.filename);
+              }}
+              aria-label="Limpiar búsqueda"
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                padding: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
-              {cat.name}
+              <X size={14} />
             </button>
-          ))}
+          )}
         </div>
+
+        <button
+          type="button"
+          className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+          onClick={() => setShowFilters(prev => !prev)}
+          aria-expanded={showFilters}
+          title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+        >
+          <SlidersHorizontal size={15} />
+          <span>Filtros</span>
+          {activeFilterCount > 0 && (
+            <span className="filter-toggle-badge">
+              {activeFilterCount}
+            </span>
+          )}
+          {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+        </button>
       </div>
+
+      {/* Filtros Integrados (Colapsable) */}
+      {showFilters && (
+        <div className="card filter-card-animated" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {activeFilterCount > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+              </span>
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--primary)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  padding: '2px 4px'
+                }}
+              >
+                Limpiar todos
+              </button>
+            </div>
+          )}
+
+          <div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+              Categoría:
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  className={`btn ${currentCategory === cat.id ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                  onClick={() => {
+                    setCurrentCategory(cat.id);
+                    updateParams(cat.id, searchTerm, activeModal?.filename);
+                  }}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ marginBottom: 16, fontSize: '0.9rem', color: 'var(--text-muted)' }}>
         Mostrando <strong>{filtered.length}</strong> de {catalog.length} archivos de estudio:

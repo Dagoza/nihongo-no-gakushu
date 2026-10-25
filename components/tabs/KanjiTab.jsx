@@ -5,7 +5,8 @@ import dynamic from 'next/dynamic';
 import { 
   Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, RotateCcw, 
   Sparkles, Check, MessageSquare, PenTool, Info, Languages, 
-  Tag, Plus, X, CheckCircle2, BookOpen, Brain, Sparkle, Filter
+  Tag, Plus, X, CheckCircle2, BookOpen, Brain, Sparkle, Filter,
+  SlidersHorizontal, ChevronDown, ChevronUp
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import kanjiData from '../../data/kanji.json';
@@ -102,6 +103,21 @@ export default function KanjiTab({
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'learned' | 'unlearned'
   const [selectedTag, setSelectedTag] = useState('all'); // 'all' | tagString
   const [areTagsExpanded, setAreTagsExpanded] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (statusFilter !== 'all') count++;
+    if (level !== 'all') count++;
+    if (selectedTag !== 'all') count++;
+    return count;
+  }, [statusFilter, level, selectedTag]);
+
+  const handleResetFilters = () => {
+    setStatusFilter('all');
+    setLevel('all');
+    setSelectedTag('all');
+  };
 
   // Kanji List State (carga unificada del catálogo global)
   const [kanjiList, setKanjiList] = useState(kanjiData || []);
@@ -603,151 +619,14 @@ export default function KanjiTab({
             </div>
           </div>
 
-          {/* Filtros Integrados: Estado, Nivel JLPT y Etiquetas */}
-          <div className="card" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {/* Filtro de Estado: Título y botones en líneas separadas, mismo estilo de nivel */}
-            <div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
-                Estado:
-              </div>
-              <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  className={`btn ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() => setStatusFilter('all')}
-                >
-                  Todos ({kanjiList.length})
-                </button>
-                <button
-                  type="button"
-                  className={`btn ${statusFilter === 'learned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() => setStatusFilter('learned')}
-                >
-                  ✓ Aprendidos ({masteredCount})
-                </button>
-                <button
-                  type="button"
-                  className={`btn ${statusFilter === 'unlearned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() => setStatusFilter('unlearned')}
-                >
-                  ⏳ Por aprender ({unlearnedCount})
-                </button>
-              </div>
-            </div>
-
-            {/* Selector de Nivel JLPT: Título y botones en líneas separadas */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  Nivel:
-                </span>
-                {isLoading && (
-                  <span style={{ fontSize: '0.78rem', color: 'var(--primary)' }}>
-                    ⚡ Cargando...
-                  </span>
-                )}
-              </div>
-              <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
-                {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
-                  <button
-                    key={lvl}
-                    type="button"
-                    className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                    onClick={() => setLevel(lvl)}
-                  >
-                    {lvl === 'all' ? 'Todos' : lvl}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Selector de Etiquetas (Tags) colapsable/expandible en una sola línea sin dropdown */}
-            {availableTags.length > 0 && (() => {
-              const FIRST_LINE_TAGS_LIMIT = 5;
-              const displayedTags = areTagsExpanded
-                ? availableTags
-                : availableTags.slice(0, FIRST_LINE_TAGS_LIMIT);
-
-              return (
-                <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
-                      <Tag size={13} />
-                      <span>Etiquetas:</span>
-                    </div>
-                    {availableTags.length > FIRST_LINE_TAGS_LIMIT && (
-                      <button
-                        type="button"
-                        onClick={() => setAreTagsExpanded(!areTagsExpanded)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          color: 'var(--primary)',
-                          fontSize: '0.78rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          padding: '2px 4px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4
-                        }}
-                      >
-                        <span>{areTagsExpanded ? 'Ver menos ▲' : `+ Ver más (${availableTags.length - FIRST_LINE_TAGS_LIMIT}) ▼`}</span>
-                      </button>
-                    )}
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                    <button
-                      type="button"
-                      className={`kanji-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
-                      onClick={() => setSelectedTag('all')}
-                    >
-                      Todas
-                    </button>
-                    {displayedTags.map(tag => (
-                      <button
-                        key={tag}
-                        type="button"
-                        className={`kanji-tag-pill ${selectedTag === tag ? 'active' : ''}`}
-                        onClick={() => setSelectedTag(selectedTag === tag ? 'all' : tag)}
-                      >
-                        #{tag}
-                      </button>
-                    ))}
-                    {!areTagsExpanded && availableTags.length > FIRST_LINE_TAGS_LIMIT && (
-                      <button
-                        type="button"
-                        className="kanji-tag-pill"
-                        onClick={() => setAreTagsExpanded(true)}
-                        style={{
-                          color: 'var(--primary)',
-                          borderColor: 'var(--primary)',
-                          fontWeight: 700,
-                          background: 'rgba(99, 102, 241, 0.08)'
-                        }}
-                      >
-                        +{availableTags.length - FIRST_LINE_TAGS_LIMIT} más...
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-
-          {/* Search Bar */}
+          {/* Search Bar & Botón de Filtros */}
           <div className="vocab-filter-bar" style={{ marginBottom: 14 }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
               <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
                 type="text" 
                 className="search-input" 
-                style={{ paddingLeft: 38 }}
+                style={{ paddingLeft: 38, width: '100%' }}
                 placeholder="Buscar por kanji, lectura o significado..."
                 value={searchTerm}
                 onChange={(e) => {
@@ -755,11 +634,213 @@ export default function KanjiTab({
                   updateParams(e.target.value, undefined, drawingKanji);
                 }}
               />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('');
+                    updateParams('', undefined, drawingKanji);
+                  }}
+                  aria-label="Limpiar búsqueda"
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              )}
             </div>
-            <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-              {filteredKanji.length} {filteredKanji.length === 1 ? 'kanji' : 'kanjis'}
-            </div>
+
+            <button
+              type="button"
+              className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+              onClick={() => setShowFilters(prev => !prev)}
+              aria-expanded={showFilters}
+              title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+            >
+              <SlidersHorizontal size={15} />
+              <span>Filtros</span>
+              {activeFilterCount > 0 && (
+                <span className="filter-toggle-badge">
+                  {activeFilterCount}
+                </span>
+              )}
+              {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+            </button>
           </div>
+
+          {/* Filtros Integrados: Estado, Nivel JLPT y Etiquetas (Colapsable) */}
+          {showFilters && (
+            <div className="card filter-card-animated" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {activeFilterCount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--primary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      padding: '2px 4px'
+                    }}
+                  >
+                    Limpiar todos
+                  </button>
+                </div>
+              )}
+
+              {/* Filtro de Estado: Título y botones en líneas separadas, mismo estilo de nivel */}
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Estado:
+                </div>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                    onClick={() => setStatusFilter('all')}
+                  >
+                    Todos ({kanjiList.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'learned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                    onClick={() => setStatusFilter('learned')}
+                  >
+                    ✓ Aprendidos ({masteredCount})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'unlearned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                    onClick={() => setStatusFilter('unlearned')}
+                  >
+                    ⏳ Por aprender ({unlearnedCount})
+                  </button>
+                </div>
+              </div>
+
+              {/* Selector de Nivel JLPT: Título y botones en líneas separadas */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                    Nivel:
+                  </span>
+                  {isLoading && (
+                    <span style={{ fontSize: '0.78rem', color: 'var(--primary)' }}>
+                      ⚡ Cargando...
+                    </span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
+                  {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
+                    <button
+                      key={lvl}
+                      type="button"
+                      className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                      style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                      onClick={() => setLevel(lvl)}
+                    >
+                      {lvl === 'all' ? 'Todos' : lvl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Selector de Etiquetas (Tags) colapsable/expandible en una sola línea sin dropdown */}
+              {availableTags.length > 0 && (() => {
+                const FIRST_LINE_TAGS_LIMIT = 5;
+                const displayedTags = areTagsExpanded
+                  ? availableTags
+                  : availableTags.slice(0, FIRST_LINE_TAGS_LIMIT);
+
+                return (
+                  <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                        <Tag size={13} />
+                        <span>Etiquetas:</span>
+                      </div>
+                      {availableTags.length > FIRST_LINE_TAGS_LIMIT && (
+                        <button
+                          type="button"
+                          onClick={() => setAreTagsExpanded(!areTagsExpanded)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'var(--primary)',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            padding: '2px 4px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}
+                        >
+                          <span>{areTagsExpanded ? 'Ver menos ▲' : `+ Ver más (${availableTags.length - FIRST_LINE_TAGS_LIMIT}) ▼`}</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className={`kanji-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
+                        onClick={() => setSelectedTag('all')}
+                      >
+                        Todas
+                      </button>
+                      {displayedTags.map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          className={`kanji-tag-pill ${selectedTag === tag ? 'active' : ''}`}
+                          onClick={() => setSelectedTag(selectedTag === tag ? 'all' : tag)}
+                        >
+                          #{tag}
+                        </button>
+                      ))}
+                      {!areTagsExpanded && availableTags.length > FIRST_LINE_TAGS_LIMIT && (
+                        <button
+                          type="button"
+                          className="kanji-tag-pill"
+                          onClick={() => setAreTagsExpanded(true)}
+                          style={{
+                            color: 'var(--primary)',
+                            borderColor: 'var(--primary)',
+                            fontWeight: 700,
+                            background: 'rgba(99, 102, 241, 0.08)'
+                          }}
+                        >
+                          +{availableTags.length - FIRST_LINE_TAGS_LIMIT} más...
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
 
           {/* Quick AI & Selection Helper Bar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>

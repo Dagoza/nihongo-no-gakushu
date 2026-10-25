@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { 
   Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, 
   BookOpen, Layers, Edit3, StickyNote, Plus, RotateCcw, Sparkles, 
-  MessageSquare, PenTool, Info, CheckCircle2, Brain, Tag, X, Filter 
+  MessageSquare, PenTool, Info, CheckCircle2, Brain, Tag, X, Filter,
+  SlidersHorizontal, ChevronDown, ChevronUp
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
@@ -55,6 +56,7 @@ export default function VocabTab({
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'learned' | 'unlearned'
   const [selectedTag, setSelectedTag] = useState(initialCategory || 'all');
   const [areTagsExpanded, setAreTagsExpanded] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
 
   useEffect(() => {
@@ -112,6 +114,25 @@ export default function VocabTab({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filterOnlyWithNotes, setFilterOnlyWithNotes] = useState(false);
   const [filterOnlyCustomized, setFilterOnlyCustomized] = useState(false);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (statusFilter !== 'all') count++;
+    if (level !== 'all') count++;
+    if (selectedTag !== 'all') count++;
+    if (filterOnlyWithNotes) count++;
+    if (filterOnlyCustomized) count++;
+    return count;
+  }, [statusFilter, level, selectedTag, filterOnlyWithNotes, filterOnlyCustomized]);
+
+  const handleResetFilters = () => {
+    setStatusFilter('all');
+    setLevel('all');
+    setSelectedTag('all');
+    setFilterOnlyWithNotes(false);
+    setFilterOnlyCustomized(false);
+    updateParams(mode, 'all', 'all', searchTerm);
+  };
 
   // Tag Editor Modal State
   const [tagEditorWord, setTagEditorWord] = useState(null);
@@ -781,162 +802,14 @@ export default function VocabTab({
             </div>
           </div>
 
-          {/* Filtros Integrados: Estado, Nivel JLPT y Etiquetas */}
-          <div className="card" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {/* Filtro de Estado: Título y botones en líneas separadas, mismo estilo de nivel */}
-            <div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
-                Estado:
-              </div>
-              <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  className={`btn ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() => setStatusFilter('all')}
-                >
-                  Todas ({effectiveVocabList.length})
-                </button>
-                <button
-                  type="button"
-                  className={`btn ${statusFilter === 'learned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() => setStatusFilter('learned')}
-                >
-                  ✓ Aprendidas ({masteredCount})
-                </button>
-                <button
-                  type="button"
-                  className={`btn ${statusFilter === 'unlearned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() => setStatusFilter('unlearned')}
-                >
-                  ⏳ Por aprender ({unlearnedCount})
-                </button>
-              </div>
-            </div>
-
-            {/* Selector de Nivel JLPT: Título y botones en líneas separadas */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  Nivel:
-                </span>
-                {isLoading && (
-                  <span style={{ fontSize: '0.78rem', color: 'var(--primary)' }}>
-                    ⚡ Cargando...
-                  </span>
-                )}
-              </div>
-              <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
-                {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
-                  <button
-                    key={lvl}
-                    type="button"
-                    className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
-                    onClick={() => {
-                      setLevel(lvl);
-                      setSelectedTag('all');
-                      updateParams(mode, lvl, 'all', searchTerm);
-                    }}
-                  >
-                    {lvl === 'all' ? 'Todos' : lvl}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Selector de Etiquetas (Tags) colapsable/expandible en una sola línea sin dropdown */}
-            {availableTags.length > 0 && (() => {
-              const FIRST_LINE_TAGS_LIMIT = 5;
-              const displayedTags = areTagsExpanded
-                ? availableTags
-                : availableTags.slice(0, FIRST_LINE_TAGS_LIMIT);
-
-              return (
-                <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
-                      <Tag size={13} />
-                      <span>Etiquetas:</span>
-                    </div>
-                    {availableTags.length > FIRST_LINE_TAGS_LIMIT && (
-                      <button
-                        type="button"
-                        onClick={() => setAreTagsExpanded(!areTagsExpanded)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          color: 'var(--primary)',
-                          fontSize: '0.78rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          padding: '2px 4px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4
-                        }}
-                      >
-                        <span>{areTagsExpanded ? 'Ver menos ▲' : `+ Ver más (${availableTags.length - FIRST_LINE_TAGS_LIMIT}) ▼`}</span>
-                      </button>
-                    )}
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                    <button
-                      type="button"
-                      className={`vocab-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
-                      onClick={() => {
-                        setSelectedTag('all');
-                        updateParams(mode, level, 'all', searchTerm);
-                      }}
-                    >
-                      Todas
-                    </button>
-                    {displayedTags.map(tag => (
-                      <button
-                        key={tag}
-                        type="button"
-                        className={`vocab-tag-pill ${selectedTag === tag ? 'active' : ''}`}
-                        onClick={() => {
-                          const nextTag = selectedTag === tag ? 'all' : tag;
-                          setSelectedTag(nextTag);
-                          updateParams(mode, level, nextTag, searchTerm);
-                        }}
-                      >
-                        #{tag}
-                      </button>
-                    ))}
-                    {!areTagsExpanded && availableTags.length > FIRST_LINE_TAGS_LIMIT && (
-                      <button
-                        type="button"
-                        className="vocab-tag-pill"
-                        onClick={() => setAreTagsExpanded(true)}
-                        style={{
-                          color: 'var(--primary)',
-                          borderColor: 'var(--primary)',
-                          fontWeight: 700,
-                          background: 'rgba(99, 102, 241, 0.08)'
-                        }}
-                      >
-                        +{availableTags.length - FIRST_LINE_TAGS_LIMIT} más...
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-
-          {/* Search Bar & Quick Tools */}
+          {/* Search Bar & Botón de Filtros */}
           <div className="vocab-filter-bar" style={{ marginBottom: 12 }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
               <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
                 type="text" 
                 className="search-input" 
-                style={{ paddingLeft: 38 }}
+                style={{ paddingLeft: 38, width: '100%' }}
                 placeholder="Buscar por kanji, kana, español..."
                 value={searchTerm}
                 onChange={(e) => {
@@ -944,43 +817,275 @@ export default function VocabTab({
                   updateParams(mode, level, selectedTag, e.target.value);
                 }}
               />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('');
+                    updateParams(mode, level, selectedTag, '');
+                  }}
+                  aria-label="Limpiar búsqueda"
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              )}
             </div>
 
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-              <button
-                type="button"
-                className={`btn btn-xs ${filterOnlyWithNotes ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setFilterOnlyWithNotes(!filterOnlyWithNotes)}
-                style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem' }}
-                title="Ver palabras con notas personales"
-              >
-                <StickyNote size={12} />
-                <span>Notas ({effectiveVocabList.filter(v => v.notes && v.notes.trim()).length})</span>
-              </button>
+            <button
+              type="button"
+              className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+              onClick={() => setShowFilters(prev => !prev)}
+              aria-expanded={showFilters}
+              title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+            >
+              <SlidersHorizontal size={15} />
+              <span>Filtros</span>
+              {activeFilterCount > 0 && (
+                <span className="filter-toggle-badge">
+                  {activeFilterCount}
+                </span>
+              )}
+              {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+            </button>
 
-              <button
-                type="button"
-                className={`btn btn-xs ${filterOnlyCustomized ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setFilterOnlyCustomized(!filterOnlyCustomized)}
-                style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem' }}
-                title="Ver palabras personalizadas"
-              >
-                <Edit3 size={12} />
-                <span>Editadas ({effectiveVocabList.filter(v => v.isCustomized).length})</span>
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline btn-xs"
-                onClick={() => setIsCreateModalOpen(true)}
-                style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem', borderColor: 'var(--primary)', color: 'var(--primary)' }}
-                title="Registrar una nueva palabra"
-              >
-                <Plus size={12} />
-                <span>Nueva</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => setIsCreateModalOpen(true)}
+              style={{
+                borderRadius: 'var(--radius-sm)',
+                padding: '8px 12px',
+                height: '40px',
+                borderColor: 'var(--primary)',
+                color: 'var(--primary)',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5
+              }}
+              title="Registrar una nueva palabra"
+            >
+              <Plus size={14} />
+              <span>Nueva</span>
+            </button>
           </div>
+
+          {/* Filtros Integrados: Estado, Nivel JLPT, Etiquetas y Opciones Especiales (Colapsable) */}
+          {showFilters && (
+            <div className="card filter-card-animated" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {activeFilterCount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--primary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      padding: '2px 4px'
+                    }}
+                  >
+                    Limpiar todos
+                  </button>
+                </div>
+              )}
+
+              {/* Filtro de Estado: Título y botones en líneas separadas, mismo estilo de nivel */}
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Estado:
+                </div>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                    onClick={() => setStatusFilter('all')}
+                  >
+                    Todas ({effectiveVocabList.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'learned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                    onClick={() => setStatusFilter('learned')}
+                  >
+                    ✓ Aprendidas ({masteredCount})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'unlearned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                    onClick={() => setStatusFilter('unlearned')}
+                  >
+                    ⏳ Por aprender ({unlearnedCount})
+                  </button>
+                </div>
+              </div>
+
+              {/* Selector de Nivel JLPT: Título y botones en líneas separadas */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                    Nivel:
+                  </span>
+                  {isLoading && (
+                    <span style={{ fontSize: '0.78rem', color: 'var(--primary)' }}>
+                      ⚡ Cargando...
+                    </span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
+                  {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
+                    <button
+                      key={lvl}
+                      type="button"
+                      className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                      style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                      onClick={() => {
+                        setLevel(lvl);
+                        setSelectedTag('all');
+                        updateParams(mode, lvl, 'all', searchTerm);
+                      }}
+                    >
+                      {lvl === 'all' ? 'Todos' : lvl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Selector de Etiquetas (Tags) colapsable/expandible en una sola línea sin dropdown */}
+              {availableTags.length > 0 && (() => {
+                const FIRST_LINE_TAGS_LIMIT = 5;
+                const displayedTags = areTagsExpanded
+                  ? availableTags
+                  : availableTags.slice(0, FIRST_LINE_TAGS_LIMIT);
+
+                return (
+                  <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                        <Tag size={13} />
+                        <span>Etiquetas:</span>
+                      </div>
+                      {availableTags.length > FIRST_LINE_TAGS_LIMIT && (
+                        <button
+                          type="button"
+                          onClick={() => setAreTagsExpanded(!areTagsExpanded)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'var(--primary)',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            padding: '2px 4px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}
+                        >
+                          <span>{areTagsExpanded ? 'Ver menos ▲' : `+ Ver más (${availableTags.length - FIRST_LINE_TAGS_LIMIT}) ▼`}</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className={`vocab-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSelectedTag('all');
+                          updateParams(mode, level, 'all', searchTerm);
+                        }}
+                      >
+                        Todas
+                      </button>
+                      {displayedTags.map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          className={`vocab-tag-pill ${selectedTag === tag ? 'active' : ''}`}
+                          onClick={() => {
+                            const nextTag = selectedTag === tag ? 'all' : tag;
+                            setSelectedTag(nextTag);
+                            updateParams(mode, level, nextTag, searchTerm);
+                          }}
+                        >
+                          #{tag}
+                        </button>
+                      ))}
+                      {!areTagsExpanded && availableTags.length > FIRST_LINE_TAGS_LIMIT && (
+                        <button
+                          type="button"
+                          className="vocab-tag-pill"
+                          onClick={() => setAreTagsExpanded(true)}
+                          style={{
+                            color: 'var(--primary)',
+                            borderColor: 'var(--primary)',
+                            fontWeight: 700,
+                            background: 'rgba(99, 102, 241, 0.08)'
+                          }}
+                        >
+                          +{availableTags.length - FIRST_LINE_TAGS_LIMIT} más...
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Filtros Especiales: Notas y Editadas */}
+              <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Filtros Especiales:
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${filterOnlyWithNotes ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setFilterOnlyWithNotes(!filterOnlyWithNotes)}
+                    style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem' }}
+                    title="Ver palabras con notas personales"
+                  >
+                    <StickyNote size={12} />
+                    <span>Notas ({effectiveVocabList.filter(v => v.notes && v.notes.trim()).length})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${filterOnlyCustomized ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setFilterOnlyCustomized(!filterOnlyCustomized)}
+                    style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem' }}
+                    title="Ver palabras personalizadas"
+                  >
+                    <Edit3 size={12} />
+                    <span>Editadas ({effectiveVocabList.filter(v => v.isCustomized).length})</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Quick AI & Selection Helper Bar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>

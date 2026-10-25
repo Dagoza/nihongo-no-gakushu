@@ -5,7 +5,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import storiesData from '../../data/stories.json';
 import audioManager from '../../lib/audioManager';
-import { Volume2, Sparkles, BookOpen, PenTool, Info, Search, ArrowRight } from 'lucide-react';
+import { Volume2, Sparkles, BookOpen, PenTool, Info, Search, ArrowRight, SlidersHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import { useApp } from '../../lib/AppContext';
 
@@ -39,6 +39,12 @@ export default function StoryTab({
   const [readingMode, setReadingMode] = useState(initialMode || 'natural'); // 'natural', 'hiragana', 'kanji_only'
   const [storyLevelFilter, setStoryLevelFilter] = useState('Todos'); // 'Todos', 'N5', 'N4', 'N3', 'Personalizadas'
   const [storySearch, setStorySearch] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = storyLevelFilter !== 'Todos' ? 1 : 0;
+  const handleResetFilters = () => {
+    setStoryLevelFilter('Todos');
+  };
 
   useEffect(() => {
     if (initialStoryId && allStories.some(s => s.id === initialStoryId)) {
@@ -339,42 +345,116 @@ export default function StoryTab({
           </button>
         </div>
 
-        {/* Filter Pills and Search */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {['Todos', 'N5', 'N4', 'N3', 'Personalizadas'].map((lvl) => {
-              const count = 
-                lvl === 'Todos' ? allStories.length :
-                lvl === 'Personalizadas' ? allStories.filter(s => s.isCustom).length :
-                allStories.filter(s => (s.level || s.difficulty) === lvl).length;
-              const isActive = storyLevelFilter === lvl;
-              return (
-                <button
-                  key={lvl}
-                  className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setStoryLevelFilter(lvl)}
-                  style={{ fontSize: '0.8rem', padding: '4px 12px' }}
-                >
-                  {lvl === 'Todos' ? `Todas (${count})` :
-                   lvl === 'Personalizadas' ? `✨ Creadas (${count})` :
-                   `${lvl} (${count})`}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Quick Search */}
-          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '4px 10px', gap: 6, minWidth: 220 }}>
-            <Search size={14} style={{ color: 'var(--text-muted)' }} />
+        {/* Search Bar & Botón de Filtros */}
+        <div className="vocab-filter-bar" style={{ marginBottom: 14 }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+            <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
-              placeholder="Buscar historia..."
+              className="search-input"
+              style={{ paddingLeft: 38, width: '100%' }}
+              placeholder="Buscar historia por título o descripción..."
               value={storySearch}
               onChange={(e) => setStorySearch(e.target.value)}
-              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.85rem', width: '100%' }}
             />
+            {storySearch && (
+              <button
+                type="button"
+                onClick={() => setStorySearch('')}
+                aria-label="Limpiar búsqueda"
+                style={{
+                  position: 'absolute',
+                  right: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
+
+          <button
+            type="button"
+            className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+            onClick={() => setShowFilters(prev => !prev)}
+            aria-expanded={showFilters}
+            title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+          >
+            <SlidersHorizontal size={15} />
+            <span>Filtros</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-toggle-badge">
+                {activeFilterCount}
+              </span>
+            )}
+            {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+          </button>
         </div>
+
+        {/* Filtros Integrados (Colapsable) */}
+        {showFilters && (
+          <div className="card filter-card-animated" style={{ padding: '14px 16px', marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {activeFilterCount > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--primary)',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    padding: '2px 4px'
+                  }}
+                >
+                  Limpiar todos
+                </button>
+              </div>
+            )}
+
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                Nivel / Dificultad:
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {['Todos', 'N5', 'N4', 'N3', 'Personalizadas'].map((lvl) => {
+                  const count = 
+                    lvl === 'Todos' ? allStories.length :
+                    lvl === 'Personalizadas' ? allStories.filter(s => s.isCustom).length :
+                    allStories.filter(s => (s.level || s.difficulty) === lvl).length;
+                  const isActive = storyLevelFilter === lvl;
+                  return (
+                    <button
+                      key={lvl}
+                      type="button"
+                      className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-outline'}`}
+                      onClick={() => setStoryLevelFilter(lvl)}
+                      style={{ fontSize: '0.8rem', padding: '4px 12px' }}
+                    >
+                      {lvl === 'Todos' ? `Todas (${count})` :
+                       lvl === 'Personalizadas' ? `✨ Creadas (${count})` :
+                       `${lvl} (${count})`}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Stories Grid / Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
