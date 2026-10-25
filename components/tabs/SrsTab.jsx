@@ -337,19 +337,12 @@ export default function SrsTab({ onNavigate }) {
   const isGoalReached = dailyGoal.completed || todayProgress >= (dailyGoal.target || 5);
 
   return (
-    <div className="srs-tab-container" style={{ maxWidth: 960, margin: '0 auto', padding: '16px 20px 48px' }}>
+    <div className="srs-tab-container">
       {/* Hero Header */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(245, 158, 11, 0.08))',
-        border: '1.5px solid rgba(99, 102, 241, 0.25)',
-        borderRadius: 20,
-        padding: '24px 28px',
-        marginBottom: 24,
-        position: 'relative'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
+      <div className="srs-hero-card">
+        <div className="srs-hero-top">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
               <span style={{
                 fontSize: '0.74rem',
                 fontWeight: 800,
@@ -377,15 +370,15 @@ export default function SrsTab({ onNavigate }) {
               </span>
             </div>
 
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-main)' }}>
+            <h1 className="srs-hero-title">
               Centro de Preguntas & Repaso Espaciado (SRS)
             </h1>
-            <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', margin: 0, maxWidth: 620, lineHeight: 1.5 }}>
+            <p className="srs-hero-desc">
               Practica preguntas inteligentes de Kanji, Vocabulario, Gramática y Examen JLPT optimizadas por el algoritmo matemático FSRS v5 para consolidar tu memoria antes del olvido.
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <div className="srs-hero-actions">
             <button
               type="button"
               className="btn btn-primary"
@@ -419,53 +412,45 @@ export default function SrsTab({ onNavigate }) {
         </div>
 
         {/* Quick Due Cards Counters */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-          gap: 12,
-          marginTop: 20,
-          paddingTop: 18,
-          borderTop: '1px solid rgba(99, 102, 241, 0.15)'
-        }}>
-          <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>PREGUNTAS FSRS</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--primary)' }}>{dueCounts.questions}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>pendientes</div>
+        <div className="srs-due-grid">
+          <div className="srs-due-card">
+            <div className="srs-due-card-label">PREGUNTAS FSRS</div>
+            <div className="srs-due-card-val" style={{ color: 'var(--primary)' }}>{dueCounts.questions}</div>
+            <div className="srs-due-card-sub">pendientes</div>
           </div>
-          <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>VOCABULARIO</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#3b82f6' }}>{dueCounts.vocab}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>por repasar</div>
+          <div className="srs-due-card">
+            <div className="srs-due-card-label">VOCABULARIO</div>
+            <div className="srs-due-card-val" style={{ color: '#3b82f6' }}>{dueCounts.vocab}</div>
+            <div className="srs-due-card-sub">por repasar</div>
           </div>
-          <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>KANJI</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#f59e0b' }}>{dueCounts.kanji}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>por repasar</div>
+          <div className="srs-due-card">
+            <div className="srs-due-card-label">KANJI</div>
+            <div className="srs-due-card-val" style={{ color: '#f59e0b' }}>{dueCounts.kanji}</div>
+            <div className="srs-due-card-sub">por repasar</div>
           </div>
-          <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>GRAMÁTICA</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#10b981' }}>{dueCounts.particles}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>por repasar</div>
+          <div className="srs-due-card">
+            <div className="srs-due-card-label">GRAMÁTICA</div>
+            <div className="srs-due-card-val" style={{ color: '#10b981' }}>{dueCounts.particles}</div>
+            <div className="srs-due-card-sub">por repasar</div>
           </div>
-          <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>ESCRITURA</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ec4899' }}>{dueCounts.scriptpad || 0}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>en Scriptpad</div>
+          <div className="srs-due-card">
+            <div className="srs-due-card-label">ESCRITURA</div>
+            <div className="srs-due-card-val" style={{ color: '#ec4899' }}>{dueCounts.scriptpad || 0}</div>
+            <div className="srs-due-card-sub">en Scriptpad</div>
           </div>
-          <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>TOTAL REPASO</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--accent, #f59e0b)' }}>{dueCounts.total}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>tarjetas listas</div>
+          <div className="srs-due-card">
+            <div className="srs-due-card-label">TOTAL REPASO</div>
+            <div className="srs-due-card-val" style={{ color: 'var(--accent, #f59e0b)' }}>{dueCounts.total}</div>
+            <div className="srs-due-card-sub">tarjetas listas</div>
           </div>
         </div>
       </div>
 
       {/* Mode Navigation Tabs */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 20, borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
+      <div className="srs-mode-tabs-wrapper">
         <button
           type="button"
-          className={`btn ${activeSection === 'quiz' ? 'btn-primary' : 'btn-outline'}`}
-          style={{ borderRadius: 10, padding: '8px 16px', fontWeight: 700, gap: 8 }}
+          className={`btn srs-mode-btn ${activeSection === 'quiz' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveSection('quiz')}
         >
           <Target size={15} />
@@ -474,18 +459,16 @@ export default function SrsTab({ onNavigate }) {
 
         <button
           type="button"
-          className={`btn ${activeSection === 'analytics' ? 'btn-primary' : 'btn-outline'}`}
-          style={{ borderRadius: 10, padding: '8px 16px', fontWeight: 700, gap: 8 }}
+          className={`btn srs-mode-btn ${activeSection === 'analytics' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveSection('analytics')}
         >
           <BarChart2 size={15} />
-          <span>Análisis & Curvas del Algoritmo</span>
+          <span>Análisis & Curvas</span>
         </button>
 
         <button
           type="button"
-          className="btn btn-outline"
-          style={{ borderRadius: 10, padding: '8px 14px', gap: 6, marginLeft: 'auto' }}
+          className="btn srs-mode-btn btn-outline"
           onClick={() => onNavigate?.('vocab', 'srs')}
         >
           <BookOpen size={15} />
@@ -494,8 +477,7 @@ export default function SrsTab({ onNavigate }) {
 
         <button
           type="button"
-          className="btn btn-outline"
-          style={{ borderRadius: 10, padding: '8px 14px', gap: 6 }}
+          className="btn srs-mode-btn btn-outline"
           onClick={() => onNavigate?.('scriptpad')}
         >
           <PenTool size={15} />
@@ -507,13 +489,7 @@ export default function SrsTab({ onNavigate }) {
       {activeSection === 'quiz' && (
         <div>
           {/* Controls Bar: Category & JLPT Level */}
-          <div style={{
-            background: 'var(--bg-main)',
-            border: '1px solid var(--border)',
-            borderRadius: 16,
-            padding: '16px 20px',
-            marginBottom: 20
-          }}>
+          <div className="srs-controls-card">
             <div style={{ marginBottom: 14 }}>
               <label style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: 8, letterSpacing: 0.5 }}>
                 CATEGORÍA TEMÁTICA
@@ -541,12 +517,12 @@ export default function SrsTab({ onNavigate }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'center' }}>
+            <div className="srs-controls-subrow">
               <div>
                 <label style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: 8, letterSpacing: 0.5 }}>
                   NIVEL JLPT (ESTÁNDAR N5 A N1)
                 </label>
-                <div style={{ display: 'flex', gap: 6 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {JLPT_LEVELS.map(lvl => (
                     <button
                       key={lvl}
@@ -568,7 +544,7 @@ export default function SrsTab({ onNavigate }) {
                 <label style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: 8, letterSpacing: 0.5 }}>
                   PREGUNTAS EN ESTA TANDA
                 </label>
-                <div style={{ display: 'flex', gap: 6 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {[3, 5, 10].map(cnt => (
                     <button
                       key={cnt}
@@ -586,7 +562,7 @@ export default function SrsTab({ onNavigate }) {
                 </div>
               </div>
 
-              <div style={{ marginLeft: 'auto', marginTop: 16 }}>
+              <div className="srs-reset-btn-wrap" style={{ marginLeft: 'auto' }}>
                 <button
                   type="button"
                   className="btn btn-secondary btn-sm"
@@ -602,10 +578,10 @@ export default function SrsTab({ onNavigate }) {
 
           {/* Active Question Box */}
           {!sessionCompleted && currentQuestion ? (
-            <div className="card" style={{ padding: '24px 28px', borderRadius: 18, border: '1.5px solid var(--border)' }}>
+            <div className="card srs-question-card">
               {/* Question metadata & utility buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className="srs-question-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <span style={{
                     fontSize: '0.78rem',
                     fontWeight: 800,
@@ -641,7 +617,7 @@ export default function SrsTab({ onNavigate }) {
                   </span>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
@@ -669,7 +645,7 @@ export default function SrsTab({ onNavigate }) {
               </div>
 
               {/* Progress bar */}
-              <div style={{ height: 6, width: '100%', background: 'var(--border)', borderRadius: 999, overflow: 'hidden', marginBottom: 24 }}>
+              <div style={{ height: 6, width: '100%', background: 'var(--border)', borderRadius: 999, overflow: 'hidden', marginBottom: 20 }}>
                 <div style={{
                   height: '100%',
                   width: `${Math.round(((currentIndex + (feedback ? 1 : 0)) / queue.length) * 100)}%`,
@@ -679,13 +655,7 @@ export default function SrsTab({ onNavigate }) {
               </div>
 
               {/* Question Text Box */}
-              <div style={{
-                background: 'var(--bg-main)',
-                border: '1px solid var(--border)',
-                borderRadius: 14,
-                padding: '22px',
-                marginBottom: 20
-              }}>
+              <div className="srs-question-box">
                 <div 
                   className="jp-text"
                   style={{ fontSize: '1.35rem', fontWeight: 700, lineHeight: 1.6, color: 'var(--text-main)', marginBottom: 8 }}
@@ -700,21 +670,10 @@ export default function SrsTab({ onNavigate }) {
               </div>
 
               {/* Options Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12, marginBottom: 20 }}>
+              <div className="srs-options-grid">
                 {currentQuestion.options.map((opt, oIdx) => {
                   let optStyle = {
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '14px 20px',
-                    borderRadius: 12,
-                    border: '1.5px solid var(--border)',
-                    background: 'var(--bg-surface)',
-                    cursor: feedback ? 'default' : 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    transition: 'all 0.15s ease'
+                    cursor: feedback ? 'default' : 'pointer'
                   };
 
                   if (feedback) {
@@ -738,6 +697,7 @@ export default function SrsTab({ onNavigate }) {
                     <button
                       key={oIdx}
                       type="button"
+                      className="srs-option-btn"
                       style={optStyle}
                       disabled={!!feedback}
                       onClick={() => handleSelectOption(oIdx)}
@@ -746,10 +706,10 @@ export default function SrsTab({ onNavigate }) {
                         {opt}
                       </span>
                       {feedback && oIdx === currentQuestion.correctIndex && (
-                        <CheckCircle2 size={18} color="var(--success, #10b981)" />
+                        <CheckCircle2 size={18} color="var(--success, #10b981)" style={{ flexShrink: 0, marginLeft: 8 }} />
                       )}
                       {feedback && oIdx === selectedOption && oIdx !== currentQuestion.correctIndex && (
-                        <X size={18} color="var(--danger, #ef4444)" />
+                        <X size={18} color="var(--danger, #ef4444)" style={{ flexShrink: 0, marginLeft: 8 }} />
                       )}
                     </button>
                   );
@@ -758,14 +718,14 @@ export default function SrsTab({ onNavigate }) {
 
               {/* Feedback and Pedagogical Explanation Box */}
               {feedback && (
-                <div style={{
-                  padding: '18px 22px',
-                  borderRadius: 14,
-                  background: feedback.isCorrect ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
-                  border: `1px solid ${feedback.isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-                  marginBottom: 20
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <div 
+                  className="srs-feedback-box"
+                  style={{
+                    background: feedback.isCorrect ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                    border: `1px solid ${feedback.isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap', gap: 6 }}>
                     <span style={{
                       fontWeight: 800,
                       fontSize: '1rem',
@@ -789,47 +749,35 @@ export default function SrsTab({ onNavigate }) {
                   </div>
 
                   {/* FSRS Rating Adjustment Bar */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingTop: 12,
-                    borderTop: '1px solid rgba(0,0,0,0.06)',
-                    flexWrap: 'wrap',
-                    gap: 8
-                  }}>
+                  <div className="srs-rating-container">
                     <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                       Calificar dificultad en memoria:
                     </span>
-                    <div style={{ display: 'flex', gap: 6 }}>
+                    <div className="srs-rating-grid">
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.AGAIN ? 'btn-danger' : 'btn-outline'}`}
-                        style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.AGAIN ? 'btn-danger' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.AGAIN)}
                       >
                         Repetir ({questionIntervals[1] || '1d'})
                       </button>
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.HARD ? 'btn-primary' : 'btn-outline'}`}
-                        style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.HARD ? 'btn-primary' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.HARD)}
                       >
                         Difícil ({questionIntervals[2] || '2d'})
                       </button>
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.GOOD ? 'btn-primary' : 'btn-outline'}`}
-                        style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.GOOD ? 'btn-primary' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.GOOD)}
                       >
                         Bien ({questionIntervals[3] || '3d'})
                       </button>
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.EASY ? 'btn-success' : 'btn-outline'}`}
-                        style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.EASY ? 'btn-success' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.EASY)}
                       >
                         Fácil ({questionIntervals[4] || '8d'})
@@ -840,12 +788,12 @@ export default function SrsTab({ onNavigate }) {
               )}
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, width: '100%' }}>
                 {feedback && (
                   <button
                     type="button"
                     className="btn btn-primary btn-lg"
-                    style={{ borderRadius: 12, padding: '12px 24px', fontWeight: 700 }}
+                    style={{ borderRadius: 12, padding: '12px 24px', fontWeight: 700, width: '100%', maxWidth: 280, justifyContent: 'center' }}
                     onClick={handleNext}
                   >
                     <span>{currentIndex + 1 < queue.length ? 'Siguiente Pregunta' : 'Completar Tanda'}</span>
@@ -856,7 +804,7 @@ export default function SrsTab({ onNavigate }) {
             </div>
           ) : sessionCompleted ? (
             /* Completed Screen */
-            <div className="card" style={{ textAlign: 'center', padding: '40px 20px', borderRadius: 20 }}>
+            <div className="card" style={{ textAlign: 'center', padding: '36px 16px', borderRadius: 20, boxSizing: 'border-box', width: '100%' }}>
               <div style={{
                 width: 68,
                 height: 68,
@@ -879,18 +827,18 @@ export default function SrsTab({ onNavigate }) {
                 Has respondido tus preguntas del algoritmo FSRS. Las tarjetas han sido reprogramadas para tus próximas sesiones de repaso.
               </p>
 
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 28 }}>
-                <div style={{ padding: '14px 20px', borderRadius: 14, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginBottom: 28, flexWrap: 'wrap' }}>
+                <div style={{ padding: '14px 20px', borderRadius: 14, background: 'var(--bg-main)', border: '1px solid var(--border)', minWidth: 120 }}>
                   <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>+{statsGained.xp} XP</div>
                   <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Experiencia</div>
                 </div>
-                <div style={{ padding: '14px 20px', borderRadius: 14, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
+                <div style={{ padding: '14px 20px', borderRadius: 14, background: 'var(--bg-main)', border: '1px solid var(--border)', minWidth: 120 }}>
                   <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--success, #10b981)' }}>{statsGained.correct}/{queue.length}</div>
                   <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Aciertos</div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   className="btn btn-outline"
