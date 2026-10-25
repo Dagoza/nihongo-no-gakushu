@@ -207,18 +207,27 @@ export default function SrsTab({ onNavigate }) {
 
     // Priorizar tarjetas pendientes en FSRS
     const srsDue = [];
-    const nonDue = [];
+    const newItems = [];
+    const futureDue = [];
 
     pool.forEach(item => {
       const card = appStateRef.current?.srsQuestions?.[item.id];
-      if (card && isDue(card)) {
-        srsDue.push(item);
+      if (card) {
+        if (isDue(card)) {
+          srsDue.push(item);
+        } else {
+          futureDue.push(item);
+        }
       } else {
-        nonDue.push(item);
+        newItems.push(item);
       }
     });
 
-    const finalQueue = [...shuffleArray(srsDue), ...shuffleArray(nonDue)].slice(0, tgt);
+    const finalQueue = [
+      ...shuffleArray(srsDue),
+      ...shuffleArray(newItems),
+      ...shuffleArray(futureDue)
+    ].slice(0, tgt);
     setQueue(finalQueue);
     setCurrentIndex(0);
     setSelectedOption(null);
@@ -233,6 +242,15 @@ export default function SrsTab({ onNavigate }) {
   }, [generateQueue, selectedCategory, selectedLevel, targetCount]);
 
   const currentQuestion = queue[currentIndex];
+
+  // Previsualización dinámica de intervalos FSRS para la pregunta activa
+  const questionIntervals = useMemo(() => {
+    if (!currentQuestion) return { 1: '1d', 2: '2d', 3: '3d', 4: '8d' };
+    const baseCard = feedback?.prevCard !== undefined 
+      ? feedback.prevCard 
+      : appState?.srsQuestions?.[currentQuestion.id];
+    return getIntervalPreviews(baseCard);
+  }, [currentQuestion, feedback, appState]);
 
   // Answering option
   const handleSelectOption = (index) => {
@@ -269,7 +287,8 @@ export default function SrsTab({ onNavigate }) {
     setFeedback({
       isCorrect,
       explanation: currentQuestion.explanation,
-      rating
+      rating,
+      prevCard: currentCard
     });
 
     setStatsGained(prev => ({
@@ -296,8 +315,10 @@ export default function SrsTab({ onNavigate }) {
   // Manual rating adjustment
   const handleManualRating = (customRating) => {
     if (!currentQuestion) return;
-    const currentCard = appState?.srsQuestions?.[currentQuestion.id];
-    const newCard = reviewQuestionCard(currentCard, customRating);
+    const baseCard = feedback?.prevCard !== undefined 
+      ? feedback.prevCard 
+      : appState?.srsQuestions?.[currentQuestion.id];
+    const newCard = reviewQuestionCard(baseCard, customRating);
     const updated = {
       ...appState,
       srsQuestions: {
@@ -425,6 +446,11 @@ export default function SrsTab({ onNavigate }) {
             <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>GRAMÁTICA</div>
             <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#10b981' }}>{dueCounts.particles}</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>por repasar</div>
+          </div>
+          <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>ESCRITURA</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ec4899' }}>{dueCounts.scriptpad || 0}</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>en Scriptpad</div>
           </div>
           <div style={{ padding: '10px 14px', borderRadius: 12, background: 'var(--bg-main)', border: '1px solid var(--border)' }}>
             <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>TOTAL REPASO</div>
@@ -594,6 +620,22 @@ export default function SrsTab({ onNavigate }) {
                      currentQuestion.category === 'grammar' ? '⚡ Gramática' :
                      `🎯 JLPT ${currentQuestion.level}`}
                   </span>
+                  {appState?.srsQuestions?.[currentQuestion.id] && isDue(appState.srsQuestions[currentQuestion.id]) && (
+                    <span style={{
+                      fontSize: '0.74rem',
+                      fontWeight: 800,
+                      padding: '3px 10px',
+                      borderRadius: 999,
+                      background: 'rgba(245, 158, 11, 0.15)',
+                      color: '#f59e0b',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}>
+                      <Clock size={12} />
+                      <span>Por Repasar</span>
+                    </span>
+                  )}
                   <span style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                     Pregunta {currentIndex + 1} de {queue.length}
                   </span>
@@ -766,7 +808,7 @@ export default function SrsTab({ onNavigate }) {
                         style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.AGAIN)}
                       >
-                        Repetir (&lt;10m)
+                        Repetir ({questionIntervals[1] || '1d'})
                       </button>
                       <button
                         type="button"
@@ -774,7 +816,7 @@ export default function SrsTab({ onNavigate }) {
                         style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.HARD)}
                       >
-                        Difícil (1d)
+                        Difícil ({questionIntervals[2] || '2d'})
                       </button>
                       <button
                         type="button"
@@ -782,7 +824,7 @@ export default function SrsTab({ onNavigate }) {
                         style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.GOOD)}
                       >
-                        Bien (3d)
+                        Bien ({questionIntervals[3] || '3d'})
                       </button>
                       <button
                         type="button"
@@ -790,7 +832,7 @@ export default function SrsTab({ onNavigate }) {
                         style={{ padding: '3px 10px', fontSize: '0.75rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.EASY)}
                       >
-                        Fácil (7d)
+                        Fácil ({questionIntervals[4] || '8d'})
                       </button>
                     </div>
                   </div>

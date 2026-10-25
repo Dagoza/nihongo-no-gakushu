@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { X, Flame, Star, CheckCircle2, RotateCcw, Volume2, Eye, EyeOff, Sparkles, ArrowRight, Bell, Award, Languages, Layers, Target, Check, Settings2, Info, Maximize2 } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
-import { SRSRating, isDue, reviewQuestionCard } from '../../lib/srs';
+import { SRSRating, isDue, reviewQuestionCard, getIntervalPreviews } from '../../lib/srs';
 import { recordDailyGoalActivity, saveState } from '../../lib/storage';
 import audioManager from '../../lib/audioManager';
 import useFocusTrap from '../../lib/useFocusTrap';
@@ -247,18 +247,27 @@ export default function DailyGoalModal({ isOpen, onClose }) {
 
     // Priorizar tarjetas FSRS pendientes de repaso
     const srsDue = [];
-    const nonDue = [];
+    const newItems = [];
+    const futureDue = [];
 
     pool.forEach(item => {
       const card = appStateRef.current?.srsQuestions?.[item.id];
-      if (card && isDue(card)) {
-        srsDue.push(item);
+      if (card) {
+        if (isDue(card)) {
+          srsDue.push(item);
+        } else {
+          futureDue.push(item);
+        }
       } else {
-        nonDue.push(item);
+        newItems.push(item);
       }
     });
 
-    const finalQueue = [...shuffleArray(srsDue), ...shuffleArray(nonDue)].slice(0, tgt);
+    const finalQueue = [
+      ...shuffleArray(srsDue),
+      ...shuffleArray(newItems),
+      ...shuffleArray(futureDue)
+    ].slice(0, tgt);
 
     // Guardar sesión activa en storage para persistencia ante bloqueos de pantalla o idles
     const today = new Date().toISOString().split('T')[0];
@@ -326,6 +335,15 @@ export default function DailyGoalModal({ isOpen, onClose }) {
   const currentQuestion = queue[currentIndex];
   const canShowSettings = currentIndex === 0 && selectedOption === null && !feedback && !sessionCompleted;
 
+  // Previsualizaciones dinámicas de intervalos FSRS para la pregunta activa
+  const questionIntervals = useMemo(() => {
+    if (!currentQuestion) return { 1: '1d', 2: '2d', 3: '3d', 4: '8d' };
+    const baseCard = feedback?.prevCard !== undefined 
+      ? feedback.prevCard 
+      : appState?.srsQuestions?.[currentQuestion.id];
+    return getIntervalPreviews(baseCard);
+  }, [currentQuestion, feedback, appState]);
+
   // Handle answering an option
   const handleSelectOption = (index) => {
     if (feedback || !currentQuestion) return;
@@ -366,7 +384,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
     setFeedback({
       isCorrect,
       explanation: currentQuestion.explanation,
-      rating
+      rating,
+      prevCard: currentCard
     });
 
     setStatsGained(prev => {
@@ -413,8 +432,10 @@ export default function DailyGoalModal({ isOpen, onClose }) {
   // Allow manual rating override with FSRS (Again, Hard, Good, Easy)
   const handleManualRating = (customRating) => {
     if (!currentQuestion) return;
-    const currentCard = appState?.srsQuestions?.[currentQuestion.id];
-    const newCard = reviewQuestionCard(currentCard, customRating);
+    const baseCard = feedback?.prevCard !== undefined 
+      ? feedback.prevCard 
+      : appState?.srsQuestions?.[currentQuestion.id];
+    const newCard = reviewQuestionCard(baseCard, customRating);
     const updated = {
       ...appState,
       srsQuestions: {
@@ -885,7 +906,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                         style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.AGAIN)}
                       >
-                        Repetir (&lt;10m)
+                        Repetir ({questionIntervals[1] || '1d'})
                       </button>
                       <button
                         type="button"
@@ -893,7 +914,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                         style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.HARD)}
                       >
-                        Difícil (1d)
+                        Difícil ({questionIntervals[2] || '2d'})
                       </button>
                       <button
                         type="button"
@@ -901,7 +922,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                         style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.GOOD)}
                       >
-                        Bien (3d)
+                        Bien ({questionIntervals[3] || '3d'})
                       </button>
                       <button
                         type="button"
@@ -909,7 +930,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                         style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
                         onClick={() => handleManualRating(SRSRating.EASY)}
                       >
-                        Fácil (7d)
+                        Fácil ({questionIntervals[4] || '8d'})
                       </button>
                     </div>
                   </div>
