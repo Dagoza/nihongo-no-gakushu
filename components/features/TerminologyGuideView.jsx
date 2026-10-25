@@ -558,7 +558,7 @@ export default function TerminologyGuideView({
   const currentAccessData = TAB_ACCESS_DATA[activePillar] || TAB_ACCESS_DATA.writing;
 
   return (
-    <div className="home-hub-container" style={{ maxWidth: 1160, margin: '0 auto', padding: '24px 16px 80px' }}>
+    <div className="section-panel active terminology-page-container">
       
       {/* 1. HERO DE LA PÁGINA (CABECERA SIN BOTONES REDUNDANTES) */}
       <section 

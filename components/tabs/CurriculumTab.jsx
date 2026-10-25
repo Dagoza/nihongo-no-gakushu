@@ -2541,7 +2541,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
   // DEFAULT VIEW: Overview of all Curriculum Steps
   return (
-    <div>
+    <div className="section-panel active curriculum-page-container">
       {/* Header */}
       <div className="module-hero-card">
         <div className="module-hero-content">

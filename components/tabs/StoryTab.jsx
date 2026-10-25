@@ -269,7 +269,7 @@ export default function StoryTab({
   };
 
   return (
-    <div>
+    <div className="section-panel active story-page-container">
       {/* Top Hero Banner */}
       <div className="module-hero-card">
         <div className="module-hero-content">

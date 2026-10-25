@@ -1880,15 +1880,52 @@ body {
   min-height: auto;
 }
 
+/* ==========================================================================
+   Standardized Page Containers (SRS Desktop Layout Standard - Unified Across All Modules)
+   ========================================================================== */
+.page-container,
+.section-panel,
+.srs-tab-container,
+.saved-tab-page,
+.jlpt-exam-tab-pane,
+.curriculum-page-container,
+.curriculum-detail-view,
+.story-page-container,
+.youtube-immersion-page,
+.terminology-page-container,
+.home-hub-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 16px 20px 48px;
+  overflow-x: hidden;
+}
+
 .section-panel {
   display: none;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .section-panel.active {
   display: block;
   animation: fadeIn 0.25s ease-out;
+}
+
+@media (max-width: 640px) {
+  .page-container,
+  .section-panel,
+  .srs-tab-container,
+  .saved-tab-page,
+  .jlpt-exam-tab-pane,
+  .curriculum-page-container,
+  .curriculum-detail-view,
+  .story-page-container,
+  .youtube-immersion-page,
+  .terminology-page-container,
+  .home-hub-container {
+    padding: 8px 0px 48px !important;
+    max-width: 100% !important;
+  }
 }
 
 .scriptpad-flashcards-container,
@@ -3054,7 +3091,7 @@ ruby.furigana-ruby rt {
 /* Kanji Grid */
 .kanji-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
 }
 
@@ -12841,7 +12878,7 @@ html {
 
 /* JLPT Exam Module Responsive Styling */
 .jlpt-exam-tab-pane {
-  max-width: 1040px;
+  max-width: 960px;
   margin: 0 auto;
   padding-bottom: 120px;
   width: 100%;
@@ -13778,9 +13815,9 @@ html {
 /* 1. Main Home Container */
 .home-hub-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 24px 20px 48px;
+  padding: 16px 20px 48px;
   display: flex;
   flex-direction: column;
   gap: 36px;
