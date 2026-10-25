@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync, User, LogIn, LogOut, ChevronDown, RefreshCw, Mail, Bell, ArrowRight, PenTool, Settings, Target, Compass, Info, Menu, X } from 'lucide-react';
+import { Flame, Star, CheckCircle, BookOpen, Moon, Sun, Keyboard, CloudCheck, CloudOff, CloudSync, User, LogIn, LogOut, ChevronDown, RefreshCw, Mail, Bell, ArrowRight, PenTool, NotebookPen, Settings, Target, Compass, Info, Menu, X } from 'lucide-react';
 import curriculumData from '../../data/curriculum.json';
 import nhkLessonsData from '../../data/nhk_lessons.json';
 import convExercisesData from '../../data/conversation_exercises.json';
@@ -408,24 +408,6 @@ export default function Header({
               )}
             </div>
 
-            {/* Quick Tour / Onboarding Guide Button */}
-            <button 
-              type="button"
-              className="theme-toggle-btn tour-header-quick-btn"
-              onClick={() => {
-                if (typeof onOpenTour === 'function') {
-                  onOpenTour();
-                } else if (contextApp?.openTour) {
-                  contextApp.openTour();
-                } else if (typeof window !== 'undefined' && window.__nihongoOpenTour) {
-                  window.__nihongoOpenTour();
-                }
-              }}
-              title="Guía y Tour Interactivo de la Aplicación"
-              aria-label="Abrir tour interactivo de la aplicación"
-            >
-              <Compass size={17} style={{ color: 'var(--primary, #6366f1)' }} />
-            </button>
 
             {/* Theme Toggle Button */}
             <button 
@@ -581,6 +563,22 @@ export default function Header({
                         className="session-action-item"
                         onClick={() => {
                           setIsDropdownOpen(false);
+                          const opts = { text: '', kana: '', title: 'Cuaderno Libre', source: 'free', ghostOpacity: 0 };
+                          if (contextApp?.openPracticePad) {
+                            contextApp.openPracticePad(opts);
+                          } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                            window.__nihongoOpenPracticePad(opts);
+                          }
+                        }}
+                      >
+                        <NotebookPen size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+                        <span>Cuaderno Libre</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
                           if (contextApp?.setIsSettingsModalOpen) {
                             contextApp.setIsSettingsModalOpen(true);
                           }
@@ -658,6 +656,23 @@ export default function Header({
                     </div>
 
                     <div className="session-card-actions">
+                      <button
+                        type="button"
+                        className="session-action-item"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          const opts = { text: '', kana: '', title: 'Cuaderno Libre', source: 'free', ghostOpacity: 0 };
+                          if (contextApp?.openPracticePad) {
+                            contextApp.openPracticePad(opts);
+                          } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                            window.__nihongoOpenPracticePad(opts);
+                          }
+                        }}
+                      >
+                        <NotebookPen size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+                        <span>Cuaderno Libre</span>
+                      </button>
+
                       <button
                         type="button"
                         className="session-action-item"
@@ -791,6 +806,27 @@ export default function Header({
           >
             <Keyboard size={16} className="text-rose-500" />
             <span>IME 🇯🇵</span>
+          </div>
+
+          {/* Acceso a Cuaderno Libre */}
+          <div 
+            className="stat-badge" 
+            style={{ 
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+            onClick={() => {
+              const opts = { text: '', kana: '', title: 'Cuaderno Libre', source: 'free', ghostOpacity: 0 };
+              if (contextApp?.openPracticePad) {
+                contextApp.openPracticePad(opts);
+              } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                window.__nihongoOpenPracticePad(opts);
+              }
+            }}
+            title="Cuaderno libre sin guía: dibuja y escribe con total libertad"
+          >
+            <NotebookPen size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <span style={{ fontWeight: 600 }}>Cuaderno ✍️</span>
           </div>
 
           {/* Acceso directo a Scriptpad y Unidades */}
