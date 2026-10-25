@@ -79,15 +79,18 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
     }
   }, [audioState.selectedText, audioState.currentText, audioState.currentAudioUrl, audioState.state]);
 
-  // Sincronizar clase de ocultamiento en móviles para adaptar el padding inferior del layout
+  // Sincronizar clase de ocultamiento en todos los dispositivos para adaptar el padding inferior del layout
   useEffect(() => {
     if (typeof document === 'undefined') return;
     if (!hasActiveWordOrAudio) {
+      document.body.classList.add('audio-bar-hidden');
       document.body.classList.add('audio-bar-mobile-hidden');
     } else {
+      document.body.classList.remove('audio-bar-hidden');
       document.body.classList.remove('audio-bar-mobile-hidden');
     }
     return () => {
+      document.body.classList.remove('audio-bar-hidden');
       document.body.classList.remove('audio-bar-mobile-hidden');
     };
   }, [hasActiveWordOrAudio]);
@@ -238,7 +241,8 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
 
   return (
     <>
-      <div className={`audio-player-bar ${isMinimized ? 'minimized' : ''} ${!hasActiveWordOrAudio ? 'mobile-hidden' : ''}`}>
+      {hasActiveWordOrAudio && (
+        <div className={`audio-player-bar ${isMinimized ? 'minimized' : ''}`}>
         {/* Clickable progress rail on the top border */}
         {isAudioTrack && (
           <div 
@@ -347,18 +351,6 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                       >
                         <PenTool size={13} />
                         <span>Cuaderno ✍️</span>
-                      </button>
-
-                      <button
-                        className="audio-clear-inline-btn"
-                        title="Limpiar palabra seleccionada y cerrar"
-                        onMouseDown={(e) => e.preventDefault()}
-                        onTouchStart={(e) => e.preventDefault()}
-                        onClick={handleClearAndClose}
-                        type="button"
-                      >
-                        <X size={13} />
-                        <span>Cerrar</span>
                       </button>
                     </div>
                   )}
@@ -536,6 +528,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
           )}
         </div>
       </div>
+      )}
 
       {/* Save Vocab / Phrase Modal */}
       <SaveVocabModal

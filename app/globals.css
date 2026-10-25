@@ -5182,9 +5182,24 @@ ruby.furigana-ruby rt {
    FLOATING AUDIO PLAYER BAR
    ========================================================================== */
 body.hide-audio-bar .audio-player-bar,
-body:has(.scriptpad-srs-container) .audio-player-bar {
+body:has(.scriptpad-srs-container) .audio-player-bar,
+.audio-player-bar.hidden,
+.audio-player-bar.mobile-hidden {
   display: none !important;
   pointer-events: none !important;
+}
+
+/* Ocultar espacio reservado inferior en todos los dispositivos si no hay nada señalado o activo */
+body.audio-bar-hidden,
+body.audio-bar-mobile-hidden,
+body:not(:has(.audio-player-bar)) {
+  padding-bottom: 0 !important;
+}
+
+body.audio-bar-hidden .main-container,
+body.audio-bar-mobile-hidden .main-container,
+body:not(:has(.audio-player-bar)) .main-container {
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 16px)) !important;
 }
 
 .audio-player-bar {
