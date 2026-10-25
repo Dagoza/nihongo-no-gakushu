@@ -125,8 +125,8 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
   };
 }
 
-// Duración del temporizador de auto-avance al completar una palabra (2 segundos para un ritmo ágil)
-const AUTO_ADVANCE_SECONDS = 2;
+// Duración del temporizador de auto-avance al completar una palabra (4 segundos según preferencia)
+const AUTO_ADVANCE_SECONDS = 4;
 
 export default function ScriptpadSrsReview({
   queue = [],
@@ -179,7 +179,7 @@ export default function ScriptpadSrsReview({
   const fallbackCanvasRef = useRef(null);
   const currentFallbackStrokeRef = useRef([]);
 
-  // Auto-avance: 2 segundos para dar ritmo ágil y tiempo de confirmar el resultado
+  // Auto-avance: 4 segundos para dar tiempo suficiente y cómodo
   const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
   const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(AUTO_ADVANCE_SECONDS);
 
@@ -371,7 +371,7 @@ export default function ScriptpadSrsReview({
     if (isFinishedRef.current) return;
     setIsWordCompleted(true);
     isWordCompletedRef.current = true;
-    setAutoAdvanceTimeLeft(AUTO_ADVANCE_SECONDS); // 2 segundos de avance ágil
+    setAutoAdvanceTimeLeft(AUTO_ADVANCE_SECONDS); // 4 segundos de avance
     const ratingInfo = getRatingInfoFromMistakes(totalMistakes, guideUsed);
     setAssignedRatingInfo(ratingInfo);
 

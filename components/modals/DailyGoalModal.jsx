@@ -482,16 +482,13 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 <h3 className="daily-goal-title">
                   Meta Diaria <span className="daily-goal-title-sub">· Reto de Hoy</span>
                 </h3>
-                <span className={`daily-goal-status-badge ${isGoalReached ? 'reached' : ''}`}>
-                  {isGoalReached ? '✓ Cumplida' : `${todayProgress}/${dailyGoal.target || 5} resueltas`}
-                </span>
               </div>
             </div>
 
-            <div className="daily-goal-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="daily-goal-header-actions">
               <button
                 type="button"
-                className="tour-info-shortcut-btn"
+                className="tour-info-shortcut-btn daily-goal-shortcut-btn"
                 onClick={() => {
                   onClose();
                   if (typeof window !== 'undefined') {
@@ -500,15 +497,14 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 }}
                 title="Abrir Centro de Repaso SRS en pantalla completa"
                 aria-label="Abrir Centro de Repaso SRS en pantalla completa"
-                style={{ padding: '3px 8px', fontSize: '0.74rem', display: 'flex', alignItems: 'center', gap: 4 }}
               >
-                <Maximize2 size={13} />
-                <span>Página Completa</span>
+                <Maximize2 size={14} />
+                <span className="daily-goal-action-label">Página Completa</span>
               </button>
 
               <button
                 type="button"
-                className="tour-info-shortcut-btn"
+                className="tour-info-shortcut-btn daily-goal-shortcut-btn"
                 onClick={() => {
                   onClose();
                   if (openTour) {
@@ -519,10 +515,9 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 }}
                 title="Ver guía y explicación de la Meta Diaria en el tour"
                 aria-label="Guía de Meta Diaria"
-                style={{ padding: '3px 8px', fontSize: '0.74rem' }}
               >
-                <Info size={13} />
-                <span>Guía</span>
+                <Info size={14} />
+                <span className="daily-goal-action-label">Guía</span>
               </button>
 
               <button
@@ -531,24 +526,33 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 onClick={onClose}
                 aria-label="Cerrar modal"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
           </div>
 
           <div className="daily-goal-header-sub">
-            <span>Racha actual: <strong style={{ color: 'var(--text-main)' }}>{currentStreak} días 🔥</strong></span>
-            {canShowSettings && (
-              <button
-                type="button"
-                className="btn btn-outline btn-sm daily-goal-settings-btn"
-                onClick={() => setShowConfig(prev => !prev)}
-                title="Configurar tema, nivel y cantidad de preguntas"
-              >
-                <Settings2 size={13} />
-                <span>Ajustes</span>
-              </button>
-            )}
+            <div className="daily-goal-streak-wrap">
+              <span>Racha actual: <strong style={{ color: 'var(--text-main)' }}>{currentStreak} días 🔥</strong></span>
+            </div>
+
+            <div className="daily-goal-sub-actions">
+              <span className={`daily-goal-status-badge ${isGoalReached ? 'reached' : ''}`}>
+                {isGoalReached ? '✓ Cumplida' : `${todayProgress}/${dailyGoal.target || 5} resueltas`}
+              </span>
+
+              {canShowSettings && (
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm daily-goal-settings-btn"
+                  onClick={() => setShowConfig(prev => !prev)}
+                  title="Configurar tema, nivel y cantidad de preguntas"
+                >
+                  <Settings2 size={13} />
+                  <span>Ajustes</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -669,33 +673,24 @@ export default function DailyGoalModal({ isOpen, onClose }) {
           {!sessionCompleted && currentQuestion ? (
             <div>
               {/* Progress and Topic Chips */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    textTransform: 'uppercase',
-                    padding: '3px 10px',
-                    borderRadius: 999,
-                    background: 'rgba(99, 102, 241, 0.12)',
-                    color: 'var(--primary, #6366f1)'
-                  }}>
+              <div className="daily-goal-question-meta-row">
+                <div className="daily-goal-question-meta-left">
+                  <span className="daily-goal-category-pill">
                     {currentQuestion.category === 'kanji' ? '🈸 Kanji' :
                      currentQuestion.category === 'vocab' ? '📖 Vocabulario' :
                      currentQuestion.category === 'grammar' ? '⚡ Gramática' :
                      `🎯 JLPT ${currentQuestion.level}`}
                   </span>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                  <span className="daily-goal-counter-text">
                     Pregunta {currentIndex + 1} de {queue.length}
                   </span>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div className="daily-goal-question-meta-right">
                   {/* Furigana toggle */}
                   <button
                     type="button"
-                    className="btn btn-outline btn-sm"
-                    style={{ padding: '4px 8px', fontSize: '0.75rem', borderRadius: 6, color: 'var(--text-main)', borderColor: 'var(--border)' }}
+                    className="btn btn-outline btn-sm daily-goal-util-btn"
                     onClick={() => setShowFurigana(prev => !prev)}
                     title={showFurigana ? 'Ocultar Furigana' : 'Mostrar Furigana'}
                   >
@@ -706,8 +701,7 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   {/* Audio speech button */}
                   <button
                     type="button"
-                    className="btn btn-outline btn-sm"
-                    style={{ padding: '4px 8px', borderRadius: 6, color: 'var(--text-main)', borderColor: 'var(--border)' }}
+                    className="btn btn-outline btn-sm daily-goal-util-btn"
                     onClick={() => {
                       const textToSpeak = currentQuestion.furigana || currentQuestion.question;
                       audioManager.speak(textToSpeak.replace(/<[^>]*>/g, ''));
