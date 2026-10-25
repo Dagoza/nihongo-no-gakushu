@@ -79,51 +79,204 @@ export const SCRIPT_PAPER_STYLES = {
   }
 };
 
-// Casilla individual táctil para el modo Tira Continua
+// Casilla individual táctil para el modo Tira Continua (con soporte de Trazo Guiado HanziWriter y fallback libre)
 function ContinuousCharBox({
   char,
   charIndex,
+  totalChars = 1,
   isActive,
   onSelect,
+  onSelectNext,
   strokes = [],
   onStrokesChange,
   currentPaper,
   showGhostGuide,
-  size = 170
+  size = 220,
+  onCharComplete,
+  isAlreadyCompleted = false,
+  onRegisterActions
 }) {
+  const writerContainerRef = useRef(null);
+  const writerRef = useRef(null);
   const canvasRef = useRef(null);
+
+  const [hasWriterData, setHasWriterData] = useState(true);
+  const [writerLoaded, setWriterLoaded] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(isAlreadyCompleted);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Estado para el motor libre (cuando no hay datos de trazo)
   const [isDrawing, setIsDrawing] = useState(false);
   const currentStrokeRef = useRef([]);
 
-  // Redibujar el contenido completo de la casilla
-  const redraw = useCallback(() => {
+  // Animar pista guiada
+  const handleAnimateHint = useCallback(() => {
+    if (writerRef.current && !isAnimating) {
+      setIsAnimating(true);
+      writerRef.current.animateCharacter({
+        onComplete: () => setIsAnimating(false)
+      });
+    }
+  }, [isAnimating]);
+
+  // Reiniciar quiz del carácter
+  const handleResetBox = useCallback(() => {
+    setIsCompleted(false);
+    if (writerRef.current) {
+      try {
+        writerRef.current.cancelQuiz();
+        writerRef.current.quiz();
+      } catch {}
+    }
+    if (onStrokesChange) {
+      onStrokesChange([]);
+    }
+  }, [onStrokesChange]);
+
+  // Registrar acciones hacia el componente padre
+  useEffect(() => {
+    if (onRegisterActions) {
+      onRegisterActions(charIndex, {
+        animateHint: handleAnimateHint,
+        clear: handleResetBox,
+        undo: () => {
+          if (!hasWriterData && strokes.length > 0) {
+            onStrokesChange(strokes.slice(0, -1));
+          }
+        },
+        hasWriterData,
+        isCompleted
+      });
+    }
+  }, [charIndex, onRegisterActions, handleAnimateHint, handleResetBox, hasWriterData, isCompleted, strokes, onStrokesChange]);
+
+  // Inicializar HanziWriter para este carácter en la tira continua
+  useEffect(() => {
+    if (!writerContainerRef.current || !char) return;
+
+    let isMounted = true;
+    setWriterLoaded(false);
+    setHasWriterData(true);
+
+    writerContainerRef.current.innerHTML = '';
+
+    try {
+      const padding = Math.max(12, Math.floor(size * 0.08));
+      const writer = HanziWriter.create(writerContainerRef.current, char, {
+        width: size,
+        height: size,
+        padding,
+        showOutline: showGhostGuide,
+        strokeAnimationSpeed: 1.3,
+        strokeHighlightSpeed: 1.8,
+        delayBetweenStrokes: 150,
+        strokeColor: currentPaper.strokeColor,
+        outlineColor: currentPaper.outlineColor,
+        highlightColor: currentPaper.highlightColor,
+        highlightCompleteColor: currentPaper.highlightCompleteColor,
+        drawingColor: currentPaper.drawingColor,
+        drawingWidth: Math.max(16, Math.floor(size * 0.1)),
+        showCharacter: false,
+        charDataLoader: (targetChar, onComplete, onErr) => {
+          fetchKanjiStrokeData(targetChar)
+            .then(data => {
+              if (isMounted) {
+                onComplete(data);
+                setWriterLoaded(true);
+                setHasWriterData(true);
+              }
+            })
+            .catch(err => {
+              if (isMounted) {
+                console.warn(`No stroke data for ${targetChar} in continuous mode:`, err);
+                setHasWriterData(false);
+                if (onErr) onErr(err);
+              }
+            });
+        }
+      });
+
+      writerRef.current = writer;
+
+      writer.quiz({
+        showHintAfterMisses: 2,
+        leniency: 1.15,
+        onMistake: () => {
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(40);
+          }
+        },
+        onCorrectStroke: () => {
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(20);
+          }
+        },
+        onComplete: () => {
+          if (!isMounted) return;
+          setIsCompleted(true);
+          onCharComplete?.(charIndex);
+          if (charIndex < totalChars - 1) {
+            setTimeout(() => {
+              onSelectNext?.(charIndex + 1);
+            }, 500);
+          }
+        }
+      });
+
+      setWriterLoaded(true);
+    } catch (err) {
+      console.warn('Continuous HanziWriter init fallback:', err);
+      setHasWriterData(false);
+    }
+
+    return () => {
+      isMounted = false;
+      if (writerRef.current) {
+        try {
+          writerRef.current.cancelQuiz();
+        } catch {}
+      }
+    };
+  }, [char, size, currentPaper, totalChars, charIndex, onCharComplete, onSelectNext]);
+
+  // Actualizar silueta cuando cambia showGhostGuide
+  useEffect(() => {
+    if (writerRef.current) {
+      try {
+        if (showGhostGuide) {
+          writerRef.current.showOutline();
+        } else {
+          writerRef.current.hideOutline();
+        }
+      } catch {}
+    }
+  }, [showGhostGuide]);
+
+  // ==========================================
+  // Fallback Canvas libre cuando !hasWriterData
+  // ==========================================
+  const redrawFree = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || hasWriterData) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     ctx.clearRect(0, 0, size, size);
 
-    // 1. Fondo de papel físico
+    // Fondo y cuadrícula Mizige
     ctx.fillStyle = currentPaper.bg;
     ctx.fillRect(0, 0, size, size);
 
-    // 2. Cuadrícula Mizige con marco delimitador
     ctx.save();
     ctx.strokeStyle = currentPaper.gridColor;
     ctx.lineWidth = 1.3;
-
-    // Marco exterior con margen físico
     ctx.strokeRect(6, 6, size - 12, size - 12);
-
     ctx.setLineDash([4, 4]);
-    // Cruz central
     ctx.beginPath();
     ctx.moveTo(size / 2, 6);
     ctx.lineTo(size / 2, size - 6);
     ctx.moveTo(6, size / 2);
     ctx.lineTo(size - 6, size / 2);
-    // Diagonales
     ctx.moveTo(6, 6);
     ctx.lineTo(size - 6, size - 6);
     ctx.moveTo(size - 6, 6);
@@ -131,7 +284,7 @@ function ContinuousCharBox({
     ctx.stroke();
     ctx.restore();
 
-    // 3. Silueta del modelo para copiar / calcar (Ghost guide)
+    // Silueta si ghost guide está activa
     if (showGhostGuide && char) {
       ctx.save();
       ctx.font = `bold ${Math.floor(size * 0.72)}px "Noto Sans JP", sans-serif`;
@@ -142,12 +295,11 @@ function ContinuousCharBox({
       ctx.restore();
     }
 
-    // 4. Renderizar trazos dibujados por el usuario
+    // Trazos libres
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = currentPaper.strokeColor;
-
     strokes.forEach(stroke => {
       if (!stroke || stroke.length < 2) return;
       ctx.beginPath();
@@ -159,14 +311,16 @@ function ContinuousCharBox({
       ctx.stroke();
     });
     ctx.restore();
-  }, [char, currentPaper, showGhostGuide, size, strokes]);
+  }, [char, currentPaper, hasWriterData, showGhostGuide, size, strokes]);
 
   useEffect(() => {
-    redraw();
-  }, [redraw]);
+    if (!hasWriterData) {
+      redrawFree();
+    }
+  }, [hasWriterData, redrawFree]);
 
-  // Manejo de eventos Pointer para pantalla táctil y ratón
   const handlePointerDown = (e) => {
+    if (hasWriterData) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     try {
@@ -184,7 +338,7 @@ function ContinuousCharBox({
   };
 
   const handlePointerMove = (e) => {
-    if (!isDrawing) return;
+    if (!isDrawing || hasWriterData) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -194,7 +348,6 @@ function ContinuousCharBox({
 
     currentStrokeRef.current.push({ x, y, w: 10 });
 
-    // Trazado en tiempo real sin latencia visual
     const ctx = canvas.getContext('2d');
     if (ctx && currentStrokeRef.current.length >= 2) {
       const len = currentStrokeRef.current.length;
@@ -218,21 +371,30 @@ function ContinuousCharBox({
     if (!isDrawing) return;
     setIsDrawing(false);
     if (currentStrokeRef.current.length > 0) {
-      onStrokesChange([...strokes, currentStrokeRef.current]);
+      const updated = [...strokes, currentStrokeRef.current];
+      onStrokesChange(updated);
       currentStrokeRef.current = [];
+      if (!isCompleted && updated.length >= 2) {
+        setIsCompleted(true);
+        onCharComplete?.(charIndex);
+      }
     }
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: 8,
-      width: '100%',
-      maxWidth: size + 20
-    }}>
-      {/* Cabecera con modelo claro para copiar */}
+    <div 
+      onClick={onSelect}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 8,
+        width: '100%',
+        maxWidth: size + 20,
+        cursor: 'pointer'
+      }}
+    >
+      {/* Cabecera con número de casilla, carácter y controles rápidos */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -240,87 +402,264 @@ function ContinuousCharBox({
         width: size,
         padding: '0 4px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{
             fontSize: '0.8rem',
             fontWeight: 800,
             color: isActive ? 'var(--primary)' : 'var(--text-muted)',
             background: isActive ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
-            padding: '2px 6px',
+            padding: '2px 8px',
             borderRadius: 6
           }}>
             #{charIndex + 1}
           </span>
-          <span style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-main)' }}>
+          <span style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--text-main)' }}>
             {char}
           </span>
         </div>
 
-        {strokes.length > 0 && (
-          <span style={{
-            fontSize: '0.72rem',
-            fontWeight: 700,
-            color: '#10b981',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 3
-          }}>
-            <CheckCircle2 size={13} />
-            <span>{strokes.length}</span>
-          </span>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {isCompleted ? (
+            <span style={{
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: '#10b981',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              background: 'rgba(16, 185, 129, 0.12)',
+              padding: '3px 8px',
+              borderRadius: 8
+            }}>
+              <CheckCircle2 size={13} />
+              <span>Listo</span>
+            </span>
+          ) : (
+            hasWriterData ? (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelect();
+                  handleAnimateHint();
+                }}
+                disabled={isAnimating}
+                title={`Ver animación de trazos para ${char}`}
+                style={{
+                  padding: '3px 8px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  borderColor: '#f59e0b',
+                  color: '#f59e0b',
+                  background: 'rgba(245, 158, 11, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4
+                }}
+              >
+                <Sparkles size={12} />
+                <span>Pista</span>
+              </button>
+            ) : (
+              strokes.length > 0 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStrokesChange([]);
+                  }}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    fontSize: '0.75rem',
+                    cursor: 'pointer',
+                    padding: '3px 8px',
+                    borderRadius: 6,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}
+                  title={`Borrar trazos de ${char}`}
+                >
+                  <RotateCcw size={12} />
+                  <span>Limpiar</span>
+                </button>
+              )
+            )
+          )}
+        </div>
       </div>
 
-      {/* Casilla de lienzo físico con bordes definidos */}
+      {/* Casilla de lienzo físico delimitado */}
       <div style={{
         position: 'relative',
         width: size,
         height: size,
-        borderRadius: 18,
+        borderRadius: 20,
         overflow: 'hidden',
-        border: isActive ? '2.5px solid var(--primary)' : currentPaper.border,
-        boxShadow: isActive ? '0 0 0 3px rgba(99, 102, 241, 0.25), ' + currentPaper.shadow : currentPaper.shadow,
+        background: currentPaper.bg,
+        border: isCompleted 
+          ? '2.5px solid #10b981' 
+          : (isActive ? '2.5px solid var(--primary)' : currentPaper.border),
+        boxShadow: isCompleted 
+          ? '0 0 0 3px rgba(16, 185, 129, 0.25), ' + currentPaper.shadow 
+          : (isActive ? '0 0 0 3px rgba(99, 102, 241, 0.25), ' + currentPaper.shadow : currentPaper.shadow),
         transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
       }}>
-        <canvas
-          ref={canvasRef}
+        {/* Cuadrícula japonesa Mizige */}
+        <svg
           width={size}
           height={size}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
           style={{
             position: 'absolute',
             inset: 0,
-            cursor: 'crosshair',
-            touchAction: 'none'
+            pointerEvents: 'none',
+            zIndex: 1
           }}
-        />
-      </div>
+        >
+          <rect
+            x={6}
+            y={6}
+            width={size - 12}
+            height={size - 12}
+            fill="none"
+            stroke={currentPaper.gridColor}
+            strokeWidth={1.3}
+            rx={8}
+          />
+          <line
+            x1={size / 2} y1={6}
+            x2={size / 2} y2={size - 6}
+            stroke={currentPaper.gridColor}
+            strokeWidth={1.3}
+            strokeDasharray="5 4"
+          />
+          <line
+            x1={6} y1={size / 2}
+            x2={size - 6} y2={size / 2}
+            stroke={currentPaper.gridColor}
+            strokeWidth={1.3}
+            strokeDasharray="5 4"
+          />
+          <line
+            x1={6} y1={6}
+            x2={size - 6} y2={size - 6}
+            stroke={currentPaper.gridColor}
+            strokeWidth={1}
+            strokeDasharray="4 4"
+            opacity={0.6}
+          />
+          <line
+            x1={size - 6} y1={6}
+            x2={6} y2={size - 6}
+            stroke={currentPaper.gridColor}
+            strokeWidth={1}
+            strokeDasharray="4 4"
+            opacity={0.6}
+          />
+        </svg>
 
-      {/* Botón rápido para borrar solo esta casilla */}
-      {strokes.length > 0 && (
-        <button
-          type="button"
-          onClick={() => onStrokesChange([])}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--text-muted)',
-            fontSize: '0.72rem',
-            cursor: 'pointer',
-            padding: '2px 6px',
-            borderRadius: 6,
+        {/* Motor HanziWriter (Trazo Guiado) */}
+        {hasWriterData ? (
+          <>
+            {!writerLoaded && (
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: currentPaper.bg,
+                color: currentPaper.isDark ? '#94a3b8' : '#64748b',
+                fontSize: '0.78rem',
+                zIndex: 10
+              }}>
+                <span>Cargando trazos...</span>
+              </div>
+            )}
+            <div 
+              ref={writerContainerRef} 
+              style={{ 
+                position: 'relative',
+                width: size, 
+                height: size, 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                zIndex: 2,
+                touchAction: 'none'
+              }} 
+            />
+          </>
+        ) : (
+          /* Motor Libre (Canvas fallback) */
+          <canvas
+            ref={canvasRef}
+            width={size}
+            height={size}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            style={{
+              position: 'relative',
+              width: size,
+              height: size,
+              zIndex: 2,
+              cursor: 'crosshair',
+              touchAction: 'none'
+            }}
+          />
+        )}
+
+        {/* Feedback visual al completar */}
+        {isCompleted && (
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: 'rgba(16, 185, 129, 0.95)',
+            color: '#ffffff',
+            padding: '8px 18px',
+            borderRadius: 24,
+            fontSize: '0.9rem',
+            fontWeight: 800,
             display: 'flex',
             alignItems: 'center',
-            gap: 4
-          }}
-          title={`Borrar trazos de ${char}`}
-        >
-          <RotateCcw size={11} />
-          <span>Limpiar</span>
-        </button>
+            gap: 6,
+            boxShadow: '0 6px 20px rgba(16, 185, 129, 0.5)',
+            zIndex: 20,
+            pointerEvents: 'none'
+          }}>
+            <CheckCircle2 size={18} />
+            <span>¡Correcto!</span>
+          </div>
+        )}
+      </div>
+
+      {/* Pequeña nota cuando no hay trazo guiado */}
+      {!hasWriterData && (
+        <div style={{
+          marginTop: 4,
+          padding: '4px 10px',
+          borderRadius: 8,
+          background: 'rgba(245, 158, 11, 0.12)',
+          border: '1px solid rgba(245, 158, 11, 0.25)',
+          color: 'var(--text-main)',
+          fontSize: '0.75rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+          textAlign: 'center',
+          maxWidth: size
+        }}>
+          <Info size={13} style={{ color: '#f59e0b', flexShrink: 0 }} />
+          <span>Trazo guiado no disponible para «{char}». Modo libre activado.</span>
+        </div>
       )}
     </div>
   );
@@ -387,7 +726,19 @@ export default function ScriptpadWriter({
 
   // Multi-casillas para modo continuo
   const [continuousStrokes, setContinuousStrokes] = useState({}); // { [charIndex]: [strokes] }
+  const [continuousCompleted, setContinuousCompleted] = useState({}); // { [charIndex]: boolean }
   const [continuousActiveIndex, setContinuousActiveIndex] = useState(0);
+  const continuousActionsRef = useRef({});
+  const registerContinuousAction = useCallback((charIdx, actions) => {
+    continuousActionsRef.current[charIdx] = actions;
+  }, []);
+
+  // Total de caracteres completados en modo continuo (trazo guiado o libre)
+  const totalCompletedInContinuous = useMemo(() => {
+    return characters.filter((_, idx) => {
+      return continuousCompleted[idx] || (continuousStrokes[idx] && continuousStrokes[idx].length > 0);
+    }).length;
+  }, [characters, continuousCompleted, continuousStrokes]);
 
   // Estados de HanziWriter (modo guiado)
   const writerContainerRef = useRef(null);
@@ -422,6 +773,9 @@ export default function ScriptpadWriter({
     setCurrentCharIndex(0);
     setStrokes([]);
     setContinuousStrokes({});
+    setContinuousCompleted({});
+    continuousActionsRef.current = {};
+    setContinuousActiveIndex(0);
     setCharCompleted(false);
     setHasWriterData(true);
     if (flowMode === 'sequential') {
@@ -550,6 +904,14 @@ export default function ScriptpadWriter({
 
   // Animar trazo de ayuda
   const handleAnimateHint = () => {
+    if (flowMode === 'continuous') {
+      const activeActions = continuousActionsRef.current[continuousActiveIndex];
+      if (activeActions?.animateHint) {
+        activeActions.animateHint();
+      }
+      return;
+    }
+
     if (writerRef.current && !isAnimating) {
       setIsAnimating(true);
       writerRef.current.animateCharacter({

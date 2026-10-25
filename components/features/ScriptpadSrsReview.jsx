@@ -6,6 +6,7 @@ import {
   Volume2, 
   ChevronLeft, 
   RotateCcw, 
+  Undo2,
   Sparkles, 
   CheckCircle2, 
   Award, 
@@ -18,7 +19,8 @@ import {
   Flag,
   Check,
   Pause,
-  Play
+  Play,
+  Info
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
@@ -34,7 +36,7 @@ const PAPER_STYLES = {
     border: '2.5px solid #d4c7b0',
     gridColor: 'rgba(180, 83, 9, 0.28)',
     strokeColor: '#18181b',
-    outlineColor: 'rgba(100, 116, 139, 0.25)',
+    outlineColor: 'rgba(99, 102, 241, 0.35)',
     drawingColor: '#2563eb',
     highlightColor: '#d97706',
     highlightCompleteColor: '#b45309',
@@ -47,7 +49,7 @@ const PAPER_STYLES = {
     border: '2.5px solid #334155',
     gridColor: 'rgba(148, 163, 184, 0.35)',
     strokeColor: '#ffffff',
-    outlineColor: 'rgba(224, 231, 255, 0.22)',
+    outlineColor: 'rgba(56, 189, 248, 0.40)',
     drawingColor: '#22d3ee',
     highlightColor: '#fbbf24',
     highlightCompleteColor: '#f59e0b',
@@ -151,13 +153,14 @@ export default function ScriptpadSrsReview({
   const [hasWriterData, setHasWriterData] = useState(true);
   const [strokeProgress, setStrokeProgress] = useState({ current: 0, total: 0 });
 
-  // Lienzo fallback libre para cuando no hay SVG
-  const fallbackCanvasRef = useRef(null);
-  const [fallbackStrokes, setFallbackStrokes] = useState([]);
+  // Trazos libres por carácter para cuando no hay SVG interactivo
+  const [fallbackStrokesByChar, setFallbackStrokesByChar] = useState({});
+  const [comparisonMode, setComparisonMode] = useState('both'); // 'both' | 'drawing' | 'model'
   const [isDrawingFallback, setIsDrawingFallback] = useState(false);
-  const fallbackStrokeRef = useRef([]);
+  const fallbackCanvasRef = useRef(null);
+  const currentFallbackStrokeRef = useRef([]);
 
-  // Auto-avance con barra de progreso
+  // Auto-avance con barra de progreso (solo para modo guiado automático)
   const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
   const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(3);
 
@@ -266,7 +269,8 @@ export default function ScriptpadSrsReview({
           item: currentItem, 
           rating, 
           mistakes: wordMistakes,
-          wasGuideUsed 
+          wasGuideUsed,
+          hasWriterData
         }
       ]);
 
@@ -282,7 +286,9 @@ export default function ScriptpadSrsReview({
         setAssignedRatingInfo(null);
         setAutoAdvancePaused(false);
         setAutoAdvanceTimeLeft(3);
-        setFallbackStrokes([]);
+        setFallbackStrokesByChar({});
+        setComparisonMode('both');
+        setHasWriterData(true);
       } else {
         triggerCheerConfetti();
         setIsFinished(true);
@@ -302,13 +308,15 @@ export default function ScriptpadSrsReview({
         setCurrentCharIndex(0);
         setIsWordCompleted(false);
         setWordMistakes(0);
+        setFallbackStrokesByChar({});
+        setHasWriterData(true);
       } else {
         setIsFinished(true);
       }
     }
-  }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, wordMistakes, wasGuideUsed]);
+  }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, wordMistakes, wasGuideUsed, hasWriterData]);
 
-  // Completar palabra y asignar dificultad percibida
+  // Completar palabra con seguimiento vectorial y asignar dificultad
   const handleCompleteWord = useCallback((totalMistakes, guideUsed) => {
     setIsWordCompleted(true);
     const ratingInfo = getRatingInfoFromMistakes(totalMistakes, guideUsed);
@@ -317,6 +325,12 @@ export default function ScriptpadSrsReview({
     if (totalMistakes === 0 && !guideUsed) {
       triggerCheerConfetti();
     }
+    playAudio();
+  }, [playAudio]);
+
+  // Completar palabra en modo libre (sin trazo vectorial) para autoevaluación
+  const handleCompleteFallbackWord = useCallback(() => {
+    setIsWordCompleted(true);
     playAudio();
   }, [playAudio]);
 
@@ -361,7 +375,7 @@ export default function ScriptpadSrsReview({
             })
             .catch(err => {
               if (isMounted) {
-                console.warn(`No stroke data for ${char}, fallback canvas:`, err);
+                console.warn(`[SRS Writing] No stroke vector data for ${char}, fallback to free canvas:`, err);
                 setHasWriterData(false);
                 if (onErr) onErr(err);
               }
@@ -419,7 +433,7 @@ export default function ScriptpadSrsReview({
 
       setWriterLoaded(true);
     } catch (err) {
-      console.warn('HanziWriter init error:', err);
+      console.warn('[SRS Writing] HanziWriter init exception, activating fallback canvas:', err);
       setHasWriterData(false);
     }
 
@@ -449,29 +463,45 @@ export default function ScriptpadSrsReview({
   const handleToggleGuide = () => {
     setShowGhostGuide(true);
     setWasGuideUsed(true);
-    if (writerRef.current) {
+    if (hasWriterData && writerRef.current) {
       try {
         writerRef.current.showOutline();
       } catch {}
     }
   };
 
-  // Reiniciar carácter actual
+  // Reiniciar carácter actual (funciona tanto para HanziWriter como para Fallback libre)
   const handleResetCurrentChar = () => {
-    if (writerRef.current) {
+    if (hasWriterData && writerRef.current) {
       try {
         writerRef.current.cancelQuiz();
         writerRef.current.quiz();
         setCharMistakes(0);
         setStrokeProgress(prev => ({ ...prev, current: 0 }));
       } catch {}
+    } else {
+      setFallbackStrokesByChar(prev => ({
+        ...prev,
+        [currentCharIndex]: []
+      }));
     }
+  };
+
+  // Deshacer último trazo en modo libre
+  const handleUndoFallbackStroke = () => {
+    setFallbackStrokesByChar(prev => {
+      const current = prev[currentCharIndex] || [];
+      return {
+        ...prev,
+        [currentCharIndex]: current.slice(0, -1)
+      };
+    });
   };
 
   // Rendirse / No me acuerdo: muestra la animación y asigna "Otra vez"
   const handleGiveUp = () => {
     setWasGuideUsed(true);
-    if (writerRef.current) {
+    if (hasWriterData && writerRef.current) {
       try {
         writerRef.current.cancelQuiz();
         writerRef.current.showOutline();
@@ -484,12 +514,15 @@ export default function ScriptpadSrsReview({
         handleCompleteWord(wordMistakes + 4, true);
       }
     } else {
-      handleCompleteWord(wordMistakes + 4, true);
+      // En modo libre revela el modelo y completa para autoevaluación
+      setShowGhostGuide(true);
+      handleCompleteFallbackWord();
     }
   };
 
-  // Temporizador de auto-avance cuando la palabra está completada
+  // Temporizador de auto-avance (únicamente en modo guiado automático)
   useEffect(() => {
+    if (!hasWriterData) return; // En modo libre sin datos no hay auto-avance para permitir comparar con calma
     if (!isWordCompleted || autoAdvancePaused || !assignedRatingInfo) return;
 
     if (autoAdvanceTimeLeft <= 0) {
@@ -502,10 +535,11 @@ export default function ScriptpadSrsReview({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isWordCompleted, autoAdvancePaused, autoAdvanceTimeLeft, assignedRatingInfo, handleRate]);
+  }, [hasWriterData, isWordCompleted, autoAdvancePaused, autoAdvanceTimeLeft, assignedRatingInfo, handleRate]);
 
-  // Manejadores para Lienzo de Fallback (cuando no hay SVG o estamos offline)
+  // Manejadores Pointer para el Lienzo de Fallback (dibujo libre de memoria)
   const handleFallbackPointerDown = (e) => {
+    if (hasWriterData) return;
     const canvas = fallbackCanvasRef.current;
     if (!canvas) return;
     try { canvas.setPointerCapture(e.pointerId); } catch {}
@@ -513,18 +547,37 @@ export default function ScriptpadSrsReview({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     setIsDrawingFallback(true);
-    fallbackStrokeRef.current = [{ x, y }];
+    currentFallbackStrokeRef.current = [{ x, y }];
   };
 
   const handleFallbackPointerMove = (e) => {
-    if (!isDrawingFallback) return;
+    if (!isDrawingFallback || hasWriterData) return;
     const canvas = fallbackCanvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    fallbackStrokeRef.current.push({ x, y });
-    setFallbackStrokes([...fallbackStrokes, [...fallbackStrokeRef.current]]);
+
+    currentFallbackStrokeRef.current.push({ x, y });
+
+    // Trazado en tiempo real sin desfase
+    const ctx = canvas.getContext('2d');
+    if (ctx && currentFallbackStrokeRef.current.length >= 2) {
+      const len = currentFallbackStrokeRef.current.length;
+      const p1 = currentFallbackStrokeRef.current[len - 2];
+      const p2 = currentFallbackStrokeRef.current[len - 1];
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = currentPaper.drawingColor || currentPaper.strokeColor;
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+      ctx.restore();
+    }
   };
 
   const handleFallbackPointerUp = (e) => {
@@ -534,15 +587,18 @@ export default function ScriptpadSrsReview({
       try { canvas.releasePointerCapture(e.pointerId); } catch {}
     }
     setIsDrawingFallback(false);
-    if (fallbackStrokeRef.current.length > 0) {
-      setFallbackStrokes(prev => [...prev, fallbackStrokeRef.current]);
-      fallbackStrokeRef.current = [];
+    if (currentFallbackStrokeRef.current.length > 1) {
+      const charStrokes = fallbackStrokesByChar[currentCharIndex] || [];
+      setFallbackStrokesByChar(prev => ({
+        ...prev,
+        [currentCharIndex]: [...charStrokes, currentFallbackStrokeRef.current]
+      }));
     }
+    currentFallbackStrokeRef.current = [];
   };
 
-  // Renderizado del lienzo de fallback
-  useEffect(() => {
-    if (hasWriterData) return;
+  // Redibujado completo del lienzo de fallback (soporta modos 'both', 'drawing' y 'model')
+  const redrawFallbackCanvas = useCallback(() => {
     const canvas = fallbackCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -550,7 +606,7 @@ export default function ScriptpadSrsReview({
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Cuadrícula cruzada
+    // 1. Cuadrícula cruzada tradicional
     ctx.save();
     ctx.strokeStyle = currentPaper.gridColor;
     ctx.lineWidth = 1.4;
@@ -563,34 +619,53 @@ export default function ScriptpadSrsReview({
     ctx.stroke();
     ctx.restore();
 
-    // Silueta si está revelado o se pidió guía
-    if ((showGhostGuide || isWordCompleted) && activeChar) {
+    const charStrokes = fallbackStrokesByChar[currentCharIndex] || [];
+
+    // 2. Modelo de referencia
+    const shouldDrawModel = (showGhostGuide && !isWordCompleted) || 
+      (isWordCompleted && (comparisonMode === 'both' || comparisonMode === 'model'));
+
+    if (shouldDrawModel && activeChar) {
       ctx.save();
-      ctx.font = `bold ${Math.floor(canvas.height * 0.65)}px "Noto Sans JP", sans-serif`;
+      ctx.font = `bold ${Math.floor(canvas.height * 0.68)}px "Noto Sans JP", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = currentPaper.outlineColor;
+      // Si está completado y comparando, usar un tono suave pero visible
+      ctx.fillStyle = isWordCompleted && comparisonMode === 'model'
+        ? (currentPaper.isDark ? '#38bdf8' : '#2563eb')
+        : currentPaper.outlineColor;
       ctx.fillText(activeChar, canvas.width / 2, canvas.height / 2 + 6);
       ctx.restore();
     }
 
-    // Trazos libres dibujados
-    ctx.save();
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = currentPaper.strokeColor;
-    fallbackStrokes.forEach(stroke => {
-      if (stroke.length < 2) return;
-      ctx.beginPath();
-      ctx.lineWidth = 12;
-      ctx.moveTo(stroke[0].x, stroke[0].y);
-      for (let i = 1; i < stroke.length; i++) {
-        ctx.lineTo(stroke[i].x, stroke[i].y);
-      }
-      ctx.stroke();
-    });
-    ctx.restore();
-  }, [hasWriterData, fallbackStrokes, showGhostGuide, isWordCompleted, activeChar, currentPaper]);
+    // 3. Trazos libres dibujados por el usuario
+    const shouldDrawUserStrokes = !isWordCompleted || (isWordCompleted && (comparisonMode === 'both' || comparisonMode === 'drawing'));
+
+    if (shouldDrawUserStrokes) {
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = currentPaper.strokeColor;
+      charStrokes.forEach(stroke => {
+        if (!stroke || stroke.length < 2) return;
+        ctx.beginPath();
+        ctx.lineWidth = 10;
+        ctx.moveTo(stroke[0].x, stroke[0].y);
+        for (let i = 1; i < stroke.length; i++) {
+          ctx.lineTo(stroke[i].x, stroke[i].y);
+        }
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+  }, [activeChar, comparisonMode, currentPaper, currentCharIndex, fallbackStrokesByChar, isWordCompleted, showGhostGuide]);
+
+  // Ejecutar redibujado cuando cambian dependencias en modo fallback
+  useEffect(() => {
+    if (!hasWriterData) {
+      redrawFallbackCanvas();
+    }
+  }, [hasWriterData, redrawFallbackCanvas]);
 
   // ==========================================
   // PANTALLA DE FINALIZACIÓN
@@ -804,7 +879,7 @@ export default function ScriptpadSrsReview({
           {currentItem.meaning_es}
         </div>
 
-        {/* Si la palabra tiene varios caracteres, mostrar indicador de carácter actual */}
+        {/* Indicador de pasos si la palabra tiene varios caracteres */}
         {characters.length > 1 && (
           <div style={{
             display: 'flex',
@@ -866,7 +941,7 @@ export default function ScriptpadSrsReview({
         )}
       </div>
 
-      {/* 3. Lienzo de Trazos HanziWriter "Sin Guía" */}
+      {/* 3. Lienzo de Trazos: HanziWriter "Sin Guía" vs Fallback Caligrafía Libre */}
       <div style={{
         background: 'var(--bg-surface)',
         border: '2px solid var(--border)',
@@ -953,7 +1028,7 @@ export default function ScriptpadSrsReview({
             />
           </svg>
 
-          {/* Motor de trazos HanziWriter */}
+          {/* Motor A: HanziWriter cuando hay orden vectorial disponible */}
           {hasWriterData ? (
             <div
               ref={writerContainerRef}
@@ -968,7 +1043,7 @@ export default function ScriptpadSrsReview({
               }}
             />
           ) : (
-            /* Fallback canvas si falla o no hay datos SVG del kanji */
+            /* Motor B: Canvas de caligrafía libre cuando NO hay orden vectorial disponible */
             <canvas
               ref={fallbackCanvasRef}
               width={padSize}
@@ -988,8 +1063,8 @@ export default function ScriptpadSrsReview({
             />
           )}
 
-          {/* Badge "Sin Guía" visible durante el trazo de memoria */}
-          {!isWordCompleted && !showGhostGuide && (
+          {/* Badge de modo en la esquina inferior */}
+          {!isWordCompleted && (
             <div style={{
               position: 'absolute',
               bottom: 8,
@@ -999,17 +1074,24 @@ export default function ScriptpadSrsReview({
               fontWeight: 800,
               padding: '2px 8px',
               borderRadius: 6,
-              background: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.75)',
-              color: 'var(--text-muted)',
+              background: isDark ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)',
+              color: hasWriterData ? 'var(--text-muted)' : '#f59e0b',
               backdropFilter: 'blur(4px)',
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4
             }}>
-              ✍️ Sin guía · De memoria
+              {hasWriterData ? (
+                <span>✍️ Sin guía · De memoria</span>
+              ) : (
+                <span>🖌️ Caligrafía Libre (Sin vector)</span>
+              )}
             </div>
           )}
 
-          {/* Indicador de trazo activo */}
-          {!isWordCompleted && strokeProgress.total > 0 && (
+          {/* Indicador de trazo activo cuando hay motor HanziWriter */}
+          {hasWriterData && !isWordCompleted && strokeProgress.total > 0 && (
             <div style={{
               position: 'absolute',
               bottom: 8,
@@ -1019,7 +1101,7 @@ export default function ScriptpadSrsReview({
               fontWeight: 800,
               padding: '2px 8px',
               borderRadius: 6,
-              background: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.75)',
+              background: isDark ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)',
               color: currentPaper.drawingColor,
               backdropFilter: 'blur(4px)',
               pointerEvents: 'none'
@@ -1029,7 +1111,7 @@ export default function ScriptpadSrsReview({
           )}
         </div>
 
-        {/* 4. Barra de Acciones durante el trazo */}
+        {/* 4. Barra de Acciones según el modo de dibujo */}
         {!isWordCompleted ? (
           <div style={{
             display: 'flex',
@@ -1038,26 +1120,43 @@ export default function ScriptpadSrsReview({
             width: '100%',
             maxWidth: padSize,
             marginTop: 12,
-            gap: 8
+            gap: 6
           }}>
+            {/* Botón Reiniciar / Limpiar */}
             <button
               type="button"
               className="btn btn-outline btn-sm"
               onClick={handleResetCurrentChar}
-              style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 5 }}
-              title="Reiniciar este carácter desde el primer trazo"
+              style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
+              title={hasWriterData ? "Reiniciar trazos desde el inicio" : "Limpiar lienzo"}
             >
               <RotateCcw size={13} />
-              <span>Reiniciar</span>
+              <span>{hasWriterData ? 'Reiniciar' : 'Borrar'}</span>
             </button>
 
+            {/* En modo libre: Botón Deshacer último trazo */}
+            {!hasWriterData && (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={handleUndoFallbackStroke}
+                disabled={!(fallbackStrokesByChar[currentCharIndex]?.length > 0)}
+                style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                title="Deshacer último trazo dibujado"
+              >
+                <Undo2 size={13} />
+                <span>Deshacer</span>
+              </button>
+            )}
+
+            {/* Botón Ver Guía */}
             {!showGhostGuide ? (
               <button
                 type="button"
                 className="btn btn-outline btn-sm"
                 onClick={handleToggleGuide}
-                style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 5 }}
-                title="Mostrar silueta tenue de guía si no recuerdas los trazos"
+                style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                title="Mostrar silueta tenue de guía si no recuerdas la forma"
               >
                 <Eye size={13} />
                 <span>Ver Guía</span>
@@ -1068,6 +1167,7 @@ export default function ScriptpadSrsReview({
               </span>
             )}
 
+            {/* Botón No me acuerdo */}
             <button
               type="button"
               className="btn btn-outline btn-sm"
@@ -1079,17 +1179,79 @@ export default function ScriptpadSrsReview({
                 borderColor: 'rgba(239, 68, 68, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 5
+                gap: 4
               }}
-              title="Rendirse y ver el modelo completo animado"
+              title="Rendirse y ver el modelo completo"
             >
               <Flag size={13} />
               <span>No sé</span>
             </button>
           </div>
         ) : (
-          /* Botón de volver a escribir la palabra si quiere practicar de nuevo */
-          <div style={{ marginTop: 10 }}>
+          /* Controles post-completado */
+          <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            {/* Si no hay datos vectoriales, permitir cambiar vista de comparación */}
+            {!hasWriterData && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                background: 'var(--bg-hover)',
+                padding: '4px',
+                borderRadius: 12,
+                border: '1px solid var(--border)'
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setComparisonMode('both')}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 8,
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    border: 'none',
+                    background: comparisonMode === 'both' ? 'var(--primary)' : 'transparent',
+                    color: comparisonMode === 'both' ? '#ffffff' : 'var(--text-muted)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Superpuesto
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setComparisonMode('drawing')}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 8,
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    border: 'none',
+                    background: comparisonMode === 'drawing' ? 'var(--primary)' : 'transparent',
+                    color: comparisonMode === 'drawing' ? '#ffffff' : 'var(--text-muted)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Mis Trazos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setComparisonMode('model')}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 8,
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    border: 'none',
+                    background: comparisonMode === 'model' ? 'var(--primary)' : 'transparent',
+                    color: comparisonMode === 'model' ? '#ffffff' : 'var(--text-muted)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Modelo Solo
+                </button>
+              </div>
+            )}
+
             <button
               type="button"
               className="btn btn-outline btn-sm"
@@ -1101,6 +1263,7 @@ export default function ScriptpadSrsReview({
                 setShowGhostGuide(false);
                 setWasGuideUsed(false);
                 setAssignedRatingInfo(null);
+                setFallbackStrokesByChar({});
               }}
               style={{ borderRadius: 10, fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
             >
@@ -1111,8 +1274,8 @@ export default function ScriptpadSrsReview({
         )}
       </div>
 
-      {/* 5. Banner de Dificultad Percibida Asignada */}
-      {isWordCompleted && assignedRatingInfo && (
+      {/* 5A. Modo Guiado Vectorial: Banner de Dificultad Percibida Automática */}
+      {isWordCompleted && hasWriterData && assignedRatingInfo && (
         <div style={{
           background: assignedRatingInfo.bg,
           border: `1.5px solid ${assignedRatingInfo.border}`,
@@ -1139,7 +1302,6 @@ export default function ScriptpadSrsReview({
             </div>
           </div>
 
-          {/* Botón pausar o continuar temporizador */}
           <button
             type="button"
             onClick={() => setAutoAdvancePaused(prev => !prev)}
@@ -1161,8 +1323,33 @@ export default function ScriptpadSrsReview({
         </div>
       )}
 
-      {/* 6. Botón Principal Continuar (con la calificación asignada) */}
-      {isWordCompleted && assignedRatingInfo && (
+      {/* 5B. Modo Caligrafía Libre: Banner de Autoevaluación Pedagógica */}
+      {isWordCompleted && !hasWriterData && (
+        <div style={{
+          background: isDark ? 'rgba(99, 102, 241, 0.12)' : 'rgba(99, 102, 241, 0.08)',
+          border: '1.5px solid rgba(99, 102, 241, 0.35)',
+          borderRadius: 18,
+          padding: '12px 16px'
+        }}>
+          <div style={{
+            fontSize: '0.88rem',
+            fontWeight: 800,
+            color: 'var(--primary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6
+          }}>
+            <Info size={16} />
+            <span>Autoevaluación de Caligrafía</span>
+          </div>
+          <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: 4 }}>
+            Compara tus trazos con el modelo revelado y selecciona tu nivel de dominio percibido abajo:
+          </div>
+        </div>
+      )}
+
+      {/* 6. Botón Principal Continuar (Modo Guiado Vectorial) */}
+      {isWordCompleted && hasWriterData && assignedRatingInfo && (
         <button
           type="button"
           className="btn btn-primary"
@@ -1188,11 +1375,13 @@ export default function ScriptpadSrsReview({
         </button>
       )}
 
-      {/* 7. Opciones de Calificación FSRS Manuales (Siempre accesibles si desea cambiarla) */}
+      {/* 7. Opciones de Calificación FSRS (Manuales en modo guiado o Autoevaluación en modo libre) */}
       {isWordCompleted && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textAlign: 'center', fontWeight: 600 }}>
-            O ajusta la dificultad manualmente si lo deseas:
+            {hasWriterData 
+              ? 'O ajusta la dificultad manualmente si lo deseas:' 
+              : 'Selecciona cómo sentiste tu dominio de este carácter:'}
           </div>
           <div style={{
             display: 'grid',
@@ -1223,7 +1412,7 @@ export default function ScriptpadSrsReview({
             >
               <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Otra vez</span>
               <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[1] || '< 10m'}</span>
-              {assignedRatingInfo?.rating === SRSRating.AGAIN && (
+              {hasWriterData && assignedRatingInfo?.rating === SRSRating.AGAIN && (
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#ef4444' }}>✓ Asignado</span>
               )}
             </button>
@@ -1252,7 +1441,7 @@ export default function ScriptpadSrsReview({
             >
               <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Difícil</span>
               <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[2] || '1d'}</span>
-              {assignedRatingInfo?.rating === SRSRating.HARD && (
+              {hasWriterData && assignedRatingInfo?.rating === SRSRating.HARD && (
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#f59e0b' }}>✓ Asignado</span>
               )}
             </button>
@@ -1281,7 +1470,7 @@ export default function ScriptpadSrsReview({
             >
               <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Bueno</span>
               <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[3] || '3d'}</span>
-              {assignedRatingInfo?.rating === SRSRating.GOOD && (
+              {hasWriterData && assignedRatingInfo?.rating === SRSRating.GOOD && (
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#3b82f6' }}>✓ Asignado</span>
               )}
             </button>
@@ -1310,7 +1499,7 @@ export default function ScriptpadSrsReview({
             >
               <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Fácil</span>
               <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[4] || '7d'}</span>
-              {assignedRatingInfo?.rating === SRSRating.EASY && (
+              {hasWriterData && assignedRatingInfo?.rating === SRSRating.EASY && (
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#10b981' }}>✓ Asignado</span>
               )}
             </button>
@@ -1318,26 +1507,63 @@ export default function ScriptpadSrsReview({
         </div>
       )}
 
-      {/* Botón alternativo para cuando aún no se completa la palabra: comprobar manualmente */}
+      {/* Botón Comprobar y Revelar para Modo Caligrafía Libre */}
       {!isWordCompleted && !hasWriterData && (
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => handleCompleteWord(fallbackStrokes.length > 0 ? 1 : 4, showGhostGuide)}
-          style={{
-            padding: '12px 20px',
-            borderRadius: 16,
-            fontSize: '0.95rem',
-            fontWeight: 800,
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
+          {characters.length > 1 && currentCharIndex < characters.length - 1 ? (
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => setCurrentCharIndex(prev => prev + 1)}
+              style={{
+                padding: '12px 20px',
+                borderRadius: 16,
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8
+              }}
+            >
+              <span>Siguiente Carácter ({currentCharIndex + 2} de {characters.length})</span>
+              <ArrowRight size={16} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleCompleteFallbackWord}
+              style={{
+                padding: '13px 20px',
+                borderRadius: 16,
+                fontSize: '0.96rem',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
+              }}
+            >
+              <Sparkles size={16} />
+              <span>Comprobar y Revelar Modelo</span>
+            </button>
+          )}
+
+          <div style={{
+            fontSize: '0.74rem',
+            color: 'var(--text-muted)',
+            textAlign: 'center',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 8
-          }}
-        >
-          <Sparkles size={16} />
-          <span>Comprobar y Calificar</span>
-        </button>
+            gap: 4
+          }}>
+            <Info size={12} />
+            <span>Sin vector interactivo. Traza de memoria y pulsa comprobar para comparar.</span>
+          </div>
+        </div>
       )}
     </div>
   );
