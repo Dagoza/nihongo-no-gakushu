@@ -67,8 +67,19 @@ export default function SrsTab({ onNavigate }) {
   const contextApp = useApp();
   const { appState, onUpdateState, openDailyGoalModal, openTour } = contextApp;
 
-  // Active section in SRS tab: 'quiz' | 'analytics'
-  const [activeSection, setActiveSection] = useState('quiz');
+  // Active section in SRS tab: 'analytics' (default: análisis y gráficas directas) | 'quiz'
+  const [activeSection, setActiveSection] = useState('analytics');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const sec = params.get('section') || params.get('tab') || params.get('mode');
+      if (sec && ['analytics', 'quiz'].includes(sec)) {
+        setActiveSection(sec);
+      }
+    } catch {}
+  }, []);
 
   // Quiz parameters
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -450,20 +461,20 @@ export default function SrsTab({ onNavigate }) {
       <div className="srs-mode-tabs-wrapper">
         <button
           type="button"
+          className={`btn srs-mode-btn ${activeSection === 'analytics' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setActiveSection('analytics')}
+        >
+          <BarChart2 size={15} />
+          <span>Análisis & Gráficas SRS</span>
+        </button>
+
+        <button
+          type="button"
           className={`btn srs-mode-btn ${activeSection === 'quiz' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveSection('quiz')}
         >
           <Target size={15} />
           <span>Preguntas FSRS en Vivo</span>
-        </button>
-
-        <button
-          type="button"
-          className={`btn srs-mode-btn ${activeSection === 'analytics' ? 'btn-primary' : 'btn-outline'}`}
-          onClick={() => setActiveSection('analytics')}
-        >
-          <BarChart2 size={15} />
-          <span>Análisis & Curvas</span>
         </button>
 
         <button
@@ -851,10 +862,19 @@ export default function SrsTab({ onNavigate }) {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  style={{ borderRadius: 10, padding: '10px 24px' }}
+                  style={{ borderRadius: 10, padding: '10px 24px', display: 'inline-flex', alignItems: 'center', gap: 8 }}
+                  onClick={() => setActiveSection('analytics')}
+                >
+                  <BarChart2 size={16} />
+                  <span>Ver Análisis & Gráficas SRS</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ borderRadius: 10, padding: '10px 20px' }}
                   onClick={() => onNavigate?.('progress')}
                 >
-                  <span>Ver Progreso General</span>
+                  <span>Progreso General</span>
                 </button>
               </div>
             </div>
@@ -871,8 +891,11 @@ export default function SrsTab({ onNavigate }) {
         <FsrsStatsModule 
           appState={appState}
           onUpdateState={onUpdateState}
-          onOpenDailyGoal={openDailyGoalModal}
+          onOpenDailyGoal={openDailyGoalModal || contextApp?.openDailyGoalModal}
           onNavigate={onNavigate}
+          showConfirm={contextApp?.showConfirm}
+          showAlert={contextApp?.showAlert}
+          onStartQuiz={() => setActiveSection('quiz')}
         />
       )}
     </div>

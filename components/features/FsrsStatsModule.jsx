@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Brain, Layers, CheckCircle2, Clock, RotateCcw, Search, ArrowUpDown, ChevronLeft, ChevronRight, Zap, ShieldAlert, X, Play, TrendingUp, BarChart2, Calendar, Eye } from 'lucide-react';
+import { Brain, Layers, CheckCircle2, Clock, RotateCcw, Search, ArrowUpDown, ChevronLeft, ChevronRight, Zap, ShieldAlert, X, Play, TrendingUp, BarChart2, Calendar, Eye, Target } from 'lucide-react';
 import {
   getFsrsOverview,
   compileFsrsItems,
@@ -24,7 +24,8 @@ export default function FsrsStatsModule({
   onOpenDailyGoal = null,
   onNavigate = null,
   showConfirm = null,
-  showAlert = null
+  showAlert = null,
+  onStartQuiz = null
 }) {
   // Pestaña activa dentro del módulo de FSRS
   const [activeSubTab, setActiveSubTab] = useState('overview'); // 'overview' | 'topics' | 'explorer'
@@ -284,8 +285,8 @@ export default function FsrsStatsModule({
           </div>
         </div>
 
-        {/* Botón de acción rápida: Repasar tarjetas pendientes */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {/* Botón de acción rápida: Repasar tarjetas pendientes y Práctica en Vivo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           {overview.dueCount > 0 && onOpenDailyGoal && (
             <button
               type="button"
@@ -304,6 +305,26 @@ export default function FsrsStatsModule({
             >
               <Zap size={16} />
               <span>Repasar {overview.dueCount} Pendientes</span>
+            </button>
+          )}
+
+          {onStartQuiz && (
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={onStartQuiz}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '8px 16px',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                borderRadius: 10
+              }}
+            >
+              <Target size={16} />
+              <span>Preguntas FSRS en Vivo</span>
             </button>
           )}
         </div>

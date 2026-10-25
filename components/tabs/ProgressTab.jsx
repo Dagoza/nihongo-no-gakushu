@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Download, Upload, CheckCircle2, RotateCcw, Keyboard, Cloud, CloudOff, CloudCheck, CloudSync, RefreshCw, ShieldCheck, AlertCircle, Sparkles, Compass, Brain, Info, BarChart3 } from 'lucide-react';
-import FsrsStatsModule from '../features/FsrsStatsModule';
+import { Download, Upload, CheckCircle2, RotateCcw, Keyboard, Cloud, CloudOff, CloudCheck, CloudSync, RefreshCw, ShieldCheck, AlertCircle, Sparkles, Compass, Brain, Info, BarChart3, ArrowRight } from 'lucide-react';
 import { exportData, parseImportData, getInitialState } from '../../lib/storage';
 import { 
   executeFullSync, 
@@ -295,15 +294,24 @@ export default function ProgressTab({
   const [detectedOS, setDetectedOS] = useState('macos');
   const [testInput, setTestInput] = useState('');
 
-  // Sección activa en la página de Progreso ('fsrs' por defecto)
-  const [activeSection, setActiveSection] = useState('fsrs'); // 'fsrs' | 'cloud' | 'backup' | 'keyboard'
+  // Sección activa en la página de Progreso ('cloud' por defecto tras mover FSRS a la página de SRS)
+  const [activeSection, setActiveSection] = useState('cloud'); // 'cloud' | 'backup' | 'keyboard'
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
       const params = new URLSearchParams(window.location.search);
       const sec = params.get('section');
-      if (sec && ['fsrs', 'cloud', 'backup', 'keyboard'].includes(sec)) {
+      if (sec === 'fsrs') {
+        if (contextApp?.navigate) {
+          contextApp.navigate('srs');
+          return;
+        } else if (typeof window !== 'undefined') {
+          window.location.href = '/srs?section=analytics';
+          return;
+        }
+      }
+      if (sec && ['cloud', 'backup', 'keyboard'].includes(sec)) {
         setActiveSection(sec);
       }
 
@@ -568,6 +576,59 @@ export default function ProgressTab({
         </div>
       </div>
 
+      {/* Banner directo hacia el Centro de Repaso SRS */}
+      <div 
+        className="card" 
+        style={{ 
+          marginBottom: 24, 
+          padding: '16px 20px', 
+          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.06) 100%)',
+          border: '1px solid rgba(99, 102, 241, 0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 14,
+          borderRadius: 14
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ 
+            width: 42, 
+            height: 42, 
+            borderRadius: 10, 
+            background: 'rgba(99, 102, 241, 0.15)', 
+            color: 'var(--primary)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <Brain size={22} />
+          </div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-main)' }}>
+              Análisis y Gráficas de Repaso SRS (FSRS v5)
+            </div>
+            <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              Las curvas de olvido, estabilidad de memoria, tarjetas en riesgo y preguntas en vivo se gestionan directamente en el Centro SRS.
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn btn-sm btn-primary"
+          onClick={() => {
+            if (contextApp?.navigate) contextApp.navigate('srs');
+            else if (typeof window !== 'undefined') window.location.href = '/srs?section=analytics';
+          }}
+          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px' }}
+        >
+          <span>Ir a Repaso & Análisis SRS</span>
+          <ArrowRight size={15} />
+        </button>
+      </div>
+
       {/* Selector de Sección Principal en Mi Progreso */}
       <div 
         style={{
@@ -579,16 +640,6 @@ export default function ProgressTab({
           borderBottom: '2px solid var(--border)'
         }}
       >
-        <button
-          type="button"
-          onClick={() => setActiveSection('fsrs')}
-          className={`btn btn-sm ${activeSection === 'fsrs' ? 'btn-primary' : 'btn-outline'}`}
-          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 16px' }}
-        >
-          <Brain size={16} />
-          <span>🧠 Análisis & FSRS</span>
-        </button>
-
         <button
           type="button"
           onClick={() => setActiveSection('cloud')}
@@ -620,19 +671,7 @@ export default function ProgressTab({
         </button>
       </div>
 
-      {/* SECCIÓN 1: ANÁLISIS & FSRS */}
-      {activeSection === 'fsrs' && (
-        <FsrsStatsModule
-          appState={appState}
-          onUpdateState={onUpdateState}
-          onOpenDailyGoal={contextApp?.openDailyGoalModal}
-          onNavigate={contextApp?.navigate}
-          showConfirm={showConfirm}
-          showAlert={contextApp?.showAlert}
-        />
-      )}
-
-      {/* SECCIÓN 2: NUBE Y CUENTA */}
+      {/* SECCIÓN 1: NUBE Y CUENTA */}
       {activeSection === 'cloud' && (
         <>
           {/* CLOUD SYNC & USER ACCOUNT CARD */}
