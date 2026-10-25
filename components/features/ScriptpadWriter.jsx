@@ -1085,15 +1085,19 @@ export default function ScriptpadWriter({
 
   const handleClearStrokes = () => {
     if (flowMode === 'continuous') {
-      setContinuousStrokes(prev => {
-        const copy = { ...prev };
-        if (copy[continuousActiveIndex]?.length > 0) {
-          copy[continuousActiveIndex] = [];
-        } else {
-          return {};
-        }
-        return copy;
-      });
+      const activeActions = continuousActionsRef.current[continuousActiveIndex];
+      if (activeActions?.clear) {
+        activeActions.clear();
+      } else {
+        setContinuousStrokes(prev => ({
+          ...prev,
+          [continuousActiveIndex]: []
+        }));
+      }
+      setContinuousCompleted(prev => ({
+        ...prev,
+        [continuousActiveIndex]: false
+      }));
       return;
     }
 
@@ -1108,14 +1112,18 @@ export default function ScriptpadWriter({
 
   const handleUndoStroke = () => {
     if (flowMode === 'continuous') {
-      setContinuousStrokes(prev => {
-        const currentList = prev[continuousActiveIndex] || [];
-        if (currentList.length === 0) return prev;
-        return {
-          ...prev,
-          [continuousActiveIndex]: currentList.slice(0, -1)
-        };
-      });
+      const activeActions = continuousActionsRef.current[continuousActiveIndex];
+      if (activeActions?.undo) {
+        activeActions.undo();
+      } else {
+        const currentList = continuousStrokes[continuousActiveIndex] || [];
+        if (currentList.length > 0) {
+          setContinuousStrokes(prev => ({
+            ...prev,
+            [continuousActiveIndex]: currentList.slice(0, -1)
+          }));
+        }
+      }
       return;
     }
 
@@ -1753,8 +1761,10 @@ export default function ScriptpadWriter({
                 key={`${currentWordIndex}_${idx}_${ch}`}
                 char={ch}
                 charIndex={idx}
+                totalChars={characters.length}
                 isActive={idx === continuousActiveIndex}
                 onSelect={() => setContinuousActiveIndex(idx)}
+                onSelectNext={(nextIdx) => setContinuousActiveIndex(nextIdx)}
                 strokes={continuousStrokes[idx] || []}
                 onStrokesChange={(newStrokes) => {
                   setContinuousStrokes(prev => ({
@@ -1765,6 +1775,14 @@ export default function ScriptpadWriter({
                 currentPaper={currentPaper}
                 showGhostGuide={showGhostGuide}
                 size={Math.min(260, Math.max(210, padSize - 20))}
+                onCharComplete={(completedIdx) => {
+                  setContinuousCompleted(prev => ({
+                    ...prev,
+                    [completedIdx]: true
+                  }));
+                }}
+                isAlreadyCompleted={!!continuousCompleted[idx]}
+                onRegisterActions={registerContinuousAction}
               />
             ))}
           </div>
@@ -1786,7 +1804,7 @@ export default function ScriptpadWriter({
               Palabra: <strong style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>{currentWord.kanji || currentWord.hiragana}</strong>
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-              {Object.values(continuousStrokes).filter(s => s && s.length > 0).length} de {characters.length} escritos
+              {totalCompletedInContinuous} de {characters.length} completados
             </span>
           </div>
         </div>
@@ -1833,8 +1851,11 @@ export default function ScriptpadWriter({
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Borrar</span>
           </button>
 
-          {/* Botón 2: Pista (si guiado) o Deshacer (si libre / continua) */}
-          {(flowMode === 'continuous' || !hasWriterData) ? (
+          {/* Botón 2: Pista (si guiado) o Deshacer (si libre) */}
+          {(flowMode === 'continuous'
+            ? (continuousActionsRef.current[continuousActiveIndex]?.hasWriterData === false)
+            : (!hasWriterData || engineMode === 'free')
+          ) ? (
             <button
               type="button"
               className="btn btn-outline btn-sm"
