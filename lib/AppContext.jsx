@@ -118,6 +118,13 @@ export function AppProvider({ children }) {
   });
 
   const openPracticePad = useCallback(({ text = '', kana = '', title = '', source = 'custom', initialChar = '', ghostOpacity = undefined, initialTab = 'canvas' } = {}) => {
+    // Deseleccionar texto visual del DOM para mantener la pantalla limpia
+    if (typeof window !== 'undefined' && window.getSelection) {
+      try {
+        window.getSelection().removeAllRanges();
+      } catch (e) {}
+    }
+
     setPracticePadState({
       isOpen: true,
       text,
@@ -141,6 +148,13 @@ export function AppProvider({ children }) {
   });
 
   const openDictionary = useCallback((initialSearch = '') => {
+    // Deseleccionar texto visual del DOM para mantener la pantalla limpia
+    if (typeof window !== 'undefined' && window.getSelection) {
+      try {
+        window.getSelection().removeAllRanges();
+      } catch (e) {}
+    }
+
     setDictionaryState({
       isOpen: true,
       search: typeof initialSearch === 'string' ? initialSearch : ''

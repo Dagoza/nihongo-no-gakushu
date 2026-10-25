@@ -16,6 +16,7 @@ import {
   BarChart3,
   Grid
 } from 'lucide-react';
+import HeaderDaruma from './HeaderDaruma';
 import { TABS, NAV_CATEGORIES } from './NavigationTabs';
 
 export default function MobileNavDrawer({
@@ -94,7 +95,7 @@ export default function MobileNavDrawer({
     }
   }, [pathname]);
 
-  // Touch handlers for swipe-to-dismiss (swipe right)
+  // Touch handlers for swipe-to-dismiss (swipe left toward left edge)
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -103,7 +104,8 @@ export default function MobileNavDrawer({
   const handleTouchEnd = (e) => {
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
     const deltaY = e.changedTouches[0].clientY - touchStartY.current;
-    if (deltaX > 55 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    // Drawer is on the left side: swiping left dismisses it
+    if (deltaX < -55 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
       onClose?.();
     }
   };
@@ -140,7 +142,7 @@ export default function MobileNavDrawer({
         aria-hidden="true"
       />
 
-      {/* Slide-out Drawer Panel (from right edge) */}
+      {/* Slide-out Drawer Panel (from left edge) */}
       <aside 
         ref={drawerRef}
         className={`mobile-nav-drawer ${isOpen ? 'open' : ''}`}
@@ -152,9 +154,14 @@ export default function MobileNavDrawer({
       >
         {/* Drawer Header */}
         <div className="mobile-nav-header">
-          <div className="mobile-nav-header-brand">
+          <div 
+            className="mobile-nav-header-brand"
+            onClick={() => handleItemClick({ id: 'home', path: '/' })}
+            title="Ir a Inicio"
+            style={{ cursor: 'pointer' }}
+          >
             <div className="mobile-nav-header-icon">
-              <Sparkles size={17} style={{ color: 'var(--primary, #6366f1)' }} />
+              <HeaderDaruma size={36} />
             </div>
             <div>
               <div className="mobile-nav-header-title">日本語マスター</div>

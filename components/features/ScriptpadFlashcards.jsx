@@ -263,54 +263,64 @@ export default function ScriptpadFlashcards({
       gap: 16,
       boxSizing: 'border-box'
     }}>
-      {/* Barra de progreso superior */}
+      {/* Botón de Salir fuera y arriba de la card */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'var(--bg-surface)',
-        padding: '10px 14px',
-        borderRadius: 16,
-        border: '1px solid var(--border)',
-        width: '100%',
-        boxSizing: 'border-box',
-        gap: 8
+        justifyContent: 'flex-start',
+        width: '100%'
       }}>
         <button
           type="button"
           onClick={onClose}
           className="btn btn-outline btn-sm"
           style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: 4,
-            borderRadius: 10,
-            padding: '6px 10px',
-            fontSize: '0.82rem',
-            flexShrink: 0
+            gap: 6,
+            borderRadius: 12,
+            padding: '7px 14px',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border)',
+            color: 'var(--text-main)',
+            cursor: 'pointer'
           }}
+          aria-label="Cerrar lección"
         >
           <ChevronLeft size={16} />
           <span>Salir</span>
         </button>
+      </div>
 
-        <div style={{ textAlign: 'center', flex: 1, minWidth: 0, padding: '0 6px' }}>
+      {/* Barra de progreso superior */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: 'var(--bg-surface)',
+        padding: '12px 18px',
+        borderRadius: 18,
+        border: '1px solid var(--border)',
+        width: '100%',
+        boxSizing: 'border-box',
+        gap: 12
+      }}>
+        <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: '0.85rem',
+            fontSize: '0.95rem',
             fontWeight: 700,
             color: 'var(--text-main)',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            lineHeight: 1.3,
+            wordBreak: 'break-word'
           }}>
             {lesson.title}
           </div>
           <div style={{
-            fontSize: '0.72rem',
+            fontSize: '0.75rem',
             color: 'var(--text-muted)',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            marginTop: 2
           }}>
             Flashcards · Tarjeta {currentIndex + 1} de {words.length}
           </div>
@@ -321,18 +331,19 @@ export default function ScriptpadFlashcards({
           onClick={playAudio}
           className="btn btn-primary btn-sm"
           style={{
-            width: 36,
-            height: 36,
+            width: 40,
+            height: 40,
             borderRadius: '50%',
             padding: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
             flexShrink: 0
           }}
           title="Escuchar audio"
         >
-          <Volume2 size={16} />
+          <Volume2 size={18} />
         </button>
       </div>
 

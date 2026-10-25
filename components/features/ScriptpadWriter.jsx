@@ -858,6 +858,37 @@ export default function ScriptpadWriter({
       paddingBottom: 140, // Espacio para scroll nativo fluido en móvil por encima del reproductor de audio
       boxSizing: 'border-box'
     }}>
+      {/* Botón de Salir fuera y arriba de la card */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width: '100%'
+      }}>
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn btn-outline btn-sm"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            borderRadius: 12,
+            padding: '7px 14px',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border)',
+            color: 'var(--text-main)',
+            cursor: 'pointer'
+          }}
+          aria-label="Cerrar lección"
+        >
+          <ChevronLeft size={16} />
+          <span>Salir</span>
+        </button>
+      </div>
+
       {/* Barra superior de progreso */}
       <div style={{
         display: 'flex',
@@ -869,22 +900,17 @@ export default function ScriptpadWriter({
         borderRadius: 18,
         border: '1px solid var(--border)'
       }}>
-        <button
-          type="button"
-          onClick={onClose}
-          className="btn btn-outline btn-sm"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10 }}
-          aria-label="Cerrar lección"
-        >
-          <ChevronLeft size={16} />
-          <span>Salir</span>
-        </button>
-
-        <div style={{ textAlign: 'center', flex: 1 }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>
+        <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontSize: '0.95rem',
+            fontWeight: 700,
+            color: 'var(--text-main)',
+            lineHeight: 1.3,
+            wordBreak: 'break-word'
+          }}>
             {lesson.title}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 2 }}>
             Palabra {currentWordIndex + 1} de {words.length}
           </div>
         </div>
@@ -895,14 +921,15 @@ export default function ScriptpadWriter({
           onClick={playCurrentWordAudio}
           className="btn btn-primary btn-sm"
           style={{
-            width: 38,
-            height: 38,
+            width: 40,
+            height: 40,
             borderRadius: '50%',
             padding: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)'
+            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
+            flexShrink: 0
           }}
           title="Escuchar pronunciación"
           aria-label="Escuchar pronunciación"
@@ -919,7 +946,7 @@ export default function ScriptpadWriter({
         padding: '16px 20px',
         boxShadow: 'var(--shadow-sm)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{
               background: 'rgba(99, 102, 241, 0.12)',
@@ -930,9 +957,6 @@ export default function ScriptpadWriter({
               borderRadius: 8
             }}>
               {currentWord.level || 'N5'}
-            </span>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              {currentWord.category || 'Vocabulario'}
             </span>
           </div>
 
@@ -961,16 +985,33 @@ export default function ScriptpadWriter({
           </div>
         </div>
 
-        {/* Palabra en gran formato con carácter activo resaltado */}
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 12, margin: '6px 0' }}>
+        {/* Palabra en gran formato con carácter activo resaltado y wrap multilinea para palabras largas */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '8px 0',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
           <h1 style={{
-            fontSize: '2.5rem',
+            fontSize: characters.length > 8
+              ? 'clamp(1.75rem, 5.5vw, 2.1rem)'
+              : characters.length > 5
+                ? 'clamp(2rem, 7vw, 2.4rem)'
+                : '2.5rem',
             fontWeight: 900,
             letterSpacing: 2,
             margin: 0,
             color: 'var(--text-main)',
             display: 'flex',
-            gap: 4
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '6px 4px',
+            maxWidth: '100%',
+            lineHeight: 1.35,
+            wordBreak: 'break-all'
           }}>
             {characters.map((ch, idx) => (
               <span
@@ -978,7 +1019,10 @@ export default function ScriptpadWriter({
                 onClick={() => setCurrentCharIndex(idx)}
                 style={{
                   cursor: 'pointer',
-                  padding: '0 4px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '2px 5px',
                   borderRadius: 8,
                   background: idx === currentCharIndex ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
                   color: idx === currentCharIndex ? 'var(--primary)' : 'inherit',
@@ -993,9 +1037,9 @@ export default function ScriptpadWriter({
         </div>
 
         {/* Lectura Kana (condicional según toggle) */}
-        <div style={{ textAlign: 'center', minHeight: 24, marginBottom: 4 }}>
+        <div style={{ textAlign: 'center', minHeight: 24, marginBottom: 4, width: '100%', wordBreak: 'break-word' }}>
           {showKana ? (
-            <span style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--primary)' }}>
+            <span style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--primary)', wordBreak: 'break-word' }}>
               {currentWord.hiragana} {currentWord.romaji && <span style={{ opacity: 0.6, fontSize: '0.9rem' }}>({currentWord.romaji})</span>}
             </span>
           ) : (
@@ -1006,9 +1050,9 @@ export default function ScriptpadWriter({
         </div>
 
         {/* Significado en español (condicional según toggle) */}
-        <div style={{ textAlign: 'center', minHeight: 22 }}>
+        <div style={{ textAlign: 'center', minHeight: 22, width: '100%', wordBreak: 'break-word' }}>
           {showMeaning ? (
-            <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-main)' }}>
+            <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-main)', wordBreak: 'break-word' }}>
               {currentWord.meaning_es}
             </span>
           ) : (
@@ -1100,7 +1144,7 @@ export default function ScriptpadWriter({
           {/* Tira superior de casillas de caracteres */}
           <div style={{
             display: 'flex',
-            gap: 8,
+            gap: characters.length > 7 ? 6 : 8,
             marginBottom: 14,
             width: '100%',
             justifyContent: 'center',
@@ -1118,18 +1162,19 @@ export default function ScriptpadWriter({
                   setEngineMode('guided');
                 }}
                 style={{
-                  width: 44,
-                  height: 44,
+                  width: characters.length > 8 ? 38 : characters.length > 6 ? 40 : 44,
+                  height: characters.length > 8 ? 38 : characters.length > 6 ? 40 : 44,
                   borderRadius: 12,
                   border: idx === currentCharIndex ? '2px solid var(--primary)' : '1px solid var(--border)',
                   background: idx === currentCharIndex ? 'rgba(99, 102, 241, 0.15)' : 'var(--bg-main)',
                   color: idx === currentCharIndex ? 'var(--primary)' : 'var(--text-main)',
-                  fontSize: '1.25rem',
+                  fontSize: characters.length > 8 ? '1.1rem' : '1.25rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  flexShrink: 0
                 }}
               >
                 {ch}

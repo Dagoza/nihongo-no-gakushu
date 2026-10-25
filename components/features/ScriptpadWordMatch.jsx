@@ -181,54 +181,64 @@ export default function ScriptpadWordMatch({
       gap: 16,
       boxSizing: 'border-box'
     }}>
-      {/* Header */}
+      {/* Botón de Salir fuera y arriba de la card */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'var(--bg-surface)',
-        padding: '10px 14px',
-        borderRadius: 16,
-        border: '1px solid var(--border)',
-        width: '100%',
-        boxSizing: 'border-box',
-        gap: 8
+        justifyContent: 'flex-start',
+        width: '100%'
       }}>
         <button
           type="button"
           onClick={onClose}
           className="btn btn-outline btn-sm"
           style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: 4,
-            borderRadius: 10,
-            padding: '6px 10px',
-            fontSize: '0.82rem',
-            flexShrink: 0
+            gap: 6,
+            borderRadius: 12,
+            padding: '7px 14px',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border)',
+            color: 'var(--text-main)',
+            cursor: 'pointer'
           }}
+          aria-label="Cerrar lección"
         >
           <ChevronLeft size={16} />
           <span>Salir</span>
         </button>
+      </div>
 
-        <div style={{ textAlign: 'center', flex: 1, minWidth: 0, padding: '0 6px' }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: 'var(--bg-surface)',
+        padding: '12px 18px',
+        borderRadius: 18,
+        border: '1px solid var(--border)',
+        width: '100%',
+        boxSizing: 'border-box',
+        gap: 12
+      }}>
+        <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: '0.85rem',
+            fontSize: '0.95rem',
             fontWeight: 700,
             color: 'var(--text-main)',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            lineHeight: 1.3,
+            wordBreak: 'break-word'
           }}>
             {lesson.title}
           </div>
           <div style={{
-            fontSize: '0.72rem',
+            fontSize: '0.75rem',
             color: 'var(--text-muted)',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            marginTop: 2
           }}>
             Word Match · Empareja palabras
           </div>

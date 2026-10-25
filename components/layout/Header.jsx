@@ -153,6 +153,26 @@ export default function Header({
     <header className="app-header">
       <div className="header-container">
         <div className="header-top-row">
+          {/* Mobile Navigation Drawer Trigger Button (Left Side) */}
+          <button 
+            type="button"
+            className={`mobile-menu-trigger-btn ${isMobileNavOpen ? 'active' : ''}`}
+            onClick={() => {
+              if (isMobileNavOpen) {
+                if (onCloseMobileNav) onCloseMobileNav();
+                else if (contextApp?.closeMobileNav) contextApp.closeMobileNav();
+              } else {
+                if (onOpenMobileNav) onOpenMobileNav();
+                else if (contextApp?.openMobileNav) contextApp.openMobileNav();
+              }
+            }}
+            title={isMobileNavOpen ? 'Cerrar menú' : 'Abrir menú de navegación y módulos'}
+            aria-label={isMobileNavOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+            aria-expanded={isMobileNavOpen}
+          >
+            {isMobileNavOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+
           <div className="brand-wrapper" onClick={() => onNavigate('/')}>
             <div className="brand-logo">
               <HeaderDaruma />
@@ -684,26 +704,6 @@ export default function Header({
                 )}
               </div>
             )}
-
-            {/* Mobile Navigation Drawer Trigger Button */}
-            <button 
-              type="button"
-              className={`mobile-menu-trigger-btn ${isMobileNavOpen ? 'active' : ''}`}
-              onClick={() => {
-                if (isMobileNavOpen) {
-                  if (onCloseMobileNav) onCloseMobileNav();
-                  else if (contextApp?.closeMobileNav) contextApp.closeMobileNav();
-                } else {
-                  if (onOpenMobileNav) onOpenMobileNav();
-                  else if (contextApp?.openMobileNav) contextApp.openMobileNav();
-                }
-              }}
-              title={isMobileNavOpen ? 'Cerrar menú' : 'Abrir menú de navegación y módulos'}
-              aria-label={isMobileNavOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
-              aria-expanded={isMobileNavOpen}
-            >
-              {isMobileNavOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
           </div>
         </div>
 
