@@ -305,9 +305,9 @@ export default function SrsReview({
         }}
       >
         {/* CARA FRONTAL */}
-        <div className="srs-card-front">
+        <div className="srs-card-front" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
           {renderFront ? renderFront(currentItem) : (
-            <div style={{ fontSize: '4.5rem', fontWeight: 800 }}>
+            <div style={{ fontSize: '4.5rem', fontWeight: 800, textAlign: 'center', margin: '0 auto' }}>
               {currentItem.kanji || currentItem.word}
             </div>
           )}

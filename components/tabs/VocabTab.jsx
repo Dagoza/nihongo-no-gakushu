@@ -54,6 +54,7 @@ export default function VocabTab({
   const [level, setLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | ...
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'learned' | 'unlearned'
   const [selectedTag, setSelectedTag] = useState(initialCategory || 'all');
+  const [areTagsExpanded, setAreTagsExpanded] = useState(false);
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
 
   useEffect(() => {
@@ -769,85 +770,59 @@ export default function VocabTab({
           </div>
 
           {/* Filtros Integrados: Estado, Nivel JLPT y Etiquetas */}
-          <div className="card" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-              {/* Filtro de Estado: Aprendidas o Por Aprender */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  Estado:
-                </span>
-                <div style={{
-                  display: 'inline-flex',
-                  background: 'var(--bg-main)',
-                  padding: '3px',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border)'
-                }}>
-                  <button
-                    type="button"
-                    onClick={() => setStatusFilter('all')}
-                    style={{
-                      padding: '4px 12px',
-                      borderRadius: '7px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '0.82rem',
-                      fontWeight: statusFilter === 'all' ? 700 : 500,
-                      background: statusFilter === 'all' ? 'var(--primary)' : 'transparent',
-                      color: statusFilter === 'all' ? '#fff' : 'var(--text-muted)',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    Todas ({effectiveVocabList.length})
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStatusFilter('learned')}
-                    style={{
-                      padding: '4px 12px',
-                      borderRadius: '7px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '0.82rem',
-                      fontWeight: statusFilter === 'learned' ? 700 : 500,
-                      background: statusFilter === 'learned' ? 'var(--success, #16a34a)' : 'transparent',
-                      color: statusFilter === 'learned' ? '#fff' : 'var(--text-muted)',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    ✓ Aprendidas ({masteredCount})
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStatusFilter('unlearned')}
-                    style={{
-                      padding: '4px 12px',
-                      borderRadius: '7px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '0.82rem',
-                      fontWeight: statusFilter === 'unlearned' ? 700 : 500,
-                      background: statusFilter === 'unlearned' ? 'var(--primary)' : 'transparent',
-                      color: statusFilter === 'unlearned' ? '#fff' : 'var(--text-muted)',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    ⏳ Por aprender ({unlearnedCount})
-                  </button>
-                </div>
+          <div className="card" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {/* Filtro de Estado: Título y botones en líneas separadas, mismo estilo de nivel */}
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                Estado:
               </div>
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className={`btn ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                  onClick={() => setStatusFilter('all')}
+                >
+                  Todas ({effectiveVocabList.length})
+                </button>
+                <button
+                  type="button"
+                  className={`btn ${statusFilter === 'learned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                  onClick={() => setStatusFilter('learned')}
+                >
+                  ✓ Aprendidas ({masteredCount})
+                </button>
+                <button
+                  type="button"
+                  className={`btn ${statusFilter === 'unlearned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                  onClick={() => setStatusFilter('unlearned')}
+                >
+                  ⏳ Por aprender ({unlearnedCount})
+                </button>
+              </div>
+            </div>
 
-              {/* Selector de Nivel JLPT */}
-              <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            {/* Selector de Nivel JLPT: Título y botones en líneas separadas */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
                   Nivel:
                 </span>
+                {isLoading && (
+                  <span style={{ fontSize: '0.78rem', color: 'var(--primary)' }}>
+                    ⚡ Cargando...
+                  </span>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
                 {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
                   <button
                     key={lvl}
                     type="button"
                     className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
-                    style={{ minWidth: 38, padding: '3px 8px' }}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
                     onClick={() => {
                       setLevel(lvl);
                       setSelectedTag('all');
@@ -857,63 +832,89 @@ export default function VocabTab({
                     {lvl === 'all' ? 'Todos' : lvl}
                   </button>
                 ))}
-                {isLoading && (
-                  <span style={{ fontSize: '0.78rem', color: 'var(--primary)', marginLeft: 6 }}>
-                    ⚡ Cargando...
-                  </span>
-                )}
               </div>
             </div>
 
-            {/* Selector de Etiquetas (Tags) y Categorías */}
-            {availableTags.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', paddingTop: 8, borderTop: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
-                  <Tag size={13} />
-                  <span>Etiquetas:</span>
-                </div>
-                <button
-                  type="button"
-                  className={`vocab-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedTag('all');
-                    updateParams(mode, level, 'all', searchTerm);
-                  }}
-                >
-                  Todas
-                </button>
-                {availableTags.slice(0, 10).map(tag => (
-                  <button
-                    key={tag}
-                    type="button"
-                    className={`vocab-tag-pill ${selectedTag === tag ? 'active' : ''}`}
-                    onClick={() => {
-                      const nextTag = selectedTag === tag ? 'all' : tag;
-                      setSelectedTag(nextTag);
-                      updateParams(mode, level, nextTag, searchTerm);
-                    }}
-                  >
-                    #{tag}
-                  </button>
-                ))}
-                {availableTags.length > 10 && (
-                  <select
-                    className="select-custom"
-                    value={selectedTag}
-                    onChange={(e) => {
-                      setSelectedTag(e.target.value);
-                      updateParams(mode, level, e.target.value, searchTerm);
-                    }}
-                    style={{ fontSize: '0.78rem', padding: '2px 8px', borderRadius: 6 }}
-                  >
-                    <option value="all">Más etiquetas ({availableTags.length})...</option>
-                    {availableTags.map(t => (
-                      <option key={t} value={t}>#{t}</option>
+            {/* Selector de Etiquetas (Tags) colapsable/expandible en una sola línea sin dropdown */}
+            {availableTags.length > 0 && (() => {
+              const FIRST_LINE_TAGS_LIMIT = 5;
+              const displayedTags = areTagsExpanded
+                ? availableTags
+                : availableTags.slice(0, FIRST_LINE_TAGS_LIMIT);
+
+              return (
+                <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                      <Tag size={13} />
+                      <span>Etiquetas:</span>
+                    </div>
+                    {availableTags.length > FIRST_LINE_TAGS_LIMIT && (
+                      <button
+                        type="button"
+                        onClick={() => setAreTagsExpanded(!areTagsExpanded)}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--primary)',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          padding: '2px 4px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4
+                        }}
+                      >
+                        <span>{areTagsExpanded ? 'Ver menos ▲' : `+ Ver más (${availableTags.length - FIRST_LINE_TAGS_LIMIT}) ▼`}</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      className={`vocab-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
+                      onClick={() => {
+                        setSelectedTag('all');
+                        updateParams(mode, level, 'all', searchTerm);
+                      }}
+                    >
+                      Todas
+                    </button>
+                    {displayedTags.map(tag => (
+                      <button
+                        key={tag}
+                        type="button"
+                        className={`vocab-tag-pill ${selectedTag === tag ? 'active' : ''}`}
+                        onClick={() => {
+                          const nextTag = selectedTag === tag ? 'all' : tag;
+                          setSelectedTag(nextTag);
+                          updateParams(mode, level, nextTag, searchTerm);
+                        }}
+                      >
+                        #{tag}
+                      </button>
                     ))}
-                  </select>
-                )}
-              </div>
-            )}
+                    {!areTagsExpanded && availableTags.length > FIRST_LINE_TAGS_LIMIT && (
+                      <button
+                        type="button"
+                        className="vocab-tag-pill"
+                        onClick={() => setAreTagsExpanded(true)}
+                        style={{
+                          color: 'var(--primary)',
+                          borderColor: 'var(--primary)',
+                          fontWeight: 700,
+                          background: 'rgba(99, 102, 241, 0.08)'
+                        }}
+                      >
+                        +{availableTags.length - FIRST_LINE_TAGS_LIMIT} más...
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Search Bar & Quick Tools */}
@@ -1049,110 +1050,108 @@ export default function VocabTab({
                       boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
                     }}
                   >
-                    <div>
-                      {/* Top Bar: Nivel, Tags y Botón de Estado Aprendido */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, gap: 8, flexWrap: 'wrap' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                          <span className="vocab-tag" style={{ fontWeight: 700 }}>
-                            {item.level || 'N5'}
+                    {/* Línea 1: Nivel a la izq, Icono IA y botón Por aprender/aprendida a la der */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span className="vocab-tag" style={{ fontWeight: 700, margin: 0 }}>
+                          {item.level || 'N5'}
+                        </span>
+                        {item.isCustomized && (
+                          <span 
+                            style={{ 
+                              fontSize: '0.7rem', 
+                              background: 'rgba(99, 102, 241, 0.15)', 
+                              color: 'var(--primary-light)', 
+                              padding: '1px 5px', 
+                              borderRadius: '4px', 
+                              fontWeight: 600,
+                              border: '1px solid rgba(99, 102, 241, 0.3)'
+                            }}
+                            title="Palabra con personalizaciones"
+                          >
+                            ✏️
                           </span>
-
-                          {/* Tags de la palabra */}
-                          {tags.slice(0, 2).map(tag => (
-                            <span 
-                              key={tag}
-                              className="vocab-tag-pill"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedTag(tag);
-                                updateParams(mode, level, tag, searchTerm);
-                              }}
-                              title={`Filtrar por #${tag}`}
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                          {tags.length > 2 && (
-                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                              +{tags.length - 2}
-                            </span>
-                          )}
-
-                          {/* Botón rápido para gestionar etiquetas */}
-                          <button
-                            type="button"
-                            className="vocab-add-tag-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setTagEditorWord(item);
-                            }}
-                            title="Gestionar etiquetas personalizadas de esta palabra"
-                          >
-                            <Tag size={10} />
-                            <span>Tag</span>
-                          </button>
-
-                          {item.isCustomized && (
-                            <span 
-                              style={{ 
-                                fontSize: '0.7rem', 
-                                background: 'rgba(99, 102, 241, 0.15)', 
-                                color: 'var(--primary-light)', 
-                                padding: '1px 5px', 
-                                borderRadius: '4px', 
-                                fontWeight: 600,
-                                border: '1px solid rgba(99, 102, 241, 0.3)'
-                              }}
-                              title="Palabra con personalizaciones"
-                            >
-                              ✏️
-                            </span>
-                          )}
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          {/* Botón Selección IA */}
-                          <button
-                            type="button"
-                            className={`kanji-select-btn ${isSelected ? 'selected' : ''}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const next = new Set(selectedWordIds);
-                              if (next.has(wordKey)) next.delete(wordKey);
-                              else next.add(wordKey);
-                              setSelectedWordIds(next);
-                            }}
-                            title={isSelected ? "Deseleccionar palabra" : "Seleccionar palabra para IA"}
-                            aria-pressed={isSelected}
-                          >
-                            {isSelected ? <Check size={12} strokeWidth={2.5} /> : <Sparkles size={12} />}
-                          </button>
-
-                          {/* Botón claro de Estado: Aprendida / Por Aprender */}
-                          <button
-                            type="button"
-                            className={`vocab-status-pill ${isMastered ? 'learned' : 'unlearned'}`}
-                            onClick={() => toggleVocabMastery(item)}
-                            title={isMastered ? "Marcar como pendiente de aprender" : "Marcar como aprendida (+20 XP)"}
-                          >
-                            {isMastered ? (
-                              <>
-                                <CheckCircle2 size={13} />
-                                <span>Aprendida</span>
-                              </>
-                            ) : (
-                              <>
-                                <Plus size={13} />
-                                <span>Por aprender</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
+                        )}
                       </div>
 
-                      <div className="vocab-kanji">
-                        <span className="jp-text">{item.kanji}</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {/* Botón Selección IA */}
+                        <button
+                          type="button"
+                          className={`kanji-select-btn ${isSelected ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const next = new Set(selectedWordIds);
+                            if (next.has(wordKey)) next.delete(wordKey);
+                            else next.add(wordKey);
+                            setSelectedWordIds(next);
+                          }}
+                          title={isSelected ? "Deseleccionar palabra" : "Seleccionar palabra para IA"}
+                          aria-pressed={isSelected}
+                        >
+                          {isSelected ? <Check size={12} strokeWidth={2.5} /> : <Sparkles size={12} />}
+                        </button>
+
+                        {/* Botón claro de Estado: Aprendida / Por Aprender */}
+                        <button
+                          type="button"
+                          className={`vocab-status-pill ${isMastered ? 'learned' : 'unlearned'}`}
+                          onClick={() => toggleVocabMastery(item)}
+                          title={isMastered ? "Marcar como pendiente de aprender" : "Marcar como aprendida (+20 XP)"}
+                        >
+                          {isMastered ? (
+                            <>
+                              <CheckCircle2 size={13} />
+                              <span>Aprendida</span>
+                            </>
+                          ) : (
+                            <>
+                              <Plus size={13} />
+                              <span>Por aprender</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Línea 2: Tags */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
+                      {tags.map(tag => (
+                        <span 
+                          key={tag}
+                          className="vocab-tag-pill"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedTag(tag);
+                            updateParams(mode, level, tag, searchTerm);
+                          }}
+                          title={`Filtrar por #${tag}`}
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                      <button
+                        type="button"
+                        className="vocab-add-tag-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTagEditorWord(item);
+                        }}
+                        title="Gestionar etiquetas personalizadas de esta palabra"
+                      >
+                        <Tag size={10} />
+                        <span>Tag</span>
+                      </button>
+                    </div>
+
+                    {/* Línea 3: Y después centrado en la card el resto */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 6, marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <span className="jp-text" style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.2 }}>
+                          {item.kanji}
+                        </span>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                           <button 
                             type="button"
                             className="audio-btn" 
@@ -1169,7 +1168,7 @@ export default function VocabTab({
                           />
                           <button
                             type="button"
-                            className="audio-btn"
+                            className="audio-btn" 
                             style={{ width: 30, height: 30 }}
                             onClick={() => {
                               if (contextApp?.openPracticePad) {
@@ -1195,7 +1194,7 @@ export default function VocabTab({
                         </div>
                       </div>
 
-                      <div className="vocab-kana jp-text" style={{ fontSize: '1rem', marginTop: 2 }}>
+                      <div className="vocab-kana jp-text" style={{ fontSize: '1.05rem', color: 'var(--accent)', fontWeight: 600 }}>
                         {item.kana || item.hiragana || ''}
                         {item.katakana && item.katakana !== (item.kana || item.hiragana) && (
                           <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: 8, fontWeight: 400 }}>
@@ -1205,7 +1204,7 @@ export default function VocabTab({
                       </div>
 
                       {/* Pitch Accent */}
-                      <div style={{ marginTop: 6, marginBottom: 4 }}>
+                      <div style={{ marginTop: 2, marginBottom: 2 }}>
                         <PitchAccent 
                           word={item.kanji} 
                           reading={item.kana || item.hiragana} 
@@ -1215,26 +1214,32 @@ export default function VocabTab({
                       </div>
                     </div>
 
-                    <div className="vocab-meanings">
-                      <div className="vocab-es">🇪🇸 {item.meaning_es}</div>
-                      {item.meaning_en && <div className="vocab-en">🇬🇧 {item.meaning_en}</div>}
+                    <div className="vocab-meanings" style={{ textAlign: 'center' }}>
+                      <div className="vocab-es" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                        🇪🇸 {item.meaning_es}
+                      </div>
+                      {item.meaning_en && (
+                        <div className="vocab-en" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                          🇬🇧 {item.meaning_en}
+                        </div>
+                      )}
 
                       {item.literal_translation && (
-                        <div style={{ marginTop: 4, fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div style={{ marginTop: 4, fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                           <span className="literal-tag">Literal</span>
                           <span>&ldquo;{item.literal_translation}&rdquo;</span>
                         </div>
                       )}
 
                       {item.breakdown && (
-                        <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--text-muted)', background: 'var(--bg-main)', padding: '4px 8px', borderRadius: '6px', border: '1px dashed var(--border)' }}>
+                        <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--text-muted)', background: 'var(--bg-main)', padding: '4px 8px', borderRadius: '6px', border: '1px dashed var(--border)', textAlign: 'center' }}>
                           <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>🧩 Desglose: </span>
                           <span>{item.breakdown}</span>
                         </div>
                       )}
 
                       {item.example_sentence && (
-                        <div style={{ marginTop: 8, padding: '8px 10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '8px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                        <div style={{ marginTop: 8, padding: '8px 10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '8px', border: '1px solid rgba(99, 102, 241, 0.15)', textAlign: 'left' }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
                             <span style={{ fontSize: '0.88rem', fontWeight: 600 }} className="jp-text">
                               {item.example_sentence}
@@ -1270,7 +1275,8 @@ export default function VocabTab({
                           border: '1px solid rgba(245, 158, 11, 0.25)',
                           borderRadius: '8px',
                           padding: '6px 9px',
-                          fontSize: '0.82rem'
+                          fontSize: '0.82rem',
+                          textAlign: 'left'
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--amber-700, #b45309)', fontWeight: 700, fontSize: '0.75rem', marginBottom: 2 }}>
                             <StickyNote size={12} />
@@ -1285,7 +1291,7 @@ export default function VocabTab({
 
                     {/* Card Action Row */}
                     <div style={{
-                      marginTop: 10,
+                      marginTop: 'auto',
                       paddingTop: 8,
                       borderTop: '1px solid var(--border)',
                       display: 'flex',
@@ -1605,7 +1611,7 @@ export default function VocabTab({
           }}
           backLabel="Volver a Vocabulario"
           renderFront={(item) => (
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
                 <span className="vocab-tag" style={{ fontWeight: 700 }}>{item.level || 'N5'}</span>
                 {item.category && (
@@ -1615,11 +1621,24 @@ export default function VocabTab({
                 )}
               </div>
 
-              <div className="vocab-kanji" style={{ fontSize: '4.8rem', lineHeight: 1.15, margin: '8px 0 16px 0' }}>
-                <span className="jp-text">{item.kanji}</span>
+              <div 
+                className="jp-text" 
+                style={{ 
+                  fontSize: '4.5rem', 
+                  fontWeight: 800, 
+                  lineHeight: 1.15, 
+                  margin: '12px auto 18px auto',
+                  textAlign: 'center',
+                  color: 'var(--text-main)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {item.kanji}
               </div>
 
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', margin: '0 0 16px 0', maxWidth: 420 }}>
                 ¿Recuerdas la lectura en Kana y el significado en español?
               </p>
 
