@@ -31,8 +31,8 @@ export { default as MobileNavDrawer } from './MobileNavDrawer';
 export const NAV_CATEGORIES = [
   { id: 'all', label: 'Todos los módulos', shortLabel: 'Todos', icon: Grid, count: 15 },
   { id: 'learn', label: 'Aprender', shortLabel: 'Aprender', icon: Sparkles, count: 6 },
-  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 8 },
-  { id: 'progress', label: 'Progreso', shortLabel: 'Progreso', icon: BarChart3, count: 1 },
+  { id: 'practice', label: 'Recursos & Práctica', shortLabel: 'Recursos', icon: Layers, count: 6 },
+  { id: 'progress', label: 'Seguimiento', shortLabel: 'Seguimiento', icon: BarChart3, count: 3 },
 ];
 
 export const TABS = [
@@ -125,17 +125,6 @@ export const TABS = [
     color: '#8b5cf6',
   },
   {
-    id: 'srs',
-    path: '/srs',
-    category: 'practice',
-    categoryName: 'Recursos & Práctica',
-    shortLabel: 'Repaso SRS',
-    fullLabel: 'Centro de Repaso SRS',
-    desc: 'Preguntas inteligentes FSRS, tarjetas y curvas de olvido',
-    icon: Brain,
-    color: '#6366f1',
-  },
-  {
     id: 'particles',
     path: '/grammar',
     category: 'practice',
@@ -145,17 +134,6 @@ export const TABS = [
     desc: '99 partículas y estructuras esenciales (N5 a N1)',
     icon: Target,
     color: '#10b981',
-  },
-  {
-    id: 'jlpt',
-    path: '/jlpt',
-    category: 'practice',
-    categoryName: 'Recursos & Práctica',
-    shortLabel: 'JLPT',
-    fullLabel: 'Simulacros JLPT',
-    desc: 'Exámenes oficiales y simulacros cronometrados (N5 a N1)',
-    icon: Award,
-    color: '#8b5cf6',
   },
   {
     id: 'kanji',
@@ -191,10 +169,32 @@ export const TABS = [
     color: '#e11d48',
   },
   {
+    id: 'srs',
+    path: '/srs',
+    category: 'progress',
+    categoryName: 'Seguimiento',
+    shortLabel: 'Repaso SRS',
+    fullLabel: 'Centro de Repaso SRS',
+    desc: 'Preguntas inteligentes FSRS, tarjetas y curvas de olvido',
+    icon: Brain,
+    color: '#6366f1',
+  },
+  {
+    id: 'jlpt',
+    path: '/jlpt',
+    category: 'progress',
+    categoryName: 'Seguimiento',
+    shortLabel: 'JLPT',
+    fullLabel: 'Simulacros JLPT',
+    desc: 'Exámenes oficiales y simulacros cronometrados (N5 a N1)',
+    icon: Award,
+    color: '#8b5cf6',
+  },
+  {
     id: 'progress',
     path: '/progress',
     category: 'progress',
-    categoryName: 'Progreso',
+    categoryName: 'Seguimiento',
     shortLabel: 'Mi Progreso',
     fullLabel: 'Mi Progreso',
     desc: 'Rachas, experiencia, nivel y estadísticas',
@@ -480,11 +480,11 @@ export default function NavigationTabs({ currentTab, onTabChange, savedCount = 0
                     </div>
                   </div>
 
-                  {/* Category: Progreso */}
+                  {/* Category: Seguimiento */}
                   <div className="mega-menu-section">
                     <div className="mega-section-header">
                       <BarChart3 size={14} className="text-emerald-400" />
-                      <span>Seguimiento (1)</span>
+                      <span>Seguimiento ({TABS.filter((t) => t.category === 'progress').length})</span>
                     </div>
                     <div className="mega-items-grid">
                       {TABS.filter((t) => t.category === 'progress').map((t) => {

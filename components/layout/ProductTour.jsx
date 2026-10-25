@@ -364,7 +364,7 @@ export default function ProductTour({
     },
     {
       id: 'jlpt',
-      category: 'Recursos & Práctica',
+      category: 'Seguimiento',
       categoryColor: '#8b5cf6',
       title: 'Simulacros Oficiales JLPT (N5 a N1)',
       subtitle: 'Exámenes completos y por sección con temporizador oficial y práctica guiada',

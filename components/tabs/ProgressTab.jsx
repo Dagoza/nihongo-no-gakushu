@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Download, Upload, CheckCircle2, RotateCcw, Keyboard, Cloud, CloudOff, CloudCheck, CloudSync, RefreshCw, ShieldCheck, AlertCircle, Sparkles, Compass, Brain, Info, BarChart3, ArrowRight } from 'lucide-react';
+import { Download, Upload, CheckCircle2, RotateCcw, Keyboard, Cloud, CloudOff, CloudCheck, CloudSync, RefreshCw, ShieldCheck, AlertCircle, Sparkles, Compass, Brain, Info, BarChart3, ArrowRight, Award } from 'lucide-react';
 import { exportData, parseImportData, getInitialState } from '../../lib/storage';
 import { 
   executeFullSync, 
@@ -359,6 +359,8 @@ export default function ProgressTab({
   const allCanDos = (curriculumData || []).flatMap(s => s.can_dos || []);
   const totalCanDos = allCanDos.length || 141;
   const completedCanDosCount = Object.values(appState.completedCanDos || {}).filter(Boolean).length;
+  const completedExamsCount = Object.keys(appState.jlptExamResults || {}).length;
+  const srsCardsCount = Object.keys(appState.srsCards || {}).length;
 
   // Sincronización manual en la nube (requiere sesión activa)
   const handleManualSync = async () => {
@@ -574,59 +576,123 @@ export default function ProgressTab({
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Competencias Can-Do</div>
         </div>
+
+        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🏆</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#8b5cf6' }}>
+            {completedExamsCount}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Simulacros JLPT</div>
+        </div>
       </div>
 
-      {/* Banner directo hacia el Centro de Repaso SRS */}
-      <div 
-        className="card" 
-        style={{ 
-          marginBottom: 24, 
-          padding: '16px 20px', 
-          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.06) 100%)',
-          border: '1px solid rgba(99, 102, 241, 0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 14,
-          borderRadius: 14
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ 
-            width: 42, 
-            height: 42, 
-            borderRadius: 10, 
-            background: 'rgba(99, 102, 241, 0.15)', 
-            color: 'var(--primary)', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            flexShrink: 0
-          }}>
-            <Brain size={22} />
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-main)' }}>
-              Análisis y Gráficas de Repaso SRS (FSRS v5)
-            </div>
-            <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: 2 }}>
-              Las curvas de olvido, estabilidad de memoria, tarjetas en riesgo y preguntas en vivo se gestionan directamente en el Centro SRS.
-            </div>
-          </div>
-        </div>
-        <button
-          type="button"
-          className="btn btn-sm btn-primary"
-          onClick={() => {
-            if (contextApp?.navigate) contextApp.navigate('srs');
-            else if (typeof window !== 'undefined') window.location.href = '/srs?section=analytics';
+      {/* Módulos de Seguimiento: Repaso SRS & Simulacros JLPT */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16, marginBottom: 24 }}>
+        {/* Tarjeta Repaso SRS */}
+        <div 
+          className="card" 
+          style={{ 
+            padding: '16px 20px', 
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.06) 100%)',
+            border: '1px solid rgba(99, 102, 241, 0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: 14,
+            borderRadius: 14
           }}
-          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px' }}
         >
-          <span>Ir a Repaso & Análisis SRS</span>
-          <ArrowRight size={15} />
-        </button>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+            <div style={{ 
+              width: 42, 
+              height: 42, 
+              borderRadius: 10, 
+              background: 'rgba(99, 102, 241, 0.15)', 
+              color: 'var(--primary)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <Brain size={22} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-main)' }}>
+                Centro de Repaso Espaciado SRS (FSRS v5)
+              </div>
+              <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: 2, lineHeight: 1.4 }}>
+                {srsCardsCount > 0 
+                  ? `${srsCardsCount} tarjetas registradas con cálculo de estabilidad y curvas de olvido.` 
+                  : 'Preguntas inteligentes de repaso espaciado con algoritmo FSRS v5.'}
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm btn-primary"
+            onClick={() => {
+              if (contextApp?.navigate) contextApp.navigate('srs');
+              else if (typeof window !== 'undefined') window.location.href = '/srs?section=analytics';
+            }}
+            style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '8px 16px', alignSelf: 'flex-start' }}
+          >
+            <span>Ir a Repaso & Análisis SRS</span>
+            <ArrowRight size={15} />
+          </button>
+        </div>
+
+        {/* Tarjeta Simulacros JLPT */}
+        <div 
+          className="card" 
+          style={{ 
+            padding: '16px 20px', 
+            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.06) 100%)',
+            border: '1px solid rgba(139, 92, 246, 0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: 14,
+            borderRadius: 14
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+            <div style={{ 
+              width: 42, 
+              height: 42, 
+              borderRadius: 10, 
+              background: 'rgba(139, 92, 246, 0.15)', 
+              color: '#8b5cf6', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <Award size={22} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-main)' }}>
+                Simulacros Oficiales JLPT (N5 a N1)
+              </div>
+              <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: 2, lineHeight: 1.4 }}>
+                {completedExamsCount > 0 
+                  ? `${completedExamsCount} simulacro(s) completado(s). Practica exámenes oficiales con cronómetro real.` 
+                  : 'Exámenes completos cronometrados y práctica guiada con corte de aprobación oficial.'}
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={() => {
+              if (contextApp?.navigate) contextApp.navigate('jlpt');
+              else if (typeof window !== 'undefined') window.location.href = '/jlpt';
+            }}
+            style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '8px 16px', alignSelf: 'flex-start', background: '#8b5cf6', color: '#fff', border: 'none' }}
+          >
+            <span>Ir a Simulacros JLPT</span>
+            <ArrowRight size={15} />
+          </button>
+        </div>
       </div>
 
       {/* Selector de Sección Principal en Mi Progreso */}
