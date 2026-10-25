@@ -5041,6 +5041,7 @@ body:has(.scriptpad-srs-container) .audio-player-bar {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  padding-right: 36px;
 }
 
 .audio-info {
@@ -5379,6 +5380,17 @@ body:has(.scriptpad-srs-container) .audio-player-bar {
 }
 
 @media (max-width: 768px) {
+  /* Ocultar el reproductor en móviles y pantallas pequeñas hasta que se señale/seleccione una palabra */
+  .audio-player-bar.mobile-hidden {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  body.audio-bar-mobile-hidden .main-container,
+  body:has(.audio-player-bar.mobile-hidden) .main-container {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 16px)) !important;
+  }
+
   .header-container {
     padding: 10px 16px;
   }
@@ -8365,6 +8377,42 @@ body:has(.scriptpad-srs-container) .audio-player-bar {
   color: #fff;
 }
 
+/* Botón de Limpiar / Cerrar Palabra en Línea */
+.audio-clear-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  line-height: 1.25;
+}
+
+.audio-clear-inline-btn:hover {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .audio-clear-inline-btn {
+  background: rgba(239, 68, 68, 0.16);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+[data-theme="dark"] .audio-clear-inline-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
 /* Botón Principal de Diccionario en Barra de Audio (Pill moderno y elegante) */
 .audio-dict-main-btn {
   display: inline-flex;
@@ -9922,6 +9970,7 @@ body:has(.scriptpad-srs-container) .audio-player-bar {
     flex-direction: column;
     gap: 8px !important;
     align-items: stretch !important;
+    padding-right: 32px !important;
   }
 
   .audio-info {
@@ -9992,6 +10041,11 @@ body:has(.scriptpad-srs-container) .audio-player-bar {
   /* Dynamic clearance when audio bar is minimized */
   body:has(.audio-player-bar.minimized) .main-container {
     padding-bottom: calc(var(--audio-player-height-minimized, 48px) + env(safe-area-inset-bottom, 16px) + 16px) !important;
+  }
+
+  body.audio-bar-mobile-hidden .main-container,
+  body:has(.audio-player-bar.mobile-hidden) .main-container {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 16px)) !important;
   }
   .progress-stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
@@ -10233,6 +10287,51 @@ body:has(.scriptpad-srs-container) .audio-player-bar {
 
 .audio-player-bar.minimized {
   padding: 8px 20px !important;
+}
+
+/* Botón flotante 'X' para cerrar y limpiar palabra del reproductor */
+.audio-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 105;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.audio-close-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+  transform: scale(1.08);
+}
+
+[data-theme="dark"] .audio-close-btn {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+[data-theme="dark"] .audio-close-btn:hover {
+  background: rgba(239, 68, 68, 0.22);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.audio-player-bar.minimized .audio-close-btn {
+  top: 6px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
 }
 
 @media (max-width: 640px) {
