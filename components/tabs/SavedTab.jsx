@@ -708,7 +708,7 @@ export default function SavedTab({
 
       {/* Full-Width Collapsible Filter Card */}
       {subView !== 'stories' && showFilters && (
-        <div className="card filter-card-animated" style={{ padding: '14px 18px', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 14, width: '100%' }}>
+        <div className="card filter-card-animated" style={{ marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 14, width: '100%' }}>
           {activeFilterCount > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>

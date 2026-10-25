@@ -340,7 +340,7 @@ export default function FsrsStatsModule({
         }}
       >
         {/* Retención Promedio R */}
-        <div className="card" style={{ padding: '16px 18px', background: 'var(--bg-surface)' }}>
+        <div className="card card-pad-kpi" style={{ background: 'var(--bg-surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               Retención Estimada (R)
@@ -356,7 +356,7 @@ export default function FsrsStatsModule({
         </div>
 
         {/* Estabilidad Promedio S */}
-        <div className="card" style={{ padding: '16px 18px', background: 'var(--bg-surface)' }}>
+        <div className="card card-pad-kpi" style={{ background: 'var(--bg-surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               Estabilidad Media (S)
@@ -372,7 +372,7 @@ export default function FsrsStatsModule({
         </div>
 
         {/* Dificultad Media D */}
-        <div className="card" style={{ padding: '16px 18px', background: 'var(--bg-surface)' }}>
+        <div className="card card-pad-kpi" style={{ background: 'var(--bg-surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               Dificultad Media (D)
@@ -388,7 +388,7 @@ export default function FsrsStatsModule({
         </div>
 
         {/* Tarjetas Pendientes Hoy */}
-        <div className="card" style={{ padding: '16px 18px', background: 'var(--bg-surface)' }}>
+        <div className="card card-pad-kpi" style={{ background: 'var(--bg-surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               Pendientes Hoy (Due)
@@ -404,7 +404,7 @@ export default function FsrsStatsModule({
         </div>
 
         {/* Tasa de Acierto / Fallos */}
-        <div className="card" style={{ padding: '16px 18px', background: 'var(--bg-surface)' }}>
+        <div className="card card-pad-kpi" style={{ background: 'var(--bg-surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               Tasa de Éxito
@@ -420,7 +420,7 @@ export default function FsrsStatsModule({
         </div>
 
         {/* Puntos Débiles (Leeches) */}
-        <div className="card" style={{ padding: '16px 18px', background: 'var(--bg-surface)' }}>
+        <div className="card card-pad-kpi" style={{ background: 'var(--bg-surface)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               Leeches (Puntos Débiles)

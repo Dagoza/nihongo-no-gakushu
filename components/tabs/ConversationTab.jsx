@@ -739,7 +739,7 @@ export default function ConversationTab({
 
           {/* Filtros Integrados (Colapsable) */}
           {showFilters && (
-            <div className="card filter-card-animated" style={{ padding: '14px 18px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div className="card filter-card-animated" style={{ marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
               {activeFilterCount > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>

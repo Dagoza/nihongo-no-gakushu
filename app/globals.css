@@ -112,12 +112,35 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-jp: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Noto Sans JP', sans-serif;
   --audio-player-height: 72px;
+
+  /* ==========================================================================
+     5. Standard Card Padding Design Tokens (SRS Desktop Architecture Standard)
+     ========================================================================== */
+  --card-padding-hero: 24px 28px;       /* Hero Cards (srs-hero-card, module-hero-card, jlpt-top-banner) */
+  --card-padding-main: 24px 28px;       /* Primary cards (.card, question-card, step-card) */
+  --card-padding-controls: 16px 20px;   /* Filters, search bars & control cards (.srs-controls-card, .filter-card-animated) */
+  --card-padding-kpi: 16px 18px;        /* KPI / Analytic metric cards */
+  --card-padding-inner: 20px 22px;      /* Inner callouts, question boxes, formula boxes */
+  --card-padding-compact: 10px 14px;    /* Compact badges, due cards, counter chips */
 }
 
 @media (max-width: 768px) {
   :root {
     --audio-player-height: 170px;
     --audio-player-height-minimized: 48px;
+    --card-padding-hero: 18px 20px;
+    --card-padding-main: 18px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --card-padding-hero: 14px 14px;
+    --card-padding-main: 16px 14px;
+    --card-padding-controls: 14px 12px;
+    --card-padding-kpi: 12px 14px;
+    --card-padding-inner: 14px 14px;
+    --card-padding-compact: 8px 8px;
   }
 }
 
@@ -1949,14 +1972,21 @@ body {
   line-height: 1.35;
 }
 
-/* Cards & Containers */
+/* Cards & Containers (Standardized SRS Desktop Padding) */
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-bento, 20px);
-  padding: 24px;
+  padding: var(--card-padding-main, 24px 28px);
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.2s, border-color 0.2s;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: var(--card-padding-main, 16px 14px);
+  }
 }
 
 [data-theme="dark"] .card {
@@ -1965,6 +1995,33 @@ body {
 
 .card:hover {
   box-shadow: var(--shadow-md);
+}
+
+/* ==========================================================================
+   Standardized Card Padding Utility Classes (SRS Architecture)
+   ========================================================================== */
+.card-pad-hero {
+  padding: var(--card-padding-hero, 24px 28px) !important;
+}
+
+.card-pad-main {
+  padding: var(--card-padding-main, 24px 28px) !important;
+}
+
+.card-pad-controls {
+  padding: var(--card-padding-controls, 16px 20px) !important;
+}
+
+.card-pad-kpi {
+  padding: var(--card-padding-kpi, 16px 18px) !important;
+}
+
+.card-pad-inner {
+  padding: var(--card-padding-inner, 20px 22px) !important;
+}
+
+.card-pad-compact {
+  padding: var(--card-padding-compact, 10px 14px) !important;
 }
 
 /* Buttons */
@@ -2836,8 +2893,17 @@ ruby.furigana-ruby rt {
 }
 
 .filter-card-animated {
+  padding: var(--card-padding-controls, 16px 20px) !important;
+  border-radius: 16px;
   animation: filterCardSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: top center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .filter-card-animated {
+    padding: var(--card-padding-controls, 14px 12px) !important;
+  }
 }
 
 @keyframes filterCardSlideDown {
@@ -3246,12 +3312,13 @@ ruby.furigana-ruby rt {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-bento, 20px);
-  padding: 22px;
+  padding: var(--card-padding-main, 24px 28px);
   display: flex;
   flex-direction: column;
   gap: 16px;
   position: relative;
   transition: transform 0.2s, border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .curriculum-step-card:hover {
@@ -8908,18 +8975,18 @@ body:not(:has(.audio-player-bar)) .main-container {
 }
 
 /* ==========================================================================
-   Universal Module Hero Banner Card (Standardized Across 11 Modules)
+   Universal Module Hero Banner Card (Standardized Across 11 Modules - SRS Standard)
    ========================================================================== */
 .module-hero-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-bento, 20px);
-  padding: 14px 18px;
+  padding: var(--card-padding-hero, 24px 28px);
   box-shadow: var(--shadow-sm);
-  margin-bottom: 14px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   box-sizing: border-box;
   width: 100%;
 }
@@ -8991,7 +9058,8 @@ body:not(:has(.audio-player-bar)) .main-container {
 
 @media (max-width: 640px) {
   .module-hero-card {
-    padding: 12px 14px;
+    padding: var(--card-padding-hero, 14px 14px);
+    margin-bottom: 14px;
   }
   .module-hero-title-row {
     gap: 10px;
@@ -9009,12 +9077,21 @@ body:not(:has(.audio-player-bar)) .main-container {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-bento, 20px);
-  padding: 16px 20px;
+  padding: var(--card-padding-hero, 24px 28px);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .saved-header-card {
+    padding: var(--card-padding-hero, 14px 14px);
+    margin-bottom: 14px;
+  }
 }
 
 .saved-header-content {
@@ -12774,7 +12851,7 @@ html {
 .jlpt-top-banner {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   border-radius: 20px;
-  padding: 24px 28px;
+  padding: var(--card-padding-hero, 24px 28px);
   color: #ffffff;
   margin-bottom: 20px;
   box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
@@ -12807,7 +12884,7 @@ html {
 }
 
 .jlpt-question-card {
-  padding: 24px;
+  padding: var(--card-padding-main, 24px 28px);
   border-radius: var(--radius-bento, 20px);
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -14666,7 +14743,7 @@ html {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(245, 158, 11, 0.08));
   border: 1.5px solid rgba(99, 102, 241, 0.25);
   border-radius: 20px;
-  padding: 24px 28px;
+  padding: var(--card-padding-hero, 24px 28px);
   margin-bottom: 24px;
   position: relative;
   box-sizing: border-box;
@@ -14716,7 +14793,7 @@ html {
 }
 
 .srs-due-card {
-  padding: 10px 14px;
+  padding: var(--card-padding-compact, 10px 14px);
   border-radius: 12px;
   background: var(--bg-main);
   border: 1px solid var(--border);
@@ -14775,7 +14852,7 @@ html {
   background: var(--bg-main);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 16px 20px;
+  padding: var(--card-padding-controls, 16px 20px);
   margin-bottom: 20px;
   box-sizing: border-box;
   width: 100%;
@@ -14791,7 +14868,7 @@ html {
 }
 
 .srs-question-card {
-  padding: 24px 28px;
+  padding: var(--card-padding-main, 24px 28px);
   border-radius: 18px;
   border: 1.5px solid var(--border);
   box-sizing: border-box;
@@ -14812,7 +14889,7 @@ html {
   background: var(--bg-main);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 22px;
+  padding: var(--card-padding-inner, 20px 22px);
   margin-bottom: 20px;
   box-sizing: border-box;
   width: 100%;
@@ -14846,7 +14923,7 @@ html {
 }
 
 .srs-feedback-box {
-  padding: 18px 22px;
+  padding: var(--card-padding-inner, 18px 22px);
   border-radius: 14px;
   margin-bottom: 20px;
   box-sizing: border-box;
