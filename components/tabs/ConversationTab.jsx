@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, RotateCcw, Sparkles, Award, Check, ChevronRight, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter } from 'lucide-react';
+import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, RotateCcw, Sparkles, Award, Check, ChevronRight, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter, SlidersHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
 import nhkLessonsData from '../../data/nhk_lessons.json';
@@ -161,6 +161,22 @@ export default function ConversationTab({
   const [levelFilter, setLevelFilter] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
   const [statusFilter, setStatusFilter] = useState(initialStatus || 'all'); // 'all' | 'completed' | 'pending'
   const [searchDialogueQuery, setSearchDialogueQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (statusFilter !== 'all') count++;
+    if (seriesFilter !== 'all') count++;
+    if (levelFilter !== 'all') count++;
+    return count;
+  }, [statusFilter, seriesFilter, levelFilter]);
+
+  const handleResetFilters = () => {
+    setStatusFilter('all');
+    setSeriesFilter('all');
+    setLevelFilter('all');
+    updateParams(selectedDialogueId, activeSubTab, 'all', filterType);
+  };
   
   // Exercise practice state
   const [filterType, setFilterType] = useState(initialType || 'all'); // 'all' | 'reply' | 'missing_word' | 'missing_kanji'
@@ -626,7 +642,7 @@ export default function ConversationTab({
       {activeSubTab === 'dialogue' && (
         <>
           {/* Progress Overview Card */}
-          <div className="card" style={{ marginBottom: 18, padding: '16px 20px' }}>
+          <div className="card" style={{ marginBottom: 16, padding: '16px 20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: '1.2rem' }}>🎓</span>
@@ -640,49 +656,16 @@ export default function ConversationTab({
                 </div>
               </div>
 
-              {/* Status Filters & Jump */}
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              {completedCount < allDialogues.length && (
                 <button
-                  className={`btn btn-sm ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => {
-                    setStatusFilter('all');
-                    updateParams(selectedDialogueId, activeSubTab, 'all', filterType);
-                  }}
-                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={handleJumpToNextPending}
+                  style={{ fontSize: '0.8rem', padding: '4px 12px', borderColor: 'var(--accent)', color: 'var(--accent)', fontWeight: 600 }}
                 >
-                  Todas ({allDialogues.length})
+                  Siguiente pendiente ➔
                 </button>
-                <button
-                  className={`btn btn-sm ${statusFilter === 'completed' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => {
-                    setStatusFilter('completed');
-                    updateParams(selectedDialogueId, activeSubTab, 'completed', filterType);
-                  }}
-                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
-                >
-                  ✓ Estudiadas ({completedCount})
-                </button>
-                <button
-                  className={`btn btn-sm ${statusFilter === 'pending' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => {
-                    setStatusFilter('pending');
-                    updateParams(selectedDialogueId, activeSubTab, 'pending', filterType);
-                  }}
-                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
-                >
-                  Pendientes ({allDialogues.length - completedCount})
-                </button>
-
-                {completedCount < allDialogues.length && (
-                  <button
-                    className="btn btn-outline btn-sm"
-                    onClick={handleJumpToNextPending}
-                    style={{ fontSize: '0.8rem', padding: '4px 12px', borderColor: 'var(--accent)', color: 'var(--accent)' }}
-                  >
-                    Siguiente pendiente ➔
-                  </button>
-                )}
-              </div>
+              )}
             </div>
 
             {/* Visual Progress Bar */}
@@ -699,79 +682,199 @@ export default function ConversationTab({
             </div>
           </div>
 
-          {/* Filtering & Search Controls Bar */}
-          <div className="card" style={{ marginBottom: 18, padding: '14px 18px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-              {/* Collection Tabs */}
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginRight: 4 }}>Colección:</span>
+          {/* Search Bar & Botón de Filtros */}
+          <div className="vocab-filter-bar" style={{ marginBottom: 14 }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+              <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input
+                type="text"
+                className="search-input"
+                style={{ paddingLeft: 38, width: '100%' }}
+                placeholder="Buscar por tema, frase o personaje..."
+                value={searchDialogueQuery}
+                onChange={(e) => setSearchDialogueQuery(e.target.value)}
+              />
+              {searchDialogueQuery && (
                 <button
-                  className={`btn btn-sm ${seriesFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setSeriesFilter('all')}
-                  style={{ fontSize: '0.78rem', padding: '3px 10px' }}
-                >
-                  Todas ({allDialogues.length})
-                </button>
-                <button
-                  className={`btn btn-sm ${seriesFilter === 'irodori' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setSeriesFilter('irodori')}
-                  style={{ 
-                    fontSize: '0.78rem', 
-                    padding: '3px 10px', 
-                    borderColor: seriesFilter === 'irodori' ? '#2563eb' : undefined,
-                    background: seriesFilter === 'irodori' ? '#2563eb' : undefined,
-                    color: seriesFilter === 'irodori' ? '#fff' : undefined
+                  type="button"
+                  onClick={() => setSearchDialogueQuery('')}
+                  aria-label="Limpiar búsqueda"
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
                 >
-                  🏙️ Irodori Situacional ({irodoriDialogues.length})
+                  <X size={14} />
                 </button>
-                <button
-                  className={`btn btn-sm ${seriesFilter === 'nhk' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setSeriesFilter('nhk')}
-                  style={{ 
-                    fontSize: '0.78rem', 
-                    padding: '3px 10px', 
-                    borderColor: seriesFilter === 'nhk' ? '#dc2626' : undefined,
-                    background: seriesFilter === 'nhk' ? '#dc2626' : undefined,
-                    color: seriesFilter === 'nhk' ? '#fff' : undefined
-                  }}
-                >
-                  📻 NHK World ({nhkLessons.length})
-                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+              onClick={() => setShowFilters(prev => !prev)}
+              aria-expanded={showFilters}
+              title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+            >
+              <SlidersHorizontal size={15} />
+              <span>Filtros</span>
+              {activeFilterCount > 0 && (
+                <span className="filter-toggle-badge">
+                  {activeFilterCount}
+                </span>
+              )}
+              {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+            </button>
+          </div>
+
+          {/* Filtros Integrados (Colapsable) */}
+          {showFilters && (
+            <div className="card filter-card-animated" style={{ padding: '14px 18px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {activeFilterCount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--primary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      padding: '2px 4px'
+                    }}
+                  >
+                    Limpiar todos
+                  </button>
+                </div>
+              )}
+
+              {/* Estado de Estudio */}
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Estado de Estudio:
+                </div>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${statusFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => {
+                      setStatusFilter('all');
+                      updateParams(selectedDialogueId, activeSubTab, 'all', filterType);
+                    }}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                  >
+                    Todas ({allDialogues.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${statusFilter === 'completed' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => {
+                      setStatusFilter('completed');
+                      updateParams(selectedDialogueId, activeSubTab, 'completed', filterType);
+                    }}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                  >
+                    ✓ Estudiadas ({completedCount})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${statusFilter === 'pending' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => {
+                      setStatusFilter('pending');
+                      updateParams(selectedDialogueId, activeSubTab, 'pending', filterType);
+                    }}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                  >
+                    ⏳ Pendientes ({allDialogues.length - completedCount})
+                  </button>
+                </div>
               </div>
 
-              {/* JLPT Level Tabs */}
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginRight: 4 }}>Nivel:</span>
-                {['all', 'N5', 'N4', 'N3'].map(lvl => {
-                  const count = lvl === 'all' ? allDialogues.length : allDialogues.filter(d => d.level === lvl).length;
-                  const isSelected = levelFilter === lvl;
-                  return (
-                    <button
-                      key={lvl}
-                      className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
-                      onClick={() => setLevelFilter(lvl)}
-                      style={{ fontSize: '0.78rem', padding: '3px 10px' }}
-                    >
-                      {lvl === 'all' ? 'Todos' : lvl} ({count})
-                    </button>
-                  );
-                })}
+              {/* Colección */}
+              <div style={{ paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Colección:
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${seriesFilter === 'all' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setSeriesFilter('all')}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                  >
+                    Todas ({allDialogues.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${seriesFilter === 'irodori' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setSeriesFilter('irodori')}
+                    style={{ 
+                      padding: '4px 10px', 
+                      fontSize: '0.8rem',
+                      borderColor: seriesFilter === 'irodori' ? '#2563eb' : undefined,
+                      background: seriesFilter === 'irodori' ? '#2563eb' : undefined,
+                      color: seriesFilter === 'irodori' ? '#fff' : undefined
+                    }}
+                  >
+                    🏙️ Irodori Situacional ({irodoriDialogues.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${seriesFilter === 'nhk' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setSeriesFilter('nhk')}
+                    style={{ 
+                      padding: '4px 10px', 
+                      fontSize: '0.8rem',
+                      borderColor: seriesFilter === 'nhk' ? '#dc2626' : undefined,
+                      background: seriesFilter === 'nhk' ? '#dc2626' : undefined,
+                      color: seriesFilter === 'nhk' ? '#fff' : undefined
+                    }}
+                  >
+                    📻 NHK World ({nhkLessons.length})
+                  </button>
+                </div>
               </div>
 
-              {/* Search Bar */}
-              <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '4px 10px', gap: 6, minWidth: 200, flex: '1 1 200px', maxWidth: 300 }}>
-                <Search size={14} style={{ color: 'var(--text-muted)' }} />
-                <input
-                  type="text"
-                  placeholder="Buscar por tema, frase o personaje..."
-                  value={searchDialogueQuery}
-                  onChange={(e) => setSearchDialogueQuery(e.target.value)}
-                  style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.85rem', width: '100%' }}
-                />
+              {/* Nivel JLPT */}
+              <div style={{ paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Nivel JLPT:
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {['all', 'N5', 'N4', 'N3'].map(lvl => {
+                    const count = lvl === 'all' ? allDialogues.length : allDialogues.filter(d => d.level === lvl).length;
+                    const isSelected = levelFilter === lvl;
+                    return (
+                      <button
+                        key={lvl}
+                        type="button"
+                        className={`btn btn-xs ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                        onClick={() => setLevelFilter(lvl)}
+                        style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                      >
+                        {lvl === 'all' ? 'Todos' : lvl} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Dialogue Selector Pills */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', maxHeight: 180, overflowY: 'auto', padding: '4px 0' }}>

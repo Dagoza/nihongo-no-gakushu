@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import curriculumData from '../../data/curriculum.json';
-import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, ChevronUp, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List, SlidersHorizontal } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
@@ -146,6 +146,21 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
   const [selectedStatus, setSelectedStatus] = useState('all'); // 'all' | 'pending' | 'completed'
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (selectedTheme !== 'all') count++;
+    if (selectedLevel !== 'all') count++;
+    if (selectedStatus !== 'all') count++;
+    return count;
+  }, [selectedTheme, selectedLevel, selectedStatus]);
+
+  const handleResetFilters = () => {
+    setSelectedTheme('all');
+    setSelectedLevel('all');
+    setSelectedStatus('all');
+  };
   
   // Furigana visibility state (on by default for easy reading)
   const [showFurigana, setShowFurigana] = useState(true);
@@ -2631,98 +2646,144 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         );
       })()}
 
-      {/* Theme & Level Filter Controls */}
-      <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
-        {/* Desktop Theme Pills */}
-        <div className="curriculum-theme-desktop">
-          {themesList.map(t => (
+      {/* Search Bar & Botón de Filtros */}
+      <div className="vocab-filter-bar" style={{ marginBottom: 14 }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+          <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <input
+            type="text"
+            className="search-input"
+            style={{ paddingLeft: 38, width: '100%' }}
+            placeholder="Buscar tema, kanji, gramática o Can-Do..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
             <button
-              key={t.id}
-              className={`btn btn-sm ${selectedTheme === t.id ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setSelectedTheme(t.id)}
-              style={{ fontWeight: 600, padding: '7px 14px' }}
+              type="button"
+              onClick={() => setSearchQuery('')}
+              aria-label="Limpiar búsqueda"
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                padding: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
             >
-              {t.icon} {t.label} ({t.count})
+              <X size={14} />
             </button>
-          ))}
+          )}
         </div>
 
-        {/* Mobile Theme Dropdown (Solo para Celular) */}
-        <div className="curriculum-theme-mobile" ref={themeDropdownRef}>
-          {(() => {
-            const activeThemeObj = themesList.find(t => t.id === selectedTheme) || themesList[0];
+        <button
+          type="button"
+          className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+          onClick={() => setShowFilters(prev => !prev)}
+          aria-expanded={showFilters}
+          title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+        >
+          <SlidersHorizontal size={15} />
+          <span>Filtros</span>
+          {activeFilterCount > 0 && (
+            <span className="filter-toggle-badge">
+              {activeFilterCount}
+            </span>
+          )}
+          {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+        </button>
 
-            return (
-              <>
+        <button
+          type="button"
+          className={`btn btn-sm ${showFurigana ? 'btn-primary' : 'btn-outline'} furigana-toggle-btn`}
+          onClick={() => setShowFurigana(prev => !prev)}
+          title={showFurigana ? 'Ocultar Furigana en los módulos' : 'Mostrar Furigana en los módulos'}
+          style={{ height: '40px', padding: '0 12px', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, borderRadius: 'var(--radius-sm)' }}
+        >
+          {showFurigana ? <EyeOff size={14} /> : <Eye size={14} />}
+          <span>Furigana {showFurigana ? 'ON' : 'OFF'}</span>
+        </button>
+      </div>
+
+      {/* Filtros Integrados (Colapsable) */}
+      {showFilters && (
+        <div className="card filter-card-animated" style={{ padding: '14px 18px', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {activeFilterCount > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                {activeFilterCount} {activeFilterCount === 1 ? 'filtro activo' : 'filtros activos'}
+              </span>
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--primary)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  padding: '2px 4px'
+                }}
+              >
+                Limpiar todos
+              </button>
+            </div>
+          )}
+
+          {/* Temas */}
+          <div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>
+              Eje Temático:
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {themesList.map(t => (
                 <button
+                  key={t.id}
                   type="button"
-                  className="btn btn-sm btn-primary theme-dropdown-trigger"
-                  onClick={() => setIsThemeDropdownOpen(prev => !prev)}
-                  aria-haspopup="true"
-                  aria-expanded={isThemeDropdownOpen}
+                  className={`btn btn-xs ${selectedTheme === t.id ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setSelectedTheme(t.id)}
+                  style={{ fontWeight: 600, padding: '5px 12px', fontSize: '0.8rem' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span>{activeThemeObj.icon}</span>
-                    <span>{activeThemeObj.label} ({activeThemeObj.count})</span>
-                  </div>
-                  <ChevronDown 
-                    size={16} 
-                    style={{ 
-                      transform: isThemeDropdownOpen ? 'rotate(180deg)' : 'none', 
-                      transition: 'transform 0.2s ease',
-                      flexShrink: 0
-                    }} 
-                  />
+                  {t.icon} {t.label} ({t.count})
                 </button>
+              ))}
+            </div>
+          </div>
 
-                {isThemeDropdownOpen && (
-                  <div className="theme-dropdown-menu">
-                    {themesList.map(t => {
-                      const isSelected = selectedTheme === t.id;
-                      return (
-                        <button
-                          key={t.id}
-                          type="button"
-                          className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'} theme-dropdown-item`}
-                          onClick={() => {
-                            setSelectedTheme(t.id);
-                            setIsThemeDropdownOpen(false);
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span>{t.icon}</span>
-                            <span>{t.label} ({t.count})</span>
-                          </div>
-                          {isSelected && <Check size={14} strokeWidth={3} />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </>
-            );
-          })()}
-        </div>
-
-        {/* Secondary filters: Level, Status and Search */}
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel:</span>
+          {/* Nivel JLPT */}
+          <div style={{ paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+              Nivel JLPT:
+            </div>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
               {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map(lvl => (
                 <button
                   key={lvl}
-                  className={`btn btn-sm ${selectedLevel === lvl ? 'btn-primary' : 'btn-outline'}`}
+                  type="button"
+                  className={`btn btn-xs ${selectedLevel === lvl ? 'btn-primary' : 'btn-outline'}`}
                   onClick={() => setSelectedLevel(lvl)}
-                  style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
                 >
                   {lvl === 'all' ? 'Todos' : lvl}
                 </button>
               ))}
             </div>
+          </div>
 
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
+          {/* Estado de Progreso */}
+          <div style={{ paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+              Estado:
+            </div>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
               {[
                 { id: 'all', label: 'Todos' },
                 { id: 'pending', label: 'Pendientes' },
@@ -2730,57 +2791,18 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               ].map(st => (
                 <button
                   key={st.id}
-                  className={`btn btn-sm ${selectedStatus === st.id ? 'btn-primary' : 'btn-outline'}`}
+                  type="button"
+                  className={`btn btn-xs ${selectedStatus === st.id ? 'btn-primary' : 'btn-outline'}`}
                   onClick={() => setSelectedStatus(st.id)}
-                  style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto' }}
+                  style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
                 >
                   {st.label}
                 </button>
               ))}
             </div>
-
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <button
-                type="button"
-                className={`btn btn-sm ${showFurigana ? 'btn-primary' : 'btn-outline'} furigana-toggle-btn`}
-                onClick={() => setShowFurigana(prev => !prev)}
-                title={showFurigana ? 'Ocultar Furigana en los módulos' : 'Mostrar Furigana en los módulos'}
-                style={{ fontSize: '0.8rem', padding: '4px 10px', height: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
-              >
-                {showFurigana ? <EyeOff size={13} /> : <Eye size={13} />}
-                <span>Furigana {showFurigana ? 'ON' : 'OFF'}</span>
-              </button>
-            </div>
-          </div>
-
-          <div style={{ position: 'relative', minWidth: 260, flex: '1 1 260px', maxWidth: 380 }}>
-            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar tema, kanji, gramática o Can-Do..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '7px 32px 7px 36px',
-                fontSize: '0.85rem',
-                minWidth: 'unset',
-              }}
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="clear-search-btn"
-                style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                title="Limpiar búsqueda"
-              >
-                <X size={14} />
-              </button>
-            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* Alert Banner for Reviewed Modules with Pending Exercises */}
       {reviewedStepsWithPendingExercises.length > 0 && (
