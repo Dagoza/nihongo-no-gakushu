@@ -173,12 +173,13 @@ export default function ScriptpadWordMatch({
 
   return (
     <div className="scriptpad-match-container" style={{
+      width: '100%',
       maxWidth: 580,
       margin: '0 auto',
       display: 'flex',
       flexDirection: 'column',
       gap: 16,
-      paddingBottom: 140 // Espacio para scroll y barra inferior móvil
+      boxSizing: 'border-box'
     }}>
       {/* Header */}
       <div style={{
@@ -186,26 +187,50 @@ export default function ScriptpadWordMatch({
         alignItems: 'center',
         justifyContent: 'space-between',
         background: 'var(--bg-surface)',
-        padding: '12px 18px',
-        borderRadius: 18,
-        border: '1px solid var(--border)'
+        padding: '10px 14px',
+        borderRadius: 16,
+        border: '1px solid var(--border)',
+        width: '100%',
+        boxSizing: 'border-box',
+        gap: 8
       }}>
         <button
           type="button"
           onClick={onClose}
           className="btn btn-outline btn-sm"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10 }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            borderRadius: 10,
+            padding: '6px 10px',
+            fontSize: '0.82rem',
+            flexShrink: 0
+          }}
         >
           <ChevronLeft size={16} />
           <span>Salir</span>
         </button>
 
-        <div style={{ textAlign: 'center', flex: 1 }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>
-            {lesson.title} - Word Match
+        <div style={{ textAlign: 'center', flex: 1, minWidth: 0, padding: '0 6px' }}>
+          <div style={{
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            color: 'var(--text-main)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}>
+            {lesson.title}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Empareja la palabra con su significado
+          <div style={{
+            fontSize: '0.72rem',
+            color: 'var(--text-muted)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}>
+            Word Match · Empareja palabras
           </div>
         </div>
       </div>

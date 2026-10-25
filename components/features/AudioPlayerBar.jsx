@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Square, Volume2, Gauge, BookmarkPlus, ChevronDown, ChevronUp, RotateCcw, RotateCw, PenTool, BookOpen, Info } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Square, Volume2, Gauge, BookmarkPlus, ChevronDown, ChevronUp, RotateCcw, RotateCw, PenTool, BookOpen, Info, X } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import SaveVocabModal from '../modals/SaveVocabModal';
 import { AppContext } from '../../lib/AppContext';
@@ -57,6 +57,54 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
   const effectiveTime = isDragging ? dragTime : (audioState.currentTime || 0);
   const progressPercent = duration > 0 ? Math.min(100, Math.max(0, (effectiveTime / duration) * 100)) : 0;
 
+  // Determinar si hay una palabra seleccionada/activa o audio reproduciéndose
+  const hasActiveWordOrAudio = Boolean(
+    (audioState.selectedText && audioState.selectedText.trim()) ||
+    (audioState.currentText && audioState.currentText.trim() && 
+      !audioState.currentText.includes('Haz clic en una palabra') && 
+      !audioState.currentText.includes('Selecciona texto en pantalla')) ||
+    audioState.currentAudioUrl ||
+    audioState.state === 'playing'
+  );
+
+  // Auto-expandir el reproductor cuando se señala/selecciona una palabra
+  const lastWordRef = useRef('');
+  useEffect(() => {
+    const activeWord = (audioState.selectedText || audioState.currentText || '').trim();
+    if (activeWord && activeWord !== lastWordRef.current) {
+      setIsMinimized(false);
+      lastWordRef.current = activeWord;
+    } else if (!activeWord && !audioState.currentAudioUrl && audioState.state === 'idle') {
+      lastWordRef.current = '';
+    }
+  }, [audioState.selectedText, audioState.currentText, audioState.currentAudioUrl, audioState.state]);
+
+  // Sincronizar clase de ocultamiento en móviles para adaptar el padding inferior del layout
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (!hasActiveWordOrAudio) {
+      document.body.classList.add('audio-bar-mobile-hidden');
+    } else {
+      document.body.classList.remove('audio-bar-mobile-hidden');
+    }
+    return () => {
+      document.body.classList.remove('audio-bar-mobile-hidden');
+    };
+  }, [hasActiveWordOrAudio]);
+
+  const clearDomSelection = () => {
+    if (typeof window !== 'undefined' && window.getSelection) {
+      try {
+        window.getSelection().removeAllRanges();
+      } catch (e) {}
+    }
+  };
+
+  const handleClearAndClose = () => {
+    audioManager.clear();
+    clearDomSelection();
+  };
+
   const handlePlayPause = () => {
     if (audioState.state === 'playing') {
       audioManager.pause();
@@ -73,6 +121,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
 
   const handleSaveSelection = () => {
     if (!audioState.selectedText) return;
+    clearDomSelection();
     const text = audioState.selectedText.trim();
     const isPhrase = text.length > 15 || /[。！？\n]/.test(text);
     setModalData({
@@ -86,6 +135,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
 
   const handleSaveCurrent = () => {
     if (!audioState.currentText) return;
+    clearDomSelection();
     const text = audioState.currentText.trim();
     const isPhrase = text.length > 15 || /[。！？\n]/.test(text);
     setModalData({
@@ -100,6 +150,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
   const handleOpenPracticePad = () => {
     const textToPractice = (audioState.selectedText || audioState.currentText || '').trim();
     if (!textToPractice) return;
+    clearDomSelection();
     const isSelection = Boolean(audioState.selectedText);
     const opts = {
       text: textToPractice,
@@ -187,7 +238,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
 
   return (
     <>
-      <div className={`audio-player-bar ${isMinimized ? 'minimized' : ''}`}>
+      <div className={`audio-player-bar ${isMinimized ? 'minimized' : ''} ${!hasActiveWordOrAudio ? 'mobile-hidden' : ''}`}>
         {/* Clickable progress rail on the top border */}
         {isAudioTrack && (
           <div 
@@ -206,8 +257,20 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
           className="audio-minimize-btn" 
           onClick={() => setIsMinimized(!isMinimized)}
           title={isMinimized ? 'Expandir reproductor' : 'Minimizar reproductor'}
+          type="button"
         >
           {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
+
+        {/* Botón flotante para limpiar palabra y cerrar reproductor */}
+        <button 
+          className="audio-close-btn" 
+          onClick={handleClearAndClose}
+          title="Limpiar palabra y cerrar reproductor"
+          aria-label="Cerrar reproductor"
+          type="button"
+        >
+          <X size={15} />
         </button>
 
         <div className="audio-player-container">
@@ -223,7 +286,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                     <span>
                       {audioState.state === 'playing' && '🔊 Reproduciendo:'}
                       {audioState.state === 'paused' && '⏸️ En pausa:'}
-                      {audioState.state === 'idle' && (audioState.selectedText ? '✨ Selección:' : (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en una palabra para escuchar'))}
+                      {audioState.state === 'idle' && (audioState.selectedText ? '✨ Palabra seleccionada:' : (audioState.currentText ? 'Listo para reproducir:' : 'Haz clic en una palabra para escuchar'))}
                     </span>
                     {audioState.currentAudioUrl ? (
                       <span className="audio-badge-mp3" style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', fontWeight: 700, whiteSpace: 'nowrap' }}>
@@ -241,7 +304,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                     )}
                   </div>
 
-                  {/* Quick save and notebook buttons for active sentence or selection */}
+                  {/* Quick save, notebook, dictionary and clear buttons for active sentence or selection */}
                   {(audioState.selectedText || audioState.currentText) && (
                     <div className="audio-inline-actions">
                       <button
@@ -251,6 +314,7 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                         onTouchStart={(e) => e.preventDefault()}
                         onClick={() => {
                           const text = (audioState.selectedText || audioState.currentText || '').trim();
+                          clearDomSelection();
                           if (contextApp?.openDictionary) {
                             contextApp.openDictionary(text);
                           }
@@ -283,6 +347,18 @@ export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) 
                       >
                         <PenTool size={13} />
                         <span>Cuaderno ✍️</span>
+                      </button>
+
+                      <button
+                        className="audio-clear-inline-btn"
+                        title="Limpiar palabra seleccionada y cerrar"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
+                        onClick={handleClearAndClose}
+                        type="button"
+                      >
+                        <X size={13} />
+                        <span>Cerrar</span>
                       </button>
                     </div>
                   )}

@@ -127,15 +127,16 @@ export default function ScriptpadFlashcards({
   if (isFinished) {
     return (
       <div className="scriptpad-finish-view" style={{
-        maxWidth: 540,
+        width: '100%',
+        maxWidth: 500,
         margin: '0 auto',
-        padding: '32px 20px',
-        paddingBottom: 140,
+        padding: '28px 16px',
         textAlign: 'center',
         background: 'var(--bg-surface)',
         borderRadius: 24,
         border: '1px solid var(--border)',
-        boxShadow: 'var(--shadow-lg)'
+        boxShadow: 'var(--shadow-lg)',
+        boxSizing: 'border-box'
       }}>
         <div style={{
           width: 76,
@@ -180,7 +181,7 @@ export default function ScriptpadFlashcards({
         {/* Listado de palabras y su estado */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
           gap: 10,
           marginBottom: 28,
           textAlign: 'left'
@@ -254,12 +255,13 @@ export default function ScriptpadFlashcards({
 
   return (
     <div className="scriptpad-flashcards-container" style={{
-      maxWidth: 500,
+      width: '100%',
+      maxWidth: 480,
       margin: '0 auto',
       display: 'flex',
       flexDirection: 'column',
       gap: 16,
-      paddingBottom: 140 // Espacio para scroll y barra inferior móvil
+      boxSizing: 'border-box'
     }}>
       {/* Barra de progreso superior */}
       <div style={{
@@ -267,26 +269,50 @@ export default function ScriptpadFlashcards({
         alignItems: 'center',
         justifyContent: 'space-between',
         background: 'var(--bg-surface)',
-        padding: '12px 18px',
-        borderRadius: 18,
-        border: '1px solid var(--border)'
+        padding: '10px 14px',
+        borderRadius: 16,
+        border: '1px solid var(--border)',
+        width: '100%',
+        boxSizing: 'border-box',
+        gap: 8
       }}>
         <button
           type="button"
           onClick={onClose}
           className="btn btn-outline btn-sm"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10 }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            borderRadius: 10,
+            padding: '6px 10px',
+            fontSize: '0.82rem',
+            flexShrink: 0
+          }}
         >
           <ChevronLeft size={16} />
           <span>Salir</span>
         </button>
 
-        <div style={{ textAlign: 'center', flex: 1, padding: '0 8px' }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {lesson.title} - Flashcards
+        <div style={{ textAlign: 'center', flex: 1, minWidth: 0, padding: '0 6px' }}>
+          <div style={{
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            color: 'var(--text-main)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}>
+            {lesson.title}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Tarjeta {currentIndex + 1} de {words.length}
+          <div style={{
+            fontSize: '0.72rem',
+            color: 'var(--text-muted)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}>
+            Flashcards · Tarjeta {currentIndex + 1} de {words.length}
           </div>
         </div>
 
@@ -316,7 +342,9 @@ export default function ScriptpadFlashcards({
         style={{
           perspective: 1000,
           cursor: 'pointer',
-          minHeight: 280
+          minHeight: 280,
+          width: '100%',
+          boxSizing: 'border-box'
         }}
       >
         <div style={{
@@ -330,12 +358,13 @@ export default function ScriptpadFlashcards({
           background: 'var(--bg-surface)',
           border: '2px solid var(--border)',
           borderRadius: 24,
-          padding: '32px 20px',
+          padding: '28px 16px',
           boxShadow: 'var(--shadow-md)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          boxSizing: 'border-box'
         }}>
           {/* LADO FRONTAL (Pregunta / Kanji) */}
           <div style={{
@@ -343,7 +372,9 @@ export default function ScriptpadFlashcards({
             display: isFlipped ? 'none' : 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 12
+            gap: 12,
+            width: '100%',
+            boxSizing: 'border-box'
           }}>
             <span style={{
               background: 'rgba(99, 102, 241, 0.12)',
@@ -355,10 +386,17 @@ export default function ScriptpadFlashcards({
             }}>
               {currentWord.level || 'N5'}
             </span>
-            <div style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: 2 }}>
+            <div style={{
+              fontSize: 'clamp(2.4rem, 10vw, 3.2rem)',
+              fontWeight: 900,
+              color: 'var(--text-main)',
+              letterSpacing: 2,
+              wordBreak: 'break-word',
+              maxWidth: '100%'
+            }}>
               {currentWord.kanji}
             </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 8 }}>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 8 }}>
               Toca para voltear y ver significado ↺
             </div>
           </div>
@@ -370,20 +408,35 @@ export default function ScriptpadFlashcards({
             display: isFlipped ? 'flex' : 'none',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 10
+            gap: 10,
+            width: '100%',
+            boxSizing: 'border-box'
           }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
+            <div style={{
+              fontSize: 'clamp(1.4rem, 6vw, 1.8rem)',
+              fontWeight: 800,
+              color: 'var(--primary)',
+              wordBreak: 'break-word',
+              maxWidth: '100%'
+            }}>
               {currentWord.hiragana}
             </div>
             {currentWord.romaji && (
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
                 {currentWord.romaji}
               </div>
             )}
-            <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', marginTop: 8 }}>
+            <div style={{
+              fontSize: 'clamp(1.15rem, 5vw, 1.35rem)',
+              fontWeight: 700,
+              color: 'var(--text-main)',
+              marginTop: 6,
+              wordBreak: 'break-word',
+              maxWidth: '100%'
+            }}>
               {currentWord.meaning_es}
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 12 }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 10 }}>
               Toca para volver a voltear ↻
             </div>
           </div>
@@ -393,13 +446,15 @@ export default function ScriptpadFlashcards({
       {/* Controles de navegación en cuadrícula perfecta para móviles */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '1fr auto 1fr',
+        gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
         gap: 8,
         alignItems: 'center',
         background: 'var(--bg-surface)',
-        padding: '10px 14px',
+        padding: '10px 12px',
         borderRadius: 18,
-        border: '1px solid var(--border)'
+        border: '1px solid var(--border)',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
         <button
           type="button"
@@ -408,12 +463,15 @@ export default function ScriptpadFlashcards({
           disabled={currentIndex === 0}
           style={{
             borderRadius: 10,
-            padding: '8px 10px',
-            fontSize: '0.82rem',
+            padding: '8px 8px',
+            fontSize: '0.8rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 4
+            gap: 4,
+            width: '100%',
+            minWidth: 0,
+            whiteSpace: 'nowrap'
           }}
         >
           <ChevronLeft size={16} />
@@ -426,8 +484,8 @@ export default function ScriptpadFlashcards({
           onClick={() => toggleKnown(currentWord)}
           style={{
             borderRadius: 10,
-            padding: '8px 14px',
-            fontSize: '0.82rem',
+            padding: '8px 12px',
+            fontSize: '0.8rem',
             fontWeight: 800,
             background: isCurrentKnown ? '#10b981' : 'transparent',
             borderColor: isCurrentKnown ? '#10b981' : 'var(--border)',
@@ -437,9 +495,10 @@ export default function ScriptpadFlashcards({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 5,
+            gap: 4,
             whiteSpace: 'nowrap',
-            transition: 'all 0.15s ease'
+            transition: 'all 0.15s ease',
+            flexShrink: 0
           }}
           title={isCurrentKnown ? 'Marcada como aprendida' : 'Marcar como aprendida'}
         >
@@ -453,12 +512,15 @@ export default function ScriptpadFlashcards({
           onClick={handleNext}
           style={{
             borderRadius: 10,
-            padding: '8px 10px',
-            fontSize: '0.82rem',
+            padding: '8px 8px',
+            fontSize: '0.8rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 4
+            gap: 4,
+            width: '100%',
+            minWidth: 0,
+            whiteSpace: 'nowrap'
           }}
         >
           <span>{currentIndex === words.length - 1 ? 'Terminar' : 'Siguiente'}</span>

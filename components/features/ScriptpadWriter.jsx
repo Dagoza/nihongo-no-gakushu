@@ -229,7 +229,8 @@ function ContinuousCharBox({
       flexDirection: 'column',
       alignItems: 'center',
       gap: 8,
-      flexShrink: 0
+      width: '100%',
+      maxWidth: size + 20
     }}>
       {/* Cabecera con modelo claro para copiar */}
       <div style={{
@@ -347,8 +348,9 @@ export default function ScriptpadWriter({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const updateSize = () => {
-      const available = Math.min(320, window.innerWidth - 48);
-      setPadSize(Math.max(260, available));
+      // Ajuste dinámico para garantizar que el lienzo y su tarjeta encajen perfectamente en pantallas móviles sin desbordar
+      const available = Math.min(300, Math.max(220, window.innerWidth - 72));
+      setPadSize(available);
     };
     updateSize();
     window.addEventListener('resize', updateSize);
@@ -421,17 +423,31 @@ export default function ScriptpadWriter({
     setStrokes([]);
     setContinuousStrokes({});
     setCharCompleted(false);
+    setHasWriterData(true);
+    if (flowMode === 'sequential') {
+      setEngineMode('guided');
+    }
     playCurrentWordAudio();
-  }, [currentWordIndex, playCurrentWordAudio]);
+  }, [currentWordIndex, playCurrentWordAudio, flowMode]);
+
+  // Al cambiar de carácter en modo secuencial
+  useEffect(() => {
+    setCharCompleted(false);
+    setStrokes([]);
+    setWriterLoaded(false);
+    setHasWriterData(true);
+    if (flowMode === 'sequential') {
+      setEngineMode('guided');
+    }
+  }, [currentCharIndex, currentWordIndex, flowMode]);
 
   // Inicializar HanziWriter en modo 'guided' para el carácter activo
   useEffect(() => {
-    if (engineMode !== 'guided' || flowMode === 'continuous') return;
+    if (flowMode === 'continuous') return;
     if (!writerContainerRef.current || !activeChar) return;
 
     let isMounted = true;
     setWriterLoaded(false);
-    setHasWriterData(true);
     setCharCompleted(false);
 
     // Limpiar contenedor previo
@@ -460,6 +476,8 @@ export default function ScriptpadWriter({
               if (isMounted) {
                 onComplete(data);
                 setWriterLoaded(true);
+                setHasWriterData(true);
+                setEngineMode('guided');
               }
             })
             .catch(err => {
@@ -504,6 +522,7 @@ export default function ScriptpadWriter({
     } catch (err) {
       console.warn('HanziWriter init fallback:', err);
       setHasWriterData(false);
+      setEngineMode('free');
     }
 
     return () => {
@@ -514,7 +533,7 @@ export default function ScriptpadWriter({
         } catch {}
       }
     };
-  }, [activeChar, engineMode, flowMode, showGhostGuide, paperStyle, padSize]);
+  }, [activeChar, flowMode, showGhostGuide, paperStyle, padSize]);
 
   // Actualizar visibilidad de silueta en HanziWriter si cambia toggle
   useEffect(() => {
@@ -545,6 +564,10 @@ export default function ScriptpadWriter({
       setCurrentCharIndex(prev => prev + 1);
       setCharCompleted(false);
       setStrokes([]);
+      setHasWriterData(true);
+      if (flowMode === 'sequential') {
+        setEngineMode('guided');
+      }
     } else {
       // Palabra completada
       handleCompleteCurrentWord();
@@ -557,6 +580,10 @@ export default function ScriptpadWriter({
       setCurrentCharIndex(prev => prev - 1);
       setCharCompleted(false);
       setStrokes([]);
+      setHasWriterData(true);
+      if (flowMode === 'sequential') {
+        setEngineMode('guided');
+      }
     }
   };
 
@@ -650,14 +677,14 @@ export default function ScriptpadWriter({
   }, [strokes, showGhostGuide, activeChar, currentPaper]);
 
   useEffect(() => {
-    if (engineMode === 'free') {
+    if (engineMode === 'free' || !hasWriterData) {
       redrawFreeCanvas();
     }
-  }, [engineMode, redrawFreeCanvas]);
+  }, [engineMode, hasWriterData, redrawFreeCanvas]);
 
   // Pointer events para dibujo fluido y sin pull-to-refresh
   const handlePointerDown = (e) => {
-    if (engineMode !== 'free') return;
+    if (engineMode !== 'free' && hasWriterData) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     try {
@@ -673,7 +700,7 @@ export default function ScriptpadWriter({
   };
 
   const handlePointerMove = (e) => {
-    if (!isDrawing || engineMode !== 'free') return;
+    if (!isDrawing || (engineMode !== 'free' && hasWriterData)) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -822,12 +849,14 @@ export default function ScriptpadWriter({
   // ==========================================
   return (
     <div className="scriptpad-writer-container" style={{
-      maxWidth: 620,
+      maxWidth: 580,
+      width: '100%',
       margin: '0 auto',
       display: 'flex',
       flexDirection: 'column',
       gap: 16,
-      paddingBottom: 140 // Espacio para scroll nativo fluido en móvil por encima del reproductor de audio
+      paddingBottom: 140, // Espacio para scroll nativo fluido en móvil por encima del reproductor de audio
+      boxSizing: 'border-box'
     }}>
       {/* Barra superior de progreso */}
       <div style={{
@@ -990,85 +1019,39 @@ export default function ScriptpadWriter({
         </div>
       </div>
 
-      {/* Selector de Modos: Motor (Trazo Guiado vs Caligrafía) y Flujo (Secuencial vs Tira Continua) */}
+      {/* Selector de Flujo: Secuencial vs Tira Continua */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: 8,
-        padding: '0 4px'
+        justifyContent: 'center',
+        padding: '0 4px',
+        width: '100%'
       }}>
-        {/* Selector de Motor */}
         <div style={{
           display: 'inline-flex',
           background: 'var(--bg-surface)',
           padding: 3,
-          borderRadius: 12,
-          border: '1px solid var(--border)'
+          borderRadius: 14,
+          border: '1px solid var(--border)',
+          boxShadow: 'var(--shadow-sm)'
         }}>
           <button
             type="button"
-            onClick={() => setEngineMode('guided')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: 9,
-              border: 'none',
-              fontSize: '0.8rem',
-              fontWeight: engineMode === 'guided' ? 700 : 500,
-              background: engineMode === 'guided' ? 'var(--primary)' : 'transparent',
-              color: engineMode === 'guided' ? '#fff' : 'var(--text-muted)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6
+            onClick={() => {
+              setFlowMode('sequential');
+              setEngineMode('guided');
+              setHasWriterData(true);
             }}
-          >
-            <Sparkles size={14} />
-            <span>Trazo Guiado</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setEngineMode('free')}
             style={{
-              padding: '6px 14px',
-              borderRadius: 9,
+              padding: '7px 20px',
+              borderRadius: 11,
               border: 'none',
-              fontSize: '0.8rem',
-              fontWeight: engineMode === 'free' ? 700 : 500,
-              background: engineMode === 'free' ? 'var(--primary)' : 'transparent',
-              color: engineMode === 'free' ? '#fff' : 'var(--text-muted)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6
-            }}
-          >
-            <PenTool size={14} />
-            <span>Caligrafía Libre</span>
-          </button>
-        </div>
-
-        {/* Selector de Flujo: Secuencial vs Continuo (Requerimiento de usuario) */}
-        <div style={{
-          display: 'inline-flex',
-          background: 'var(--bg-surface)',
-          padding: 3,
-          borderRadius: 12,
-          border: '1px solid var(--border)'
-        }}>
-          <button
-            type="button"
-            onClick={() => setFlowMode('sequential')}
-            style={{
-              padding: '6px 12px',
-              borderRadius: 9,
-              border: 'none',
-              fontSize: '0.8rem',
-              fontWeight: flowMode === 'sequential' ? 700 : 500,
+              fontSize: '0.82rem',
+              fontWeight: flowMode === 'sequential' ? 800 : 500,
               background: flowMode === 'sequential' ? 'var(--primary)' : 'transparent',
               color: flowMode === 'sequential' ? '#fff' : 'var(--text-muted)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
             }}
           >
             Secuencial
@@ -1077,17 +1060,18 @@ export default function ScriptpadWriter({
             type="button"
             onClick={() => {
               setFlowMode('continuous');
-              setEngineMode('free'); // El modo continuo utiliza el motor libre
+              setEngineMode('free');
             }}
             style={{
-              padding: '6px 12px',
-              borderRadius: 9,
+              padding: '7px 20px',
+              borderRadius: 11,
               border: 'none',
-              fontSize: '0.8rem',
-              fontWeight: flowMode === 'continuous' ? 700 : 500,
+              fontSize: '0.82rem',
+              fontWeight: flowMode === 'continuous' ? 800 : 500,
               background: flowMode === 'continuous' ? 'var(--primary)' : 'transparent',
               color: flowMode === 'continuous' ? '#fff' : 'var(--text-muted)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
             }}
           >
             Tira Continua
@@ -1102,28 +1086,37 @@ export default function ScriptpadWriter({
           background: 'var(--bg-surface)',
           border: '2px solid var(--border)',
           borderRadius: 24,
-          padding: 16,
+          padding: '16px 12px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           boxShadow: 'var(--shadow-md)',
           position: 'relative',
-          minHeight: 310
+          minHeight: 310,
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
           {/* Tira superior de casillas de caracteres */}
           <div style={{
             display: 'flex',
             gap: 8,
-            marginBottom: 12,
+            marginBottom: 14,
             width: '100%',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexWrap: 'wrap'
           }}>
             {characters.map((ch, idx) => (
               <button
                 key={idx}
                 type="button"
-                onClick={() => setCurrentCharIndex(idx)}
+                onClick={() => {
+                  setCurrentCharIndex(idx);
+                  setCharCompleted(false);
+                  setStrokes([]);
+                  setHasWriterData(true);
+                  setEngineMode('guided');
+                }}
                 style={{
                   width: 44,
                   height: 44,
@@ -1142,48 +1135,6 @@ export default function ScriptpadWriter({
                 {ch}
               </button>
             ))}
-          </div>
-
-          {/* Selector de Estilo de Papel para Delimitar los Bordes del Lienzo */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            marginBottom: 12
-          }}>
-            <span style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-              Estilo de Papel:
-            </span>
-            {Object.values(SCRIPT_PAPER_STYLES).map(p => {
-              const isSelected = paperStyle === p.id;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setPaperStyle(p.id)}
-                  style={{
-                    padding: '4px 11px',
-                    borderRadius: 9,
-                    border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border)',
-                    background: isSelected ? 'var(--primary)' : 'var(--bg-main)',
-                    color: isSelected ? '#ffffff' : 'var(--text-main)',
-                    fontSize: '0.78rem',
-                    fontWeight: isSelected ? 800 : 500,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 5,
-                    boxShadow: isSelected ? '0 2px 8px rgba(99, 102, 241, 0.28)' : 'none',
-                    transition: 'all 0.15s ease'
-                  }}
-                  title={p.label}
-                >
-                  <span>{p.icon}</span>
-                  <span>{p.shortLabel}</span>
-                </button>
-              );
-            })}
           </div>
 
           {/* Contenedor de Hoja de Papel con Límites Físicos Definidos */}
@@ -1341,72 +1292,54 @@ export default function ScriptpadWriter({
               </div>
             )}
           </div>
+
+          {/* Pequeña nota informativa si no hay trazo guiado disponible para este carácter */}
+          {!hasWriterData && (
+            <div style={{
+              marginTop: 12,
+              padding: '6px 12px',
+              borderRadius: 12,
+              background: 'rgba(245, 158, 11, 0.12)',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              color: 'var(--text-main)',
+              fontSize: '0.78rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              textAlign: 'center',
+              maxWidth: padSize
+            }}>
+              <Info size={14} style={{ color: '#f59e0b', flexShrink: 0 }} />
+              <span>Trazo guiado no disponible para «{activeChar}». Modo caligrafía libre activado.</span>
+            </div>
+          )}
         </div>
       ) : (
-        // MODO TIRA CONTINUA MULTI-CASILLA (Escribir todas de seguido)
+        // MODO TIRA CONTINUA MULTI-CASILLA VERTICAL (Ver y escribir todos hacia abajo)
         <div style={{
           background: 'var(--bg-surface)',
           border: '2px solid var(--border)',
           borderRadius: 24,
-          padding: 16,
+          padding: '16px 12px',
           boxShadow: 'var(--shadow-md)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 14
+          gap: 16,
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
-          {/* Selector de Estilo de Papel para la Tira Continua */}
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center', padding: '0 8px' }}>
+            Escribe o calca cada carácter hacia abajo en orden:
+          </div>
+
+          {/* Lista VERTICAL interactiva de casillas táctiles */}
           <div style={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8
-          }}>
-            <span style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-              Estilo de Papel:
-            </span>
-            {Object.values(SCRIPT_PAPER_STYLES).map(p => {
-              const isSelected = paperStyle === p.id;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setPaperStyle(p.id)}
-                  style={{
-                    padding: '4px 11px',
-                    borderRadius: 9,
-                    border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border)',
-                    background: isSelected ? 'var(--primary)' : 'var(--bg-main)',
-                    color: isSelected ? '#ffffff' : 'var(--text-main)',
-                    fontSize: '0.78rem',
-                    fontWeight: isSelected ? 800 : 500,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 5,
-                    boxShadow: isSelected ? '0 2px 8px rgba(99, 102, 241, 0.28)' : 'none',
-                    transition: 'all 0.15s ease'
-                  }}
-                  title={p.label}
-                >
-                  <span>{p.icon}</span>
-                  <span>{p.shortLabel}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-            Copia o calca cada carácter de la palabra sobre su casilla con el dedo o lápiz:
-          </div>
-
-          {/* Tira horizontal interactiva de casillas táctiles */}
-          <div style={{
-            display: 'flex',
-            gap: 16,
-            overflowX: 'auto',
-            padding: '8px 4px 12px',
-            justifyContent: characters.length <= 3 ? 'center' : 'flex-start',
-            WebkitOverflowScrolling: 'touch'
+            gap: 22,
+            width: '100%'
           }}>
             {characters.map((ch, idx) => (
               <ContinuousCharBox
@@ -1424,7 +1357,7 @@ export default function ScriptpadWriter({
                 }}
                 currentPaper={currentPaper}
                 showGhostGuide={showGhostGuide}
-                size={characters.length <= 2 ? 190 : 170}
+                size={Math.min(260, Math.max(210, padSize - 20))}
               />
             ))}
           </div>
@@ -1434,14 +1367,16 @@ export default function ScriptpadWriter({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '8px 14px',
+            padding: '10px 16px',
             background: 'var(--bg-main)',
             borderRadius: 14,
             border: '1px solid var(--border)',
-            fontSize: '0.82rem'
+            fontSize: '0.82rem',
+            width: '100%',
+            boxSizing: 'border-box'
           }}>
             <span style={{ color: 'var(--text-muted)' }}>
-              Palabra: <strong style={{ color: 'var(--text-main)' }}>{currentWord.kanji || currentWord.hiragana}</strong>
+              Palabra: <strong style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>{currentWord.kanji || currentWord.hiragana}</strong>
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>
               {Object.values(continuousStrokes).filter(s => s && s.length > 0).length} de {characters.length} escritos
@@ -1453,42 +1388,67 @@ export default function ScriptpadWriter({
       {/* BARRA DE HERRAMIENTAS Y ACCIONES INFERIORES */}
       <div style={{
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        flexDirection: 'column',
         gap: 10,
         background: 'var(--bg-surface)',
-        padding: '12px 16px',
+        padding: '12px',
         borderRadius: 20,
-        border: '1px solid var(--border)'
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-sm)',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
-        {/* Herramientas de trazo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {engineMode === 'free' && (
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={handleUndoStroke}
-              disabled={flowMode === 'continuous' ? (continuousStrokes[continuousActiveIndex] || []).length === 0 : strokes.length === 0}
-              title="Deshacer trazo"
-              style={{ borderRadius: 10 }}
-            >
-              <Undo2 size={16} />
-            </button>
-          )}
-
+        {/* Fila 1: 4 Herramientas de trazo y cambio rápido de papel en cuadrícula perfecta */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+          gap: 6,
+          width: '100%'
+        }}>
+          {/* Botón 1: Borrar */}
           <button
             type="button"
             className="btn btn-outline btn-sm"
             onClick={handleClearStrokes}
             title={flowMode === 'continuous' ? "Borrar casilla activa (o todas si ya está vacía)" : "Borrar lienzo"}
-            style={{ borderRadius: 10 }}
+            style={{
+              borderRadius: 10,
+              padding: '8px 4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              fontSize: '0.78rem',
+              minWidth: 0
+            }}
           >
-            <RotateCcw size={16} />
-            <span>Borrar</span>
+            <RotateCcw size={15} style={{ flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Borrar</span>
           </button>
 
-          {engineMode === 'guided' && (
+          {/* Botón 2: Pista (si guiado) o Deshacer (si libre / continua) */}
+          {(flowMode === 'continuous' || !hasWriterData) ? (
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleUndoStroke}
+              disabled={flowMode === 'continuous' ? (continuousStrokes[continuousActiveIndex] || []).length === 0 : strokes.length === 0}
+              title="Deshacer último trazo"
+              style={{
+                borderRadius: 10,
+                padding: '8px 4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4,
+                fontSize: '0.78rem',
+                minWidth: 0
+              }}
+            >
+              <Undo2 size={15} style={{ flexShrink: 0 }} />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Deshacer</span>
+            </button>
+          ) : (
             <button
               type="button"
               className="btn btn-outline btn-sm"
@@ -1500,26 +1460,43 @@ export default function ScriptpadWriter({
                 borderColor: '#f59e0b',
                 color: '#f59e0b',
                 background: 'rgba(245, 158, 11, 0.08)',
-                fontWeight: 700
+                fontWeight: 700,
+                padding: '8px 4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4,
+                fontSize: '0.78rem',
+                minWidth: 0
               }}
             >
-              <Sparkles size={16} />
-              <span>Pista</span>
+              <Sparkles size={15} style={{ flexShrink: 0 }} />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Pista</span>
             </button>
           )}
 
+          {/* Botón 3: Alternar silueta Guía */}
           <button
             type="button"
             className={`btn btn-sm ${showGhostGuide ? 'btn-outline' : 'btn-primary'}`}
             onClick={() => setShowGhostGuide(!showGhostGuide)}
             title="Alternar silueta de guía"
-            style={{ borderRadius: 10 }}
+            style={{
+              borderRadius: 10,
+              padding: '8px 4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              fontSize: '0.78rem',
+              minWidth: 0
+            }}
           >
-            {showGhostGuide ? <Eye size={15} /> : <EyeOff size={15} />}
-            <span>Guía</span>
+            {showGhostGuide ? <Eye size={15} style={{ flexShrink: 0 }} /> : <EyeOff size={15} style={{ flexShrink: 0 }} />}
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Guía</span>
           </button>
 
-          {/* Botón de cambio rápido de estilo de papel */}
+          {/* Botón 4: Único botón de papel que switchea entre Washi, Blanco y Pizarra */}
           <button
             type="button"
             className="btn btn-outline btn-sm"
@@ -1528,39 +1505,59 @@ export default function ScriptpadWriter({
               const nextIdx = (styles.indexOf(paperStyle) + 1) % styles.length;
               setPaperStyle(styles[nextIdx]);
             }}
-            title="Alternar estilo de papel (Washi, Blanco, Pizarra)"
-            style={{ borderRadius: 10, display: 'flex', alignItems: 'center', gap: 5 }}
+            title="Cambiar estilo de papel (Washi, Blanco, Pizarra)"
+            style={{
+              borderRadius: 10,
+              padding: '8px 4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              fontSize: '0.78rem',
+              minWidth: 0
+            }}
           >
-            <span>{currentPaper.icon}</span>
-            <span>{currentPaper.shortLabel}</span>
+            <span style={{ flexShrink: 0 }}>{currentPaper.icon}</span>
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{currentPaper.shortLabel}</span>
           </button>
         </div>
 
-        {/* Navegación y avance */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {/* Fila 2: Navegación y avance */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
           {flowMode === 'sequential' && characters.length > 1 && (
             <button
               type="button"
               className="btn btn-outline btn-sm"
               onClick={handlePrevChar}
               disabled={currentCharIndex === 0}
-              style={{ borderRadius: 10 }}
+              style={{
+                borderRadius: 12,
+                padding: '10px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Carácter anterior"
+              aria-label="Carácter anterior"
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={18} />
             </button>
           )}
 
           <button
             type="button"
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary"
             onClick={flowMode === 'sequential' && currentCharIndex < characters.length - 1 ? handleNextChar : handleCompleteCurrentWord}
             style={{
-              padding: '8px 18px',
+              flex: 1,
+              padding: '10px 18px',
               borderRadius: 12,
               fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
-              gap: 6
+              justifyContent: 'center',
+              gap: 8,
+              fontSize: '0.9rem'
             }}
           >
             <span>
@@ -1568,7 +1565,7 @@ export default function ScriptpadWriter({
                 ? 'Siguiente Carácter' 
                 : (currentWordIndex === words.length - 1 ? 'Finalizar Lección' : 'Siguiente Palabra')}
             </span>
-            <ChevronRight size={16} />
+            <ChevronRight size={18} />
           </button>
         </div>
       </div>

@@ -222,7 +222,7 @@ export default function ScriptpadTab({
   // ==========================================
   if (activeMode === 'write' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 620, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
         <ScriptpadWriter
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -236,7 +236,7 @@ export default function ScriptpadTab({
 
   if (activeMode === 'flashcards' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 500, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
         <ScriptpadFlashcards
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -250,7 +250,7 @@ export default function ScriptpadTab({
 
   if (activeMode === 'match' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 580, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
         <ScriptpadWordMatch
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -273,12 +273,13 @@ export default function ScriptpadTab({
       : srsQueue;
 
     return (
-      <div className="section-panel active" style={{ padding: '16px 8px 140px', overflowY: 'auto' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 580, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
         <ScriptpadSrsReview
           queue={queueToReview}
           onClose={handleCloseStudy}
           appState={appState}
           onUpdateState={onUpdateState}
+          onComplete={handleCompleteStudy}
         />
       </div>
     );

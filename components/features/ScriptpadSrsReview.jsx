@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import HanziWriter from 'hanzi-writer';
 import { 
   Volume2, 
   ChevronLeft, 
@@ -10,12 +11,117 @@ import {
   Award, 
   PenTool, 
   Eye, 
+  EyeOff, 
   Layers,
-  ArrowRight
+  ArrowRight,
+  HelpCircle,
+  Flag,
+  Check,
+  Pause,
+  Play
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
-import { SRSRating, reviewCard, getIntervalPreviews } from '../../lib/srs';
+import { SRSRating, reviewCard, getIntervalPreviews, ensureFsrsCard } from '../../lib/srs';
+import { fetchKanjiStrokeData } from '../../lib/kanjiStrokeUtils';
+
+// Estilos de papel para el lienzo de caligrafía
+const PAPER_STYLES = {
+  washi: {
+    id: 'washi',
+    label: 'Washi Tradicional (和紙)',
+    bg: '#faf6ee',
+    border: '2.5px solid #d4c7b0',
+    gridColor: 'rgba(180, 83, 9, 0.28)',
+    strokeColor: '#18181b',
+    outlineColor: 'rgba(100, 116, 139, 0.25)',
+    drawingColor: '#2563eb',
+    highlightColor: '#d97706',
+    highlightCompleteColor: '#b45309',
+    isDark: false
+  },
+  chalkboard: {
+    id: 'chalkboard',
+    label: 'Pizarra Oscura (黒板)',
+    bg: '#0a0f1d',
+    border: '2.5px solid #334155',
+    gridColor: 'rgba(148, 163, 184, 0.35)',
+    strokeColor: '#ffffff',
+    outlineColor: 'rgba(224, 231, 255, 0.22)',
+    drawingColor: '#22d3ee',
+    highlightColor: '#fbbf24',
+    highlightCompleteColor: '#f59e0b',
+    isDark: true
+  }
+};
+
+/**
+ * Calcula la calificación recomendada FSRS según la cantidad de equivocados
+ */
+function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
+  if (wasGuideUsed) {
+    return {
+      rating: SRSRating.AGAIN,
+      name: 'Otra vez',
+      tag: 'Guía consultada',
+      badge: '🔄 Requiere repaso (Consultaste la guía)',
+      color: '#ef4444',
+      bg: 'rgba(239, 68, 68, 0.12)',
+      border: 'rgba(239, 68, 68, 0.5)',
+      desc: 'El intervalo se reinicia para afianzar la memoria muscular.'
+    };
+  }
+
+  if (mistakes === 0) {
+    return {
+      rating: SRSRating.EASY,
+      name: 'Fácil',
+      tag: '0 errores',
+      badge: '🎯 ¡Impecable! 0 errores de trazo',
+      color: '#10b981',
+      bg: 'rgba(16, 185, 129, 0.12)',
+      border: 'rgba(16, 185, 129, 0.5)',
+      desc: 'Trazos exactos de memoria en orden correcto.'
+    };
+  }
+
+  if (mistakes === 1) {
+    return {
+      rating: SRSRating.GOOD,
+      name: 'Bueno',
+      tag: '1 error',
+      badge: '✨ ¡Muy bien! Solo 1 error leve',
+      color: '#3b82f6',
+      bg: 'rgba(59, 130, 246, 0.12)',
+      border: 'rgba(59, 130, 246, 0.5)',
+      desc: 'Gran precisión con solo un ajuste menor.'
+    };
+  }
+
+  if (mistakes <= 3) {
+    return {
+      rating: SRSRating.HARD,
+      name: 'Difícil',
+      tag: `${mistakes} errores`,
+      badge: `💪 Buen esfuerzo: ${mistakes} errores`,
+      color: '#f59e0b',
+      bg: 'rgba(245, 158, 11, 0.12)',
+      border: 'rgba(245, 158, 11, 0.5)',
+      desc: 'Costó recordar el orden exacto de trazos.'
+    };
+  }
+
+  return {
+    rating: SRSRating.AGAIN,
+    name: 'Otra vez',
+    tag: `${mistakes} errores`,
+    badge: `🔄 Necesitas repasar: ${mistakes} errores`,
+    color: '#ef4444',
+    bg: 'rgba(239, 68, 68, 0.12)',
+    border: 'rgba(239, 68, 68, 0.5)',
+    desc: 'Es conveniente volver a practicar este kanji pronto.'
+  };
+}
 
 export default function ScriptpadSrsReview({
   queue = [],
@@ -24,21 +130,81 @@ export default function ScriptpadSrsReview({
   onUpdateState,
   onComplete
 }) {
+  // Congelar la cola de repaso para la sesión activa para evitar desincronización
+  const [reviewQueue] = useState(() => {
+    return Array.isArray(queue) && queue.length > 0 ? [...queue] : [];
+  });
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isRevealed, setIsRevealed] = useState(false);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [wordMistakes, setWordMistakes] = useState(0);
+  const [charMistakes, setCharMistakes] = useState(0);
+  const [showGhostGuide, setShowGhostGuide] = useState(false);
+  const [wasGuideUsed, setWasGuideUsed] = useState(false);
+  const [isWordCompleted, setIsWordCompleted] = useState(false);
+  const [assignedRatingInfo, setAssignedRatingInfo] = useState(null);
   const [reviewHistory, setReviewHistory] = useState([]);
   const [isFinished, setIsFinished] = useState(false);
 
+  // Estados de carga de trazos y fallback libre
+  const [writerLoaded, setWriterLoaded] = useState(false);
+  const [hasWriterData, setHasWriterData] = useState(true);
+  const [strokeProgress, setStrokeProgress] = useState({ current: 0, total: 0 });
+
+  // Lienzo fallback libre para cuando no hay SVG
+  const fallbackCanvasRef = useRef(null);
+  const [fallbackStrokes, setFallbackStrokes] = useState([]);
+  const [isDrawingFallback, setIsDrawingFallback] = useState(false);
+  const fallbackStrokeRef = useRef([]);
+
+  // Auto-avance con barra de progreso
+  const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
+  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(3);
+
+  // Referencias HanziWriter
+  const writerContainerRef = useRef(null);
+  const writerRef = useRef(null);
+
+  // Detectar tema oscuro
   const isDark = (typeof document !== 'undefined' && document.body?.getAttribute('data-theme') === 'dark') || appState?.theme === 'dark';
+  const currentPaper = isDark ? PAPER_STYLES.chalkboard : PAPER_STYLES.washi;
 
-  const currentItem = queue[currentIndex];
+  // Tamaño responsivo del lienzo
+  const [padSize, setPadSize] = useState(270);
+  useEffect(() => {
+    const updateSize = () => {
+      if (typeof window === 'undefined') return;
+      const available = Math.min(290, window.innerWidth - 44);
+      setPadSize(Math.max(240, available));
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
-  // Lienzo de escritura táctil para el repaso
-  const canvasRef = useRef(null);
-  const [strokes, setStrokes] = useState([]);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const currentStrokeRef = useRef([]);
+  // Ocultar barra flotante de reproducción para evitar obstrucción en móvil
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('hide-audio-bar');
+      return () => {
+        document.body.classList.remove('hide-audio-bar');
+      };
+    }
+  }, []);
 
+  const currentItem = reviewQueue[currentIndex];
+
+  // Descomponer palabra en caracteres para orden de trazos
+  const characters = useMemo(() => {
+    if (!currentItem) return ['日'];
+    const text = (currentItem.kanji || currentItem.hiragana || '').trim();
+    const chars = Array.from(text).filter(c => c && c.trim().length > 0);
+    return chars.length > 0 ? chars : ['日'];
+  }, [currentItem]);
+
+  const activeChar = characters[currentCharIndex] || characters[0] || '日';
+
+  // Reproducir audio nativo o neuronal
   const playAudio = useCallback(() => {
     if (!currentItem) return;
     try {
@@ -54,65 +220,369 @@ export default function ScriptpadSrsReview({
     }
   }, [currentItem]);
 
-  useEffect(() => {
-    setIsRevealed(false);
-    setStrokes([]);
-    if (currentItem) {
-      playAudio();
-    }
-  }, [currentIndex, currentItem, playAudio]);
+  // Previsualizaciones de intervalos FSRS
+  const intervals = useMemo(() => {
+    if (!currentItem?.card) return { 1: '< 10m', 2: '1d', 3: '3d', 4: '7d' };
+    return getIntervalPreviews(currentItem.card);
+  }, [currentItem]);
 
-  // Dibujar lienzo con cuadrícula
+  // Calificar tarjeta de forma segura con FSRS y avanzar
+  const handleRate = useCallback((rating) => {
+    if (!currentItem) return;
+
+    try {
+      const currentCard = currentItem.card;
+      const updatedCard = reviewCard(currentCard, rating);
+
+      // Guardar en srsQuestions y registrar progreso en Scriptpad
+      if (onUpdateState) {
+        const nextQuestions = {
+          ...(appState?.srsQuestions || {}),
+          [currentItem.cardKey]: updatedCard
+        };
+
+        const wordKey = currentItem.kanji || currentItem.hiragana || currentItem.id;
+        const prevWordProgress = appState?.scriptpadWordProgress?.[wordKey] || { practices: 0, completed: true };
+        const nextWordProgress = {
+          ...(appState?.scriptpadWordProgress || {}),
+          [wordKey]: {
+            ...prevWordProgress,
+            practices: (prevWordProgress.practices || 0) + 1,
+            lastPractice: new Date().toISOString(),
+            completed: true
+          }
+        };
+
+        onUpdateState({
+          ...appState,
+          srsQuestions: nextQuestions,
+          scriptpadWordProgress: nextWordProgress
+        });
+      }
+
+      setReviewHistory(prev => [
+        ...prev, 
+        { 
+          item: currentItem, 
+          rating, 
+          mistakes: wordMistakes,
+          wasGuideUsed 
+        }
+      ]);
+
+      // Avanzar a la siguiente palabra o finalizar
+      if (currentIndex < reviewQueue.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+        setCurrentCharIndex(0);
+        setWordMistakes(0);
+        setCharMistakes(0);
+        setShowGhostGuide(false);
+        setWasGuideUsed(false);
+        setIsWordCompleted(false);
+        setAssignedRatingInfo(null);
+        setAutoAdvancePaused(false);
+        setAutoAdvanceTimeLeft(3);
+        setFallbackStrokes([]);
+      } else {
+        triggerCheerConfetti();
+        setIsFinished(true);
+        if (onComplete) {
+          onComplete({
+            mode: 'srs',
+            totalWords: reviewQueue.length,
+            wordsPracticed: reviewQueue
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error al calificar con FSRS:', err);
+      // Fallback para nunca trabar al usuario
+      if (currentIndex < reviewQueue.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+        setCurrentCharIndex(0);
+        setIsWordCompleted(false);
+        setWordMistakes(0);
+      } else {
+        setIsFinished(true);
+      }
+    }
+  }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, wordMistakes, wasGuideUsed]);
+
+  // Completar palabra y asignar dificultad percibida
+  const handleCompleteWord = useCallback((totalMistakes, guideUsed) => {
+    setIsWordCompleted(true);
+    const ratingInfo = getRatingInfoFromMistakes(totalMistakes, guideUsed);
+    setAssignedRatingInfo(ratingInfo);
+
+    if (totalMistakes === 0 && !guideUsed) {
+      triggerCheerConfetti();
+    }
+    playAudio();
+  }, [playAudio]);
+
+  // Inicializar o recargar HanziWriter en modo Quiz SIN GUÍA
   useEffect(() => {
-    const canvas = canvasRef.current;
+    if (isWordCompleted) return;
+    if (!writerContainerRef.current || !activeChar) return;
+
+    let isMounted = true;
+    setWriterLoaded(false);
+    setHasWriterData(true);
+    setCharMistakes(0);
+
+    // Limpiar contenedor previo
+    writerContainerRef.current.innerHTML = '';
+
+    try {
+      const writer = HanziWriter.create(writerContainerRef.current, activeChar, {
+        width: padSize,
+        height: padSize,
+        padding: 18,
+        showOutline: showGhostGuide, // "Sin guía" por defecto
+        showCharacter: false,
+        strokeAnimationSpeed: 1.4,
+        strokeHighlightSpeed: 2.0,
+        delayBetweenStrokes: 120,
+        strokeColor: currentPaper.strokeColor,
+        outlineColor: currentPaper.outlineColor,
+        highlightColor: currentPaper.highlightColor,
+        highlightCompleteColor: currentPaper.highlightCompleteColor,
+        drawingColor: currentPaper.drawingColor,
+        drawingWidth: 22,
+        charDataLoader: (char, onComplete, onErr) => {
+          fetchKanjiStrokeData(char)
+            .then(data => {
+              if (isMounted) {
+                onComplete(data);
+                setWriterLoaded(true);
+                const total = Array.isArray(data.strokes) ? data.strokes.length : 0;
+                setStrokeProgress({ current: 0, total });
+              }
+            })
+            .catch(err => {
+              if (isMounted) {
+                console.warn(`No stroke data for ${char}, fallback canvas:`, err);
+                setHasWriterData(false);
+                if (onErr) onErr(err);
+              }
+            });
+        }
+      });
+
+      writerRef.current = writer;
+
+      // Iniciar el Quiz con seguimiento estricto de trazos
+      writer.quiz({
+        showHintAfterMisses: 3, // Destello suave tras 3 fallos consecutivos en el mismo trazo
+        leniency: 1.15,
+        onMistake: (strokeData) => {
+          if (!isMounted) return;
+          setWordMistakes(prev => prev + 1);
+          setCharMistakes(prev => prev + 1);
+
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            try { navigator.vibrate(40); } catch {}
+          }
+        },
+        onCorrectStroke: (strokeData) => {
+          if (!isMounted) return;
+          setStrokeProgress(prev => ({
+            ...prev,
+            current: (strokeData?.strokeNum || 0) + 1
+          }));
+
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            try { navigator.vibrate(20); } catch {}
+          }
+        },
+        onComplete: (summary) => {
+          if (!isMounted) return;
+
+          // Si la palabra tiene más caracteres pendientes
+          if (currentCharIndex < characters.length - 1) {
+            setTimeout(() => {
+              if (isMounted) {
+                setCurrentCharIndex(prev => prev + 1);
+              }
+            }, 350);
+          } else {
+            // Palabra completa de principio a fin
+            setTimeout(() => {
+              if (isMounted) {
+                const totalWordMistakes = wordMistakes + (summary?.totalMistakes || 0);
+                handleCompleteWord(totalWordMistakes, wasGuideUsed || showGhostGuide);
+              }
+            }, 250);
+          }
+        }
+      });
+
+      setWriterLoaded(true);
+    } catch (err) {
+      console.warn('HanziWriter init error:', err);
+      setHasWriterData(false);
+    }
+
+    return () => {
+      isMounted = false;
+      if (writerRef.current) {
+        try {
+          writerRef.current.cancelQuiz();
+        } catch {}
+      }
+    };
+  }, [
+    activeChar, 
+    currentCharIndex, 
+    characters.length, 
+    currentIndex, 
+    isWordCompleted, 
+    padSize, 
+    currentPaper, 
+    showGhostGuide, 
+    handleCompleteWord, 
+    wasGuideUsed, 
+    wordMistakes
+  ]);
+
+  // Manejo de silueta / guía si el usuario la activa
+  const handleToggleGuide = () => {
+    setShowGhostGuide(true);
+    setWasGuideUsed(true);
+    if (writerRef.current) {
+      try {
+        writerRef.current.showOutline();
+      } catch {}
+    }
+  };
+
+  // Reiniciar carácter actual
+  const handleResetCurrentChar = () => {
+    if (writerRef.current) {
+      try {
+        writerRef.current.cancelQuiz();
+        writerRef.current.quiz();
+        setCharMistakes(0);
+        setStrokeProgress(prev => ({ ...prev, current: 0 }));
+      } catch {}
+    }
+  };
+
+  // Rendirse / No me acuerdo: muestra la animación y asigna "Otra vez"
+  const handleGiveUp = () => {
+    setWasGuideUsed(true);
+    if (writerRef.current) {
+      try {
+        writerRef.current.cancelQuiz();
+        writerRef.current.showOutline();
+        writerRef.current.animateCharacter({
+          onComplete: () => {
+            handleCompleteWord(wordMistakes + 4, true);
+          }
+        });
+      } catch {
+        handleCompleteWord(wordMistakes + 4, true);
+      }
+    } else {
+      handleCompleteWord(wordMistakes + 4, true);
+    }
+  };
+
+  // Temporizador de auto-avance cuando la palabra está completada
+  useEffect(() => {
+    if (!isWordCompleted || autoAdvancePaused || !assignedRatingInfo) return;
+
+    if (autoAdvanceTimeLeft <= 0) {
+      handleRate(assignedRatingInfo.rating);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setAutoAdvanceTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isWordCompleted, autoAdvancePaused, autoAdvanceTimeLeft, assignedRatingInfo, handleRate]);
+
+  // Manejadores para Lienzo de Fallback (cuando no hay SVG o estamos offline)
+  const handleFallbackPointerDown = (e) => {
+    const canvas = fallbackCanvasRef.current;
+    if (!canvas) return;
+    try { canvas.setPointerCapture(e.pointerId); } catch {}
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setIsDrawingFallback(true);
+    fallbackStrokeRef.current = [{ x, y }];
+  };
+
+  const handleFallbackPointerMove = (e) => {
+    if (!isDrawingFallback) return;
+    const canvas = fallbackCanvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    fallbackStrokeRef.current.push({ x, y });
+    setFallbackStrokes([...fallbackStrokes, [...fallbackStrokeRef.current]]);
+  };
+
+  const handleFallbackPointerUp = (e) => {
+    if (!isDrawingFallback) return;
+    const canvas = fallbackCanvasRef.current;
+    if (canvas) {
+      try { canvas.releasePointerCapture(e.pointerId); } catch {}
+    }
+    setIsDrawingFallback(false);
+    if (fallbackStrokeRef.current.length > 0) {
+      setFallbackStrokes(prev => [...prev, fallbackStrokeRef.current]);
+      fallbackStrokeRef.current = [];
+    }
+  };
+
+  // Renderizado del lienzo de fallback
+  useEffect(() => {
+    if (hasWriterData) return;
+    const canvas = fallbackCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const isDark = (typeof document !== 'undefined' && document.body?.getAttribute('data-theme') === 'dark') || appState?.theme === 'dark';
-    const width = canvas.width;
-    const height = canvas.height;
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Cuadrícula cruzada
     ctx.save();
-    ctx.strokeStyle = isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(99, 102, 241, 0.15)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
-
+    ctx.strokeStyle = currentPaper.gridColor;
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([5, 5]);
     ctx.beginPath();
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
+    ctx.moveTo(canvas.width / 2, 0);
+    ctx.lineTo(canvas.width / 2, canvas.height);
+    ctx.moveTo(0, canvas.height / 2);
+    ctx.lineTo(canvas.width, canvas.height / 2);
     ctx.stroke();
-
-    ctx.setLineDash([]);
-    ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)';
-    ctx.strokeRect(1, 1, width - 2, height - 2);
     ctx.restore();
 
-    // Si está revelado, mostrar el modelo en transparencia suave para comparar
-    if (isRevealed && currentItem) {
+    // Silueta si está revelado o se pidió guía
+    if ((showGhostGuide || isWordCompleted) && activeChar) {
       ctx.save();
-      ctx.font = `bold ${Math.floor(height * 0.65)}px "Noto Sans JP", sans-serif`;
+      ctx.font = `bold ${Math.floor(canvas.height * 0.65)}px "Noto Sans JP", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = isDark ? 'rgba(224, 231, 255, 0.35)' : 'rgba(99, 102, 241, 0.2)';
-      ctx.fillText(currentItem.kanji || currentItem.hiragana, width / 2, height / 2 + 6);
+      ctx.fillStyle = currentPaper.outlineColor;
+      ctx.fillText(activeChar, canvas.width / 2, canvas.height / 2 + 6);
       ctx.restore();
     }
 
-    // Trazos del usuario
+    // Trazos libres dibujados
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = isDark ? '#ffffff' : '#0f172a';
-
-    strokes.forEach(stroke => {
+    ctx.strokeStyle = currentPaper.strokeColor;
+    fallbackStrokes.forEach(stroke => {
       if (stroke.length < 2) return;
       ctx.beginPath();
-      ctx.lineWidth = stroke[0].w || 12;
+      ctx.lineWidth = 12;
       ctx.moveTo(stroke[0].x, stroke[0].y);
       for (let i = 1; i < stroke.length; i++) {
         ctx.lineTo(stroke[i].x, stroke[i].y);
@@ -120,127 +590,104 @@ export default function ScriptpadSrsReview({
       ctx.stroke();
     });
     ctx.restore();
-  }, [strokes, isRevealed, currentItem, appState?.theme]);
+  }, [hasWriterData, fallbackStrokes, showGhostGuide, isWordCompleted, activeChar, currentPaper]);
 
-  // Manejadores Pointer para dibujar de memoria
-  const handlePointerDown = (e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    try {
-      canvas.setPointerCapture(e.pointerId);
-    } catch {}
+  // ==========================================
+  // PANTALLA DE FINALIZACIÓN
+  // ==========================================
+  if (isFinished || (currentIndex >= reviewQueue.length && reviewHistory.length > 0)) {
+    const perfectCount = reviewHistory.filter(h => h.mistakes === 0 && !h.wasGuideUsed).length;
+    const hardOrAgainCount = reviewHistory.filter(h => h.rating === SRSRating.AGAIN || h.rating === SRSRating.HARD).length;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setIsDrawing(true);
-    currentStrokeRef.current = [{ x, y, w: 10 }];
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDrawing) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    currentStrokeRef.current.push({ x, y, w: 10 });
-    setStrokes([...strokes, [...currentStrokeRef.current]]);
-  };
-
-  const handlePointerUp = () => {
-    if (!isDrawing) return;
-    setIsDrawing(false);
-    if (currentStrokeRef.current.length > 0) {
-      setStrokes(prev => [...prev, currentStrokeRef.current]);
-      currentStrokeRef.current = [];
-    }
-  };
-
-  // Calificar tarjeta con FSRS
-  const handleRate = (rating) => {
-    if (!currentItem) return;
-
-    const currentCard = currentItem.card;
-    const updatedCard = reviewCard(currentCard, rating);
-
-    // Guardar en srsQuestions
-    if (onUpdateState) {
-      const nextQuestions = {
-        ...(appState?.srsQuestions || {}),
-        [currentItem.cardKey]: updatedCard
-      };
-
-      onUpdateState({
-        ...appState,
-        srsQuestions: nextQuestions
-      });
-    }
-
-    setReviewHistory(prev => [...prev, { item: currentItem, rating }]);
-
-    if (currentIndex < queue.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    } else {
-      triggerCheerConfetti();
-      setIsFinished(true);
-      if (onComplete) {
-        onComplete({
-          mode: 'srs',
-          totalWords: queue.length,
-          wordsPracticed: queue
-        });
-      }
-    }
-  };
-
-  // Previsualizaciones de intervalos FSRS
-  const intervals = React.useMemo(() => {
-    if (!currentItem?.card) return { 1: '1m', 2: '10m', 3: '1d', 4: '4d' };
-    return getIntervalPreviews(currentItem.card);
-  }, [currentItem]);
-
-  // Pantalla de finalización
-  if (isFinished || (currentIndex >= queue.length && reviewHistory.length > 0)) {
     return (
       <div className="srs-finish-card" style={{
-        maxWidth: 500,
+        maxWidth: 520,
         margin: '0 auto',
-        padding: '32px 20px',
-        paddingBottom: 140,
+        padding: '36px 20px',
+        paddingBottom: 60,
         textAlign: 'center',
         background: 'var(--bg-surface)',
         borderRadius: 24,
-        border: '1px solid var(--border)'
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-md)'
       }}>
         <div style={{
-          width: 72,
-          height: 72,
+          width: 76,
+          height: 76,
           borderRadius: '50%',
           background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
           color: '#fff',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 16px'
+          margin: '0 auto 18px',
+          boxShadow: '0 8px 24px rgba(16, 185, 129, 0.35)'
         }}>
-          <CheckCircle2 size={40} />
+          <CheckCircle2 size={44} />
         </div>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-main)' }}>
-          ¡Repaso Completado!
+
+        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-main)' }}>
+          ¡Repaso SRS Completado!
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: 24 }}>
-          Has repasado {reviewHistory.length} palabras de escritura a mano con el algoritmo FSRS.
+          Has practicado el trazo de {reviewHistory.length} palabras de memoria con seguimiento inteligente FSRS.
         </p>
+
+        {/* Resumen de rendimiento */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 12,
+          marginBottom: 28,
+          textAlign: 'left'
+        }}>
+          <div style={{
+            background: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.08)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: 16,
+            padding: '14px 16px'
+          }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#10b981', textTransform: 'uppercase' }}>
+              🎯 Trazos Perfectos
+            </div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 2 }}>
+              {perfectCount} <span style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.7 }}>/ {reviewHistory.length}</span>
+            </div>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              0 errores de memoria (Fácil)
+            </div>
+          </div>
+
+          <div style={{
+            background: isDark ? 'rgba(245, 158, 11, 0.1)' : 'rgba(245, 158, 11, 0.08)',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+            borderRadius: 16,
+            padding: '14px 16px'
+          }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase' }}>
+              🔄 A Reforzar
+            </div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 2 }}>
+              {hardOrAgainCount} <span style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.7 }}>palabras</span>
+            </div>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              Programadas para repaso próximo
+            </div>
+          </div>
+        </div>
 
         <button
           type="button"
           className="btn btn-primary"
           onClick={onClose}
-          style={{ padding: '12px 28px', borderRadius: 14, fontWeight: 700 }}
+          style={{
+            padding: '14px 32px',
+            borderRadius: 16,
+            fontWeight: 800,
+            fontSize: '1rem',
+            width: '100%',
+            boxShadow: '0 4px 16px rgba(99, 102, 241, 0.35)'
+          }}
         >
           Volver al Scriptpad
         </button>
@@ -248,12 +695,13 @@ export default function ScriptpadSrsReview({
     );
   }
 
+  // Cola vacía
   if (!currentItem) {
     return (
-      <div style={{ textAlign: 'center', padding: 40, background: 'var(--bg-surface)', borderRadius: 20 }}>
+      <div style={{ textAlign: 'center', padding: 40, background: 'var(--bg-surface)', borderRadius: 24 }}>
         <h3>No hay palabras pendientes para repasar ahora 🎉</h3>
-        <p style={{ color: 'var(--text-muted)' }}>¡Estás al día con tus repasos de escritura!</p>
-        <button type="button" className="btn btn-primary btn-sm" onClick={onClose} style={{ marginTop: 12 }}>
+        <p style={{ color: 'var(--text-muted)' }}>¡Estás al día con tus repasos de escritura a mano!</p>
+        <button type="button" className="btn btn-primary btn-sm" onClick={onClose} style={{ marginTop: 14 }}>
           Volver
         </button>
       </div>
@@ -262,20 +710,20 @@ export default function ScriptpadSrsReview({
 
   return (
     <div className="scriptpad-srs-container" style={{
-      maxWidth: 580,
+      maxWidth: 540,
       margin: '0 auto',
       display: 'flex',
       flexDirection: 'column',
-      gap: 16,
-      paddingBottom: 140
+      gap: 14,
+      paddingBottom: 40
     }}>
-      {/* Header superior */}
+      {/* 1. Header Superior */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         background: 'var(--bg-surface)',
-        padding: '12px 18px',
+        padding: '10px 16px',
         borderRadius: 18,
         border: '1px solid var(--border)'
       }}>
@@ -283,18 +731,18 @@ export default function ScriptpadSrsReview({
           type="button"
           onClick={onClose}
           className="btn btn-outline btn-sm"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10 }}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10, padding: '6px 12px' }}
         >
           <ChevronLeft size={16} />
           <span>Salir</span>
         </button>
 
         <div style={{ textAlign: 'center', flex: 1 }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>
+          <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
             Repaso SRS de Escritura (FSRS)
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Palabra {currentIndex + 1} de {queue.length}
+          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+            Palabra {currentIndex + 1} de {reviewQueue.length}
           </div>
         </div>
 
@@ -303,34 +751,90 @@ export default function ScriptpadSrsReview({
           onClick={playAudio}
           className="btn btn-primary btn-sm"
           style={{ width: 36, height: 36, borderRadius: '50%', padding: 0 }}
-          title="Escuchar"
+          title="Escuchar pronunciación"
         >
           <Volume2 size={16} />
         </button>
       </div>
 
-      {/* Tarjeta de Pregunta */}
+      {/* 2. Tarjeta de Pregunta */}
       <div style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border)',
-        borderRadius: 22,
-        padding: '18px 20px',
+        borderRadius: 20,
+        padding: '16px 20px',
         textAlign: 'center'
       }}>
-        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
           Escribe de memoria en japonés:
         </div>
-        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 4 }}>
+        <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 4 }}>
           {currentItem.meaning_es}
         </div>
-        {isRevealed && (
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)', marginTop: 8 }}>
-            {currentItem.kanji} <span style={{ fontSize: '1rem', opacity: 0.75 }}>({currentItem.hiragana})</span>
+
+        {/* Si la palabra tiene varios caracteres, mostrar indicador de carácter actual */}
+        {characters.length > 1 && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            marginTop: 10
+          }}>
+            {characters.map((ch, idx) => {
+              const isPast = idx < currentCharIndex;
+              const isCurrent = idx === currentCharIndex;
+              return (
+                <div
+                  key={`char-step-${idx}`}
+                  style={{
+                    padding: '3px 10px',
+                    borderRadius: 8,
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    background: isCurrent 
+                      ? 'var(--primary)' 
+                      : (isPast ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-hover)'),
+                    color: isCurrent 
+                      ? '#ffffff' 
+                      : (isPast ? '#10b981' : 'var(--text-muted)'),
+                    border: `1px solid ${isCurrent ? 'var(--primary)' : 'var(--border)'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}
+                >
+                  {isPast && <Check size={12} strokeWidth={3} />}
+                  <span>Carácter {idx + 1}</span>
+                  {isWordCompleted && <span style={{ opacity: 0.85 }}>({ch})</span>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Modelo revelado cuando se completa */}
+        {isWordCompleted && (
+          <div style={{
+            marginTop: 12,
+            paddingTop: 10,
+            borderTop: '1px dashed var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10
+          }}>
+            <span style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--primary)', fontFamily: 'var(--font-jp)' }}>
+              {currentItem.kanji || currentItem.hiragana}
+            </span>
+            <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              ({currentItem.hiragana})
+            </span>
           </div>
         )}
       </div>
 
-      {/* Lienzo táctil para trazar la palabra */}
+      {/* 3. Lienzo de Trazos HanziWriter "Sin Guía" */}
       <div style={{
         background: 'var(--bg-surface)',
         border: '2px solid var(--border)',
@@ -340,47 +844,297 @@ export default function ScriptpadSrsReview({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: 'var(--shadow-sm)'
+        boxShadow: 'var(--shadow-sm)',
+        position: 'relative'
       }}>
-        <canvas
-          ref={canvasRef}
-          width={280}
-          height={280}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          style={{
-            width: 280,
-            height: 280,
-            borderRadius: 20,
-            background: isDark ? '#070b14' : '#faf6ee',
-            border: `2px solid ${isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.25)'}`,
-            boxShadow: isDark ? 'inset 0 2px 14px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.4)' : 'inset 0 1px 4px rgba(0,0,0,0.04)',
-            cursor: 'crosshair',
-            touchAction: 'none'
-          }}
-        />
-
-        <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-          <button
-            type="button"
-            className="btn btn-outline btn-sm"
-            onClick={() => setStrokes([])}
-            style={{ borderRadius: 10 }}
+        {/* Contenedor cuadrado con estilo de papel y cuadrícula */}
+        <div style={{
+          width: padSize,
+          height: padSize,
+          borderRadius: 20,
+          background: currentPaper.bg,
+          border: currentPaper.border,
+          boxShadow: currentPaper.isDark 
+            ? 'inset 0 2px 14px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.4)' 
+            : 'inset 0 1px 4px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.06)',
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          touchAction: 'none'
+        }}>
+          {/* Rejilla de caligrafía japonesa tradicional (SVG) */}
+          <svg
+            width={padSize}
+            height={padSize}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              pointerEvents: 'none',
+              zIndex: 1
+            }}
           >
-            <RotateCcw size={14} />
-            <span>Borrar</span>
-          </button>
+            {/* Marco perimetral */}
+            <rect
+              x={6}
+              y={6}
+              width={padSize - 12}
+              height={padSize - 12}
+              fill="none"
+              stroke={currentPaper.gridColor}
+              strokeWidth={1.5}
+              rx={12}
+            />
+            {/* Cruz central punteada */}
+            <line
+              x1={padSize / 2} y1={6}
+              x2={padSize / 2} y2={padSize - 6}
+              stroke={currentPaper.gridColor}
+              strokeWidth={1.4}
+              strokeDasharray="6 4"
+            />
+            <line
+              x1={6} y1={padSize / 2}
+              x2={padSize - 6} y2={padSize / 2}
+              stroke={currentPaper.gridColor}
+              strokeWidth={1.4}
+              strokeDasharray="6 4"
+            />
+            {/* Diagonales tenues */}
+            <line
+              x1={6} y1={6}
+              x2={padSize - 6} y2={padSize - 6}
+              stroke={currentPaper.gridColor}
+              strokeWidth={1}
+              strokeDasharray="4 4"
+              opacity={0.5}
+            />
+            <line
+              x1={padSize - 6} y1={6}
+              x2={6} y2={padSize - 6}
+              stroke={currentPaper.gridColor}
+              strokeWidth={1}
+              strokeDasharray="4 4"
+              opacity={0.5}
+            />
+          </svg>
+
+          {/* Motor de trazos HanziWriter */}
+          {hasWriterData ? (
+            <div
+              ref={writerContainerRef}
+              style={{
+                width: padSize,
+                height: padSize,
+                position: 'relative',
+                zIndex: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            />
+          ) : (
+            /* Fallback canvas si falla o no hay datos SVG del kanji */
+            <canvas
+              ref={fallbackCanvasRef}
+              width={padSize}
+              height={padSize}
+              onPointerDown={handleFallbackPointerDown}
+              onPointerMove={handleFallbackPointerMove}
+              onPointerUp={handleFallbackPointerUp}
+              onPointerCancel={handleFallbackPointerUp}
+              style={{
+                width: padSize,
+                height: padSize,
+                position: 'relative',
+                zIndex: 2,
+                cursor: 'crosshair',
+                touchAction: 'none'
+              }}
+            />
+          )}
+
+          {/* Badge "Sin Guía" visible durante el trazo de memoria */}
+          {!isWordCompleted && !showGhostGuide && (
+            <div style={{
+              position: 'absolute',
+              bottom: 8,
+              left: 10,
+              zIndex: 3,
+              fontSize: '0.68rem',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: 6,
+              background: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.75)',
+              color: 'var(--text-muted)',
+              backdropFilter: 'blur(4px)',
+              pointerEvents: 'none'
+            }}>
+              ✍️ Sin guía · De memoria
+            </div>
+          )}
+
+          {/* Indicador de trazo activo */}
+          {!isWordCompleted && strokeProgress.total > 0 && (
+            <div style={{
+              position: 'absolute',
+              bottom: 8,
+              right: 10,
+              zIndex: 3,
+              fontSize: '0.68rem',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: 6,
+              background: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.75)',
+              color: currentPaper.drawingColor,
+              backdropFilter: 'blur(4px)',
+              pointerEvents: 'none'
+            }}>
+              Trazo {strokeProgress.current} de {strokeProgress.total}
+            </div>
+          )}
         </div>
+
+        {/* 4. Barra de Acciones durante el trazo */}
+        {!isWordCompleted ? (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            maxWidth: padSize,
+            marginTop: 12,
+            gap: 8
+          }}>
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleResetCurrentChar}
+              style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 5 }}
+              title="Reiniciar este carácter desde el primer trazo"
+            >
+              <RotateCcw size={13} />
+              <span>Reiniciar</span>
+            </button>
+
+            {!showGhostGuide ? (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={handleToggleGuide}
+                style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 5 }}
+                title="Mostrar silueta tenue de guía si no recuerdas los trazos"
+              >
+                <Eye size={13} />
+                <span>Ver Guía</span>
+              </button>
+            ) : (
+              <span style={{ fontSize: '0.72rem', color: '#f59e0b', fontWeight: 700 }}>
+                💡 Guía activa
+              </span>
+            )}
+
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleGiveUp}
+              style={{
+                borderRadius: 10,
+                fontSize: '0.76rem',
+                color: '#ef4444',
+                borderColor: 'rgba(239, 68, 68, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5
+              }}
+              title="Rendirse y ver el modelo completo animado"
+            >
+              <Flag size={13} />
+              <span>No sé</span>
+            </button>
+          </div>
+        ) : (
+          /* Botón de volver a escribir la palabra si quiere practicar de nuevo */
+          <div style={{ marginTop: 10 }}>
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => {
+                setIsWordCompleted(false);
+                setCurrentCharIndex(0);
+                setWordMistakes(0);
+                setCharMistakes(0);
+                setShowGhostGuide(false);
+                setWasGuideUsed(false);
+                setAssignedRatingInfo(null);
+              }}
+              style={{ borderRadius: 10, fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
+            >
+              <RotateCcw size={13} />
+              <span>Volver a trazar</span>
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Botón Revelar o Botones de Calificación FSRS */}
-      {!isRevealed ? (
+      {/* 5. Banner de Dificultad Percibida Asignada */}
+      {isWordCompleted && assignedRatingInfo && (
+        <div style={{
+          background: assignedRatingInfo.bg,
+          border: `1.5px solid ${assignedRatingInfo.border}`,
+          borderRadius: 18,
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12
+        }}>
+          <div>
+            <div style={{
+              fontSize: '0.88rem',
+              fontWeight: 800,
+              color: assignedRatingInfo.color,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}>
+              <span>{assignedRatingInfo.badge}</span>
+            </div>
+            <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              Dificultad asignada automáticamente: <strong>{assignedRatingInfo.name}</strong>
+            </div>
+          </div>
+
+          {/* Botón pausar o continuar temporizador */}
+          <button
+            type="button"
+            onClick={() => setAutoAdvancePaused(prev => !prev)}
+            className="btn btn-outline btn-sm"
+            style={{
+              padding: '4px 8px',
+              borderRadius: 8,
+              fontSize: '0.72rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              borderColor: assignedRatingInfo.border
+            }}
+            title={autoAdvancePaused ? "Reanudar auto-avance" : "Pausar para elegir otra dificultad"}
+          >
+            {autoAdvancePaused ? <Play size={12} /> : <Pause size={12} />}
+            <span>{autoAdvancePaused ? 'Pausado' : `${autoAdvanceTimeLeft}s`}</span>
+          </button>
+        </div>
+      )}
+
+      {/* 6. Botón Principal Continuar (con la calificación asignada) */}
+      {isWordCompleted && assignedRatingInfo && (
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() => setIsRevealed(true)}
+          onClick={() => handleRate(assignedRatingInfo.rating)}
           style={{
             padding: '14px 20px',
             borderRadius: 16,
@@ -389,99 +1143,169 @@ export default function ScriptpadSrsReview({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 8,
-            boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
+            gap: 10,
+            boxShadow: `0 4px 16px ${assignedRatingInfo.color}40`,
+            background: assignedRatingInfo.color,
+            color: '#ffffff',
+            border: 'none',
+            cursor: 'pointer'
           }}
         >
-          <Sparkles size={18} />
-          <span>Comprobar y Revelar Modelo</span>
+          <span>Continuar ({assignedRatingInfo.name})</span>
+          <ArrowRight size={18} />
         </button>
-      ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 8
-        }}>
-          <button
-            type="button"
-            onClick={() => handleRate(SRSRating.Again)}
-            style={{
-              padding: '10px 4px',
-              borderRadius: 14,
-              border: '1px solid rgba(239, 68, 68, 0.4)',
-              background: 'rgba(239, 68, 68, 0.1)',
-              color: '#ef4444',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2
-            }}
-          >
-            <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Otra vez</span>
-            <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{intervals[1] || '1m'}</span>
-          </button>
+      )}
 
-          <button
-            type="button"
-            onClick={() => handleRate(SRSRating.Hard)}
-            style={{
-              padding: '10px 4px',
-              borderRadius: 14,
-              border: '1px solid rgba(245, 158, 11, 0.4)',
-              background: 'rgba(245, 158, 11, 0.1)',
-              color: '#f59e0b',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2
-            }}
-          >
-            <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Difícil</span>
-            <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{intervals[2] || '10m'}</span>
-          </button>
+      {/* 7. Opciones de Calificación FSRS Manuales (Siempre accesibles si desea cambiarla) */}
+      {isWordCompleted && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textAlign: 'center', fontWeight: 600 }}>
+            O ajusta la dificultad manualmente si lo deseas:
+          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 8
+          }}>
+            {/* OTRA VEZ (1) */}
+            <button
+              type="button"
+              onClick={() => handleRate(SRSRating.AGAIN)}
+              style={{
+                padding: '10px 4px',
+                borderRadius: 14,
+                border: assignedRatingInfo?.rating === SRSRating.AGAIN 
+                  ? '2px solid #ef4444' 
+                  : '1px solid rgba(239, 68, 68, 0.4)',
+                background: assignedRatingInfo?.rating === SRSRating.AGAIN 
+                  ? 'rgba(239, 68, 68, 0.22)' 
+                  : 'rgba(239, 68, 68, 0.1)',
+                color: '#ef4444',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                boxShadow: assignedRatingInfo?.rating === SRSRating.AGAIN ? '0 0 10px rgba(239, 68, 68, 0.3)' : 'none'
+              }}
+            >
+              <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Otra vez</span>
+              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[1] || '< 10m'}</span>
+              {assignedRatingInfo?.rating === SRSRating.AGAIN && (
+                <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#ef4444' }}>✓ Asignado</span>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => handleRate(SRSRating.Good)}
-            style={{
-              padding: '10px 4px',
-              borderRadius: 14,
-              border: '1px solid rgba(59, 130, 246, 0.4)',
-              background: 'rgba(59, 130, 246, 0.1)',
-              color: '#3b82f6',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2
-            }}
-          >
-            <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Bueno</span>
-            <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{intervals[3] || '1d'}</span>
-          </button>
+            {/* DIFÍCIL (2) */}
+            <button
+              type="button"
+              onClick={() => handleRate(SRSRating.HARD)}
+              style={{
+                padding: '10px 4px',
+                borderRadius: 14,
+                border: assignedRatingInfo?.rating === SRSRating.HARD 
+                  ? '2px solid #f59e0b' 
+                  : '1px solid rgba(245, 158, 11, 0.4)',
+                background: assignedRatingInfo?.rating === SRSRating.HARD 
+                  ? 'rgba(245, 158, 11, 0.22)' 
+                  : 'rgba(245, 158, 11, 0.1)',
+                color: '#f59e0b',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                boxShadow: assignedRatingInfo?.rating === SRSRating.HARD ? '0 0 10px rgba(245, 158, 11, 0.3)' : 'none'
+              }}
+            >
+              <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Difícil</span>
+              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[2] || '1d'}</span>
+              {assignedRatingInfo?.rating === SRSRating.HARD && (
+                <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#f59e0b' }}>✓ Asignado</span>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => handleRate(SRSRating.Easy)}
-            style={{
-              padding: '10px 4px',
-              borderRadius: 14,
-              border: '1px solid rgba(16, 185, 129, 0.4)',
-              background: 'rgba(16, 185, 129, 0.1)',
-              color: '#10b981',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2
-            }}
-          >
-            <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Fácil</span>
-            <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{intervals[4] || '4d'}</span>
-          </button>
+            {/* BUENO (3) */}
+            <button
+              type="button"
+              onClick={() => handleRate(SRSRating.GOOD)}
+              style={{
+                padding: '10px 4px',
+                borderRadius: 14,
+                border: assignedRatingInfo?.rating === SRSRating.GOOD 
+                  ? '2px solid #3b82f6' 
+                  : '1px solid rgba(59, 130, 246, 0.4)',
+                background: assignedRatingInfo?.rating === SRSRating.GOOD 
+                  ? 'rgba(59, 130, 246, 0.22)' 
+                  : 'rgba(59, 130, 246, 0.1)',
+                color: '#3b82f6',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                boxShadow: assignedRatingInfo?.rating === SRSRating.GOOD ? '0 0 10px rgba(59, 130, 246, 0.3)' : 'none'
+              }}
+            >
+              <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Bueno</span>
+              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[3] || '3d'}</span>
+              {assignedRatingInfo?.rating === SRSRating.GOOD && (
+                <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#3b82f6' }}>✓ Asignado</span>
+              )}
+            </button>
+
+            {/* FÁCIL (4) */}
+            <button
+              type="button"
+              onClick={() => handleRate(SRSRating.EASY)}
+              style={{
+                padding: '10px 4px',
+                borderRadius: 14,
+                border: assignedRatingInfo?.rating === SRSRating.EASY 
+                  ? '2px solid #10b981' 
+                  : '1px solid rgba(16, 185, 129, 0.4)',
+                background: assignedRatingInfo?.rating === SRSRating.EASY 
+                  ? 'rgba(16, 185, 129, 0.22)' 
+                  : 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                boxShadow: assignedRatingInfo?.rating === SRSRating.EASY ? '0 0 10px rgba(16, 185, 129, 0.3)' : 'none'
+              }}
+            >
+              <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Fácil</span>
+              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[4] || '7d'}</span>
+              {assignedRatingInfo?.rating === SRSRating.EASY && (
+                <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#10b981' }}>✓ Asignado</span>
+              )}
+            </button>
+          </div>
         </div>
+      )}
+
+      {/* Botón alternativo para cuando aún no se completa la palabra: comprobar manualmente */}
+      {!isWordCompleted && !hasWriterData && (
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => handleCompleteWord(fallbackStrokes.length > 0 ? 1 : 4, showGhostGuide)}
+          style={{
+            padding: '12px 20px',
+            borderRadius: 16,
+            fontSize: '0.95rem',
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8
+          }}
+        >
+          <Sparkles size={16} />
+          <span>Comprobar y Calificar</span>
+        </button>
       )}
     </div>
   );
