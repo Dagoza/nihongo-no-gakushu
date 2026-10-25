@@ -289,7 +289,7 @@ export default function JlptExamTab() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <Award size={26} color="#fbbf24" />
-                <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+                <h1 className="module-hero-title" style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
                   Simulacros Oficiales JLPT
                 </h1>
               </div>
@@ -544,10 +544,10 @@ export default function JlptExamTab() {
               {examResults.passed ? <Check size={36} strokeWidth={3} /> : <XCircle size={36} />}
             </div>
 
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-main)' }}>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 4px', color: 'var(--text-main)' }}>
               {examResults.passed ? '¡APROBADO! (合格)' : 'NO APROBADO (不合格)'}
             </h2>
-            <div style={{ fontSize: '0.92rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
               Simulacro Oficial JLPT {level} · {SECTIONS.find(s => s.id === section)?.label}
             </div>
           </div>

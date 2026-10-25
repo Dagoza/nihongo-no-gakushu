@@ -226,7 +226,7 @@ export default function ScriptpadTab({
   // ==========================================
   if (activeMode === 'write' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ width: '100%', maxWidth: 620, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 720, margin: '0 auto', boxSizing: 'border-box' }}>
         <ScriptpadWriter
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -240,7 +240,7 @@ export default function ScriptpadTab({
 
   if (activeMode === 'flashcards' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ width: '100%', maxWidth: 500, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 580, margin: '0 auto', boxSizing: 'border-box' }}>
         <ScriptpadFlashcards
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -254,7 +254,7 @@ export default function ScriptpadTab({
 
   if (activeMode === 'match' && activeLesson) {
     return (
-      <div className="section-panel active" style={{ width: '100%', maxWidth: 580, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 680, margin: '0 auto', boxSizing: 'border-box' }}>
         <ScriptpadWordMatch
           lesson={activeLesson}
           onClose={handleCloseStudy}
@@ -320,7 +320,7 @@ export default function ScriptpadTab({
     }
 
     return (
-      <div className="section-panel active" style={{ width: '100%', maxWidth: 580, margin: '0 auto', padding: '12px 4px 140px', boxSizing: 'border-box' }}>
+      <div className="section-panel active" style={{ width: '100%', maxWidth: 680, margin: '0 auto', boxSizing: 'border-box' }}>
         <ScriptpadSrsReview
           queue={queueToReview}
           onClose={handleCloseStudy}
@@ -337,7 +337,7 @@ export default function ScriptpadTab({
   // ==========================================
   if (selectedUnit) {
     return (
-      <div className="section-panel active" style={{ maxWidth: 620, margin: '0 auto', padding: '12px 6px' }}>
+      <div className="section-panel active">
         {/* Barra superior con botón volver y título de unidad */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
           <button
@@ -961,23 +961,16 @@ export default function ScriptpadTab({
   // VISTA 1: CATÁLOGO DE UNIDADES PRINCIPALES (TOTALMENTE EN ESPAÑOL)
   // ==========================================
   return (
-    <div className="section-panel active" style={{ maxWidth: 640, margin: '0 auto', padding: '12px 6px' }}>
+    <div className="section-panel active">
       {/* Tarjeta de Encabezado */}
-      <div className="module-hero-card" style={{ marginBottom: 14, padding: '14px 16px' }}>
+      <div className="module-hero-card">
         <div className="module-hero-content">
-          <div className="module-hero-title-row" style={{ gap: 12 }}>
+          <div className="module-hero-title-row">
             <div 
               className="module-hero-icon-badge" 
               style={{ 
-                width: 44,
-                height: 44,
-                borderRadius: 14,
                 background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)', 
-                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.25)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
+                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.25)' 
               }}
             >
               <PenTool size={22} color="#fff" />
@@ -985,16 +978,11 @@ export default function ScriptpadTab({
             <div style={{ minWidth: 0, flex: 1 }}>
               <span className="module-category-pill" style={{ 
                 color: '#8b5cf6', 
-                background: 'rgba(139, 92, 246, 0.12)',
-                fontSize: '0.68rem',
-                padding: '2px 8px',
-                borderRadius: 6,
-                display: 'inline-block',
-                marginBottom: 2
+                background: 'rgba(139, 92, 246, 0.12)' 
               }}>
                 Escritura & Vocabulario
               </span>
-              <h1 className="module-hero-title" style={{ fontSize: '1.2rem', fontWeight: 800, margin: '2px 0' }}>
+              <h1 className="module-hero-title">
                 Scriptpad: Unidades y Caligrafía
               </h1>
             </div>
@@ -1163,8 +1151,8 @@ export default function ScriptpadTab({
           : 'Módulos del Currículum para Escritura'}
       </div>
 
-      {/* Lista de Unidades en Español con tipografía optimizada */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+      {/* Lista de Unidades en Español con tipografía optimizada y grid responsivo */}
+      <div className="scriptpad-units-grid">
         {units.map((unit) => (
           <div
             key={unit.id}
