@@ -2,9 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft,
   Volume2, 
   ArrowRight, 
   Languages, 
@@ -14,13 +12,9 @@ import {
   BookOpen,
   Search,
   Filter,
-  Check,
   Compass,
   Layers,
-  Sparkle,
-  Info,
-  ExternalLink,
-  ChevronRight
+  Sparkle
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import terminologyList from '../../data/terminology.json';
@@ -39,8 +33,6 @@ export default function TerminologyGuideView({
   initialTerm = null,
   initialSearch = ''
 }) {
-  const router = useRouter();
-
   const [activePillar, setActivePillar] = useState(initialTerm ? 'glossary' : initialPillar);
   const [highlightedTermId, setHighlightedTermId] = useState(initialTerm);
   const [playingAudioId, setPlayingAudioId] = useState(null);
@@ -345,141 +337,299 @@ export default function TerminologyGuideView({
   const currentData = pillarsData[activePillar] || pillarsData.writing;
   const PillarIcon = currentData.icon;
 
+  // Definición de pestañas con labels adaptativos
+  const pillarsTabs = useMemo(() => [
+    { 
+      id: 'writing', 
+      label: '1. Sistemas de Escritura', 
+      shortLabel: '1. Escritura',
+      icon: Languages, 
+      count: '4 Sistemas',
+      color: '#6366f1',
+      badgeBg: 'rgba(99, 102, 241, 0.12)'
+    },
+    { 
+      id: 'particles', 
+      label: '2. Estructura & Partículas', 
+      shortLabel: '2. Partículas',
+      icon: Target, 
+      count: 'Sintaxis SOV',
+      color: '#10b981',
+      badgeBg: 'rgba(16, 185, 129, 0.12)'
+    },
+    { 
+      id: 'jlpt', 
+      label: '3. Niveles JLPT', 
+      shortLabel: '3. JLPT',
+      icon: Award, 
+      count: 'N5 a N1',
+      color: '#f59e0b',
+      badgeBg: 'rgba(245, 158, 11, 0.12)'
+    },
+    { 
+      id: 'phonetics', 
+      label: '4. Fonética & Tono', 
+      shortLabel: '4. Fonética',
+      icon: Sparkles, 
+      count: 'Moras & Pitch',
+      color: '#ec4899',
+      badgeBg: 'rgba(236, 72, 153, 0.12)'
+    },
+    { 
+      id: 'glossary', 
+      label: '5. Glosario Lingüístico', 
+      shortLabel: '5. Glosario',
+      icon: BookOpen, 
+      count: `${terminologyList.length} Términos`,
+      color: '#8b5cf6',
+      badgeBg: 'rgba(139, 92, 246, 0.12)'
+    }
+  ], []);
+
+  // Accesos contextuales dentro de cada pestaña
+  const TAB_ACCESS_DATA = useMemo(() => ({
+    writing: {
+      title: 'Aplica los Sistemas de Escritura en tu Práctica',
+      subtitle: 'Conecta la teoría de Hiragana, Katakana y Kanji con las herramientas interactivas:',
+      items: [
+        {
+          title: 'Diccionario de Kanjis',
+          badge: '2,136 Joyo Kanji',
+          desc: 'Explora trazos animados, lecturas On\'yomi / Kun\'yomi y familias de radicales.',
+          href: '/kanji',
+          icon: Languages,
+          color: '#6366f1',
+          bg: 'rgba(99, 102, 241, 0.1)'
+        },
+        {
+          title: 'Banco de Vocabulario',
+          badge: 'Lecturas Kana & Romaji',
+          desc: 'Practica vocabulario con kanjis, hiragana y katakana con audio neuronal nativo.',
+          href: '/vocab',
+          icon: Layers,
+          color: '#3b82f6',
+          bg: 'rgba(59, 130, 246, 0.1)'
+        },
+        {
+          title: 'Ruta de Aprendizaje N5',
+          badge: 'Currículum Guiado',
+          desc: 'Aprende los sistemas de escritura paso a paso con ejercicios progresivos.',
+          href: '/curriculum',
+          icon: Compass,
+          color: '#10b981',
+          bg: 'rgba(16, 185, 129, 0.1)'
+        }
+      ]
+    },
+    particles: {
+      title: 'Aplica la Estructura y Partículas en tu Práctica',
+      subtitle: 'Ejercita la sintaxis SOV y distingue con precisión las funciones de cada partícula:',
+      items: [
+        {
+          title: 'Entrenador de Partículas',
+          badge: 'Práctica Interactiva',
+          desc: 'Pon a prueba は vs が, を, に, で, へ, と, も en oraciones y contextos reales.',
+          href: '/particles',
+          icon: Target,
+          color: '#10b981',
+          bg: 'rgba(16, 185, 129, 0.1)'
+        },
+        {
+          title: 'Biblioteca de Gramática',
+          badge: 'Reglas y Patrones',
+          desc: 'Consulta todas las construcciones sintácticas, formas verbales y partículas.',
+          href: '/grammar',
+          icon: BookOpen,
+          color: '#6366f1',
+          bg: 'rgba(99, 102, 241, 0.1)'
+        },
+        {
+          title: 'Ruta de Gramática en Currículum',
+          badge: 'Lecciones N5 a N1',
+          desc: 'Avanza por las explicaciones didácticas de sintaxis en el orden oficial.',
+          href: '/curriculum',
+          icon: Compass,
+          color: '#8b5cf6',
+          bg: 'rgba(139, 92, 246, 0.1)'
+        }
+      ]
+    },
+    jlpt: {
+      title: 'Aplica el Estándar Oficial JLPT en tu Práctica',
+      subtitle: 'Comprueba tu nivel y avanza de forma estructurada según la escala oficial N5 a N1:',
+      items: [
+        {
+          title: 'Currículum Oficial N5 a N1',
+          badge: 'Ruta Homologada',
+          desc: 'Temarios completos clasificados por nivel con kanjis, gramática y vocabulario.',
+          href: '/curriculum',
+          icon: Compass,
+          color: '#f59e0b',
+          bg: 'rgba(245, 158, 11, 0.1)'
+        },
+        {
+          title: 'Simulador y Entrenador JLPT',
+          badge: 'Tests por Nivel',
+          desc: 'Mide tu preparación para el examen oficial con simulacros de preguntas.',
+          href: '/jlpt',
+          icon: Award,
+          color: '#e11d48',
+          bg: 'rgba(225, 29, 72, 0.1)'
+        },
+        {
+          title: 'Vocabulario por Nivel JLPT',
+          badge: 'Filtros N5-N1',
+          desc: 'Estudia las listas de vocabulario oficial organizadas de N5 a N1 con repetición espaciada.',
+          href: '/vocab',
+          icon: Layers,
+          color: '#3b82f6',
+          bg: 'rgba(59, 130, 246, 0.1)'
+        }
+      ]
+    },
+    phonetics: {
+      title: 'Aplica la Fonética y Entonación en tu Práctica',
+      subtitle: 'Perfecciona tu ritmo isocrónico por moras y discriminación del acento tonal (Pitch):',
+      items: [
+        {
+          title: 'Vocabulario con Audio Neuronal',
+          badge: 'Voz Japonesa Nativa',
+          desc: 'Escucha la pronunciación de cada término con velocidad ajustable y entonación clara.',
+          href: '/vocab',
+          icon: Volume2,
+          color: '#ec4899',
+          bg: 'rgba(236, 72, 153, 0.1)'
+        },
+        {
+          title: 'Historias y Shadowing',
+          badge: 'Comprensión Auditiva',
+          desc: 'Práctica de sombras y compás rítmico con textos contextualizados y furigana.',
+          href: '/story',
+          icon: BookOpen,
+          color: '#8b5cf6',
+          bg: 'rgba(139, 92, 246, 0.1)'
+        },
+        {
+          title: 'Ruta Auditiva en Currículum',
+          badge: 'Entrenamiento Auditivo',
+          desc: 'Ejercicios guiados con audios MP3 oficiales y TTS de última generación.',
+          href: '/curriculum',
+          icon: Compass,
+          color: '#10b981',
+          bg: 'rgba(16, 185, 129, 0.1)'
+        }
+      ]
+    },
+    glossary: {
+      title: 'Aplica la Terminología Lingüística en tu Práctica',
+      subtitle: 'Conecta cada concepto del glosario (Keigo, Bikougo, Wago, Kango) con la aplicación diaria:',
+      items: [
+        {
+          title: 'Vocabulario Completo',
+          badge: 'Léxico Integral',
+          desc: 'Busca palabras reales que aplican conceptos como Jukugo, Gairaigo y Wago.',
+          href: '/vocab',
+          icon: Layers,
+          color: '#3b82f6',
+          bg: 'rgba(59, 130, 246, 0.1)'
+        },
+        {
+          title: 'Biblioteca de Gramática',
+          badge: 'Keigo y Registros',
+          desc: 'Aprende el uso práctico de formas honoríficas (Sonkeigo, Kenjougo y Teineigo).',
+          href: '/grammar',
+          icon: Target,
+          color: '#10b981',
+          bg: 'rgba(16, 185, 129, 0.1)'
+        },
+        {
+          title: 'Currículum Progresivo',
+          badge: 'Ruta de Aprendizaje',
+          desc: 'Avanza lección por lección integrando de forma natural todos los pilares estudiados.',
+          href: '/curriculum',
+          icon: Compass,
+          color: '#6366f1',
+          bg: 'rgba(99, 102, 241, 0.1)'
+        }
+      ]
+    }
+  }), []);
+
+  const currentAccessData = TAB_ACCESS_DATA[activePillar] || TAB_ACCESS_DATA.writing;
+
   return (
     <div className="home-hub-container" style={{ maxWidth: 1160, margin: '0 auto', padding: '24px 16px 80px' }}>
       
-      {/* 1. CABECERA & NAVEGACIÓN SUPERIOR */}
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
-          <button
-            type="button"
-            onClick={() => router.push('/')}
-            className="home-btn-secondary"
-            style={{ padding: '8px 16px', fontSize: '0.84rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}
-          >
-            <ArrowLeft size={16} />
-            <span>Volver al Inicio</span>
-          </button>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <Link
-              href="/curriculum"
-              className="home-btn-secondary"
-              style={{ padding: '8px 14px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            >
-              <Compass size={15} color="#6366f1" />
-              <span>Ruta de Aprendizaje</span>
-            </Link>
-            <Link
-              href="/vocab"
-              className="home-btn-secondary"
-              style={{ padding: '8px 14px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            >
-              <Layers size={15} color="#3b82f6" />
-              <span>Vocabulario</span>
-            </Link>
-            <Link
-              href="/grammar"
-              className="home-btn-secondary"
-              style={{ padding: '8px 14px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            >
-              <Target size={15} color="#10b981" />
-              <span>Gramática & Partículas</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Hero Card de la Página */}
-        <section 
-          className="home-hero-card"
-          style={{
-            padding: '32px 28px',
-            borderRadius: 24,
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04)'
-          }}
-        >
-          <div style={{ maxWidth: 840 }}>
-            <div className="home-greeting-badge" style={{ marginBottom: 12 }}>
-              <Sparkle size={14} color="#8b5cf6" />
-              <span>Arquitectura Lingüística del Japonés</span>
-            </div>
-
-            <h1 className="home-hero-title" style={{ fontSize: '1.2rem', marginBottom: 6, lineHeight: 1.25 }}>
-              Guía de Terminología y{' '}
-              <span className="home-hero-highlight" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Pilares del Idioma
-              </span>
-            </h1>
-
-            <p className="home-hero-desc" style={{ fontSize: '0.78rem', lineHeight: 1.35, color: 'var(--text-muted)', marginBottom: 0 }}>
-              Una experiencia clara, sin saturación y fundamentada para comprender la estructura del japonés: los 5 pilares estructurales y el glosario completo con más de 39 explicaciones etimológicas, fórmulas de cortesía (Keigo, Bikougo) y audio nativo neuronal.
-            </p>
-          </div>
-        </section>
-      </div>
-
-      {/* 2. SELECTOR DE PESTAÑAS (LOS 5 PILARES) */}
-      <div 
-        style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 8, 
-          overflowX: 'auto', 
-          paddingBottom: 8, 
-          marginBottom: 24,
-          borderBottom: '1px solid var(--border)'
+      {/* 1. HERO DE LA PÁGINA (CABECERA SIN BOTONES REDUNDANTES) */}
+      <section 
+        className="home-hero-card"
+        style={{
+          padding: '28px 24px',
+          borderRadius: 24,
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
+          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04)',
+          marginBottom: 20
         }}
       >
-        {[
-          { id: 'writing', label: '1. Sistemas de Escritura', icon: Languages, count: '4 Sistemas' },
-          { id: 'particles', label: '2. Estructura & Partículas', icon: Target, count: 'Sintaxis SOV' },
-          { id: 'jlpt', label: '3. Niveles JLPT', icon: Award, count: 'N5 a N1' },
-          { id: 'phonetics', label: '4. Fonética & Tono', icon: Sparkles, count: 'Moras & Pitch' },
-          { id: 'glossary', label: '5. Glosario Lingüístico', icon: BookOpen, count: `${terminologyList.length} Términos` }
-        ].map((tab) => {
+        <div style={{ maxWidth: 840 }}>
+          <div className="home-greeting-badge" style={{ marginBottom: 12 }}>
+            <Sparkle size={14} color="#8b5cf6" />
+            <span>Arquitectura Lingüística del Japonés</span>
+          </div>
+
+          <h1 className="home-hero-title" style={{ fontSize: '1.2rem', marginBottom: 6, lineHeight: 1.25 }}>
+            Guía de Terminología y{' '}
+            <span className="home-hero-highlight" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Pilares del Idioma
+            </span>
+          </h1>
+
+          <p className="home-hero-desc" style={{ fontSize: '0.78rem', lineHeight: 1.35, color: 'var(--text-muted)', marginBottom: 0 }}>
+            Una experiencia clara, sin saturación y fundamentada para comprender la estructura del japonés: los 5 pilares estructurales y el glosario completo con más de 39 explicaciones etimológicas, fórmulas de cortesía (Keigo, Bikougo) y audio nativo neuronal.
+          </p>
+        </div>
+      </section>
+
+      {/* 2. SELECTOR DE PESTAÑAS (LOS 5 PILARES) - GRID RESPONSIVO SIN SCROLL */}
+      <nav 
+        className="term-tabs-nav"
+        role="tablist"
+        aria-label="Pilares y secciones de terminología"
+      >
+        {pillarsTabs.map((tab) => {
           const TabIcon = tab.icon;
           const isActive = activePillar === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`pillar-panel-${tab.id}`}
               onClick={() => handlePillarChange(tab.id)}
+              className={`term-tab-btn ${isActive ? 'active' : ''}`}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '10px 18px',
-                borderRadius: 14,
-                fontSize: '0.86rem',
-                fontWeight: isActive ? 800 : 600,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease',
-                border: isActive ? '1px solid var(--primary)' : '1px solid var(--border)',
-                background: isActive ? 'var(--primary-bg)' : 'var(--bg-card)',
-                color: isActive ? 'var(--primary)' : 'var(--text-muted)'
+                '--tab-color': tab.color,
+                '--tab-badge-bg': tab.badgeBg
               }}
             >
-              <TabIcon size={16} />
-              <span>{tab.label}</span>
-              <span 
-                style={{ 
-                  fontSize: '0.72rem', 
-                  padding: '2px 6px', 
-                  borderRadius: 6, 
-                  background: isActive ? 'var(--primary)' : 'var(--bg-subtle)',
-                  color: isActive ? '#ffffff' : 'var(--text-muted)',
-                  fontWeight: 700
-                }}
-              >
-                {tab.count}
-              </span>
+              <div className="term-tab-icon-wrap">
+                <TabIcon size={17} />
+              </div>
+              <div className="term-tab-title-wrap">
+                <span className="term-tab-title">
+                  <span className="term-tab-title-full">{tab.label}</span>
+                  <span className="term-tab-title-short">{tab.shortLabel}</span>
+                </span>
+                <span className="term-tab-badge">
+                  {tab.count}
+                </span>
+              </div>
             </button>
           );
         })}
-      </div>
+      </nav>
 
       {/* 3. RESUMEN SUPERIOR DEL PILAR SELECCIONADO */}
       <div 
@@ -613,6 +763,43 @@ export default function TerminologyGuideView({
               )}
             </div>
           ))}
+
+          {/* Accesos contextuales dentro del contenido de la pestaña */}
+          {currentAccessData && (
+            <div className="term-access-section" style={{ gridColumn: '1 / -1' }}>
+              <div className="term-access-header">
+                <div className="term-access-title-wrap">
+                  <Compass size={18} style={{ color: currentData.color }} />
+                  <h4 className="term-access-title">{currentAccessData.title}</h4>
+                </div>
+                <p className="term-access-subtitle">{currentAccessData.subtitle}</p>
+              </div>
+
+              <div className="term-access-grid">
+                {currentAccessData.items.map((acc, idx) => {
+                  const AccIcon = acc.icon;
+                  return (
+                    <Link key={idx} href={acc.href} className="term-access-card">
+                      <div className="term-access-icon" style={{ color: acc.color, background: acc.bg }}>
+                        <AccIcon size={20} />
+                      </div>
+                      <div className="term-access-body">
+                        <div className="term-access-top-line">
+                          <span className="term-access-card-title">{acc.title}</span>
+                          <span className="term-access-badge">{acc.badge}</span>
+                        </div>
+                        <p className="term-access-card-desc">{acc.desc}</p>
+                        <div className="term-access-action" style={{ color: acc.color }}>
+                          <span>Ir a la sección</span>
+                          <ArrowRight size={13} />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* VISTA DEL PILAR 5: GLOSARIO LINGÜÍSTICO COMPLETO */
@@ -974,45 +1161,45 @@ export default function TerminologyGuideView({
               })}
             </div>
           )}
+
+          {/* Accesos contextuales dentro del contenido del glosario */}
+          {currentAccessData && (
+            <div className="term-access-section">
+              <div className="term-access-header">
+                <div className="term-access-title-wrap">
+                  <Compass size={18} style={{ color: currentData.color }} />
+                  <h4 className="term-access-title">{currentAccessData.title}</h4>
+                </div>
+                <p className="term-access-subtitle">{currentAccessData.subtitle}</p>
+              </div>
+
+              <div className="term-access-grid">
+                {currentAccessData.items.map((acc, idx) => {
+                  const AccIcon = acc.icon;
+                  return (
+                    <Link key={idx} href={acc.href} className="term-access-card">
+                      <div className="term-access-icon" style={{ color: acc.color, background: acc.bg }}>
+                        <AccIcon size={20} />
+                      </div>
+                      <div className="term-access-body">
+                        <div className="term-access-top-line">
+                          <span className="term-access-card-title">{acc.title}</span>
+                          <span className="term-access-badge">{acc.badge}</span>
+                        </div>
+                        <p className="term-access-card-desc">{acc.desc}</p>
+                        <div className="term-access-action" style={{ color: acc.color }}>
+                          <span>Ir a la sección</span>
+                          <ArrowRight size={13} />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
-
-      {/* 5. SECCIÓN INFERIOR: ENLACES RÁPIDOS AL ECOSISTEMA */}
-      <div 
-        style={{ 
-          marginTop: 48, 
-          padding: '28px', 
-          borderRadius: 22, 
-          background: 'var(--bg-card)', 
-          border: '1px solid var(--border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 16
-        }}
-      >
-        <div>
-          <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)', margin: '0 0 6px' }}>
-            Aplica esta terminología en tu práctica diaria
-          </h4>
-          <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: 0 }}>
-            Conecta cada concepto con kanjis reales, partículas gramaticales o el currículum guiado N5 a N1.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <button
-            type="button"
-            onClick={() => router.push('/curriculum')}
-            className="home-btn-primary"
-            style={{ padding: '10px 18px', fontSize: '0.84rem' }}
-          >
-            <span>Ir al Currículum</span>
-            <ArrowRight size={15} />
-          </button>
-        </div>
-      </div>
 
     </div>
   );
