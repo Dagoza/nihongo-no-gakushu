@@ -154,12 +154,15 @@ export default function ScriptpadSrsReview({
   const showGhostGuideRef = useRef(false);
   const currentCharIndexRef = useRef(0);
   const isWordCompletedRef = useRef(false);
+  const isFinishedRef = useRef(false);
+  const isRatingInProgressRef = useRef(false);
 
   wordMistakesRef.current = wordMistakes;
   wasGuideUsedRef.current = wasGuideUsed;
   showGhostGuideRef.current = showGhostGuide;
   currentCharIndexRef.current = currentCharIndex;
   isWordCompletedRef.current = isWordCompleted;
+  isFinishedRef.current = isFinished;
 
   // Estados de carga de trazos y fallback libre
   const [writerLoaded, setWriterLoaded] = useState(false);
@@ -173,9 +176,9 @@ export default function ScriptpadSrsReview({
   const fallbackCanvasRef = useRef(null);
   const currentFallbackStrokeRef = useRef([]);
 
-  // Auto-avance: 6 segundos para dar tiempo suficiente a observar el resultado
+  // Auto-avance: 4 segundos para dar tiempo suficiente a observar el resultado
   const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
-  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(6);
+  const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(4);
 
   // Referencias HanziWriter
   const writerContainerRef = useRef(null);
@@ -244,7 +247,8 @@ export default function ScriptpadSrsReview({
 
   // Calificar tarjeta de forma segura con FSRS y avanzar
   const handleRate = useCallback((rating) => {
-    if (!currentItem) return;
+    if (!currentItem || isFinished || isFinishedRef.current || isRatingInProgressRef.current) return;
+    isRatingInProgressRef.current = true;
 
     try {
       const currentCard = currentItem.card;
@@ -299,15 +303,25 @@ export default function ScriptpadSrsReview({
         setWasGuideUsed(false);
         wasGuideUsedRef.current = false;
         setIsWordCompleted(false);
+        isWordCompletedRef.current = false;
         setAssignedRatingInfo(null);
         setAutoAdvancePaused(false);
-        setAutoAdvanceTimeLeft(6);
+        setAutoAdvanceTimeLeft(4);
         setFallbackStrokesByChar({});
         setComparisonMode('both');
         setHasWriterData(true);
+        setTimeout(() => {
+          isRatingInProgressRef.current = false;
+        }, 100);
       } else {
-        triggerCheerConfetti();
+        isFinishedRef.current = true;
         setIsFinished(true);
+        setIsWordCompleted(false);
+        isWordCompletedRef.current = false;
+        setAssignedRatingInfo(null);
+        setAutoAdvancePaused(true);
+        setAutoAdvanceTimeLeft(0);
+        triggerCheerConfetti();
         if (onComplete) {
           onComplete({
             mode: 'srs',
@@ -323,21 +337,33 @@ export default function ScriptpadSrsReview({
         setCurrentIndex(prev => prev + 1);
         setCurrentCharIndex(0);
         setIsWordCompleted(false);
+        isWordCompletedRef.current = false;
         setWordMistakes(0);
         wordMistakesRef.current = 0;
         setFallbackStrokesByChar({});
         setHasWriterData(true);
-        setAutoAdvanceTimeLeft(6);
+        setAutoAdvanceTimeLeft(4);
+        setTimeout(() => {
+          isRatingInProgressRef.current = false;
+        }, 100);
       } else {
+        isFinishedRef.current = true;
         setIsFinished(true);
+        setIsWordCompleted(false);
+        isWordCompletedRef.current = false;
+        setAssignedRatingInfo(null);
+        setAutoAdvancePaused(true);
+        setAutoAdvanceTimeLeft(0);
       }
     }
-  }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, hasWriterData]);
+  }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, hasWriterData, isFinished]);
 
   // Completar palabra con seguimiento vectorial y asignar dificultad
   const handleCompleteWord = useCallback((totalMistakes, guideUsed) => {
+    if (isFinishedRef.current) return;
     setIsWordCompleted(true);
-    setAutoAdvanceTimeLeft(6); // 6 segundos de avance
+    isWordCompletedRef.current = true;
+    setAutoAdvanceTimeLeft(4); // 4 segundos de avance
     const ratingInfo = getRatingInfoFromMistakes(totalMistakes, guideUsed);
     setAssignedRatingInfo(ratingInfo);
 
@@ -465,6 +491,10 @@ export default function ScriptpadSrsReview({
         try {
           writerRef.current.cancelQuiz();
         } catch {}
+        writerRef.current = null;
+      }
+      if (writerContainerRef.current) {
+        writerContainerRef.current.innerHTML = '';
       }
     };
   }, [
@@ -590,8 +620,9 @@ export default function ScriptpadSrsReview({
     }
   };
 
-  // Temporizador de auto-avance (6 segundos, solo en modo guiado automático)
+  // Temporizador de auto-avance (4 segundos, solo en modo guiado automático)
   useEffect(() => {
+    if (isFinished || isFinishedRef.current) return;
     if (!hasWriterData) return; // En modo libre sin datos no hay auto-avance para permitir comparar con calma
     if (!isWordCompleted || autoAdvancePaused || !assignedRatingInfo) return;
 
@@ -605,7 +636,7 @@ export default function ScriptpadSrsReview({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [hasWriterData, isWordCompleted, autoAdvancePaused, autoAdvanceTimeLeft, assignedRatingInfo, handleRate]);
+  }, [isFinished, hasWriterData, isWordCompleted, autoAdvancePaused, autoAdvanceTimeLeft, assignedRatingInfo, handleRate]);
 
   // Manejadores Pointer para el Lienzo de Fallback (dibujo libre de memoria)
   const handleFallbackPointerDown = (e) => {
@@ -744,7 +775,7 @@ export default function ScriptpadSrsReview({
     const hardOrAgainCount = reviewHistory.filter(h => h.rating === SRSRating.AGAIN || h.rating === SRSRating.HARD).length;
 
     return (
-      <div className="srs-finish-card" style={{
+      <div key="srs-finish-view" className="srs-finish-card" style={{
         maxWidth: 520,
         margin: '0 auto',
         padding: '36px 20px',
@@ -789,7 +820,8 @@ export default function ScriptpadSrsReview({
             background: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.08)',
             border: '1px solid rgba(16, 185, 129, 0.3)',
             borderRadius: 16,
-            padding: '14px 16px'
+            padding: '14px 16px',
+            minWidth: 0
           }}>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#10b981', textTransform: 'uppercase' }}>
               Trazos Perfectos
@@ -806,7 +838,8 @@ export default function ScriptpadSrsReview({
             background: isDark ? 'rgba(245, 158, 11, 0.1)' : 'rgba(245, 158, 11, 0.08)',
             border: '1px solid rgba(245, 158, 11, 0.3)',
             borderRadius: 16,
-            padding: '14px 16px'
+            padding: '14px 16px',
+            minWidth: 0
           }}>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase' }}>
               A Reforzar
@@ -853,7 +886,7 @@ export default function ScriptpadSrsReview({
   }
 
   return (
-    <div className="scriptpad-srs-container" style={{
+    <div key="srs-quiz-view" className="scriptpad-srs-container" style={{
       maxWidth: 540,
       margin: '0 auto',
       display: 'flex',
@@ -1409,7 +1442,7 @@ export default function ScriptpadSrsReview({
         </div>
       )}
 
-      {/* 6. Botón Principal Continuar (Modo Guiado Vectorial, 6s) */}
+      {/* 6. Botón Principal Continuar (Modo Guiado Vectorial, 4s) */}
       {isWordCompleted && hasWriterData && assignedRatingInfo && (
         <button
           type="button"

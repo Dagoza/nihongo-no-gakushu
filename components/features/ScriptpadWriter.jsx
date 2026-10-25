@@ -94,7 +94,8 @@ function ContinuousCharBox({
   size = 220,
   onCharComplete,
   isAlreadyCompleted = false,
-  onRegisterActions
+  onRegisterActions,
+  onModeDetected
 }) {
   const writerContainerRef = useRef(null);
   const writerRef = useRef(null);
@@ -102,8 +103,19 @@ function ContinuousCharBox({
 
   const [hasWriterData, setHasWriterData] = useState(true);
   const [writerLoaded, setWriterLoaded] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(isAlreadyCompleted);
+  const [isCompleted, setIsCompleted] = useState(Boolean(isAlreadyCompleted));
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // Sincronizar estado de completado si el componente padre lo resetea o cambia
+  useEffect(() => {
+    setIsCompleted(Boolean(isAlreadyCompleted));
+    if (!isAlreadyCompleted && writerRef.current) {
+      try {
+        writerRef.current.cancelQuiz();
+        writerRef.current.quiz();
+      } catch {}
+    }
+  }, [isAlreadyCompleted]);
 
   // Estado para el motor libre (cuando no hay datos de trazo)
   const [isDrawing, setIsDrawing] = useState(false);
@@ -184,12 +196,14 @@ function ContinuousCharBox({
                 onComplete(data);
                 setWriterLoaded(true);
                 setHasWriterData(true);
+                onModeDetected?.(charIndex, 'guided');
               }
             })
             .catch(err => {
               if (isMounted) {
                 console.warn(`No stroke data for ${targetChar} in continuous mode:`, err);
                 setHasWriterData(false);
+                onModeDetected?.(charIndex, 'free');
                 if (onErr) onErr(err);
               }
             });
@@ -214,7 +228,7 @@ function ContinuousCharBox({
         onComplete: () => {
           if (!isMounted) return;
           setIsCompleted(true);
-          onCharComplete?.(charIndex);
+          onCharComplete?.(charIndex, { isFreeHand: false });
           if (charIndex < totalChars - 1) {
             setTimeout(() => {
               onSelectNext?.(charIndex + 1);
@@ -227,6 +241,7 @@ function ContinuousCharBox({
     } catch (err) {
       console.warn('Continuous HanziWriter init fallback:', err);
       setHasWriterData(false);
+      onModeDetected?.(charIndex, 'free');
     }
 
     return () => {
@@ -237,7 +252,7 @@ function ContinuousCharBox({
         } catch {}
       }
     };
-  }, [char, size, currentPaper, totalChars, charIndex, onCharComplete, onSelectNext]);
+  }, [char, size, currentPaper, totalChars, charIndex, onCharComplete, onSelectNext, onModeDetected]);
 
   // Actualizar silueta cuando cambia showGhostGuide
   useEffect(() => {
@@ -374,9 +389,9 @@ function ContinuousCharBox({
       const updated = [...strokes, currentStrokeRef.current];
       onStrokesChange(updated);
       currentStrokeRef.current = [];
-      if (!isCompleted && updated.length >= 2) {
+      if (!isCompleted && updated.length >= 1) {
         setIsCompleted(true);
-        onCharComplete?.(charIndex);
+        onCharComplete?.(charIndex, { isFreeHand: true });
       }
     }
   };
@@ -728,7 +743,21 @@ export default function ScriptpadWriter({
   const [continuousStrokes, setContinuousStrokes] = useState({}); // { [charIndex]: [strokes] }
   const [continuousCompleted, setContinuousCompleted] = useState({}); // { [charIndex]: boolean }
   const [continuousActiveIndex, setContinuousActiveIndex] = useState(0);
+  const [continuousCharModes, setContinuousCharModes] = useState({}); // { [charIndex]: 'guided' | 'free' }
+  const continuousCharModesRef = useRef({});
   const continuousActionsRef = useRef({});
+  const autoAdvanceTimerRef = useRef(null);
+
+  // Limpiar timer de auto-avance al desmontar el componente
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimerRef.current) {
+        clearTimeout(autoAdvanceTimerRef.current);
+        autoAdvanceTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const registerContinuousAction = useCallback((charIdx, actions) => {
     continuousActionsRef.current[charIdx] = actions;
   }, []);
@@ -770,10 +799,16 @@ export default function ScriptpadWriter({
 
   // Al cambiar de palabra
   useEffect(() => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
     setCurrentCharIndex(0);
     setStrokes([]);
     setContinuousStrokes({});
     setContinuousCompleted({});
+    setContinuousCharModes({});
+    continuousCharModesRef.current = {};
     continuousActionsRef.current = {};
     setContinuousActiveIndex(0);
     setCharCompleted(false);
@@ -920,40 +955,30 @@ export default function ScriptpadWriter({
     }
   };
 
-  // Avanzar al siguiente carácter o siguiente palabra
-  const handleNextChar = () => {
-    if (currentCharIndex < characters.length - 1) {
-      setCurrentCharIndex(prev => prev + 1);
-      setCharCompleted(false);
-      setStrokes([]);
-      setHasWriterData(true);
-      if (flowMode === 'sequential') {
-        setEngineMode('guided');
-      }
-    } else {
-      // Palabra completada
-      handleCompleteCurrentWord();
-    }
-  };
-
-  // Retroceder al carácter anterior
-  const handlePrevChar = () => {
-    if (currentCharIndex > 0) {
-      setCurrentCharIndex(prev => prev - 1);
-      setCharCompleted(false);
-      setStrokes([]);
-      setHasWriterData(true);
-      if (flowMode === 'sequential') {
-        setEngineMode('guided');
-      }
-    }
-  };
-
   // Completar la palabra actual y pasar a la siguiente
-  const handleCompleteCurrentWord = () => {
+  const handleCompleteCurrentWord = useCallback(() => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
     triggerCheerConfetti();
     const updated = [...wordsPracticed, currentWord];
     setWordsPracticed(updated);
+
+    // Reiniciar inmediatamente y de forma síncrona el estado de las cuadrículas
+    setCurrentCharIndex(0);
+    setStrokes([]);
+    setContinuousStrokes({});
+    setContinuousCompleted({});
+    setContinuousCharModes({});
+    continuousCharModesRef.current = {};
+    continuousActionsRef.current = {};
+    setContinuousActiveIndex(0);
+    setCharCompleted(false);
+    setHasWriterData(true);
+    if (flowMode === 'sequential') {
+      setEngineMode('guided');
+    }
 
     if (currentWordIndex < words.length - 1) {
       setCurrentWordIndex(prev => prev + 1);
@@ -968,6 +993,80 @@ export default function ScriptpadWriter({
           stars: 3,
           wordsPracticed: updated
         });
+      }
+    }
+  }, [wordsPracticed, currentWord, currentWordIndex, words.length, flowMode, onComplete]);
+
+  // Avanzar al siguiente carácter o siguiente palabra (modo secuencial)
+  const handleNextChar = useCallback(() => {
+    if (currentCharIndex < characters.length - 1) {
+      setCurrentCharIndex(prev => prev + 1);
+      setCharCompleted(false);
+      setStrokes([]);
+      setHasWriterData(true);
+      if (flowMode === 'sequential') {
+        setEngineMode('guided');
+      }
+    } else {
+      // Palabra completada
+      handleCompleteCurrentWord();
+    }
+  }, [currentCharIndex, characters.length, flowMode, handleCompleteCurrentWord]);
+
+  // Manejo de completado de un carácter en tira continua
+  const handleContinuousCharComplete = useCallback((completedIdx, meta = {}) => {
+    const isFree = Boolean(meta.isFreeHand);
+    continuousCharModesRef.current[completedIdx] = isFree ? 'free' : 'guided';
+    setContinuousCharModes(prev => ({
+      ...prev,
+      [completedIdx]: isFree ? 'free' : 'guided'
+    }));
+
+    setContinuousCompleted(prev => {
+      const nextCompleted = {
+        ...prev,
+        [completedIdx]: true
+      };
+
+      // Verificar si se completaron todos los caracteres de la palabra
+      const allDone = characters.length > 0 && characters.every((_, idx) => {
+        return idx === completedIdx ? true : Boolean(nextCompleted[idx]);
+      });
+
+      if (allDone) {
+        // Detectar si alguno de los caracteres es de trazo libre
+        const anyFreeHand = characters.some((_, idx) => {
+          if (idx === completedIdx && isFree) return true;
+          if (continuousCharModesRef.current[idx] === 'free') return true;
+          const action = continuousActionsRef.current[idx];
+          if (action && action.hasWriterData === false) return true;
+          return false;
+        });
+
+        // "En tira continua cuando termino de copiar todos los kanjis o kanas me debe llevar a la siguiente palabra, excepto cuando detecta que es trazo libre."
+        if (!anyFreeHand) {
+          if (autoAdvanceTimerRef.current) {
+            clearTimeout(autoAdvanceTimerRef.current);
+          }
+          autoAdvanceTimerRef.current = setTimeout(() => {
+            handleCompleteCurrentWord();
+          }, 700);
+        }
+      }
+
+      return nextCompleted;
+    });
+  }, [characters, handleCompleteCurrentWord]);
+
+  // Retroceder al carácter anterior
+  const handlePrevChar = () => {
+    if (currentCharIndex > 0) {
+      setCurrentCharIndex(prev => prev - 1);
+      setCharCompleted(false);
+      setStrokes([]);
+      setHasWriterData(true);
+      if (flowMode === 'sequential') {
+        setEngineMode('guided');
       }
     }
   };
@@ -1084,6 +1183,11 @@ export default function ScriptpadWriter({
   };
 
   const handleClearStrokes = () => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+
     if (flowMode === 'continuous') {
       const activeActions = continuousActionsRef.current[continuousActiveIndex];
       if (activeActions?.clear) {
@@ -1111,6 +1215,11 @@ export default function ScriptpadWriter({
   };
 
   const handleUndoStroke = () => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+
     if (flowMode === 'continuous') {
       const activeActions = continuousActionsRef.current[continuousActiveIndex];
       if (activeActions?.undo) {
@@ -1474,7 +1583,7 @@ export default function ScriptpadWriter({
             type="button"
             onClick={() => {
               setFlowMode('continuous');
-              setEngineMode('free');
+              setEngineMode('guided');
             }}
             style={{
               padding: '7px 20px',
@@ -1775,13 +1884,15 @@ export default function ScriptpadWriter({
                 currentPaper={currentPaper}
                 showGhostGuide={showGhostGuide}
                 size={Math.min(260, Math.max(210, padSize - 20))}
-                onCharComplete={(completedIdx) => {
-                  setContinuousCompleted(prev => ({
+                onCharComplete={handleContinuousCharComplete}
+                onModeDetected={(charIdx, mode) => {
+                  continuousCharModesRef.current[charIdx] = mode;
+                  setContinuousCharModes(prev => ({
                     ...prev,
-                    [completedIdx]: true
+                    [charIdx]: mode
                   }));
                 }}
-                isAlreadyCompleted={!!continuousCompleted[idx]}
+                isAlreadyCompleted={Boolean(continuousCompleted[idx])}
                 onRegisterActions={registerContinuousAction}
               />
             ))}
