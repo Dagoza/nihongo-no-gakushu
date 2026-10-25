@@ -717,31 +717,53 @@ export default function ScriptpadSrsReview({
       gap: 14,
       paddingBottom: 40
     }}>
+      {/* Botón de Salir fuera y arriba de la card */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width: '100%'
+      }}>
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn btn-outline btn-sm"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            borderRadius: 12,
+            padding: '7px 14px',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border)',
+            color: 'var(--text-main)',
+            cursor: 'pointer'
+          }}
+          aria-label="Cerrar lección"
+        >
+          <ChevronLeft size={16} />
+          <span>Salir</span>
+        </button>
+      </div>
+
       {/* 1. Header Superior */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         background: 'var(--bg-surface)',
-        padding: '10px 16px',
+        padding: '12px 18px',
         borderRadius: 18,
-        border: '1px solid var(--border)'
+        border: '1px solid var(--border)',
+        gap: 12
       }}>
-        <button
-          type="button"
-          onClick={onClose}
-          className="btn btn-outline btn-sm"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, borderRadius: 10, padding: '6px 12px' }}
-        >
-          <ChevronLeft size={16} />
-          <span>Salir</span>
-        </button>
-
-        <div style={{ textAlign: 'center', flex: 1 }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
+        <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.3 }}>
             Repaso SRS de Escritura (FSRS)
           </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 2 }}>
             Palabra {currentIndex + 1} de {reviewQueue.length}
           </div>
         </div>
@@ -750,10 +772,20 @@ export default function ScriptpadSrsReview({
           type="button"
           onClick={playAudio}
           className="btn btn-primary btn-sm"
-          style={{ width: 36, height: 36, borderRadius: '50%', padding: 0 }}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
+            flexShrink: 0
+          }}
           title="Escuchar pronunciación"
         >
-          <Volume2 size={16} />
+          <Volume2 size={18} />
         </button>
       </div>
 
