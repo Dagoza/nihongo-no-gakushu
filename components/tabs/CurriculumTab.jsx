@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import curriculumData from '../../data/curriculum.json';
 import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, ChevronUp, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List, SlidersHorizontal } from 'lucide-react';
