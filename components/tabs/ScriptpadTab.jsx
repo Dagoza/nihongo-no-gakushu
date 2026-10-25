@@ -374,33 +374,42 @@ export default function ScriptpadTab({
         </div>
 
         {/* Tarjeta Banner de la Unidad (Estilo Screenshots de Referencia) */}
-        <div style={{
-          background: selectedUnit.bg_gradient || 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-          borderRadius: 18,
-          padding: '14px 16px',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 14,
-          marginBottom: 16,
-          boxShadow: '0 6px 18px rgba(0,0,0,0.16)'
-        }}>
-          <div style={{
-            width: 46,
-            height: 46,
-            borderRadius: 14,
-            background: 'rgba(255, 255, 255, 0.22)',
-            backdropFilter: 'blur(6px)',
+        <div 
+          className="scriptpad-unit-banner"
+          style={{
+            background: selectedUnit.bg_gradient || 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+            borderRadius: 18,
+            padding: '14px 16px',
+            color: '#fff',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.45rem',
-            fontWeight: 900,
-            flexShrink: 0
-          }}>
+            gap: 14,
+            marginBottom: 16,
+            boxShadow: '0 6px 18px rgba(0,0,0,0.16)',
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
+          <div 
+            className="scriptpad-unit-banner-icon"
+            style={{
+              width: 46,
+              height: 46,
+              borderRadius: 14,
+              background: 'rgba(255, 255, 255, 0.22)',
+              backdropFilter: 'blur(6px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.45rem',
+              fontWeight: 900,
+              flexShrink: 0
+            }}
+          >
             {selectedUnit.kanji_icon}
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
             <div style={{ 
               fontSize: '0.68rem', 
               fontWeight: 800, 
@@ -461,17 +470,22 @@ export default function ScriptpadTab({
             return (
               <div 
                 key={lesson.id}
+                className="scriptpad-lesson-card"
                 style={{
                   background: 'var(--bg-surface)',
                   border: isExpanded ? '2px solid var(--primary)' : '1px solid var(--border)',
                   borderRadius: 16,
                   overflow: 'hidden',
                   transition: 'all 0.15s ease',
-                  boxShadow: isExpanded ? '0 4px 14px rgba(99, 102, 241, 0.12)' : 'var(--shadow-sm)'
+                  boxShadow: isExpanded ? '0 4px 14px rgba(99, 102, 241, 0.12)' : 'var(--shadow-sm)',
+                  width: '100%',
+                  maxWidth: '100%',
+                  boxSizing: 'border-box'
                 }}
               >
                 {/* Cabecera de la Lección */}
                 <div 
+                  className="scriptpad-lesson-header"
                   onClick={() => setExpandedLessonId(isExpanded ? null : lesson.id)}
                   style={{
                     padding: '12px 14px',
@@ -480,7 +494,10 @@ export default function ScriptpadTab({
                     justifyContent: 'space-between',
                     cursor: 'pointer',
                     userSelect: 'none',
-                    gap: 10
+                    gap: 10,
+                    width: '100%',
+                    maxWidth: '100%',
+                    boxSizing: 'border-box'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
@@ -991,19 +1008,25 @@ export default function ScriptpadTab({
       </div>
 
       {/* Tarjeta de Repaso SRS de Escritura */}
-      <div style={{
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 16,
-        padding: '10px 14px',
-        marginBottom: 14,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: 10
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div 
+        className="scriptpad-srs-banner"
+        style={{
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 16,
+          padding: '10px 14px',
+          marginBottom: 14,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 10,
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1 }}>
           <div style={{
             width: 36,
             height: 36,
@@ -1018,14 +1041,17 @@ export default function ScriptpadTab({
           }}>
             <Brain size={18} />
           </div>
-          <div>
-            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)' }}>
+          <div style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
+            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Repaso SRS de Escritura (FSRS)
             </div>
             <div style={{ 
               fontSize: '0.74rem', 
               color: srsQueue.length > 0 ? 'var(--text-muted)' : 'var(--accent-matcha, #10b981)',
-              fontWeight: srsQueue.length > 0 ? 500 : 700
+              fontWeight: srsQueue.length > 0 ? 500 : 700,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}>
               {srsQueue.length > 0 
                 ? `${srsQueue.length} ${srsQueue.length === 1 ? 'palabra lista' : 'palabras listas'} para repasar` 
@@ -1054,7 +1080,8 @@ export default function ScriptpadTab({
             color: srsQueue.length === 0 ? 'var(--text-muted, #9ca3af)' : undefined,
             display: 'inline-flex',
             alignItems: 'center',
-            gap: 6
+            gap: 6,
+            flexShrink: 0
           }}
         >
           {srsQueue.length === 0 ? (
@@ -1078,17 +1105,24 @@ export default function ScriptpadTab({
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: 8,
-        marginBottom: 12
+        marginBottom: 12,
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
-        <div style={{
-          display: 'inline-flex',
-          background: 'var(--bg-surface)',
-          padding: 2,
-          borderRadius: 10,
-          border: '1px solid var(--border)'
-        }}>
+        <div 
+          className="scriptpad-track-switcher"
+          style={{
+            display: 'inline-flex',
+            background: 'var(--bg-surface)',
+            padding: 2,
+            borderRadius: 10,
+            border: '1px solid var(--border)',
+            boxSizing: 'border-box'
+          }}
+        >
           <button
             type="button"
+            className="scriptpad-track-btn"
             onClick={() => setActiveTab('thematic')}
             style={{
               padding: '5px 12px',
@@ -1105,6 +1139,7 @@ export default function ScriptpadTab({
           </button>
           <button
             type="button"
+            className="scriptpad-track-btn"
             onClick={() => setActiveTab('curriculum')}
             style={{
               padding: '5px 12px',
@@ -1157,6 +1192,7 @@ export default function ScriptpadTab({
           <div
             key={unit.id}
             onClick={() => setSelectedUnitId(unit.id)}
+            className="scriptpad-unit-card"
             style={{
               background: 'var(--bg-surface)',
               border: '1px solid var(--border)',
@@ -1168,7 +1204,12 @@ export default function ScriptpadTab({
               cursor: 'pointer',
               transition: 'transform 0.15s ease, box-shadow 0.15s ease',
               boxShadow: 'var(--shadow-sm)',
-              gap: 12
+              gap: 12,
+              width: '100%',
+              maxWidth: '100%',
+              minWidth: 0,
+              boxSizing: 'border-box',
+              overflow: 'hidden'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-1px)';
@@ -1179,26 +1220,29 @@ export default function ScriptpadTab({
               e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1, overflow: 'hidden' }}>
               {/* Badge con kanji temático */}
-              <div style={{
-                width: 44,
-                height: 44,
-                borderRadius: 13,
-                background: unit.color || '#6366f1',
-                color: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1.35rem',
-                fontWeight: 900,
-                flexShrink: 0,
-                boxShadow: `0 3px 10px ${unit.color ? unit.color + '33' : 'rgba(99, 102, 241, 0.25)'}`
-              }}>
+              <div 
+                className="scriptpad-unit-kanji-badge"
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 13,
+                  background: unit.color || '#6366f1',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.35rem',
+                  fontWeight: 900,
+                  flexShrink: 0,
+                  boxShadow: `0 3px 10px ${unit.color ? unit.color + '33' : 'rgba(99, 102, 241, 0.25)'}`
+                }}
+              >
                 {unit.kanji_icon}
               </div>
 
-              <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
                 <h3 style={{ 
                   fontSize: '0.94rem', 
                   fontWeight: 800, 
@@ -1223,20 +1267,23 @@ export default function ScriptpadTab({
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              <span style={{
-                background: 'var(--bg-main)',
-                border: '1px solid var(--border)',
-                color: 'var(--text-muted)',
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                padding: '3px 8px',
-                borderRadius: 8,
-                whiteSpace: 'nowrap'
-              }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <span 
+                className="scriptpad-unit-meta-badge"
+                style={{
+                  background: 'var(--bg-main)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-muted)',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  padding: '3px 8px',
+                  borderRadius: 8,
+                  whiteSpace: 'nowrap'
+                }}
+              >
                 {unit.lessons.length} lec • {unit.total_words} pal
               </span>
-              <ChevronRight size={16} style={{ color: 'var(--text-muted)' }} />
+              <ChevronRight size={16} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
             </div>
           </div>
         ))}

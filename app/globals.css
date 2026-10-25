@@ -1879,15 +1879,29 @@ body {
 
 .scriptpad-units-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 12px;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
-@media (max-width: 640px) {
+.scriptpad-unit-card {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
   .scriptpad-units-grid {
-    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -10243,6 +10257,97 @@ body:has(.scriptpad-srs-container) .audio-player-bar {
   }
   .card {
     padding: 16px !important;
+  }
+
+  /* Scriptpad Cards Mobile Polish (Strict Zero-Overflow on Small Devices) */
+  .scriptpad-units-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .scriptpad-unit-card {
+    padding: 10px 12px !important;
+    gap: 10px !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .scriptpad-unit-kanji-badge {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    border-radius: 11px !important;
+    font-size: 1.15rem !important;
+  }
+
+  .scriptpad-unit-meta-badge {
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+    white-space: nowrap !important;
+  }
+
+  .scriptpad-srs-banner {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .scriptpad-unit-banner {
+    padding: 12px 14px !important;
+    gap: 12px !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .scriptpad-unit-banner-icon {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    border-radius: 11px !important;
+    font-size: 1.25rem !important;
+  }
+
+  .scriptpad-lesson-card {
+    border-radius: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .scriptpad-lesson-header {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .scriptpad-track-switcher {
+    width: 100% !important;
+    display: flex !important;
+    box-sizing: border-box !important;
+  }
+
+  .scriptpad-track-btn {
+    flex: 1 1 0 !important;
+    text-align: center !important;
+    padding: 5px 6px !important;
+    font-size: 0.72rem !important;
+    white-space: nowrap !important;
   }
 
   /* Grammar & Particle Cards Mobile Polish */
