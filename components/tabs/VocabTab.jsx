@@ -2,19 +2,31 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, BookOpen, Layers, Edit3, StickyNote, Plus, RotateCcw, Sparkles, MessageSquare, PenTool, Info } from 'lucide-react';
+import { 
+  Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, 
+  BookOpen, Layers, Edit3, StickyNote, Plus, RotateCcw, Sparkles, 
+  MessageSquare, PenTool, Info, CheckCircle2, Brain, Tag, X, Filter 
+} from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
 import vocabularyData from '../../data/vocabulary.json';
 import exercisesData from '../../data/exercises.json';
 import * as wanakana from 'wanakana';
-import { getNewCard, reviewCard, isDue } from '../../lib/srs';
+import { getNewCard, reviewCard, isDue, ensureFsrsCard } from '../../lib/srs';
 import PitchAccent from '../features/PitchAccent';
 import { getVocabularyFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
 import { getAuthSession } from '../../lib/supabaseSync';
 import TerminologyTooltip from '../common/TerminologyTooltip';
 import { triggerCheerConfetti } from '../../lib/confetti';
+import { 
+  getVocabTags, 
+  addTagToVocab, 
+  removeTagFromVocab, 
+  getAllUniqueVocabTags, 
+  POPULAR_VOCAB_TAG_SUGGESTIONS,
+  getWordKey
+} from '../../lib/vocabTags';
 
 // Lazy loading con code-splitting para componentes de alto peso e interactividad
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
@@ -35,14 +47,19 @@ export default function VocabTab({
 }) {
   const contextApp = useApp();
   const authUser = propAuthUser || contextApp?.authUser;
-  const [mode, setMode] = useState(initialMode || 'cards'); // 'cards' | 'typing' | 'n4_exercises' | 'srs'
-  const [level, setLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4'
-  const [category, setCategory] = useState(initialCategory || 'all');
+  
+  // Normalizar modo inicial: 'study' o 'typing' abren el modo de estudio
+  const resolvedInitialMode = (initialMode === 'typing' || initialMode === 'study') ? 'study' : (initialMode || 'cards');
+  const [mode, setMode] = useState(resolvedInitialMode); // 'cards' | 'study' | 'srs' | 'n4_exercises'
+  const [level, setLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | ...
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'learned' | 'unlearned'
+  const [selectedTag, setSelectedTag] = useState(initialCategory || 'all');
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
 
   useEffect(() => {
-    if (initialMode && ['cards', 'typing', 'n4_exercises', 'srs'].includes(initialMode)) {
-      setMode(initialMode);
+    if (initialMode) {
+      if (initialMode === 'typing' || initialMode === 'study') setMode('study');
+      else if (['cards', 'srs', 'n4_exercises'].includes(initialMode)) setMode(initialMode);
     }
   }, [initialMode]);
 
@@ -54,7 +71,7 @@ export default function VocabTab({
 
   useEffect(() => {
     if (initialCategory) {
-      setCategory(initialCategory);
+      setSelectedTag(initialCategory);
     }
   }, [initialCategory]);
 
@@ -64,26 +81,27 @@ export default function VocabTab({
     }
   }, [initialSearch]);
 
-  const updateParams = (newMode, newLevel, newCat, newSearch) => {
+  const updateParams = (newMode, newLevel, newTag, newSearch) => {
     if (onParamsChange) {
       onParamsChange({
         mode: newMode !== undefined ? newMode : mode,
         level: newLevel !== undefined ? newLevel : level,
-        category: newCat !== undefined ? newCat : category,
+        category: newTag !== undefined ? newTag : selectedTag,
         search: newSearch !== undefined ? newSearch : searchTerm
       });
     }
   };
 
-  // Typing practice state
-  const [typingIndex, setTypingIndex] = useState(0);
-  const [typingInput, setTypingInput] = useState('');
-  const [typingFeedback, setTypingFeedback] = useState(null); // { type: 'correct'|'wrong', msg, target }
+  // Study Mode state (muestra solo palabras por aprender)
+  const [studyIndex, setStudyIndex] = useState(0);
+  const [studyInput, setStudyInput] = useState('');
+  const [studyFeedback, setStudyFeedback] = useState(null);
   const isComposingRef = useRef(false);
 
   // N4 Exercises state
   const [exerciseIndex, setExerciseIndex] = useState(0);
-  const [exerciseAnswer, setExerciseAnswer] = useState(null); // { selected, isCorrect }
+  const [exerciseAnswer, setExerciseAnswer] = useState(null);
+  const [exerciseStatusFilter, setExerciseStatusFilter] = useState('all');
 
   // SRS state
   const [srsQueue, setSrsQueue] = useState([]);
@@ -94,79 +112,50 @@ export default function VocabTab({
   const [filterOnlyWithNotes, setFilterOnlyWithNotes] = useState(false);
   const [filterOnlyCustomized, setFilterOnlyCustomized] = useState(false);
 
+  // Tag Editor Modal State
+  const [tagEditorWord, setTagEditorWord] = useState(null);
+  const [newTagInput, setNewTagInput] = useState('');
+
   // AI Content Generator & Multi-selection State
   const [selectedWordIds, setSelectedWordIds] = useState(new Set());
   const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
   const [aiGenType, setAiGenType] = useState('story');
 
-  const isMassive = Boolean(authUser && appState?.useMassiveDictionary);
+  // Carga unificada de catálogo global
   const [vocabularyList, setVocabularyList] = useState(vocabularyData || []);
   const [isLoading, setIsLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(36);
 
-  const handleToggleSource = (enableMassive) => {
-    if (enableMassive) {
-      if (!authUser) {
-        if (contextApp?.showAlert) {
-          contextApp.showAlert({
-            type: 'lock',
-            title: 'Diccionario Masivo en la Nube',
-            message: 'Inicia sesión con tu cuenta de Google o correo para desbloquear el diccionario masivo con más de 2,000 palabras.',
-            actionLabel: 'Iniciar Sesión',
-            onAction: () => {
-              if (contextApp?.setIsAuthModalOpen) {
-                contextApp.setIsAuthModalOpen(true);
-              }
-            }
-          });
-        } else if (contextApp?.setIsAuthModalOpen) {
-          contextApp.setIsAuthModalOpen(true);
-        }
-        return;
-      }
-      onUpdateState({
-        ...appState,
-        useMassiveDictionary: true
-      });
-    } else {
-      onUpdateState({
-        ...appState,
-        useMassiveDictionary: false
-      });
-    }
-  };
-
   useEffect(() => {
-    // Si está apagado el catálogo masivo o no hay sesión activa, usar estrictamente los recursos propios
-    if (!authUser || !appState?.useMassiveDictionary) {
-      setVocabularyList(vocabularyData || []);
-      setIsLoading(false);
-      return;
-    }
-
     let isMounted = true;
-    setIsLoading(true);
-    getVocabularyFromSupabase({ level, authUser })
-      .then(data => {
-        if (isMounted && data && data.length > 0) {
-          setVocabularyList(data);
-        }
-      })
-      .catch(err => console.error("Error cargando vocabulario masivo:", err))
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
+    if (authUser) {
+      setIsLoading(true);
+      getVocabularyFromSupabase({ level, authUser })
+        .then(data => {
+          if (isMounted && data && data.length > 0) {
+            setVocabularyList(data);
+          }
+        })
+        .catch(err => console.error("Error cargando vocabulario global:", err))
+        .finally(() => {
+          if (isMounted) setIsLoading(false);
+        });
+    } else {
+      const list = vocabularyData || [];
+      setVocabularyList(level === 'all' ? list : list.filter(k => k.level === level));
+      setIsLoading(false);
+    }
     return () => { isMounted = false; };
-  }, [level, authUser, appState?.useMassiveDictionary]);
+  }, [level, authUser]);
 
   // Reset de ventana visible cuando cambian filtros o búsqueda
   useEffect(() => {
     setVisibleCount(36);
-  }, [searchTerm, level, category, mode, isMassive]);
+  }, [searchTerm, level, statusFilter, selectedTag, mode]);
 
   const n4Exercises = exercisesData || [];
 
-  // Merge vocabulary with user customizations and saved custom words
+  // Merge vocabulary con personalizaciones y palabras agregadas por el usuario
   const effectiveVocabList = useMemo(() => {
     const customizations = appState?.vocabCustomizations || {};
     const baseList = (vocabularyList || []).map(item => {
@@ -192,37 +181,78 @@ export default function VocabTab({
     return [...extraCustom, ...baseList];
   }, [vocabularyList, appState?.vocabCustomizations, appState?.savedCustomVocab]);
 
-  // Filter vocabulary
-  const filteredVocab = effectiveVocabList.filter(item => {
-    const matchLevel = level === 'all' || item.level === level;
-    const matchCategory = category === 'all' || item.category === category;
-    const search = searchTerm.trim().toLowerCase();
-    const matchSearch = !search ||
-      (item.kanji && item.kanji.toLowerCase().includes(search)) ||
-      (item.kana && item.kana.toLowerCase().includes(search)) ||
-      (item.hiragana && item.hiragana.toLowerCase().includes(search)) ||
-      (item.katakana && item.katakana.toLowerCase().includes(search)) ||
-      (item.meaning_es && item.meaning_es.toLowerCase().includes(search)) ||
-      (item.meaning_en && item.meaning_en.toLowerCase().includes(search)) ||
-      (item.literal_translation && item.literal_translation.toLowerCase().includes(search)) ||
-      (item.breakdown && item.breakdown.toLowerCase().includes(search)) ||
-      (item.example_sentence && item.example_sentence.toLowerCase().includes(search)) ||
-      (item.example_translation && item.example_translation.toLowerCase().includes(search)) ||
-      (item.notes && item.notes.toLowerCase().includes(search));
+  // Contadores de progreso y maestría
+  const isWordMastered = (item) => {
+    if (!item) return false;
+    return Boolean(
+      (item.id && appState.masteredVocab?.[item.id]) ||
+      (item.kanji && appState.masteredVocab?.[item.kanji])
+    );
+  };
 
-    const matchNotesOnly = !filterOnlyWithNotes || Boolean(item.notes && item.notes.trim());
-    const matchCustomOnly = !filterOnlyCustomized || Boolean(item.isCustomized);
+  const masteredCount = useMemo(() => {
+    return effectiveVocabList.filter(item => isWordMastered(item)).length;
+  }, [effectiveVocabList, appState.masteredVocab]);
 
-    return matchLevel && matchCategory && matchSearch && matchNotesOnly && matchCustomOnly;
-  });
+  const unlearnedCount = useMemo(() => {
+    return Math.max(0, effectiveVocabList.length - masteredCount);
+  }, [effectiveVocabList.length, masteredCount]);
 
-  // Extract unique categories based on current level
-  const availableCategories = ['all', ...new Set(
-    effectiveVocabList
-      .filter(item => level === 'all' || item.level === level)
-      .map(item => item.category)
-      .filter(Boolean)
-  )];
+  const progressPercent = Math.round((masteredCount / Math.max(1, effectiveVocabList.length)) * 100);
+
+  // Palabras aprendidas que están vencidas para repaso espaciado
+  const dueLearnedVocab = useMemo(() => {
+    return effectiveVocabList.filter(item => {
+      const card = (item.id && appState.masteredVocab?.[item.id]) || (item.kanji && appState.masteredVocab?.[item.kanji]);
+      if (!card) return false;
+      return isDue(card);
+    });
+  }, [effectiveVocabList, appState.masteredVocab]);
+
+  // Etiquetas disponibles (combina categorías nativas + etiquetas personalizadas)
+  const availableTags = useMemo(() => {
+    return getAllUniqueVocabTags(effectiveVocabList, appState?.vocabTags);
+  }, [effectiveVocabList, appState?.vocabTags]);
+
+  // Filtrado de vocabulario para la vista de tarjetas
+  const filteredVocab = useMemo(() => {
+    return effectiveVocabList.filter(item => {
+      // Filtro de Nivel
+      if (level !== 'all' && item.level !== level) return false;
+
+      // Filtro por Estado: Aprendidas o Por Aprender
+      const isMastered = isWordMastered(item);
+      if (statusFilter === 'learned' && !isMastered) return false;
+      if (statusFilter === 'unlearned' && isMastered) return false;
+
+      // Filtro por Etiqueta
+      if (selectedTag !== 'all') {
+        const tags = getVocabTags(item, appState?.vocabTags);
+        if (!tags.includes(selectedTag)) return false;
+      }
+
+      // Filtros rápidos
+      if (filterOnlyWithNotes && (!item.notes || !item.notes.trim())) return false;
+      if (filterOnlyCustomized && !item.isCustomized) return false;
+
+      // Búsqueda
+      const search = searchTerm.trim().toLowerCase();
+      if (!search) return true;
+      return (
+        (item.kanji && item.kanji.toLowerCase().includes(search)) ||
+        (item.kana && item.kana.toLowerCase().includes(search)) ||
+        (item.hiragana && item.hiragana.toLowerCase().includes(search)) ||
+        (item.katakana && item.katakana.toLowerCase().includes(search)) ||
+        (item.meaning_es && item.meaning_es.toLowerCase().includes(search)) ||
+        (item.meaning_en && item.meaning_en.toLowerCase().includes(search)) ||
+        (item.literal_translation && item.literal_translation.toLowerCase().includes(search)) ||
+        (item.breakdown && item.breakdown.toLowerCase().includes(search)) ||
+        (item.example_sentence && item.example_sentence.toLowerCase().includes(search)) ||
+        (item.example_translation && item.example_translation.toLowerCase().includes(search)) ||
+        (item.notes && item.notes.toLowerCase().includes(search))
+      );
+    });
+  }, [effectiveVocabList, level, statusFilter, selectedTag, filterOnlyWithNotes, filterOnlyCustomized, searchTerm, appState?.masteredVocab, appState?.vocabTags]);
 
   const selectedWordsForAI = useMemo(() => {
     if (selectedWordIds.size === 0) {
@@ -233,6 +263,245 @@ export default function VocabTab({
     });
   }, [selectedWordIds, effectiveVocabList, filteredVocab]);
 
+  // Alternar palabra aprendida / por aprender
+  const toggleVocabMastery = (item) => {
+    const key = item.id || item.kanji;
+    const isMastered = isWordMastered(item);
+    const updatedMastered = { ...(appState.masteredVocab || {}) };
+
+    if (isMastered) {
+      if (item.id) delete updatedMastered[item.id];
+      if (item.kanji) delete updatedMastered[item.kanji];
+      onUpdateState({
+        ...appState,
+        masteredVocab: updatedMastered
+      });
+    } else {
+      updatedMastered[key] = getNewCard();
+      if (item.id && item.kanji && item.id !== item.kanji) {
+        updatedMastered[item.kanji] = updatedMastered[key];
+      }
+      const newXp = (appState.xp || 0) + 20;
+      triggerCheerConfetti();
+      onUpdateState({
+        ...appState,
+        xp: newXp,
+        masteredVocab: updatedMastered
+      });
+    }
+  };
+
+  // Iniciar Repaso SRS (solo con palabras aprendidas)
+  const startSrsSession = (forceAll = false) => {
+    const learnedWords = effectiveVocabList.filter(item => isWordMastered(item));
+
+    if (learnedWords.length === 0) {
+      if (contextApp?.showAlert) {
+        contextApp.showAlert({
+          type: 'info',
+          title: 'Sin Vocabulario Aprendido',
+          message: 'Aún no has marcado palabras como aprendidas. Usa "Estudiar Vocabulario" para aprender tus primeras palabras y sumarlas al repaso espaciado.'
+        });
+      }
+      return;
+    }
+
+    const queue = forceAll
+      ? [...learnedWords].sort(() => Math.random() - 0.5)
+      : learnedWords.filter(item => {
+          const card = (item.id && appState.masteredVocab?.[item.id]) || (item.kanji && appState.masteredVocab?.[item.kanji]);
+          return isDue(card);
+        }).sort(() => Math.random() - 0.5);
+
+    if (queue.length === 0) {
+      if (contextApp?.showAlert) {
+        contextApp.showAlert({
+          type: 'success',
+          title: '¡Estás al día con el SRS!',
+          message: `Has repasado todas tus ${learnedWords.length} palabras aprendidas. El algoritmo FSRS avisará cuando toque repasar. ¿Deseas repasarlas todas de todos modos?`,
+          actionLabel: 'Repasar de todos modos',
+          onAction: () => startSrsSession(true)
+        });
+      } else {
+        setSrsQueue(learnedWords.sort(() => Math.random() - 0.5));
+        setMode('srs');
+        updateParams('srs', level, selectedTag, searchTerm);
+      }
+      return;
+    }
+
+    setSrsQueue(queue);
+    setMode('srs');
+    updateParams('srs', level, selectedTag, searchTerm);
+  };
+
+  const handleSrsReview = (item, rating) => {
+    const key = item.id || item.kanji;
+    const currentCardData = (item.id && appState.masteredVocab?.[item.id]) || (item.kanji && appState.masteredVocab?.[item.kanji]);
+    const oldCard = (currentCardData && typeof currentCardData === 'object') 
+      ? currentCardData 
+      : getNewCard();
+      
+    const newCard = reviewCard(oldCard, rating);
+    const newXp = (appState.xp || 0) + 10;
+    
+    onUpdateState({
+      ...appState,
+      xp: newXp,
+      masteredVocab: {
+        ...(appState.masteredVocab || {}),
+        [key]: newCard
+      }
+    });
+  };
+
+  const handleSrsUndo = (item, prevCardData) => {
+    const key = item.id || item.kanji;
+    const updated = { ...(appState.masteredVocab || {}) };
+    if (prevCardData === undefined || prevCardData === null) {
+      delete updated[key];
+      if (item.id) delete updated[item.id];
+      if (item.kanji) delete updated[item.kanji];
+    } else {
+      updated[key] = prevCardData;
+    }
+    onUpdateState({
+      ...appState,
+      masteredVocab: updated
+    });
+  };
+
+  // MODO ESTUDIAR VOCABULARIO (Solo las que faltan por aprender)
+  const studyItems = useMemo(() => {
+    return effectiveVocabList.filter(item => {
+      // Filtrar estrictamente solo las palabras no aprendidas
+      if (isWordMastered(item)) return false;
+
+      // Respetar nivel y etiqueta seleccionados si aplican
+      if (level !== 'all' && item.level !== level) return false;
+      if (selectedTag !== 'all') {
+        const tags = getVocabTags(item, appState?.vocabTags);
+        if (!tags.includes(selectedTag)) return false;
+      }
+      return true;
+    });
+  }, [effectiveVocabList, appState?.masteredVocab, level, selectedTag]);
+
+  const currentStudyItem = studyItems[studyIndex];
+
+  // Marcar como aprendida directamente dentro del modo estudio
+  const handleMarkLearnedFromStudy = (item) => {
+    if (!item) return;
+    const key = item.id || item.kanji;
+    const updatedMastered = {
+      ...(appState.masteredVocab || {}),
+      [key]: getNewCard()
+    };
+    if (item.id && item.kanji && item.id !== item.kanji) {
+      updatedMastered[item.kanji] = updatedMastered[key];
+    }
+    const newXp = (appState.xp || 0) + 20;
+    triggerCheerConfetti();
+    onUpdateState({
+      ...appState,
+      xp: newXp,
+      masteredVocab: updatedMastered
+    });
+
+    setStudyFeedback({
+      type: 'correct',
+      msg: '🎉 ¡Palabra aprendida! Añadida a tu cola de Repaso SRS (+20 XP)',
+      target: item.kanji || item.kana
+    });
+
+    setTimeout(() => {
+      setStudyFeedback(null);
+      setStudyInput('');
+      if (studyIndex >= studyItems.length - 1) {
+        setStudyIndex(0);
+      }
+    }, 1200);
+  };
+
+  const handleValidateStudyTyping = (forcedValue = null) => {
+    if (!currentStudyItem) return;
+    const inputVal = (typeof forcedValue === 'string' ? forcedValue : studyInput).trim();
+    if (!inputVal) return;
+    const targetKanji = (currentStudyItem.kanji || '').trim();
+    const targetKana = (currentStudyItem.kana || currentStudyItem.hiragana || '').trim();
+
+    const isMatch = inputVal === targetKanji || inputVal === targetKana;
+
+    if (isMatch) {
+      setStudyFeedback({
+        type: 'correct',
+        msg: `🎉 ¡Correcto! (+20 XP)`,
+        target: `${targetKanji} (${targetKana})`
+      });
+      audioManager.speak(targetKana || targetKanji);
+
+      // Marcar como aprendida automáticamente al acertar
+      const key = currentStudyItem.id || currentStudyItem.kanji;
+      const updatedMastered = {
+        ...(appState.masteredVocab || {}),
+        [key]: getNewCard()
+      };
+      if (currentStudyItem.id && currentStudyItem.kanji && currentStudyItem.id !== currentStudyItem.kanji) {
+        updatedMastered[currentStudyItem.kanji] = updatedMastered[key];
+      }
+      const newXp = (appState.xp || 0) + 20;
+      triggerCheerConfetti();
+      onUpdateState({
+        ...appState,
+        xp: newXp,
+        masteredVocab: updatedMastered
+      });
+
+      setTimeout(() => {
+        setStudyFeedback(null);
+        setStudyInput('');
+        if (studyIndex >= studyItems.length - 1) {
+          setStudyIndex(0);
+        }
+      }, 1500);
+    } else {
+      setStudyFeedback({
+        type: 'wrong',
+        msg: `Lectura esperada en japonés:`,
+        target: `${targetKanji || targetKana} (${targetKana})`
+      });
+    }
+  };
+
+  const handleStudyHint = () => {
+    if (!currentStudyItem) return;
+    const target = currentStudyItem.kana || currentStudyItem.hiragana || currentStudyItem.kanji;
+    if (target) {
+      setStudyInput(target.charAt(0));
+    }
+  };
+
+  // Gestión de Etiquetas (Tags)
+  const handleAddTagToCurrent = (tag) => {
+    if (!tagEditorWord || !tag || !tag.trim()) return;
+    const updated = addTagToVocab(tagEditorWord, tag, appState?.vocabTags);
+    onUpdateState({
+      ...appState,
+      vocabTags: updated
+    });
+    setNewTagInput('');
+  };
+
+  const handleRemoveTagFromCurrent = (tag) => {
+    if (!tagEditorWord || !tag) return;
+    const updated = removeTagFromVocab(tagEditorWord, tag, appState?.vocabTags);
+    onUpdateState({
+      ...appState,
+      vocabTags: updated
+    });
+  };
+
+  // Guardar edición de palabra
   const handleSaveWordEdit = async (updatedWord) => {
     const wordKey = updatedWord.id || updatedWord.kanji;
     const prevCustomizations = appState?.vocabCustomizations || {};
@@ -299,115 +568,7 @@ export default function VocabTab({
     });
   };
 
-  const toggleVocabMastery = (id) => {
-    const isMastered = !!appState.masteredVocab?.[id];
-    const newMastered = {
-      ...(appState.masteredVocab || {}),
-      [id]: !isMastered
-    };
-    if (!isMastered) {
-      triggerCheerConfetti();
-    }
-    onUpdateState({
-      ...appState,
-      masteredVocab: newMastered
-    });
-  };
-
-  const startSrsSession = () => {
-    const queue = effectiveVocabList.filter(item => {
-      const card = appState.masteredVocab?.[item.id];
-      if (!card) return true; // aprender nueva
-      if (typeof card === 'boolean') return true; // migrar
-      return isDue(card); // repasar
-    }).sort(() => Math.random() - 0.5); // barajar
-    
-    setSrsQueue(queue);
-    setMode('srs');
-  };
-
-  const handleSrsReview = (item, rating) => {
-    const currentCardData = appState.masteredVocab?.[item.id];
-    const oldCard = (currentCardData && typeof currentCardData === 'object') 
-      ? currentCardData 
-      : getNewCard();
-      
-    const newCard = reviewCard(oldCard, rating);
-    
-    onUpdateState({
-      ...appState,
-      masteredVocab: {
-        ...(appState.masteredVocab || {}),
-        [item.id]: newCard
-      }
-    });
-  };
-
-  const handleSrsUndo = (item, prevCardData) => {
-    const updated = { ...(appState.masteredVocab || {}) };
-    if (prevCardData === undefined || prevCardData === null) {
-      delete updated[item.id];
-    } else {
-      updated[item.id] = prevCardData;
-    }
-    onUpdateState({
-      ...appState,
-      masteredVocab: updated
-    });
-  };
-
-  // Typing validation
-  const currentTypingItem = filteredVocab[typingIndex] || filteredVocab[0];
-
-  const handleValidateTyping = (forcedValue = null) => {
-    if (!currentTypingItem) return;
-    const inputVal = (typeof forcedValue === 'string' ? forcedValue : typingInput).trim();
-    if (!inputVal) return;
-    const targetKanji = (currentTypingItem.kanji || '').trim();
-    const targetKana = (currentTypingItem.kana || currentTypingItem.hiragana || '').trim();
-
-    const isMatch = inputVal === targetKanji || inputVal === targetKana;
-
-    if (isMatch) {
-      setTypingFeedback({
-        type: 'correct',
-        msg: `🎉 ¡Correcto! (+20 XP)`,
-        target: `${targetKanji} (${targetKana})`
-      });
-      audioManager.speak(targetKana || targetKanji);
-
-      // Record XP and streak
-      const newXp = (appState.xp || 0) + 20;
-      onUpdateState({
-        ...appState,
-        xp: newXp
-      });
-
-      setTimeout(() => {
-        setTypingFeedback(null);
-        setTypingInput('');
-        setTypingIndex((prev) => (prev + 1) % Math.max(1, filteredVocab.length));
-      }, 1600);
-    } else {
-      setTypingFeedback({
-        type: 'wrong',
-        msg: `Revisa la ortografía.`,
-        target: `Respuesta esperada: ${targetKanji || targetKana} (${targetKana})`
-      });
-    }
-  };
-
-  const handleShowHint = () => {
-    if (!currentTypingItem) return;
-    const target = currentTypingItem.kana || currentTypingItem.kanji;
-    if (target) {
-      setTypingInput(target.charAt(0));
-    }
-  };
-
-  // N4 Exercise Handler
-  const [exerciseStatusFilter, setExerciseStatusFilter] = useState('all'); // 'all' | 'pending' | 'completed'
-
+  // Manejador de Ejercicios N4
   const filteredN4Exercises = useMemo(() => {
     return n4Exercises.filter(ex => {
       const isCompleted = !!appState?.completedExercises?.[ex.id];
@@ -419,7 +580,6 @@ export default function VocabTab({
 
   const n4CompletedCount = n4Exercises.filter(ex => !!appState?.completedExercises?.[ex.id]).length;
   const n4PendingCount = n4Exercises.length - n4CompletedCount;
-
   const currentExercise = filteredN4Exercises[exerciseIndex] || filteredN4Exercises[0] || null;
 
   const handleSelectExerciseOption = (opt) => {
@@ -442,19 +602,9 @@ export default function VocabTab({
     }
   };
 
-  const handleNextExercise = () => {
-    setExerciseAnswer(null);
-    setExerciseIndex((prev) => (prev + 1) % Math.max(1, filteredN4Exercises.length));
-  };
-
-  const handlePrevExercise = () => {
-    setExerciseAnswer(null);
-    setExerciseIndex((prev) => (prev - 1 + Math.max(1, filteredN4Exercises.length)) % Math.max(1, filteredN4Exercises.length));
-  };
-
   return (
     <div className="section-panel active">
-      {/* Header */}
+      {/* Header Limpio sin exceso de texto */}
       <div className="module-hero-card">
         <div className="module-hero-content">
           <div className="module-hero-title-row">
@@ -487,328 +637,361 @@ export default function VocabTab({
                 </button>
               </div>
               <h1 className="module-hero-title">Entrenador de Vocabulario</h1>
-              <p className="module-hero-subtitle">
-                Catálogo léxico con Pitch Accent, audio neuronal y ejercicios interactivos para dominar el vocabulario en todos los niveles JLPT.
-              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Acceso Rápido al nuevo Scriptpad Táctil */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(99, 102, 241, 0.08) 100%)',
-        border: '1px solid rgba(139, 92, 246, 0.28)',
-        borderRadius: 'var(--radius-bento, 20px)',
-        padding: '14px 18px',
-        marginBottom: '18px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: 40,
-            height: 40,
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
-          }}>
-            <PenTool size={20} />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)' }}>
-              ¿Prefieres practicar escribiendo a mano en tu celular o tablet?
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              Prueba el nuevo <strong>Scriptpad por Unidades</strong> con trazos guiados, caligrafía libre y repaso espaciado.
-            </div>
-          </div>
-        </div>
-        <Link
-          href="/scriptpad"
-          className="btn btn-primary btn-sm"
-          style={{
-            padding: '8px 16px',
-            borderRadius: '12px',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            textDecoration: 'none'
-          }}
-        >
-          <span>Ir a Scriptpad</span>
-          <ArrowRight size={15} />
-        </Link>
-      </div>
-
-      {/* Selector de Fuente: Recursos Propios vs Catálogo Masivo API */}
-      <div className="source-selector-bar" style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '12px',
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 'var(--radius-bento, 20px)',
-        padding: '12px 18px',
-        marginBottom: '20px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)' }}>
-            Fuente del Diccionario:
-          </span>
-          <div style={{
-            display: 'inline-flex',
-            background: 'var(--bg-main)',
-            padding: '3px',
-            borderRadius: '10px',
-            border: '1px solid var(--border)'
-          }}>
-            <button
-              type="button"
-              onClick={() => handleToggleSource(false)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: !isMassive ? 700 : 500,
-                background: !isMassive ? 'var(--primary)' : 'transparent',
-                color: !isMassive ? '#fff' : 'var(--text-muted)',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <span>📖 Mis Recursos Propios</span>
-              <span style={{
-                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
-                color: !isMassive ? '#fff' : 'var(--text-muted)',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontSize: '0.75rem',
-                fontWeight: 700
-              }}>
-                {(vocabularyData || []).length} palabras
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleToggleSource(true)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: isMassive ? 700 : 500,
-                background: isMassive ? 'var(--primary)' : 'transparent',
-                color: isMassive ? '#fff' : 'var(--text-muted)',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <span>{authUser ? '🌐 Catálogo Masivo (API)' : '🔒 Catálogo Masivo (API)'}</span>
-              <span style={{
-                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
-                color: isMassive ? '#fff' : 'var(--text-muted)',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontSize: '0.75rem',
-                fontWeight: 700
-              }}>
-                +2,000 palabras
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          {!isMassive ? (
-            <span>✨ Mostrando vocabulario curado de libros y cuadernos propios de estudio.</span>
-          ) : (
-            <span>🚀 Mostrando base de datos masiva poblada en Supabase ({vocabularyList.length} palabras).</span>
-          )}
-        </div>
-      </div>
-
-      {/* Main Mode Selector & Level Filter */}
-      <div className="story-controls" style={{ marginBottom: 20 }}>
+      {/* Selector de Modo Principal: Tarjetas, Estudiar, SRS y Ejercicios */}
+      <div className="story-controls" style={{ marginBottom: 16 }}>
         <div className="reading-mode-selector">
           <button 
+            type="button"
             className={`mode-btn ${mode === 'cards' ? 'active' : ''}`}
             onClick={() => {
               setMode('cards');
-              updateParams('cards', level, category, searchTerm);
+              updateParams('cards', level, selectedTag, searchTerm);
             }}
           >
-            <Layers size={16} /> 🗂️ Tarjetas ({filteredVocab.length})
+            <Layers size={16} />
+            <span>🗂️ Tarjetas ({filteredVocab.length})</span>
           </button>
+          
           <button 
-            className={`mode-btn ${mode === 'typing' ? 'active' : ''}`}
+            type="button"
+            className={`mode-btn ${mode === 'study' ? 'active' : ''}`}
             onClick={() => {
-              setMode('typing');
-              setTypingFeedback(null);
-              setTypingInput('');
-              updateParams('typing', level, category, searchTerm);
+              setMode('study');
+              setStudyFeedback(null);
+              setStudyInput('');
+              updateParams('study', level, selectedTag, searchTerm);
             }}
           >
-            <Keyboard size={16} /> ⌨️ Práctica Teclado IME
+            <BookOpen size={16} />
+            <span>📖 Estudiar ({unlearnedCount})</span>
           </button>
+
           <button 
+            type="button"
             className={`mode-btn ${mode === 'srs' ? 'active' : ''}`}
             onClick={() => {
-              startSrsSession();
-              updateParams('srs', level, category, searchTerm);
+              startSrsSession(false);
+              updateParams('srs', level, selectedTag, searchTerm);
             }}
           >
-            🧠 Repaso Espaciado (SRS)
+            <Brain size={16} />
+            <span>🧠 Repaso SRS {dueLearnedVocab.length > 0 ? `(${dueLearnedVocab.length})` : ''}</span>
           </button>
+
           <button 
+            type="button"
             className={`mode-btn ${mode === 'n4_exercises' ? 'active' : ''}`}
             onClick={() => {
               setMode('n4_exercises');
               setExerciseAnswer(null);
-              updateParams('n4_exercises', level, category, searchTerm);
+              updateParams('n4_exercises', level, selectedTag, searchTerm);
             }}
           >
-            <BookOpen size={16} /> 📝 Ejercicios de Contexto ({n4Exercises.length})
+            <PenTool size={16} />
+            <span>📝 Ejercicios ({n4Exercises.length})</span>
           </button>
-        </div>
-
-        {/* Level Filters */}
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Nivel:</span>
-          {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
-            <button
-              key={lvl}
-              className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
-              style={{ minWidth: 42, padding: '4px 10px' }}
-              onClick={() => {
-                setLevel(lvl);
-                setCategory('all');
-                updateParams(mode, lvl, 'all', searchTerm);
-              }}
-            >
-              {lvl === 'all' ? 'Todos' : lvl}
-            </button>
-          ))}
-          {isLoading && (
-            <span style={{ fontSize: '0.8rem', color: 'var(--primary)', marginLeft: 8 }}>
-              ⚡ Cargando Supabase...
-            </span>
-          )}
         </div>
       </div>
 
       {/* MODE 1: VOCABULARY CARDS */}
       {mode === 'cards' && (
         <div>
-          {/* Filter Bar */}
-          <div className="vocab-filter-bar">
+          {/* Overview Stats Bar: Concisa, sin texto redundante */}
+          <div className="card" style={{ marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+            <div style={{ flex: '1 1 260px' }}>
+              <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 6 }}>
+                Palabras Dominadas: <span style={{ color: 'var(--primary)' }}>{masteredCount} de {effectiveVocabList.length}</span> ({progressPercent}%)
+              </div>
+              <div style={{ width: '100%', maxWidth: 300, height: 8, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
+                <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent))', transition: 'width 0.4s' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <button 
+                type="button"
+                className="btn btn-outline btn-lg"
+                onClick={() => startSrsSession(false)}
+                title="Repasar vocabulario aprendido usando repetición espaciada"
+                style={{ position: 'relative' }}
+              >
+                <Brain size={18} />
+                <span>Repaso SRS</span>
+                {dueLearnedVocab.length > 0 && (
+                  <span style={{
+                    background: 'var(--primary)',
+                    color: '#fff',
+                    borderRadius: 999,
+                    padding: '2px 7px',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    marginLeft: 4
+                  }}>
+                    {dueLearnedVocab.length}
+                  </span>
+                )}
+              </button>
+
+              <button 
+                type="button"
+                className="btn btn-primary btn-lg"
+                onClick={() => {
+                  setStudyIndex(0);
+                  setStudyFeedback(null);
+                  setStudyInput('');
+                  setMode('study');
+                  updateParams('study', level, selectedTag, searchTerm);
+                }}
+                title="Estudiar las palabras que faltan por aprender"
+              >
+                <BookOpen size={18} />
+                <span>Estudiar Vocabulario</span>
+                {unlearnedCount > 0 && (
+                  <span style={{
+                    background: 'rgba(255,255,255,0.25)',
+                    color: '#fff',
+                    borderRadius: 999,
+                    padding: '2px 7px',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    marginLeft: 4
+                  }}>
+                    {unlearnedCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Filtros Integrados: Estado, Nivel JLPT y Etiquetas */}
+          <div className="card" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+              {/* Filtro de Estado: Aprendidas o Por Aprender */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                  Estado:
+                </span>
+                <div style={{
+                  display: 'inline-flex',
+                  background: 'var(--bg-main)',
+                  padding: '3px',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border)'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter('all')}
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.82rem',
+                      fontWeight: statusFilter === 'all' ? 700 : 500,
+                      background: statusFilter === 'all' ? 'var(--primary)' : 'transparent',
+                      color: statusFilter === 'all' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    Todas ({effectiveVocabList.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter('learned')}
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.82rem',
+                      fontWeight: statusFilter === 'learned' ? 700 : 500,
+                      background: statusFilter === 'learned' ? 'var(--success, #16a34a)' : 'transparent',
+                      color: statusFilter === 'learned' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    ✓ Aprendidas ({masteredCount})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter('unlearned')}
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.82rem',
+                      fontWeight: statusFilter === 'unlearned' ? 700 : 500,
+                      background: statusFilter === 'unlearned' ? 'var(--primary)' : 'transparent',
+                      color: statusFilter === 'unlearned' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    ⏳ Por aprender ({unlearnedCount})
+                  </button>
+                </div>
+              </div>
+
+              {/* Selector de Nivel JLPT */}
+              <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                  Nivel:
+                </span>
+                {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '3px 8px' }}
+                    onClick={() => {
+                      setLevel(lvl);
+                      setSelectedTag('all');
+                      updateParams(mode, lvl, 'all', searchTerm);
+                    }}
+                  >
+                    {lvl === 'all' ? 'Todos' : lvl}
+                  </button>
+                ))}
+                {isLoading && (
+                  <span style={{ fontSize: '0.78rem', color: 'var(--primary)', marginLeft: 6 }}>
+                    ⚡ Cargando...
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Selector de Etiquetas (Tags) y Categorías */}
+            {availableTags.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                  <Tag size={13} />
+                  <span>Etiquetas:</span>
+                </div>
+                <button
+                  type="button"
+                  className={`vocab-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedTag('all');
+                    updateParams(mode, level, 'all', searchTerm);
+                  }}
+                >
+                  Todas
+                </button>
+                {availableTags.slice(0, 10).map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className={`vocab-tag-pill ${selectedTag === tag ? 'active' : ''}`}
+                    onClick={() => {
+                      const nextTag = selectedTag === tag ? 'all' : tag;
+                      setSelectedTag(nextTag);
+                      updateParams(mode, level, nextTag, searchTerm);
+                    }}
+                  >
+                    #{tag}
+                  </button>
+                ))}
+                {availableTags.length > 10 && (
+                  <select
+                    className="select-custom"
+                    value={selectedTag}
+                    onChange={(e) => {
+                      setSelectedTag(e.target.value);
+                      updateParams(mode, level, e.target.value, searchTerm);
+                    }}
+                    style={{ fontSize: '0.78rem', padding: '2px 8px', borderRadius: 6 }}
+                  >
+                    <option value="all">Más etiquetas ({availableTags.length})...</option>
+                    {availableTags.map(t => (
+                      <option key={t} value={t}>#{t}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Search Bar & Quick Tools */}
+          <div className="vocab-filter-bar" style={{ marginBottom: 12 }}>
             <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
               <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
                 type="text" 
                 className="search-input" 
                 style={{ paddingLeft: 38 }}
-                placeholder="Buscar por kanji, kana, español o inglés..."
+                placeholder="Buscar por kanji, kana, español..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  updateParams(mode, level, category, e.target.value);
+                  updateParams(mode, level, selectedTag, e.target.value);
                 }}
               />
             </div>
 
-            <select 
-              className="filter-select"
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-                updateParams(mode, level, e.target.value, searchTerm);
-              }}
-            >
-              {availableCategories.map(cat => (
-                <option key={cat} value={cat}>
-                  {cat === 'all' ? 'Todas las Categorías' : cat}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+              <button
+                type="button"
+                className={`btn btn-xs ${filterOnlyWithNotes ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setFilterOnlyWithNotes(!filterOnlyWithNotes)}
+                style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem' }}
+                title="Ver palabras con notas personales"
+              >
+                <StickyNote size={12} />
+                <span>Notas ({effectiveVocabList.filter(v => v.notes && v.notes.trim()).length})</span>
+              </button>
+
+              <button
+                type="button"
+                className={`btn btn-xs ${filterOnlyCustomized ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setFilterOnlyCustomized(!filterOnlyCustomized)}
+                style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem' }}
+                title="Ver palabras personalizadas"
+              >
+                <Edit3 size={12} />
+                <span>Editadas ({effectiveVocabList.filter(v => v.isCustomized).length})</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-outline btn-xs"
+                onClick={() => setIsCreateModalOpen(true)}
+                style={{ borderRadius: '20px', padding: '4px 10px', fontSize: '0.78rem', borderColor: 'var(--primary)', color: 'var(--primary)' }}
+                title="Registrar una nueva palabra"
+              >
+                <Plus size={12} />
+                <span>Nueva</span>
+              </button>
+            </div>
           </div>
 
-          {/* Quick Filter Chips & Action Row */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 }}>
-            <button
-              type="button"
-              className={`btn btn-xs ${filterOnlyWithNotes ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilterOnlyWithNotes(!filterOnlyWithNotes)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, borderRadius: '20px', padding: '4px 12px' }}
-              title="Ver únicamente palabras que contienen notas de estudio personales"
-            >
-              <StickyNote size={13} />
-              <span>Con Notas ({effectiveVocabList.filter(v => v.notes && v.notes.trim()).length})</span>
-            </button>
+          {/* Quick AI & Selection Helper Bar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button
+                type="button"
+                className={`btn btn-xs ${selectedWordIds.size > 0 ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setIsAIGeneratorOpen(true)}
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: 5, 
+                  borderRadius: '20px', 
+                  padding: '4px 12px',
+                  borderColor: 'var(--primary)',
+                  color: selectedWordIds.size > 0 ? '#fff' : 'var(--primary)',
+                  fontWeight: 600
+                }}
+                title="Generar historias u oraciones con IA usando palabras seleccionadas"
+              >
+                <Sparkles size={13} />
+                <span>Generar con IA {selectedWordIds.size > 0 ? `(${selectedWordIds.size})` : ''}</span>
+              </button>
 
-            <button
-              type="button"
-              className={`btn btn-xs ${filterOnlyCustomized ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilterOnlyCustomized(!filterOnlyCustomized)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, borderRadius: '20px', padding: '4px 12px' }}
-              title="Ver palabras modificadas o personalizadas"
-            >
-              <Edit3 size={13} />
-              <span>Personalizadas ({effectiveVocabList.filter(v => v.isCustomized).length})</span>
-            </button>
-
-            <button
-              type="button"
-              className={`btn btn-xs ${selectedWordIds.size > 0 ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setIsAIGeneratorOpen(true)}
-              style={{ 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: 5, 
-                borderRadius: '20px', 
-                padding: '4px 12px',
-                borderColor: 'var(--primary)',
-                color: selectedWordIds.size > 0 ? '#fff' : 'var(--primary)',
-                fontWeight: 600
-              }}
-              title="Generar historias u oraciones de ejemplo con IA usando palabras seleccionadas"
-            >
-              <Sparkles size={13} />
-              <span>Generar con IA {selectedWordIds.size > 0 ? `(${selectedWordIds.size})` : ''}</span>
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-outline btn-xs"
-              onClick={() => setIsCreateModalOpen(true)}
-              style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, borderColor: 'var(--primary)', color: 'var(--primary-light)' }}
-              title="Registrar una nueva palabra con Kanji, Hiragana, Katakana y notas"
-            >
-              <Plus size={14} />
-              <span>Nueva Palabra</span>
-            </button>
-          </div>
-
-          <div style={{ marginBottom: 16, fontSize: '0.9rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span>Mostrando <strong>{filteredVocab.length}</strong> palabras:</span>
               {selectedWordIds.size > 0 ? (
                 <button
                   type="button"
@@ -833,9 +1016,10 @@ export default function VocabTab({
                 </button>
               )}
             </div>
-            <span>
-              Dominadas: <strong>{filteredVocab.filter(v => appState.masteredVocab?.[v.id]).length}</strong> de {filteredVocab.length}
-            </span>
+
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Mostrando: <strong>{filteredVocab.length}</strong> de {effectiveVocabList.length}
+            </div>
           </div>
 
           {/* Cards Grid */}
@@ -848,271 +1032,295 @@ export default function VocabTab({
           ) : (
             <div className="vocab-grid">
               {filteredVocab.slice(0, visibleCount).map((item) => {
-              const isMastered = !!appState.masteredVocab?.[item.id];
-              const wordKey = item.id || item.kanji;
-              const isSelected = selectedWordIds.has(wordKey);
-              return (
-                <div 
-                  key={item.id} 
-                  className={`vocab-card ${isSelected ? 'selected-card' : ''}`}
-                  style={{ 
-                    borderColor: isSelected 
-                      ? 'var(--primary)' 
-                      : (isMastered ? 'var(--success)' : (item.isCustomized ? 'rgba(99, 102, 241, 0.4)' : 'var(--border)')),
-                    background: isSelected ? 'var(--primary-bg, rgba(99, 102, 241, 0.04))' : undefined,
-                    boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
-                  }}
-                >
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 8 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                        {/* Selector para Generador IA */}
-                        <label 
-                          style={{ 
-                            cursor: 'pointer', 
-                            display: 'inline-flex', 
-                            alignItems: 'center', 
-                            gap: 4, 
-                            padding: '1px 6px', 
-                            borderRadius: '4px',
-                            background: isSelected ? 'var(--primary)' : 'rgba(99, 102, 241, 0.08)',
-                            color: isSelected ? '#fff' : 'var(--primary)',
-                            fontSize: '0.72rem',
-                            fontWeight: 700,
-                            border: isSelected ? '1px solid var(--primary)' : '1px solid rgba(99, 102, 241, 0.2)'
-                          }}
-                          title="Seleccionar para generar historia u oraciones con IA"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <input 
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => {
+                const isMastered = isWordMastered(item);
+                const wordKey = item.id || item.kanji;
+                const isSelected = selectedWordIds.has(wordKey);
+                const tags = getVocabTags(item, appState?.vocabTags);
+
+                return (
+                  <div 
+                    key={item.id || item.kanji} 
+                    className={`vocab-card ${isSelected ? 'selected-card' : ''}`}
+                    style={{ 
+                      borderColor: isSelected 
+                        ? 'var(--primary)' 
+                        : (isMastered ? 'rgba(34, 197, 94, 0.45)' : (item.isCustomized ? 'rgba(99, 102, 241, 0.4)' : 'var(--border)')),
+                      background: isSelected ? 'var(--primary-bg, rgba(99, 102, 241, 0.04))' : undefined,
+                      boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
+                    }}
+                  >
+                    <div>
+                      {/* Top Bar: Nivel, Tags y Botón de Estado Aprendido */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, gap: 8, flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <span className="vocab-tag" style={{ fontWeight: 700 }}>
+                            {item.level || 'N5'}
+                          </span>
+
+                          {/* Tags de la palabra */}
+                          {tags.slice(0, 2).map(tag => (
+                            <span 
+                              key={tag}
+                              className="vocab-tag-pill"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedTag(tag);
+                                updateParams(mode, level, tag, searchTerm);
+                              }}
+                              title={`Filtrar por #${tag}`}
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                          {tags.length > 2 && (
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                              +{tags.length - 2}
+                            </span>
+                          )}
+
+                          {/* Botón rápido para gestionar etiquetas */}
+                          <button
+                            type="button"
+                            className="vocab-add-tag-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTagEditorWord(item);
+                            }}
+                            title="Gestionar etiquetas personalizadas de esta palabra"
+                          >
+                            <Tag size={10} />
+                            <span>Tag</span>
+                          </button>
+
+                          {item.isCustomized && (
+                            <span 
+                              style={{ 
+                                fontSize: '0.7rem', 
+                                background: 'rgba(99, 102, 241, 0.15)', 
+                                color: 'var(--primary-light)', 
+                                padding: '1px 5px', 
+                                borderRadius: '4px', 
+                                fontWeight: 600,
+                                border: '1px solid rgba(99, 102, 241, 0.3)'
+                              }}
+                              title="Palabra con personalizaciones"
+                            >
+                              ✏️
+                            </span>
+                          )}
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          {/* Botón Selección IA */}
+                          <button
+                            type="button"
+                            className={`kanji-select-btn ${isSelected ? 'selected' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
                               const next = new Set(selectedWordIds);
                               if (next.has(wordKey)) next.delete(wordKey);
                               else next.add(wordKey);
                               setSelectedWordIds(next);
                             }}
-                            style={{ accentColor: 'var(--primary)', width: 13, height: 13, cursor: 'pointer' }}
-                          />
-                          <span>IA</span>
-                        </label>
-
-                        <span className="vocab-tag">
-                          {item.level} · {item.category}
-                          {(item.kanji === '美化語' || item.category === 'Cortesía y Registro') && (
-                            <TerminologyTooltip termId="bikougo">
-                              <span style={{ marginLeft: 5, cursor: 'help' }} title="Ver explicación de Bikougo / Cortesía">ℹ️</span>
-                            </TerminologyTooltip>
-                          )}
-                        </span>
-                        {item.isCustomized && (
-                          <span 
-                            style={{ 
-                              fontSize: '0.72rem', 
-                              background: 'rgba(99, 102, 241, 0.15)', 
-                              color: 'var(--primary-light)', 
-                              padding: '2px 6px', 
-                              borderRadius: '4px', 
-                              fontWeight: 600,
-                              border: '1px solid rgba(99, 102, 241, 0.3)'
-                            }}
-                            title="Esta palabra tiene modificaciones personalizadas"
+                            title={isSelected ? "Deseleccionar palabra" : "Seleccionar palabra para IA"}
+                            aria-pressed={isSelected}
                           >
-                            ✏️ Editado
+                            {isSelected ? <Check size={12} strokeWidth={2.5} /> : <Sparkles size={12} />}
+                          </button>
+
+                          {/* Botón claro de Estado: Aprendida / Por Aprender */}
+                          <button
+                            type="button"
+                            className={`vocab-status-pill ${isMastered ? 'learned' : 'unlearned'}`}
+                            onClick={() => toggleVocabMastery(item)}
+                            title={isMastered ? "Marcar como pendiente de aprender" : "Marcar como aprendida (+20 XP)"}
+                          >
+                            {isMastered ? (
+                              <>
+                                <CheckCircle2 size={13} />
+                                <span>Aprendida</span>
+                              </>
+                            ) : (
+                              <>
+                                <Plus size={13} />
+                                <span>Por aprender</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="vocab-kanji">
+                        <span className="jp-text">{item.kanji}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <button 
+                            type="button"
+                            className="audio-btn" 
+                            style={{ width: 30, height: 30 }}
+                            onClick={() => audioManager.speak(item.kana || item.hiragana || item.kanji)}
+                            title="Escuchar pronunciación"
+                          >
+                            <Volume2 size={15} />
+                          </button>
+                          <SpeechPractice 
+                            targetText={item.kanji} 
+                            targetKana={item.kana || item.hiragana} 
+                            compact={true} 
+                          />
+                          <button
+                            type="button"
+                            className="audio-btn"
+                            style={{ width: 30, height: 30 }}
+                            onClick={() => {
+                              if (contextApp?.openPracticePad) {
+                                contextApp.openPracticePad({
+                                  text: item.kanji,
+                                  kana: item.kana || item.hiragana,
+                                  title: `Vocabulario: ${item.kanji} (${item.meaning_es})`,
+                                  source: 'vocab'
+                                });
+                              } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+                                window.__nihongoOpenPracticePad({
+                                  text: item.kanji,
+                                  kana: item.kana || item.hiragana,
+                                  title: `Vocabulario: ${item.kanji} (${item.meaning_es})`,
+                                  source: 'vocab'
+                                });
+                              }
+                            }}
+                            title="Practicar en Cuaderno"
+                          >
+                            <PenTool size={14} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="vocab-kana jp-text" style={{ fontSize: '1rem', marginTop: 2 }}>
+                        {item.kana || item.hiragana || ''}
+                        {item.katakana && item.katakana !== (item.kana || item.hiragana) && (
+                          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: 8, fontWeight: 400 }}>
+                            · {item.katakana}
                           </span>
                         )}
                       </div>
-                      <label style={{ cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <input 
-                          type="checkbox"
-                          checked={isMastered}
-                          onChange={() => toggleVocabMastery(item.id)}
-                          style={{ accentColor: 'var(--success)' }}
-                        />
-                        <span style={{ color: isMastered ? 'var(--success)' : 'var(--text-muted)', fontWeight: isMastered ? 700 : 500 }}>
-                          {isMastered ? 'Dominada' : 'Repasar'}
-                        </span>
-                      </label>
-                    </div>
 
-                    <div className="vocab-kanji">
-                      <span className="jp-text">{item.kanji}</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <button 
-                          type="button"
-                          className="audio-btn" 
-                          style={{ width: 32, height: 32 }}
-                          onClick={() => audioManager.speak(item.kana || item.hiragana || item.kanji)}
-                          title="Escuchar pronunciación"
-                        >
-                          <Volume2 size={16} />
-                        </button>
-                        <SpeechPractice 
-                          targetText={item.kanji} 
-                          targetKana={item.kana || item.hiragana} 
-                          compact={true} 
+                      {/* Pitch Accent */}
+                      <div style={{ marginTop: 6, marginBottom: 4 }}>
+                        <PitchAccent 
+                          word={item.kanji} 
+                          reading={item.kana || item.hiragana} 
+                          mode="full" 
+                          size="sm" 
                         />
-                        <button
-                          type="button"
-                          className="audio-btn"
-                          style={{ width: 32, height: 32 }}
-                          onClick={() => {
-                            if (contextApp?.openPracticePad) {
-                              contextApp.openPracticePad({
-                                text: item.kanji,
-                                kana: item.kana || item.hiragana,
-                                title: `Vocabulario: ${item.kanji} (${item.meaning_es})`,
-                                source: 'vocab'
-                              });
-                            } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
-                              window.__nihongoOpenPracticePad({
-                                text: item.kanji,
-                                kana: item.kana || item.hiragana,
-                                title: `Vocabulario: ${item.kanji} (${item.meaning_es})`,
-                                source: 'vocab'
-                              });
-                            }
-                          }}
-                          title="Practicar caligrafía y trazos en el Cuaderno"
-                        >
-                          <PenTool size={15} />
-                        </button>
                       </div>
                     </div>
 
-                    <div className="vocab-kana jp-text">
-                      {item.kana || item.hiragana || ''}
-                      {item.katakana && item.katakana !== (item.kana || item.hiragana) && (
-                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: 8, fontWeight: 400 }}>
-                          · {item.katakana}
-                        </span>
+                    <div className="vocab-meanings">
+                      <div className="vocab-es">🇪🇸 {item.meaning_es}</div>
+                      {item.meaning_en && <div className="vocab-en">🇬🇧 {item.meaning_en}</div>}
+
+                      {item.literal_translation && (
+                        <div style={{ marginTop: 4, fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span className="literal-tag">Literal</span>
+                          <span>&ldquo;{item.literal_translation}&rdquo;</span>
+                        </div>
+                      )}
+
+                      {item.breakdown && (
+                        <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--text-muted)', background: 'var(--bg-main)', padding: '4px 8px', borderRadius: '6px', border: '1px dashed var(--border)' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>🧩 Desglose: </span>
+                          <span>{item.breakdown}</span>
+                        </div>
+                      )}
+
+                      {item.example_sentence && (
+                        <div style={{ marginTop: 8, padding: '8px 10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '8px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                            <span style={{ fontSize: '0.88rem', fontWeight: 600 }} className="jp-text">
+                              {item.example_sentence}
+                            </span>
+                            <button
+                              type="button"
+                              className="tts-btn-small"
+                              onClick={() => audioManager.speak(item.example_sentence)}
+                              title="Escuchar frase de ejemplo"
+                              style={{ padding: '2px 5px', height: 'auto', width: 'auto' }}
+                            >
+                              <Volume2 size={13} />
+                            </button>
+                          </div>
+                          {item.example_reading && (
+                            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }} className="jp-text">
+                              {item.example_reading}
+                            </div>
+                          )}
+                          {item.example_translation && (
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #64748b)', marginTop: 2 }}>
+                              {item.example_translation}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Nota de Estudio Personal */}
+                      {item.notes && (
+                        <div style={{
+                          marginTop: 8,
+                          background: 'rgba(245, 158, 11, 0.08)',
+                          border: '1px solid rgba(245, 158, 11, 0.25)',
+                          borderRadius: '8px',
+                          padding: '6px 9px',
+                          fontSize: '0.82rem'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--amber-700, #b45309)', fontWeight: 700, fontSize: '0.75rem', marginBottom: 2 }}>
+                            <StickyNote size={12} />
+                            <span>Nota:</span>
+                          </div>
+                          <div style={{ color: 'var(--text-main)', whiteSpace: 'pre-wrap', lineHeight: 1.35 }}>
+                            {item.notes}
+                          </div>
+                        </div>
                       )}
                     </div>
 
-                    {/* Curva Visual SVG de Pitch Accent */}
-                    <div style={{ marginTop: 8, marginBottom: 4 }}>
-                      <PitchAccent 
-                        word={item.kanji} 
-                        reading={item.kana || item.hiragana} 
-                        mode="full" 
-                        size="sm" 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="vocab-meanings">
-                    <div className="vocab-es">🇪🇸 {item.meaning_es}</div>
-                    {item.meaning_en && <div className="vocab-en">🇬🇧 {item.meaning_en}</div>}
-
-                    {item.literal_translation && (
-                      <div style={{ marginTop: 4, fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span className="literal-tag">Literal</span>
-                        <span>&ldquo;{item.literal_translation}&rdquo;</span>
-                      </div>
-                    )}
-
-                    {item.breakdown && (
-                      <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--text-muted, #94a3b8)', background: 'rgba(255, 255, 255, 0.03)', padding: '4px 8px', borderRadius: '6px', border: '1px dashed var(--border)' }}>
-                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>🧩 Desglose: </span>
-                        <span>{item.breakdown}</span>
-                      </div>
-                    )}
-
-                    {item.example_sentence && (
-                      <div style={{ marginTop: 8, padding: '8px 10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '8px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
-                          <span style={{ fontSize: '0.88rem', fontWeight: 600 }} className="jp-text">
-                            {item.example_sentence}
-                          </span>
-                          <button
-                            type="button"
-                            className="tts-btn-small"
-                            onClick={() => audioManager.speak(item.example_sentence)}
-                            title="Escuchar frase de ejemplo"
-                            style={{ padding: '2px 5px', height: 'auto', width: 'auto' }}
-                          >
-                            <Volume2 size={13} />
-                          </button>
-                        </div>
-                        {item.example_reading && (
-                          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }} className="jp-text">
-                            {item.example_reading}
-                          </div>
-                        )}
-                        {item.example_translation && (
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #64748b)', marginTop: 2 }}>
-                            {item.example_translation}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {item.polite_masu && (
-                      <div style={{ marginTop: 8, fontSize: '0.8rem', color: 'var(--primary)', background: 'var(--primary-bg)', padding: '4px 8px', borderRadius: '4px' }}>
-                        Forma ます: <strong className="jp-text">{item.polite_masu}</strong> | て: <strong className="jp-text">{item.te_form}</strong>
-                      </div>
-                    )}
-
-                    {/* Nota de Estudio Personal */}
-                    {item.notes && (
-                      <div style={{
-                        marginTop: 10,
-                        background: 'rgba(245, 158, 11, 0.08)',
-                        border: '1px solid rgba(245, 158, 11, 0.25)',
-                        borderRadius: '8px',
-                        padding: '8px 10px',
-                        fontSize: '0.84rem'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--amber-700, #b45309)', fontWeight: 700, fontSize: '0.78rem', marginBottom: 3 }}>
-                          <StickyNote size={13} />
-                          <span>Nota de Estudio:</span>
-                        </div>
-                        <div style={{ color: 'var(--text-main)', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
-                          {item.notes}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Action Row */}
-                  <div style={{
-                    marginTop: 12,
-                    paddingTop: 10,
-                    borderTop: '1px solid var(--border)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}>
-                    <button
-                      type="button"
-                      className="btn btn-outline btn-xs"
-                      onClick={() => setEditingWord(item)}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', padding: '4px 8px' }}
-                      title="Modificar cómo se escribe esta palabra o agregar/editar notas"
-                    >
-                      <Edit3 size={13} />
-                      <span>{item.notes ? 'Editar / Notas' : '+ Nota / Editar'}</span>
-                    </button>
-
-                    {item.isCustomized && (
+                    {/* Card Action Row */}
+                    <div style={{
+                      marginTop: 10,
+                      paddingTop: 8,
+                      borderTop: '1px solid var(--border)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
                       <button
                         type="button"
-                        className="btn btn-ghost btn-xs"
-                        onClick={() => handleResetWordEdit(item.id || item.kanji)}
-                        style={{ color: 'var(--text-muted)', fontSize: '0.75rem', padding: '2px 6px', display: 'inline-flex', alignItems: 'center', gap: 3 }}
-                        title="Restablecer palabra a su valor original"
+                        className="btn btn-outline btn-xs"
+                        onClick={() => setEditingWord(item)}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', padding: '3px 7px' }}
+                        title="Modificar ortografía o agregar/editar notas"
                       >
-                        <RotateCcw size={12} />
-                        <span>Restaurar</span>
+                        <Edit3 size={12} />
+                        <span>{item.notes ? 'Editar / Notas' : '+ Nota'}</span>
                       </button>
-                    )}
+
+                      {item.isCustomized && (
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => handleResetWordEdit(item.id || item.kanji)}
+                          style={{ color: 'var(--text-muted)', fontSize: '0.72rem', padding: '2px 5px', display: 'inline-flex', alignItems: 'center', gap: 3 }}
+                          title="Restablecer palabra a su valor original"
+                        >
+                          <RotateCcw size={11} />
+                          <span>Restaurar</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
 
           {visibleCount < filteredVocab.length && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 24, marginBottom: 16 }}>
@@ -1136,7 +1344,8 @@ export default function VocabTab({
                 className="btn btn-outline btn-sm" 
                 onClick={() => {
                   setLevel('all');
-                  setCategory('all');
+                  setStatusFilter('all');
+                  setSelectedTag('all');
                   setSearchTerm('');
                   setFilterOnlyWithNotes(false);
                   setFilterOnlyCustomized(false);
@@ -1150,138 +1359,249 @@ export default function VocabTab({
         </div>
       )}
 
-      {/* MODE 2: JAPANESE IME TYPING CHALLENGE */}
-      {mode === 'typing' && currentTypingItem && (
+      {/* MODE 2: ESTUDIAR VOCABULARIO (Solo las que faltan por aprender) */}
+      {mode === 'study' && (
         <div className="quiz-container" style={{ maxWidth: 680 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <span className="vocab-tag">{currentTypingItem.level} · {currentTypingItem.category}</span>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              Palabra {typingIndex + 1} de {filteredVocab.length}
-            </span>
-          </div>
-
-          <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 6 }}>
-              {currentTypingItem.meaning_es}
-            </div>
-            {currentTypingItem.meaning_en && (
-              <div style={{ fontSize: '1.05rem', color: 'var(--text-muted)', marginBottom: 12 }}>
-                ({currentTypingItem.meaning_en})
+          {currentStudyItem ? (
+            <div>
+              {/* Barra superior de estudio */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    setMode('cards');
+                    updateParams('cards', level, selectedTag, searchTerm);
+                  }}
+                >
+                  <ArrowLeft size={16} /> Volver a Tarjetas
+                </button>
+                <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  Palabra {studyIndex + 1} de {studyItems.length} por aprender
+                </span>
               </div>
-            )}
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
-              <button 
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={() => audioManager.speak(currentTypingItem.kana || currentTypingItem.hiragana || currentTypingItem.kanji)}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-              >
-                <Volume2 size={16} /> Escuchar
-              </button>
-              <SpeechPractice 
-                targetText={currentTypingItem.kanji} 
-                targetKana={currentTypingItem.kana || currentTypingItem.hiragana} 
-                onMatch={() => {
-                  const targetVal = currentTypingItem.kana || currentTypingItem.hiragana || currentTypingItem.kanji;
-                  if (targetVal) {
-                    setTypingInput(targetVal);
-                    handleValidateTyping(targetVal);
-                  }
-                }}
-              />
-            </div>
-          </div>
 
-          <div className="typing-box" style={{ marginTop: 16 }}>
-            <div className="typing-prompt">
-              <span>🇯🇵 Escribe en japonés (Hiragana o Kanji):</span>
-              <span className="ime-badge">Teclado IME Activo</span>
-            </div>
+              {/* Tarjeta de Estudio Focalizada */}
+              <div className="card" style={{ padding: '24px 20px', textAlign: 'center', marginBottom: 18 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <span className="vocab-tag" style={{ fontWeight: 700 }}>{currentStudyItem.level || 'N5'}</span>
+                  {currentStudyItem.category && (
+                    <span style={{ fontSize: '0.78rem', background: 'var(--bg-main)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                      {currentStudyItem.category}
+                    </span>
+                  )}
+                </div>
 
-            <div className="typing-input-row">
-              <input 
-                type="text" 
-                className="japanese-input jp-text"
-                placeholder="Escribe en romaji (se convertirá a hiragana)..."
-                value={typingInput}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  const converted = wanakana.toKana(val, { IMEMode: true });
-                  setTypingInput(converted);
-                }}
-                onCompositionStart={() => { isComposingRef.current = true; }}
-                onCompositionEnd={() => { isComposingRef.current = false; }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !isComposingRef.current) {
-                    handleValidateTyping();
-                  }
-                }}
-                autoFocus
-              />
-              <button className="btn btn-primary" onClick={handleValidateTyping}>
-                Validar
-              </button>
-              <button className="btn btn-outline" onClick={handleShowHint} title="Revelar primer carácter">
-                <Lightbulb size={16} /> Pista
-              </button>
-            </div>
+                <div className="jp-text" style={{ fontSize: '3.6rem', fontWeight: 800, color: 'var(--text-main)', margin: '4px 0' }}>
+                  {currentStudyItem.kanji}
+                </div>
 
-            {typingFeedback && (
-              <div className={`typing-feedback ${typingFeedback.type}`}>
-                <div>{typingFeedback.msg}</div>
-                {typingFeedback.target && (
-                  <div className="jp-text" style={{ fontSize: '1.15rem', marginTop: 4 }}>
-                    {typingFeedback.target}
-                  </div>
-                )}
-                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+                <div className="jp-text" style={{ fontSize: '1.4rem', color: 'var(--primary)', fontWeight: 600, marginBottom: 8 }}>
+                  {currentStudyItem.kana || currentStudyItem.hiragana}
+                </div>
+
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>
+                  {currentStudyItem.meaning_es}
+                </div>
+
+                {/* Pitch Accent */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
                   <PitchAccent 
-                    word={currentTypingItem.kanji} 
-                    reading={currentTypingItem.kana} 
-                    mode="compact" 
+                    word={currentStudyItem.kanji} 
+                    reading={currentStudyItem.kana || currentStudyItem.hiragana} 
+                    mode="full" 
                     size="sm" 
                   />
                 </div>
+
+                {/* Frase de ejemplo si existe */}
+                {currentStudyItem.example_sentence && (
+                  <div style={{ 
+                    fontSize: '0.9rem', 
+                    background: 'var(--bg-main)', 
+                    border: '1px solid var(--border)', 
+                    padding: '10px 14px', 
+                    borderRadius: 10, 
+                    color: 'var(--text-muted)',
+                    marginBottom: 14,
+                    textAlign: 'left'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 3 }}>
+                      <span className="jp-text" style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+                        {currentStudyItem.example_sentence}
+                      </span>
+                      <button 
+                        type="button" 
+                        className="tts-btn-small"
+                        onClick={() => audioManager.speak(currentStudyItem.example_sentence)}
+                        style={{ padding: '2px 6px' }}
+                      >
+                        <Volume2 size={13} />
+                      </button>
+                    </div>
+                    {currentStudyItem.example_translation && (
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary, #64748b)' }}>
+                        {currentStudyItem.example_translation}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Audio y práctica */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 16 }}>
+                  <button 
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => audioManager.speak(currentStudyItem.kana || currentStudyItem.hiragana || currentStudyItem.kanji)}
+                  >
+                    <Volume2 size={15} /> Escuchar
+                  </button>
+                </div>
+
+                {/* Botón directo de "Marcar como Aprendida" */}
+                <div style={{ paddingTop: 14, borderTop: '1px dashed var(--border)' }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ width: '100%', maxWidth: 320, margin: '0 auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                    onClick={() => handleMarkLearnedFromStudy(currentStudyItem)}
+                  >
+                    <CheckCircle2 size={18} />
+                    <span>✓ Marcar como Aprendida (+20 XP)</span>
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
-            <button 
-              className="btn btn-outline btn-sm"
-              onClick={() => {
-                setTypingFeedback(null);
-                setTypingInput('');
-                setTypingIndex((prev) => (prev - 1 + filteredVocab.length) % filteredVocab.length);
-              }}
-            >
-              <ArrowLeft size={16} /> Anterior
-            </button>
+              {/* Caja de validación interactiva de escritura */}
+              <div className="typing-box">
+                <div className="typing-prompt">
+                  <span>O escribe la palabra en japonés para validar y aprender:</span>
+                  <span className="ime-badge">🇯🇵 IME Romaji → Kana</span>
+                </div>
 
-            <button 
-              className="btn btn-outline btn-sm"
-              onClick={() => {
-                setTypingFeedback(null);
-                setTypingInput('');
-                setTypingIndex((prev) => (prev + 1) % filteredVocab.length);
-              }}
-            >
-              Siguiente <ArrowRight size={16} />
-            </button>
-          </div>
+                <div className="typing-input-row">
+                  <input 
+                    type="text" 
+                    className="japanese-input jp-text"
+                    placeholder="Escribe en hiragana..."
+                    value={studyInput}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const converted = wanakana.toKana(val, { IMEMode: true });
+                      setStudyInput(converted);
+                    }}
+                    onCompositionStart={() => { isComposingRef.current = true; }}
+                    onCompositionEnd={() => { isComposingRef.current = false; }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isComposingRef.current) {
+                        handleValidateStudyTyping();
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <button type="button" className="btn btn-primary" onClick={() => handleValidateStudyTyping()}>
+                    Validar
+                  </button>
+                  <button type="button" className="btn btn-outline" onClick={handleStudyHint} title="Pista de primer carácter">
+                    <Lightbulb size={16} /> Pista
+                  </button>
+                </div>
+
+                <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>O practica pronunciando:</span>
+                  <SpeechPractice 
+                    targetText={currentStudyItem.kanji} 
+                    targetKana={currentStudyItem.kana || currentStudyItem.hiragana} 
+                    onMatch={() => {
+                      handleMarkLearnedFromStudy(currentStudyItem);
+                    }}
+                  />
+                </div>
+
+                {studyFeedback && (
+                  <div className={`typing-feedback ${studyFeedback.type}`} style={{ marginTop: 12 }}>
+                    <div>{studyFeedback.msg}</div>
+                    {studyFeedback.target && (
+                      <div className="jp-text" style={{ fontSize: '1.2rem', marginTop: 4 }}>
+                        {studyFeedback.target}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Botones de Navegación Anterior / Siguiente */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    setStudyFeedback(null);
+                    setStudyInput('');
+                    setStudyIndex((prev) => Math.max(0, prev - 1));
+                  }}
+                  disabled={studyIndex === 0}
+                >
+                  <ArrowLeft size={16} /> Anterior
+                </button>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    setStudyFeedback(null);
+                    setStudyInput('');
+                    setStudyIndex((prev) => Math.min(studyItems.length - 1, prev + 1));
+                  }}
+                  disabled={studyIndex >= studyItems.length - 1}
+                >
+                  Saltar <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+              <div style={{ fontSize: '3.6rem', marginBottom: 14 }}>🏆</div>
+              <h3 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: 12, color: 'var(--text-main)' }}>
+                ¡Todo el vocabulario aprendido!
+              </h3>
+              <p style={{ color: 'var(--text-muted)', marginBottom: 24, maxWidth: 440, margin: '0 auto 24px auto', lineHeight: 1.5 }}>
+                No quedan palabras por aprender con los filtros actuales. Pásate al Repaso SRS para consolidarlas en tu memoria a largo plazo.
+              </p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button 
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => startSrsSession(true)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+                >
+                  <Brain size={18} /> Ir al Repaso SRS
+                </button>
+                <button 
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => {
+                    setMode('cards');
+                    updateParams('cards', level, selectedTag, searchTerm);
+                  }}
+                >
+                  Volver a Tarjetas
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* MODE: SRS REVIEW */}
+      {/* MODE: SRS REVIEW (Solo palabras aprendidas con espaciado FSRS) */}
       {mode === 'srs' && (
         <SrsReview 
           queue={srsQueue}
           onRate={handleSrsReview}
           onUndo={handleSrsUndo}
-          getCurrentCard={(item) => appState.masteredVocab?.[item.id]}
+          getCurrentCard={(item) => (item.id && appState.masteredVocab?.[item.id]) || (item.kanji && appState.masteredVocab?.[item.kanji])}
           onExit={() => {
             setMode('cards');
-            updateParams('cards', level, category, searchTerm);
+            updateParams('cards', level, selectedTag, searchTerm);
           }}
           backLabel="Volver a Vocabulario"
           renderFront={(item) => (
@@ -1291,11 +1611,6 @@ export default function VocabTab({
                 {item.category && (
                   <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)', fontWeight: 600 }}>
                     {item.category}
-                  </span>
-                )}
-                {item.type && (
-                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
-                    {item.type}
                   </span>
                 )}
               </div>
@@ -1335,7 +1650,7 @@ export default function VocabTab({
                 )}
               </div>
 
-              {/* Pitch Accent Visual Curve en SRS */}
+              {/* Pitch Accent en SRS */}
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
                 <PitchAccent 
                   word={item.kanji} 
@@ -1355,7 +1670,7 @@ export default function VocabTab({
                 </div>
               )}
 
-              {/* Herramientas de audio y pronunciación */}
+              {/* Herramientas de audio */}
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 16, marginBottom: 16 }}>
                 <button 
                   type="button"
@@ -1369,32 +1684,13 @@ export default function VocabTab({
                   targetKana={item.kana || item.hiragana} 
                   acceptableReadings={[item.kana, item.hiragana, item.katakana].filter(Boolean)}
                 />
-                {contextApp?.openPracticePad && (
-                  <button 
-                    type="button"
-                    className="btn btn-outline btn-sm" 
-                    onClick={() => {
-                      contextApp.openPracticePad({
-                        text: item.kanji,
-                        kana: item.kana || item.hiragana,
-                        title: `Palabra: ${item.kanji} (${item.meaning_es})`,
-                        source: 'vocab',
-                        initialChar: item.kanji?.[0]
-                      });
-                    }}
-                    title="Abrir en Cuaderno de Cuadrícula y Caligrafía"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
-                  >
-                    <PenTool size={14} /> Cuaderno
-                  </button>
-                )}
               </div>
 
               {/* Tatoeba Sentences Integration */}
               {item.tatoeba_sentences && item.tatoeba_sentences.length > 0 && (
                 <div style={{ marginTop: 20, textAlign: 'left', background: 'var(--bg-surface)', padding: 14, borderRadius: 10, border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-                    📚 Ejemplos en Contexto (Tatoeba):
+                  <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: 10 }}>
+                    📚 Ejemplos en Contexto:
                   </div>
                   {item.tatoeba_sentences.map((sentence, idx) => (
                     <div key={idx} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: idx === item.tatoeba_sentences.length - 1 ? 'none' : '1px solid var(--border)' }}>
@@ -1430,7 +1726,6 @@ export default function VocabTab({
       {/* MODE 3: N4 CONTEXT EXERCISES */}
       {mode === 'n4_exercises' && (
         <div className="quiz-container" style={{ maxWidth: 720 }}>
-          {/* Status filter bar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estado:</span>
@@ -1516,7 +1811,6 @@ export default function VocabTab({
                 </p>
               </div>
 
-              {/* Options Grid */}
               <div className="quiz-options-grid">
                 {currentExercise.options.map((opt) => {
                   const isSelected = exerciseAnswer?.selected === opt;
@@ -1540,7 +1834,6 @@ export default function VocabTab({
                 })}
               </div>
 
-              {/* Feedback Explanation */}
               {exerciseAnswer && (
                 <div 
                   style={{ 
@@ -1579,15 +1872,174 @@ export default function VocabTab({
               )}
 
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
-                <button className="btn btn-outline btn-sm" onClick={handlePrevExercise}>
+                <button className="btn btn-outline btn-sm" onClick={() => {
+                  setExerciseAnswer(null);
+                  setExerciseIndex((prev) => (prev - 1 + filteredN4Exercises.length) % filteredN4Exercises.length);
+                }}>
                   <ArrowLeft size={16} /> Anterior
                 </button>
-                <button className="btn btn-outline btn-sm" onClick={handleNextExercise}>
+                <button className="btn btn-outline btn-sm" onClick={() => {
+                  setExerciseAnswer(null);
+                  setExerciseIndex((prev) => (prev + 1) % filteredN4Exercises.length);
+                }}>
                   Siguiente <ArrowRight size={16} />
                 </button>
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* MODAL GESTOR DE ETIQUETAS (TAGS) PERSONALIZADAS PARA VOCABULARIO */}
+      {tagEditorWord && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          background: 'rgba(0,0,0,0.6)', zIndex: 1100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div className="card" style={{ maxWidth: 440, width: '100%', position: 'relative', padding: '24px 20px' }}>
+            <button 
+              type="button"
+              className="btn btn-ghost btn-xs"
+              style={{ position: 'absolute', top: 12, right: 12, borderRadius: '50%', width: 30, height: 30, padding: 0 }}
+              onClick={() => {
+                setTagEditorWord(null);
+                setNewTagInput('');
+              }}
+              title="Cerrar"
+            >
+              <X size={16} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <div className="jp-text" style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
+                {tagEditorWord.kanji || tagEditorWord.kana}
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
+                  Etiquetas de Vocabulario
+                </h3>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  {tagEditorWord.meaning_es}
+                </div>
+              </div>
+            </div>
+
+            {/* Etiquetas activas */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
+                Etiquetas asignadas:
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {getVocabTags(tagEditorWord, appState?.vocabTags).map(tag => (
+                  <span
+                    key={tag}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      background: 'rgba(99, 102, 241, 0.12)',
+                      color: 'var(--primary)',
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      padding: '3px 8px',
+                      borderRadius: 12,
+                      fontSize: '0.82rem',
+                      fontWeight: 700
+                    }}
+                  >
+                    <span>#{tag}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTagFromCurrent(tag)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: 'var(--primary)',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                      title="Eliminar etiqueta"
+                    >
+                      <X size={13} />
+                    </button>
+                  </span>
+                ))}
+                {getVocabTags(tagEditorWord, appState?.vocabTags).length === 0 && (
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Sin etiquetas asignadas.
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Sugerencias populares */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
+                Sugerencias populares (haz clic para agregar):
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {POPULAR_VOCAB_TAG_SUGGESTIONS.map(sugg => {
+                  const currentTags = getVocabTags(tagEditorWord, appState?.vocabTags);
+                  const isPresent = currentTags.includes(sugg);
+                  return (
+                    <button
+                      key={sugg}
+                      type="button"
+                      className={`btn btn-xs ${isPresent ? 'btn-primary' : 'btn-outline'}`}
+                      style={{ borderRadius: 12, fontSize: '0.75rem', padding: '2px 8px' }}
+                      onClick={() => {
+                        if (isPresent) handleRemoveTagFromCurrent(sugg);
+                        else handleAddTagToCurrent(sugg);
+                      }}
+                    >
+                      {isPresent ? `✓ ${sugg}` : `+ ${sugg}`}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Input para nueva etiqueta personalizada */}
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              <input 
+                type="text" 
+                className="input-text" 
+                style={{ flex: 1, fontSize: '0.88rem' }}
+                placeholder="Crear nueva etiqueta (ej. Trabajo, Viaje)..."
+                value={newTagInput}
+                onChange={(e) => setNewTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddTagToCurrent(newTagInput);
+                  }
+                }}
+              />
+              <button 
+                type="button" 
+                className="btn btn-primary btn-sm"
+                onClick={() => handleAddTagToCurrent(newTagInput)}
+                disabled={!newTagInput.trim()}
+              >
+                Añadir
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setTagEditorWord(null);
+                  setNewTagInput('');
+                }}
+              >
+                Listo
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -1620,9 +2072,9 @@ export default function VocabTab({
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 900,
-          background: 'var(--surface)',
+          background: 'var(--bg-surface)',
           border: '2px solid var(--primary)',
-          borderRadius: 16,
+          borderRadius: 'var(--radius-bento, 20px)',
           padding: '10px 18px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.28)',
           display: 'flex',

@@ -2981,8 +2981,9 @@ ruby.furigana-ruby rt {
   color: var(--text-main) !important;
 }
 
-/* Status Pill Buttons on Kanji Card */
-.kanji-status-pill {
+/* Status Pill Buttons on Kanji and Vocab Cards */
+.kanji-status-pill,
+.vocab-status-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -2996,31 +2997,36 @@ ruby.furigana-ruby rt {
   user-select: none;
 }
 
-.kanji-status-pill.learned {
+.kanji-status-pill.learned,
+.vocab-status-pill.learned {
   background: rgba(34, 197, 94, 0.12);
   color: #16a34a;
   border-color: rgba(34, 197, 94, 0.3);
 }
 
-[data-theme="dark"] .kanji-status-pill.learned {
+[data-theme="dark"] .kanji-status-pill.learned,
+[data-theme="dark"] .vocab-status-pill.learned {
   background: rgba(34, 197, 94, 0.18);
   color: #4ade80;
   border-color: rgba(74, 222, 128, 0.35);
 }
 
-.kanji-status-pill.learned:hover {
+.kanji-status-pill.learned:hover,
+.vocab-status-pill.learned:hover {
   background: rgba(34, 197, 94, 0.2);
   border-color: rgba(34, 197, 94, 0.5);
   transform: translateY(-1px);
 }
 
-.kanji-status-pill.unlearned {
+.kanji-status-pill.unlearned,
+.vocab-status-pill.unlearned {
   background: var(--bg-main);
   color: var(--text-muted);
   border: 1px dashed var(--border);
 }
 
-.kanji-status-pill.unlearned:hover {
+.kanji-status-pill.unlearned:hover,
+.vocab-status-pill.unlearned:hover {
   background: rgba(99, 102, 241, 0.08);
   border-color: var(--primary);
   color: var(--primary);
@@ -3028,7 +3034,8 @@ ruby.furigana-ruby rt {
 }
 
 /* Tag Pills and Tag Editor */
-.kanji-tag-pill {
+.kanji-tag-pill,
+.vocab-tag-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -3043,19 +3050,22 @@ ruby.furigana-ruby rt {
   transition: all 0.15s ease;
 }
 
-.kanji-tag-pill:hover {
+.kanji-tag-pill:hover,
+.vocab-tag-pill:hover {
   border-color: var(--primary);
   color: var(--primary);
   background: rgba(99, 102, 241, 0.06);
 }
 
-.kanji-tag-pill.active {
+.kanji-tag-pill.active,
+.vocab-tag-pill.active {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
 }
 
-.kanji-add-tag-btn {
+.kanji-add-tag-btn,
+.vocab-add-tag-btn {
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -3070,7 +3080,8 @@ ruby.furigana-ruby rt {
   transition: all 0.15s ease;
 }
 
-.kanji-add-tag-btn:hover {
+.kanji-add-tag-btn:hover,
+.vocab-add-tag-btn:hover {
   border-color: var(--primary);
   color: var(--primary);
   background: rgba(99, 102, 241, 0.06);
@@ -12524,6 +12535,11 @@ html {
     justify-content: space-between;
     width: 100%;
     gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .hidden-xs {
+    display: none !important;
   }
 
   .daily-goal-streak-wrap {
