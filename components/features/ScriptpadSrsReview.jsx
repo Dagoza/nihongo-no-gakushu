@@ -347,7 +347,7 @@ export default function ScriptpadSrsReview({
         wordMistakesRef.current = 0;
         setFallbackStrokesByChar({});
         setHasWriterData(true);
-        setAutoAdvanceTimeLeft(4);
+        setAutoAdvanceTimeLeft(6);
         setTimeout(() => {
           isRatingInProgressRef.current = false;
         }, 100);
@@ -368,7 +368,7 @@ export default function ScriptpadSrsReview({
     if (isFinishedRef.current) return;
     setIsWordCompleted(true);
     isWordCompletedRef.current = true;
-    setAutoAdvanceTimeLeft(4); // 4 segundos de avance
+    setAutoAdvanceTimeLeft(6); // 6 segundos de avance
     const ratingInfo = getRatingInfoFromMistakes(totalMistakes, guideUsed);
     setAssignedRatingInfo(ratingInfo);
 
@@ -1510,7 +1510,7 @@ export default function ScriptpadSrsReview({
               }}
             >
               <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Otra vez</span>
-              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[1] || '< 10m'}</span>
+              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[1] || '1d'}</span>
               {hasWriterData && assignedRatingInfo?.rating === SRSRating.AGAIN && (
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#ef4444' }}>✓ Asignado</span>
               )}
@@ -1597,7 +1597,7 @@ export default function ScriptpadSrsReview({
               }}
             >
               <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Fácil</span>
-              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[4] || '7d'}</span>
+              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[4] || '8d'}</span>
               {hasWriterData && assignedRatingInfo?.rating === SRSRating.EASY && (
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#10b981' }}>✓ Asignado</span>
               )}
