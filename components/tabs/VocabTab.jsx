@@ -701,7 +701,7 @@ export default function VocabTab({
 
       {/* MODE 1: VOCABULARY CARDS */}
       {mode === 'cards' && (
-        <div>
+        <div style={{ paddingBottom: selectedWordIds.size > 0 ? 110 : 30 }}>
           {/* Overview Stats Bar: Concisa, sin texto redundante */}
           <div className="card" style={{ marginBottom: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
             <div style={{ flex: '1 1 260px' }}>
@@ -713,25 +713,31 @@ export default function VocabTab({
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <button 
                 type="button"
-                className="btn btn-outline btn-lg"
+                className="btn btn-outline btn-sm"
                 onClick={() => startSrsSession(false)}
                 title="Repasar vocabulario aprendido usando repetición espaciada"
-                style={{ position: 'relative' }}
+                style={{
+                  borderRadius: 999,
+                  padding: '6px 14px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  position: 'relative'
+                }}
               >
-                <Brain size={18} />
+                <Brain size={15} />
                 <span>Repaso SRS</span>
                 {dueLearnedVocab.length > 0 && (
                   <span style={{
                     background: 'var(--primary)',
                     color: '#fff',
                     borderRadius: 999,
-                    padding: '2px 7px',
-                    fontSize: '0.75rem',
+                    padding: '1px 6px',
+                    fontSize: '0.72rem',
                     fontWeight: 800,
-                    marginLeft: 4
+                    marginLeft: 2
                   }}>
                     {dueLearnedVocab.length}
                   </span>
@@ -740,7 +746,7 @@ export default function VocabTab({
 
               <button 
                 type="button"
-                className="btn btn-primary btn-lg"
+                className="btn btn-primary btn-sm"
                 onClick={() => {
                   setStudyIndex(0);
                   setStudyFeedback(null);
@@ -749,18 +755,24 @@ export default function VocabTab({
                   updateParams('study', level, selectedTag, searchTerm);
                 }}
                 title="Estudiar las palabras que faltan por aprender"
+                style={{
+                  borderRadius: 999,
+                  padding: '6px 14px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600
+                }}
               >
-                <BookOpen size={18} />
+                <BookOpen size={15} />
                 <span>Estudiar Vocabulario</span>
                 {unlearnedCount > 0 && (
                   <span style={{
                     background: 'rgba(255,255,255,0.25)',
                     color: '#fff',
                     borderRadius: 999,
-                    padding: '2px 7px',
-                    fontSize: '0.75rem',
+                    padding: '1px 6px',
+                    fontSize: '0.72rem',
                     fontWeight: 800,
-                    marginLeft: 4
+                    marginLeft: 2
                   }}>
                     {unlearnedCount}
                   </span>
@@ -2085,55 +2097,62 @@ export default function VocabTab({
 
       {/* Floating Action Bar cuando hay palabras seleccionadas */}
       {selectedWordIds.size > 0 && (
-        <div style={{
-          position: 'fixed',
-          bottom: 24,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 900,
-          background: 'var(--bg-surface)',
-          border: '2px solid var(--primary)',
-          borderRadius: 'var(--radius-bento, 20px)',
-          padding: '10px 18px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.28)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 14,
-          backdropFilter: 'blur(12px)',
-          maxWidth: '92%',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{
-              background: 'var(--primary)',
-              color: '#fff',
-              borderRadius: 999,
-              padding: '2px 9px',
-              fontSize: '0.8rem',
-              fontWeight: 800
-            }}>
-              {selectedWordIds.size}
-            </span>
-            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              {selectedWordIds.size === 1 ? 'palabra seleccionada' : 'palabras seleccionadas'}
-            </span>
+        <div className="selection-floating-bar" role="region" aria-label="Acciones para palabras seleccionadas">
+          <div className="selection-floating-header">
+            <div className="selection-floating-info">
+              <span style={{
+                background: 'var(--primary)',
+                color: '#fff',
+                borderRadius: 999,
+                padding: '2px 9px',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                flexShrink: 0
+              }}>
+                {selectedWordIds.size}
+              </span>
+              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
+                {selectedWordIds.size === 1 ? 'palabra seleccionada' : 'palabras seleccionadas'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-ghost btn-xs"
+              onClick={() => setSelectedWordIds(new Set())}
+              style={{
+                color: 'var(--text-muted)',
+                fontSize: '0.8rem',
+                padding: '3px 8px',
+                borderRadius: 999,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4
+              }}
+              title="Deseleccionar y limpiar"
+            >
+              <X size={13} />
+              <span>Limpiar</span>
+            </button>
           </div>
 
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', maxWidth: 280, overflow: 'hidden' }}>
-            {Array.from(selectedWordIds).slice(0, 4).map(id => {
+          <div className="selection-floating-chips">
+            {Array.from(selectedWordIds).slice(0, 6).map(id => {
               const w = effectiveVocabList.find(x => (x.id === id || x.kanji === id));
               return w ? (
-                <span key={id} className="jp-text" style={{ fontSize: '0.82rem', background: 'rgba(99, 102, 241, 0.12)', color: 'var(--primary)', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
+                <span key={id} className="jp-text selection-floating-chip" style={{ fontSize: '0.84rem' }}>
                   {w.kanji}
                 </span>
               ) : null;
             })}
-            {selectedWordIds.size > 4 && (
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>+{selectedWordIds.size - 4} más</span>
+            {selectedWordIds.size > 6 && (
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', alignSelf: 'center', paddingLeft: 4 }}>
+                +{selectedWordIds.size - 6} más
+              </span>
             )}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+          <div className="selection-floating-actions two-actions">
             <button
               type="button"
               className="btn btn-outline btn-sm"
@@ -2141,7 +2160,6 @@ export default function VocabTab({
                 setAiGenType('conversation');
                 setIsAIGeneratorOpen(true);
               }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
               title="Generar un diálogo personalizado con las palabras seleccionadas"
             >
               <MessageSquare size={14} />
@@ -2154,19 +2172,11 @@ export default function VocabTab({
                 setAiGenType('story');
                 setIsAIGeneratorOpen(true);
               }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+              style={{ boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
               title="Generar historia con las palabras seleccionadas"
             >
-              <Sparkles size={15} />
+              <Sparkles size={14} />
               <span>Historia</span>
-            </button>
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              onClick={() => setSelectedWordIds(new Set())}
-              style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}
-            >
-              Limpiar
             </button>
           </div>
         </div>
