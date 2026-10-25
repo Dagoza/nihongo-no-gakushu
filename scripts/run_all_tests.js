@@ -259,6 +259,46 @@ runTest('El diccionario de furigana y la utilidad toFurigana generan anotaciones
   assert(converted.includes('<ruby class="furigana-ruby">私<rt>わたし</rt></ruby>'), 'Debe generar furigana correcto para 私');
 });
 
+// -----------------------------------------------------------------------------
+// COMPONENTES & MODALES: Integridad de Hooks de React
+// -----------------------------------------------------------------------------
+console.log('\n--- COMPONENTES & MODALES: Integridad de Hooks de React ---');
+
+runTest('Todos los componentes y modales importan correctamente los React Hooks que utilizan', () => {
+  const hooks = ['useState', 'useEffect', 'useCallback', 'useMemo', 'useRef', 'useContext'];
+  let checkedCount = 0;
+
+  function checkFile(filePath) {
+    const content = fs.readFileSync(filePath, 'utf8');
+    for (const h of hooks) {
+      const regex = new RegExp(`\\b${h}\\b`);
+      if (regex.test(content)) {
+        const hasImport = new RegExp(`import[^{]*{[^}]*\\b${h}\\b[^}]*}[^{]*from\\s*["\x27]react["\x27]`).test(content);
+        const isOnlyReactDot = !new RegExp(`(?<!React\\.)${h}\\(`).test(content);
+        assert(hasImport || isOnlyReactDot, `En ${path.relative(ROOT_DIR, filePath)} se utiliza ${h} pero NO está importado de 'react'`);
+      }
+    }
+    checkedCount++;
+  }
+
+  function walkDir(dir) {
+    const fullDir = path.join(ROOT_DIR, dir);
+    if (!fs.existsSync(fullDir)) return;
+    for (const f of fs.readdirSync(fullDir)) {
+      const full = path.join(fullDir, f);
+      if (fs.statSync(full).isDirectory()) {
+        if (f !== 'node_modules' && f !== '.next' && f !== '.git') walkDir(path.join(dir, f));
+      } else if (f.endsWith('.jsx') || f.endsWith('.js')) {
+        checkFile(full);
+      }
+    }
+  }
+
+  walkDir('components');
+  walkDir('app');
+  assert(checkedCount >= 50, `Se esperaban al menos 50 componentes verificados, revisados: ${checkedCount}`);
+});
+
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);
 console.log('======================================================\n');

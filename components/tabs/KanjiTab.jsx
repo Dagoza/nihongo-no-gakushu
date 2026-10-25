@@ -1,12 +1,24 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, RotateCcw, Sparkles, Check, MessageSquare, PenTool, Info, Languages } from 'lucide-react';
+import { 
+  Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, RotateCcw, 
+  Sparkles, Check, MessageSquare, PenTool, Info, Languages, 
+  Tag, Plus, X, CheckCircle2, BookOpen, Brain, Sparkle, Filter
+} from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import kanjiData from '../../data/kanji.json';
 import * as wanakana from 'wanakana';
-import { getNewCard, reviewCard, isDue } from '../../lib/srs';
+import { getNewCard, reviewCard, isDue, ensureFsrsCard } from '../../lib/srs';
+import { triggerCheerConfetti } from '../../lib/confetti';
+import { 
+  getKanjiTags, 
+  addTagToKanji, 
+  removeTagFromKanji, 
+  getAllUniqueTags, 
+  POPULAR_TAG_SUGGESTIONS 
+} from '../../lib/kanjiTags';
 import PitchAccent from '../features/PitchAccent';
 import { getKanjiFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
@@ -66,10 +78,12 @@ export default function KanjiTab({
   const contextApp = useApp();
   const authUser = propAuthUser || contextApp?.authUser;
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
-  const [quizActive, setQuizActive] = useState(initialMode === 'quiz');
-  const [quizIndex, setQuizIndex] = useState(0);
-  const [quizInput, setQuizInput] = useState('');
-  const [quizFeedback, setQuizFeedback] = useState(null); // { type: 'correct'|'wrong', msg, reading }
+  
+  // Study Mode State (sustituye el antiguo quiz de lecturas)
+  const [studyActive, setStudyActive] = useState(initialMode === 'study' || initialMode === 'quiz');
+  const [studyIndex, setStudyIndex] = useState(0);
+  const [studyInput, setStudyInput] = useState('');
+  const [studyFeedback, setStudyFeedback] = useState(null);
   const isComposingRef = useRef(false);
 
   // SRS State
@@ -79,17 +93,36 @@ export default function KanjiTab({
   // Drawing Mode
   const [drawingKanji, setDrawingKanji] = useState(initialDraw || null);
 
+  // Tag Editor Modal
+  const [tagEditorKanji, setTagEditorKanji] = useState(null);
+  const [newTagInput, setNewTagInput] = useState('');
+
+  // Filters State
+  const [level, setLevel] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'learned' | 'unlearned'
+  const [selectedTag, setSelectedTag] = useState('all'); // 'all' | tagString
+
+  // Kanji List State (carga unificada del catálogo global)
+  const [kanjiList, setKanjiList] = useState(kanjiData || []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(32);
+
   // Progressive Disclosure: Compound words toggle per kanji
   const [expandedCompoundKanji, setExpandedCompoundKanji] = useState({});
   const toggleExpandWords = (kanjiChar) => {
     setExpandedCompoundKanji(prev => ({ ...prev, [kanjiChar]: !prev[kanjiChar] }));
   };
 
+  // AI Content Generator & Kanji Selection State
+  const [selectedKanjiChars, setSelectedKanjiChars] = useState(new Set());
+  const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
+  const [aiGenType, setAiGenType] = useState('story');
+
   const updateParams = (newSearch, newMode, newDraw) => {
     if (onParamsChange) {
       const activeMode = newMode !== undefined 
         ? newMode 
-        : (quizActive ? 'quiz' : (srsActive ? 'srs' : 'list'));
+        : (studyActive ? 'study' : (srsActive ? 'srs' : 'list'));
       onParamsChange({
         search: newSearch !== undefined ? newSearch : searchTerm,
         mode: activeMode,
@@ -105,13 +138,13 @@ export default function KanjiTab({
   }, [initialSearch]);
 
   useEffect(() => {
-    if (initialMode === 'quiz') {
-      setQuizActive(true);
+    if (initialMode === 'study' || initialMode === 'quiz') {
+      setStudyActive(true);
       setSrsActive(false);
     } else if (initialMode === 'srs') {
       startSrsSession();
     } else if (initialMode === 'list') {
-      setQuizActive(false);
+      setStudyActive(false);
       setSrsActive(false);
     }
   }, [initialMode]);
@@ -122,94 +155,91 @@ export default function KanjiTab({
     }
   }, [initialDraw]);
 
-  const isMassive = Boolean(authUser && appState?.useMassiveKanji);
-  const [level, setLevel] = useState('all');
-  const [kanjiList, setKanjiList] = useState(kanjiData || []);
-  const [isLoading, setIsLoading] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(32);
-
-  // AI Content Generator & Kanji Selection State
-  const [selectedKanjiChars, setSelectedKanjiChars] = useState(new Set());
-  const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
-  const [aiGenType, setAiGenType] = useState('story');
-
-  const handleToggleSource = (enableMassive) => {
-    if (enableMassive) {
-      if (!authUser) {
-        if (contextApp?.showAlert) {
-          contextApp.showAlert({
-            type: 'lock',
-            title: 'Catálogo Masivo de Kanjis',
-            message: 'Inicia sesión con tu cuenta de Google o correo para desbloquear el catálogo masivo con más de 2,100 kanjis.',
-            actionLabel: 'Iniciar Sesión',
-            onAction: () => {
-              if (contextApp?.setIsAuthModalOpen) {
-                contextApp.setIsAuthModalOpen(true);
-              }
-            }
-          });
-        } else if (contextApp?.setIsAuthModalOpen) {
-          contextApp.setIsAuthModalOpen(true);
-        }
-        return;
-      }
-      onUpdateState({
-        ...appState,
-        useMassiveKanji: true
-      });
-    } else {
-      onUpdateState({
-        ...appState,
-        useMassiveKanji: false
-      });
-    }
-  };
-
+  // Carga unificada de kanjis globales
   useEffect(() => {
-    // Si está apagado el catálogo masivo o no hay sesión activa, usar estrictamente los kanjis propios
-    if (!authUser || !appState?.useMassiveKanji) {
-      setKanjiList(kanjiData || []);
-      setIsLoading(false);
-      return;
-    }
-
     let isMounted = true;
-    setIsLoading(true);
-    getKanjiFromSupabase({ level, authUser })
-      .then(data => {
-        if (isMounted && data && data.length > 0) {
-          setKanjiList(data);
-        }
-      })
-      .catch(err => console.error("Error cargando kanjis masivos:", err))
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
+    if (authUser) {
+      setIsLoading(true);
+      getKanjiFromSupabase({ level, authUser })
+        .then(data => {
+          if (isMounted && data && data.length > 0) {
+            setKanjiList(data);
+          }
+        })
+        .catch(err => console.error("Error cargando kanjis globales:", err))
+        .finally(() => {
+          if (isMounted) setIsLoading(false);
+        });
+    } else {
+      const list = kanjiData || [];
+      setKanjiList(level === 'all' ? list : list.filter(k => k.level === level));
+      setIsLoading(false);
+    }
     return () => { isMounted = false; };
-  }, [level, authUser, appState?.useMassiveKanji]);
+  }, [level, authUser]);
 
-  // Reset de ventana visible cuando cambian filtros o búsqueda para optimizar rendimiento
+  // Reset de ventana visible cuando cambian filtros o búsqueda
   useEffect(() => {
     setVisibleCount(32);
-  }, [searchTerm, level, isMassive]);
+  }, [searchTerm, level, statusFilter, selectedTag]);
 
-  // Filter kanji
-  const filteredKanji = kanjiList.filter(k => {
-    const matchLevel = level === 'all' || k.level === level;
-    const search = searchTerm.trim().toLowerCase();
-    if (!matchLevel) return false;
-    if (!search) return true;
-    return (
-      k.kanji.includes(search) ||
-      (k.meaning_es && k.meaning_es.toLowerCase().includes(search)) ||
-      (k.meaning_en && k.meaning_en.toLowerCase().includes(search)) ||
-      (k.pronunciation && k.pronunciation.toLowerCase().includes(search)) ||
-      (k.onyomi && k.onyomi.toLowerCase().includes(search)) ||
-      (k.kunyomi && k.kunyomi.toLowerCase().includes(search))
-    );
-  });
+  // Kanjis aprendidos y pendientes
+  const masteredCount = useMemo(() => {
+    return kanjiList.filter(k => Boolean(appState.masteredKanji?.[k.kanji])).length;
+  }, [kanjiList, appState.masteredKanji]);
 
-  const selectedKanjisForAI = React.useMemo(() => {
+  const unlearnedCount = useMemo(() => {
+    return Math.max(0, kanjiList.length - masteredCount);
+  }, [kanjiList.length, masteredCount]);
+
+  const progressPercent = Math.round((masteredCount / Math.max(1, kanjiList.length)) * 100);
+
+  // Kanjis aprendidos que están pendientes de repaso según repetición espaciada FSRS
+  const dueLearnedKanjis = useMemo(() => {
+    return kanjiList.filter(k => {
+      const card = appState.masteredKanji?.[k.kanji];
+      if (!card) return false;
+      return isDue(card);
+    });
+  }, [kanjiList, appState.masteredKanji]);
+
+  // Todas las etiquetas únicas disponibles
+  const availableTags = useMemo(() => {
+    return getAllUniqueTags(kanjiList, appState.kanjiTags);
+  }, [kanjiList, appState.kanjiTags]);
+
+  // Filtrado de kanjis para la vista de tarjetas
+  const filteredKanji = useMemo(() => {
+    return kanjiList.filter(k => {
+      // Filtro de Nivel JLPT
+      if (level !== 'all' && k.level !== level) return false;
+
+      // Filtro por Estado: Aprendidos o Por aprender
+      const isMastered = Boolean(appState.masteredKanji?.[k.kanji]);
+      if (statusFilter === 'learned' && !isMastered) return false;
+      if (statusFilter === 'unlearned' && isMastered) return false;
+
+      // Filtro por Etiqueta personalizada
+      if (selectedTag !== 'all') {
+        const tags = getKanjiTags(k.kanji, appState.kanjiTags);
+        if (!tags.includes(selectedTag)) return false;
+      }
+
+      // Filtro de Búsqueda
+      const search = searchTerm.trim().toLowerCase();
+      if (!search) return true;
+      return (
+        k.kanji.includes(search) ||
+        (k.meaning_es && k.meaning_es.toLowerCase().includes(search)) ||
+        (k.meaning_en && k.meaning_en.toLowerCase().includes(search)) ||
+        (k.pronunciation && k.pronunciation.toLowerCase().includes(search)) ||
+        (k.onyomi && k.onyomi.toLowerCase().includes(search)) ||
+        (k.kunyomi && k.kunyomi.toLowerCase().includes(search))
+      );
+    });
+  }, [kanjiList, level, statusFilter, selectedTag, searchTerm, appState.masteredKanji, appState.kanjiTags]);
+
+  const selectedKanjisForAI = useMemo(() => {
     if (selectedKanjiChars.size === 0) {
       return filteredKanji.slice(0, 5).map(k => ({
         text: k.kanji,
@@ -227,32 +257,69 @@ export default function KanjiTab({
     });
   }, [selectedKanjiChars, filteredKanji, kanjiList]);
 
-  const masteredCount = kanjiList.filter(k => !!appState.masteredKanji?.[k.kanji]).length;
-  const progressPercent = Math.round((masteredCount / Math.max(1, kanjiList.length)) * 100);
-
+  // Alternar kanji como aprendido / por aprender desde las cards
   const toggleKanjiMastery = (char) => {
-    const isMastered = !!appState.masteredKanji?.[char];
-    const newMastered = {
-      ...(appState.masteredKanji || {}),
-      [char]: !isMastered
-    };
-    onUpdateState({
-      ...appState,
-      masteredKanji: newMastered
-    });
+    const isMastered = Boolean(appState.masteredKanji?.[char]);
+    const updatedMastered = { ...(appState.masteredKanji || {}) };
+    
+    if (isMastered) {
+      delete updatedMastered[char];
+      onUpdateState({
+        ...appState,
+        masteredKanji: updatedMastered
+      });
+    } else {
+      updatedMastered[char] = getNewCard();
+      const newXp = (appState.xp || 0) + 20;
+      triggerCheerConfetti();
+      onUpdateState({
+        ...appState,
+        xp: newXp,
+        masteredKanji: updatedMastered
+      });
+    }
   };
 
-  const startSrsSession = () => {
-    const queue = kanjiList.filter(item => {
-      const card = appState.masteredKanji?.[item.kanji];
-      if (!card) return true;
-      if (typeof card === 'boolean') return true;
-      return isDue(card);
-    }).sort(() => Math.random() - 0.5);
+  // Iniciar Repaso SRS (solo con kanjis aprendidos)
+  const startSrsSession = (forceAll = false) => {
+    const learnedKanjis = kanjiList.filter(item => Boolean(appState.masteredKanji?.[item.kanji]));
     
+    if (learnedKanjis.length === 0) {
+      if (contextApp?.showAlert) {
+        contextApp.showAlert({
+          type: 'info',
+          title: 'Sin Kanjis Aprendidos',
+          message: 'Aún no has marcado kanjis como aprendidos. Ve a "Estudiar Kanjis" para aprender tus primeros caracteres y programar sus repasos con repetición espaciada.'
+        });
+      }
+      return;
+    }
+
+    const queue = forceAll
+      ? [...learnedKanjis].sort(() => Math.random() - 0.5)
+      : learnedKanjis.filter(item => isDue(appState.masteredKanji[item.kanji])).sort(() => Math.random() - 0.5);
+
+    if (queue.length === 0) {
+      if (contextApp?.showAlert) {
+        contextApp.showAlert({
+          type: 'success',
+          title: '¡Estás al día con el SRS!',
+          message: `Has repasado todos tus ${learnedKanjis.length} kanjis aprendidos. El algoritmo FSRS avisará cuando toque repasar. ¿Deseas repasarlos todos de todos modos?`,
+          actionLabel: 'Repasar de todos modos',
+          onAction: () => startSrsSession(true)
+        });
+      } else {
+        setSrsQueue(learnedKanjis.sort(() => Math.random() - 0.5));
+        setSrsActive(true);
+        setStudyActive(false);
+        updateParams(searchTerm, 'srs', drawingKanji);
+      }
+      return;
+    }
+
     setSrsQueue(queue);
     setSrsActive(true);
-    setQuizActive(false);
+    setStudyActive(false);
     updateParams(searchTerm, 'srs', drawingKanji);
   };
 
@@ -263,9 +330,11 @@ export default function KanjiTab({
       : getNewCard();
       
     const newCard = reviewCard(oldCard, rating);
+    const newXp = (appState.xp || 0) + 10;
     
     onUpdateState({
       ...appState,
+      xp: newXp,
       masteredKanji: {
         ...(appState.masteredKanji || {}),
         [item.kanji]: newCard
@@ -286,80 +355,134 @@ export default function KanjiTab({
     });
   };
 
-  // Compile quiz items
-  const quizItems = React.useMemo(() => {
-    const items = [];
-    kanjiList.forEach(k => {
-      let primaryReading = '';
-      if (k.kunyomi && k.kunyomi.includes('[')) {
-        primaryReading = k.kunyomi.split('[')[1]?.replace(']', '').trim();
-      } else if (k.kunyomi) {
-        primaryReading = k.kunyomi.split(',')[0].trim();
-      } else if (k.pronunciation) {
-        primaryReading = k.pronunciation.split(',')[0].trim();
-      } else if (k.onyomi) {
-        primaryReading = k.onyomi.split(',')[0].trim();
-      }
+  // MODO ESTUDIAR KANJIS (Solo los que faltan por aprender)
+  const studyItems = useMemo(() => {
+    return kanjiList.filter(k => {
+      // Filtrar estrictamente solo los que faltan por aprender
+      const isMastered = Boolean(appState.masteredKanji?.[k.kanji]);
+      if (isMastered) return false;
 
-      if (primaryReading) {
-        items.push({
-          kanji: k.kanji,
-          meaning: k.meaning_es,
-          reading: primaryReading,
-          words: k.words || []
-        });
+      // Respetar nivel y etiqueta seleccionados si aplican
+      if (level !== 'all' && k.level !== level) return false;
+      if (selectedTag !== 'all') {
+        const tags = getKanjiTags(k.kanji, appState.kanjiTags);
+        if (!tags.includes(selectedTag)) return false;
       }
+      return true;
     });
-    return items.sort(() => 0.5 - Math.random());
-  }, [quizActive]);
+  }, [kanjiList, appState.masteredKanji, level, selectedTag, studyActive]);
 
-  const currentQuizItem = quizItems[quizIndex];
+  const currentStudyItem = studyItems[studyIndex];
 
-  const handleValidateReading = (forcedValue = null) => {
-    if (!currentQuizItem) return;
-    const inputVal = (typeof forcedValue === 'string' ? forcedValue : quizInput).trim();
+  // Marcar como aprendido directamente dentro del modo estudio
+  const handleMarkLearnedFromStudy = (kanjiChar) => {
+    if (!kanjiChar) return;
+    const newMastered = {
+      ...(appState.masteredKanji || {}),
+      [kanjiChar]: getNewCard()
+    };
+    const newXp = (appState.xp || 0) + 20;
+    triggerCheerConfetti();
+    onUpdateState({
+      ...appState,
+      xp: newXp,
+      masteredKanji: newMastered
+    });
+
+    setStudyFeedback({
+      type: 'correct',
+      msg: '🎉 ¡Kanji aprendido! Añadido a tu cola de Repaso SRS (+20 XP)',
+      reading: kanjiChar
+    });
+
+    setTimeout(() => {
+      setStudyFeedback(null);
+      setStudyInput('');
+      if (studyIndex >= studyItems.length - 1) {
+        setStudyIndex(0);
+      }
+    }, 1200);
+  };
+
+  const handleValidateStudyReading = (forcedValue = null) => {
+    if (!currentStudyItem) return;
+    const inputVal = (typeof forcedValue === 'string' ? forcedValue : studyInput).trim();
     if (!inputVal) return;
-    const expected = currentQuizItem.reading.trim();
+    
+    const expectedPrimary = getPrimaryKanjiReading(currentStudyItem);
+    const allReadings = getAllKanjiReadings(currentStudyItem);
 
-    // Check if input matches primary reading or any compound word reading
-    const isMatch = inputVal === expected || (currentQuizItem.words && currentQuizItem.words.some(w => w.reading === inputVal));
+    const isMatch = inputVal === expectedPrimary || allReadings.some(r => r.includes(inputVal)) || 
+      (currentStudyItem.words && currentStudyItem.words.some(w => w.reading === inputVal));
 
     if (isMatch) {
-      setQuizFeedback({
+      setStudyFeedback({
         type: 'correct',
         msg: `🎉 ¡Correcto! (+20 XP)`,
-        reading: `${currentQuizItem.kanji} = ${expected}`
+        reading: `${currentStudyItem.kanji} = ${expectedPrimary || inputVal}`
       });
-      audioManager.speak(expected);
+      audioManager.speak(expectedPrimary || inputVal);
 
+      // Marcar automáticamente como aprendido al acertar la lectura
+      const newMastered = {
+        ...(appState.masteredKanji || {}),
+        [currentStudyItem.kanji]: getNewCard()
+      };
       const newXp = (appState.xp || 0) + 20;
+      triggerCheerConfetti();
       onUpdateState({
         ...appState,
-        xp: newXp
+        xp: newXp,
+        masteredKanji: newMastered
       });
 
       setTimeout(() => {
-        setQuizFeedback(null);
-        setQuizInput('');
-        setQuizIndex((prev) => prev + 1);
-      }, 1600);
+        setStudyFeedback(null);
+        setStudyInput('');
+        if (studyIndex >= studyItems.length - 1) {
+          setStudyIndex(0);
+        }
+      }, 1500);
     } else {
-      setQuizFeedback({
+      setStudyFeedback({
         type: 'wrong',
         msg: `Lectura esperada en Hiragana:`,
-        reading: expected
+        reading: expectedPrimary || currentStudyItem.pronunciation || '—'
       });
     }
   };
 
-  const handleShowHint = () => {
-    if (!currentQuizItem) return;
-    setQuizInput(currentQuizItem.reading.charAt(0));
+  const handleStudyHint = () => {
+    if (!currentStudyItem) return;
+    const expected = getPrimaryKanjiReading(currentStudyItem);
+    if (expected) {
+      setStudyInput(expected.charAt(0));
+    }
+  };
+
+  // Gestión de Etiquetas (Tags)
+  const handleAddTagToCurrent = (tag) => {
+    if (!tagEditorKanji || !tag || !tag.trim()) return;
+    const updated = addTagToKanji(tagEditorKanji.kanji, tag, appState.kanjiTags);
+    onUpdateState({
+      ...appState,
+      kanjiTags: updated
+    });
+    setNewTagInput('');
+  };
+
+  const handleRemoveTagFromCurrent = (tag) => {
+    if (!tagEditorKanji || !tag) return;
+    const updated = removeTagFromKanji(tagEditorKanji.kanji, tag, appState.kanjiTags);
+    onUpdateState({
+      ...appState,
+      kanjiTags: updated
+    });
   };
 
   return (
     <div className="section-panel active">
-      {/* Header */}
+      {/* Header Limpio sin exceso de texto */}
       <div className="module-hero-card">
         <div className="module-hero-content">
           <div className="module-hero-title-row">
@@ -392,178 +515,224 @@ export default function KanjiTab({
                 </button>
               </div>
               <h1 className="module-hero-title">Biblioteca de Kanji</h1>
-              <p className="module-hero-subtitle">
-                Diccionario y estudio de kanjis con orden de trazos interactivo, lecturas On/Kun, radicales y nemotecnias visuales.
-              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Selector de Fuente: Kanjis Propios vs Catálogo Masivo API */}
-      <div className="source-selector-bar" style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '12px',
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 'var(--radius-bento, 20px)',
-        padding: '12px 18px',
-        marginBottom: '20px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)' }}>
-            Fuente de Kanjis:
-          </span>
-          <div style={{
-            display: 'inline-flex',
-            background: 'var(--bg-main)',
-            padding: '3px',
-            borderRadius: '10px',
-            border: '1px solid var(--border)'
-          }}>
-            <button
-              type="button"
-              onClick={() => handleToggleSource(false)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: !isMassive ? 700 : 500,
-                background: !isMassive ? 'var(--primary)' : 'transparent',
-                color: !isMassive ? '#fff' : 'var(--text-muted)',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <span>📖 Mis Kanjis Propios</span>
-              <span style={{
-                background: !isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
-                color: !isMassive ? '#fff' : 'var(--text-muted)',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontSize: '0.75rem',
-                fontWeight: 700
-              }}>
-                {(kanjiData || []).length} kanjis
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleToggleSource(true)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: isMassive ? 700 : 500,
-                background: isMassive ? 'var(--primary)' : 'transparent',
-                color: isMassive ? '#fff' : 'var(--text-muted)',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <span>{authUser ? '🌐 Catálogo Masivo (API)' : '🔒 Catálogo Masivo (API)'}</span>
-              <span style={{
-                background: isMassive ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface)',
-                color: isMassive ? '#fff' : 'var(--text-muted)',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontSize: '0.75rem',
-                fontWeight: 700
-              }}>
-                +2,100 kanjis
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          {!isMassive ? (
-            <span>✨ Mostrando kanjis propios curados de libros con mnemotécnicas.</span>
-          ) : (
-            <span>🚀 Mostrando base de datos masiva poblada en Supabase ({kanjiList.length} kanjis).</span>
-          )}
-        </div>
-      </div>
-
-      {!quizActive && !srsActive ? (
+      {!studyActive && !srsActive ? (
         <div>
-          {/* Overview Stats Bar */}
-          <div className="card" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-            <div>
-              <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 4 }}>
+          {/* Overview Stats Bar: Concisa, sin texto redundante */}
+          <div className="card" style={{ marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+            <div style={{ flex: '1 1 260px' }}>
+              <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 6 }}>
                 Kanjis Dominados: <span style={{ color: 'var(--primary)' }}>{masteredCount} de {kanjiList.length}</span> ({progressPercent}%)
               </div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                Aprende la composición, significado y practica escribir la lectura en Hiragana.
-              </div>
-              <div style={{ width: 280, height: 8, background: 'var(--border)', borderRadius: 999, marginTop: 8, overflow: 'hidden' }}>
+              <div style={{ width: '100%', maxWidth: 300, height: 8, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
                 <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent))', transition: 'width 0.4s' }} />
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               <button 
+                type="button"
                 className="btn btn-outline btn-lg"
-                onClick={startSrsSession}
+                onClick={() => startSrsSession(false)}
+                title="Repasar kanjis aprendidos usando repetición espaciada"
+                style={{ position: 'relative' }}
               >
-                🧠 Repaso SRS
+                <Brain size={18} />
+                <span>Repaso SRS</span>
+                {dueLearnedKanjis.length > 0 && (
+                  <span style={{
+                    background: 'var(--primary)',
+                    color: '#fff',
+                    borderRadius: 999,
+                    padding: '2px 7px',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    marginLeft: 4
+                  }}>
+                    {dueLearnedKanjis.length}
+                  </span>
+                )}
               </button>
+
               <button 
+                type="button"
                 className="btn btn-primary btn-lg"
                 onClick={() => {
-                  setQuizIndex(0);
-                  setQuizFeedback(null);
-                  setQuizInput('');
-                  setQuizActive(true);
+                  setStudyIndex(0);
+                  setStudyFeedback(null);
+                  setStudyInput('');
+                  setStudyActive(true);
                   setSrsActive(false);
-                  updateParams(searchTerm, 'quiz', drawingKanji);
+                  updateParams(searchTerm, 'study', drawingKanji);
                 }}
+                title="Estudiar los kanjis que faltan por aprender"
               >
-                ✍️ Practicar Lecturas
+                <BookOpen size={18} />
+                <span>Estudiar Kanjis</span>
+                {unlearnedCount > 0 && (
+                  <span style={{
+                    background: 'rgba(255,255,255,0.25)',
+                    color: '#fff',
+                    borderRadius: 999,
+                    padding: '2px 7px',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    marginLeft: 4
+                  }}>
+                    {unlearnedCount}
+                  </span>
+                )}
               </button>
             </div>
           </div>
 
-          {/* Level Selector */}
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Nivel:</span>
-            {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
-              <button
-                key={lvl}
-                className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
-                style={{ minWidth: 42, padding: '4px 10px' }}
-                onClick={() => setLevel(lvl)}
-              >
-                {lvl === 'all' ? 'Todos' : lvl}
-              </button>
-            ))}
-            {isLoading && (
-              <span style={{ fontSize: '0.8rem', color: 'var(--primary)', marginLeft: 8 }}>
-                ⚡ Cargando Supabase...
-              </span>
+          {/* Filtros Integrados: Estado, Nivel JLPT y Etiquetas */}
+          <div className="card" style={{ padding: '14px 16px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+              {/* Filtro de Estado: Aprendidos o Por Aprender */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                  Estado:
+                </span>
+                <div style={{
+                  display: 'inline-flex',
+                  background: 'var(--bg-main)',
+                  padding: '3px',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border)'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter('all')}
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.82rem',
+                      fontWeight: statusFilter === 'all' ? 700 : 500,
+                      background: statusFilter === 'all' ? 'var(--primary)' : 'transparent',
+                      color: statusFilter === 'all' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    Todos ({kanjiList.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter('learned')}
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.82rem',
+                      fontWeight: statusFilter === 'learned' ? 700 : 500,
+                      background: statusFilter === 'learned' ? 'var(--success, #16a34a)' : 'transparent',
+                      color: statusFilter === 'learned' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    ✓ Aprendidos ({masteredCount})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter('unlearned')}
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: '7px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.82rem',
+                      fontWeight: statusFilter === 'unlearned' ? 700 : 500,
+                      background: statusFilter === 'unlearned' ? 'var(--primary)' : 'transparent',
+                      color: statusFilter === 'unlearned' ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    ⏳ Por aprender ({unlearnedCount})
+                  </button>
+                </div>
+              </div>
+
+              {/* Selector de Nivel JLPT */}
+              <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                  Nivel:
+                </span>
+                {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    className={`btn ${level === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '3px 8px' }}
+                    onClick={() => setLevel(lvl)}
+                  >
+                    {lvl === 'all' ? 'Todos' : lvl}
+                  </button>
+                ))}
+                {isLoading && (
+                  <span style={{ fontSize: '0.78rem', color: 'var(--primary)', marginLeft: 6 }}>
+                    ⚡ Cargando...
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Selector de Etiquetas (Tags) para seccionado personalizado */}
+            {availableTags.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                  <Tag size={13} />
+                  <span>Etiquetas:</span>
+                </div>
+                <button
+                  type="button"
+                  className={`kanji-tag-pill ${selectedTag === 'all' ? 'active' : ''}`}
+                  onClick={() => setSelectedTag('all')}
+                >
+                  Todas
+                </button>
+                {availableTags.slice(0, 10).map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className={`kanji-tag-pill ${selectedTag === tag ? 'active' : ''}`}
+                    onClick={() => setSelectedTag(selectedTag === tag ? 'all' : tag)}
+                  >
+                    #{tag}
+                  </button>
+                ))}
+                {availableTags.length > 10 && (
+                  <select
+                    className="select-custom"
+                    value={selectedTag}
+                    onChange={(e) => setSelectedTag(e.target.value)}
+                    style={{ fontSize: '0.78rem', padding: '2px 8px', borderRadius: 6 }}
+                  >
+                    <option value="all">Más etiquetas ({availableTags.length})...</option>
+                    {availableTags.map(t => (
+                      <option key={t} value={t}>#{t}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
             )}
           </div>
 
           {/* Search Bar */}
-          <div className="vocab-filter-bar">
+          <div className="vocab-filter-bar" style={{ marginBottom: 14 }}>
             <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
               <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
                 type="text" 
                 className="search-input" 
                 style={{ paddingLeft: 38 }}
-                placeholder="Buscar kanji por carácter, lectura (いち, に) o significado (persona, norte, agua)..."
+                placeholder="Buscar por kanji, lectura o significado..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -571,13 +740,13 @@ export default function KanjiTab({
                 }}
               />
             </div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-              {filteredKanji.length} kanjis
+            <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+              {filteredKanji.length} {filteredKanji.length === 1 ? 'kanji' : 'kanjis'}
             </div>
           </div>
 
           {/* Quick AI & Selection Helper Bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button
                 type="button"
@@ -624,8 +793,8 @@ export default function KanjiTab({
               )}
             </div>
 
-            <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-              Dominados: <strong>{masteredCount}</strong> de {kanjiList.length}
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Mostrando: <strong>{filteredKanji.length}</strong> de {kanjiList.length}
             </div>
           </div>
 
@@ -643,6 +812,8 @@ export default function KanjiTab({
                   className="btn btn-outline btn-sm" 
                   onClick={() => {
                     setLevel('all');
+                    setStatusFilter('all');
+                    setSelectedTag('all');
                     setSearchTerm('');
                     updateParams('', 'list', drawingKanji);
                   }}
@@ -652,222 +823,249 @@ export default function KanjiTab({
               </div>
             ) : (
               filteredKanji.slice(0, visibleCount).map((k) => {
-              const isMastered = !!appState.masteredKanji?.[k.kanji];
-              const isSelected = selectedKanjiChars.has(k.kanji);
-              return (
-                <div 
-                  key={k.kanji} 
-                  className={`kanji-card ${isSelected ? 'selected-card' : ''}`}
-                  style={{ 
-                    borderColor: isSelected 
-                      ? 'var(--primary)' 
-                      : (isMastered ? 'var(--success)' : 'var(--border)'),
-                    background: isSelected ? 'var(--primary-bg, rgba(99, 102, 241, 0.04))' : undefined,
-                    boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
-                  }}
-                >
-                  {/* Top Bar: Tag & Actions */}
-                  <div className="kanji-card-topbar">
-                    <span className="vocab-tag">
-                      {k.strokes ? `${k.strokes} trazo${k.strokes === 1 ? '' : 's'}` : 'General'}
-                    </span>
+                const isMastered = Boolean(appState.masteredKanji?.[k.kanji]);
+                const isSelected = selectedKanjiChars.has(k.kanji);
+                const tags = getKanjiTags(k.kanji, appState.kanjiTags);
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {/* Botón elegante de Selección */}
-                      <button
-                        type="button"
-                        className={`kanji-select-btn ${isSelected ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const next = new Set(selectedKanjiChars);
-                          if (next.has(k.kanji)) next.delete(k.kanji);
-                          else next.add(k.kanji);
-                          setSelectedKanjiChars(next);
-                        }}
-                        title={isSelected ? "Deseleccionar kanji" : "Seleccionar kanji para generar historia u oraciones con IA"}
-                        aria-pressed={isSelected}
-                      >
-                        {isSelected ? (
-                          <Check size={12} strokeWidth={2.5} />
-                        ) : (
-                          <Sparkles size={12} />
-                        )}
-                        <span>{isSelected ? 'Seleccionado' : 'Seleccionar'}</span>
-                      </button>
-
-                      {/* Checkbox de Dominado / Aprender */}
-                      <label 
-                        className="kanji-mastery-label"
-                        style={{ 
-                          cursor: 'pointer', 
-                          fontSize: '0.8rem', 
-                          display: 'inline-flex', 
-                          alignItems: 'center', 
-                          gap: 5,
-                          userSelect: 'none'
-                        }}
-                      >
-                        <input 
-                          type="checkbox"
-                          checked={isMastered}
-                          onChange={() => toggleKanjiMastery(k.kanji)}
-                          style={{ accentColor: 'var(--success)', cursor: 'pointer', width: 14, height: 14 }}
-                        />
-                        <span style={{ color: isMastered ? 'var(--success)' : 'var(--text-muted)', fontWeight: isMastered ? 700 : 500 }}>
-                          {isMastered ? 'Dominado' : 'Aprender'}
+                return (
+                  <div 
+                    key={k.kanji} 
+                    className={`kanji-card ${isSelected ? 'selected-card' : ''}`}
+                    style={{ 
+                      borderColor: isSelected 
+                        ? 'var(--primary)' 
+                        : (isMastered ? 'rgba(34, 197, 94, 0.45)' : 'var(--border)'),
+                      background: isSelected ? 'var(--primary-bg, rgba(99, 102, 241, 0.04))' : undefined,
+                      boxShadow: isSelected ? '0 0 0 1px var(--primary)' : undefined
+                    }}
+                  >
+                    {/* Top Bar: Trazos, Etiquetas y Estado Aprendido */}
+                    <div className="kanji-card-topbar">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        <span className="vocab-tag">
+                          {k.strokes ? `${k.strokes} tr` : 'General'}
                         </span>
-                      </label>
-                    </div>
-                  </div>
+                        
+                        {/* Tags del Kanji */}
+                        {tags.slice(0, 2).map(tag => (
+                          <span 
+                            key={tag}
+                            className="kanji-tag-pill"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedTag(tag);
+                            }}
+                            title={`Filtrar por #${tag}`}
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                        {tags.length > 2 && (
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                            +{tags.length - 2}
+                          </span>
+                        )}
 
-                  <div className="kanji-header" style={{ alignItems: 'flex-start' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                      <div className="kanji-big-char jp-text">
-                        {k.kanji}
+                        {/* Botón rápido para gestionar etiquetas */}
+                        <button
+                          type="button"
+                          className="kanji-add-tag-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTagEditorKanji(k);
+                          }}
+                          title="Gestionar etiquetas personalizadas de este kanji"
+                        >
+                          <Tag size={10} />
+                          <span>Tag</span>
+                        </button>
                       </div>
-                      <button 
-                        className="btn btn-outline btn-xs" 
-                        onClick={() => {
-                          setDrawingKanji(k.kanji);
-                          updateParams(searchTerm, undefined, k.kanji);
-                        }}
-                        title="Practicar orden de trazos"
-                      >
-                        ✍️ Trazos
-                      </button>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {/* Botón de Selección para IA */}
+                        <button
+                          type="button"
+                          className={`kanji-select-btn ${isSelected ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const next = new Set(selectedKanjiChars);
+                            if (next.has(k.kanji)) next.delete(k.kanji);
+                            else next.add(k.kanji);
+                            setSelectedKanjiChars(next);
+                          }}
+                          title={isSelected ? "Deseleccionar kanji" : "Seleccionar kanji para IA"}
+                          aria-pressed={isSelected}
+                        >
+                          {isSelected ? (
+                            <Check size={12} strokeWidth={2.5} />
+                          ) : (
+                            <Sparkles size={12} />
+                          )}
+                        </button>
+
+                        {/* Botón claro de Estado: Aprendido / Por Aprender */}
+                        <button
+                          type="button"
+                          className={`kanji-status-pill ${isMastered ? 'learned' : 'unlearned'}`}
+                          onClick={() => toggleKanjiMastery(k.kanji)}
+                          title={isMastered ? "Marcar como pendiente de aprender" : "Marcar como aprendido (+20 XP)"}
+                        >
+                          {isMastered ? (
+                            <>
+                              <CheckCircle2 size={13} />
+                              <span>Aprendido</span>
+                            </>
+                          ) : (
+                            <>
+                              <Plus size={13} />
+                              <span>Por aprender</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="kanji-meta" style={{ marginTop: 2 }}>
-                      <div className="kanji-meaning">
-                        {k.meaning_es}
-                      </div>
-                      {k.meaning_en && (
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                          ({k.meaning_en})
+                    <div className="kanji-header" style={{ alignItems: 'flex-start' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                        <div className="kanji-big-char jp-text">
+                          {k.kanji}
                         </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Readings */}
-                  <div style={{ background: 'var(--bg-main)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '0.9rem', marginTop: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                      <div style={{ flex: 1 }}>
-                        {k.kunyomi && (
-                          <div><strong><TerminologyTooltip termId="wago">Kun (japonesa):</TerminologyTooltip></strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{k.kunyomi}</span></div>
-                        )}
-                        {k.onyomi && (
-                          <div><strong><TerminologyTooltip termId="kango">On (china):</TerminologyTooltip></strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.onyomi}</span></div>
-                        )}
-                        {!k.kunyomi && !k.onyomi && k.pronunciation && (
-                          <div><strong>Lectura:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.pronunciation}</span></div>
-                        )}
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, marginTop: 2 }}>
                         <button 
                           type="button"
-                          className="audio-btn" 
-                          style={{ width: 28, height: 28 }}
-                          onClick={() => audioManager.speak(getPrimaryKanjiReading(k) || k.kanji)}
-                          title="Escuchar pronunciación del kanji"
+                          className="btn btn-outline btn-xs" 
+                          onClick={() => {
+                            setDrawingKanji(k.kanji);
+                            updateParams(searchTerm, undefined, k.kanji);
+                          }}
+                          title="Practicar orden de trazos"
                         >
-                          <Volume2 size={14} />
+                          ✍️ Trazos
                         </button>
-                        <SpeechPractice 
-                          targetText={k.kanji} 
-                          targetKana={getPrimaryKanjiReading(k)} 
-                          acceptableReadings={getAllKanjiReadings(k)}
-                          compact={true} 
-                        />
+                      </div>
+
+                      <div className="kanji-meta" style={{ marginTop: 2 }}>
+                        <div className="kanji-meaning">
+                          {k.meaning_es}
+                        </div>
+                        {k.meaning_en && (
+                          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                            ({k.meaning_en})
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
 
-                  {/* Mnemonic */}
-                  {k.mnemonic && (
-                    <div className="kanji-mnemonic">
-                      💡 <strong>Mnemotecnia:</strong> {k.mnemonic}
-                    </div>
-                  )}
-
-                  {/* Compound Words with Progressive Disclosure */}
-                  {k.words && k.words.length > 0 && (() => {
-                    const isExpanded = Boolean(expandedCompoundKanji[k.kanji]);
-                    const displayWords = isExpanded || k.words.length <= 2 ? k.words : k.words.slice(0, 2);
-                    const remainingCount = k.words.length - 2;
-
-                    return (
-                      <div className="kanji-words-list">
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                            <TerminologyTooltip termId="jukugo">
-                              <span>Palabras Compuestas (Jukugo) ({k.words.length}):</span>
-                            </TerminologyTooltip>
-                          </span>
-                          {k.words.length > 2 && (
-                            <button
-                              type="button"
-                              onClick={() => toggleExpandWords(k.kanji)}
-                              style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: 'var(--primary)',
-                                fontSize: '0.75rem',
-                                fontWeight: 700,
-                                cursor: 'pointer',
-                                padding: '2px 6px',
-                                borderRadius: '4px'
-                              }}
-                            >
-                              {isExpanded ? 'Ver menos' : `+ Ver ${remainingCount} más`}
-                            </button>
+                    {/* Readings */}
+                    <div style={{ background: 'var(--bg-main)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '0.9rem', marginTop: 10 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                        <div style={{ flex: 1 }}>
+                          {k.kunyomi && (
+                            <div><strong><TerminologyTooltip termId="wago">Kun (japonesa):</TerminologyTooltip></strong> <span className="jp-text" style={{ color: 'var(--accent)', fontWeight: 600 }}>{k.kunyomi}</span></div>
+                          )}
+                          {k.onyomi && (
+                            <div><strong><TerminologyTooltip termId="kango">On (china):</TerminologyTooltip></strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.onyomi}</span></div>
+                          )}
+                          {!k.kunyomi && !k.onyomi && k.pronunciation && (
+                            <div><strong>Lectura:</strong> <span className="jp-text" style={{ color: 'var(--primary)', fontWeight: 600 }}>{k.pronunciation}</span></div>
                           )}
                         </div>
-                        {displayWords.map((w, idx) => (
-                          <div key={idx} className="kanji-word-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6, padding: '8px 10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                              <span className="jp-text" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                                {w.word === '美化語' ? (
-                                  <TerminologyTooltip termId="bikougo">
-                                    <span style={{ cursor: 'pointer', borderBottom: '1.5px dashed var(--primary)' }}>
-                                      {w.word}
-                                    </span>
-                                  </TerminologyTooltip>
-                                ) : (
-                                  w.word
-                                )}{' '}
-                                <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
-                              </span>
-                              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1, marginLeft: 8 }}>{w.meaning}</span>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                                <button 
-                                  type="button"
-                                  className="audio-btn" 
-                                  style={{ width: 26, height: 26, flexShrink: 0 }}
-                                  onClick={() => audioManager.speak(w.reading || w.word)}
-                                  title="Escuchar palabra"
-                                >
-                                  <Volume2 size={13} />
-                                </button>
-                                <SpeechPractice 
-                                  targetText={w.word} 
-                                  targetKana={w.reading} 
-                                  compact={true} 
-                                />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, marginTop: 2 }}>
+                          <button 
+                            type="button"
+                            className="audio-btn" 
+                            style={{ width: 28, height: 28 }}
+                            onClick={() => audioManager.speak(getPrimaryKanjiReading(k) || k.kanji)}
+                            title="Escuchar pronunciación del kanji"
+                          >
+                            <Volume2 size={14} />
+                          </button>
+                          <SpeechPractice 
+                            targetText={k.kanji} 
+                            targetKana={getPrimaryKanjiReading(k)} 
+                            acceptableReadings={getAllKanjiReadings(k)}
+                            compact={true} 
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mnemonic */}
+                    {k.mnemonic && (
+                      <div className="kanji-mnemonic">
+                        💡 <strong>Mnemotecnia:</strong> {k.mnemonic}
+                      </div>
+                    )}
+
+                    {/* Compound Words with Progressive Disclosure */}
+                    {k.words && k.words.length > 0 && (() => {
+                      const isExpanded = Boolean(expandedCompoundKanji[k.kanji]);
+                      const displayWords = isExpanded || k.words.length <= 2 ? k.words : k.words.slice(0, 2);
+                      const remainingCount = k.words.length - 2;
+
+                      return (
+                        <div className="kanji-words-list">
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                              <TerminologyTooltip termId="jukugo">
+                                <span>Palabras Compuestas ({k.words.length}):</span>
+                              </TerminologyTooltip>
+                            </span>
+                            {k.words.length > 2 && (
+                              <button
+                                type="button"
+                                onClick={() => toggleExpandWords(k.kanji)}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  color: 'var(--primary)',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px'
+                                }}
+                              >
+                                {isExpanded ? 'Ver menos' : `+ Ver ${remainingCount} más`}
+                              </button>
+                            )}
+                          </div>
+                          {displayWords.map((w, idx) => (
+                            <div key={idx} className="kanji-word-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6, padding: '8px 10px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                                <span className="jp-text" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                                  {w.word}{' '}
+                                  <small style={{ color: 'var(--primary)', fontWeight: 'normal' }}>({w.reading})</small>
+                                </span>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1, marginLeft: 8 }}>{w.meaning}</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                                  <button 
+                                    type="button"
+                                    className="audio-btn" 
+                                    style={{ width: 26, height: 26, flexShrink: 0 }}
+                                    onClick={() => audioManager.speak(w.reading || w.word)}
+                                    title="Escuchar palabra"
+                                  >
+                                    <Volume2 size={13} />
+                                  </button>
+                                  <SpeechPractice 
+                                    targetText={w.word} 
+                                    targetKana={w.reading} 
+                                    compact={true} 
+                                  />
+                                </div>
+                              </div>
+                              <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-start' }}>
+                                <PitchAccent word={w.word} reading={w.reading} mode="compact" size="sm" />
                               </div>
                             </div>
-                            {/* Curva visual de Pitch Accent */}
-                            <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-start' }}>
-                              <PitchAccent word={w.word} reading={w.reading} mode="compact" size="sm" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  })()}
-                </div>
-              );
-            }))}
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                );
+              })
+            )}
           </div>
 
           {visibleCount < filteredKanji.length && (
@@ -885,6 +1083,7 @@ export default function KanjiTab({
           )}
         </div>
       ) : srsActive ? (
+        /* MODO REPASO SRS: Solo kanjis aprendidos con espaciado FSRS */
         <SrsReview 
           queue={srsQueue}
           onRate={handleSrsReview}
@@ -1007,7 +1206,7 @@ export default function KanjiTab({
                 </div>
               )}
 
-              {/* Curva de Pitch Accent para lectura o palabra principal del Kanji */}
+              {/* Pitch Accent */}
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
                 <PitchAccent 
                   word={item.words?.[0]?.word || item.kanji} 
@@ -1038,39 +1237,12 @@ export default function KanjiTab({
                 >
                   ✍️ Practicar Trazos
                 </button>
-                <button 
-                  type="button"
-                  className="btn btn-outline btn-sm" 
-                  onClick={() => {
-                    if (contextApp?.openPracticePad) {
-                      contextApp.openPracticePad({
-                        text: item.kanji,
-                        kana: getPrimaryKanjiReading(item),
-                        title: `Kanji: ${item.kanji} (${item.meaning_es})`,
-                        source: 'kanji',
-                        initialChar: item.kanji
-                      });
-                    } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
-                      window.__nihongoOpenPracticePad({
-                        text: item.kanji,
-                        kana: getPrimaryKanjiReading(item),
-                        title: `Kanji: ${item.kanji} (${item.meaning_es})`,
-                        source: 'kanji',
-                        initialChar: item.kanji
-                      });
-                    }
-                  }}
-                  title="Abrir en Cuaderno de Cuadrícula y Caligrafía"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
-                >
-                  <PenTool size={14} /> Cuaderno
-                </button>
               </div>
 
-              {/* Vocabulario contextual con este Kanji */}
+              {/* Vocabulario contextual */}
               {item.words && item.words.length > 0 && (
                 <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)', textAlign: 'left' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 10 }}>
                     📖 Vocabulario con este Kanji:
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8 }}>
@@ -1114,135 +1286,395 @@ export default function KanjiTab({
           )}
         />
       ) : (
-        /* QUIZ MODE */
-        <div className="quiz-container" style={{ maxWidth: 640 }}>
-          {currentQuizItem ? (
+        /* MODO ESTUDIAR KANJIS (Muestra solo los que faltan por aprender) */
+        <div className="quiz-container" style={{ maxWidth: 680 }}>
+          {currentStudyItem ? (
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <button className="btn btn-outline btn-sm" onClick={() => {
-                  setQuizActive(false);
-                  updateParams(searchTerm, 'list', drawingKanji);
-                }}>
+              {/* Barra superior del modo Estudio */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm" 
+                  onClick={() => {
+                    setStudyActive(false);
+                    updateParams(searchTerm, 'list', drawingKanji);
+                  }}
+                >
                   <ArrowLeft size={16} /> Volver a Kanjis
                 </button>
-                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                  Kanji {quizIndex + 1} de {quizItems.length}
+                <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  Kanji {studyIndex + 1} de {studyItems.length} por aprender
                 </span>
               </div>
 
-              <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              {/* Tarjeta de Estudio Focalizada */}
+              <div className="card" style={{ padding: '24px 20px', textAlign: 'center', marginBottom: 18 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <span className="vocab-tag" style={{ fontWeight: 700 }}>{currentStudyItem.level || 'N5'}</span>
+                  {currentStudyItem.strokes && (
+                    <span style={{ fontSize: '0.78rem', background: 'var(--bg-main)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                      {currentStudyItem.strokes} trazos
+                    </span>
+                  )}
+                </div>
+
                 <div 
                   className="kanji-big-char jp-text"
-                  style={{ width: 100, height: 100, fontSize: '3.8rem', margin: '0 auto 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ width: 110, height: 110, fontSize: '4.5rem', margin: '0 auto 12px auto' }}
                 >
-                  {currentQuizItem.kanji}
+                  {currentStudyItem.kanji}
                 </div>
-                <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                  Significado: {currentQuizItem.meaning}
+
+                <div style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>
+                  {currentStudyItem.meaning_es}
                 </div>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: 6 }}>
-                  Escribe la lectura en Hiragana usando tu teclado en japonés:
-                </p>
+
+                {/* Lecturas Kun y On */}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  gap: 16, 
+                  flexWrap: 'wrap', 
+                  background: 'var(--bg-main)', 
+                  padding: '10px 14px', 
+                  borderRadius: 10,
+                  border: '1px solid var(--border)',
+                  marginBottom: 14,
+                  fontSize: '0.9rem'
+                }}>
+                  {currentStudyItem.kunyomi && (
+                    <div>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', marginRight: 6 }}>Kun:</span>
+                      <strong className="jp-text" style={{ color: 'var(--accent)' }}>{currentStudyItem.kunyomi}</strong>
+                    </div>
+                  )}
+                  {currentStudyItem.onyomi && (
+                    <div>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', marginRight: 6 }}>On:</span>
+                      <strong className="jp-text" style={{ color: 'var(--primary)' }}>{currentStudyItem.onyomi}</strong>
+                    </div>
+                  )}
+                </div>
+
+                {/* Mnemotecnia */}
+                {currentStudyItem.mnemonic && (
+                  <div style={{ 
+                    fontSize: '0.88rem', 
+                    background: 'rgba(234, 179, 8, 0.08)', 
+                    border: '1px solid rgba(234, 179, 8, 0.25)', 
+                    padding: '8px 12px', 
+                    borderRadius: 8, 
+                    color: 'var(--text-muted)',
+                    marginBottom: 14,
+                    textAlign: 'left'
+                  }}>
+                    💡 <strong>Mnemotecnia:</strong> {currentStudyItem.mnemonic}
+                  </div>
+                )}
+
+                {/* Acciones de trazos y audio */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 16 }}>
+                  <button 
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => audioManager.speak(getPrimaryKanjiReading(currentStudyItem) || currentStudyItem.kanji)}
+                  >
+                    <Volume2 size={15} /> Escuchar
+                  </button>
+                  <button 
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setDrawingKanji(currentStudyItem.kanji)}
+                  >
+                    ✍️ Practicar Trazos
+                  </button>
+                </div>
+
+                {/* Botón directo de "Marcar como Aprendido" */}
+                <div style={{ paddingTop: 14, borderTop: '1px dashed var(--border)' }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ width: '100%', maxWidth: 320, margin: '0 auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                    onClick={() => handleMarkLearnedFromStudy(currentStudyItem.kanji)}
+                  >
+                    <CheckCircle2 size={18} />
+                    <span>✓ Marcar como Aprendido (+20 XP)</span>
+                  </button>
+                </div>
               </div>
 
+              {/* Caja de validación interactiva de lectura */}
               <div className="typing-box">
                 <div className="typing-prompt">
-                  <span>✍️ Lectura en Hiragana:</span>
-                  <span className="ime-badge">🇯🇵 Teclado IME</span>
+                  <span>O escribe la lectura para validar y aprender:</span>
+                  <span className="ime-badge">🇯🇵 IME Romaji → Kana</span>
                 </div>
 
                 <div className="typing-input-row">
                   <input 
                     type="text" 
                     className="japanese-input jp-text"
-                    placeholder="Escribe la lectura en romaji (se convierte a hiragana)..."
-                    value={quizInput}
+                    placeholder="Escribe la lectura en hiragana..."
+                    value={studyInput}
                     onChange={(e) => {
                       const val = e.target.value;
                       const converted = wanakana.toKana(val, { IMEMode: true });
-                      setQuizInput(converted);
+                      setStudyInput(converted);
                     }}
                     onCompositionStart={() => { isComposingRef.current = true; }}
                     onCompositionEnd={() => { isComposingRef.current = false; }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !isComposingRef.current) {
-                        handleValidateReading();
+                        handleValidateStudyReading();
                       }
                     }}
                     autoFocus
                   />
-                  <button className="btn btn-primary" onClick={handleValidateReading}>
+                  <button type="button" className="btn btn-primary" onClick={() => handleValidateStudyReading()}>
                     Validar
                   </button>
-                  <button className="btn btn-outline" onClick={handleShowHint} title="Revelar primer kana">
+                  <button type="button" className="btn btn-outline" onClick={handleStudyHint} title="Revelar primer kana">
                     <Lightbulb size={16} /> Pista
                   </button>
                 </div>
 
-                <div style={{ marginTop: 14, paddingTop: 10, borderTop: '1px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>O practica diciendo la lectura:</span>
+                <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>O practica pronunciando:</span>
                   <SpeechPractice 
-                    targetText={currentQuizItem.kanji} 
-                    targetKana={currentQuizItem.reading} 
-                    acceptableReadings={currentQuizItem.words?.map(w => w.reading)}
-                    onMatch={(spoken) => {
-                      setQuizInput(currentQuizItem.reading);
-                      handleValidateReading(currentQuizItem.reading);
+                    targetText={currentStudyItem.kanji} 
+                    targetKana={getPrimaryKanjiReading(currentStudyItem)} 
+                    acceptableReadings={getAllKanjiReadings(currentStudyItem)}
+                    onMatch={() => {
+                      handleMarkLearnedFromStudy(currentStudyItem.kanji);
                     }}
                   />
                 </div>
 
-                {quizFeedback && (
-                  <div className={`typing-feedback ${quizFeedback.type}`}>
-                    <div>{quizFeedback.msg}</div>
-                    <div className="jp-text" style={{ fontSize: '1.2rem', marginTop: 4 }}>
-                      {quizFeedback.reading}
-                    </div>
+                {studyFeedback && (
+                  <div className={`typing-feedback ${studyFeedback.type}`} style={{ marginTop: 12 }}>
+                    <div>{studyFeedback.msg}</div>
+                    {studyFeedback.reading && (
+                      <div className="jp-text" style={{ fontSize: '1.2rem', marginTop: 4 }}>
+                        {studyFeedback.reading}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
+              {/* Botones de Navegación Anterior / Siguiente */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
                 <button 
+                  type="button"
                   className="btn btn-outline btn-sm"
                   onClick={() => {
-                    setQuizFeedback(null);
-                    setQuizInput('');
-                    setQuizIndex((prev) => Math.max(0, prev - 1));
+                    setStudyFeedback(null);
+                    setStudyInput('');
+                    setStudyIndex((prev) => Math.max(0, prev - 1));
                   }}
+                  disabled={studyIndex === 0}
                 >
                   <ArrowLeft size={16} /> Anterior
                 </button>
                 <button 
+                  type="button"
                   className="btn btn-outline btn-sm"
                   onClick={() => {
-                    setQuizFeedback(null);
-                    setQuizInput('');
-                    setQuizIndex((prev) => prev + 1);
+                    setStudyFeedback(null);
+                    setStudyInput('');
+                    setStudyIndex((prev) => Math.min(studyItems.length - 1, prev + 1));
                   }}
+                  disabled={studyIndex >= studyItems.length - 1}
                 >
-                  Siguiente <ArrowRight size={16} />
+                  Saltar <ArrowRight size={16} />
                 </button>
               </div>
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-              <div style={{ fontSize: '3.5rem', marginBottom: 12 }}>🏆</div>
-              <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: 12 }}>¡Práctica de Kanji Completada!</h3>
-              <p style={{ color: 'var(--text-muted)', marginBottom: 24 }}>Has repasado la lectura y escritura de tus Kanjis. ¡Gran trabajo!</p>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-                <button className="btn btn-primary" onClick={() => { setQuizIndex(0); setQuizFeedback(null); }}>
-                  <RotateCcw size={16} /> Repetir Práctica
+              <div style={{ fontSize: '3.6rem', marginBottom: 14 }}>🏆</div>
+              <h3 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: 12, color: 'var(--text-main)' }}>
+                ¡Todos los kanjis aprendidos!
+              </h3>
+              <p style={{ color: 'var(--text-muted)', marginBottom: 24, maxWidth: 440, margin: '0 auto 24px auto', lineHeight: 1.5 }}>
+                No quedan más kanjis por aprender con los filtros actuales. Pásate al Repaso SRS para consolidarlos en tu memoria a largo plazo.
+              </p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button 
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => startSrsSession(true)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+                >
+                  <Brain size={18} /> Ir al Repaso SRS
                 </button>
-                <button className="btn btn-outline" onClick={() => {
-                  setQuizActive(false);
-                  updateParams(searchTerm, 'list', drawingKanji);
-                }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => {
+                    setStudyActive(false);
+                    updateParams(searchTerm, 'list', drawingKanji);
+                  }}
+                >
                   Volver a la Biblioteca
                 </button>
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* MODAL GESTOR DE ETIQUETAS (TAGS) PERSONALIZADAS */}
+      {tagEditorKanji && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          background: 'rgba(0,0,0,0.6)', zIndex: 1100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div className="card" style={{ maxWidth: 440, width: '100%', position: 'relative', padding: '24px 20px' }}>
+            <button 
+              type="button"
+              className="btn btn-ghost btn-xs"
+              style={{ position: 'absolute', top: 12, right: 12, borderRadius: '50%', width: 30, height: 30, padding: 0 }}
+              onClick={() => {
+                setTagEditorKanji(null);
+                setNewTagInput('');
+              }}
+              title="Cerrar"
+            >
+              <X size={16} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <div className="kanji-big-char jp-text" style={{ width: 50, height: 50, fontSize: '2rem' }}>
+                {tagEditorKanji.kanji}
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
+                  Etiquetas de 【{tagEditorKanji.kanji}】
+                </h3>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  {tagEditorKanji.meaning_es}
+                </div>
+              </div>
+            </div>
+
+            {/* Etiquetas activas */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
+                Etiquetas asignadas:
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {getKanjiTags(tagEditorKanji.kanji, appState.kanjiTags).map(tag => (
+                  <span
+                    key={tag}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      background: 'rgba(99, 102, 241, 0.12)',
+                      color: 'var(--primary)',
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      padding: '3px 8px',
+                      borderRadius: 12,
+                      fontSize: '0.82rem',
+                      fontWeight: 700
+                    }}
+                  >
+                    <span>#{tag}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTagFromCurrent(tag)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: 'var(--primary)',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                      title="Eliminar etiqueta"
+                    >
+                      <X size={13} />
+                    </button>
+                  </span>
+                ))}
+                {getKanjiTags(tagEditorKanji.kanji, appState.kanjiTags).length === 0 && (
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Sin etiquetas asignadas.
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Sugerencias populares */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
+                Sugerencias populares (haz clic para agregar):
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {POPULAR_TAG_SUGGESTIONS.map(sugg => {
+                  const currentTags = getKanjiTags(tagEditorKanji.kanji, appState.kanjiTags);
+                  const isPresent = currentTags.includes(sugg);
+                  return (
+                    <button
+                      key={sugg}
+                      type="button"
+                      className={`btn btn-xs ${isPresent ? 'btn-primary' : 'btn-outline'}`}
+                      style={{ borderRadius: 12, fontSize: '0.75rem', padding: '2px 8px' }}
+                      onClick={() => {
+                        if (isPresent) handleRemoveTagFromCurrent(sugg);
+                        else handleAddTagToCurrent(sugg);
+                      }}
+                    >
+                      {isPresent ? `✓ ${sugg}` : `+ ${sugg}`}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Input para nueva etiqueta personalizada */}
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              <input 
+                type="text" 
+                className="input-text" 
+                style={{ flex: 1, fontSize: '0.88rem' }}
+                placeholder="Crear nueva etiqueta (ej. Trabajo, Viaje)..."
+                value={newTagInput}
+                onChange={(e) => setNewTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddTagToCurrent(newTagInput);
+                  }
+                }}
+              />
+              <button 
+                type="button" 
+                className="btn btn-primary btn-sm"
+                onClick={() => handleAddTagToCurrent(newTagInput)}
+                disabled={!newTagInput.trim()}
+              >
+                Añadir
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setTagEditorKanji(null);
+                  setNewTagInput('');
+                }}
+              >
+                Listo
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -1256,7 +1688,8 @@ export default function KanjiTab({
         }}>
           <div className="card" style={{ maxWidth: 420, width: '100%', position: 'relative', textAlign: 'center', padding: '22px 20px 18px 20px', maxHeight: '94vh', overflowY: 'auto' }}>
             <button 
-              className="btn btn-outline btn-sm"
+              type="button"
+              className="btn btn-outline btn-sm" 
               style={{ position: 'absolute', top: 12, right: 12, borderRadius: '50%', width: 32, height: 32, padding: 0 }}
               onClick={() => {
                 setDrawingKanji(null);

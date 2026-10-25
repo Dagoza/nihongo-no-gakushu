@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { X, Flame, Star, CheckCircle2, RotateCcw, Volume2, Eye, EyeOff, Sparkles, ArrowRight, Bell, Award, Languages, Layers, Target, Check, Settings2, Info, Maximize2 } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
 import { SRSRating, isDue, reviewQuestionCard, getIntervalPreviews } from '../../lib/srs';
@@ -78,7 +78,7 @@ const JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'];
 
 export default function DailyGoalModal({ isOpen, onClose }) {
   const modalCardRef = useFocusTrap(isOpen);
-  const { appState, onUpdateState, openTour, openNotificationSettings } = useApp();
+  const { appState, onUpdateState, openTour, openNotificationSettings, navigate } = useApp();
   const appStateRef = useRef(appState);
 
   appStateRef.current = appState;
@@ -512,7 +512,9 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                 className="tour-info-shortcut-btn daily-goal-shortcut-btn"
                 onClick={() => {
                   onClose();
-                  if (typeof window !== 'undefined') {
+                  if (navigate) {
+                    navigate('srs');
+                  } else if (typeof window !== 'undefined') {
                     window.location.href = '/srs';
                   }
                 }}
@@ -887,47 +889,35 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   </div>
 
                   {/* FSRS Rating Adjustment Bar */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingTop: 10,
-                    borderTop: '1px solid rgba(0,0,0,0.06)',
-                    flexWrap: 'wrap',
-                    gap: 8
-                  }}>
+                  <div className="srs-rating-container" style={{ paddingTop: 10, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
                     <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                       Calificar dificultad en memoria:
                     </span>
-                    <div style={{ display: 'flex', gap: 6 }}>
+                    <div className="srs-rating-grid">
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.AGAIN ? 'btn-danger' : 'btn-outline'}`}
-                        style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.AGAIN ? 'btn-danger' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.AGAIN)}
                       >
                         Repetir ({questionIntervals[1] || '1d'})
                       </button>
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.HARD ? 'btn-primary' : 'btn-outline'}`}
-                        style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.HARD ? 'btn-primary' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.HARD)}
                       >
                         Difícil ({questionIntervals[2] || '2d'})
                       </button>
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.GOOD ? 'btn-primary' : 'btn-outline'}`}
-                        style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.GOOD ? 'btn-primary' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.GOOD)}
                       >
                         Bien ({questionIntervals[3] || '3d'})
                       </button>
                       <button
                         type="button"
-                        className={`btn btn-sm ${feedback.rating === SRSRating.EASY ? 'btn-success' : 'btn-outline'}`}
-                        style={{ padding: '2px 8px', fontSize: '0.72rem', borderRadius: 6 }}
+                        className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.EASY ? 'btn-success' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.EASY)}
                       >
                         Fácil ({questionIntervals[4] || '8d'})
