@@ -933,72 +933,251 @@ export default function ConversationTab({
             </div>
           )}
 
-          {/* Dialogue Selector Pills */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', maxHeight: 180, overflowY: 'auto', padding: '4px 0' }}>
-            {visibleDialogues.length === 0 ? (
-              <div style={{ padding: '16px 20px', textAlign: 'center', width: '100%', color: 'var(--text-muted)' }}>
-                <p style={{ margin: '0 0 8px 0', fontSize: '0.9rem' }}>No se encontraron diálogos con los filtros seleccionados.</p>
-                <button 
-                  type="button" 
-                  className="btn btn-outline btn-sm" 
-                  onClick={() => { setSeriesFilter('all'); setLevelFilter('all'); setStatusFilter('all'); setSearchDialogueQuery(''); }}
-                >
-                  Restablecer filtros
-                </button>
-              </div>
-            ) : (
-              visibleDialogues.map(d => {
-                const isDone = isDialogueCompleted(d);
-                const isSelected = d.id === selectedDialogueId;
-
-                return (
-                  <button
-                    key={d.id}
-                    className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
-                    onClick={() => {
-                      setSelectedDialogueId(d.id);
-                      setMutedSpeaker('');
-                      setRevealedLineIndices({});
-                      updateParams(d.id, activeSubTab, statusFilter, filterType);
-                    }}
-                    style={{ 
-                      fontSize: '0.82rem', 
-                      whiteSpace: 'nowrap',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      borderColor: isDone ? (isSelected ? 'var(--primary)' : '#22c55e') : undefined,
-                      background: isDone && !isSelected ? 'rgba(34, 197, 94, 0.08)' : undefined
-                    }}
-                    title={`${d.series} · Nivel ${d.level} · ${d.title_es}`}
+          {/* When no dialogue is selected: Overview List of Conversation Cards */}
+          {!currentDialogue ? (
+            <div className="curriculum-list" style={{ marginTop: 8 }}>
+              {visibleDialogues.length === 0 ? (
+                <div className="card" style={{ padding: '36px 20px', textAlign: 'center', width: '100%', color: 'var(--text-muted)' }}>
+                  <p style={{ margin: '0 0 12px 0', fontSize: '1rem' }}>No se encontraron conversaciones con los filtros seleccionados.</p>
+                  <button 
+                    type="button" 
+                    className="btn btn-outline btn-sm" 
+                    onClick={handleResetFilters}
                   >
-                    {isDone ? (
-                      <CheckCircle2 size={13} color={isSelected ? '#fff' : '#22c55e'} />
-                    ) : (
-                      <span style={{ opacity: 0.5, fontSize: '0.75rem' }}>○</span>
-                    )}
-                    <span style={{ 
-                      fontSize: '0.7rem', 
-                      fontWeight: 800, 
-                      padding: '1px 5px', 
-                      borderRadius: 3, 
-                      background: isSelected ? 'rgba(255, 255, 255, 0.25)' : (d.level === 'N5' ? 'rgba(16, 185, 129, 0.15)' : d.level === 'N4' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)'),
-                      color: isSelected ? '#fff' : (d.level === 'N5' ? '#059669' : d.level === 'N4' ? '#2563eb' : '#d97706')
-                    }}>
-                      {d.level}
-                    </span>
-                    <span>
-                      {d.seriesKey === 'irodori' ? `Irodori ${d.dialogueNum}` : `L${d.dialogueNum}`}: {d.title_jp.slice(0, 16)}...
-                    </span>
+                    Restablecer filtros
                   </button>
-                );
-              })
-            )}
-          </div>
+                </div>
+              ) : (
+                visibleDialogues.map(d => {
+                  const isDone = isDialogueCompleted(d);
+                  const seriesBadgeBg = d.seriesKey === 'irodori' ? 'rgba(37, 99, 235, 0.12)' : 'rgba(220, 38, 38, 0.12)';
+                  const seriesBadgeColor = d.seriesKey === 'irodori' ? '#2563eb' : '#dc2626';
+                  const lvlBg = d.level === 'N5' ? 'rgba(16, 185, 129, 0.15)' : d.level === 'N4' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+                  const lvlColor = d.level === 'N5' ? '#059669' : d.level === 'N4' ? '#2563eb' : '#d97706';
 
-          {currentDialogue && (
-            <div className="card" style={{ marginBottom: 24, border: isCurrentDialogueCompleted ? '1.5px solid rgba(34, 197, 94, 0.4)' : undefined }}>
-              {/* Top Info Bar */}
+                  return (
+                    <div
+                      key={d.id}
+                      className={`curriculum-step-card ${isDone ? 'completed' : ''}`}
+                      onClick={() => handleOpenDialogue(d.id)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div className="step-card-header">
+                        <div 
+                          className="step-number-badge"
+                          style={{ 
+                            background: isDone ? 'rgba(16, 185, 129, 0.12)' : seriesBadgeBg, 
+                            color: isDone ? 'var(--success)' : seriesBadgeColor 
+                          }}
+                        >
+                          <span style={{ fontSize: '1.25rem' }}>{d.seriesKey === 'irodori' ? '🏙️' : '📻'}</span>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 800 }}>
+                            {d.seriesKey === 'irodori' ? `I-${d.dialogueNum}` : `L-${d.dialogueNum}`}
+                          </span>
+                        </div>
+
+                        <div className="step-header-content">
+                          <div className="step-header-main">
+                            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6, alignItems: 'center' }}>
+                              <span style={{ 
+                                fontSize: '0.72rem', 
+                                fontWeight: 800, 
+                                padding: '2px 8px', 
+                                borderRadius: 4, 
+                                background: seriesBadgeBg, 
+                                color: seriesBadgeColor 
+                              }}>
+                                {d.series}
+                              </span>
+
+                              <span style={{ 
+                                fontSize: '0.72rem', 
+                                fontWeight: 800, 
+                                padding: '2px 8px', 
+                                borderRadius: 4, 
+                                background: lvlBg, 
+                                color: lvlColor 
+                              }}>
+                                Nivel {d.level}
+                              </span>
+
+                              <span style={{ 
+                                fontSize: '0.72rem', 
+                                fontWeight: 700, 
+                                padding: '2px 8px', 
+                                borderRadius: 4, 
+                                background: 'var(--bg-main)', 
+                                border: '1px solid var(--border)',
+                                color: 'var(--text-muted)' 
+                              }}>
+                                💬 {d.dialogue.length} turnos
+                              </span>
+
+                              {d.characters.length > 0 && (
+                                <span style={{ 
+                                  fontSize: '0.72rem', 
+                                  fontWeight: 600, 
+                                  padding: '2px 8px', 
+                                  borderRadius: 4, 
+                                  background: 'var(--bg-main)', 
+                                  border: '1px solid var(--border)',
+                                  color: 'var(--text-muted)' 
+                                }}>
+                                  👥 {d.characters.join(', ')}
+                                </span>
+                              )}
+
+                              {(d.audio_local || d.audio_url) && (
+                                <span style={{ 
+                                  fontSize: '0.72rem', 
+                                  fontWeight: 700, 
+                                  padding: '2px 8px', 
+                                  borderRadius: 4, 
+                                  background: 'rgba(16, 185, 129, 0.12)', 
+                                  color: '#059669' 
+                                }}>
+                                  🎙️ Audio nativo
+                                </span>
+                              )}
+
+                              {d.related_step && (
+                                <span style={{ 
+                                  fontSize: '0.72rem', 
+                                  fontWeight: 600, 
+                                  padding: '2px 8px', 
+                                  borderRadius: 4, 
+                                  background: 'var(--bg-surface)', 
+                                  border: '1px solid var(--border)', 
+                                  color: 'var(--text-muted)' 
+                                }}>
+                                  🔗 Módulo {d.related_step}
+                                </span>
+                              )}
+                            </div>
+
+                            <h3 className="step-title jp-text" style={{ fontSize: '1.25rem', marginBottom: 4 }}>
+                              {d.title_jp}
+                            </h3>
+                            <p className="step-subtitle" style={{ fontSize: '0.92rem', color: 'var(--text-muted)', margin: 0 }}>
+                              🇪🇸 {d.title_es}
+                            </p>
+                          </div>
+
+                          <div className="step-card-actions" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              type="button"
+                              className={`step-card-check-btn ${isDone ? 'checked' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDialogueCompletion(d);
+                              }}
+                              title={isDone ? 'Conversación estudiada (Clic para desmarcar)' : 'Marcar conversación como estudiada (+30 XP)'}
+                            >
+                              <div className={`step-checkbox-square ${isDone ? 'checked' : ''}`}>
+                                {isDone ? <Check size={12} strokeWidth={3} /> : null}
+                              </div>
+                              <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>
+                                {isDone ? 'Estudiada ✓' : 'Marcar'}
+                              </span>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm"
+                              onClick={() => handleOpenDialogue(d.id)}
+                              style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+                            >
+                              <span>Practicar Diálogo</span>
+                              <ArrowRight size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Excerpt / situation line */}
+                      {(d.situation || d.dialogue?.[0]) && (
+                        <div className="step-card-details" style={{ fontSize: '0.86rem' }}>
+                          {d.situation ? (
+                            <div style={{ color: 'var(--text-main)', lineHeight: 1.5 }}>
+                              📍 <strong>Situación:</strong> {d.situation}
+                            </div>
+                          ) : (
+                            <div style={{ color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>
+                              💬 {d.dialogue[0].speaker}: «{d.dialogue[0].jp || d.dialogue[0].japanese}» ({d.dialogue[0].es || d.dialogue[0].spanish})
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          ) : (
+            /* When a dialogue is selected: Full Detail View */
+            <div className="curriculum-detail-view" style={{ marginBottom: 24 }}>
+              {/* Top Navigation Toolbar */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                flexWrap: 'wrap', 
+                gap: 12, 
+                marginBottom: 16,
+                paddingBottom: 14,
+                borderBottom: '1px solid var(--border)'
+              }}>
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={handleBackToList}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+                >
+                  <ArrowLeft size={16} />
+                  <span>Volver a la lista de conversaciones</span>
+                </button>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  {prevDialogue && (
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      onClick={() => handleOpenDialogue(prevDialogue.id)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                      title={`Conversación anterior: ${prevDialogue.title_es}`}
+                    >
+                      <ChevronLeft size={14} />
+                      <span>Anterior</span>
+                    </button>
+                  )}
+
+                  {nextDialogue && (
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      onClick={() => handleOpenDialogue(nextDialogue.id)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                      title={`Siguiente conversación: ${nextDialogue.title_es}`}
+                    >
+                      <span>Siguiente</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    className={`btn ${isCurrentDialogueCompleted ? 'btn-outline' : 'btn-primary'} btn-sm`}
+                    onClick={() => toggleDialogueCompletion(currentDialogue)}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+                  >
+                    <CheckCircle2 size={16} color={isCurrentDialogueCompleted ? 'var(--success)' : '#fff'} />
+                    <span>{isCurrentDialogueCompleted ? 'Conversación Estudiada ✓' : 'Marcar como Estudiada (+30 XP)'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="card" style={{ marginBottom: 24, border: isCurrentDialogueCompleted ? '1.5px solid rgba(34, 197, 94, 0.4)' : undefined }}>
+                {/* Top Info Bar */}
               <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
@@ -1822,7 +2001,29 @@ export default function ConversationTab({
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {prevDialogue && (
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      onClick={() => handleOpenDialogue(prevDialogue.id)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                    >
+                      <ChevronLeft size={14} />
+                      <span>{prevDialogue.seriesKey === 'irodori' ? `I-${prevDialogue.dialogueNum}` : `L-${prevDialogue.dialogueNum}`}</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={handleBackToList}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}
+                  >
+                    <ArrowLeft size={14} />
+                    <span>Volver a la Lista</span>
+                  </button>
+
                   <button
                     className="btn btn-sm"
                     onClick={() => toggleDialogueCompletion(currentDialogue)}
@@ -1846,20 +2047,32 @@ export default function ConversationTab({
                     )}
                   </button>
 
-                  <button
-                    className="btn btn-outline btn-sm"
-                    onClick={handleJumpToNextPending}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                  >
-                    <span>Siguiente conversación</span>
-                    <ChevronRight size={16} />
-                  </button>
+                  {nextDialogue ? (
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handleOpenDialogue(nextDialogue.id)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    >
+                      <span>{nextDialogue.seriesKey === 'irodori' ? `I-${nextDialogue.dialogueNum}` : `L-${nextDialogue.dialogueNum}`}</span>
+                      <ChevronRight size={16} />
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-outline btn-sm"
+                      onClick={handleJumpToNextPending}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    >
+                      <span>Siguiente pendiente</span>
+                      <ChevronRight size={16} />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
-          )}
-        </>
-      )}
+          </div>
+        )}
+      </>
+    )}
 
       {/* ========================================================================= */}
       {/* SUBTAB 2: AI ROLEPLAY INTERACTIVE MODE                                    */}
