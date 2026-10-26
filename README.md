@@ -290,7 +290,7 @@ nihongo-master/
 │   ├── nhk_lessons.json     # 48 lecciones NHK
 │   ├── irodori_dialogues.json # 22 diálogos Irodori
 │   ├── conversation_exercises.json # 210 ejercicios conversacionales
-│   ├── stories.json         # 4 historias interactivas
+│   ├── stories.json         # 10 historias interactivas graduadas (N5→N1)
 │   ├── pitch_accents.json   # 1 251 patrones de acento tonal
 │   ├── dictionary.json      # 1 528 entradas de diccionario
 │   ├── youtube_catalog.json # Catálogo de videos

@@ -2281,7 +2281,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_5",
+        "chapter": 1,
+        "title": "大学での出会いと自己紹介",
+        "story_title": "アンナの東京キャンパス日記",
+        "level": "N5",
+        "link_url": "/story?id=story_5&chapter=1"
+      }
+    ]
   },
   {
     "step": 3,
@@ -3393,7 +3402,7 @@
       {
         "id": "story_1",
         "chapter": 2,
-        "title": "学校への道と友達 (Camino a la escuela)",
+        "title": "学校への道と友達",
         "story_title": "日本での一日",
         "level": "N5",
         "link_url": "/story?id=story_1&chapter=2"
@@ -5912,7 +5921,7 @@
       {
         "id": "story_1",
         "chapter": 4,
-        "title": "昼休みと週末の計画 (Almuerzo y planes)",
+        "title": "昼休みと週末の計画",
         "story_title": "日本での一日",
         "level": "N5",
         "link_url": "/story?id=story_1&chapter=4"
@@ -6667,11 +6676,11 @@
     "related_stories": [
       {
         "id": "story_2",
-        "chapter": 1,
-        "title": "シェアハウスでの新しい生活",
+        "chapter": 3,
+        "title": "地下鉄に乗って秋葉原へ",
         "story_title": "東京での新しい暮らし",
         "level": "N5",
-        "link_url": "/story?id=story_2&chapter=1"
+        "link_url": "/story?id=story_2&chapter=3"
       }
     ]
   },
@@ -7903,7 +7912,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_5",
+        "chapter": 2,
+        "title": "キャンパスの案内と教室",
+        "story_title": "アンナの東京キャンパス日記",
+        "level": "N5",
+        "link_url": "/story?id=story_5&chapter=2"
+      }
+    ]
   },
   {
     "step": 8,
@@ -9199,7 +9217,7 @@
       {
         "id": "story_1",
         "chapter": 3,
-        "title": "日本語の授業 (Clase de japonés)",
+        "title": "日本語の授業",
         "story_title": "日本での一日",
         "level": "N5",
         "link_url": "/story?id=story_1&chapter=3"
@@ -9978,7 +9996,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_5",
+        "chapter": 3,
+        "title": "アルバイトの面接と職場ルール",
+        "story_title": "アンナの東京キャンパス日記",
+        "level": "N5",
+        "link_url": "/story?id=story_5&chapter=3"
+      }
+    ]
   },
   {
     "step": 10,
@@ -11187,11 +11214,11 @@
     "related_stories": [
       {
         "id": "story_2",
-        "chapter": 4,
-        "title": "下町の夏祭りと花火",
+        "chapter": 1,
+        "title": "シェアハウスでの新しい生活",
         "story_title": "東京での新しい暮らし",
         "level": "N5",
-        "link_url": "/story?id=story_2&chapter=4"
+        "link_url": "/story?id=story_2&chapter=1"
       }
     ]
   },
@@ -11968,11 +11995,11 @@
     "related_stories": [
       {
         "id": "story_2",
-        "chapter": 4,
-        "title": "下町の夏祭りと花火",
+        "chapter": 1,
+        "title": "シェアハウスでの新しい生活",
         "story_title": "東京での新しい暮らし",
         "level": "N5",
-        "link_url": "/story?id=story_2&chapter=4"
+        "link_url": "/story?id=story_2&chapter=1"
       }
     ]
   },
@@ -13818,11 +13845,11 @@
     "related_stories": [
       {
         "id": "story_2",
-        "chapter": 3,
-        "title": "地下鉄に乗って秋葉原へ",
+        "chapter": 2,
+        "title": "スーパーでの買い物と料理",
         "story_title": "東京での新しい暮らし",
         "level": "N5",
-        "link_url": "/story?id=story_2&chapter=3"
+        "link_url": "/story?id=story_2&chapter=2"
       }
     ]
   },
@@ -15349,11 +15376,11 @@
     "related_stories": [
       {
         "id": "story_2",
-        "chapter": 2,
-        "title": "スーパーでの買い物と料理",
+        "chapter": 4,
+        "title": "下町の夏祭りと花火",
         "story_title": "東京での新しい暮らし",
         "level": "N5",
-        "link_url": "/story?id=story_2&chapter=2"
+        "link_url": "/story?id=story_2&chapter=4"
       }
     ]
   },
@@ -16100,11 +16127,11 @@
     "related_stories": [
       {
         "id": "story_2",
-        "chapter": 2,
-        "title": "スーパーでの買い物と料理",
+        "chapter": 4,
+        "title": "下町の夏祭りと花火",
         "story_title": "東京での新しい暮らし",
         "level": "N5",
-        "link_url": "/story?id=story_2&chapter=2"
+        "link_url": "/story?id=story_2&chapter=4"
       }
     ]
   },
@@ -17918,7 +17945,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_6",
+        "chapter": 1,
+        "title": "箱根への週末旅行の計画",
+        "story_title": "アンナの温泉旅行と日本の伝統",
+        "level": "N5",
+        "link_url": "/story?id=story_6&chapter=1"
+      }
+    ]
   },
   {
     "step": 17,
@@ -19209,7 +19245,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_6",
+        "chapter": 2,
+        "title": "温泉宿のルールと露天風呂",
+        "story_title": "アンナの温泉旅行と日本の伝統",
+        "level": "N5",
+        "link_url": "/story?id=story_6&chapter=2"
+      }
+    ]
   },
   {
     "step": 18,
@@ -20470,7 +20515,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_6",
+        "chapter": 3,
+        "title": "旅先の風邪と薬局での相談",
+        "story_title": "アンナの温泉旅行と日本の伝統",
+        "level": "N5",
+        "link_url": "/story?id=story_6&chapter=3"
+      }
+    ]
   },
   {
     "step": 19,
@@ -21260,7 +21314,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_6",
+        "chapter": 4,
+        "title": "感謝の手紙と新しい目標",
+        "story_title": "アンナの温泉旅行と日本の伝統",
+        "level": "N5",
+        "link_url": "/story?id=story_6&chapter=4"
+      }
+    ]
   },
   {
     "step": 20,
@@ -22234,12 +22297,12 @@
     ],
     "related_stories": [
       {
-        "id": "story_3",
+        "id": "story_7",
         "chapter": 1,
-        "title": "日本に来たばかりの日々と電器屋",
-        "story_title": "日本での挑戦と発見",
+        "title": "川から流れてきた大きな桃",
+        "story_title": "昔話：桃太郎の冒険",
         "level": "N4",
-        "link_url": "/story?id=story_3&chapter=1"
+        "link_url": "/story?id=story_7&chapter=1"
       }
     ]
   },
@@ -23206,12 +23269,12 @@
     ],
     "related_stories": [
       {
-        "id": "story_3",
-        "chapter": 2,
-        "title": "ラーメン屋での注文とアレルギー",
-        "story_title": "日本での挑戦と発見",
+        "id": "story_8",
+        "chapter": 1,
+        "title": "雪の日の罠と優しい若者",
+        "story_title": "昔話：鶴の恩返し",
         "level": "N4",
-        "link_url": "/story?id=story_3&chapter=2"
+        "link_url": "/story?id=story_8&chapter=1"
       }
     ]
   },
@@ -25211,11 +25274,11 @@
     "related_stories": [
       {
         "id": "story_3",
-        "chapter": 3,
-        "title": "突然の雨と地域のお祭り",
+        "chapter": 2,
+        "title": "ラーメン屋での注文とアレルギー",
         "story_title": "日本での挑戦と発見",
         "level": "N4",
-        "link_url": "/story?id=story_3&chapter=3"
+        "link_url": "/story?id=story_3&chapter=2"
       }
     ]
   },
@@ -26179,12 +26242,12 @@
     "related_dialogues": [],
     "related_stories": [
       {
-        "id": "story_3",
-        "chapter": 3,
-        "title": "突然の雨と地域のお祭り",
-        "story_title": "日本での挑戦と発見",
+        "id": "story_7",
+        "chapter": 2,
+        "title": "鬼ヶ島への旅立ちときび団子",
+        "story_title": "昔話：桃太郎の冒険",
         "level": "N4",
-        "link_url": "/story?id=story_3&chapter=3"
+        "link_url": "/story?id=story_7&chapter=2"
       }
     ]
   },
@@ -27124,12 +27187,12 @@
     ],
     "related_stories": [
       {
-        "id": "story_3",
-        "chapter": 1,
-        "title": "日本に来たばかりの日々と電器屋",
-        "story_title": "日本での挑戦と発見",
+        "id": "story_7",
+        "chapter": 3,
+        "title": "仲間たちとの出会いと協力",
+        "story_title": "昔話：桃太郎の冒険",
         "level": "N4",
-        "link_url": "/story?id=story_3&chapter=1"
+        "link_url": "/story?id=story_7&chapter=3"
       }
     ]
   },
@@ -28089,12 +28152,12 @@
     ],
     "related_stories": [
       {
-        "id": "story_3",
-        "chapter": 4,
-        "title": "美容院と不在票の連絡",
-        "story_title": "日本での挑戦と発見",
+        "id": "story_8",
+        "chapter": 2,
+        "title": "吹雪の夜の美しい客",
+        "story_title": "昔話：鶴の恩返し",
         "level": "N4",
-        "link_url": "/story?id=story_3&chapter=4"
+        "link_url": "/story?id=story_8&chapter=2"
       }
     ]
   },
@@ -29050,12 +29113,12 @@
     ],
     "related_stories": [
       {
-        "id": "story_3",
-        "chapter": 5,
-        "title": "緊急地震速報と将来の夢",
-        "story_title": "日本での挑戦と発見",
+        "id": "story_8",
+        "chapter": 3,
+        "title": "決して見てはいけない部屋",
+        "story_title": "昔話：鶴の恩返し",
         "level": "N4",
-        "link_url": "/story?id=story_3&chapter=5"
+        "link_url": "/story?id=story_8&chapter=3"
       }
     ]
   },
@@ -31026,11 +31089,11 @@
     "related_stories": [
       {
         "id": "story_4",
-        "chapter": 3,
-        "title": "カフェでのオタク談義と友情",
+        "chapter": 1,
+        "title": "アパートの契約と引越し",
         "story_title": "日本社会で生きる：夢への架け橋",
         "level": "N3",
-        "link_url": "/story?id=story_4&chapter=3"
+        "link_url": "/story?id=story_4&chapter=1"
       }
     ]
   },
@@ -32033,11 +32096,11 @@
     "related_stories": [
       {
         "id": "story_4",
-        "chapter": 1,
-        "title": "アパートの契約と引越し",
+        "chapter": 2,
+        "title": "毎日の自炊と健康管理",
         "story_title": "日本社会で生きる：夢への架け橋",
         "level": "N3",
-        "link_url": "/story?id=story_4&chapter=1"
+        "link_url": "/story?id=story_4&chapter=2"
       }
     ]
   },
@@ -33030,11 +33093,11 @@
     "related_stories": [
       {
         "id": "story_4",
-        "chapter": 2,
-        "title": "毎日の自炊と健康管理",
+        "chapter": 3,
+        "title": "カフェでのオタク談義と友情",
         "story_title": "日本社会で生きる：夢への架け橋",
         "level": "N3",
-        "link_url": "/story?id=story_4&chapter=2"
+        "link_url": "/story?id=story_4&chapter=3"
       }
     ]
   },
@@ -34017,11 +34080,11 @@
     "related_stories": [
       {
         "id": "story_4",
-        "chapter": 3,
-        "title": "カフェでのオタク談義と友情",
+        "chapter": 4,
+        "title": "九州・桜島への一人旅",
         "story_title": "日本社会で生きる：夢への架け橋",
         "level": "N3",
-        "link_url": "/story?id=story_4&chapter=3"
+        "link_url": "/story?id=story_4&chapter=4"
       }
     ]
   },
@@ -35003,7 +35066,16 @@
       }
     ],
     "related_dialogues": [],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_9",
+        "chapter": 1,
+        "title": "テレワーク導入と新たな課題",
+        "story_title": "職場の変革と未来の架け橋",
+        "level": "N2",
+        "link_url": "/story?id=story_9&chapter=1"
+      }
+    ]
   },
   {
     "step": 34,
@@ -35996,7 +36068,16 @@
         ]
       }
     ],
-    "related_stories": []
+    "related_stories": [
+      {
+        "id": "story_9",
+        "chapter": 2,
+        "title": "多文化共生プロジェクトの提案",
+        "story_title": "職場の変革と未来の架け橋",
+        "level": "N2",
+        "link_url": "/story?id=story_9&chapter=2"
+      }
+    ]
   },
   {
     "step": 35,
@@ -36976,12 +37057,12 @@
     ],
     "related_stories": [
       {
-        "id": "story_4",
-        "chapter": 3,
-        "title": "カフェでのオタク談義と友情",
-        "story_title": "日本社会で生きる：夢への架け橋",
-        "level": "N3",
-        "link_url": "/story?id=story_4&chapter=3"
+        "id": "story_10",
+        "chapter": 1,
+        "title": "千年の都に息づく木造建築の美",
+        "story_title": "京都の町家と伝統の継承",
+        "level": "N1",
+        "link_url": "/story?id=story_10&chapter=1"
       }
     ]
   },
@@ -37961,12 +38042,12 @@
     ],
     "related_stories": [
       {
-        "id": "story_4",
-        "chapter": 4,
-        "title": "九州・桜島への一人旅",
-        "story_title": "日本社会で生きる：夢への架け橋",
-        "level": "N3",
-        "link_url": "/story?id=story_4&chapter=4"
+        "id": "story_10",
+        "chapter": 2,
+        "title": "匠の技と世代を超えた対話",
+        "story_title": "京都の町家と伝統の継承",
+        "level": "N1",
+        "link_url": "/story?id=story_10&chapter=2"
       }
     ]
   },

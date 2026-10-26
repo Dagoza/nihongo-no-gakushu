@@ -411,14 +411,20 @@ Cada entrada contiene rigurosamente:
 ## 8. Catálogo Integrado de Historias y Diálogos Situacionales (Irodori & NHK World)
 
 ### 8.1. Biblioteca de Historias Graduadas (`data/stories.json`)
-Todas las historias cuentan con capítulos progresivos, audio Edge TTS nativo, desglose frase por frase con explicaciones gramaticales en español, modo IME Typing y quizzes de comprensión:
+Todas las historias cuentan con capítulos progresivos, motor de furigana universal con anotaciones `<ruby>` interactivas, audio neuronal Edge TTS, desglose frase por frase al 100% con explicaciones gramaticales en español, modo IME Typing y quizzes de comprensión (+10 XP por acierto):
 
-| ID Historia | Título (JP / ES) | Nivel JLPT | Capítulos | Frases Clave | Módulos del Currículum Vinculados |
-| :--- | :--- | :---: | :---: | :---: | :--- |
-| `story_1` | **日本での一日** · *Un día en Japón* | **N5** | 4 capítulos | 58 frases | **M1, M3, M5, M8** (Saludos, presentaciones, compras, rutina) |
-| `story_2` | **東京での新しい暮らし** · *Nueva Vida en Tokio* | **N5** | 4 capítulos | 21 frases | **M4, M6, M12, M13, M14, M15** (Sharehouse, transporte, restaurantes, salud) |
-| `story_3` | **日本での挑戦と発見** · *Desafíos y Descubrimientos* | **N4** | 5 capítulos | 12 frases | **M20, M21, M22, M23, M25, M26, M27, M28** (Autonomía, trámites, cocina, viajes) |
-| `story_4` | **日本社会で生きる：夢への架け橋** · *Vivir en la Sociedad Japonesa* | **N3** | 5 capítulos | 8 frases | **M29, M30, M31, M32, M35, M36, M37** (Negocios, honoríficos, desastres, metas) |
+| ID Historia | Título (JP / ES) | Nivel JLPT | Capítulos | Frases Clave | Quizzes (+10 XP) | Módulos del Currículum Vinculados |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| `story_1` | **日本での一日** · *Un día en Japón* | **N5** | 4 capítulos | 57 frases | 3 preguntas | **M1, M3, M5, M8** (Saludos, presentaciones, compras, rutina) |
+| `story_2` | **東京での新しい暮らし** · *Nueva Vida en Tokio* | **N5** | 4 capítulos | 24 frases | 3 preguntas | **M4, M6, M10, M11, M12, M13, M14, M15** (Sharehouse, transporte, restaurantes, salud) |
+| `story_3` | **日本での挑戦と発見** · *Desafíos y Descubrimientos* | **N4** | 5 capítulos | 18 frases | 3 preguntas | **M22, M23, M28** (Autonomía, trámites, cocina, sismos) |
+| `story_4` | **日本社会で生きる：夢への架け橋** · *Vivir en la Sociedad Japonesa* | **N3** | 5 capítulos | 15 frases | 3 preguntas | **M29, M30, M31, M32, M37** (Alquiler, cocina casera, aficiones, viajes, entrevista) |
+| `story_5` | **アンナの東京キャンパス日記** · *Diario Universitario de Anna* | **N5** | 4 capítulos | 16 frases | 3 preguntas | **M2, M7, M9** (Campus, secretaría, trabajo a tiempo parcial, biblioteca) |
+| `story_6` | **アンナの温泉旅行と日本の伝統** · *Aguas Termales y Tradición* | **N5** | 4 capítulos | 16 frases | 3 preguntas | **M16, M17, M18, M19** (Hakone, normas onsen, farmacia, cartas de gratitud) |
+| `story_7` | **昔話：桃太郎の冒険** · *La Aventura de Momotaro* | **N4** | 4 capítulos | 16 frases | 3 preguntas | **M20, M24, M25** (Folclore, kibidango, animales leales, ogros) |
+| `story_8` | **昔話：鶴の恩返し** · *La Gratitud de la Grulla* | **N4** | 4 capítulos | 16 frases | 3 preguntas | **M21, M26, M27** (Folclore, hospitalidad, promesas, Wabi-Sabi) |
+| `story_9` | **職場の変革と未来の架け橋** · *Transformación Laboral y DX* | **N2** | 4 capítulos | 16 frases | 3 preguntas | **M33, M34, M37** (Teletrabajo, diversidad, innovación, resolución de crisis) |
+| `story_10` | **京都の町家と伝統の継承：木を紡ぐ匠の哲学** · *Artesanía en Kioto* | **N1** | 4 capítulos | 16 frases | 3 preguntas | **M35, M36, M37** (Kigumi sin clavos, diálogo maestro-aprendiz, Wabi-Sabi) |
 
 ### 8.2. Biblioteca Unificada de Conversaciones (`data/irodori_dialogues.json` y `data/nhk_lessons.json`)
 Total: **70 diálogos interactivos** con modos Shadowing, Ocultar Personaje, evaluación de pronunciación por micrófono, audio neuronal multi-voz y caligrafía:

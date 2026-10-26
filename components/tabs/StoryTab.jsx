@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import storiesData from '../../data/stories.json';
+import furiganaDict from '../../data/furigana_dict.js';
 import audioManager from '../../lib/audioManager';
 import { Volume2, Sparkles, BookOpen, PenTool, Info, Search, ArrowRight, ArrowLeft, SlidersHorizontal, ChevronDown, ChevronUp, ChevronRight, ChevronLeft, X, Check, CheckCircle2 } from 'lucide-react';
 import * as wanakana from 'wanakana';
@@ -38,7 +39,7 @@ export default function StoryTab({
   const [selectedStoryId, setSelectedStoryId] = useState(initialStoryId || null);
   const [currentChapter, setCurrentChapter] = useState(initialChapter ? parseInt(initialChapter, 10) : 1);
   const [readingMode, setReadingMode] = useState(initialMode || 'natural'); // 'natural', 'hiragana', 'kanji_only'
-  const [storyLevelFilter, setStoryLevelFilter] = useState('Todos'); // 'Todos', 'N5', 'N4', 'N3', 'Personalizadas'
+  const [storyLevelFilter, setStoryLevelFilter] = useState('Todos'); // 'Todos', 'N5', 'N4', 'N3', 'N2', 'N1', 'Personalizadas'
   const [storyStatusFilter, setStoryStatusFilter] = useState('all'); // 'all' | 'pending' | 'completed'
   const [storySearch, setStorySearch] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -261,58 +262,18 @@ export default function StoryTab({
     setTypingInput(activeSentence.japanese.slice(0, Math.ceil(activeSentence.japanese.length / 2)));
   };
 
-  const renderRubyParagraph = (rawJp) => {
-    const rubyMap = [
-      ['私', 'わたし'], ['今年', 'ことし'], ['外国', 'がいこく'], ['来ました', 'きました'],
-      ['国', 'くに'], ['遠い', 'とおい'], ['今日', 'きょう'], ['四月一日', 'しがつついたち'],
-      ['月曜日', 'げつようび'], ['今', 'いま'], ['午前六時半', 'ごぜんろくじはん'],
-      ['毎日', 'まいにち'], ['早く', 'はやく'], ['起きます', 'おきます'],
-      ['天気', 'てんき'], ['良くて', 'よくて'], ['空', 'そら'], ['白い', 'しろい'],
-      ['雲', 'くも'], ['少し', 'すこし'], ['青い', 'あおい'], ['外', 'そと'],
-      ['寒い', 'さむい'], ['冷たい', 'つめたい'], ['水', 'みず'], ['顔', 'かお'],
-      ['洗います', 'あらいます'], ['朝ごはん', 'あさごはん'], ['味', 'あじ'],
-      ['美味しい', 'おいしい'], ['食べます', 'たべます'], ['父', 'ちち'],
-      ['母', 'はは'], ['会社', 'かいしゃ'], ['行きました', 'いきました'],
-      ['子供たち', 'こどもたち'], ['家', 'いえ'], ['学生', 'がくせい'],
-      ['学校', 'がっこう'], ['駅', 'えき'], ['近い', 'ちかい'], ['電車', 'でんしゃ'],
-      ['乗ります', 'のります'], ['道', 'みち'], ['長い', 'ながい'], ['大きい', 'おおきい'],
-      ['木', 'き'], ['美しい', 'うつくしい'], ['花', 'はな'], ['男の子', 'おとこのこ'],
-      ['女の子', 'おんなのこ'], ['立っています', 'たっています'], ['右', 'みぎ'],
-      ['左', 'ひだり'], ['古い', 'ふるい'], ['店', 'みせ'], ['新しい', 'あたらしい'],
-      ['小さい', 'ちいさい'], ['見えます', 'みえます'], ['大勢', 'おおぜい'],
-      ['人', 'ひと'], ['速い', 'はやい'], ['多い', 'おおい'], ['八時', 'はちじ'],
-      ['出て', 'でて'], ['入ります', 'はいります'], ['南口', 'みなみぐち'],
-      ['友達', 'ともだち'], ['会いました', 'あいました'], ['彼女', 'かのじょ'],
-      ['名前', 'なまえ'], ['元気', 'げんき'], ['言います', 'いいます'],
-      ['日本語', 'にほんご'], ['勉強', 'べんきょう'], ['先生方', 'せんせいがた'],
-      ['本', 'ほん'], ['机', 'つくえ'], ['出します', 'だします'],
-      ['話', 'はなし'], ['聞いて', 'きいて'], ['読みます', 'よみます'],
-      ['字', 'じ'], ['書きます', 'かきます'], ['易しくない', 'やすくない'],
-      ['難しい', 'むずかしい'], ['漢字', 'かんじ'], ['読み方', 'よみかた'],
-      ['何', 'なん'], ['聞きます', 'ききます'], ['授業', 'じゅぎょう'],
-      ['面白い', 'おもしろい'], ['休み時間', 'やすみじかん'], ['午後十二時', 'ごごじゅうにじ'],
-      ['皆', 'みな'], ['魚', 'さかな'], ['飲み物', 'のみもの'], ['買います', 'かいます'],
-      ['お茶', 'おちゃ'], ['百五十円', 'ひゃくごじゅうえん'], ['全部', 'ぜんぶ'],
-      ['千二百九十八円', 'せんにひゃくきゅうじゅうはちえん'], ['安い', 'やすい'],
-      ['今週', 'こんしゅう'], ['土曜日', 'どようび'], ['日曜日', 'にちようび'],
-      ['東', 'ひがし'], ['山', 'やま'], ['高い', 'たかい'], ['低い', 'ひくい'],
-      ['空気', 'くうき'], ['楽しい', 'たのしい'], ['西', 'にし'], ['川', 'かわ'],
-      ['足', 'あし'], ['入れる', 'いれる'], ['気持ち', 'きもち'],
-      ['火曜日', 'かようび'], ['水曜日', 'すいようび'], ['木曜日', 'もくようび'],
-      ['金曜日', 'きんようび'], ['忙しい', 'いそがしい'], ['休み', 'やすみ'],
-      ['暑い', 'あつい'], ['飲んで', 'のんで'], ['お父さん', 'おとうさん'],
-      ['三万円', 'さんまんえん'], ['車', 'くるま'], ['遅い', 'おそい'],
-      ['北', 'きた'], ['黒い', 'くろい'], ['悪い', 'わるい'], ['雨', 'あめ'],
-      ['目', 'め'], ['耳', 'みみ'], ['口', 'くち'], ['手', 'て'],
-      ['五分', 'ごふん'], ['時間', 'じかん'], ['行きましょう', 'いきましょう']
-    ];
+  const renderRubyParagraph = (rawJp, chapterObj = null) => {
+    if (!rawJp) return null;
+    const chapterDict = chapterObj?.rubyDict || {};
+    const mergedDict = { ...(furiganaDict || {}), ...chapterDict };
 
     // Sort keys by descending length to match compound kanji before individual characters
-    const sortedRubyMap = [...rubyMap].sort((a, b) => b[0].length - a[0].length);
-    const rubyDict = Object.fromEntries(rubyMap);
-    const escapedKeys = sortedRubyMap.map(([k]) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const sortedKeys = Object.keys(mergedDict).sort((a, b) => b.length - a.length);
+    if (sortedKeys.length === 0) return <div>{rawJp}</div>;
+
+    const escapedKeys = sortedKeys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
     const reg = new RegExp(escapedKeys.join('|'), 'g');
-    const html = rawJp.replace(reg, (k) => `<ruby class="ruby-clickable" data-word="${k}">${k}<rt>${rubyDict[k]}</rt></ruby>`);
+    const html = rawJp.replace(reg, (k) => `<ruby class="ruby-clickable furigana-ruby" data-word="${k}">${k}<rt>${mergedDict[k]}</rt></ruby>`);
 
     return (
       <div 
@@ -524,7 +485,7 @@ export default function StoryTab({
                 Nivel JLPT / Categoría:
               </div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {['Todos', 'N5', 'N4', 'N3', 'Personalizadas'].map((lvl) => {
+                {['Todos', 'N5', 'N4', 'N3', 'N2', 'N1', 'Personalizadas'].map((lvl) => {
                   const count = 
                     lvl === 'Todos' ? allStories.length :
                     lvl === 'Personalizadas' ? allStories.filter(s => s.isCustom).length :
@@ -995,7 +956,7 @@ export default function StoryTab({
           {readingMode === 'hiragana' ? (
             <p>{chapter.hiragana}</p>
           ) : (
-            renderRubyParagraph(chapter.japanese)
+            renderRubyParagraph(chapter.japanese, chapter)
           )}
         </div>
 
@@ -1021,7 +982,7 @@ export default function StoryTab({
           <div className="breakdown-card" style={{ borderLeft: '5px solid var(--primary)' }}>
             <div className="breakdown-header">
               <div className="breakdown-jp jp-text">
-                {activeSentence.japanese}
+                {renderRubyParagraph(activeSentence.japanese, chapter)}
               </div>
               <div className="breakdown-actions">
                 <button 
