@@ -96,25 +96,28 @@ export default function ScriptpadFlashcards({
 
     if (onUpdateState) {
       const key = word.kanji || word.hiragana || word.id;
-      const currentWordProgress = { ...(appState?.scriptpadWordProgress || {}) };
-      const currentMasteredVocab = { ...(appState?.masteredVocab || {}) };
+      onUpdateState((prev) => {
+        const base = prev || appState || {};
+        const currentWordProgress = { ...(base?.scriptpadWordProgress || {}) };
+        const currentMasteredVocab = { ...(base?.masteredVocab || {}) };
 
-      if (isNowKnown) {
-        currentWordProgress[key] = {
-          timesPracticed: (currentWordProgress[key]?.timesPracticed || 0) + 1,
-          lastPracticedAt: new Date().toISOString(),
-          mastered: true
+        if (isNowKnown) {
+          currentWordProgress[key] = {
+            timesPracticed: (currentWordProgress[key]?.timesPracticed || 0) + 1,
+            lastPracticedAt: new Date().toISOString(),
+            mastered: true
+          };
+          if (word.id) currentMasteredVocab[word.id] = true;
+        } else {
+          if (currentWordProgress[key]) delete currentWordProgress[key];
+          if (word.id) delete currentMasteredVocab[word.id];
+        }
+
+        return {
+          ...base,
+          scriptpadWordProgress: currentWordProgress,
+          masteredVocab: currentMasteredVocab
         };
-        if (word.id) currentMasteredVocab[word.id] = true;
-      } else {
-        if (currentWordProgress[key]) delete currentWordProgress[key];
-        if (word.id) delete currentMasteredVocab[word.id];
-      }
-
-      onUpdateState({
-        ...appState,
-        scriptpadWordProgress: currentWordProgress,
-        masteredVocab: currentMasteredVocab
       });
     }
   };

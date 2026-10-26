@@ -9,7 +9,8 @@ import {
   getAuthUser, 
   signOutUser, 
   subscribeToAuthChanges,
-  extractUserProfile 
+  extractUserProfile,
+  flushPendingCloudPush
 } from './supabaseSync';
 import { checkAllScheduledActivities } from './notificationManager';
 import { triggerCheerConfetti, triggerGrandConfetti, isConfettiEnabled } from './confetti';
@@ -489,7 +490,13 @@ export function AppProvider({ children }) {
         getAuthUser().then((user) => {
           if (user) handleTriggerSync();
         });
+      } else if (document.visibilityState === 'hidden') {
+        flushPendingCloudPush();
       }
+    };
+
+    const handlePageHide = () => {
+      flushPendingCloudPush();
     };
 
     const handleOnline = () => {
@@ -500,6 +507,8 @@ export function AppProvider({ children }) {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('online', handleOnline);
+    window.addEventListener('pagehide', handlePageHide);
+    window.addEventListener('beforeunload', handlePageHide);
 
     return () => {
       if (tourTimer) clearTimeout(tourTimer);
@@ -508,6 +517,8 @@ export function AppProvider({ children }) {
       }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('online', handleOnline);
+      window.removeEventListener('pagehide', handlePageHide);
+      window.removeEventListener('beforeunload', handlePageHide);
       if (subscription?.unsubscribe) {
         subscription.unsubscribe();
       }
@@ -658,6 +669,7 @@ export function AppProvider({ children }) {
     syncInfo,
     handleTriggerSync,
     onTriggerSync: handleTriggerSync,
+    flushPendingCloudPush,
     handleSignOut,
     onSignOut: handleSignOut,
     handleAuthSuccess,

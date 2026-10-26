@@ -264,27 +264,30 @@ export default function ScriptpadSrsReview({
 
       // Guardar en srsQuestions y registrar progreso en Scriptpad
       if (onUpdateState) {
-        const nextQuestions = {
-          ...(latestAppState?.srsQuestions || {}),
-          [currentItem.cardKey]: updatedCard
-        };
-
         const wordKey = currentItem.kanji || currentItem.hiragana || currentItem.id;
-        const prevWordProgress = latestAppState?.scriptpadWordProgress?.[wordKey] || { practices: 0, completed: true };
-        const nextWordProgress = {
-          ...(latestAppState?.scriptpadWordProgress || {}),
-          [wordKey]: {
-            ...prevWordProgress,
-            practices: (prevWordProgress.practices || 0) + 1,
-            lastPractice: new Date().toISOString(),
-            completed: true
-          }
-        };
+        onUpdateState((prev) => {
+          const base = prev || latestAppState || {};
+          const nextQuestions = {
+            ...(base?.srsQuestions || {}),
+            [currentItem.cardKey]: updatedCard
+          };
 
-        onUpdateState({
-          ...latestAppState,
-          srsQuestions: nextQuestions,
-          scriptpadWordProgress: nextWordProgress
+          const prevWordProgress = base?.scriptpadWordProgress?.[wordKey] || { practices: 0, completed: true };
+          const nextWordProgress = {
+            ...(base?.scriptpadWordProgress || {}),
+            [wordKey]: {
+              ...prevWordProgress,
+              practices: (prevWordProgress.practices || 0) + 1,
+              lastPractice: new Date().toISOString(),
+              completed: true
+            }
+          };
+
+          return {
+            ...base,
+            srsQuestions: nextQuestions,
+            scriptpadWordProgress: nextWordProgress
+          };
         });
       }
 

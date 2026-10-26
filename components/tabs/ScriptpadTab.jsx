@@ -13,7 +13,8 @@ import {
   Volume2, 
   Check, 
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Cloud
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useApp } from '../../lib/AppContext';
@@ -71,6 +72,16 @@ export default function ScriptpadTab({
   const contextApp = useApp();
   const appState = propAppState || contextApp?.appState || {};
   const onUpdateState = propOnUpdateState || contextApp?.handleUpdateState;
+  const onTriggerSync = contextApp?.handleTriggerSync;
+  const syncStatus = contextApp?.syncStatus;
+  const authUser = contextApp?.authUser;
+
+  // Sincronizar automáticamente al abrir Scriptpad si hay un usuario autenticado
+  useEffect(() => {
+    if (authUser && onTriggerSync) {
+      onTriggerSync();
+    }
+  }, [authUser, onTriggerSync]);
 
   // Filtros de navegación
   const [activeTab, setActiveTab] = useState('thematic'); // 'thematic' | 'curriculum'
@@ -196,10 +207,15 @@ export default function ScriptpadTab({
     }
   };
 
-  // Finalizar lección y guardar progreso
+  // Finalizar lección y guardar progreso (sincronizando de inmediato con la nube)
   const handleCompleteStudy = (stats) => {
     if (activeLesson && onUpdateState) {
       recordLessonCompletion(activeLesson.id, stats, appState, onUpdateState);
+      if (onTriggerSync) {
+        setTimeout(() => {
+          onTriggerSync();
+        }, 200);
+      }
     }
   };
 
@@ -338,39 +354,68 @@ export default function ScriptpadTab({
   if (selectedUnit) {
     return (
       <div className="section-panel active">
-        {/* Barra superior con botón volver y título de unidad */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-          <button
-            type="button"
-            onClick={() => setSelectedUnitId(null)}
-            className="btn btn-outline btn-sm"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              padding: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}
-            aria-label="Volver a unidades"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <div style={{ overflow: 'hidden' }}>
-            <h2 style={{ 
-              fontSize: '1.05rem', 
-              fontWeight: 800, 
-              margin: 0, 
-              color: 'var(--text-main)',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
-            }}>
-              {selectedUnit.title}
-            </h2>
+        {/* Barra superior con botón volver, título de unidad y botón de sincronización */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1 }}>
+            <button
+              type="button"
+              onClick={() => setSelectedUnitId(null)}
+              className="btn btn-outline btn-sm"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+              aria-label="Volver a unidades"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div style={{ overflow: 'hidden' }}>
+              <h2 style={{ 
+                fontSize: '1.05rem', 
+                fontWeight: 800, 
+                margin: 0, 
+                color: 'var(--text-main)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}>
+                {selectedUnit.title}
+              </h2>
+            </div>
           </div>
+
+          {authUser && (
+            <button
+              type="button"
+              onClick={() => onTriggerSync && onTriggerSync()}
+              disabled={syncStatus === 'syncing'}
+              className="btn btn-outline btn-sm"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                borderRadius: 12,
+                padding: '6px 11px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                color: syncStatus === 'synced' ? '#10b981' : syncStatus === 'error' ? '#ef4444' : 'var(--text-muted)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                cursor: 'pointer',
+                flexShrink: 0
+              }}
+              title="Sincronizar lecciones con la nube"
+            >
+              <Cloud size={13} className={syncStatus === 'syncing' ? 'animate-spin' : ''} />
+              <span>{syncStatus === 'syncing' ? 'Sincronizando...' : syncStatus === 'synced' ? 'Nube al día' : 'Sincronizar'}</span>
+            </button>
+          )}
         </div>
 
         {/* Tarjeta Banner de la Unidad (Estilo Screenshots de Referencia) */}
@@ -982,27 +1027,56 @@ export default function ScriptpadTab({
       {/* Tarjeta de Encabezado */}
       <div className="module-hero-card">
         <div className="module-hero-content">
-          <div className="module-hero-title-row">
-            <div 
-              className="module-hero-icon-badge" 
-              style={{ 
-                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)', 
-                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.25)' 
-              }}
-            >
-              <PenTool size={22} color="#fff" />
+          <div className="module-hero-title-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
+              <div 
+                className="module-hero-icon-badge" 
+                style={{ 
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)', 
+                  boxShadow: '0 4px 12px rgba(139, 92, 246, 0.25)' 
+                }}
+              >
+                <PenTool size={22} color="#fff" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span className="module-category-pill" style={{ 
+                  color: '#8b5cf6', 
+                  background: 'rgba(139, 92, 246, 0.12)' 
+                }}>
+                  Escritura & Vocabulario
+                </span>
+                <h1 className="module-hero-title">
+                  Scriptpad: Unidades y Caligrafía
+                </h1>
+              </div>
             </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <span className="module-category-pill" style={{ 
-                color: '#8b5cf6', 
-                background: 'rgba(139, 92, 246, 0.12)' 
-              }}>
-                Escritura & Vocabulario
-              </span>
-              <h1 className="module-hero-title">
-                Scriptpad: Unidades y Caligrafía
-              </h1>
-            </div>
+
+            {authUser && (
+              <button
+                type="button"
+                onClick={() => onTriggerSync && onTriggerSync()}
+                disabled={syncStatus === 'syncing'}
+                className="btn btn-outline btn-sm"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  borderRadius: 14,
+                  padding: '7px 14px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  color: syncStatus === 'synced' ? '#10b981' : syncStatus === 'error' ? '#ef4444' : 'var(--text-muted)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border)',
+                  cursor: 'pointer',
+                  flexShrink: 0
+                }}
+                title="Sincronizar lecciones de Scriptpad con la cuenta en la nube"
+              >
+                <Cloud size={15} className={syncStatus === 'syncing' ? 'animate-spin' : ''} />
+                <span>{syncStatus === 'syncing' ? 'Sincronizando...' : syncStatus === 'synced' ? 'Nube al día' : 'Sincronizar'}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
