@@ -34,6 +34,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/conversacion',
+        destination: '/nhk',
+        permanent: true,
+      },
+      {
+        source: '/conversaciones',
+        destination: '/nhk',
+        permanent: true,
+      },
+      {
         source: '/questions',
         destination: '/srs',
         permanent: true,

@@ -33,7 +33,7 @@ export function AppProvider({ children }) {
 
   const [appState, setAppState] = useState(getInitialState());
   const [mounted, setMounted] = useState(false);
-  const [activeStoryId, setActiveStoryId] = useState('story_1');
+  const [activeStoryId, setActiveStoryId] = useState(null);
 
   // Supabase Auth and Sync State
   const [authUser, setAuthUser] = useState(null);

@@ -25,9 +25,24 @@ async function synthesizeText(text, voice = 'ja-JP-NanamiNeural', rateStr = '+0%
 
   const buffer = await new Promise((resolve, reject) => {
     const chunks = [];
+    const timeout = setTimeout(() => {
+      try {
+        if (typeof audioStream.destroy === 'function') {
+          audioStream.destroy();
+        }
+      } catch (e) {}
+      reject(new Error('MsEdgeTTS timeout: tiempo de espera agotado al conectar con el servicio neural'));
+    }, 9000);
+
     audioStream.on('data', chunk => chunks.push(chunk));
-    audioStream.on('end', () => resolve(Buffer.concat(chunks)));
-    audioStream.on('error', err => reject(err));
+    audioStream.on('end', () => {
+      clearTimeout(timeout);
+      resolve(Buffer.concat(chunks));
+    });
+    audioStream.on('error', err => {
+      clearTimeout(timeout);
+      reject(err);
+    });
   });
 
   // Keep cache bounded

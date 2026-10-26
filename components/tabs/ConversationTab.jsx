@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, RotateCcw, Sparkles, Award, Check, ChevronRight, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter, SlidersHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Sparkles, Award, Check, ChevronRight, ChevronLeft, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter, SlidersHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
 import nhkLessonsData from '../../data/nhk_lessons.json';
 import irodoriDialoguesData from '../../data/irodori_dialogues.json';
 import conversationExercisesData from '../../data/conversation_exercises.json';
 import { useApp } from '../../lib/AppContext';
+import { triggerGrandConfetti } from '../../lib/confetti';
 
 // Lazy loading con code-splitting para componentes pesados
 const RoleplayChat = dynamic(() => import('../features/RoleplayChat'), { ssr: false });
@@ -152,8 +153,11 @@ export default function ConversationTab({
 
   const [selectedDialogueId, setSelectedDialogueId] = useState(() => {
     if (initialDialogue) return initialDialogue;
-    if (initialLesson) return `nhk_l_${initialLesson}`;
-    return 'iro_diag_1';
+    if (initialLesson) {
+      const match = allDialogues.find(d => d.lessonNum === parseInt(initialLesson, 10));
+      return match ? match.id : null;
+    }
+    return null;
   });
 
   const [activeSubTab, setActiveSubTab] = useState(initialTab || 'dialogue'); // 'dialogue' | 'roleplay' | 'saved' | 'practice'
@@ -175,6 +179,7 @@ export default function ConversationTab({
     setStatusFilter('all');
     setSeriesFilter('all');
     setLevelFilter('all');
+    setSearchDialogueQuery('');
     updateParams(selectedDialogueId, activeSubTab, 'all', filterType);
   };
   
@@ -206,9 +211,9 @@ export default function ConversationTab({
   const updateParams = (newDialogueId, newTab, newStatus, newType) => {
     if (onParamsChange) {
       const targetId = newDialogueId !== undefined ? newDialogueId : selectedDialogueId;
-      const targetObj = allDialogues.find(d => d.id === targetId);
+      const targetObj = targetId ? allDialogues.find(d => d.id === targetId) : null;
       onParamsChange({
-        dialogue: targetId,
+        dialogue: targetId || undefined,
         lesson: targetObj?.lessonNum || undefined,
         tab: newTab !== undefined ? newTab : activeSubTab,
         status: newStatus !== undefined ? newStatus : statusFilter,
@@ -217,14 +222,60 @@ export default function ConversationTab({
     }
   };
 
+  const handleOpenDialogue = (dialogueId) => {
+    setSelectedDialogueId(dialogueId);
+    setMutedSpeaker('');
+    setRevealedLineIndices({});
+    setRevealedKanaIndices({});
+    setRevealedEsIndices({});
+    updateParams(dialogueId, activeSubTab, statusFilter, filterType);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToList = () => {
+    setSelectedDialogueId(null);
+    setMutedSpeaker('');
+    setRevealedLineIndices({});
+    setRevealedKanaIndices({});
+    setRevealedEsIndices({});
+    updateParams(null, activeSubTab, statusFilter, filterType);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
     if (initialDialogue && allDialogues.some(d => d.id === initialDialogue)) {
       setSelectedDialogueId(initialDialogue);
     } else if (initialLesson) {
       const match = allDialogues.find(d => d.lessonNum === parseInt(initialLesson, 10));
       if (match) setSelectedDialogueId(match.id);
+    } else if (!initialDialogue && !initialLesson) {
+      setSelectedDialogueId(null);
     }
   }, [initialDialogue, initialLesson, allDialogues]);
+
+  // Handle browser Back/Forward navigation smoothly
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window === 'undefined') return;
+      const params = new URLSearchParams(window.location.search);
+      const dialogue = params.get('dialogue');
+      const lesson = params.get('lesson');
+      const tab = params.get('tab');
+      if (dialogue && allDialogues.some(d => d.id === dialogue)) {
+        setSelectedDialogueId(dialogue);
+      } else if (lesson) {
+        const match = allDialogues.find(d => d.lessonNum === parseInt(lesson, 10));
+        setSelectedDialogueId(match ? match.id : null);
+      } else {
+        setSelectedDialogueId(null);
+      }
+      if (tab && ['dialogue', 'roleplay', 'saved', 'practice'].includes(tab)) {
+        setActiveSubTab(tab);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [allDialogues]);
 
   useEffect(() => {
     if (initialTab && ['dialogue', 'roleplay', 'saved', 'practice'].includes(initialTab)) {
@@ -251,10 +302,15 @@ export default function ConversationTab({
   };
 
   const currentDialogue = useMemo(() => {
-    return allDialogues.find(d => d.id === selectedDialogueId) || allDialogues[0] || null;
+    if (!selectedDialogueId) return null;
+    return allDialogues.find(d => d.id === selectedDialogueId) || null;
   }, [allDialogues, selectedDialogueId]);
 
-  const isCurrentDialogueCompleted = isDialogueCompleted(currentDialogue);
+  const currentDialogueIndex = allDialogues.findIndex(d => d.id === currentDialogue?.id);
+  const prevDialogue = currentDialogueIndex > 0 ? allDialogues[currentDialogueIndex - 1] : null;
+  const nextDialogue = currentDialogueIndex >= 0 && currentDialogueIndex < allDialogues.length - 1 ? allDialogues[currentDialogueIndex + 1] : null;
+
+  const isCurrentDialogueCompleted = currentDialogue ? isDialogueCompleted(currentDialogue) : false;
 
   const completedCount = allDialogues.filter(isDialogueCompleted).length;
   const progressPercent = allDialogues.length > 0 ? Math.round((completedCount / allDialogues.length) * 100) : 0;
@@ -386,6 +442,7 @@ export default function ConversationTab({
     } else {
       newCompleted[item.id] = true;
       if (item.lessonNum) newCompleted[item.lessonNum] = true;
+      triggerGrandConfetti();
     }
 
     const xpBonus = !isDone ? 30 : 0;
