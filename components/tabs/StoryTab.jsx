@@ -283,10 +283,6 @@ export default function StoryTab({
           if (ruby) {
             const word = ruby.getAttribute('data-word') || ruby.innerText;
             handleWordClick(e, word);
-          } else {
-            // speak clicked text or target
-            const selection = window.getSelection().toString();
-            if (selection) audioManager.speak(selection);
           }
         }}
       />

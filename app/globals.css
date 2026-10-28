@@ -5300,30 +5300,32 @@ body:not(:has(.audio-player-bar)) .main-container {
 }
 
 /* --------------------------------------------------------------------------
-   1. Menú Emergente de Selección de Texto (TextSelectionPopup)
+   1. Menú Emergente Contextual de Selección (TextSelectionPopup)
    -------------------------------------------------------------------------- */
 .text-selection-popup {
   position: absolute;
-  z-index: 9995;
+  z-index: 99995;
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.95);
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1.5px solid rgba(99, 102, 241, 0.35);
   border-radius: 9999px;
-  box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 4px 6px 4px 12px;
+  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 4px 6px 4px 10px;
   user-select: none;
   animation: tspFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .text-selection-popup {
-  background: rgba(20, 24, 35, 0.95);
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.5), 0 2px 10px rgba(0, 0, 0, 0.3);
+  background: rgba(20, 24, 38, 0.98);
+  border-color: rgba(129, 140, 248, 0.45);
+  box-shadow: 0 14px 40px -4px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes tspFadeIn {
@@ -5340,57 +5342,64 @@ body:not(:has(.audio-player-bar)) .main-container {
 .tsp-preview {
   display: flex;
   align-items: center;
-  max-width: 140px;
+  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 4px;
+  flex-shrink: 0;
 }
 
 .tsp-preview-text {
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--primary);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .tsp-divider {
   width: 1px;
-  height: 18px;
+  height: 16px;
   background: var(--border, rgba(0, 0, 0, 0.12));
+  flex-shrink: 0;
 }
 
 [data-theme="dark"] .tsp-divider {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .tsp-actions {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
+  flex-shrink: 0;
 }
 
 .tsp-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: transparent;
   border: none;
   color: var(--text-main, #1f2937);
-  padding: 4px 8px;
+  padding: 4px 7px;
   border-radius: 9999px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
   line-height: 1;
+  flex-shrink: 0;
+  touch-action: manipulation;
 }
 
 [data-theme="dark"] .tsp-btn {
   color: var(--text-main, #f3f4f6);
 }
 
-.tsp-btn:hover {
-  background: rgba(99, 102, 241, 0.12);
+.tsp-btn:hover,
+.tsp-btn:active {
+  background: rgba(99, 102, 241, 0.16);
   color: var(--primary);
   transform: translateY(-1px);
 }
@@ -5400,7 +5409,8 @@ body:not(:has(.audio-player-bar)) .main-container {
   color: var(--primary);
 }
 
-.tsp-btn-primary:hover {
+.tsp-btn-primary:hover,
+.tsp-btn-primary:active {
   background: var(--primary);
   color: #ffffff;
 }
@@ -5409,13 +5419,14 @@ body:not(:has(.audio-player-bar)) .main-container {
   color: #8b5cf6;
 }
 
-.tsp-btn-accent:hover {
-  background: rgba(139, 92, 246, 0.14);
+.tsp-btn-accent:hover,
+.tsp-btn-accent:active {
+  background: rgba(139, 92, 246, 0.16);
   color: #7c3aed;
 }
 
 .tsp-btn-success {
-  background: rgba(16, 185, 129, 0.14) !important;
+  background: rgba(16, 185, 129, 0.16) !important;
   color: #10b981 !important;
 }
 
@@ -5435,15 +5446,18 @@ body:not(:has(.audio-player-bar)) .main-container {
   color: var(--text-muted);
   cursor: pointer;
   margin-left: 2px;
+  flex-shrink: 0;
   transition: all 0.15s ease;
+  touch-action: manipulation;
 }
 
-.tsp-close-btn:hover {
-  background: rgba(239, 68, 68, 0.14);
+.tsp-close-btn:hover,
+.tsp-close-btn:active {
+  background: rgba(239, 68, 68, 0.16);
   color: #ef4444;
 }
 
-/* Indicador de flecha en desktop */
+/* Indicador de flecha contextual */
 .tsp-arrow {
   position: absolute;
   left: 50%;
@@ -5467,66 +5481,21 @@ body:not(:has(.audio-player-bar)) .main-container {
   border-right: none !important;
 }
 
-/* Modo Mobile Dock: Anclado flotante inferior para dedos */
-.text-selection-popup.mobile-dock {
-  position: fixed !important;
-  bottom: calc(14px + env(safe-area-inset-bottom, 14px)) !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: calc(100% - 20px) !important;
-  max-width: 460px !important;
-  padding: 6px 8px !important;
-  justify-content: space-between !important;
-  border-radius: 18px !important;
-  border: 1.5px solid rgba(99, 102, 241, 0.35) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35) !important;
-  animation: tspSlideUpMobile 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  z-index: 99999 !important;
-  background: rgba(255, 255, 255, 0.98) !important;
-}
-
-[data-theme="dark"] .text-selection-popup.mobile-dock {
-  background: rgba(20, 26, 42, 0.98) !important;
-  border-color: rgba(129, 140, 248, 0.45) !important;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7) !important;
-}
-
-/* Si el mini-reproductor está activo en móvil, elevar el dock de selección para no taparse */
-body:has(.floating-mini-player) .text-selection-popup.mobile-dock {
-  bottom: calc(70px + env(safe-area-inset-bottom, 14px)) !important;
-}
-
-@keyframes tspSlideUpMobile {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 15px);
+@media (max-width: 640px) {
+  .text-selection-popup {
+    padding: 3px 5px 3px 8px;
+    gap: 3px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
+  .tsp-preview {
+    max-width: 60px;
   }
-}
-
-.text-selection-popup.mobile-dock .tsp-preview {
-  max-width: 70px;
-  padding-right: 2px;
-  flex-shrink: 0;
-}
-
-.text-selection-popup.mobile-dock .tsp-actions {
-  flex-shrink: 0;
-  gap: 2px;
-  display: flex;
-  align-items: center;
-}
-
-.text-selection-popup.mobile-dock .tsp-btn {
-  padding: 5px 6px;
-  font-size: 0.68rem;
-  min-height: 28px;
-  flex-shrink: 0;
+  .tsp-btn {
+    padding: 4px 5px;
+    font-size: 0.67rem;
+  }
 }
 
 /* --------------------------------------------------------------------------

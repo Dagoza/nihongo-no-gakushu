@@ -8,26 +8,17 @@ import { AppContext } from '../../lib/AppContext';
 export default function TextSelectionPopup() {
   const contextApp = useContext(AppContext);
   const [selectedText, setSelectedText] = useState('');
-  const [coords, setCoords] = useState({ x: 0, y: 0, placement: 'top' });
+  const [coords, setCoords] = useState({ x: 0, y: 0, placement: 'bottom' });
   const [isVisible, setIsVisible] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  
   const popupRef = useRef(null);
+  const persistedTextRef = useRef('');
+  const isInteractingRef = useRef(false);
   const selectionTimeoutRef = useRef(null);
 
-  // Check mobile viewport and touch capabilities
-  useEffect(() => {
-    const checkMobile = () => {
-      const mobileWidth = typeof window !== 'undefined' && window.innerWidth < 640;
-      const touchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-      setIsMobile(mobileWidth || (touchDevice && window.innerWidth < 768));
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   const clearDomSelection = useCallback(() => {
+    persistedTextRef.current = '';
     if (typeof window !== 'undefined' && window.getSelection) {
       try {
         window.getSelection().removeAllRanges();
@@ -38,14 +29,18 @@ export default function TextSelectionPopup() {
   const handleDismiss = useCallback(() => {
     setIsVisible(false);
     setSelectedText('');
+    persistedTextRef.current = '';
     setIsCopied(false);
   }, []);
 
-  // Core selection inspector
+  // Inspect selection on document
   const inspectSelection = useCallback(() => {
+    // If the user is currently tapping/clicking an action in the popup, do not dismiss
+    if (isInteractingRef.current) return;
+
     try {
       const activeEl = document.activeElement;
-      // Ignore typing inside inputs, textareas or contenteditable fields
+      // Do not popup inside inputs, textareas or editable fields
       if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
         return;
       }
@@ -54,68 +49,67 @@ export default function TextSelectionPopup() {
       const rawText = selection ? selection.toString() : '';
       const cleanText = rawText ? rawText.trim() : '';
 
-      // If user cleared the selection (e.g. tapped elsewhere), dismiss popup
+      // If user cleared the selection (e.g. tapped elsewhere on blank space)
       if (!cleanText || cleanText.length < 1) {
-        if (isVisible) {
+        if (isVisible && !isInteractingRef.current) {
           setIsVisible(false);
           setSelectedText('');
+          persistedTextRef.current = '';
         }
         return;
       }
 
-      // Ignore massive selections (> 500 chars)
+      // Ignore huge selections
       if (cleanText.length > 500) {
         return;
       }
 
+      // Persist text so that even if touch collapses the selection, the action executes reliably
+      persistedTextRef.current = cleanText;
       setSelectedText(cleanText);
       setIsCopied(false);
 
-      const isMobileView = typeof window !== 'undefined' && (window.innerWidth < 640 || ('ontouchstart' in window && window.innerWidth < 768));
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
 
-      if (isMobileView) {
-        // Mobile: dock smoothly at bottom
-        setCoords({ x: 0, y: 0, placement: 'mobile-dock' });
-      } else {
-        // Desktop: compute floating coordinates above or below selection
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          const rect = range.getBoundingClientRect();
+        const popupHeight = 44;
+        const estimatedWidth = Math.min(380, (typeof window !== 'undefined' ? window.innerWidth : 400) - 24);
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        const scrollX = window.scrollX || window.pageXOffset || 0;
 
-          const popupHeight = 44;
-          const popupWidth = 370;
-          const scrollY = window.scrollY || window.pageYOffset || 0;
-          const scrollX = window.scrollX || window.pageXOffset || 0;
+        const centerX = rect.left + scrollX + rect.width / 2;
+        
+        // On mobile & desktop, default to placing comfortably BELOW the selected line
+        // to avoid clashing with native top toolbars (Android & iOS)
+        let targetY = rect.bottom + scrollY + 10;
+        let placement = 'bottom';
 
-          const centerX = rect.left + scrollX + rect.width / 2;
-          let topY = rect.top + scrollY - popupHeight - 10;
-          let placement = 'top';
-
-          // Flip below selection if too close to viewport top
-          if (rect.top < popupHeight + 16) {
-            topY = rect.bottom + scrollY + 10;
-            placement = 'bottom';
-          }
-
-          const minX = popupWidth / 2 + 12;
-          const maxX = window.innerWidth - popupWidth / 2 - 12;
-          const clampedX = Math.max(minX, Math.min(centerX, maxX));
-
-          setCoords({ x: clampedX, y: topY, placement });
+        // If selection is too close to bottom of the viewport, place above
+        if (rect.bottom + popupHeight + 20 > (window.innerHeight || 800)) {
+          targetY = Math.max(scrollY + 10, rect.top + scrollY - popupHeight - 10);
+          placement = 'top';
         }
-      }
 
-      setIsVisible(true);
+        // Clamp horizontal position so the popup never clips off-screen
+        const halfWidth = estimatedWidth / 2;
+        const minX = halfWidth + 12;
+        const maxX = (window.innerWidth || 400) - halfWidth - 12;
+        const clampedX = Math.max(minX, Math.min(centerX, maxX));
+
+        setCoords({ x: clampedX, y: targetY, placement });
+        setIsVisible(true);
+      }
     } catch (err) {
       console.warn('Error inspecting selection:', err);
     }
   }, [isVisible]);
 
-  // Listen to selection events (selectionchange, touchend, mouseup)
+  // Event listeners
   useEffect(() => {
     if (typeof document === 'undefined') return;
 
-    const debouncedInspect = (delay = 80) => {
+    const debouncedInspect = (delay = 120) => {
       if (selectionTimeoutRef.current) {
         clearTimeout(selectionTimeoutRef.current);
       }
@@ -124,39 +118,30 @@ export default function TextSelectionPopup() {
       }, delay);
     };
 
-    // 1. Native selectionchange (Crucial for mobile iOS/Android & desktop)
+    // Native selection change
     const handleSelectionChange = () => {
-      debouncedInspect(100);
-    };
-
-    // 2. Touchend (When finger lifts after selecting on mobile)
-    const handleTouchEnd = (e) => {
-      if (popupRef.current && popupRef.current.contains(e.target)) {
-        return;
-      }
       debouncedInspect(140);
     };
 
-    // 3. Mouseup (When mouse releases after drag-selection on desktop)
-    const handleMouseUp = (e) => {
+    // End of drag or touch selection
+    const handlePointerUp = (e) => {
       if (popupRef.current && popupRef.current.contains(e.target)) {
         return;
       }
-      debouncedInspect(40);
+      debouncedInspect(80);
     };
 
-    // 4. Desktop-only outside click detection
-    const handleDesktopMouseDown = (e) => {
-      // Only on desktop/non-touch to avoid interfering with mobile touch-selection
-      if (window.innerWidth >= 640 && popupRef.current && !popupRef.current.contains(e.target)) {
+    // Outside click detection (desktop/non-touch)
+    const handleOutsideClick = (e) => {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
         const sel = window.getSelection();
-        if (!sel || sel.isCollapsed) {
+        if (!sel || !sel.toString().trim()) {
           handleDismiss();
         }
       }
     };
 
-    // 5. Escape key to close
+    // Escape key
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         handleDismiss();
@@ -165,111 +150,98 @@ export default function TextSelectionPopup() {
     };
 
     document.addEventListener('selectionchange', handleSelectionChange);
-    document.addEventListener('touchend', handleTouchEnd, { passive: true });
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mousedown', handleDesktopMouseDown);
+    document.addEventListener('mouseup', handlePointerUp);
+    document.addEventListener('touchend', handlePointerUp, { passive: true });
+    document.addEventListener('mousedown', handleOutsideClick);
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       if (selectionTimeoutRef.current) clearTimeout(selectionTimeoutRef.current);
       document.removeEventListener('selectionchange', handleSelectionChange);
-      document.removeEventListener('touchend', handleTouchEnd);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mousedown', handleDesktopMouseDown);
+      document.removeEventListener('mouseup', handlePointerUp);
+      document.removeEventListener('touchend', handlePointerUp);
+      document.removeEventListener('mousedown', handleOutsideClick);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [inspectSelection, handleDismiss, clearDomSelection]);
 
-  // Synchronize with audioManager's selectedText
-  useEffect(() => {
-    const unsubscribe = audioManager.subscribe((state) => {
-      if (state.selectedText && state.selectedText.trim()) {
-        const text = state.selectedText.trim();
-        if (text !== selectedText && text.length > 0 && text.length <= 500) {
-          setSelectedText(text);
-          const isMobileView = typeof window !== 'undefined' && (window.innerWidth < 640 || ('ontouchstart' in window && window.innerWidth < 768));
-          if (isMobileView) {
-            setCoords({ x: 0, y: 0, placement: 'mobile-dock' });
-            setIsVisible(true);
-          }
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, [selectedText]);
+  // Robust Action Dispatcher: Reads persisted text and guarantees execution
+  const executeAction = (actionCallback) => {
+    isInteractingRef.current = true;
+    const textToUse = (persistedTextRef.current || selectedText || '').trim();
 
-  // Actions
+    // Clear selection from DOM visually and close popup
+    clearDomSelection();
+    handleDismiss();
+
+    setTimeout(() => {
+      isInteractingRef.current = false;
+    }, 300);
+
+    if (textToUse && typeof actionCallback === 'function') {
+      actionCallback(textToUse);
+    }
+  };
+
+  // Action handlers
   const handlePlay = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = selectedText;
-    clearDomSelection();
-    handleDismiss();
-    if (text) {
+    executeAction((text) => {
       audioManager.speak(text);
-    }
+    });
   };
 
   const handleDictionary = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = selectedText;
-    clearDomSelection();
-    handleDismiss();
-    if (text && contextApp?.openDictionary) {
-      contextApp.openDictionary(text);
-    }
+    executeAction((text) => {
+      if (contextApp?.openDictionary) {
+        contextApp.openDictionary(text);
+      }
+    });
   };
 
   const handleSave = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = selectedText;
-    clearDomSelection();
-    handleDismiss();
-    if (!text) return;
-
-    const isPhrase = text.length > 15 || /[。！？\n]/.test(text);
-    const modalData = {
-      type: isPhrase ? 'phrase' : 'word',
-      text: text,
-      sentenceText: text,
-      source: 'Selección de Texto'
-    };
-
-    if (contextApp?.openSaveModal) {
-      contextApp.openSaveModal(modalData);
-    }
+    executeAction((text) => {
+      const isPhrase = text.length > 15 || /[。！？\n]/.test(text);
+      if (contextApp?.openSaveModal) {
+        contextApp.openSaveModal({
+          type: isPhrase ? 'phrase' : 'word',
+          text: text,
+          sentenceText: text,
+          source: 'Selección de Texto'
+        });
+      }
+    });
   };
 
   const handlePracticePad = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = selectedText;
-    clearDomSelection();
-    handleDismiss();
-    if (!text) return;
-
-    const opts = {
-      text: text,
-      kana: '',
-      title: `Práctica: ${text.length > 20 ? text.slice(0, 20) + '...' : text}`,
-      source: 'selection'
-    };
-
-    if (contextApp?.openPracticePad) {
-      contextApp.openPracticePad(opts);
-    } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
-      window.__nihongoOpenPracticePad(opts);
-    }
+    executeAction((text) => {
+      const opts = {
+        text: text,
+        kana: '',
+        title: `Práctica: ${text.length > 20 ? text.slice(0, 20) + '...' : text}`,
+        source: 'selection'
+      };
+      if (contextApp?.openPracticePad) {
+        contextApp.openPracticePad(opts);
+      } else if (typeof window !== 'undefined' && window.__nihongoOpenPracticePad) {
+        window.__nihongoOpenPracticePad(opts);
+      }
+    });
   };
 
   const handleCopy = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = selectedText;
-    if (text && typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(text).catch(() => {});
+    const textToCopy = (persistedTextRef.current || selectedText || '').trim();
+    if (textToCopy && typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(textToCopy).catch(() => {});
       setIsCopied(true);
       setTimeout(() => {
         clearDomSelection();
@@ -284,42 +256,46 @@ export default function TextSelectionPopup() {
   const handleAnalyzeAI = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = selectedText;
-    clearDomSelection();
-    handleDismiss();
-    if (text && contextApp?.openDictionary) {
-      contextApp.openDictionary(text);
-    }
+    executeAction((text) => {
+      if (contextApp?.openDictionary) {
+        contextApp.openDictionary(text);
+      }
+    });
   };
 
   if (!isVisible || !selectedText) {
     return null;
   }
 
-  const isDock = coords.placement === 'mobile-dock' || isMobile;
+  const displayText = selectedText.length > 10 ? `${selectedText.slice(0, 10)}…` : selectedText;
 
-  const style = isDock
-    ? {}
-    : {
-        top: `${coords.y}px`,
-        left: `${coords.x}px`,
-        transform: 'translateX(-50%)'
-      };
+  // Crucial: onPointerDown preventDefault on buttons prevents touch focus change from wiping DOM selection
+  const buttonProps = {
+    onPointerDown: (e) => {
+      isInteractingRef.current = true;
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    onTouchStart: (e) => {
+      isInteractingRef.current = true;
+      e.stopPropagation();
+    }
+  };
 
   return (
     <div
       ref={popupRef}
-      className={`text-selection-popup ${isDock ? 'mobile-dock' : `floating-${coords.placement}`}`}
-      style={style}
+      className={`text-selection-popup floating-${coords.placement}`}
+      style={{
+        top: `${coords.y}px`,
+        left: `${coords.x}px`,
+        transform: 'translateX(-50%)'
+      }}
       role="toolbar"
       aria-label="Acciones de texto seleccionado"
-      onPointerDown={(e) => e.stopPropagation()}
-      onTouchStart={(e) => e.stopPropagation()}
     >
       <div className="tsp-preview" title={selectedText}>
-        <span className="tsp-preview-text jp-text">
-          {selectedText.length > (isDock ? 8 : 16) ? `${selectedText.slice(0, isDock ? 8 : 16)}…` : selectedText}
-        </span>
+        <span className="tsp-preview-text jp-text">{displayText}</span>
       </div>
 
       <div className="tsp-divider" />
@@ -330,7 +306,7 @@ export default function TextSelectionPopup() {
           type="button"
           className="tsp-btn tsp-btn-primary"
           onClick={handlePlay}
-          onTouchEnd={handlePlay}
+          {...buttonProps}
           title="Escuchar pronunciación (activa el reproductor)"
           aria-label="Reproducir audio"
         >
@@ -343,12 +319,12 @@ export default function TextSelectionPopup() {
           type="button"
           className="tsp-btn"
           onClick={handleDictionary}
-          onTouchEnd={handleDictionary}
+          {...buttonProps}
           title="Consultar en el Diccionario"
           aria-label="Diccionario"
         >
           <BookOpen size={13} className="tsp-icon" />
-          <span className="tsp-label">{isDock ? 'Dict' : 'Diccionario'}</span>
+          <span className="tsp-label">Dict</span>
         </button>
 
         {/* Guardar en Vocabulario */}
@@ -356,7 +332,7 @@ export default function TextSelectionPopup() {
           type="button"
           className="tsp-btn"
           onClick={handleSave}
-          onTouchEnd={handleSave}
+          {...buttonProps}
           title="Guardar palabra o frase en mi vocabulario"
           aria-label="Guardar"
         >
@@ -369,7 +345,7 @@ export default function TextSelectionPopup() {
           type="button"
           className="tsp-btn"
           onClick={handlePracticePad}
-          onTouchEnd={handlePracticePad}
+          {...buttonProps}
           title="Practicar trazos y caligrafía en el Cuaderno"
           aria-label="Cuaderno"
         >
@@ -382,7 +358,7 @@ export default function TextSelectionPopup() {
           type="button"
           className={`tsp-btn ${isCopied ? 'tsp-btn-success' : ''}`}
           onClick={handleCopy}
-          onTouchEnd={handleCopy}
+          {...buttonProps}
           title={isCopied ? '¡Copiado!' : 'Copiar texto al portapapeles'}
           aria-label="Copiar"
         >
@@ -395,12 +371,12 @@ export default function TextSelectionPopup() {
           type="button"
           className="tsp-btn tsp-btn-accent"
           onClick={handleAnalyzeAI}
-          onTouchEnd={handleAnalyzeAI}
+          {...buttonProps}
           title="Analizar desglose gramatical y morfológico"
           aria-label="Analizar gramática"
         >
           <Sparkles size={13} className="tsp-icon" />
-          <span className="tsp-label">{isDock ? 'IA' : 'Analizar'}</span>
+          <span className="tsp-label">IA</span>
         </button>
       </div>
 
@@ -411,18 +387,15 @@ export default function TextSelectionPopup() {
           handleDismiss();
           clearDomSelection();
         }}
-        onTouchEnd={() => {
-          handleDismiss();
-          clearDomSelection();
-        }}
+        {...buttonProps}
         title="Cerrar menú"
         aria-label="Cerrar"
       >
         <X size={13} />
       </button>
 
-      {/* Triángulo indicador en desktop */}
-      {!isDock && <div className={`tsp-arrow tsp-arrow-${coords.placement}`} />}
+      {/* Triángulo indicador */}
+      <div className={`tsp-arrow tsp-arrow-${coords.placement}`} />
     </div>
   );
 }
