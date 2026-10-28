@@ -188,7 +188,7 @@ export default function FloatingMiniPlayer() {
       }
     : {};
 
-  // Minimized mode: compact floating circle / bubble
+  // Minimized mode: sleek compact mini-pill with high contrast and integrated controls
   if (isMinimized) {
     return (
       <div
@@ -202,38 +202,54 @@ export default function FloatingMiniPlayer() {
         role="region"
         aria-label="Reproductor de audio minimizado"
       >
+        {/* Play/Pause high-contrast button */}
         <button
           type="button"
-          className="fmp-bubble-btn"
+          className={`fmp-min-play-btn ${audioState.state === 'playing' ? 'is-playing' : ''}`}
           onClick={handlePlayPause}
           title={audioState.state === 'playing' ? 'Pausar audio' : 'Reanudar audio'}
           aria-label={audioState.state === 'playing' ? 'Pausar' : 'Reproducir'}
         >
           {audioState.state === 'playing' ? (
-            <Pause size={16} className="text-primary animate-pulse" />
+            <Pause size={14} className="fmp-icon-white" />
           ) : (
-            <Play size={16} className="text-primary" />
+            <Play size={14} className="fmp-icon-white" style={{ marginLeft: 1 }} />
           )}
         </button>
 
+        {/* Audio status indicator & quick expand */}
+        <div 
+          className="fmp-min-info" 
+          onClick={() => setIsMinimized(false)} 
+          title="Clic para expandir reproductor"
+        >
+          <span className="fmp-min-badge">
+            {audioState.state === 'playing' ? '🔊' : '⏸️'}
+          </span>
+        </div>
+
+        <div className="fmp-min-divider" />
+
+        {/* Expand button */}
         <button
           type="button"
-          className="fmp-expand-btn"
+          className="fmp-min-action-btn"
           onClick={() => setIsMinimized(false)}
-          title="Expandir reproductor"
+          title="Expandir reproductor completo"
           aria-label="Expandir reproductor"
         >
-          <Maximize2 size={12} />
+          <Maximize2 size={13} />
         </button>
 
+        {/* Close button */}
         <button
           type="button"
-          className="fmp-close-micro-btn"
+          className="fmp-min-action-btn fmp-min-close-btn"
           onClick={handleClose}
           title="Cerrar y detener audio"
           aria-label="Cerrar"
         >
-          <X size={11} />
+          <X size={13} />
         </button>
       </div>
     );
