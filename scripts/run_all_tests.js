@@ -54,7 +54,8 @@ const datasetsToCheck = [
   'pdf_catalog.json',
   'irodori_dialogues.json',
   'nhk_lessons.json',
-  'scriptpad_units.json'
+  'scriptpad_units.json',
+  'kotowaza.json'
 ];
 
 datasetsToCheck.forEach(filename => {
@@ -331,6 +332,24 @@ runTest('Módulos de notificaciones existen y exportan generadores dinámicos', 
   assert(swCode.includes('getDynamicPushNotification'), 'public/sw.js debe incluir generador dinámico getDynamicPushNotification');
   assert(swCode.includes('SW_KANJI_CATALOG'), 'public/sw.js debe contener SW_KANJI_CATALOG');
   assert(swCode.includes('SW_VOCAB_CATALOG'), 'public/sw.js debe contener SW_VOCAB_CATALOG');
+});
+
+runTest('Catálogo kotowaza.json tiene expresiones, kana, significado y nivel JLPT', () => {
+  const kotowazaPath = path.join(DATA_DIR, 'kotowaza.json');
+  assert(fs.existsSync(kotowazaPath), 'data/kotowaza.json debe existir');
+  const items = JSON.parse(fs.readFileSync(kotowazaPath, 'utf8'));
+  assert(Array.isArray(items) && items.length >= 25, 'Debe contener al menos 25 proverbios y modismos');
+
+  items.forEach((item, idx) => {
+    assert(item.id, `Elemento #${idx} debe tener id`);
+    assert(item.expression, `Elemento #${idx} debe tener expression`);
+    assert(item.kana, `Elemento #${idx} debe tener kana`);
+    assert(item.meaning_es, `Elemento #${idx} debe tener meaning_es`);
+    assert(item.teaching, `Elemento #${idx} debe tener teaching`);
+    assert(item.category, `Elemento #${idx} debe tener category`);
+    assert(VALID_JLPT_LEVELS.has(item.level), `Nivel ${item.level} inválido en ${item.id}`);
+    assert(item.example && item.example.jp && item.example.es, `Ejemplo inválido en ${item.id}`);
+  });
 });
 
 console.log('\n======================================================');

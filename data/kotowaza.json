@@ -1,0 +1,512 @@
+[
+  {
+    "id": "koto_nana_korobi",
+    "expression": "七転び八起き",
+    "kana": "ななころびやおき",
+    "romaji": "Nana korobi ya oki",
+    "literal_es": "Caer siete veces, levantarse ocho",
+    "meaning_es": "El espíritu central de la resiliencia japonesa: los tropiezos y fracasos son inevitables, pero lo que define a una persona es su capacidad constante de levantarse y perseverar sin rendirse jamás.",
+    "teaching": "En tu aprendizaje del japonés cometerás errores al escribir kanjis o conjugar verbos. No te desanimes: cada caída es una oportunidad para consolidar tu aprendizaje.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N3",
+    "example": {
+      "jp": "日本語の勉強は大変ですが、七転び八起きで頑張ります。",
+      "kana": "にほんごのべんきょうはたいへんですが、ななころびやおきでがんばります。",
+      "es": "Estudiar japonés es exigente, pero perseveraré con el espíritu de caer siete veces y levantarse ocho."
+    },
+    "audio_text": "七転び八起き"
+  },
+  {
+    "id": "koto_saru_mo_ki",
+    "expression": "猿も木から落ちる",
+    "kana": "さるもきからおちる",
+    "romaji": "Saru mo ki kara ochiru",
+    "literal_es": "Hasta los monos se caen de los árboles",
+    "meaning_es": "Incluso la persona más experimentada, talentosa o experta en una materia puede cometer un error imprevisto. Nadie es infalible.",
+    "teaching": "Si te equivocas en una prueba o no recuerdas una palabra que ya habías memorizado, acéptalo con naturalidad y humildad. Hasta los nativos consultan kanjis.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N3",
+    "example": {
+      "jp": "先生でも間違えることがあります。猿も木から落ちるですね。",
+      "kana": "せんせいでもまちがえることがあります。さるもきからおちるですね。",
+      "es": "Incluso el profesor puede equivocarse. Hasta los monos caen de los árboles, ¿verdad?"
+    },
+    "audio_text": "猿も木から落ちる"
+  },
+  {
+    "id": "koto_ichigo_ichie",
+    "expression": "一期一会",
+    "kana": "いちごいちえ",
+    "romaji": "Ichigo Ichie",
+    "literal_es": "Una vida, un único encuentro",
+    "meaning_es": "Concepto filosófico originado en la ceremonia del té (Sadō) por el maestro Sen no Rikyū. Cada encuentro humano y cada instante presente es irrepetible; por tanto, debe atesorarse con máxima sinceridad y gratitud.",
+    "teaching": "Dedica plena presencia a cada sesión de estudio y a cada conversación en japonés; ese momento exacto nunca volverá a repetirse de la misma manera.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N2",
+    "example": {
+      "jp": "旅先で出会った人との時間は、まさに一期一会でした。",
+      "kana": "たびさきでであったひととのじかんは、まさにいちごいちえでした。",
+      "es": "El tiempo compartido con la persona que conocí en el viaje fue verdaderamente un encuentro único en la vida."
+    },
+    "audio_text": "一期一会"
+  },
+  {
+    "id": "koto_hana_yori_dango",
+    "expression": "花より団子",
+    "kana": "はなよりだんご",
+    "romaji": "Hana yori dango",
+    "literal_es": "Albóndigas de arroz antes que flores",
+    "meaning_es": "Preferir la sustancia, lo práctico y lo útil por encima de la apariencia externa, lo meramente estético o lo superficial. Se originó en el Hanami, donde la gente prefería comer los dulces antes que solo contemplar los cerezos.",
+    "teaching": "Prioriza dominar el vocabulario real y las partículas funcionales que usarás en conversaciones cotidianas antes de obsesionarte con excepciones gramaticales oscuras.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N3",
+    "example": {
+      "jp": "お花見に来たのに、食べることに夢中で花より団子だね。",
+      "kana": "おはなみにきたのに、たべることにむちゅうではなよりだんごだね。",
+      "es": "Vinimos a ver los cerezos, pero estás tan concentrado en comer que eres puro 'albóndigas antes que flores'."
+    },
+    "audio_text": "花より団子"
+  },
+  {
+    "id": "koto_neko_ni_koban",
+    "expression": "猫に小判",
+    "kana": "ねこにこばん",
+    "romaji": "Neko ni koban",
+    "literal_es": "Monedas de oro ovaladas para un gato",
+    "meaning_es": "Ofrecer o dar algo de inmenso valor o sabiduría a alguien que es completamente incapaz de comprender su precio o apreciarlo (equivalente a 'arrojar perlas a los cerdos').",
+    "teaching": "Los recursos de estudio más avanzados no sirven de nada si no cultivas la disciplina para aplicarlos a diario.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N3",
+    "example": {
+      "jp": "彼に高価な万年筆をプレゼントしても、猫に小判だよ。",
+      "kana": "かれにこうかなまんねんひつをプレゼントしても、ねこにこばんだよ。",
+      "es": "Aunque le regales una pluma estilográfica carísima, es como darle monedas de oro a un gato."
+    },
+    "audio_text": "猫に小判"
+  },
+  {
+    "id": "koto_i_no_naka",
+    "expression": "井の中の蛙大海を知らず",
+    "kana": "いのなかのかわずたいかいをしらず",
+    "romaji": "I no naka no kawazu taikai o shirazu",
+    "literal_es": "La rana dentro del pozo no conoce el gran océano",
+    "meaning_es": "Una persona con una visión estrecha y limitada del mundo que cree saberlo todo, ignorando por completo la inmensidad del conocimiento y las experiencias que existen fuera de su entorno habitual.",
+    "teaching": "Aprender japonés expande tu mente más allá de tu cultura materna y te permite ver el mundo desde una perspectiva infinitamente más rica.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N2",
+    "example": {
+      "jp": "海外に出て初めて、自分が井の中の蛙だったと気づきました。",
+      "kana": "かいがいにでてはじめて、じぶんがいのなかのかわずだったときづきました。",
+      "es": "Solo al salir al extranjero me di cuenta de que era una rana en el fondo del pozo."
+    },
+    "audio_text": "井の中の蛙大海を知らず"
+  },
+  {
+    "id": "koto_ame_futte",
+    "expression": "雨降って地固まる",
+    "kana": "あめふってじかたまる",
+    "romaji": "Ame futte ji katamaru",
+    "literal_es": "Tras la lluvia, la tierra se endurece y consolida",
+    "meaning_es": "Los momentos difíciles, disputas o crisis inevitablemente fortalecen los cimientos de una relación o situación, dejándola mucho más sólida y estable que antes del conflicto.",
+    "teaching": "Superar una etapa de estancamiento en el estudio forja una base memorística mucho más firme a largo plazo.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N2",
+    "example": {
+      "jp": "喧嘩の後はもっと仲良くなりました。雨降って地固まるです。",
+      "kana": "けんかのあとはもっとなかよくなりました。あめふってじかたまるです。",
+      "es": "Después de la discusión nos volvimos más unidos. Tras la lluvia, la tierra se endurece."
+    },
+    "audio_text": "雨降って地固まる"
+  },
+  {
+    "id": "koto_ishi_no_ue",
+    "expression": "石の上にも三年",
+    "kana": "いしのうえにもさんねん",
+    "romaji": "Ishi no ue ni mo sannen",
+    "literal_es": "Incluso sobre una roca fría, tres años la calentarán",
+    "meaning_es": "La paciencia y la perseverancia constante vencen cualquier dificultad. Si mantienes el esfuerzo ininterrumpido durante el tiempo necesario, el éxito llegará.",
+    "teaching": "El dominio del japonés no ocurre en una semana; la constancia de repasar tus tarjetas FSRS día a día transformará tu cerebro.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N2",
+    "example": {
+      "jp": "最初は辛くても、石の上にも三年で続けてみましょう。",
+      "kana": "さいしょはつらくても、いしのうえにもさんねんでつづけてみましょう。",
+      "es": "Aunque al principio sea difícil, perseveremos: con el tiempo hasta la piedra más fría se calienta."
+    },
+    "audio_text": "石の上にも三年"
+  },
+  {
+    "id": "koto_hyakubun_ikken",
+    "expression": "百聞は一見に如かず",
+    "kana": "ひゃくぶんはいっけんにしかず",
+    "romaji": "Hyakubun wa ikken ni shikazu",
+    "literal_es": "Escuchar cien veces no se compara a ver una sola vez",
+    "meaning_es": "La experiencia directa y vivencial supera con creces cualquier cantidad de explicaciones teóricas o rumores ajenos. Ver y practicar por uno mismo es la vía definitiva del entendimiento.",
+    "teaching": "En lugar de limitarte a leer sobre Japón, interactúa con hablantes nativos, lee historias reales y escucha audios cotidianos.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N2",
+    "example": {
+      "jp": "写真を見るより実際に行くべきです。百聞は一見に如かずですから。",
+      "kana": "しゃしんをみるよりじっさいにいくべきです。ひゃくぶんはいっけんにしかずですから。",
+      "es": "Es mejor ir en persona que mirar fotos: ver una sola vez vale más que escuchar cien veces."
+    },
+    "audio_text": "百聞は一見に如かず"
+  },
+  {
+    "id": "koto_omoitatta",
+    "expression": "思い立ったが吉日",
+    "kana": "おもいたったがきつじつ",
+    "romaji": "Omoitatta ga kichijitsu",
+    "literal_es": "El día en que te decides a actuar es el día propicio",
+    "meaning_es": "No pospongas para mañana lo que consideres valioso. Cuando surge una buena determinación o deseo de aprender, ese instante es el mejor momento para comenzar.",
+    "teaching": "No esperes al próximo lunes para iniciar tu meta diaria; hazlo ahora mismo en un par de minutos.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N3",
+    "example": {
+      "jp": "日本語を勉強したいなら、思い立ったが吉日、今日から始めましょう。",
+      "kana": "にほんごをべんきょうしたいなら、おもいたったがきつじつ、きょうからはじめましょう。",
+      "es": "Si quieres estudiar japonés, el momento en que lo decides es el día ideal: comencemos hoy."
+    },
+    "audio_text": "思い立ったが吉日"
+  },
+  {
+    "id": "koto_juunin_toiro",
+    "expression": "十人十色",
+    "kana": "じゅうにんといろ",
+    "romaji": "Juunin toiro",
+    "literal_es": "Diez personas, diez colores distintos",
+    "meaning_es": "Cada individuo posee su propia personalidad, gustos, opiniones y ritmos únicos de aprendizaje. La diversidad y la singularidad de cada ser humano enriquecen la sociedad.",
+    "teaching": "No compares tu velocidad de memorización con la de otros estudiantes. Encuentra tu propio ritmo de estudio y celébralo.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N3",
+    "example": {
+      "jp": "人の好みは十人十色だから、みんな違って当たり前です。",
+      "kana": "ひとのこのみはじゅうにんといろだから、みんなちがってあたりまえです。",
+      "es": "Los gustos de la gente son como diez colores para diez personas; es completamente natural que todos seamos diferentes."
+    },
+    "audio_text": "十人十色"
+  },
+  {
+    "id": "koto_isseki_nichou",
+    "expression": "一石二鳥",
+    "kana": "いっせきにちょう",
+    "romaji": "Isseki nichou",
+    "literal_es": "Una sola piedra, dos pájaros",
+    "meaning_es": "Conseguir dos beneficios o resolver dos objetivos simultáneamente mediante una sola acción o esfuerzo (matar dos pájaros de un tiro).",
+    "teaching": "Al leer historias breves en japonés con audio no solo entrenas tu comprensión lectora, sino también tu oído fonético al mismo tiempo.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N4",
+    "example": {
+      "jp": "歩いて通勤すれば運動にも節約にもなり、一石二鳥です。",
+      "kana": "あるいてつうきんすればうんどうにもせつやくにもなり、いっせきにちょうです。",
+      "es": "Caminar al trabajo es ejercicio y además ahorro: dos pájaros de un solo tiro."
+    },
+    "audio_text": "一石二鳥"
+  },
+  {
+    "id": "koto_jigou_jitoku",
+    "expression": "自業自得",
+    "kana": "じごうじとく",
+    "romaji": "Jigou jitoku",
+    "literal_es": "La propia acción produce el propio resultado",
+    "meaning_es": "Principio budista de causa y efecto: cada persona debe asumir la responsabilidad de las consecuencias de sus propios actos, tanto buenos como malos (cosechas lo que siembras).",
+    "teaching": "El tiempo que inviertas hoy en tu estudio es el dominio y la fluidez que cosecharás en el futuro.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N3",
+    "example": {
+      "jp": "夜更かしして寝坊したのは自業自得だよ。",
+      "kana": "よふかししてねぼうしたのはじごうじとくだよ。",
+      "es": "Haberte quedado despierto hasta tarde y quedarte dormido es tu propia responsabilidad."
+    },
+    "audio_text": "自業自得"
+  },
+  {
+    "id": "koto_onko_chishin",
+    "expression": "温故知新",
+    "kana": "おんこちしん",
+    "romaji": "Onko chishin",
+    "literal_es": "Visitar lo antiguo para comprender lo nuevo",
+    "meaning_es": "Aforismo de Confucio adoptado en la cultura japonesa: estudiar con devoción la historia, la tradición y los fundamentos del pasado permite generar innovaciones y conocimientos nuevos para el porvenir.",
+    "teaching": "Repasar los kanjis básicos de N5 es el pilar que te permitirá deducir sin esfuerzo los compuestos complejos de N2 y N1.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N2",
+    "example": {
+      "jp": "伝統を学びながら新しい技術を生み出す温故知新の姿勢が大切です。",
+      "kana": "でんとうをまなびながらあたらしいぎじゅつをうみだすおんこちしんのしせいがたいせつです。",
+      "es": "Es fundamental la postura de aprender del pasado para crear nuevas tecnologías."
+    },
+    "audio_text": "温故知新"
+  },
+  {
+    "id": "koto_minoru_hodo",
+    "expression": "実るほど頭を垂れる稲穂かな",
+    "kana": "みのるほどあたまをたれるいなほかな",
+    "romaji": "Minoru hodo atama o tareru inaho kana",
+    "literal_es": "Cuanto más grano madura la espiga de arroz, más inclina su cabeza",
+    "meaning_es": "La verdadera sabiduría, el éxito y la maestría se manifiestan en la humildad y la gentileza sincera. Quien verdaderamente sabe no alardea.",
+    "teaching": "A medida que alcances niveles avanzados en japonés, mantén siempre una actitud humilde, respetuosa y agradecida con quienes te rodean.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N1",
+    "example": {
+      "jp": "成功しても謙虚でいる彼の姿は、まさに実るほど頭を垂れる稲穂かなです。",
+      "kana": "せいこうしてもけんきょでいるかれのすがたは、まさにみのるほどあたまをたれるいなほかなです。",
+      "es": "Su actitud humilde a pesar de su gran éxito personifica a la espiga de arroz que inclina su cabeza al madurar."
+    },
+    "audio_text": "実るほど頭を垂れる稲穂かな"
+  },
+  {
+    "id": "koto_ungai_souten",
+    "expression": "雲外蒼天",
+    "kana": "うんがいそうてん",
+    "romaji": "Ungai souten",
+    "literal_es": "Más allá de las nubes aguarda el cielo azul despejado",
+    "meaning_es": "Las dificultades, tristezas y tormentas son pasajeras. Si perseveras con fe y coraje a través de los momentos sombríos, al final te espera una claridad luminosa.",
+    "teaching": "Cuando una regla gramatical o un grupo de kanjis se te haga cuesta arriba, recuerda que tras el esfuerzo viene la satisfacción de entenderlo sin pensar.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N1",
+    "example": {
+      "jp": "困難な状況でも、雲外蒼天を信じて前を向いて歩みましょう。",
+      "kana": "こんなんなじょうきょうでも、うんがいそうてんをしんじてまえをむいてあゆみましょう。",
+      "es": "Incluso en situaciones difíciles, sigamos adelante confiando en que más allá de las nubes hay un cielo azul."
+    },
+    "audio_text": "雲外蒼天"
+  },
+  {
+    "id": "koto_shoshin",
+    "expression": "初心忘るべからず",
+    "kana": "しょしんわするべからず",
+    "romaji": "Shoshin wasuru bekarazu",
+    "literal_es": "Jamás debes olvidar el corazón del principiante",
+    "meaning_es": "Enseñanza inmortal del maestro de teatro Noh Zeami Motokiyo. Sin importar cuánto domines un arte o idioma, mantén viva la curiosidad ingenua, el respeto y la devoción con la que diste tu primer paso.",
+    "teaching": "Recuerda la emoción del primer día en que aprendiste a escribir tu nombre en Hiragana y llévala contigo en cada lección.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N2",
+    "example": {
+      "jp": "何年仕事を続けても、初心忘るべからずの気持ちを大切にしています。",
+      "kana": "なんねんしごとをつづけても、しょしんわするべからずのきもちをたいせつにしています。",
+      "es": "Sin importar cuántos años lleve trabajando, valoro profundamente el espíritu de no olvidar la humildad del principiante."
+    },
+    "audio_text": "初心忘るべからず"
+  },
+  {
+    "id": "koto_inu_mo_arukeba",
+    "expression": "犬も歩けば棒に当たる",
+    "kana": "いぬもあるけばぼうにあたる",
+    "romaji": "Inu mo arukeba bou ni ataru",
+    "literal_es": "Incluso el perro que camina se topa con un palo",
+    "meaning_es": "Tiene un doble matiz tradicional: por un lado, quien actúa y se aventura al mundo encontrará tanto tropiezos como oportunidades afortunadas inesperadas. Siempre es mejor actuar que permanecer inmóvil.",
+    "teaching": "Atrévete a hablar y escribir japonés aunque cometas fallos; la acción es la única forma de toparse con el aprendizaje real.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N3",
+    "example": {
+      "jp": "散歩していたら偶然昔の友人に会ったよ。犬も歩けば棒に当たるだね。",
+      "kana": "さんぽしていたらぐうぜんむかしのゆうじんにあったよ。いぬもあるけばぼうにあたるだね。",
+      "es": "Caminando me topé por casualidad con un viejo amigo. Quien sale a caminar encuentra sorpresas."
+    },
+    "audio_text": "犬も歩けば棒に当たる"
+  },
+  {
+    "id": "koto_anzuru_yori",
+    "expression": "案ずるより産むが易し",
+    "kana": "あんずるよりうむがやすし",
+    "romaji": "Anzuru yori umu ga yasushi",
+    "literal_es": "Dar a luz es más sencillo que consumirse en preocupaciones sobre el parto",
+    "meaning_es": "Las metas o tareas que tememos suelen resultar mucho más abordables y llevaderas en la práctica de lo que la ansiedad mental nos hace creer antes de empezar.",
+    "teaching": "Presentarse al examen JLPT o hablar con un nativo asusta antes de empezar, pero al lanzarte descubres que eres perfectamente capaz.",
+    "category": "Proverbio (Kotowaza)",
+    "level": "N2",
+    "example": {
+      "jp": "心配ばかりしていたけれど、案ずるより産むが易しで簡単に合格できました。",
+      "kana": "しんぱいばかりしていたけれど、あんずるよりうむがやすしでかんたんにごうかくできました。",
+      "es": "Me preocupé muchísimo, pero emprender la tarea fue más fácil que temerla y aprobé fácilmente."
+    },
+    "audio_text": "案ずるより産むが易し"
+  },
+  {
+    "id": "koto_oubai_touri",
+    "expression": "桜梅桃李",
+    "kana": "おうばいとうり",
+    "romaji": "Oubai touri",
+    "literal_es": "Cerezo, ciruelo, melocotón y albaricoque",
+    "meaning_es": "Las cuatro flores florecen en épocas distintas de la primavera, cada una con su propio color, fragancia y belleza singular sin compararse ni envidiarse entre sí.",
+    "teaching": "Tu camino en el japonés es tuyo y único. Respeta tus propios tiempos y florece con tu propia luz.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N1",
+    "example": {
+      "jp": "他人と比べる必要はありません。桜梅桃李のように自分らしく輝きましょう。",
+      "kana": "たにんとくらべるひつようはありません。おうばいとうりのようにじぶんらしくかがやきましょう。",
+      "es": "No hace falta compararse con nadie: brilla a tu propia manera, tal como el cerezo, ciruelo, durazno y albaricoque."
+    },
+    "audio_text": "桜梅桃李"
+  },
+  {
+    "id": "koto_komorebi",
+    "expression": "木漏れ日",
+    "kana": "こもれび",
+    "romaji": "Komorebi",
+    "literal_es": "Luz del sol que se filtra y gotea a través de las ramas y hojas",
+    "meaning_es": "Concepto poético y estético japonés que no posee traducción unívoca en casi ningún idioma occidental. Alude a la danza sutil entre la sombra y la luz natural en un bosque.",
+    "teaching": "Aprender una lengua no es solo traducir palabras, sino adquirir una lente sensible para percibir matices del mundo que antes pasaban desapercibidos.",
+    "category": "Concepto Cultural & Estético",
+    "level": "N2",
+    "example": {
+      "jp": "森の中を歩きながら、美しい木漏れ日に心が癒されました。",
+      "kana": "もりのなかをあるきながら、うつくしいこもれびにこころがいやされました。",
+      "es": "Caminando por el bosque, mi espíritu encontró serenidad bajo la hermosa luz filtrada entre las hojas."
+    },
+    "audio_text": "木漏れ日"
+  },
+  {
+    "id": "koto_kaizen",
+    "expression": "改善",
+    "kana": "かいぜん",
+    "romaji": "Kaizen",
+    "literal_es": "Cambiar para mejor",
+    "meaning_es": "La célebre filosofía japonesa de mejora continua mediante pequeñas acciones cotidianas incrementales. Los grandes éxitos no son fruto de saltos titánicos, sino de la acumulación silenciosa de pequeños ajustes diarios.",
+    "teaching": "Aprender 3 palabras y repasar 5 kanjis cada día genera un dominio exponencial con el tiempo.",
+    "category": "Concepto Cultural & Estético",
+    "level": "N4",
+    "example": {
+      "jp": "毎日の小さな改善が、やがて大きな目標達成につながります。",
+      "kana": "まいにちのちいさなかいぜんが、やがておおきなもくひょうたっせいにつながります。",
+      "es": "La pequeña mejora de cada día conduce con el tiempo al cumplimiento de grandes metas."
+    },
+    "audio_text": "改善"
+  },
+  {
+    "id": "koto_hara_hachi",
+    "expression": "腹八分目",
+    "kana": "はらはちぶんめ",
+    "romaji": "Hara hachi bun me",
+    "literal_es": "Estómago al ochenta por ciento",
+    "meaning_es": "Sabiduría milenaria tradicional de la isla de Okinawa y el confucianismo: detenerse antes de quedar completamente lleno para mantener la energía, la claridad mental y la longevidad.",
+    "teaching": "En tus sesiones de estudio, detén la sesión antes de quedar exhausto para que al día siguiente retomes el aprendizaje con entusiasmo renovado.",
+    "category": "Sabiduría Cotidiana",
+    "level": "N2",
+    "example": {
+      "jp": "健康のために、いつも腹八分目を心がけています。",
+      "kana": "けんこうのために、いつもはらはちぶんめをこころがけています。",
+      "es": "Por el bien de mi salud, siempre procuro comer hasta el ochenta por ciento de saciedad."
+    },
+    "audio_text": "腹八分目"
+  },
+  {
+    "id": "koto_mono_no_aware",
+    "expression": "物の哀れ",
+    "kana": "もののあわれ",
+    "romaji": "Mono no aware",
+    "literal_es": "El patetismo o sensibilidad conmovedora de las cosas",
+    "meaning_es": "Pilar estético primordial de la literatura clásica japonesa (como Genji Monogatari). Describe la melancolía dulce y reverente que sentimos ante la belleza efímera de la vida y el paso inexorable del tiempo.",
+    "teaching": "La belleza de la flor del cerezo radica en que caerá en pocos días; valorar lo transitorio le da profundidad a cada instante de estudio.",
+    "category": "Concepto Cultural & Estético",
+    "level": "N1",
+    "example": {
+      "jp": "散りゆく桜の花びらに、日本の「物の哀れ」を感じます。",
+      "kana": "ちりゆくさくらのはなびらに、にほんの「もののあわれ」をかんじます。",
+      "es": "En los pétalos de cerezo que caen siento la profunda sensibilidad estética de las cosas."
+    },
+    "audio_text": "物の哀れ"
+  },
+  {
+    "id": "koto_yuugen",
+    "expression": "幽玄",
+    "kana": "ゆうげん",
+    "romaji": "Yuugen",
+    "literal_es": "Misterio profundo, elegancia sutil y penumbra espiritual",
+    "meaning_es": "Concepto estético del arte tradicional, el teatro Noh y la poesía Waka. Se refiere a una belleza insondable que no se muestra directamente a los ojos, sino que se intuye en la sombra o más allá de lo visible.",
+    "teaching": "Gran parte de la riqueza del japonés reside en lo que no se dice explícitamente: aprender a leer el aire (kuuki wo yomu) y captar las intenciones sutiles.",
+    "category": "Concepto Cultural & Estético",
+    "level": "N1",
+    "example": {
+      "jp": "能の舞台には、言葉では表現できない幽玄の美が漂っています。",
+      "kana": "のうのぶたいには、ことばではひょうげんできないゆうげんのびがただよっています。",
+      "es": "En el escenario del teatro Noh flota una belleza sutil e insondable que las palabras no pueden describir."
+    },
+    "audio_text": "幽玄"
+  },
+  {
+    "id": "koto_itadakimasu",
+    "expression": "いただきます",
+    "kana": "いただきます",
+    "romaji": "Itadakimasu",
+    "literal_es": "Recibo con humildad sobre mi cabeza",
+    "meaning_es": "Fórmula sagrada pronunciada con las palmas unidas antes de cada comida. Agradece la vida que los animales y plantas entregaron para nutrirnos, así como el esfuerzo de campesinos, cocineros y anfitriones.",
+    "teaching": "El lenguaje en Japón no es solo información técnica, sino un vehículo continuo de respeto, cortesía y gratitud hacia la vida cotidiana.",
+    "category": "Sabiduría Cotidiana",
+    "level": "N5",
+    "example": {
+      "jp": "食事の前には、手を合わせて「いただきます」と言いましょう。",
+      "kana": "しょくじのまえには、てをあわせて「いただきます」といいましょう。",
+      "es": "Antes de comer, juntemos las manos y digamos 'itadakimasu' con gratitud."
+    },
+    "audio_text": "いただきます"
+  },
+  {
+    "id": "koto_gochisou",
+    "expression": "ごちそうさまでした",
+    "kana": "ごちそうさまでした",
+    "romaji": "Gochisousama deshita",
+    "literal_es": "Fue una gran carrera y esmero para agasajarme",
+    "meaning_es": "Expresión de cierre tras una comida. El kanji 馳走 (chisou) significa correr velozmente en todas direcciones, en alusión al anfitrión que corrió a caballo o a pie para conseguir los mejores ingredientes para sus invitados.",
+    "teaching": "Reconocer el trabajo invisible detrás de cada servicio o detalle es uno de los valores más hermosos de la sociedad japonesa.",
+    "category": "Sabiduría Cotidiana",
+    "level": "N5",
+    "example": {
+      "jp": "とても美味しい料理でした。ごちそうさまでした！",
+      "kana": "とてもおいしいりょうりでした。ごちそうさまでした！",
+      "es": "La comida estuvo riquísima. ¡Muchas gracias por todo el esmero!"
+    },
+    "audio_text": "ごちそうさまでした"
+  },
+  {
+    "id": "koto_otsukare",
+    "expression": "お疲れ様でした",
+    "kana": "おつかれさまでした",
+    "romaji": "Otsukaresama deshita",
+    "literal_es": "Fue una honorable fatiga / esfuerzo",
+    "meaning_es": "El saludo indispensable del ámbito laboral, académico y social en Japón. Reconoce y valida el cansancio positivo y el esmero que la otra persona ha dedicado a su jornada.",
+    "teaching": "Felicítate tras cada bloque de estudio: el cansancio mental es la prueba viva de que tu cerebro está creando nuevas conexiones sinápticas.",
+    "category": "Sabiduría Cotidiana",
+    "level": "N4",
+    "example": {
+      "jp": "今日のレッスンはこれで終了です。皆さん、お疲れ様でした！",
+      "kana": "きょうのレッスンはこれでしゅうりょうです。みなさん、おつかれさまでした！",
+      "es": "La lección de hoy concluye aquí. ¡Muchas gracias a todos por su arduo esfuerzo!"
+    },
+    "audio_text": "お疲れ様でした"
+  },
+  {
+    "id": "koto_ganbatte",
+    "expression": "頑張って！",
+    "kana": "がんばって",
+    "romaji": "Ganbatte!",
+    "literal_es": "¡Mantente firme y persevera en tu puesto!",
+    "meaning_es": "El grito de aliento y motivación más icónico del idioma japonés. Proviene de 'ganbaru' (esforzarse, ser tenaz y resistir ante la adversidad). Se dice con entusiasmo antes de exámenes, competiciones y retos diarios.",
+    "teaching": "Cualquier persona puede aprender japonés si decide no renunciar. ¡Ganbatte en tu meta de hoy!",
+    "category": "Sabiduría Cotidiana",
+    "level": "N5",
+    "example": {
+      "jp": "明日のJLPT試験、全力で頑張ってください！応援しています。",
+      "kana": "あしたのJLPTしけん、ぜんりょくでがんばってください！おうえんしています。",
+      "es": "¡Da todo de ti en el examen JLPT de mañana! ¡Mucho ánimo, te estamos apoyando!"
+    },
+    "audio_text": "頑張って"
+  },
+  {
+    "id": "koto_gashin_shoutan",
+    "expression": "臥薪嘗胆",
+    "kana": "がしんしょうたん",
+    "romaji": "Gashin shoutan",
+    "literal_es": "Dormir sobre leña áspera y probar la hiel amarga",
+    "meaning_es": "Soportar privaciones, sacrificios y rigores extremos con paciencia indomable para alcanzar un objetivo trascendental o vengar un fracaso pasado.",
+    "teaching": "Los periodos de intenso estudio y disciplina exigente son el precio necesario que pagan quienes alcanzan la maestría.",
+    "category": "Modismo de 4 Kanjis (Yojijukugo)",
+    "level": "N1",
+    "example": {
+      "jp": "不合格の悔しさを胸に、臥薪嘗胆の日々を過ごしてついにN1に合格しました。",
+      "kana": "ふごうかくのくやしさをむねに、がしんしょうたんのひびをすごしてついにN1にごうかくしました。",
+      "es": "Con el dolor de no haber aprobado en mente, viví días de duro sacrificio y finalmente aprobé el N1."
+    },
+    "audio_text": "臥薪嘗胆"
+  }
+]

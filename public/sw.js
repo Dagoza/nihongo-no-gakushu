@@ -58,12 +58,12 @@ const SW_VOCAB_CATALOG = [
 ];
 
 const SW_NUGGETS_CATALOG = [
-  { category: 'Proverbio', expression: '一期一会', reading: 'いちごいちえ', meaning: 'Un encuentro, una sola oportunidad en la vida', detail: 'Valora cada instante de tu práctica de japonés.', url: '/vocab?search=一期一会' },
-  { category: 'Proverbio', expression: '七転び八起き', reading: 'ななころびやおき', meaning: 'Caer siete veces, levantarse ocho', detail: 'La resiliencia ante los ejercicios difíciles de kanji.', url: '/vocab?search=七転び八起き' },
-  { category: 'Proverbio', expression: '猿も木から落ちる', reading: 'さるもきからおちる', meaning: 'Hasta los monos caen de los árboles', detail: 'Incluso los más avanzados se equivocan. ¡Sigue adelante!', url: '/vocab?search=猿' },
-  { category: 'Cultura', expression: 'いただきます', reading: 'Itadakimasu', meaning: 'Recibo con humildad estos alimentos', detail: 'Agradecimiento tradicional antes de comer en Japón.', url: '/vocab?search=いただきます' },
-  { category: 'Cultura', expression: 'お疲れ様でした', reading: 'Otsukaresama deshita', meaning: 'Gracias por tu arduo trabajo', detail: 'El saludo japonés de reconocimiento al esfuerzo mutuo.', url: '/vocab?search=疲' },
-  { category: 'Filosofía', expression: '腹八分目', reading: 'Hara hachi bun me', meaning: 'Comer hasta el 80% de saciedad', detail: 'Secreto de salud y longevidad en Okinawa.', url: '/vocab?search=腹' }
+  { id: 'koto_ichigo_ichie', category: 'Proverbio', expression: '一期一会', reading: 'いちごいちえ', meaning: 'Un encuentro, una sola oportunidad en la vida', detail: 'Valora cada instante de tu práctica de japonés.', url: '/terminology?pillar=kotowaza&id=koto_ichigo_ichie' },
+  { id: 'koto_nana_korobi', category: 'Proverbio', expression: '七転び八起き', reading: 'ななころびやおき', meaning: 'Caer siete veces, levantarse ocho', detail: 'La resiliencia ante los ejercicios difíciles de kanji.', url: '/terminology?pillar=kotowaza&id=koto_nana_korobi' },
+  { id: 'koto_saru_mo_ki', category: 'Proverbio', expression: '猿も木から落ちる', reading: 'さるもきからおちる', meaning: 'Hasta los monos caen de los árboles', detail: 'Incluso los más avanzados se equivocan. ¡Sigue adelante!', url: '/terminology?pillar=kotowaza&id=koto_saru_mo_ki' },
+  { id: 'koto_itadakimasu', category: 'Cultura', expression: 'いただきます', reading: 'Itadakimasu', meaning: 'Recibo con humildad estos alimentos', detail: 'Agradecimiento tradicional antes de comer en Japón.', url: '/terminology?pillar=kotowaza&id=koto_itadakimasu' },
+  { id: 'koto_otsukare', category: 'Cultura', expression: 'お疲れ様でした', reading: 'Otsukaresama deshita', meaning: 'Gracias por tu arduo trabajo', detail: 'El saludo japonés de reconocimiento al esfuerzo mutuo.', url: '/terminology?pillar=kotowaza&id=koto_otsukare' },
+  { id: 'koto_hara_hachi', category: 'Filosofía', expression: '腹八分目', reading: 'Hara hachi bun me', meaning: 'Comer hasta el 80% de saciedad', detail: 'Secreto de salud y longevidad en Okinawa.', url: '/terminology?pillar=kotowaza&id=koto_hara_hachi' }
 ];
 
 // Install Event - Pre-cache core shell

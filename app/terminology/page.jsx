@@ -9,12 +9,18 @@ function TerminologyPageContent() {
   const searchParams = useSearchParams();
   const pillarParam = searchParams.get('pillar') || 'writing';
   const termParam = searchParams.get('term');
+  const kotowazaParam = searchParams.get('kotowaza') || searchParams.get('id');
   const queryParam = searchParams.get('search') || '';
+
+  const resolvedPillar = kotowazaParam 
+    ? 'kotowaza' 
+    : (termParam ? 'glossary' : pillarParam);
 
   return (
     <TerminologyGuideView 
-      initialPillar={termParam ? 'glossary' : pillarParam}
+      initialPillar={resolvedPillar}
       initialTerm={termParam}
+      initialKotowazaId={kotowazaParam}
       initialSearch={queryParam}
     />
   );

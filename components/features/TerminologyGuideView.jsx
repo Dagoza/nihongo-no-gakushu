@@ -14,10 +14,14 @@ import {
   Filter,
   Compass,
   Layers,
-  Sparkle
+  Sparkle,
+  Quote,
+  Copy,
+  Check
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import terminologyList from '../../data/terminology.json';
+import kotowazaList from '../../data/kotowaza.json';
 
 /**
  * Normaliza texto en japonés para síntesis de voz neuronal eliminando lecturas entre paréntesis.
@@ -31,15 +35,25 @@ function cleanTextForAudio(text) {
 export default function TerminologyGuideView({
   initialPillar = 'writing',
   initialTerm = null,
+  initialKotowazaId = null,
   initialSearch = ''
 }) {
-  const [activePillar, setActivePillar] = useState(initialTerm ? 'glossary' : initialPillar);
+  const [activePillar, setActivePillar] = useState(
+    initialKotowazaId ? 'kotowaza' : (initialTerm ? 'glossary' : initialPillar)
+  );
   const [highlightedTermId, setHighlightedTermId] = useState(initialTerm);
+  const [highlightedKotowazaId, setHighlightedKotowazaId] = useState(initialKotowazaId);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
 
   // Filtros y búsqueda para el glosario
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
+
+  // Filtros y búsqueda para Kotowaza (Proverbios)
+  const [kotowazaSearch, setKotowazaSearch] = useState('');
+  const [kotowazaCategory, setKotowazaCategory] = useState('Todas');
+  const [kotowazaLevel, setKotowazaLevel] = useState('Todos');
 
   // Categorías de filtrado
   const categoryPills = useMemo(() => {
@@ -86,17 +100,65 @@ export default function TerminologyGuideView({
     });
   }, [searchTerm, selectedCategory]);
 
+  // Categorías de filtrado para Kotowaza (Proverbios)
+  const kotowazaCategoryPills = useMemo(() => [
+    'Todas',
+    'Proverbio (Kotowaza)',
+    'Modismo de 4 Kanjis (Yojijukugo)',
+    'Concepto Cultural & Estético',
+    'Sabiduría Cotidiana'
+  ], []);
+
+  const kotowazaLevelPills = useMemo(() => [
+    'Todos', 'N5', 'N4', 'N3', 'N2', 'N1'
+  ], []);
+
+  // Proverbios filtrados
+  const filteredKotowaza = useMemo(() => {
+    if (!Array.isArray(kotowazaList)) return [];
+    const query = kotowazaSearch.trim().toLowerCase();
+
+    return kotowazaList.filter((item) => {
+      const matchCat = kotowazaCategory === 'Todas' || item.category === kotowazaCategory;
+      const matchLvl = kotowazaLevel === 'Todos' || item.level === kotowazaLevel;
+      if (!matchCat || !matchLvl) return false;
+      if (!query) return true;
+
+      return (
+        (item.expression || '').toLowerCase().includes(query) ||
+        (item.kana || '').toLowerCase().includes(query) ||
+        (item.romaji || '').toLowerCase().includes(query) ||
+        (item.literal_es || '').toLowerCase().includes(query) ||
+        (item.meaning_es || '').toLowerCase().includes(query) ||
+        (item.teaching || '').toLowerCase().includes(query)
+      );
+    });
+  }, [kotowazaSearch, kotowazaCategory, kotowazaLevel]);
+
+  // Copiar proverbio al portapapeles
+  const handleCopyKotowaza = (item) => {
+    if (typeof navigator === 'undefined' || !navigator.clipboard) return;
+    const text = `${item.expression} (${item.kana} · ${item.romaji})\n"${item.meaning_es}"\nEnseñanza: ${item.teaching}`;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(item.id);
+      setTimeout(() => setCopiedId(null), 2200);
+    }).catch(() => {});
+  };
+
   // Sincronizar estado si cambian las props iniciales
   useEffect(() => {
-    if (initialTerm) {
+    if (initialKotowazaId) {
+      setActivePillar('kotowaza');
+      setHighlightedKotowazaId(initialKotowazaId);
+    } else if (initialTerm) {
       setActivePillar('glossary');
       setHighlightedTermId(initialTerm);
     } else if (initialPillar) {
       setActivePillar(initialPillar);
     }
-  }, [initialPillar, initialTerm]);
+  }, [initialPillar, initialTerm, initialKotowazaId]);
 
-  // Desplazamiento suave y resaltado cuando se accede mediante enlace directo a un término
+  // Desplazamiento suave y resaltado cuando se accede mediante enlace directo a un término del glosario
   useEffect(() => {
     if (activePillar === 'glossary' && highlightedTermId) {
       const timer = setTimeout(() => {
@@ -109,17 +171,37 @@ export default function TerminologyGuideView({
     }
   }, [activePillar, highlightedTermId]);
 
+  // Desplazamiento suave y resaltado cuando se accede mediante enlace directo a un proverbio (Kotowaza)
+  useEffect(() => {
+    if (activePillar === 'kotowaza' && highlightedKotowazaId) {
+      const timer = setTimeout(() => {
+        const targetElement = document.getElementById(`kotowaza-card-${highlightedKotowazaId}`);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 250);
+      return () => clearTimeout(timer);
+    }
+  }, [activePillar, highlightedKotowazaId]);
+
   // Actualizar la URL de forma limpia al cambiar de pilar
   const handlePillarChange = (pillarId) => {
     setActivePillar(pillarId);
     if (pillarId !== 'glossary') {
       setHighlightedTermId(null);
     }
+    if (pillarId !== 'kotowaza') {
+      setHighlightedKotowazaId(null);
+    }
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       url.searchParams.set('pillar', pillarId);
       if (pillarId !== 'glossary') {
         url.searchParams.delete('term');
+      }
+      if (pillarId !== 'kotowaza') {
+        url.searchParams.delete('kotowaza');
+        url.searchParams.delete('id');
       }
       window.history.replaceState(null, '', url.toString());
     }
@@ -331,6 +413,15 @@ export default function TerminologyGuideView({
       color: '#8b5cf6',
       summary: 'Explora todas las definiciones lingüísticas del idioma con desglose etimológico, ejemplos contextuales con audio neuronal y referencias cruzadas.',
       isDynamicGlossary: true
+    },
+    kotowaza: {
+      title: 'Proverbios Tradicionales & Sabiduría (Kotowaza 諺)',
+      subtitle: `${kotowazaList.length} proverbios y modismos esenciales: resiliencia, empatía, humildad y cultura japonesa`,
+      badge: 'Sabiduría Tradicional',
+      icon: Quote,
+      color: '#f59e0b',
+      summary: 'Los proverbios (ことわざ) y modismos de cuatro ideogramas (四字熟語) condensan siglos de filosofía zen, valores éticos de perseverancia (Ganbaru) y poesía cotidiana en metáforas inolvidables.',
+      isKotowaza: true
     }
   };
 
@@ -383,6 +474,15 @@ export default function TerminologyGuideView({
       count: `${terminologyList.length} Términos`,
       color: '#8b5cf6',
       badgeBg: 'rgba(139, 92, 246, 0.12)'
+    },
+    { 
+      id: 'kotowaza', 
+      label: '6. Proverbios & Sabiduría', 
+      shortLabel: '6. Kotowaza',
+      icon: Quote, 
+      count: `${kotowazaList.length} Proverbios`,
+      color: '#f59e0b',
+      badgeBg: 'rgba(245, 158, 11, 0.12)'
     }
   ], []);
 
@@ -552,6 +652,39 @@ export default function TerminologyGuideView({
           bg: 'rgba(99, 102, 241, 0.1)'
         }
       ]
+    },
+    kotowaza: {
+      title: 'Conecta la Sabiduría Tradicional con tu Práctica Diaria',
+      subtitle: 'Herramientas interactivas para aplicar proverbios y modismos japoneses en tu estudio:',
+      items: [
+        {
+          title: 'Repaso Espaciado FSRS',
+          badge: 'ts-fsrs v5',
+          desc: 'Fija expresiones japonesas y proverbios en tu memoria de largo plazo con intervalos adaptativos.',
+          href: '/srs',
+          icon: Sparkles,
+          color: '#f59e0b',
+          bg: 'rgba(245, 158, 11, 0.1)'
+        },
+        {
+          title: 'Historias en Japonés',
+          badge: 'Inmersión con Audio',
+          desc: 'Lee relatos con audio nativo y furigana donde los proverbios cobran vida en contexto real.',
+          href: '/story',
+          icon: BookOpen,
+          color: '#10b981',
+          bg: 'rgba(16, 185, 129, 0.1)'
+        },
+        {
+          title: 'Diccionario de Kanjis',
+          badge: 'Trazos y Radicales',
+          desc: 'Aprende a descomponer los ideogramas que forman cada proverbio y modismo de 4 kanjis.',
+          href: '/kanji',
+          icon: Languages,
+          color: '#6366f1',
+          bg: 'rgba(99, 102, 241, 0.1)'
+        }
+      ]
     }
   }), []);
 
@@ -658,7 +791,7 @@ export default function TerminologyGuideView({
       </div>
 
       {/* 4. CONTENIDO PRINCIPAL POR PILAR */}
-      {activePillar !== 'glossary' ? (
+      {activePillar !== 'glossary' && activePillar !== 'kotowaza' ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
           {currentData.sections && currentData.sections.map((sec) => (
             <div 
@@ -800,6 +933,428 @@ export default function TerminologyGuideView({
               </div>
             </div>
           )}
+        </div>
+      ) : activePillar === 'kotowaza' ? (
+        /* VISTA DEL PILAR 6: PROVERBIOS & SABIDURÍA (KOTOWAZA) */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          
+          {/* Controles de Búsqueda y Filtros de Kotowaza */}
+          <div 
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 14,
+              background: 'var(--bg-card)',
+              padding: '20px',
+              borderRadius: 20,
+              border: '1px solid var(--border)',
+              boxShadow: '0 4px 18px rgba(0, 0, 0, 0.03)'
+            }}
+          >
+            {/* Input de Búsqueda */}
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <Search 
+                size={18} 
+                style={{ position: 'absolute', left: 16, color: 'var(--text-muted)', pointerEvents: 'none' }} 
+              />
+              <input
+                type="text"
+                value={kotowazaSearch}
+                onChange={(e) => setKotowazaSearch(e.target.value)}
+                placeholder="Buscar proverbio por kanji, kana, significado o enseñanza (ej. Nana korobi, Saru, Kaizen, flor)..."
+                aria-label="Buscar proverbios y modismos japoneses"
+                style={{
+                  width: '100%',
+                  padding: '12px 42px 12px 44px',
+                  borderRadius: 14,
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-subtle)',
+                  color: 'var(--text-main)',
+                  fontSize: '0.92rem',
+                  fontWeight: 500,
+                  outline: 'none',
+                  transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+                }}
+              />
+              {kotowazaSearch && (
+                <button
+                  type="button"
+                  onClick={() => setKotowazaSearch('')}
+                  style={{
+                    position: 'absolute',
+                    right: 14,
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: 4
+                  }}
+                  title="Limpiar búsqueda"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Categorías de Kotowaza */}
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                overflowX: 'auto',
+                paddingBottom: 4
+              }}
+            >
+              <Filter size={15} style={{ color: 'var(--text-muted)', flexShrink: 0, marginRight: 2 }} />
+              {kotowazaCategoryPills.map((cat) => {
+                const isSelected = kotowazaCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setKotowazaCategory(cat)}
+                    style={{
+                      padding: '7px 14px',
+                      borderRadius: 20,
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      whiteSpace: 'nowrap',
+                      cursor: 'pointer',
+                      transition: 'all 0.18s ease',
+                      border: isSelected ? '1px solid #f59e0b' : '1px solid var(--border)',
+                      background: isSelected ? '#f59e0b' : 'var(--bg-subtle)',
+                      color: isSelected ? '#000000' : 'var(--text-muted)'
+                    }}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Filtros de Nivel JLPT */}
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                overflowX: 'auto',
+                paddingBottom: 2
+              }}
+            >
+              <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--text-muted)', marginRight: 4 }}>
+                Nivel JLPT:
+              </span>
+              {kotowazaLevelPills.map((lvl) => {
+                const isSelected = kotowazaLevel === lvl;
+                return (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setKotowazaLevel(lvl)}
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: 14,
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.18s ease',
+                      border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
+                      background: isSelected ? 'var(--primary)' : 'transparent',
+                      color: isSelected ? '#ffffff' : 'var(--text-muted)'
+                    }}
+                  >
+                    {lvl}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Contador de Resultados */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--text-muted)', padding: '0 4px' }}>
+              <span>
+                Mostrando <strong>{filteredKotowaza.length}</strong> de {kotowazaList.length} proverbios y modismos japoneses
+              </span>
+              {(kotowazaSearch || kotowazaCategory !== 'Todas' || kotowazaLevel !== 'Todos') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setKotowazaSearch('');
+                    setKotowazaCategory('Todas');
+                    setKotowazaLevel('Todos');
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--primary)',
+                    cursor: 'pointer',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Restablecer filtros
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Estado sin resultados */}
+          {filteredKotowaza.length === 0 ? (
+            <div 
+              style={{
+                padding: '44px 20px',
+                textAlign: 'center',
+                background: 'var(--bg-card)',
+                borderRadius: 20,
+                border: '1px solid var(--border)'
+              }}
+            >
+              <p style={{ fontSize: '1rem', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+                No se encontraron proverbios para los filtros seleccionados.
+              </p>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setKotowazaSearch('');
+                  setKotowazaCategory('Todas');
+                  setKotowazaLevel('Todos');
+                }}
+              >
+                Ver todos los proverbios
+              </button>
+            </div>
+          ) : (
+            /* Cuadrícula de Tarjetas de Proverbios */
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
+              {filteredKotowaza.map((item) => {
+                const isHighlighted = highlightedKotowazaId === item.id;
+                const isPlaying = playingAudioId === item.id;
+
+                return (
+                  <div
+                    key={item.id}
+                    id={`kotowaza-card-${item.id}`}
+                    style={{
+                      background: 'var(--bg-card)',
+                      borderRadius: 20,
+                      border: isHighlighted ? '2px solid #f59e0b' : '1px solid var(--border)',
+                      boxShadow: isHighlighted 
+                        ? '0 0 0 4px rgba(245, 158, 11, 0.25), 0 8px 24px rgba(0, 0, 0, 0.08)' 
+                        : '0 4px 18px rgba(0, 0, 0, 0.03)',
+                      padding: '22px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 14,
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    {/* Header: Ideograma, Kana, Categoría y Nivel */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ 
+                          fontSize: '1.45rem', 
+                          fontWeight: 900, 
+                          color: 'var(--text-main)', 
+                          letterSpacing: '0.03em',
+                          lineHeight: 1.25,
+                          fontFamily: "'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif"
+                        }}>
+                          {item.expression}
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: '#f59e0b', fontWeight: 700, marginTop: 4 }}>
+                          {item.kana} <span style={{ opacity: 0.65, fontWeight: 500 }}>· {item.romaji}</span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5, flexShrink: 0 }}>
+                        <span style={{
+                          padding: '3px 8px',
+                          borderRadius: 8,
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          background: 'rgba(245, 158, 11, 0.12)',
+                          color: '#f59e0b',
+                          border: '1px solid rgba(245, 158, 11, 0.25)'
+                        }}>
+                          {item.category}
+                        </span>
+                        <span style={{
+                          padding: '2px 7px',
+                          borderRadius: 6,
+                          fontSize: '0.66rem',
+                          fontWeight: 700,
+                          background: 'rgba(99, 102, 241, 0.12)',
+                          color: 'var(--primary)',
+                          border: '1px solid rgba(99, 102, 241, 0.25)'
+                        }}>
+                          {item.level}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Traducción Literal y Significado */}
+                    <div style={{ fontSize: '0.86rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                        Literal: «{item.literal_es}»
+                      </div>
+                      <div style={{ color: 'var(--text-main)', lineHeight: 1.5, fontWeight: 500 }}>
+                        {item.meaning_es}
+                      </div>
+                    </div>
+
+                    {/* Caja de Enseñanza Práctica */}
+                    <div style={{
+                      padding: '10px 12px',
+                      borderRadius: 12,
+                      background: 'rgba(245, 158, 11, 0.06)',
+                      border: '1px solid rgba(245, 158, 11, 0.18)',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 8,
+                      fontSize: '0.78rem',
+                      lineHeight: 1.45,
+                      color: 'var(--text-main)'
+                    }}>
+                      <Sparkles size={15} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
+                      <div>
+                        <strong style={{ color: '#f59e0b', display: 'block', fontSize: '0.74rem', marginBottom: 2 }}>
+                          Enseñanza & Aplicación Práctica:
+                        </strong>
+                        {item.teaching}
+                      </div>
+                    </div>
+
+                    {/* Oración de Ejemplo */}
+                    {item.example && (
+                      <div style={{
+                        padding: '10px 12px',
+                        borderRadius: 12,
+                        background: 'var(--bg-subtle)',
+                        border: '1px solid var(--border)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 3,
+                        fontSize: '0.78rem'
+                      }}>
+                        <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '0.82rem' }}>
+                          {item.example.jp}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                          {item.example.kana}
+                        </div>
+                        <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: 2 }}>
+                          «{item.example.es}»
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Barra de Acciones */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: 8,
+                      paddingTop: 8,
+                      borderTop: '1px solid var(--border)'
+                    }}>
+                      <button
+                        type="button"
+                        onClick={() => playAudio(item.audio_text || item.expression, item.id)}
+                        disabled={isPlaying}
+                        className="btn btn-outline btn-sm"
+                        style={{
+                          borderRadius: 10,
+                          fontSize: '0.74rem',
+                          padding: '6px 12px',
+                          gap: 6,
+                          color: isPlaying ? '#10b981' : 'var(--text-main)',
+                          borderColor: isPlaying ? '#10b981' : 'var(--border)'
+                        }}
+                        title="Escuchar pronunciación nativa con síntesis neuronal"
+                      >
+                        <Volume2 size={14} className={isPlaying ? 'animate-pulse' : ''} />
+                        <span>{isPlaying ? 'Reproduciendo...' : 'Escuchar'}</span>
+                      </button>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyKotowaza(item)}
+                          className="btn btn-outline btn-sm"
+                          style={{
+                            borderRadius: 10,
+                            fontSize: '0.74rem',
+                            padding: '6px 10px',
+                            gap: 5
+                          }}
+                          title="Copiar proverbio y significado al portapapeles"
+                        >
+                          {copiedId === item.id ? <Check size={13} style={{ color: '#10b981' }} /> : <Copy size={13} />}
+                          <span>{copiedId === item.id ? 'Copiado' : 'Copiar'}</span>
+                        </button>
+
+                        <Link
+                          href={`/kanji?search=${encodeURIComponent(item.expression)}`}
+                          className="btn btn-outline btn-sm"
+                          style={{
+                            borderRadius: 10,
+                            fontSize: '0.74rem',
+                            padding: '6px 10px',
+                            gap: 5
+                          }}
+                          title="Explorar los ideogramas de este proverbio en el diccionario de Kanji"
+                        >
+                          <Languages size={13} />
+                          <span>Kanjis</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Accesos rápidos de Kotowaza al final */}
+          {currentAccessData && (
+            <div className="term-access-section" style={{ marginTop: 12 }}>
+              <div className="term-access-header">
+                <div className="term-access-title-wrap">
+                  <Compass size={18} style={{ color: currentData.color }} />
+                  <h4 className="term-access-title">{currentAccessData.title}</h4>
+                </div>
+                <p className="term-access-subtitle">{currentAccessData.subtitle}</p>
+              </div>
+              <div className="term-access-grid">
+                {currentAccessData.items.map((acc, idx) => {
+                  const AccIcon = acc.icon;
+                  return (
+                    <Link key={idx} href={acc.href} className="term-access-card">
+                      <div className="term-access-icon" style={{ color: acc.color, background: acc.bg }}>
+                        <AccIcon size={20} />
+                      </div>
+                      <div className="term-access-body">
+                        <div className="term-access-top-line">
+                          <span className="term-access-card-title">{acc.title}</span>
+                          <span className="term-access-badge">{acc.badge}</span>
+                        </div>
+                        <p className="term-access-card-desc">{acc.desc}</p>
+                        <div className="term-access-action" style={{ color: acc.color }}>
+                          <span>Ir a la sección</span>
+                          <ArrowRight size={13} />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
         </div>
       ) : (
         /* VISTA DEL PILAR 5: GLOSARIO LINGÜÍSTICO COMPLETO */
