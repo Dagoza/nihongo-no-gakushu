@@ -5684,9 +5684,10 @@ body:not(:has(.audio-player-bar)) .main-container {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 8px 0 10px;
+  padding: 0 8px 0 6px;
   z-index: 9980;
   user-select: none;
+  touch-action: manipulation;
   animation: fmpSlideIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   max-width: calc(100vw - 32px);
   box-sizing: border-box;
@@ -5740,20 +5741,29 @@ body:not(:has(.audio-player-bar)) .main-container {
   transition: width 0.08s linear;
 }
 
-/* Asa de arrastre */
+/* Asa de arrastre al lado izquierdo */
 .fmp-drag-handle {
   display: flex;
   align-items: center;
+  justify-content: center;
   cursor: grab;
-  padding: 4px 2px;
+  padding: 6px 6px;
   color: var(--text-muted);
+  touch-action: none !important;
+  user-select: none;
+  flex-shrink: 0;
+  border-radius: 4px;
 }
 
 .fmp-drag-handle:active {
   cursor: grabbing;
 }
 
-/* Información de audio */
+.fmp-min-drag-handle {
+  padding: 6px 4px 6px 6px;
+}
+
+/* Información de audio (sin icono de sonido) */
 .fmp-info {
   display: flex;
   align-items: center;
@@ -5761,16 +5771,6 @@ body:not(:has(.audio-player-bar)) .main-container {
   max-width: 140px;
   overflow: hidden;
   white-space: nowrap;
-}
-
-.fmp-icon-playing {
-  color: var(--primary, #6366f1);
-  animation: fmpPulse 1.8s infinite ease-in-out;
-}
-
-@keyframes fmpPulse {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.18); opacity: 1; }
 }
 
 .fmp-text {
@@ -5904,18 +5904,19 @@ body:not(:has(.audio-player-bar)) .main-container {
 }
 
 /* --------------------------------------------------------------------------
-   3. Modo Minimizado (Mini-Cápsula Flotante de Alta Visibilidad)
+   3. Modo Minimizado (Mini-Cápsula Flotante con Drag a la Izquierda)
    -------------------------------------------------------------------------- */
 .floating-mini-player.minimized {
   height: 38px;
   width: auto;
   border-radius: 9999px;
-  padding: 0 8px 0 6px;
-  gap: 6px;
+  padding: 0 8px 0 4px;
+  gap: 5px;
   background: rgba(255, 255, 255, 0.98);
   border: 1.5px solid rgba(99, 102, 241, 0.4);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(99, 102, 241, 0.2);
   align-items: center;
+  touch-action: manipulation;
 }
 
 [data-theme="dark"] .floating-mini-player.minimized {
@@ -5961,19 +5962,6 @@ body:not(:has(.audio-player-bar)) .main-container {
 .fmp-icon-white {
   color: #ffffff !important;
   stroke: #ffffff !important;
-}
-
-.fmp-min-info {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 0 2px;
-  user-select: none;
-}
-
-.fmp-min-badge {
-  font-size: 0.82rem;
-  line-height: 1;
 }
 
 .fmp-min-divider {

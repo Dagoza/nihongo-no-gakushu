@@ -6,12 +6,10 @@ import {
   Pause, 
   RotateCcw, 
   RotateCw, 
-  Volume2, 
   X, 
   Minimize2, 
   Maximize2, 
-  GripVertical,
-  Gauge
+  GripVertical
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 
@@ -47,8 +45,10 @@ export default function FloatingMiniPlayer() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [position, setPosition] = useState(null); // { x, y } when dragged
   const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef({ mouseX: 0, mouseY: 0, posX: 0, posY: 0 });
+  
+  const dragStartRef = useRef(null);
   const playerRef = useRef(null);
+  const lastWidthRef = useRef(380);
 
   // Subscribe to audioManager updates
   useEffect(() => {
@@ -65,6 +65,62 @@ export default function FloatingMiniPlayer() {
 
   // Active check: show player whenever audio is playing, paused, or loaded
   const isActive = audioState.state === 'playing' || audioState.state === 'paused' || (audioState.currentAudioUrl && audioState.state !== 'idle');
+
+  // Prevent exiting viewport on expand / collapse / window resize
+  const clampPositionWithinViewport = useCallback((targetWidth, targetHeight) => {
+    if (typeof window === 'undefined') return;
+    const margin = 16;
+    const width = targetWidth || playerRef.current?.offsetWidth || (isMinimized ? 120 : 380);
+    const height = targetHeight || playerRef.current?.offsetHeight || 44;
+
+    setPosition(prev => {
+      if (!prev) return null;
+      let newX = prev.x;
+      let newY = prev.y;
+
+      // Re-center / shift left if aligned to or exceeding the right edge
+      if (newX + width > window.innerWidth - margin) {
+        newX = Math.max(margin, window.innerWidth - width - margin);
+      }
+      if (newX < margin) {
+        newX = margin;
+      }
+
+      if (newY + height > window.innerHeight - margin) {
+        newY = Math.max(margin, window.innerHeight - height - margin);
+      }
+      if (newY < margin) {
+        newY = margin;
+      }
+
+      if (newX !== prev.x || newY !== prev.y) {
+        return { x: newX, y: newY };
+      }
+      return prev;
+    });
+  }, [isMinimized]);
+
+  // Re-clamp whenever minimized state changes (e.g. expanding near right edge)
+  useEffect(() => {
+    if (!position || typeof window === 'undefined') return;
+    // Delay slightly to allow DOM layout measurement of new capsule width
+    const timer = setTimeout(() => {
+      const estimatedWidth = isMinimized ? 120 : 380;
+      clampPositionWithinViewport(estimatedWidth, 44);
+    }, 40);
+    return () => clearTimeout(timer);
+  }, [isMinimized, clampPositionWithinViewport, position]);
+
+  // Re-clamp on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (position) {
+        clampPositionWithinViewport();
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [position, clampPositionWithinViewport]);
 
   // Play / Pause toggle
   const handlePlayPause = useCallback(() => {
@@ -118,24 +174,20 @@ export default function FloatingMiniPlayer() {
     audioManager.seek(pct * duration);
   };
 
-  // Dragging logic
-  const handlePointerDown = (e) => {
-    // Only drag with primary pointer button
+  // Immediate Drag on the dedicated Handle
+  const handleHandlePointerDown = (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
-
-    // Prevent dragging when clicking directly on buttons or interactive inputs
-    if (e.target.closest('button') || e.target.closest('.fmp-rail')) {
-      return;
-    }
-
     if (!playerRef.current) return;
     const rect = playerRef.current.getBoundingClientRect();
 
     dragStartRef.current = {
-      mouseX: e.clientX,
-      mouseY: e.clientY,
+      startX: e.clientX,
+      startY: e.clientY,
       posX: position ? position.x : rect.left,
-      posY: position ? position.y : rect.top
+      posY: position ? position.y : rect.top,
+      isCommitted: true,
+      targetEl: e.currentTarget,
+      pointerId: e.pointerId
     };
 
     setIsDragging(true);
@@ -144,18 +196,50 @@ export default function FloatingMiniPlayer() {
     } catch {}
   };
 
+  // Safe Threshold Dragging on the container (does NOT hijack scrolling)
+  const handleContainerPointerDown = (e) => {
+    if (e.target.closest('button') || e.target.closest('.fmp-rail') || e.target.closest('.fmp-drag-handle')) {
+      return;
+    }
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    if (!playerRef.current) return;
+    const rect = playerRef.current.getBoundingClientRect();
+
+    dragStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      posX: position ? position.x : rect.left,
+      posY: position ? position.y : rect.top,
+      isCommitted: false,
+      targetEl: e.currentTarget,
+      pointerId: e.pointerId
+    };
+  };
+
   const handlePointerMove = (e) => {
-    if (!isDragging) return;
-    const dx = e.clientX - dragStartRef.current.mouseX;
-    const dy = e.clientY - dragStartRef.current.mouseY;
+    if (!dragStartRef.current) return;
+    const dx = e.clientX - dragStartRef.current.startX;
+    const dy = e.clientY - dragStartRef.current.startY;
+
+    // Only commit to drag if moved beyond threshold (prevents scroll interference on touchscreens)
+    if (!dragStartRef.current.isCommitted) {
+      if (Math.hypot(dx, dy) > 8) {
+        dragStartRef.current.isCommitted = true;
+        setIsDragging(true);
+        try {
+          dragStartRef.current.targetEl?.setPointerCapture(dragStartRef.current.pointerId);
+        } catch {}
+      } else {
+        return;
+      }
+    }
 
     const newX = dragStartRef.current.posX + dx;
     const newY = dragStartRef.current.posY + dy;
 
-    // Clamp inside viewport
-    const width = playerRef.current?.offsetWidth || 300;
+    const width = playerRef.current?.offsetWidth || (isMinimized ? 120 : 360);
     const height = playerRef.current?.offsetHeight || 44;
-    const margin = 10;
+    const margin = 12;
 
     const clampedX = Math.max(margin, Math.min(newX, window.innerWidth - width - margin));
     const clampedY = Math.max(margin, Math.min(newY, window.innerHeight - height - margin));
@@ -164,11 +248,16 @@ export default function FloatingMiniPlayer() {
   };
 
   const handlePointerUp = (e) => {
+    if (dragStartRef.current) {
+      if (dragStartRef.current.isCommitted) {
+        try {
+          dragStartRef.current.targetEl?.releasePointerCapture(dragStartRef.current.pointerId);
+        } catch {}
+      }
+      dragStartRef.current = null;
+    }
     if (isDragging) {
       setIsDragging(false);
-      try {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      } catch {}
     }
   };
 
@@ -188,20 +277,29 @@ export default function FloatingMiniPlayer() {
       }
     : {};
 
-  // Minimized mode: sleek compact mini-pill with high contrast and integrated controls
+  // Minimized mode: sleek compact mini-pill with drag handle on far left
   if (isMinimized) {
     return (
       <div
         ref={playerRef}
         className={`floating-mini-player minimized ${isDragging ? 'is-dragging' : ''}`}
         style={playerStyle}
-        onPointerDown={handlePointerDown}
+        onPointerDown={handleContainerPointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         role="region"
         aria-label="Reproductor de audio minimizado"
       >
+        {/* Drag handle on the far left */}
+        <div 
+          className="fmp-drag-handle fmp-min-drag-handle" 
+          title="Arrastrar reproductor"
+          onPointerDown={handleHandlePointerDown}
+        >
+          <GripVertical size={14} className="text-muted" />
+        </div>
+
         {/* Play/Pause high-contrast button */}
         <button
           type="button"
@@ -216,17 +314,6 @@ export default function FloatingMiniPlayer() {
             <Play size={14} className="fmp-icon-white" style={{ marginLeft: 1 }} />
           )}
         </button>
-
-        {/* Audio status indicator & quick expand */}
-        <div 
-          className="fmp-min-info" 
-          onClick={() => setIsMinimized(false)} 
-          title="Clic para expandir reproductor"
-        >
-          <span className="fmp-min-badge">
-            {audioState.state === 'playing' ? '🔊' : '⏸️'}
-          </span>
-        </div>
 
         <div className="fmp-min-divider" />
 
@@ -255,13 +342,13 @@ export default function FloatingMiniPlayer() {
     );
   }
 
-  // Expanded mode: sleek compact capsule
+  // Expanded mode: sleek compact capsule with drag handle on the left and NO sound icon
   return (
     <div
       ref={playerRef}
       className={`floating-mini-player ${isDragging ? 'is-dragging' : ''}`}
       style={playerStyle}
-      onPointerDown={handlePointerDown}
+      onPointerDown={handleContainerPointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
@@ -282,17 +369,17 @@ export default function FloatingMiniPlayer() {
         </div>
       )}
 
-      {/* Drag handle */}
-      <div className="fmp-drag-handle" title="Arrastrar reproductor">
-        <GripVertical size={13} className="text-muted" />
+      {/* Drag handle on the far left */}
+      <div 
+        className="fmp-drag-handle" 
+        title="Arrastrar reproductor"
+        onPointerDown={handleHandlePointerDown}
+      >
+        <GripVertical size={14} className="text-muted" />
       </div>
 
-      {/* Info indicator */}
+      {/* Info indicator - NO sound icon, just text and time badge */}
       <div className="fmp-info" title={titleText}>
-        <Volume2 
-          size={15} 
-          className={audioState.state === 'playing' ? 'fmp-icon-playing' : 'text-muted'} 
-        />
         <span className="fmp-text jp-text">{truncatedText}</span>
         {isAudioTrack && (
           <span className="fmp-time-badge">
