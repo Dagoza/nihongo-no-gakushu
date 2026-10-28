@@ -5469,19 +5469,33 @@ body:not(:has(.audio-player-bar)) .main-container {
 
 /* Modo Mobile Dock: Anclado flotante inferior para dedos */
 .text-selection-popup.mobile-dock {
-  position: fixed;
-  bottom: calc(14px + env(safe-area-inset-bottom, 14px));
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 24px);
-  max-width: 440px;
-  padding: 6px 10px;
-  justify-content: space-between;
-  border-radius: 16px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
-  animation: tspSlideUpMobile 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  position: fixed !important;
+  bottom: calc(14px + env(safe-area-inset-bottom, 14px)) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 20px) !important;
+  max-width: 460px !important;
+  padding: 6px 8px !important;
+  justify-content: space-between !important;
+  border-radius: 18px !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.35) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35) !important;
+  animation: tspSlideUpMobile 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  z-index: 99999 !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+}
+
+[data-theme="dark"] .text-selection-popup.mobile-dock {
+  background: rgba(20, 26, 42, 0.98) !important;
+  border-color: rgba(129, 140, 248, 0.45) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Si el mini-reproductor está activo en móvil, elevar el dock de selección para no taparse */
+body:has(.floating-mini-player) .text-selection-popup.mobile-dock {
+  bottom: calc(70px + env(safe-area-inset-bottom, 14px)) !important;
 }
 
 @keyframes tspSlideUpMobile {
@@ -5495,14 +5509,24 @@ body:not(:has(.audio-player-bar)) .main-container {
   }
 }
 
+.text-selection-popup.mobile-dock .tsp-preview {
+  max-width: 70px;
+  padding-right: 2px;
+  flex-shrink: 0;
+}
+
 .text-selection-popup.mobile-dock .tsp-actions {
   flex-shrink: 0;
   gap: 2px;
+  display: flex;
+  align-items: center;
 }
 
 .text-selection-popup.mobile-dock .tsp-btn {
-  padding: 5px 7px;
-  font-size: 0.7rem;
+  padding: 5px 6px;
+  font-size: 0.68rem;
+  min-height: 28px;
+  flex-shrink: 0;
 }
 
 /* --------------------------------------------------------------------------
