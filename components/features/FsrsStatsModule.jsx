@@ -903,8 +903,8 @@ export default function FsrsStatsModule({
             }}
           >
             {/* Buscador y alcance */}
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <div style={{ position: 'relative', flex: 1, minWidth: 220 }}>
+            <div className="fsrs-search-scope-row" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <div className="fsrs-search-input-wrap" style={{ position: 'relative', flex: 1, minWidth: 220 }}>
                 <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 <input
                   type="text"

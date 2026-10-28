@@ -2648,68 +2648,61 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
       {/* Search Bar & Botón de Filtros */}
       <div className="vocab-filter-bar" style={{ marginBottom: 14 }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-          <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input
-            type="text"
-            className="search-input"
-            style={{ paddingLeft: 38, width: '100%' }}
-            placeholder="Buscar tema, kanji, gramática o Can-Do..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              aria-label="Limpiar búsqueda"
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-muted)',
-                cursor: 'pointer',
-                padding: 4,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <X size={14} />
-            </button>
-          )}
+        <div className="filter-search-row">
+          <div className="filter-input-wrapper">
+            <Search size={18} className="filter-search-icon" />
+            <input
+              type="text"
+              className="search-input"
+              style={{ paddingLeft: 38, width: '100%' }}
+              placeholder="Buscar tema, kanji, gramática o Can-Do..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                aria-label="Limpiar búsqueda"
+                className="clear-search-btn"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+            onClick={() => setShowFilters(prev => !prev)}
+            aria-expanded={showFilters}
+            title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+          >
+            <SlidersHorizontal size={15} />
+            <span className="filter-toggle-text">Filtros</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-toggle-badge">
+                {activeFilterCount}
+              </span>
+            )}
+            <span className="filter-toggle-chevron">
+              {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
+            </span>
+          </button>
         </div>
 
-        <button
-          type="button"
-          className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
-          onClick={() => setShowFilters(prev => !prev)}
-          aria-expanded={showFilters}
-          title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
-        >
-          <SlidersHorizontal size={15} />
-          <span>Filtros</span>
-          {activeFilterCount > 0 && (
-            <span className="filter-toggle-badge">
-              {activeFilterCount}
-            </span>
-          )}
-          {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
-        </button>
-
-        <button
-          type="button"
-          className={`btn btn-sm ${showFurigana ? 'btn-primary' : 'btn-outline'} furigana-toggle-btn`}
-          onClick={() => setShowFurigana(prev => !prev)}
-          title={showFurigana ? 'Ocultar Furigana en los módulos' : 'Mostrar Furigana en los módulos'}
-          style={{ height: '40px', padding: '0 12px', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700, borderRadius: 'var(--radius-sm)' }}
-        >
-          {showFurigana ? <EyeOff size={14} /> : <Eye size={14} />}
-          <span>Furigana {showFurigana ? 'ON' : 'OFF'}</span>
-        </button>
+        <div className="filter-actions-row">
+          <button
+            type="button"
+            className={`btn btn-sm ${showFurigana ? 'btn-primary' : 'btn-outline'} furigana-toggle-btn filter-action-btn`}
+            onClick={() => setShowFurigana(prev => !prev)}
+            title={showFurigana ? 'Ocultar Furigana en los módulos' : 'Mostrar Furigana en los módulos'}
+            style={{ fontWeight: 700, borderRadius: 'var(--radius-sm)' }}
+          >
+            {showFurigana ? <EyeOff size={14} /> : <Eye size={14} />}
+            <span>Furigana {showFurigana ? 'ON' : 'OFF'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Filtros Integrados (Colapsable) */}

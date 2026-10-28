@@ -529,63 +529,54 @@ export default function GrammarTab({
 
           {/* Search Bar & Botón de Filtros */}
           <div className="vocab-filter-bar" style={{ marginBottom: 12 }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-              <Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-              <input 
-                type="text" 
-                className="search-input" 
-                style={{ paddingLeft: 38, width: '100%' }}
-                placeholder="Buscar función, fórmula, ejemplo o traducción..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  updateParams(filterParticle, e.target.value, quizActive, levelFilter);
-                }}
-              />
-              {searchTerm && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchTerm('');
-                    updateParams(filterParticle, '', quizActive, levelFilter);
+            <div className="filter-search-row">
+              <div className="filter-input-wrapper">
+                <Search size={18} className="filter-search-icon" />
+                <input 
+                  type="text" 
+                  className="search-input" 
+                  style={{ paddingLeft: 38, width: '100%' }}
+                  placeholder="Buscar función, fórmula, ejemplo o traducción..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    updateParams(filterParticle, e.target.value, quizActive, levelFilter);
                   }}
-                  aria-label="Limpiar búsqueda"
-                  style={{
-                    position: 'absolute',
-                    right: 10,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-muted)',
-                    cursor: 'pointer',
-                    padding: 4,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchTerm('');
+                      updateParams(filterParticle, '', quizActive, levelFilter);
+                    }}
+                    aria-label="Limpiar búsqueda"
+                    className="clear-search-btn"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
 
-            <button
-              type="button"
-              className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
-              onClick={() => setShowFilters(prev => !prev)}
-              aria-expanded={showFilters}
-              title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
-            >
-              <SlidersHorizontal size={15} />
-              <span>Filtros</span>
-              {activeFilterCount > 0 && (
-                <span className="filter-toggle-badge">
-                  {activeFilterCount}
+              <button
+                type="button"
+                className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+                onClick={() => setShowFilters(prev => !prev)}
+                aria-expanded={showFilters}
+                title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+              >
+                <SlidersHorizontal size={15} />
+                <span className="filter-toggle-text">Filtros</span>
+                {activeFilterCount > 0 && (
+                  <span className="filter-toggle-badge">
+                    {activeFilterCount}
+                  </span>
+                )}
+                <span className="filter-toggle-chevron">
+                  {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
                 </span>
-              )}
-              {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
-            </button>
+              </button>
+            </div>
           </div>
 
           {/* Filtros Integrados (Colapsable) */}

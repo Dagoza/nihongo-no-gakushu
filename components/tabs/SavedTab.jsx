@@ -657,51 +657,55 @@ export default function SavedTab({
         </div>
 
         {subView !== 'stories' && (
-          <div className="vocab-filter-bar" style={{ marginBottom: 0, flex: '1 1 300px', maxWidth: 440, justifyContent: 'flex-end' }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-              <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-              <input
-                type="text"
-                placeholder="Buscar por Kanji, Kana o significado..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  updateParams(subView, e.target.value, selectedLevel, selectedCategory);
-                }}
-                className="search-input"
-                style={{ paddingLeft: 38, width: '100%' }}
-              />
-              {searchQuery && (
-                <button
-                  className="clear-search-btn"
-                  onClick={() => {
-                    setSearchQuery('');
-                    updateParams(subView, '', selectedLevel, selectedCategory);
+          <div className="vocab-filter-bar saved-filter-bar" style={{ marginBottom: 0 }}>
+            <div className="filter-search-row">
+              <div className="filter-input-wrapper">
+                <Search size={16} className="filter-search-icon" />
+                <input
+                  type="text"
+                  placeholder="Buscar por Kanji, Kana o significado..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    updateParams(subView, e.target.value, selectedLevel, selectedCategory);
                   }}
-                  aria-label="Limpiar búsqueda"
-                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
+                  className="search-input"
+                  style={{ paddingLeft: 38, width: '100%' }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="clear-search-btn"
+                    onClick={() => {
+                      setSearchQuery('');
+                      updateParams(subView, '', selectedLevel, selectedCategory);
+                    }}
+                    aria-label="Limpiar búsqueda"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
 
-            <button
-              type="button"
-              className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
-              onClick={() => setShowFilters(prev => !prev)}
-              aria-expanded={showFilters}
-              title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
-            >
-              <SlidersHorizontal size={15} />
-              <span>Filtros</span>
-              {activeFilterCount > 0 && (
-                <span className="filter-toggle-badge">
-                  {activeFilterCount}
+              <button
+                type="button"
+                className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'} filter-toggle-btn`}
+                onClick={() => setShowFilters(prev => !prev)}
+                aria-expanded={showFilters}
+                title={showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+              >
+                <SlidersHorizontal size={15} />
+                <span className="filter-toggle-text">Filtros</span>
+                {activeFilterCount > 0 && (
+                  <span className="filter-toggle-badge">
+                    {activeFilterCount}
+                  </span>
+                )}
+                <span className="filter-toggle-chevron">
+                  {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
                 </span>
-              )}
-              {showFilters ? <ChevronUp size={13} style={{ marginLeft: 2 }} /> : <ChevronDown size={13} style={{ marginLeft: 2 }} />}
-            </button>
+              </button>
+            </div>
           </div>
         )}
       </div>
