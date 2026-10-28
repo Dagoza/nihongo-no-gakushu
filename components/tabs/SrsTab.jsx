@@ -24,7 +24,8 @@ import {
   PenTool,
   Clock,
   Compass,
-  Settings2
+  Settings2,
+  Bell
 } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
 import { 
@@ -418,6 +419,42 @@ export default function SrsTab({ onNavigate }) {
             >
               <Compass size={16} />
               <span>Guía</span>
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ borderRadius: 12, padding: '10px 14px', gap: 6, position: 'relative' }}
+              onClick={() => {
+                if (contextApp?.openNotificationSettings) {
+                  contextApp.openNotificationSettings();
+                }
+              }}
+              title="Configurar recordatorios y alertas dinámicas de FSRS"
+            >
+              <Bell size={16} />
+              <span>Recordatorios FSRS</span>
+              {dueCounts.total > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -4,
+                  background: 'var(--accent, #f59e0b)',
+                  color: '#000000',
+                  fontSize: '0.62rem',
+                  fontWeight: 800,
+                  borderRadius: '50%',
+                  minWidth: 16,
+                  height: 16,
+                  padding: '0 3px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '2px solid var(--bg-card)'
+                }}>
+                  {dueCounts.total > 99 ? '99+' : dueCounts.total}
+                </span>
+              )}
             </button>
           </div>
         </div>

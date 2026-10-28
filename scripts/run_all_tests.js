@@ -299,6 +299,40 @@ runTest('Todos los componentes y modales importan correctamente los React Hooks 
   assert(checkedCount >= 50, `Se esperaban al menos 50 componentes verificados, revisados: ${checkedCount}`);
 });
 
+// -----------------------------------------------------------------------------
+// NOTIFICACIONES & FSRS: Integridad y Contenido Dinámico
+// -----------------------------------------------------------------------------
+console.log('\n--- NOTIFICACIONES & FSRS: Integridad y Contenido Dinámico ---');
+
+runTest('Módulos de notificaciones existen y exportan generadores dinámicos', () => {
+  const notifContentPath = path.join(ROOT_DIR, 'lib', 'notificationContent.js');
+  const notifManagerPath = path.join(ROOT_DIR, 'lib', 'notificationManager.js');
+  const swPath = path.join(ROOT_DIR, 'public', 'sw.js');
+
+  assert(fs.existsSync(notifContentPath), 'lib/notificationContent.js debe existir');
+  assert(fs.existsSync(notifManagerPath), 'lib/notificationManager.js debe existir');
+  assert(fs.existsSync(swPath), 'public/sw.js debe existir');
+
+  const contentCode = fs.readFileSync(notifContentPath, 'utf8');
+  assert(contentCode.includes('getKanjiOfTheDay'), 'Debe exportar getKanjiOfTheDay');
+  assert(contentCode.includes('getWordOfTheDay'), 'Debe exportar getWordOfTheDay');
+  assert(contentCode.includes('getParticleOfTheDay'), 'Debe exportar getParticleOfTheDay');
+  assert(contentCode.includes('getRandomCulturalNugget'), 'Debe exportar getRandomCulturalNugget');
+  assert(contentCode.includes('getFsrsDueNotification'), 'Debe exportar getFsrsDueNotification');
+  assert(contentCode.includes('formatDynamicActivityNotification'), 'Debe exportar formatDynamicActivityNotification');
+
+  const managerCode = fs.readFileSync(notifManagerPath, 'utf8');
+  assert(managerCode.includes('checkFsrsSmartNotification'), 'Debe implementar checkFsrsSmartNotification');
+  assert(managerCode.includes('notifyDailyGoalSuccess'), 'Debe implementar notifyDailyGoalSuccess');
+  assert(managerCode.includes('fsrs_due'), 'DEFAULT_ACTIVITIES debe incluir fsrs_due');
+  assert(managerCode.includes('random_pill'), 'DEFAULT_ACTIVITIES debe incluir random_pill');
+
+  const swCode = fs.readFileSync(swPath, 'utf8');
+  assert(swCode.includes('getDynamicPushNotification'), 'public/sw.js debe incluir generador dinámico getDynamicPushNotification');
+  assert(swCode.includes('SW_KANJI_CATALOG'), 'public/sw.js debe contener SW_KANJI_CATALOG');
+  assert(swCode.includes('SW_VOCAB_CATALOG'), 'public/sw.js debe contener SW_VOCAB_CATALOG');
+});
+
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);
 console.log('======================================================\n');

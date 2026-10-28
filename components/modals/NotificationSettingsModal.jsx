@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   X, 
   Bell, 
@@ -11,8 +11,12 @@ import {
   ShieldCheck, 
   AlertCircle, 
   RotateCcw, 
-  Play 
+  Play,
+  Zap,
+  BookOpen,
+  HelpCircle
 } from 'lucide-react';
+import { useApp } from '../../lib/AppContext';
 import {
   isNotificationSupported,
   getNotificationPermission,
@@ -26,6 +30,14 @@ import {
   getNextScheduledNotification,
   DEFAULT_ACTIVITIES
 } from '../../lib/notificationManager';
+import {
+  getKanjiOfTheDay,
+  getWordOfTheDay,
+  getParticleOfTheDay,
+  getRandomCulturalNugget,
+  getFsrsDueNotification
+} from '../../lib/notificationContent';
+import { getDueCounts } from '../../lib/srs';
 import useFocusTrap from '../../lib/useFocusTrap';
 
 export default function NotificationSettingsModal({
@@ -33,12 +45,23 @@ export default function NotificationSettingsModal({
   onClose
 }) {
   const modalCardRef = useFocusTrap(isOpen);
+  const { appState } = useApp();
+
   const [supported, setSupported] = useState(true);
   const [permission, setPermission] = useState('default');
   const [masterEnabled, setMasterEnabled] = useState(false);
   const [schedule, setSchedule] = useState([]);
   const [testStatus, setTestStatus] = useState(null); // 'sending' | 'sent' | 'error'
+  const [testingId, setTestingId] = useState(null);
   const [nextNotif, setNextNotif] = useState(null);
+
+  // Información dinámica de hoy para mostrar en vista previa viva
+  const todayKanji = useMemo(() => getKanjiOfTheDay(), []);
+  const todayWord = useMemo(() => getWordOfTheDay(), []);
+  const todayParticle = useMemo(() => getParticleOfTheDay(), []);
+  const todayNugget = useMemo(() => getRandomCulturalNugget(0), []);
+  const dueCounts = useMemo(() => getDueCounts(appState || {}), [appState]);
+  const fsrsPreview = useMemo(() => getFsrsDueNotification(appState || {}), [appState]);
 
   const refreshState = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -149,7 +172,7 @@ export default function NotificationSettingsModal({
     setTestStatus('sending');
 
     try {
-      const success = await sendTestNotification(activityId);
+      const success = await sendTestNotification(activityId, appState || {});
       if (success) {
         setTestStatus('sent');
       } else {
@@ -171,7 +194,7 @@ export default function NotificationSettingsModal({
     if (presetName === 'recommended') {
       updated = DEFAULT_ACTIVITIES.map(a => ({
         ...a,
-        enabled: a.id !== 'night_story'
+        enabled: a.id !== 'night_story' && a.id !== 'random_pill'
       }));
     } else if (presetName === 'light') {
       updated = DEFAULT_ACTIVITIES.map(a => ({
@@ -233,10 +256,10 @@ export default function NotificationSettingsModal({
             </div>
             <div style={{ minWidth: 0 }}>
               <h3 id="notif-modal-title" style={{ fontSize: '1.12rem', fontWeight: 800, margin: 0, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                Recordatorios Diarios
+                Recordatorios Dinámicos
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                Organiza tus micro-hábitos de estudio en japonés
+                Kanjis, vocabulario, alertas FSRS y píldoras al instante
               </p>
             </div>
           </div>
@@ -295,7 +318,7 @@ export default function NotificationSettingsModal({
                 <strong style={{ color: '#f59e0b', display: 'block', marginBottom: 2 }}>
                   Notificaciones bloqueadas por el navegador
                 </strong>
-                Habilita los permisos del sitio en tu navegador o celular para poder recibir los recordatorios.
+                Habilita los permisos del sitio en tu navegador o celular para recibir recordatorios dinámicos.
               </div>
             </div>
           ) : permission !== 'granted' ? (
@@ -317,7 +340,7 @@ export default function NotificationSettingsModal({
                     Activar en este celular / navegador
                   </div>
                   <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                    Recibe tus avisos de kanji, vocabulario y racha en el horario fijado
+                    Recibe kanjis, palabras del día, alertas FSRS y salva tu racha
                   </div>
                 </div>
               </div>
@@ -346,7 +369,7 @@ export default function NotificationSettingsModal({
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <ShieldCheck size={16} />
-                <span style={{ fontWeight: 600 }}>Permisos activos en este dispositivo</span>
+                <span style={{ fontWeight: 600 }}>Notificaciones activas en este dispositivo</span>
               </div>
               {nextNotif && (
                 <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
@@ -370,11 +393,11 @@ export default function NotificationSettingsModal({
             <div style={{ minWidth: 0, flex: 1 }}>
               <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Clock size={16} style={{ color: 'var(--primary)' }} />
-                <span>Recordatorios Automáticos</span>
+                <span>Recordatorios Automáticos y FSRS</span>
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 2 }}>
                 {masterEnabled 
-                  ? 'Activo: se enviarán notificaciones según tus horarios' 
+                  ? 'Activo: recibirás notificaciones dinámicas y avisos cuando haya FSRS listos' 
                   : 'Pausado: no recibirás avisos'}
               </div>
             </div>
@@ -387,6 +410,103 @@ export default function NotificationSettingsModal({
               />
               <span className="notif-toggle-slider" />
             </label>
+          </div>
+
+          {/* Tarjeta de Vista Previa Dinámica Viva de Hoy */}
+          <div style={{
+            padding: '12px 14px',
+            borderRadius: 14,
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(16, 185, 129, 0.06))',
+            border: '1px solid rgba(99, 102, 241, 0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Sparkles size={14} />
+                <span>Vista Previa de Notificaciones Dinámicas de Hoy</span>
+              </div>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                Cambian a diario y son interactivas
+              </span>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+              gap: 8,
+              fontSize: '0.74rem'
+            }}>
+              {/* Kanji de hoy */}
+              <div style={{
+                background: 'var(--bg-card)',
+                padding: '8px 10px',
+                borderRadius: 10,
+                border: '1px solid var(--border)'
+              }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem', fontWeight: 700 }}>🌅 KANJI DEL DÍA</div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 2 }}>
+                  【{todayKanji.kanji}】 {todayKanji.meaning_es}
+                </div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.67rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {todayKanji.onyomi}
+                </div>
+              </div>
+
+              {/* Palabra de hoy */}
+              <div style={{
+                background: 'var(--bg-card)',
+                padding: '8px 10px',
+                borderRadius: 10,
+                border: '1px solid var(--border)'
+              }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem', fontWeight: 700 }}>🍱 PALABRA DEL DÍA</div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 2 }}>
+                  【{todayWord.word}】
+                </div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.67rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {todayWord.meaning_es}
+                </div>
+              </div>
+
+              {/* FSRS Status */}
+              <div style={{
+                background: 'var(--bg-card)',
+                padding: '8px 10px',
+                borderRadius: 10,
+                border: '1px solid var(--border)'
+              }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem', fontWeight: 700 }}>🧠 ESTADO FSRS</div>
+                <div style={{ 
+                  fontSize: '0.95rem', 
+                  fontWeight: 800, 
+                  color: dueCounts.total > 0 ? 'var(--accent, #f59e0b)' : '#10b981', 
+                  marginTop: 2 
+                }}>
+                  {dueCounts.total > 0 ? `${dueCounts.total} por repasar` : 'Al día ✨'}
+                </div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.67rem' }}>
+                  {dueCounts.vocab} vcb · {dueCounts.kanji} knj
+                </div>
+              </div>
+
+              {/* Píldora / Proverbio */}
+              <div style={{
+                background: 'var(--bg-card)',
+                padding: '8px 10px',
+                borderRadius: 10,
+                border: '1px solid var(--border)'
+              }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem', fontWeight: 700 }}>💡 PÍLDORA CULTURAL</div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 2 }}>
+                  {todayNugget.expression}
+                </div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.67rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {todayNugget.meaning}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Plantillas / Presets Rápidos */}
@@ -407,7 +527,7 @@ export default function NotificationSettingsModal({
                 className="btn btn-outline btn-sm"
                 onClick={() => handleApplyPreset('recommended')}
                 style={{ fontSize: '0.73rem', padding: '5px 10px', borderRadius: 8 }}
-                title="Activa Kanji, Vocabulario, Partículas y Reto Diario"
+                title="Activa Kanji, Vocabulario, FSRS, Partículas y Reto Diario"
               >
                 🌟 Recomendada
               </button>
@@ -425,9 +545,9 @@ export default function NotificationSettingsModal({
                 className="btn btn-outline btn-sm"
                 onClick={() => handleApplyPreset('intensive')}
                 style={{ fontSize: '0.73rem', padding: '5px 10px', borderRadius: 8 }}
-                title="Activa las 5 actividades completas"
+                title="Activa todas las actividades disponibles"
               >
-                📚 Todas (5)
+                📚 Todas ({DEFAULT_ACTIVITIES.length})
               </button>
             </div>
           </div>
@@ -443,6 +563,26 @@ export default function NotificationSettingsModal({
 
             {schedule.map((activity) => {
               const isCardActive = activity.enabled && masterEnabled;
+
+              // Datos dinámicos contextuales para cada actividad
+              let dynamicSubtext = null;
+              if (activity.id === 'morning_kanji') {
+                dynamicSubtext = `Hoy: 【${todayKanji.kanji}】 ${todayKanji.meaning_es} (${todayKanji.level})`;
+              } else if (activity.id === 'lunch_vocab') {
+                dynamicSubtext = `Hoy: 【${todayWord.word}】 ${todayWord.meaning_es}`;
+              } else if (activity.id === 'fsrs_due') {
+                dynamicSubtext = dueCounts.total > 0
+                  ? `🚨 ${dueCounts.total} tarjetas pendientes listas para repasar`
+                  : `✨ No hay repasos pendientes en este momento`;
+              } else if (activity.id === 'afternoon_particles') {
+                dynamicSubtext = `Hoy: Partícula 【${todayParticle.particle}】 · ${todayParticle.role_es}`;
+              } else if (activity.id === 'random_pill') {
+                dynamicSubtext = `Hoy: 【${todayNugget.expression}】 · ${todayNugget.meaning}`;
+              } else if (activity.id === 'evening_daily_goal') {
+                const pending = Math.max(1, (appState?.dailyGoal?.target || 5) - (appState?.dailyGoal?.answeredToday || 0));
+                dynamicSubtext = `Racha actual: ${appState?.streak || 1} días 🔥 · ${pending} preguntas pendientes`;
+              }
+
               return (
                 <div 
                   key={activity.id}
@@ -461,6 +601,19 @@ export default function NotificationSettingsModal({
                             {activity.url}
                           </span>
                         </div>
+                        {dynamicSubtext && (
+                          <div style={{ 
+                            fontSize: '0.71rem', 
+                            color: activity.id === 'fsrs_due' && dueCounts.total > 0 ? 'var(--accent, #f59e0b)' : 'var(--primary)',
+                            fontWeight: 600,
+                            marginTop: 2,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {dynamicSubtext}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -502,11 +655,15 @@ export default function NotificationSettingsModal({
                       <button
                         type="button"
                         onClick={() => handleTest(activity.id)}
-                        title={`Enviar prueba de ${activity.name}`}
+                        disabled={testingId === activity.id}
+                        title={`Enviar prueba dinámica de ${activity.name}`}
                         className="notif-test-btn"
+                        style={{
+                          opacity: testingId === activity.id ? 0.6 : 1
+                        }}
                       >
                         <Play size={11} style={{ fill: 'currentColor' }} />
-                        <span>Probar</span>
+                        <span>{testingId === activity.id ? 'Enviando...' : 'Probar'}</span>
                       </button>
                     </div>
                   </div>
@@ -531,8 +688,8 @@ export default function NotificationSettingsModal({
               {testStatus === 'sent' ? <Check size={16} /> : <AlertCircle size={16} />}
               <span>
                 {testStatus === 'sent' 
-                  ? '¡Notificación de prueba enviada con éxito a tu dispositivo!' 
-                  : 'No se pudo mostrar la notificación. Revisa que los permisos estén concedidos.'}
+                  ? '¡Notificación dinámica enviada con éxito! Revisa la barra de tu dispositivo.' 
+                  : 'No se pudo mostrar la notificación. Revisa que los permisos estén concedidos en el navegador.'}
               </span>
             </div>
           )}
@@ -562,7 +719,7 @@ export default function NotificationSettingsModal({
         {/* Footer */}
         <div className="notif-modal-footer">
           <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-            Los cambios se guardan automáticamente
+            Se guardan automáticamente en este dispositivo
           </span>
 
           <div className="notif-modal-footer-actions">
@@ -573,7 +730,7 @@ export default function NotificationSettingsModal({
               style={{ borderRadius: 10, gap: 6 }}
             >
               <Bell size={14} />
-              <span>Probar</span>
+              <span>Probar General</span>
             </button>
             <button
               type="button"

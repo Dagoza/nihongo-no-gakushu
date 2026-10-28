@@ -11,7 +11,8 @@ import {
   isNotificationSupported, 
   getNotificationPermission, 
   isDailyReminderEnabled, 
-  requestNotificationPermission 
+  requestNotificationPermission,
+  notifyDailyGoalSuccess
 } from '../../lib/notificationManager';
 
 import jlptExamsData from '../../data/jlpt_exams.json';
@@ -425,6 +426,9 @@ export default function DailyGoalModal({ isOpen, onClose }) {
       clearQuizSession();
       try {
         audioManager.playSfx?.('complete');
+      } catch {}
+      try {
+        notifyDailyGoalSuccess(currentStreak);
       } catch {}
     }
   };
