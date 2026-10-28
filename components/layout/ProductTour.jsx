@@ -419,13 +419,13 @@ export default function ProductTour({
     },
     {
       id: 'audio_bar',
-      category: 'Audio Persistente',
+      category: 'Audio & Selección',
       categoryColor: '#6366f1',
-      title: 'Barra Flotante de Audio & Modo Selección',
-      subtitle: 'Tu reproductor persistente con control de velocidad y voz neuronal',
+      title: 'Mini-Reproductor Flotante & Menú de Selección',
+      subtitle: 'Reproductor ultracompacto arrastrable y menú emergente contextual',
       icon: Volume2,
-      description: 'En la parte inferior de la pantalla encontrarás el reproductor continuo: pausa, retrocede o adelanta 5 segundos y regula la velocidad desde 0.5x hasta 1.25x sin interrumpir tu navegación.',
-      hiddenTip: '🔊 Pronunciación por Selección (Función Secreta): ¡Sombrea con el ratón cualquier fragmento de texto en japonés en cualquier pestaña y la voz neuronal lo leerá en voz alta al instante!',
+      description: 'Selecciona cualquier texto en pantalla para abrir el menú contextual con opciones inmediatas: Reproducir, Diccionario, Guardar, Cuaderno, Copiar y Analizar. Al reproducir, un mini-reproductor flotante te permite pausar, reiniciar (↺), avanzar/retroceder 5s y regular la velocidad.',
+      hiddenTip: '💡 Funciones Avanzadas: 1. Puedes arrastrar el mini-reproductor a cualquier lugar de la pantalla. 2. Puedes minimizarlo a una micro-burbuja flotante. 3. Al hacer clic en cualquier opción del menú contextual, el texto se deselecciona automáticamente.',
       tab: null
     },
     {
@@ -2744,7 +2744,7 @@ export default function ProductTour({
                         </button>
                         <div>
                           <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>
-                            Reproductor Persistente Nihongo
+                            Mini-Reproductor Flotante
                           </div>
                           <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                             {audioPlaying ? 'Reproduciendo audio neuronal...' : 'Listo para reproducir'}

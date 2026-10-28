@@ -39,6 +39,8 @@ export { default as PWAInstaller } from './layout/PWAInstaller';
 
 // --- Módulos de Estudio y Funcionalidades Interactivas ---
 export { default as AudioPlayerBar } from './features/AudioPlayerBar';
+export { default as TextSelectionPopup } from './features/TextSelectionPopup';
+export { default as FloatingMiniPlayer } from './features/FloatingMiniPlayer';
 export { default as ComprehensionQuiz } from './features/ComprehensionQuiz';
 export { default as FsrsStatsModule } from './features/FsrsStatsModule';
 export { default as FuriganaText } from './features/FuriganaText';
