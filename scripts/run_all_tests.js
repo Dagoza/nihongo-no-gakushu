@@ -492,6 +492,44 @@ runTest('Todos los modales independientes implementan bloqueo de scroll', () => 
   });
 });
 
+// -----------------------------------------------------------------------------
+// SCROLL-CRAFT: Integridad de Primitivas, Estilos y Respeto a Reducción de Movimiento
+// -----------------------------------------------------------------------------
+console.log('\n--- SCROLL-CRAFT: Integridad de Primitivas y Estilos ---');
+
+runTest('Primitivas useScrollCraft, StickyScrollStage y ScrollTimelinePath existen y son modulares', () => {
+  const hookPath = path.join(ROOT_DIR, 'lib', 'scrollCraft', 'useScrollCraft.js');
+  const stagePath = path.join(ROOT_DIR, 'components', 'scroll', 'StickyScrollStage.jsx');
+  const timelinePath = path.join(ROOT_DIR, 'components', 'scroll', 'ScrollTimelinePath.jsx');
+
+  assert(fs.existsSync(hookPath), 'useScrollCraft.js debe existir');
+  assert(fs.existsSync(stagePath), 'StickyScrollStage.jsx debe existir');
+  assert(fs.existsSync(timelinePath), 'ScrollTimelinePath.jsx debe existir');
+
+  const hookCode = fs.readFileSync(hookPath, 'utf8');
+  assert(hookCode.includes('prefers-reduced-motion'), 'useScrollCraft debe soportar prefers-reduced-motion');
+  assert(hookCode.includes('requestAnimationFrame'), 'useScrollCraft debe usar rAF');
+});
+
+runTest('globals.css incluye soporte CSS scroll-driven animations y prefers-reduced-motion', () => {
+  const cssPath = path.join(ROOT_DIR, 'app', 'globals.css');
+  const css = fs.readFileSync(cssPath, 'utf8');
+  assert(css.includes('.scroll-stage-container'), 'globals.css debe contener .scroll-stage-container');
+  assert(css.includes('.scroll-craft-reveal'), 'globals.css debe contener .scroll-craft-reveal');
+  assert(css.includes('@media (prefers-reduced-motion: reduce)'), 'globals.css debe contener reglas para prefers-reduced-motion');
+});
+
+runTest('HomePage y CurriculumTab integran Scroll-Craft sin interferir con módulos táctiles', () => {
+  const homePath = path.join(ROOT_DIR, 'app', 'page.jsx');
+  const currPath = path.join(ROOT_DIR, 'components', 'tabs', 'CurriculumTab.jsx');
+
+  const homeCode = fs.readFileSync(homePath, 'utf8');
+  assert(homeCode.includes('useScrollCraft'), 'HomePage debe integrar useScrollCraft');
+
+  const currCode = fs.readFileSync(currPath, 'utf8');
+  assert(currCode.includes('ScrollTimelinePath'), 'CurriculumTab debe integrar ScrollTimelinePath');
+});
+
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);
 console.log('======================================================\n');

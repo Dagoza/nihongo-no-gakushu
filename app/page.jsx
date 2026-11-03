@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useApp } from '../lib/AppContext';
+import { useScrollCraft } from '../lib/scrollCraft/useScrollCraft';
 import JapanesePillarsGuide from '../components/features/JapanesePillarsGuide';
 import StudyStatusBento from '../components/features/StudyStatusBento';
 import { 
@@ -27,6 +28,7 @@ const ZenDaruma3D = dynamic(() => import('../components/features/ZenDaruma3D'), 
 
 export default function HomePage() {
   const { appState, handleUpdateState, navigate } = useApp();
+  const { velocity, progress } = useScrollCraft();
 
   const [isCelebrating, setIsCelebrating] = useState(false);
 
@@ -105,11 +107,13 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Mascota Zen Daruma */}
+        {/* Mascota Zen Daruma con reacción a scroll-craft */}
         <ZenDaruma3D 
           celebrate={isCelebrating}
           size={240}
           onInteract={triggerCelebration}
+          scrollVelocity={velocity}
+          scrollProgress={progress}
         />
       </section>
 
@@ -163,7 +167,7 @@ export default function HomePage() {
               <div
                 key={idx}
                 onClick={() => navigate(mod.path)}
-                className="home-module-card"
+                className="home-module-card scroll-craft-reveal"
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') navigate(mod.path); }}

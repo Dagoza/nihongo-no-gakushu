@@ -8,6 +8,7 @@ import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
 import TerminologyTooltip from '../common/TerminologyTooltip';
+import ScrollTimelinePath from '../scroll/ScrollTimelinePath';
 import { triggerGrandConfetti } from '../../lib/confetti';
 
 // Helper to structure and parse grammar points into title and Japanese pattern/content
@@ -147,6 +148,16 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const [selectedStatus, setSelectedStatus] = useState('all'); // 'all' | 'pending' | 'completed'
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  const curriculumTrailRef = useRef(null);
+
+  const jlptMilestones = useMemo(() => [
+    { id: 'N5', label: '⛩️ N5', badge: 'N5', percent: 6 },
+    { id: 'N4', label: '⛩️ N4', badge: 'N4', percent: 34 },
+    { id: 'N3', label: '⛩️ N3', badge: 'N3', percent: 68 },
+    { id: 'N2', label: '⛩️ N2', badge: 'N2', percent: 88 },
+    { id: 'N1', label: '⛩️ N1', badge: 'N1', percent: 98 },
+  ], []);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -2846,7 +2857,18 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
         </div>
       )}
 
-      <div className="curriculum-list">
+      <div 
+        className="curriculum-list" 
+        ref={curriculumTrailRef} 
+        style={{ position: 'relative', paddingLeft: selectedLevel === 'all' && filteredSteps.length > 5 ? 'clamp(0px, 3.2vw, 38px)' : 0 }}
+      >
+        {selectedLevel === 'all' && filteredSteps.length > 5 && (
+          <ScrollTimelinePath
+            containerRef={curriculumTrailRef}
+            milestones={jlptMilestones}
+            activeMilestoneId={selectedLevel !== 'all' ? selectedLevel : null}
+          />
+        )}
         {filteredSteps.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
             <p style={{ fontSize: '1.1rem', marginBottom: 12 }}>No se encontraron módulos con los filtros seleccionados.</p>
@@ -2855,11 +2877,47 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
             </button>
           </div>
         ) : (
-          filteredSteps.map((step) => {
+          filteredSteps.map((step, idx) => {
             const isDone = userState?.completedSteps?.[step.step];
+            const prevStep = idx > 0 ? filteredSteps[idx - 1] : null;
+            const isNewLevelBreak = selectedLevel === 'all' && (!prevStep || prevStep.level !== step.level);
 
             return (
-              <div key={step.step} className={`curriculum-step-card ${isDone ? 'completed' : ''}`}>
+              <React.Fragment key={step.step}>
+                {isNewLevelBreak && (
+                  <div 
+                    className="curriculum-torii-station scroll-craft-reveal"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      margin: idx === 0 ? '0 0 16px' : '32px 0 16px',
+                      padding: '10px 18px',
+                      borderRadius: 14,
+                      background: 'linear-gradient(90deg, rgba(225, 29, 72, 0.08) 0%, rgba(99, 102, 241, 0.03) 100%)',
+                      borderLeft: '4px solid var(--color-shu)',
+                      borderTop: '1px solid var(--border)',
+                      borderRight: '1px solid var(--border)',
+                      borderBottom: '1px solid var(--border)'
+                    }}
+                  >
+                    <span style={{ fontSize: '1.4rem' }}>⛩️</span>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-shu)', letterSpacing: '0.04em' }}>
+                          Estación Tokaido {step.level}
+                        </span>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                          (Estándar Oficial JLPT)
+                        </span>
+                      </div>
+                      <h4 style={{ margin: '2px 0 0', fontSize: '0.96rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                        Módulos Nivel {step.level}
+                      </h4>
+                    </div>
+                  </div>
+                )}
+                <div className={`curriculum-step-card scroll-craft-reveal ${isDone ? 'completed' : ''}`}>
                 {/* Header Row: Badge + Titles + Actions */}
                 <div className="step-card-header">
                   <div className="step-number-badge">
@@ -3074,6 +3132,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                   </div>
                 </div>
               </div>
+            </React.Fragment>
           );
         }))}
       </div>

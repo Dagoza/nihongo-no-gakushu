@@ -12,12 +12,20 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 export default function ZenDaruma3D({ 
   celebrate = false,
   onInteract = null,
-  size = 240
+  size = 240,
+  scrollVelocity = 0,
+  scrollProgress = 0
 }) {
   const canvasRef = useRef(null);
   const animIdRef = useRef(null);
   const [speechBubble, setSpeechBubble] = useState('¡Ganbatte! (がんばって ✨)');
   const [clickCount, setClickCount] = useState(0);
+
+  // Mantener referencia reactiva a scrollVelocity y scrollProgress para el bucle de render
+  const scrollRef = useRef({ velocity: 0, progress: 0 });
+  useEffect(() => {
+    scrollRef.current = { velocity: scrollVelocity, progress: scrollProgress };
+  }, [scrollVelocity, scrollProgress]);
 
   // Frases de aliento que dice el Daruma
   const phrases = [
@@ -105,8 +113,11 @@ export default function ZenDaruma3D({
         const autoSwayX = Math.sin(now * 1.8) * 0.55 + Math.sin(now * 3.4) * 0.15;
         const autoSwayY = Math.cos(now * 1.3) * 0.28 + Math.sin(now * 2.1) * 0.12;
 
-        s.targetTiltX = autoSwayX;
-        s.targetTiltY = autoSwayY;
+        // Reacción elástica orgánica a la velocidad del scroll
+        const scrollVel = scrollRef.current?.velocity || 0;
+        const scrollSway = Math.sin(now * 6) * Math.min(0.65, scrollVel * 0.25);
+        s.targetTiltX = autoSwayX + scrollSway;
+        s.targetTiltY = autoSwayY + Math.min(0.35, scrollVel * 0.15);
 
         // Saltitos alegres espontáneos cada 6 a 9 segundos
         if (!s.nextIdleActionTime || now > s.nextIdleActionTime) {
@@ -141,8 +152,9 @@ export default function ZenDaruma3D({
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      // --- PÉTALOS DE SAKURA DE FONDO (SI CELEBRA) ---
-      if (celebrate && s.petals.length > 0) {
+      // --- PÉTALOS DE SAKURA DE FONDO (SI CELEBRA O HAY BRISA DE SCROLL) ---
+      const hasScrollBreeze = (scrollRef.current?.velocity || 0) > 0.45;
+      if ((celebrate || hasScrollBreeze) && s.petals.length > 0) {
         s.petals.forEach(p => {
           p.y += p.speedY;
           p.x += Math.sin(p.y * 0.03) * p.speedX;

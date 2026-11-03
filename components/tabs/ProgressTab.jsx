@@ -503,9 +503,9 @@ export default function ProgressTab({
         </div>
       )}
 
-      {/* Stats Cards Grid */}
+      {/* Stats Cards Grid con revelado Scroll-Craft */}
       <div className="progress-stats-grid">
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🔥</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent)' }}>
             {streak} {streak === 1 ? 'día' : 'días'}
@@ -513,7 +513,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Racha de Estudio</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>⭐</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
             {xp} XP
@@ -521,7 +521,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel {userLevel} Maestro</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎯</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--success)' }}>
             {masteredParticlesCount}/{totalParticles}
@@ -529,7 +529,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Partículas Dominadas</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>漢</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary-light)' }}>
             {masteredKanjiCount}/{totalKanji}
@@ -537,7 +537,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Kanjis Aprendidos</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>📚</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--warning)' }}>
             {masteredVocabCount}/{totalVocab}
@@ -545,7 +545,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Vocabulario Dominado</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>📖</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#8b5cf6' }}>
             {completedSentencesCount}/58
@@ -553,7 +553,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Oraciones de Historia</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>📻</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ec4899' }}>
             {completedConversationsCount}/{totalConversations}
@@ -561,7 +561,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Conversaciones Estudiadas</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🗺️</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
             {completedStepsCount}/{totalSteps}
@@ -569,7 +569,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Ruta Consolidada (Módulos)</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎯</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ec4899' }}>
             {completedCanDosCount}/{totalCanDos}
@@ -577,7 +577,7 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Competencias Can-Do</div>
         </div>
 
-        <div className="card" style={{ textAlign: 'center', padding: '20px 16px' }}>
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🏆</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#8b5cf6' }}>
             {completedExamsCount}

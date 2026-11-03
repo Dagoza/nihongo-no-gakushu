@@ -554,7 +554,7 @@ export default function StoryTab({
               return (
                 <div 
                   key={s.id} 
-                  className={`curriculum-step-card ${isDone ? 'completed' : ''}`}
+                  className={`curriculum-step-card scroll-craft-reveal ${isDone ? 'completed' : ''}`}
                   onClick={() => handleOpenStory(s.id)}
                   style={{ cursor: 'pointer' }}
                 >
