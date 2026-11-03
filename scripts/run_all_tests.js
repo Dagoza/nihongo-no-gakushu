@@ -352,6 +352,97 @@ runTest('Catálogo kotowaza.json tiene expresiones, kana, significado y nivel JL
   });
 });
 
+runTest('FSRS: Progresión controlada en repeticiones tempranas (sin saltos prematuros a meses)', () => {
+  const { getNewCard, reviewCard, getIntervalPreviews, SRSRating } = require(path.join(ROOT_DIR, 'lib', 'srs.js'));
+
+  // 1. Tarjeta nueva: progresión inicial suave
+  const newCard = getNewCard();
+  const previews1 = getIntervalPreviews(newCard);
+  assert.strictEqual(previews1[1], '1d', 'Rep 1: Again debe ser 1d');
+  assert.strictEqual(previews1[2], '1d', 'Rep 1: Hard debe ser 1d');
+  assert.strictEqual(previews1[3], '2d', 'Rep 1: Good debe ser 2d');
+  assert.strictEqual(previews1[4], '4d', 'Rep 1: Easy debe ser 4d');
+
+  // 2. Primera vez calificada como Fácil (Rating 4)
+  const cardAfterEasy1 = reviewCard(newCard, SRSRating.EASY);
+  assert.strictEqual(cardAfterEasy1.reps, 1, 'Reps debe ser 1');
+  assert.strictEqual(cardAfterEasy1.consecutive_reps, 1, 'Consecutive reps debe ser 1');
+  assert.strictEqual(cardAfterEasy1.scheduled_days, 4, 'Scheduled days debe ser 4d');
+
+  // 3. Previsualizaciones en 2º repaso (el caso reportado: NO debe saltar a 28d ni 2mo)
+  const previews2 = getIntervalPreviews(cardAfterEasy1);
+  assert.strictEqual(previews2[1], '1d', 'Rep 2: Again debe ser 1d');
+  assert.strictEqual(previews2[2], '2d', 'Rep 2: Hard debe ser 2d (no 28d)');
+  assert.strictEqual(previews2[3], '5d', 'Rep 2: Good debe ser 5d (no 1mo)');
+  assert.strictEqual(previews2[4], '9d', 'Rep 2: Easy debe ser 9d (no 2mo)');
+});
+
+runTest('FSRS: Disminución y reinicio de cuentas en Difícil y Otra vez', () => {
+  const { getNewCard, reviewCard, SRSRating } = require(path.join(ROOT_DIR, 'lib', 'srs.js'));
+
+  const newCard = getNewCard();
+  const cardRep1 = reviewCard(newCard, SRSRating.EASY);
+
+  // Calificar 'Otra vez' (Again) en el 2º repaso debe reiniciar cuentas
+  const cardAgain = reviewCard(cardRep1, SRSRating.AGAIN);
+  assert.strictEqual(cardAgain.scheduled_days, 1, 'Intervalo debe reiniciarse a 1d');
+  assert.strictEqual(cardAgain.consecutive_reps, 0, 'Racha debe reiniciarse a 0');
+  assert.strictEqual(cardAgain.lapses, 1, 'Lapses debe incrementarse a 1');
+  assert.strictEqual(cardAgain.state, 3, 'Estado debe ser Relearning (3)');
+
+  // Tarjeta con madurez (ej. intervalo previo de 11 días)
+  const matureCard = {
+    reps: 3,
+    consecutive_reps: 3,
+    lapses: 0,
+    scheduled_days: 11,
+    stability: 11,
+    difficulty: 4.5,
+    state: 2,
+    last_review: new Date(Date.now() - 11 * 86400000),
+    due: new Date()
+  };
+
+  // Calificar 'Difícil' (Hard) debe disminuir el intervalo previo y penalizar racha
+  const cardHard = reviewCard(matureCard, SRSRating.HARD);
+  assert(cardHard.scheduled_days < 11, `Intervalo de Difícil (${cardHard.scheduled_days}d) debe ser menor al previo (11d)`);
+  assert.strictEqual(cardHard.consecutive_reps, 2, 'Racha debe reducirse de 3 a 2');
+  assert(cardHard.difficulty > matureCard.difficulty, 'Dificultad debe aumentar');
+});
+
+runTest('FSRS: Cada palabra maneja su estado, historial y tiempo de forma independiente', () => {
+  const { reviewCard, getIntervalPreviews, ensureFsrsCard, isDue, SRSRating } = require(path.join(ROOT_DIR, 'lib', 'srs.js'));
+
+  // Tarjeta A (palabra recién aprendida)
+  let cardA = ensureFsrsCard({ reps: 0 });
+  cardA = reviewCard(cardA, SRSRating.GOOD);
+
+  // Tarjeta B (palabra repasada 3 veces exitosamente)
+  let cardB = ensureFsrsCard({
+    reps: 3,
+    consecutive_reps: 3,
+    lapses: 0,
+    scheduled_days: 11,
+    stability: 11,
+    difficulty: 4.0,
+    state: 2
+  });
+
+  const prevA = getIntervalPreviews(cardA);
+  const prevB = getIntervalPreviews(cardB);
+
+  // Los intervalos de A y B deben ser completamente independientes
+  assert.strictEqual(prevA[3], '5d', 'Palabra A (2º repaso) Good debe ser 5d');
+  assert.strictEqual(prevB[3], '22d', 'Palabra B (4º repaso) Good debe ser 22d');
+  assert.notStrictEqual(cardA.due.getTime(), cardB.due.getTime(), 'Fechas de vencimiento deben ser independientes');
+
+  // isDue debe evaluar correctamente tarjetas vencidas vs futuras
+  const futureCard = { due: new Date(Date.now() + 100000000) };
+  const pastCard = { due: new Date(Date.now() - 100000) };
+  assert.strictEqual(isDue(futureCard), false, 'Tarjeta futura no debe estar due');
+  assert.strictEqual(isDue(pastCard), true, 'Tarjeta pasada debe estar due');
+});
+
 // -----------------------------------------------------------------------------
 // CONTROL DE SCROLL EN MODALES Y PREVENCIÓN DE GESTOS TÁCTILES
 // -----------------------------------------------------------------------------

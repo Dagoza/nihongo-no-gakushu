@@ -250,7 +250,7 @@ export default function ScriptpadSrsReview({
 
   // Previsualizaciones de intervalos FSRS
   const intervals = useMemo(() => {
-    if (!currentItem?.card) return { 1: '1d', 2: '2d', 3: '3d', 4: '8d' };
+    if (!currentItem?.card) return { 1: '1d', 2: '1d', 3: '2d', 4: '4d' };
     return getIntervalPreviews(currentItem.card);
   }, [currentItem]);
 
@@ -1179,40 +1179,46 @@ export default function ScriptpadSrsReview({
             />
           </svg>
 
-          {/* Motor A: HanziWriter cuando hay orden vectorial disponible */}
-          {hasWriterData ? (
-            <div
-              ref={writerContainerRef}
-              style={{
-                width: padSize,
-                height: padSize,
-                position: 'relative',
-                zIndex: 2,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            />
-          ) : (
-            /* Motor B: Canvas de caligrafía libre cuando NO hay orden vectorial disponible */
-            <canvas
-              ref={fallbackCanvasRef}
-              width={padSize}
-              height={padSize}
-              onPointerDown={handleFallbackPointerDown}
-              onPointerMove={handleFallbackPointerMove}
-              onPointerUp={handleFallbackPointerUp}
-              onPointerCancel={handleFallbackPointerUp}
-              style={{
-                width: padSize,
-                height: padSize,
-                position: 'relative',
-                zIndex: 2,
-                cursor: 'crosshair',
-                touchAction: 'none'
-              }}
-            />
-          )}
+          {/* Motor A: HanziWriter cuando hay orden vectorial disponible (siempre montado en DOM para permitir inicialización) */}
+          <div
+            ref={writerContainerRef}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: padSize,
+              height: padSize,
+              zIndex: hasWriterData ? 2 : -1,
+              opacity: hasWriterData ? 1 : 0,
+              pointerEvents: hasWriterData ? 'auto' : 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          />
+
+          {/* Motor B: Canvas de caligrafía libre cuando NO hay orden vectorial disponible */}
+          <canvas
+            ref={fallbackCanvasRef}
+            width={padSize}
+            height={padSize}
+            onPointerDown={handleFallbackPointerDown}
+            onPointerMove={handleFallbackPointerMove}
+            onPointerUp={handleFallbackPointerUp}
+            onPointerCancel={handleFallbackPointerUp}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: padSize,
+              height: padSize,
+              zIndex: !hasWriterData ? 2 : -1,
+              opacity: !hasWriterData ? 1 : 0,
+              pointerEvents: !hasWriterData ? 'auto' : 'none',
+              cursor: 'crosshair',
+              touchAction: 'none'
+            }}
+          />
 
           {/* Indicador de trazo activo cuando hay motor HanziWriter */}
           {hasWriterData && !isWordCompleted && strokeProgress.total > 0 && (
@@ -1237,7 +1243,8 @@ export default function ScriptpadSrsReview({
 
         {/* 4. Barra de Acciones durante el trazo */}
         {!isWordCompleted ? (
-          <div style={{
+          <>
+            <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1286,26 +1293,28 @@ export default function ScriptpadSrsReview({
               <span>{showGhostGuide ? 'Ocultar Guía' : 'Ver Guía'}</span>
             </button>
 
-            {/* Botón SÍ ERA: anula error de trazo, acepta y dibuja el trazo si hubo fallo de dedo o lápiz */}
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={handleAcceptStroke}
-              style={{
-                borderRadius: 10,
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                color: '#10b981',
-                borderColor: 'rgba(16, 185, 129, 0.4)',
-                background: 'rgba(16, 185, 129, 0.08)'
-              }}
-            >
-              <Check size={13} strokeWidth={2.5} />
-              <span>Sí era</span>
-            </button>
+            {/* Botón SÍ ERA: anula error de trazo, acepta y dibuja el trazo si hubo fallo de dedo o lápiz en HanziWriter */}
+            {hasWriterData && (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={handleAcceptStroke}
+                style={{
+                  borderRadius: 10,
+                  fontSize: '0.76rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  color: '#10b981',
+                  borderColor: 'rgba(16, 185, 129, 0.4)',
+                  background: 'rgba(16, 185, 129, 0.08)'
+                }}
+              >
+                <Check size={13} strokeWidth={2.5} />
+                <span>Sí era</span>
+              </button>
+            )}
 
             {/* Botón No me acuerdo */}
             <button
@@ -1327,11 +1336,79 @@ export default function ScriptpadSrsReview({
               <span>No sé</span>
             </button>
           </div>
+
+          {/* En modo libre sin vector: Botón integrado para avanzar de carácter o revelar modelo */}
+          {!hasWriterData && (
+            <div style={{
+              width: '100%',
+              maxWidth: padSize,
+              marginTop: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 6
+            }}>
+              {characters.length > 1 && currentCharIndex < characters.length - 1 ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setCurrentCharIndex(prev => prev + 1)}
+                  style={{
+                    padding: '11px 18px',
+                    borderRadius: 14,
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
+                  }}
+                >
+                  <span>Siguiente Carácter ({currentCharIndex + 2} de {characters.length})</span>
+                  <ArrowRight size={16} />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleCompleteFallbackWord}
+                  style={{
+                    padding: '11px 18px',
+                    borderRadius: 14,
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
+                  }}
+                >
+                  <Sparkles size={16} />
+                  <span>Comprobar y Revelar Modelo</span>
+                </button>
+              )}
+
+              <div style={{
+                fontSize: '0.72rem',
+                color: 'var(--text-muted)',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4
+              }}>
+                <Info size={12} />
+                <span>Sin vector interactivo. Traza de memoria y avanza para comparar.</span>
+              </div>
+            </div>
+          )}
+        </>
         ) : (
           /* Controles post-completado */
           <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
             {/* Si no hay datos vectoriales, permitir cambiar vista de comparación */}
-            {!hasWriterData && (
+            {(!hasWriterData || wordHadFallback) && (
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -1397,7 +1474,9 @@ export default function ScriptpadSrsReview({
               className="btn btn-outline btn-sm"
               onClick={() => {
                 setIsWordCompleted(false);
+                isWordCompletedRef.current = false;
                 setCurrentCharIndex(0);
+                currentCharIndexRef.current = 0;
                 setWordMistakes(0);
                 wordMistakesRef.current = 0;
                 setCharMistakes(0);
@@ -1407,6 +1486,8 @@ export default function ScriptpadSrsReview({
                 wasGuideUsedRef.current = false;
                 setAssignedRatingInfo(null);
                 setFallbackStrokesByChar({});
+                setWordHadFallback(false);
+                setHasWriterData(true);
               }}
               style={{ borderRadius: 10, fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
             >
@@ -1418,7 +1499,7 @@ export default function ScriptpadSrsReview({
       </div>
 
       {/* 5A. Modo Guiado Vectorial: Banner de Dificultad Percibida Automática */}
-      {isWordCompleted && hasWriterData && assignedRatingInfo && (
+      {isWordCompleted && !wordHadFallback && hasWriterData && assignedRatingInfo && (
         <div style={{
           background: assignedRatingInfo.bg,
           border: `1.5px solid ${assignedRatingInfo.border}`,
@@ -1467,7 +1548,7 @@ export default function ScriptpadSrsReview({
       )}
 
       {/* 5B. Modo Caligrafía Libre: Banner de Autoevaluación Pedagógica */}
-      {isWordCompleted && !hasWriterData && (
+      {isWordCompleted && (wordHadFallback || !hasWriterData) && (
         <div style={{
           background: isDark ? 'rgba(99, 102, 241, 0.12)' : 'rgba(99, 102, 241, 0.08)',
           border: '1.5px solid rgba(99, 102, 241, 0.35)',
@@ -1492,7 +1573,7 @@ export default function ScriptpadSrsReview({
       )}
 
       {/* 6. Botón Principal Continuar (Modo Guiado Vectorial, 4s) */}
-      {isWordCompleted && hasWriterData && assignedRatingInfo && (
+      {isWordCompleted && !wordHadFallback && hasWriterData && assignedRatingInfo && (
         <button
           type="button"
           className="btn btn-primary"
@@ -1522,7 +1603,7 @@ export default function ScriptpadSrsReview({
       {isWordCompleted && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textAlign: 'center', fontWeight: 600 }}>
-            {hasWriterData 
+            {!wordHadFallback && hasWriterData 
               ? 'O ajusta la dificultad manualmente si lo deseas:' 
               : 'Selecciona cómo sentiste tu dominio de este carácter:'}
           </div>
@@ -1641,70 +1722,11 @@ export default function ScriptpadSrsReview({
               }}
             >
               <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Fácil</span>
-              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[4] || '8d'}</span>
+              <span style={{ fontSize: '0.72rem', opacity: 0.85 }}>{intervals[4] || '4d'}</span>
               {hasWriterData && assignedRatingInfo?.rating === SRSRating.EASY && (
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#10b981' }}>✓ Asignado</span>
               )}
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Botón Comprobar y Revelar para Modo Caligrafía Libre */}
-      {!isWordCompleted && !hasWriterData && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
-          {characters.length > 1 && currentCharIndex < characters.length - 1 ? (
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={() => setCurrentCharIndex(prev => prev + 1)}
-              style={{
-                padding: '12px 20px',
-                borderRadius: 16,
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8
-              }}
-            >
-              <span>Siguiente Carácter ({currentCharIndex + 2} de {characters.length})</span>
-              <ArrowRight size={16} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleCompleteFallbackWord}
-              style={{
-                padding: '13px 20px',
-                borderRadius: 16,
-                fontSize: '0.96rem',
-                fontWeight: 800,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
-              }}
-            >
-              <Sparkles size={16} />
-              <span>Comprobar y Revelar Modelo</span>
-            </button>
-          )}
-
-          <div style={{
-            fontSize: '0.74rem',
-            color: 'var(--text-muted)',
-            textAlign: 'center',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4
-          }}>
-            <Info size={12} />
-            <span>Sin vector interactivo. Traza de memoria y pulsa comprobar para comparar.</span>
           </div>
         </div>
       )}

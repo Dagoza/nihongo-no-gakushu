@@ -257,7 +257,7 @@ export default function SrsTab({ onNavigate }) {
 
   // Previsualización dinámica de intervalos FSRS para la pregunta activa
   const questionIntervals = useMemo(() => {
-    if (!currentQuestion) return { 1: '1d', 2: '2d', 3: '3d', 4: '8d' };
+    if (!currentQuestion) return { 1: '1d', 2: '1d', 3: '2d', 4: '4d' };
     const baseCard = feedback?.prevCard !== undefined 
       ? feedback.prevCard 
       : appState?.srsQuestions?.[currentQuestion.id];
@@ -828,7 +828,7 @@ export default function SrsTab({ onNavigate }) {
                         className={`btn btn-sm srs-rating-btn ${feedback.rating === SRSRating.EASY ? 'btn-success' : 'btn-outline'}`}
                         onClick={() => handleManualRating(SRSRating.EASY)}
                       >
-                        Fácil ({questionIntervals[4] || '8d'})
+                        Fácil ({questionIntervals[4] || '4d'})
                       </button>
                     </div>
                   </div>
