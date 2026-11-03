@@ -28,6 +28,7 @@ import {
   POPULAR_VOCAB_TAG_SUGGESTIONS,
   getWordKey
 } from '../../lib/vocabTags';
+import useBodyScrollLock from '../../lib/useBodyScrollLock';
 
 // Lazy loading con code-splitting para componentes de alto peso e interactividad
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
@@ -137,6 +138,19 @@ export default function VocabTab({
   // Tag Editor Modal State
   const [tagEditorWord, setTagEditorWord] = useState(null);
   const [newTagInput, setNewTagInput] = useState('');
+  useBodyScrollLock(Boolean(tagEditorWord));
+
+  useEffect(() => {
+    if (!tagEditorWord) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setTagEditorWord(null);
+        setNewTagInput('');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [tagEditorWord]);
 
   // AI Content Generator & Multi-selection State
   const [selectedWordIds, setSelectedWordIds] = useState(new Set());
@@ -2016,13 +2030,25 @@ export default function VocabTab({
 
       {/* MODAL GESTOR DE ETIQUETAS (TAGS) PERSONALIZADAS PARA VOCABULARIO */}
       {tagEditorWord && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-          background: 'rgba(0,0,0,0.6)', zIndex: 1100,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div className="card" style={{ maxWidth: 440, width: '100%', position: 'relative', padding: '24px 20px' }}>
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-label="Gestor de etiquetas para vocabulario"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setTagEditorWord(null);
+              setNewTagInput('');
+            }
+          }}
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+            background: 'rgba(0,0,0,0.6)', zIndex: 1100,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+            backdropFilter: 'blur(4px)',
+            overscrollBehavior: 'contain'
+          }}
+        >
+          <div className="card" style={{ maxWidth: 440, width: '100%', position: 'relative', padding: '24px 20px', overscrollBehavior: 'contain' }}>
             <button 
               type="button"
               className="btn btn-ghost btn-xs"

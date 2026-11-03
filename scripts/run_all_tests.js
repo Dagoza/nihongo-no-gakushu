@@ -352,6 +352,55 @@ runTest('Catálogo kotowaza.json tiene expresiones, kana, significado y nivel JL
   });
 });
 
+// -----------------------------------------------------------------------------
+// CONTROL DE SCROLL EN MODALES Y PREVENCIÓN DE GESTOS TÁCTILES
+// -----------------------------------------------------------------------------
+console.log('\n--- CONTROL DE SCROLL EN MODALES Y PREVENCIÓN DE GESTOS TÁCTILES ---');
+
+runTest('useBodyScrollLock existe y exporta utilidades y hook de bloqueo de scroll', () => {
+  const scrollLockPath = path.join(ROOT_DIR, 'lib', 'useBodyScrollLock.js');
+  assert(fs.existsSync(scrollLockPath), 'lib/useBodyScrollLock.js debe existir');
+  const code = fs.readFileSync(scrollLockPath, 'utf8');
+  assert(code.includes('lockBodyScroll'), 'Debe exportar lockBodyScroll');
+  assert(code.includes('unlockBodyScroll'), 'Debe exportar unlockBodyScroll');
+  assert(code.includes('useBodyScrollLock'), 'Debe exportar useBodyScrollLock');
+  assert(code.includes('preventBackgroundTouchMove'), 'Debe incluir prevención de touchmove en móvil');
+  assert(code.includes('modal-open'), 'Debe manejar la clase modal-open');
+});
+
+runTest('useFocusTrap integra useBodyScrollLock para todos los modales accesibles', () => {
+  const focusTrapPath = path.join(ROOT_DIR, 'lib', 'useFocusTrap.js');
+  const code = fs.readFileSync(focusTrapPath, 'utf8');
+  assert(code.includes('useBodyScrollLock'), 'useFocusTrap debe importar y utilizar useBodyScrollLock');
+});
+
+runTest('KanjiDraw tiene touchAction: none y previene scroll al dibujar en móvil', () => {
+  const kanjiDrawPath = path.join(ROOT_DIR, 'components', 'features', 'KanjiDraw.jsx');
+  const code = fs.readFileSync(kanjiDrawPath, 'utf8');
+  assert(code.includes("touchAction: 'none'"), 'KanjiDraw debe declarar touchAction: none');
+  assert(code.includes('preventTouchScroll'), 'KanjiDraw debe prevenir gestos táctiles con preventTouchScroll');
+  assert(code.includes('overscrollBehavior'), 'KanjiDraw debe contener overscrollBehavior');
+});
+
+runTest('Todos los modales independientes implementan bloqueo de scroll', () => {
+  const filesToCheck = [
+    { file: 'components/tabs/KanjiTab.jsx', lock: 'useBodyScrollLock' },
+    { file: 'components/tabs/VocabTab.jsx', lock: 'useBodyScrollLock' },
+    { file: 'components/tabs/SavedTab.jsx', lock: 'useBodyScrollLock' },
+    { file: 'components/features/FsrsStatsModule.jsx', lock: 'useBodyScrollLock' },
+    { file: 'components/modals/TerminologyDetailModal.jsx', lock: 'useFocusTrap' },
+    { file: 'components/layout/MobileNavDrawer.jsx', lock: 'useBodyScrollLock' },
+    { file: 'components/layout/ProductTour.jsx', lock: 'useBodyScrollLock' }
+  ];
+
+  filesToCheck.forEach(({ file, lock }) => {
+    const fullPath = path.join(ROOT_DIR, file);
+    assert(fs.existsSync(fullPath), `${file} debe existir`);
+    const content = fs.readFileSync(fullPath, 'utf8');
+    assert(content.includes(lock), `${file} debe implementar ${lock}`);
+  });
+});
+
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);
 console.log('======================================================\n');

@@ -14,6 +14,7 @@ import {
 } from '../../lib/japaneseUtils';
 import { getAuthSession } from '../../lib/supabaseSync';
 import { useApp } from '../../lib/AppContext';
+import useBodyScrollLock from '../../lib/useBodyScrollLock';
 
 export default function SavedTab({ 
   appState, 
@@ -89,6 +90,16 @@ export default function SavedTab({
 
   // Export / Story Generator Modal state
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  useBodyScrollLock(isExportModalOpen);
+
+  useEffect(() => {
+    if (!isExportModalOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsExportModalOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExportModalOpen]);
   const [modalMode, setModalMode] = useState('prompt'); // 'prompt' | 'create_story' | 'export_files'
   const [storyLevel, setStoryLevel] = useState('N5');
   const [storyTheme, setStoryTheme] = useState('daily');

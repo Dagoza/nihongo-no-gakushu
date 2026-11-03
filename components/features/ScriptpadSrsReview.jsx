@@ -170,12 +170,14 @@ export default function ScriptpadSrsReview({
   // Estados de carga de trazos y fallback libre
   const [writerLoaded, setWriterLoaded] = useState(false);
   const [hasWriterData, setHasWriterData] = useState(true);
+  const [wordHadFallback, setWordHadFallback] = useState(false);
   const [strokeProgress, setStrokeProgress] = useState({ current: 0, total: 0 });
 
   // Trazos libres por carácter para cuando no hay SVG interactivo
   const [fallbackStrokesByChar, setFallbackStrokesByChar] = useState({});
   const [comparisonMode, setComparisonMode] = useState('both'); // 'both' | 'drawing' | 'model'
   const [isDrawingFallback, setIsDrawingFallback] = useState(false);
+  const isDrawingFallbackRef = useRef(false);
   const fallbackCanvasRef = useRef(null);
   const currentFallbackStrokeRef = useRef([]);
 
@@ -320,6 +322,7 @@ export default function ScriptpadSrsReview({
         setAutoAdvanceTimeLeft(AUTO_ADVANCE_SECONDS);
         setFallbackStrokesByChar({});
         setComparisonMode('both');
+        setWordHadFallback(false);
         setHasWriterData(true);
         setTimeout(() => {
           isRatingInProgressRef.current = false;
@@ -332,6 +335,7 @@ export default function ScriptpadSrsReview({
         setAssignedRatingInfo(null);
         setAutoAdvancePaused(true);
         setAutoAdvanceTimeLeft(0);
+        setWordHadFallback(false);
         triggerCheerConfetti();
         if (onComplete) {
           onComplete({
@@ -352,6 +356,7 @@ export default function ScriptpadSrsReview({
         setWordMistakes(0);
         wordMistakesRef.current = 0;
         setFallbackStrokesByChar({});
+        setWordHadFallback(false);
         setHasWriterData(true);
         setAutoAdvanceTimeLeft(AUTO_ADVANCE_SECONDS);
         setTimeout(() => {
@@ -365,6 +370,7 @@ export default function ScriptpadSrsReview({
         setAssignedRatingInfo(null);
         setAutoAdvancePaused(true);
         setAutoAdvanceTimeLeft(0);
+        setWordHadFallback(false);
       }
     }
   }, [currentItem, currentIndex, reviewQueue, appState, onUpdateState, onComplete, hasWriterData, isFinished]);
@@ -387,6 +393,8 @@ export default function ScriptpadSrsReview({
   // Completar palabra en modo libre (sin trazo vectorial) para autoevaluación
   const handleCompleteFallbackWord = useCallback(() => {
     setIsWordCompleted(true);
+    isWordCompletedRef.current = true;
+    setWordHadFallback(true);
     playAudio();
   }, [playAudio]);
 
@@ -433,7 +441,12 @@ export default function ScriptpadSrsReview({
             .catch(err => {
               if (isMounted) {
                 console.warn(`[SRS Writing] No stroke vector data for ${char}, fallback to free canvas:`, err);
+                try {
+                  writer.cancelQuiz();
+                } catch {}
+                writerRef.current = null;
                 setHasWriterData(false);
+                setWordHadFallback(true);
                 if (onErr) onErr(err);
               }
             });
@@ -494,6 +507,7 @@ export default function ScriptpadSrsReview({
     } catch (err) {
       console.warn('[SRS Writing] HanziWriter init exception, activating fallback canvas:', err);
       setHasWriterData(false);
+      setWordHadFallback(true);
     }
 
     return () => {
@@ -654,21 +668,43 @@ export default function ScriptpadSrsReview({
     if (hasWriterData) return;
     const canvas = fallbackCanvasRef.current;
     if (!canvas) return;
-    try { canvas.setPointerCapture(e.pointerId); } catch {}
+    if (e.pointerId) {
+      try { canvas.setPointerCapture(e.pointerId); } catch {}
+    }
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleX = canvas.width / (rect.width || canvas.width);
+    const scaleY = canvas.height / (rect.height || canvas.height);
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    isDrawingFallbackRef.current = true;
     setIsDrawingFallback(true);
     currentFallbackStrokeRef.current = [{ x, y }];
+
+    // Dibuja punto inicial visible de inmediato
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = currentPaper.drawingColor || currentPaper.strokeColor;
+      ctx.fillStyle = currentPaper.drawingColor || currentPaper.strokeColor;
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
   };
 
   const handleFallbackPointerMove = (e) => {
-    if (!isDrawingFallback || hasWriterData) return;
+    if (!isDrawingFallbackRef.current || hasWriterData) return;
     const canvas = fallbackCanvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleX = canvas.width / (rect.width || canvas.width);
+    const scaleY = canvas.height / (rect.height || canvas.height);
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     currentFallbackStrokeRef.current.push({ x, y });
 
@@ -683,7 +719,7 @@ export default function ScriptpadSrsReview({
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.strokeStyle = currentPaper.drawingColor || currentPaper.strokeColor;
-      ctx.lineWidth = 10;
+      ctx.lineWidth = 12;
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
       ctx.lineTo(p2.x, p2.y);
@@ -693,18 +729,28 @@ export default function ScriptpadSrsReview({
   };
 
   const handleFallbackPointerUp = (e) => {
-    if (!isDrawingFallback) return;
+    if (!isDrawingFallbackRef.current) return;
+    isDrawingFallbackRef.current = false;
+    setIsDrawingFallback(false);
+
     const canvas = fallbackCanvasRef.current;
-    if (canvas) {
+    if (canvas && e?.pointerId) {
       try { canvas.releasePointerCapture(e.pointerId); } catch {}
     }
-    setIsDrawingFallback(false);
-    if (currentFallbackStrokeRef.current.length > 1) {
-      const charStrokes = fallbackStrokesByChar[currentCharIndex] || [];
-      setFallbackStrokesByChar(prev => ({
-        ...prev,
-        [currentCharIndex]: [...charStrokes, currentFallbackStrokeRef.current]
-      }));
+
+    if (currentFallbackStrokeRef.current.length >= 1) {
+      const finishedStroke = [...currentFallbackStrokeRef.current];
+      if (finishedStroke.length === 1) {
+        finishedStroke.push({ x: finishedStroke[0].x + 0.5, y: finishedStroke[0].y + 0.5 });
+      }
+      const charIdx = currentCharIndexRef.current;
+      setFallbackStrokesByChar(prev => {
+        const existing = prev[charIdx] || [];
+        return {
+          ...prev,
+          [charIdx]: [...existing, finishedStroke]
+        };
+      });
     }
     currentFallbackStrokeRef.current = [];
   };
@@ -718,28 +764,15 @@ export default function ScriptpadSrsReview({
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 1. Cuadrícula cruzada tradicional
-    ctx.save();
-    ctx.strokeStyle = currentPaper.gridColor;
-    ctx.lineWidth = 1.4;
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.moveTo(canvas.width / 2, 0);
-    ctx.lineTo(canvas.width / 2, canvas.height);
-    ctx.moveTo(0, canvas.height / 2);
-    ctx.lineTo(canvas.width, canvas.height / 2);
-    ctx.stroke();
-    ctx.restore();
-
     const charStrokes = fallbackStrokesByChar[currentCharIndex] || [];
 
-    // 2. Modelo de referencia
+    // 1. Modelo de referencia
     const shouldDrawModel = (showGhostGuide && !isWordCompleted) || 
       (isWordCompleted && (comparisonMode === 'both' || comparisonMode === 'model'));
 
     if (shouldDrawModel && activeChar) {
       ctx.save();
-      ctx.font = `bold ${Math.floor(canvas.height * 0.68)}px "Noto Sans JP", sans-serif`;
+      ctx.font = `bold ${Math.floor(canvas.height * 0.65)}px "Noto Sans JP", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = isWordCompleted && comparisonMode === 'model'
@@ -749,18 +782,18 @@ export default function ScriptpadSrsReview({
       ctx.restore();
     }
 
-    // 3. Trazos libres dibujados por el usuario
+    // 2. Trazos libres dibujados por el usuario
     const shouldDrawUserStrokes = !isWordCompleted || (isWordCompleted && (comparisonMode === 'both' || comparisonMode === 'drawing'));
 
-    if (shouldDrawUserStrokes) {
+    if (shouldDrawUserStrokes && charStrokes.length > 0) {
       ctx.save();
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.strokeStyle = currentPaper.strokeColor;
+      ctx.strokeStyle = currentPaper.drawingColor || currentPaper.strokeColor;
+      ctx.lineWidth = 12;
       charStrokes.forEach(stroke => {
-        if (!stroke || stroke.length < 2) return;
+        if (!stroke || stroke.length === 0) return;
         ctx.beginPath();
-        ctx.lineWidth = 10;
         ctx.moveTo(stroke[0].x, stroke[0].y);
         for (let i = 1; i < stroke.length; i++) {
           ctx.lineTo(stroke[i].x, stroke[i].y);
@@ -1005,13 +1038,16 @@ export default function ScriptpadSrsReview({
               const isPast = idx < currentCharIndex;
               const isCurrent = idx === currentCharIndex;
               return (
-                <div
+                <button
+                  type="button"
                   key={`char-step-${idx}`}
+                  onClick={() => setCurrentCharIndex(idx)}
                   style={{
-                    padding: '3px 10px',
-                    borderRadius: 8,
+                    padding: '4px 12px',
+                    borderRadius: 10,
                     fontSize: '0.8rem',
                     fontWeight: 700,
+                    cursor: 'pointer',
                     background: isCurrent 
                       ? 'var(--primary)' 
                       : (isPast ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-hover)'),
@@ -1021,13 +1057,15 @@ export default function ScriptpadSrsReview({
                     border: `1px solid ${isCurrent ? 'var(--primary)' : 'var(--border)'}`,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 4
+                    gap: 5,
+                    transition: 'all 0.15s ease'
                   }}
+                  title={`Ir al carácter ${idx + 1}`}
                 >
                   {isPast && <Check size={12} strokeWidth={3} />}
                   <span>Carácter {idx + 1}</span>
                   {isWordCompleted && <span style={{ opacity: 0.85 }}>({ch})</span>}
-                </div>
+                </button>
               );
             })}
           </div>

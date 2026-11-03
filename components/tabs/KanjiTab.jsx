@@ -24,6 +24,7 @@ import PitchAccent from '../features/PitchAccent';
 import { getKanjiFromSupabase } from '../../lib/supabaseData';
 import { useApp } from '../../lib/AppContext';
 import TerminologyTooltip from '../common/TerminologyTooltip';
+import useBodyScrollLock from '../../lib/useBodyScrollLock';
 
 // Lazy loading con code-splitting para componentes interactivos de alto impacto
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
@@ -97,6 +98,27 @@ export default function KanjiTab({
   // Tag Editor Modal
   const [tagEditorKanji, setTagEditorKanji] = useState(null);
   const [newTagInput, setNewTagInput] = useState('');
+
+  // Bloquear scroll de fondo para modales de Kanji y permitir cierre con tecla Escape
+  useBodyScrollLock(Boolean(drawingKanji || tagEditorKanji));
+
+  useEffect(() => {
+    if (!drawingKanji && !tagEditorKanji) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (drawingKanji) {
+          setDrawingKanji(null);
+          updateParams(searchTerm, undefined, null);
+        }
+        if (tagEditorKanji) {
+          setTagEditorKanji(null);
+          setNewTagInput('');
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [drawingKanji, tagEditorKanji, searchTerm]);
 
   // Filters State
   const [level, setLevel] = useState('all');
@@ -1621,13 +1643,25 @@ export default function KanjiTab({
 
       {/* MODAL GESTOR DE ETIQUETAS (TAGS) PERSONALIZADAS */}
       {tagEditorKanji && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-          background: 'rgba(0,0,0,0.6)', zIndex: 1100,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div className="card" style={{ maxWidth: 440, width: '100%', position: 'relative', padding: '24px 20px' }}>
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-label="Gestor de etiquetas para kanji"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setTagEditorKanji(null);
+              setNewTagInput('');
+            }
+          }}
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+            background: 'rgba(0,0,0,0.6)', zIndex: 1100,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+            backdropFilter: 'blur(4px)',
+            overscrollBehavior: 'contain'
+          }}
+        >
+          <div className="card" style={{ maxWidth: 440, width: '100%', position: 'relative', padding: '24px 20px', overscrollBehavior: 'contain' }}>
             <button 
               type="button"
               className="btn btn-ghost btn-xs"
@@ -1774,13 +1808,25 @@ export default function KanjiTab({
 
       {/* DRAWING MODAL - 筆順 STROKE ORDER */}
       {drawingKanji && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-          background: 'rgba(0,0,0,0.6)', zIndex: 1000,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div className="card" style={{ maxWidth: 420, width: '100%', position: 'relative', textAlign: 'center', padding: '22px 20px 18px 20px', maxHeight: '94vh', overflowY: 'auto' }}>
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Práctica de trazos de kanji ${drawingKanji}`}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setDrawingKanji(null);
+              updateParams(searchTerm, undefined, null);
+            }
+          }}
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+            background: 'rgba(0,0,0,0.6)', zIndex: 1000,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+            backdropFilter: 'blur(4px)',
+            overscrollBehavior: 'contain'
+          }}
+        >
+          <div className="card" style={{ maxWidth: 420, width: '100%', position: 'relative', textAlign: 'center', padding: '22px 20px 18px 20px', maxHeight: '94vh', overflowY: 'auto', overscrollBehavior: 'contain' }}>
             <button 
               type="button"
               className="btn btn-outline btn-sm" 

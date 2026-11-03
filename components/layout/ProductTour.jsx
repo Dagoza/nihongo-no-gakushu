@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { Sparkles, Flame, Star, CheckCircle2, BookOpen, Keyboard, Compass, MessageSquare, Tv, Layers, Target, Languages, FileText, BookmarkCheck, Volume2, BarChart3, ChevronLeft, ChevronRight, X, Play, Eye, EyeOff, Lightbulb, Check, ExternalLink, Mic, Award, CloudCheck, Bell, VolumeX, ArrowRight, PenTool } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../../lib/audioManager';
+import useBodyScrollLock from '../../lib/useBodyScrollLock';
 
 export default function ProductTour({ 
   isOpen, 
@@ -480,6 +481,8 @@ export default function ProductTour({
   }, [isFirstStep]);
 
   // Keyboard navigation & body scroll lock
+  useBodyScrollLock(effectiveOpen);
+
   useEffect(() => {
     if (!effectiveOpen) return;
 
@@ -493,11 +496,9 @@ export default function ProductTour({
       }
     };
 
-    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [effectiveOpen, currentStepIndex, goToNextStep, goToPrevStep, handleSkip]);

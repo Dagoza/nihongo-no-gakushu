@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import HeaderDaruma from './HeaderDaruma';
 import { TABS, NAV_CATEGORIES } from './NavigationTabs';
+import useBodyScrollLock from '../../lib/useBodyScrollLock';
 
 export default function MobileNavDrawer({
   isOpen = false,
@@ -57,15 +58,7 @@ export default function MobileNavDrawer({
   })();
 
   // Lock body scroll when drawer is open
-  useEffect(() => {
-    if (isOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
 
   // Close on Escape key
   useEffect(() => {

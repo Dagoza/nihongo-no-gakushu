@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Brain, Layers, CheckCircle2, Clock, RotateCcw, Search, ArrowUpDown, ChevronLeft, ChevronRight, Zap, ShieldAlert, X, Play, TrendingUp, BarChart2, Calendar, Eye, Target } from 'lucide-react';
+import useBodyScrollLock from '../../lib/useBodyScrollLock';
 import {
   getFsrsOverview,
   compileFsrsItems,
@@ -41,6 +42,16 @@ export default function FsrsStatsModule({
 
   // Modal Inspector de tarjeta
   const [inspectingItem, setInspectingItem] = useState(null);
+  useBodyScrollLock(Boolean(inspectingItem));
+
+  useEffect(() => {
+    if (!inspectingItem) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setInspectingItem(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [inspectingItem]);
 
   // Catálogos consolidados
   const catalogs = useMemo(() => ({

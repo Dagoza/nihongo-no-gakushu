@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import terminologyList from '../../data/terminology.json';
+import useFocusTrap from '../../lib/useFocusTrap';
 
 /**
  * Normalizes Japanese text for speech synthesis by removing parenthetical readings
@@ -34,9 +35,22 @@ export default function TerminologyDetailModal({
   initialTermId = null,
   onNavigate
 }) {
+  const modalCardRef = useFocusTrap(isOpen);
   const [activePillar, setActivePillar] = useState(initialTermId ? 'glossary' : initialPillarId);
   const [highlightedTermId, setHighlightedTermId] = useState(initialTermId);
   const [playingAudio, setPlayingAudio] = useState(null);
+
+  // Cerrar con Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   // Glossary search & filtering state
   const [searchTerm, setSearchTerm] = useState('');
@@ -318,8 +332,9 @@ export default function TerminologyDetailModal({
 
 
   return (
-    <div className="term-modal-overlay" onClick={onClose}>
+    <div className="term-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="term-modal-title">
       <div 
+        ref={modalCardRef}
         className="term-modal-card"
         onClick={(e) => e.stopPropagation()}
       >

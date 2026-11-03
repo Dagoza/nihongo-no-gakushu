@@ -7522,6 +7522,58 @@ body:not(:has(.audio-player-bar)) .main-container {
   border-color: var(--accent);
 }
 
+/* ==================== CONTROL GLOBAL DE SCROLL EN MODALES ==================== */
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: auto !important;
+  touch-action: none;
+}
+
+/* Permitir scroll únicamente dentro de los elementos con scroll de los modales */
+.modal-open .modal-window,
+.modal-open .modal-card,
+.modal-open .dictionary-modal-card,
+.modal-open .settings-modal-card,
+.modal-open .daily-goal-modal,
+.modal-open .notif-modal-container,
+.modal-open .save-vocab-modal,
+.modal-open .export-story-modal,
+.modal-open .term-modal-card,
+.modal-open .conv-modal-window,
+.modal-open .practice-pad-window,
+.modal-open .ai-generator-modal,
+.modal-open .auth-modal-card,
+.modal-open [role="dialog"] {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+/* Lienzos de dibujo: NUNCA permitir scroll táctil */
+.kanji-draw-wrapper,
+.kanji-draw-wrapper svg,
+.practice-sheet-viewport canvas,
+.practice-sheet-viewport {
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
+
+/* Overlays y Backdrops: Prevenir cualquier rebote elástico hacia la página de fondo */
+.modal-backdrop,
+.modal-overlay,
+.ui-modal-overlay,
+.dictionary-modal-overlay,
+.practice-pad-overlay,
+.daily-goal-overlay,
+.notif-modal-backdrop,
+.conv-modal-backdrop,
+.tour-modal-backdrop,
+.term-modal-overlay {
+  overscroll-behavior: contain;
+  touch-action: none;
+}
+
 /* ==================== MODAL DE GUARDADO ==================== */
 .modal-backdrop {
   position: fixed;

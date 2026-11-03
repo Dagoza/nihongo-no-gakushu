@@ -48,27 +48,9 @@ export default function PracticePadModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Bloquear scroll del body y selección de texto cuando el modal está abierto (evita que la página de fondo interfiera en móvil y desktop)
+  // Prevenir menú contextual y selecciones accidentales durante el trazo caligráfico
   useEffect(() => {
     if (!isOpen) return;
-    const prevOverflow = document.body.style.overflow;
-    const prevTouchAction = document.body.style.touchAction;
-    const prevUserSelect = document.body.style.userSelect;
-    const prevWebkitUserSelect = document.body.style.webkitUserSelect;
-
-    document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
-    document.body.style.userSelect = 'none';
-    document.body.style.webkitUserSelect = 'none';
-    
-    // Prevenir touchmove en el documento para evitar scroll bounce en iOS
-    const preventTouchMove = (e) => {
-      // Permitir scroll en elementos internos que lo necesiten (toolbar, library)
-      if (e.target.closest && (e.target.closest('.practice-toolbar') || e.target.closest('[style*="overflowY"]') || e.target.closest('[style*="overflow-y"]') || e.target.closest('input') || e.target.closest('textarea'))) {
-        return;
-      }
-    };
-    document.addEventListener('touchmove', preventTouchMove, { passive: true });
 
     // Evitar menú contextual y opciones nativas de selección al mantener presionado sobre el lienzo o modal
     const handleContextMenu = (e) => {
@@ -94,11 +76,6 @@ export default function PracticePadModal({
     document.addEventListener('selectionchange', handleSelectionChange);
     
     return () => {
-      document.body.style.overflow = prevOverflow;
-      document.body.style.touchAction = prevTouchAction;
-      document.body.style.userSelect = prevUserSelect;
-      document.body.style.webkitUserSelect = prevWebkitUserSelect;
-      document.removeEventListener('touchmove', preventTouchMove);
       window.removeEventListener('contextmenu', handleContextMenu, { capture: true });
       document.removeEventListener('selectionchange', handleSelectionChange);
     };

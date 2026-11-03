@@ -144,6 +144,17 @@ export default function KanjiDraw({
         charDataLoader: () => charData
       });
 
+      // Asegurar que el SVG generado por HanziWriter tenga touchAction: none para móviles
+      if (containerRef.current) {
+        const svg = containerRef.current.querySelector('svg');
+        if (svg) {
+          svg.style.touchAction = 'none';
+          svg.style.userSelect = 'none';
+          svg.style.webkitUserSelect = 'none';
+          svg.style.overscrollBehavior = 'contain';
+        }
+      }
+
       startQuizSession();
     } catch (e) {
       console.error('Error inicializando HanziWriter:', e);
@@ -169,6 +180,27 @@ export default function KanjiDraw({
       }
     };
   }, [activeTab, initHanziWriter]);
+
+  // Prevenir que gestos táctiles sobre el lienzo de dibujo se conviertan en scroll, rebote o gestos de navegación
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const preventTouchScroll = (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+      e.stopPropagation();
+    };
+
+    el.addEventListener('touchstart', preventTouchScroll, { passive: false });
+    el.addEventListener('touchmove', preventTouchScroll, { passive: false });
+
+    return () => {
+      el.removeEventListener('touchstart', preventTouchScroll);
+      el.removeEventListener('touchmove', preventTouchScroll);
+    };
+  }, [activeTab]);
 
   const startQuizSession = () => {
     if (!writerRef.current) return;
@@ -339,7 +371,10 @@ export default function KanjiDraw({
         boxShadow: quizSuccess ? '0 4px 24px rgba(16, 185, 129, 0.2)' : '0 4px 20px rgba(0, 0, 0, 0.08)',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
         overflow: 'hidden',
-        userSelect: 'none'
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        touchAction: 'none',
+        overscrollBehavior: 'contain'
       }}>
         {/* Check animado en la parte superior derecha al completar el kanji en Practicar */}
         {quizSuccess && (
@@ -535,7 +570,11 @@ export default function KanjiDraw({
             position: 'absolute',
             inset: 0,
             zIndex: 2,
-            display: activeTab === 'order' ? 'none' : 'block'
+            display: activeTab === 'order' ? 'none' : 'block',
+            touchAction: 'none',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            overscrollBehavior: 'contain'
           }}
         />
 
