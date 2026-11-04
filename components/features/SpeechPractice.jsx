@@ -365,23 +365,14 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
   const getCandidates = () => {
     const candidates = new Set();
 
-    const addClean = (raw) => {
+    const addWithVariants = (raw, reading = null) => {
       if (!raw) return;
-      const cleaned = cleanText(raw);
-      if (cleaned) {
-        candidates.add(cleaned);
-        try {
-          const hira = wanakana.toHiragana(cleaned);
-          if (hira) candidates.add(hira);
-        } catch {}
-
-        const equivs = getNumberEquivalents(cleaned);
+      const variants = getAllVariants(raw, reading);
+      for (const v of variants) {
+        candidates.add(v);
+        const equivs = getNumberEquivalents(v);
         for (const eq of equivs) {
           candidates.add(eq);
-          try {
-            const h = wanakana.toHiragana(eq);
-            if (h) candidates.add(h);
-          } catch {}
         }
       }
     };
@@ -399,48 +390,42 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
       const parts = textToSplit.split(/[,、/・;\s]+/);
       for (const p of parts) {
         if (!p) continue;
-        addClean(p);
+        addWithVariants(p);
         // If parentheses like ひと(つ) -> add 'ひと' and 'ひとつ'
         if (p.includes('(') || p.includes('（')) {
           const withoutParen = p.replace(/[()（）]/g, '');
           const baseOnly = p.replace(/[(（].*?[)）]/g, '');
-          addClean(withoutParen);
-          addClean(baseOnly);
+          addWithVariants(withoutParen);
+          addWithVariants(baseOnly);
         }
       }
     };
 
-    if (targetText) addClean(targetText);
+    if (targetText) addWithVariants(targetText, targetKana);
     if (targetKana) parseStr(targetKana);
     if (acceptableReadings) parseStr(acceptableReadings);
 
     return Array.from(candidates);
   };
 
-  // Find candidate with closest match to spoken text
+  // Find candidate with closest match to spoken text (considering both orthography and phonetic reading)
   const getBestCandidate = (spoken) => {
     const candidates = getCandidates();
     if (!candidates || candidates.length === 0) {
       return cleanText(targetText) || targetText || '';
     }
     const cleanSpoken = cleanText(spoken);
-    let spokenHiragana = cleanSpoken;
-    try {
-      spokenHiragana = wanakana.toHiragana(cleanSpoken);
-    } catch {}
+    const spokenHira = textToHiragana(cleanSpoken);
 
     let best = candidates[0];
     let maxScore = -1;
 
     for (const cand of candidates) {
       const cleanCand = cleanText(cand);
-      let candHira = cleanCand;
-      try {
-        candHira = wanakana.toHiragana(cleanCand);
-      } catch {}
+      const candHira = textToHiragana(cleanCand);
 
       const lcsDirect = getLcsLength(cleanSpoken, cleanCand);
-      const lcsHira = getLcsLength(spokenHiragana, candHira);
+      const lcsHira = getLcsLength(spokenHira, candHira);
       const score = Math.max(lcsDirect, lcsHira);
 
       if (score > maxScore) {
@@ -455,51 +440,69 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
     if (!spoken) return;
     
     const cleanSpoken = cleanText(spoken);
-    const spokenVariants = new Set([cleanSpoken]);
-    const numEquivs = getNumberEquivalents(cleanSpoken);
-    numEquivs.forEach(eq => spokenVariants.add(eq));
-    try {
-      const hira = wanakana.toHiragana(cleanSpoken);
-      if (hira) spokenVariants.add(hira);
-    } catch {}
-
+    const spokenVariants = new Set(getAllVariants(spoken));
+    const spokenHira = textToHiragana(cleanSpoken);
+    
     const candidates = getCandidates();
+    const targetHira = textToHiragana(targetKana || targetText);
 
     let isMatch = false;
-    for (const sv of spokenVariants) {
-      let svHira = sv;
-      try {
-        svHira = wanakana.toHiragana(sv);
-      } catch {}
 
+    // 1. Direct variant match (accepts both Kanji and Kana, okurigana variations, numbers)
+    for (const sv of spokenVariants) {
+      if (candidates.includes(sv)) {
+        isMatch = true;
+        break;
+      }
+    }
+
+    // 2. Exact phonetic reading match (both resolve to the same Hiragana utterance)
+    if (!isMatch && spokenHira && targetHira) {
+      if (spokenHira === targetHira) {
+        isMatch = true;
+      }
+    }
+
+    // 3. Candidate phonetic match (matches any candidate's normalized hiragana reading)
+    if (!isMatch && spokenHira) {
       for (const cand of candidates) {
         if (!cand) continue;
-        const candClean = cleanText(cand);
-        let candHira = candClean;
-        try {
-          candHira = wanakana.toHiragana(candClean);
-        } catch {}
-
-        // Match exacto en kanji, dígitos o hiragana
-        if (sv === candClean || svHira === candHira) {
+        const candHira = textToHiragana(cand);
+        if (spokenHira === candHira) {
           isMatch = true;
           break;
         }
+      }
+    }
 
-        // Match parcial para oraciones compuestas (> 3 caracteres)
-        if (candClean.length > 3) {
+    // 4. Partial substring or compound match for longer phrases (> 3 characters)
+    if (!isMatch) {
+      for (const cand of candidates) {
+        if (!cand) continue;
+        const candClean = cleanText(cand);
+        const candHira = textToHiragana(candClean);
+
+        if (candClean.length > 3 || (candHira && candHira.length > 3)) {
           if (
-            sv.includes(candClean) || 
-            candClean.includes(sv) ||
-            svHira.includes(candHira) || 
-            candHira.includes(svHira)
+            cleanSpoken.includes(candClean) || 
+            candClean.includes(cleanSpoken) ||
+            (spokenHira && candHira && (spokenHira.includes(candHira) || candHira.includes(spokenHira)))
           ) {
             isMatch = true;
             break;
           }
         }
+
+        // 5. High-similarity phonetic match (LCS >= 85%) for long sentences (>= 6 moras)
+        if (candHira && spokenHira && candHira.length >= 6 && spokenHira.length >= 6) {
+          const lcs = getLcsLength(spokenHira, candHira);
+          const maxLen = Math.max(spokenHira.length, candHira.length);
+          if (lcs / maxLen >= 0.85) {
+            isMatch = true;
+            break;
+          }
+        }
       }
-      if (isMatch) break;
     }
 
     if (isMatch) {
@@ -715,6 +718,11 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
                   <span style={{ color: 'var(--success, #10b981)', fontWeight: 600, fontSize: '0.72rem' }}>Esperado: </span>
                   <span className="jp-text" style={{ fontSize: '0.88rem' }}>
                     {renderDiff(diffResult.tDiff, 'target')}
+                    {targetKana && bestTarget !== targetKana && (
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginLeft: 4 }}>
+                        ({targetKana})
+                      </span>
+                    )}
                     {hasKanjiNum && KANJI_TO_DIGIT[bestTarget] && (
                       <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginLeft: 4 }}>
                         ({KANJI_TO_DIGIT[bestTarget]})
@@ -807,6 +815,11 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
               <span style={{ color: 'var(--success, #10b981)', fontWeight: 600 }}>Esperado: </span>
               <span className="jp-text" style={{ fontSize: '0.95rem' }}>
                 {renderDiff(diffResult.tDiff, 'target')}
+                {targetKana && bestTarget !== targetKana && (
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 6 }}>
+                    ({targetKana})
+                  </span>
+                )}
                 {hasKanjiNum && KANJI_TO_DIGIT[bestTarget] && (
                   <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 6 }}>
                     ({KANJI_TO_DIGIT[bestTarget]})
