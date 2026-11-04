@@ -8,7 +8,8 @@
     "start": "next start -p 3000",
     "test": "node scripts/run_all_tests.js",
     "test:e2e": "node scripts/run_e2e_tests.mjs",
-    "audit:ui": "node scripts/audit_ui_playwright.mjs"
+    "audit:ui": "node scripts/audit_ui_playwright.mjs",
+    "deploy:prod": "node scripts/trigger_deploy.mjs"
   },
   "devDependencies": {
     "playwright": "^1.50.0"

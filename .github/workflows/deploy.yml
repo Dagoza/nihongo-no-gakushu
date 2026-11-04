@@ -1,0 +1,72 @@
+name: Vercel Production Deployment
+
+on:
+  # Ejecución periódica cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
+  schedule:
+    - cron: '0 */6 * * *'
+
+  # Ejecución manual bajo demanda desde GitHub Actions
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Forzar despliegue incluso si no hay commits recientes'
+        type: boolean
+        required: false
+        default: true
+      reason:
+        description: 'Motivo del despliegue'
+        type: string
+        required: false
+        default: 'Despliegue manual bajo demanda'
+
+jobs:
+  deploy-if-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+
+      - name: Determinar si debe desplegarse
+        id: check_changes
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+            echo "🚀 Modo manual activado (${{ github.event.inputs.reason }}). Procediendo con el despliegue."
+          else
+            # Revisar commits en las últimas 6 horas y 15 minutos (margen de seguridad de jitter de cron)
+            RECENT_COMMITS=$(git log --since="6 hours 15 minutes ago" --oneline)
+            if [ -n "$RECENT_COMMITS" ]; then
+              echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+              echo "✅ Cambios detectados en las últimas 6 horas:"
+              echo "$RECENT_COMMITS"
+            else
+              echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+              echo "⏸️ No se detectaron commits nuevos en las últimas 6 horas. Despliegue omitido para ahorrar cuota de Vercel."
+            fi
+          fi
+
+      - name: Disparar Vercel Deploy Hook
+        if: steps:check_changes.outputs.should_deploy == 'true'
+        run: |
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK }}" ]; then
+            echo "❌ Error: El secret VERCEL_DEPLOY_HOOK no está configurado en GitHub Secrets."
+            echo "Por favor configúralo en: Repositorio > Settings > Secrets and variables > Actions > New repository secret."
+            exit 1
+          fi
+
+          echo "📡 Contactando endpoint de despliegue de Vercel..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "Código HTTP recibido: $HTTP_STATUS"
+          echo "Respuesta: $BODY"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "🎉 Despliegue encolado exitosamente en Vercel."
+          else
+            echo "❌ Error al disparar el despliegue en Vercel (Código HTTP $HTTP_STATUS)."
+            exit 1
+          fi

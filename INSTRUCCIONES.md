@@ -106,12 +106,12 @@ El objetivo es que al consultar cualquier kanji en la aplicación, aparezcan **t
 
 ---
 
-## 3. Flujo de Trabajo para Despliegues en Vercel (Commit, Push y Deploy)
+## 3. Flujo de Trabajo para Control de Despliegues en Vercel (Hobby Plan Protegido)
 
-La aplicación está diseñada para desplegarse de manera continua en **Vercel**. Cada vez que se realicen cambios en el código o se agregue nuevo contenido, debe ejecutarse el ciclo completo: **Prueba local -> Commit -> Push -> Deploy**.
+Para no agotar las cuotas del plan gratuito de Vercel (100 despliegues/día y 6,000 minutos/mes), los despliegues automáticos por commit individual están desactivados mediante `"git": { "deploymentEnabled": false }` en `vercel.json`. Puedes hacer tantos commits y `git push` a `main` como necesites para respaldar tu trabajo sin consumir cuota de despliegues.
 
-### 3.1. Verificación previa al commit (Build Check)
-Antes de confirmar los cambios, verifica que la aplicación compile correctamente y no contenga errores de sintaxis o empaquetado:
+### 3.1. Verificación previa al commit (Build Check Local)
+Antes de confirmar los cambios, verifica que la aplicación compile correctamente:
 
 ```bash
 npm run build
@@ -119,14 +119,14 @@ npm run build
 
 Si la compilación es exitosa (`Compiled successfully`), procede con el flujo de Git.
 
-### 3.2. Ciclo de Git (Commit y Push)
+### 3.2. Ciclo de Git (Commit y Push libre)
 
 1. **Añadir los archivos modificados:**
    ```bash
    git add .
    ```
 
-2. **Crear el commit con mensaje semántico y claro:**
+2. **Crear el commit con mensaje semántico:**
    ```bash
    git commit -m "feat(vocab): agregar nuevas palabras y sincronizar kanjis correspondientes"
    ```
@@ -135,15 +135,20 @@ Si la compilación es exitosa (`Compiled successfully`), procede con el flujo de
    ```bash
    git push origin main
    ```
+   *(Nota: Este push actualiza GitHub y respalda tu código, pero **NO** gasta cuota de despliegue en Vercel).*
 
-### 3.3. Despliegue en Vercel
+### 3.3. Métodos para Desplegar a Producción
 
-* **Opción Automática (Recomendada):**  
-  Si el repositorio de GitHub/GitLab está conectado al proyecto en el panel de Vercel, cada `git push origin main` dispara automáticamente un nuevo despliegue en producción.
-* **Opción Manual mediante Vercel CLI:**  
-  Si deseas forzar el despliegue desde la terminal:
+* **1. Despliegue Automático Periódico (Cron cada 6 horas):**  
+  GitHub Actions (`.github/workflows/deploy.yml`) se ejecuta cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC). Revisa si hubo commits en ese intervalo; si hubo cambios, activa el *Deploy Hook* de Vercel para publicar una versión consolidada. Si no hubo cambios, no gasta cuota.
+
+* **2. Despliegue Manual Bajo Demanda (1 Clic en GitHub):**  
+  En GitHub > pestaña **Actions** > seleccionar **Vercel Production Deployment** > hacer clic en **Run workflow**.
+
+* **3. Despliegue Inmediato desde Terminal:**  
+  Teniendo configurada la variable `VERCEL_DEPLOY_HOOK` en tu archivo `.env.local`:
   ```bash
-  npx vercel --prod
+  npm run deploy:prod
   ```
 
 ### 3.4. Checklist Rápido de Verificación
@@ -152,7 +157,7 @@ Si la compilación es exitosa (`Compiled successfully`), procede con el flujo de
 - [ ] ¿Se añadieron las referencias de la palabra a **todos los kanjis que la componen** en `data/kanji.json`?
 - [ ] ¿Se ejecutó `npm run build` sin errores?
 - [ ] ¿Se realizó `git add`, `git commit` y `git push origin main`?
-- [ ] ¿Se verificó en Vercel que el estado sea **Ready / Deployed**?
+- [ ] ¿Se programó o disparó el despliegue cuando se requería publicar a producción?
 
 ---
 
