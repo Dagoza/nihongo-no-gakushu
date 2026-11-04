@@ -16083,3 +16083,34 @@ html {
     opacity: 1 !important;
   }
 }
+
+/* Estilos de Insignia de Instrucción y Resaltado en Preguntas de Examen/FSRS */
+.daily-goal-instruction-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  line-height: 1.4;
+}
+
+[data-theme='dark'] .daily-goal-instruction-badge {
+  background: rgba(129, 140, 248, 0.15);
+  color: #818cf8;
+  border-color: rgba(129, 140, 248, 0.3);
+}
+
+.jp-text u {
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--primary, #6366f1);
+  font-weight: 800;
+  color: var(--primary, #6366f1);
+}
+
