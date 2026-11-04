@@ -27,7 +27,7 @@ import {
 import kanjiData from '../../data/kanji.json';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
-import { SRSRating, reviewCard, getIntervalPreviews, ensureFsrsCard } from '../../lib/srs';
+import { SRSRating, reviewCard, getIntervalPreviews, ensureFsrsCard, getRatingInfoFromMistakes } from '../../lib/srs';
 import { fetchKanjiStrokeData, getCharacterStrokeCount } from '../../lib/kanjiStrokeUtils';
 
 // Estilos de papel para el lienzo de caligrafía
@@ -59,74 +59,6 @@ const PAPER_STYLES = {
     isDark: true
   }
 };
-
-/**
- * Calcula la calificación recomendada FSRS según la cantidad de equivocados
- */
-function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
-  if (wasGuideUsed) {
-    return {
-      rating: SRSRating.AGAIN,
-      name: 'Otra vez',
-      tag: 'Guía consultada',
-      badge: 'Requiere repaso (Guía consultada)',
-      color: '#ef4444',
-      bg: 'rgba(239, 68, 68, 0.12)',
-      border: 'rgba(239, 68, 68, 0.5)',
-      desc: 'El intervalo se reinicia para afianzar la memoria muscular.'
-    };
-  }
-
-  if (mistakes === 0) {
-    return {
-      rating: SRSRating.EASY,
-      name: 'Fácil',
-      tag: '0 errores',
-      badge: 'Impecable: 0 errores de trazo',
-      color: '#10b981',
-      bg: 'rgba(16, 185, 129, 0.12)',
-      border: 'rgba(16, 185, 129, 0.5)',
-      desc: 'Trazos exactos de memoria en orden correcto.'
-    };
-  }
-
-  if (mistakes === 1) {
-    return {
-      rating: SRSRating.GOOD,
-      name: 'Bueno',
-      tag: '1 error',
-      badge: 'Muy bien: 1 error leve',
-      color: '#3b82f6',
-      bg: 'rgba(59, 130, 246, 0.12)',
-      border: 'rgba(59, 130, 246, 0.5)',
-      desc: 'Gran precisión con solo un ajuste menor.'
-    };
-  }
-
-  if (mistakes <= 3) {
-    return {
-      rating: SRSRating.HARD,
-      name: 'Difícil',
-      tag: `${mistakes} errores`,
-      badge: `Buen esfuerzo: ${mistakes} errores`,
-      color: '#f59e0b',
-      bg: 'rgba(245, 158, 11, 0.12)',
-      border: 'rgba(245, 158, 11, 0.5)',
-      desc: 'Costó recordar el orden exacto de trazos.'
-    };
-  }
-
-  return {
-    rating: SRSRating.AGAIN,
-    name: 'Otra vez',
-    tag: `${mistakes} errores`,
-    badge: `Necesitas repasar: ${mistakes} errores`,
-    color: '#ef4444',
-    bg: 'rgba(239, 68, 68, 0.12)',
-    border: 'rgba(239, 68, 68, 0.5)',
-    desc: 'Es conveniente volver a practicar este kanji pronto.'
-  };
-}
 
 // Duración del temporizador de auto-avance al completar una palabra (4 segundos según preferencia)
 const AUTO_ADVANCE_SECONDS = 4;

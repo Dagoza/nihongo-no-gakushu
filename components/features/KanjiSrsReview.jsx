@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import HanziWriter from 'hanzi-writer';
 import { 
   ArrowLeft, 
   Undo2, 
@@ -11,24 +10,24 @@ import {
   Check, 
   CheckCircle2, 
   X, 
-  Eye, 
-  EyeOff, 
-  Play, 
-  RefreshCw, 
   PenTool, 
   ListChecks, 
   Layers, 
   Shuffle, 
   BookOpen, 
-  Zap,
-  HelpCircle,
-  Award
+  Zap
 } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
-import { SRSRating, getIntervalPreviews } from '../../lib/srs';
+import { 
+  SRSRating, 
+  getIntervalPreviews, 
+  getRatingInfoFromMistakes, 
+  triggerSrsFeedback 
+} from '../../lib/srs';
+import { getPrimaryKanjiReading, getAllKanjiReadings } from '../../lib/japaneseUtils';
 import { triggerCheerConfetti } from '../../lib/confetti';
-import { fetchKanjiStrokeData } from '../../lib/kanjiStrokeUtils';
 import kanjiDataDefault from '../../data/kanji.json';
+import KanjiDraw from './KanjiDraw';
 import PitchAccent from './PitchAccent';
 import SpeechPractice from './SpeechPractice';
 
@@ -39,7 +38,7 @@ const KANJI_SRS_MODE_STORAGE_KEY = 'nihongo_kanji_srs_mode_v2';
 const REVIEW_MODES = [
   { id: 'mix', label: 'Mix Dinámico', icon: Shuffle, desc: 'Alterna entre dibujo, test y memoria' },
   { id: 'choice', label: 'Selección Múltiple', icon: ListChecks, desc: 'Quiz interactivo de significado y kanji' },
-  { id: 'draw', label: 'Dibujar Trazo', icon: PenTool, desc: 'Escribe el kanji en el lienzo caligráfico' },
+  { id: 'draw', label: 'Dibujar Trazo', icon: PenTool, desc: 'Escribe el kanji con el componente KanjiDraw' },
   { id: 'flashcard', label: 'Flashcard Clásica', icon: Layers, desc: 'Tarjeta de memoria tradicional con volteo' },
 ];
 
@@ -47,47 +46,9 @@ const REVIEW_MODES = [
 const EXERCISE_TYPES = {
   CHOICE_MEANING: 'choice_meaning', // Dado Kanji -> Elegir significado
   CHOICE_KANJI: 'choice_kanji',     // Dado significado -> Elegir Kanji
-  DRAW: 'draw',                     // Dibujar Kanji en el lienzo
-  FLASHCARD: 'flashcard'            // Tarjeta clásica
+  DRAW: 'draw',                     // Dibujar Kanji con KanjiDraw
+  FLASHCARD: 'flashcard'            // Tarjeta clásica de memoria
 };
-
-// Extractor de lectura primaria
-function getPrimaryReading(k) {
-  if (!k) return '';
-  if (k.kunyomi && k.kunyomi.includes('[')) {
-    const inside = k.kunyomi.split('[')[1]?.replace(']', '').trim();
-    if (inside) return inside.split(/[,、]/)[0]?.replace(/[(（].*?[)）]/g, '').trim();
-  }
-  if (k.kunyomi) {
-    return k.kunyomi.split(/[,、]/)[0]?.replace(/[(（].*?[)）]/g, '').trim();
-  }
-  if (k.onyomi && k.onyomi.includes('[')) {
-    const inside = k.onyomi.split('[')[1]?.replace(']', '').trim();
-    if (inside) return inside.split(/[,、]/)[0]?.trim();
-  }
-  if (k.onyomi) {
-    return k.onyomi.split(/[,、]/)[0]?.trim();
-  }
-  if (k.pronunciation) {
-    return k.pronunciation.split(/[,、]/)[0]?.trim();
-  }
-  return '';
-}
-
-// Extractor de todas las lecturas
-function getAllReadings(k) {
-  if (!k) return [];
-  const list = [];
-  if (k.kunyomi) list.push(k.kunyomi);
-  if (k.onyomi) list.push(k.onyomi);
-  if (k.pronunciation) list.push(k.pronunciation);
-  if (k.words && Array.isArray(k.words)) {
-    k.words.forEach(w => {
-      if (w.reading) list.push(w.reading);
-    });
-  }
-  return list;
-}
 
 // Mezclador Fisher-Yates
 function shuffleList(array) {
@@ -138,24 +99,6 @@ export default function KanjiSrsReview({
   // Estados de Selección Múltiple (Quiz)
   const [quizSelectedOption, setQuizSelectedOption] = useState(null);
   const [quizIsAnswered, setQuizIsAnswered] = useState(false);
-
-  // Estados de Dibujo (HanziWriter)
-  const [drawMistakes, setDrawMistakes] = useState(0);
-  const [drawCurrentStroke, setDrawCurrentStroke] = useState(0);
-  const [drawTotalStrokes, setDrawTotalStrokes] = useState(0);
-  const [drawIsCompleted, setDrawIsCompleted] = useState(false);
-  const [drawShowGuide, setDrawShowGuide] = useState(false);
-  const [drawGuideUsed, setDrawGuideUsed] = useState(false);
-  const [drawIsAnimating, setDrawIsAnimating] = useState(false);
-  const [drawAnimUsed, setDrawAnimUsed] = useState(false);
-  const [drawError, setDrawError] = useState(false);
-
-  // Referencias para HanziWriter
-  const canvasContainerRef = useRef(null);
-  const writerRef = useRef(null);
-  const drawMistakesRef = useRef(0);
-  const drawGuideUsedRef = useRef(false);
-  const drawAnimUsedRef = useRef(false);
 
   // Caché de opciones generadas para evitar re-mezclar en cada render
   const optionsCacheRef = useRef({});
@@ -217,60 +160,7 @@ export default function KanjiSrsReview({
     setSuggestedRating(null);
     setQuizSelectedOption(null);
     setQuizIsAnswered(false);
-    setDrawIsCompleted(false);
-    setDrawMistakes(0);
-    drawMistakesRef.current = 0;
   };
-
-  // Retroalimentación háptica y auditiva sutil para calificaciones FSRS
-  const triggerSrsFeedback = useCallback((rating) => {
-    if (typeof window === 'undefined') return;
-
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      try {
-        if (rating === SRSRating.EASY) navigator.vibrate([15, 30, 20]);
-        else if (rating === SRSRating.GOOD) navigator.vibrate(20);
-        else if (rating === SRSRating.HARD) navigator.vibrate(30);
-        else navigator.vibrate([40, 40, 40]);
-      } catch {}
-    }
-
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      gain.gain.setValueAtTime(0.04, ctx.currentTime);
-
-      if (rating === SRSRating.EASY) {
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.18);
-      } else if (rating === SRSRating.GOOD) {
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.10);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.15);
-      } else if (rating === SRSRating.HARD) {
-        osc.frequency.setValueAtTime(440, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.12);
-      } else {
-        osc.frequency.setValueAtTime(330, ctx.currentTime);
-        osc.frequency.setValueAtTime(261.63, ctx.currentTime + 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.16);
-      }
-    } catch {}
-  }, []);
 
   // Generación inteligente de opciones para preguntas de selección múltiple
   const currentOptions = useMemo(() => {
@@ -287,7 +177,7 @@ export default function KanjiSrsReview({
       const correctOption = {
         id: 'correct',
         meaning: currentItem.meaning_es,
-        reading: getPrimaryReading(currentItem),
+        reading: getPrimaryKanjiReading(currentItem),
         kanji: currentItem.kanji,
         isCorrect: true
       };
@@ -304,7 +194,7 @@ export default function KanjiSrsReview({
       const shuffledDistractors = shuffleList(pool).slice(0, 3).map(k => ({
         id: `dist_${k.kanji}`,
         meaning: k.meaning_es,
-        reading: getPrimaryReading(k),
+        reading: getPrimaryKanjiReading(k),
         kanji: k.kanji,
         isCorrect: false
       }));
@@ -353,25 +243,6 @@ export default function KanjiSrsReview({
     setSuggestedRating(null);
     setQuizSelectedOption(null);
     setQuizIsAnswered(false);
-    setDrawMistakes(0);
-    setDrawCurrentStroke(0);
-    setDrawTotalStrokes(0);
-    setDrawIsCompleted(false);
-    setDrawShowGuide(false);
-    setDrawGuideUsed(false);
-    setDrawIsAnimating(false);
-    setDrawAnimUsed(false);
-    setDrawError(false);
-    drawMistakesRef.current = 0;
-    drawGuideUsedRef.current = false;
-    drawAnimUsedRef.current = false;
-
-    if (writerRef.current) {
-      try {
-        writerRef.current.cancelQuiz();
-      } catch {}
-      writerRef.current = null;
-    }
   }, []);
 
   // Manejo de Respuesta en Selección Múltiple
@@ -383,7 +254,7 @@ export default function KanjiSrsReview({
     setIsRevealed(true);
 
     const isRight = Boolean(currentOptions[index]?.isCorrect);
-    const reading = getPrimaryReading(currentItem) || currentItem?.kanji;
+    const reading = getPrimaryKanjiReading(currentItem) || currentItem?.kanji;
 
     if (isRight) {
       audioManager.speak(reading);
@@ -393,7 +264,19 @@ export default function KanjiSrsReview({
       triggerSrsFeedback(SRSRating.AGAIN);
       setSuggestedRating(SRSRating.AGAIN);
     }
-  }, [quizIsAnswered, currentOptions, currentItem, triggerSrsFeedback]);
+  }, [quizIsAnswered, currentOptions, currentItem]);
+
+  // Completitud al dibujar en el lienzo KanjiDraw (reutiliza lógica FSRS de Scriptpad)
+  const handleDrawComplete = useCallback((summary) => {
+    const mistakes = summary?.totalMistakes || 0;
+    // Reutiliza la función central de cálculo FSRS según errores de Scriptpad
+    const ratingInfo = getRatingInfoFromMistakes(mistakes, false);
+    setSuggestedRating(ratingInfo.rating);
+    setIsRevealed(true);
+    triggerCheerConfetti();
+    const reading = getPrimaryKanjiReading(currentItem) || currentItem?.kanji;
+    audioManager.speak(reading);
+  }, [currentItem]);
 
   // Manejo de Calificación FSRS y avance
   const handleRate = useCallback((rating) => {
@@ -417,7 +300,7 @@ export default function KanjiSrsReview({
 
     resetCardState();
     setSrsReviewIndex(prev => prev + 1);
-  }, [currentItem, getCurrentCard, onRate, resetCardState, srsReviewIndex, triggerSrsFeedback]);
+  }, [currentItem, getCurrentCard, onRate, resetCardState, srsReviewIndex]);
 
   // Deshacer / Devolver tarjeta anterior
   const handleUndo = useCallback(() => {
@@ -434,230 +317,13 @@ export default function KanjiSrsReview({
     setIsRevealed(true);
   }, [reviewHistory, onUndo, resetCardState]);
 
-  // Inicialización de HanziWriter en Modo Dibujo
-  useEffect(() => {
-    if (currentExerciseType !== EXERCISE_TYPES.DRAW || !currentItem || !canvasContainerRef.current) {
-      return;
-    }
-
-    let isMounted = true;
-    setDrawError(false);
-    setDrawIsCompleted(false);
-    drawMistakesRef.current = 0;
-    setDrawMistakes(0);
-
-    // Limpiar contenedor previo
-    canvasContainerRef.current.innerHTML = '';
-
-    const isDark = typeof document !== 'undefined' && 
-      document.documentElement.getAttribute('data-theme') === 'dark';
-
-    // Determinar ancho adaptativo para móviles
-    const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 400;
-    const padSize = Math.min(270, Math.max(220, viewportWidth - 72));
-
-    try {
-      const writer = HanziWriter.create(canvasContainerRef.current, currentItem.kanji, {
-        width: padSize,
-        height: padSize,
-        padding: 16,
-        showOutline: drawShowGuide,
-        showCharacter: false,
-        strokeAnimationSpeed: 1.5,
-        delayBetweenStrokes: 140,
-        strokeColor: isDark ? '#60a5fa' : '#2563eb',
-        outlineColor: isDark ? 'rgba(148, 163, 184, 0.28)' : 'rgba(100, 116, 139, 0.22)',
-        highlightColor: '#f59e0b',
-        highlightCompleteColor: '#10b981',
-        drawingColor: isDark ? '#38bdf8' : '#1d4ed8',
-        drawingWidth: 18,
-        charDataLoader: (char, onComplete, onErr) => {
-          fetchKanjiStrokeData(char)
-            .then(data => {
-              if (isMounted) {
-                onComplete(data);
-                const total = Array.isArray(data.strokes) ? data.strokes.length : 0;
-                setDrawTotalStrokes(total);
-              }
-            })
-            .catch(err => {
-              if (isMounted) {
-                console.warn(`[Kanji SRS] Sin datos vectoriales de trazo para ${char}:`, err);
-                setDrawError(true);
-                if (onErr) onErr(err);
-              }
-            });
-        }
-      });
-
-      writerRef.current = writer;
-
-      // Asegurar touch-action: none en el SVG para evitar scroll táctil en pantallas móviles
-      setTimeout(() => {
-        if (!isMounted || !canvasContainerRef.current) return;
-        const svg = canvasContainerRef.current.querySelector('svg');
-        if (svg) {
-          svg.style.touchAction = 'none';
-          svg.style.userSelect = 'none';
-          svg.style.webkitUserSelect = 'none';
-          svg.style.overscrollBehavior = 'contain';
-        }
-      }, 50);
-
-      // Iniciar Quiz de Caligrafía
-      writer.quiz({
-        leniency: 1.25,
-        showHintAfterMisses: 3,
-        onMistake: () => {
-          if (!isMounted) return;
-          drawMistakesRef.current += 1;
-          setDrawMistakes(drawMistakesRef.current);
-          if (typeof navigator !== 'undefined' && navigator.vibrate) {
-            try { navigator.vibrate(35); } catch {}
-          }
-        },
-        onCorrectStroke: (data) => {
-          if (!isMounted) return;
-          setDrawCurrentStroke((data?.strokeNum || 0) + 1);
-          if (typeof navigator !== 'undefined' && navigator.vibrate) {
-            try { navigator.vibrate(18); } catch {}
-          }
-        },
-        onComplete: () => {
-          if (!isMounted) return;
-          setDrawIsCompleted(true);
-          setIsRevealed(true);
-          triggerCheerConfetti();
-          const reading = getPrimaryReading(currentItem) || currentItem.kanji;
-          audioManager.speak(reading);
-
-          // Calificación automática sugerida de acuerdo al rendimiento de trazo
-          const mistakes = drawMistakesRef.current;
-          const guideUsed = drawGuideUsedRef.current;
-          const animUsed = drawAnimUsedRef.current;
-
-          let suggested = SRSRating.GOOD;
-          if (mistakes === 0 && !guideUsed && !animUsed) {
-            suggested = SRSRating.EASY;
-          } else if (mistakes <= 1 && !guideUsed && !animUsed) {
-            suggested = SRSRating.GOOD;
-          } else if (mistakes <= 3 && !animUsed) {
-            suggested = SRSRating.HARD;
-          } else {
-            suggested = SRSRating.AGAIN;
-          }
-
-          setSuggestedRating(suggested);
-        }
-      });
-    } catch (e) {
-      console.error('Error al inicializar HanziWriter en Kanji SRS:', e);
-      setDrawError(true);
-    }
-
-    return () => {
-      isMounted = false;
-      if (writerRef.current) {
-        try {
-          writerRef.current.cancelQuiz();
-        } catch {}
-        writerRef.current = null;
-      }
-    };
-  }, [currentExerciseType, currentItem, drawShowGuide]);
-
-  // Alternar Guía de Contorno Fantasma en el Lienzo
-  const handleToggleGuide = () => {
-    if (!writerRef.current) return;
-    const nextVal = !drawShowGuide;
-    setDrawShowGuide(nextVal);
-    if (nextVal) {
-      drawGuideUsedRef.current = true;
-      setDrawGuideUsed(true);
-      writerRef.current.showOutline();
-    } else {
-      writerRef.current.hideOutline();
-    }
-  };
-
-  // Animar trazos del Kanji paso a paso
-  const handleAnimateDraw = () => {
-    if (!writerRef.current || drawIsAnimating) return;
-    setDrawIsAnimating(true);
-    drawAnimUsedRef.current = true;
-    setDrawAnimUsed(true);
-
-    try {
-      writerRef.current.cancelQuiz();
-      writerRef.current.animateCharacter({
-        onComplete: () => {
-          setDrawIsAnimating(false);
-          // Reiniciar el quiz para que el usuario pueda escribirlo
-          if (writerRef.current) {
-            writerRef.current.quiz({
-              leniency: 1.25,
-              onMistake: () => {
-                drawMistakesRef.current += 1;
-                setDrawMistakes(drawMistakesRef.current);
-              },
-              onCorrectStroke: (data) => {
-                setDrawCurrentStroke((data?.strokeNum || 0) + 1);
-              },
-              onComplete: () => {
-                setDrawIsCompleted(true);
-                setIsRevealed(true);
-                triggerCheerConfetti();
-                audioManager.speak(getPrimaryReading(currentItem) || currentItem.kanji);
-                setSuggestedRating(SRSRating.HARD);
-              }
-            });
-          }
-        }
-      });
-    } catch (err) {
-      console.warn('Error animando trazos:', err);
-      setDrawIsAnimating(false);
-    }
-  };
-
-  // Reiniciar lienzo de dibujo
-  const handleResetDraw = () => {
-    if (!writerRef.current) return;
-    drawMistakesRef.current = 0;
-    setDrawMistakes(0);
-    setDrawCurrentStroke(0);
-    setDrawIsCompleted(false);
-    setIsRevealed(false);
-    setSuggestedRating(null);
-    try {
-      writerRef.current.cancelQuiz();
-      writerRef.current.quiz({
-        leniency: 1.25,
-        onMistake: () => {
-          drawMistakesRef.current += 1;
-          setDrawMistakes(drawMistakesRef.current);
-        },
-        onCorrectStroke: (data) => {
-          setDrawCurrentStroke((data?.strokeNum || 0) + 1);
-        },
-        onComplete: () => {
-          setDrawIsCompleted(true);
-          setIsRevealed(true);
-          triggerCheerConfetti();
-          audioManager.speak(getPrimaryReading(currentItem) || currentItem.kanji);
-          setSuggestedRating(SRSRating.GOOD);
-        }
-      });
-    } catch {}
-  };
-
   // Revelar respuesta manualmente (en modo dibujo o flashcard)
   const handleManualReveal = () => {
     setIsRevealed(true);
     if (!suggestedRating) {
       setSuggestedRating(SRSRating.GOOD);
     }
-    const reading = getPrimaryReading(currentItem) || currentItem?.kanji;
+    const reading = getPrimaryKanjiReading(currentItem) || currentItem?.kanji;
     if (reading) {
       audioManager.speak(reading);
     }
@@ -840,7 +506,7 @@ export default function KanjiSrsReview({
   const currentCardData = getCurrentCard ? getCurrentCard(currentItem) : null;
   const intervalPreviews = getIntervalPreviews(currentCardData);
   const progressPercent = Math.round((srsReviewIndex / queue.length) * 100);
-  const primaryReading = getPrimaryReading(currentItem);
+  const primaryReading = getPrimaryKanjiReading(currentItem);
 
   return (
     <div className="quiz-container" style={{ maxWidth: 720, padding: '24px 20px' }}>
@@ -1270,121 +936,38 @@ export default function KanjiSrsReview({
         )}
 
         {/* ------------------------------------------------------------- */}
-        {/* FORMATO 3: DIBUJAR TRAZO CON LIENZO CALIGRÁFICO (HANZIWRITER) */}
+        {/* FORMATO 3: DIBUJAR TRAZO (REUTILIZANDO KanjiDraw COMPONENTE)   */}
         {/* ------------------------------------------------------------- */}
         {currentExerciseType === EXERCISE_TYPES.DRAW && (
           <div>
             <div style={{ marginBottom: 12 }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                ✍️ Práctica de Trazo de Memoria
+                ✍️ Práctica de Trazo
               </span>
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-main)', marginTop: 4 }}>
                 {currentItem.meaning_es}
               </div>
-              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '4px 0 10px 0' }}>
-                Dibuja los trazos del kanji en el orden y dirección correctos:
-              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginTop: 4 }}>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs"
+                  onClick={handleManualReveal}
+                  style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}
+                  title="Revelar kanji si no recuerdas cómo escribirlo"
+                >
+                  💡 Revelar Respuesta
+                </button>
+              </div>
             </div>
 
-            {/* Controles de Ayuda del Lienzo */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                className="btn btn-outline btn-xs"
-                onClick={handleToggleGuide}
-                style={{
-                  fontSize: '0.75rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  background: drawShowGuide ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
-                  borderColor: drawShowGuide ? 'var(--primary)' : 'var(--border)'
-                }}
-                title="Mostrar/ocultar contorno guía tenue"
-              >
-                {drawShowGuide ? <EyeOff size={13} /> : <Eye size={13} />}
-                <span>{drawShowGuide ? 'Ocultar Guía' : 'Ver Guía (Pista)'}</span>
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline btn-xs"
-                onClick={handleAnimateDraw}
-                disabled={drawIsAnimating}
-                style={{ fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: 5 }}
-                title="Demostrar la animación oficial del orden de trazos"
-              >
-                <Play size={13} />
-                <span>Animar</span>
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline btn-xs"
-                onClick={handleResetDraw}
-                style={{ fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: 5 }}
-                title="Limpiar trazos para volver a intentar"
-              >
-                <RefreshCw size={13} />
-                <span>Reiniciar</span>
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-ghost btn-xs"
-                onClick={handleManualReveal}
-                style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}
-                title="Revelar kanji si no recuerdas cómo escribirlo"
-              >
-                💡 Revelar
-              </button>
-            </div>
-
-            {/* Contenedor del Lienzo de Dibujo con Retícula Tradicional */}
-            <div 
-              style={{ 
-                position: 'relative', 
-                width: 260, 
-                height: 260, 
-                margin: '0 auto 12px auto',
-                borderRadius: 18,
-                background: 'var(--bg-surface)',
-                border: drawIsCompleted ? '2px solid #10b981' : '2px dashed var(--border)',
-                boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.04)',
-                overflow: 'hidden'
-              }}
-            >
-              {/* Retícula en cruz estilo papel caligráfico */}
-              <svg 
-                width="260" 
-                height="260" 
-                style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', opacity: 0.28 }}
-              >
-                <line x1="130" y1="0" x2="130" y2="260" stroke="var(--primary)" strokeDasharray="5 5" strokeWidth="1.2" />
-                <line x1="0" y1="130" x2="260" y2="130" stroke="var(--primary)" strokeDasharray="5 5" strokeWidth="1.2" />
-              </svg>
-
-              {/* HanziWriter Canvas Target */}
-              <div ref={canvasContainerRef} style={{ width: 260, height: 260 }} />
-
-              {/* Mensaje de error de carga de trazos si no hay datos vectoriales */}
-              {drawError && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'var(--bg-surface)' }}>
-                  <span style={{ fontSize: '2.5rem', marginBottom: 8 }} className="jp-text">{currentItem.kanji}</span>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Trazos vectoriales no disponibles para este kanji.</span>
-                  <button type="button" className="btn btn-primary btn-xs" onClick={handleManualReveal} style={{ marginTop: 8 }}>
-                    Mostrar Respuesta
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Estado del trazo */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 14, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              <span>Trazo: <strong>{drawCurrentStroke}</strong> de {drawTotalStrokes || currentItem.strokes || '?'}</span>
-              <span>Errores: <strong style={{ color: drawMistakes > 0 ? '#ef4444' : 'inherit' }}>{drawMistakes}</strong></span>
-              {drawIsCompleted && <span style={{ color: '#10b981', fontWeight: 700 }}>¡Completado! ✨</span>}
-            </div>
+            {/* Reutilización limpia del componente oficial KanjiDraw */}
+            <KanjiDraw
+              key={currentItem.kanji}
+              character={currentItem.kanji}
+              size={260}
+              initialMode="quiz"
+              onQuizComplete={handleDrawComplete}
+            />
           </div>
         )}
 
@@ -1555,7 +1138,7 @@ export default function KanjiSrsReview({
               <SpeechPractice 
                 targetText={currentItem.kanji} 
                 targetKana={primaryReading} 
-                acceptableReadings={getAllReadings(currentItem)}
+                acceptableReadings={getAllKanjiReadings(currentItem)}
               />
             </div>
 

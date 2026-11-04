@@ -33,41 +33,8 @@ const KanjiDraw = dynamic(() => import('../features/KanjiDraw'), { ssr: false })
 const SpeechPractice = dynamic(() => import('../features/SpeechPractice'), { ssr: false });
 const AIGeneratorModal = dynamic(() => import('../modals/AIGeneratorModal'), { ssr: false });
 
-export function getPrimaryKanjiReading(k) {
-  if (!k) return '';
-  if (k.kunyomi && k.kunyomi.includes('[')) {
-    const inside = k.kunyomi.split('[')[1]?.replace(']', '').trim();
-    if (inside) return inside.split(/[,、]/)[0]?.replace(/[(（].*?[)）]/g, '').trim();
-  }
-  if (k.kunyomi) {
-    return k.kunyomi.split(/[,、]/)[0]?.replace(/[(（].*?[)）]/g, '').trim();
-  }
-  if (k.onyomi && k.onyomi.includes('[')) {
-    const inside = k.onyomi.split('[')[1]?.replace(']', '').trim();
-    if (inside) return inside.split(/[,、]/)[0]?.trim();
-  }
-  if (k.onyomi) {
-    return k.onyomi.split(/[,、]/)[0]?.trim();
-  }
-  if (k.pronunciation) {
-    return k.pronunciation.split(/[,、]/)[0]?.trim();
-  }
-  return '';
-}
-
-export function getAllKanjiReadings(k) {
-  if (!k) return [];
-  const list = [];
-  if (k.kunyomi) list.push(k.kunyomi);
-  if (k.onyomi) list.push(k.onyomi);
-  if (k.pronunciation) list.push(k.pronunciation);
-  if (k.words && Array.isArray(k.words)) {
-    k.words.forEach(w => {
-      if (w.reading) list.push(w.reading);
-    });
-  }
-  return list;
-}
+import { getPrimaryKanjiReading, getAllKanjiReadings } from '../../lib/japaneseUtils';
+export { getPrimaryKanjiReading, getAllKanjiReadings };
 
 export default function KanjiTab({ 
   appState, 
