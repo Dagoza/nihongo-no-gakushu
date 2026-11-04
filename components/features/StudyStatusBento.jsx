@@ -7,17 +7,18 @@ import {
   Layers, 
   Target, 
   ArrowRight, 
-  Compass,
-  TrendingUp,
-  Award
+  Compass, 
+  TrendingUp, 
+  Award 
 } from 'lucide-react';
+import { calculateOverallProgress } from '../../lib/progressMetrics';
 
 export default function StudyStatusBento({ appState, onNavigate }) {
   const streak = appState?.streak || 1;
   const xp = appState?.xp || 0;
-  const level = Math.floor(xp / 100) + 1;
-  const xpInCurrentLevel = xp % 100;
-  const xpProgressPercent = Math.min(100, xpInCurrentLevel);
+  const progressMetrics = React.useMemo(() => calculateOverallProgress(appState), [appState]);
+  const dominioPercent = progressMetrics.overallInteger;
+  const nextMilestone = Math.min(100, (Math.floor(dominioPercent / 10) + 1) * 10);
 
   const masteredVocabCount = Object.values(appState?.masteredVocab || {}).filter(Boolean).length;
   const masteredKanjiCount = Object.values(appState?.masteredKanji || {}).filter(Boolean).length;
@@ -101,22 +102,27 @@ export default function StudyStatusBento({ appState, onNavigate }) {
           </div>
         </div>
 
-        {/* 2. Nivel y XP */}
-        <div className="study-stat-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+        {/* 2. Dominio General (Techos de Completación) */}
+        <div 
+          className="study-stat-item" 
+          style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 6, cursor: 'pointer' }}
+          onClick={() => onNavigate?.('/progress')}
+          title="Dominio integral del curso. Clic para ver desglose por techos y niveles."
+        >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <span className="study-stat-label">Nivel {level}</span>
-            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary)' }}>
-              {xp} XP
+            <span className="study-stat-label">Dominio General</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary)' }}>
+              {dominioPercent}%
             </span>
           </div>
           <div className="study-level-progress-bar">
             <div 
               className="study-level-progress-fill" 
-              style={{ width: `${xpProgressPercent}%` }} 
+              style={{ width: `${dominioPercent}%` }} 
             />
           </div>
           <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-            {100 - xpInCurrentLevel} XP para Nivel {level + 1}
+            {dominioPercent >= 100 ? '¡Curso 100% completado! 🏆' : `Próximo hito: ${nextMilestone}% · Techos ponderados`}
           </span>
         </div>
 

@@ -683,6 +683,47 @@ runTest('jlpt_exams y FSRS enmascaran adecuadamente furigana y brechas', () => {
   assert(instrContext && instrContext.includes('completa'), 'getQuestionInstruction instruye correctamente completar brecha');
 });
 
+// -----------------------------------------------------------------------------
+// TECHOS DE COMPLETACIÓN: Dominio Global Ponderado & Catálogo Extendido
+// -----------------------------------------------------------------------------
+console.log('\n--- TECHOS DE COMPLETACIÓN: Integridad del Modelo de Progreso Ponderado ---');
+
+runTest('Ponderaciones oficiales de techos suman exactamente 100%', () => {
+  const { WEIGHTS } = require('../lib/progressMetrics.js');
+  const sum = Object.values(WEIGHTS).reduce((a, b) => a + b, 0);
+  assert(sum === 100, `La suma de techos debe ser 100%, obtenida: ${sum}`);
+  assert(WEIGHTS.modules === 25, 'Módulos ponderado a 25%');
+  assert(WEIGHTS.conversations === 20, 'Conversaciones ponderado a 20%');
+  assert(WEIGHTS.stories === 15, 'Historias ponderado a 15%');
+  assert(WEIGHTS.scriptpad === 15, 'Scriptpad ponderado a 15%');
+  assert(WEIGHTS.kanji === 10, 'Kanjis ponderado a 10%');
+  assert(WEIGHTS.vocab === 10, 'Vocabulario ponderado a 10%');
+  assert(WEIGHTS.particles === 5, 'Partículas ponderado a 5%');
+});
+
+runTest('Catálogo oficial de kanjis extendido contiene >1000 kanjis de N5 a N1', () => {
+  const jlptKanjis = require('../data/jlpt_kanji_catalog.json');
+  const total = Object.values(jlptKanjis).reduce((acc, arr) => acc + arr.length, 0);
+  assert(total >= 1000, `Catálogo de kanjis debe tener >= 1000 ideogramas (actual: ${total})`);
+  assert(Array.isArray(jlptKanjis.N5) && jlptKanjis.N5.length > 50, 'N5 kanjis presentes');
+  assert(Array.isArray(jlptKanjis.N4) && jlptKanjis.N4.length > 100, 'N4 kanjis presentes');
+  assert(Array.isArray(jlptKanjis.N1) && jlptKanjis.N1.length > 500, 'N1 kanjis presentes');
+});
+
+runTest('calculateOverallProgress calcula techos correctamente y no desborda 100%', () => {
+  const { calculateOverallProgress } = require('../lib/progressMetrics.js');
+  const emptyRes = calculateOverallProgress({});
+  assert(emptyRes.overallPercent === 0, 'Estado vacío = 0%');
+
+  const partialRes = calculateOverallProgress({
+    completedSteps: { 1: true, 2: true },
+    completedConversations: { nhk_1: true },
+    masteredKanji: { 一: true, 二: true }
+  });
+  assert(partialRes.overallPercent > 0 && partialRes.overallPercent <= 100, 'Progreso acotado en rango 0-100');
+  assert(typeof partialRes.byLevel.N5.integer === 'number', 'Avance por nivel N5 calculado');
+});
+
 
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);

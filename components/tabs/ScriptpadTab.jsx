@@ -13,7 +13,8 @@ import {
   Volume2, 
   Check, 
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Compass
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useApp } from '../../lib/AppContext';
@@ -456,17 +457,50 @@ export default function ScriptpadTab({
             }}>
               {selectedUnit.subtitle}
             </p>
-            <span style={{
-              display: 'inline-block',
-              marginTop: 6,
-              fontSize: '0.7rem',
-              fontWeight: 700,
-              background: 'rgba(255,255,255,0.24)',
-              padding: '2px 8px',
-              borderRadius: 6
-            }}>
-              {selectedUnit.lessons.length} lecciones • {selectedUnit.total_words} palabras
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
+              <span style={{
+                display: 'inline-block',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                background: 'rgba(255,255,255,0.24)',
+                padding: '2px 8px',
+                borderRadius: 6
+              }}>
+                {selectedUnit.lessons.length} lecciones • {selectedUnit.total_words} palabras
+              </span>
+              {selectedUnit.track === 'curriculum' && (() => {
+                const stepMatch = selectedUnit.id.match(/\d+/);
+                const stepNum = stepMatch ? stepMatch[0] : 1;
+                return (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (typeof window !== 'undefined') {
+                        window.location.href = `/curriculum?step=${stepNum}`;
+                      }
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      background: 'rgba(255,255,255,0.32)',
+                      color: '#fff',
+                      padding: '2px 9px',
+                      borderRadius: 6,
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    title="Ver módulo homólogo en Currículum"
+                  >
+                    <Compass size={13} />
+                    <span>Ver en Currículum (Paso {stepNum})</span>
+                  </button>
+                );
+              })()}
+            </div>
           </div>
         </div>
 
@@ -1282,6 +1316,36 @@ export default function ScriptpadTab({
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              {unit.track === 'curriculum' && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const stepMatch = unit.id.match(/\d+/);
+                    const stepNum = stepMatch ? stepMatch[0] : 1;
+                    if (typeof window !== 'undefined') {
+                      window.location.href = `/curriculum?step=${stepNum}`;
+                    }
+                  }}
+                  style={{
+                    padding: '3px 7px',
+                    fontSize: '0.68rem',
+                    borderRadius: 6,
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-main)',
+                    color: 'var(--primary)',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 3
+                  }}
+                  title="Ir al módulo en Currículum"
+                >
+                  <Compass size={11} />
+                  <span>Módulo</span>
+                </button>
+              )}
               <span 
                 className="scriptpad-unit-meta-badge"
                 style={{

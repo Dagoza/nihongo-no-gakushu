@@ -8,6 +8,7 @@ import NavigationTabs from './NavigationTabs';
 import MobileNavDrawer from './MobileNavDrawer';
 import AudioPlayerBar from '../features/AudioPlayerBar';
 import UIModal from '../modals/UIModal';
+import { calculateOverallProgress } from '../../lib/progressMetrics';
 
 // Lazy loading con code-splitting para componentes de alto peso e impacto
 const AuthModal = dynamic(() => import('../modals/AuthModal'), { ssr: false });
@@ -70,6 +71,8 @@ function AppShellContent({ children }) {
     }
   }, [currentTab]);
 
+  const progressMetrics = React.useMemo(() => calculateOverallProgress(appState), [appState]);
+
   return (
     <>
       {/* Top Header */}
@@ -77,7 +80,9 @@ function AppShellContent({ children }) {
         stats={{
           streak: appState.streak || 1,
           xp: appState.xp || 0,
-          level: Math.floor((appState.xp || 0) / 100) + 1,
+          dominioPercent: progressMetrics.overallInteger,
+          dominioExact: progressMetrics.overallPercent,
+          progressMetrics,
           particles: Object.values(appState.masteredParticles || {}).filter(Boolean).length,
           totalParticles: 99,
           vocab: Object.values(appState.masteredVocab || {}).filter(Boolean).length

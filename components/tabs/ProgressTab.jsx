@@ -1,7 +1,35 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Download, Upload, CheckCircle2, RotateCcw, Keyboard, Cloud, CloudOff, CloudCheck, CloudSync, RefreshCw, ShieldCheck, AlertCircle, Sparkles, Compass, Brain, Info, BarChart3, ArrowRight, Award } from 'lucide-react';
+import { 
+  Download, 
+  Upload, 
+  CheckCircle2, 
+  RotateCcw, 
+  Keyboard, 
+  Cloud, 
+  CloudOff, 
+  CloudCheck, 
+  CloudSync, 
+  RefreshCw, 
+  ShieldCheck, 
+  AlertCircle, 
+  Sparkles, 
+  Compass, 
+  Brain, 
+  Info, 
+  BarChart3, 
+  ArrowRight, 
+  Award,
+  Target,
+  TrendingUp,
+  Layers,
+  BookOpen,
+  PenTool,
+  Star,
+  Flame,
+  Check
+} from 'lucide-react';
 import { exportData, parseImportData, getInitialState } from '../../lib/storage';
 import { 
   executeFullSync, 
@@ -13,6 +41,10 @@ import curriculumData from '../../data/curriculum.json';
 import particlesData from '../../data/particles.json';
 import kanjiData from '../../data/kanji.json';
 import vocabularyData from '../../data/vocabulary.json';
+import storiesData from '../../data/stories.json';
+import scriptpadUnitsData from '../../data/scriptpad_units.json';
+import jlptKanjiCatalog from '../../data/jlpt_kanji_catalog.json';
+import { calculateOverallProgress, JLPT_LEVELS, WEIGHTS } from '../../lib/progressMetrics';
 import { useApp } from '../../lib/AppContext';
 
 function detectUserOS() {
@@ -344,18 +376,47 @@ export default function ProgressTab({
 
   const streak = appState.streak || 1;
   const xp = appState.xp || 0;
-  const userLevel = Math.floor(xp / 100) + 1;
+  const progressMetrics = React.useMemo(() => calculateOverallProgress(appState), [appState]);
+  const [selectedJlptLevel, setSelectedJlptLevel] = useState('all');
+  const [masteryViewMode, setMasteryViewMode] = useState('dual');
+  const activeLevelData = selectedJlptLevel === 'all' ? null : progressMetrics.byLevel[selectedJlptLevel];
+
   const masteredParticlesCount = Object.values(appState.masteredParticles || {}).filter(Boolean).length;
   const totalParticles = particlesData?.length || 99;
   const masteredVocabCount = Object.values(appState.masteredVocab || {}).filter(Boolean).length;
-  const totalVocab = vocabularyData?.length || 321;
-  const masteredKanjiCount = Object.values(appState.masteredKanji || {}).filter(Boolean).length;
-  const totalKanji = kanjiData?.length || 161;
+  const totalVocab = vocabularyData?.length || 1687;
+
+  // Kanjis del catálogo oficial N5 a N1
+  const allKanjiList = React.useMemo(() => [
+    ...(jlptKanjiCatalog.N5 || []),
+    ...(jlptKanjiCatalog.N4 || []),
+    ...(jlptKanjiCatalog.N3 || []),
+    ...(jlptKanjiCatalog.N2 || []),
+    ...(jlptKanjiCatalog.N1 || [])
+  ], []);
+  const totalKanji = allKanjiList.length || 2213;
+  const masteredKanjiCount = allKanjiList.filter(ch => Boolean(appState.masteredKanji?.[ch])).length;
+
+  const completedStoriesCount = (storiesData || []).filter(s => {
+    if (appState.completedStories?.[s.id]) return true;
+    if (s.sentences && s.sentences.length > 0) {
+      return s.sentences.every(sent => Boolean(appState.completedSentences?.[sent.id]));
+    }
+    return false;
+  }).length;
+  const totalStories = storiesData?.length || 10;
+  const totalStorySentences = (storiesData || []).reduce((acc, st) => acc + (st.sentences ? st.sentences.length : 0), 0) || 210;
   const completedSentencesCount = Object.values(appState.completedSentences || {}).filter(Boolean).length;
-  const completedConversationsCount = Object.values(appState.completedConversations || {}).filter(Boolean).length;
+
+  const completedConversationsCount = progressMetrics.breakdown.conversations.completed;
   const totalConversations = (nhkLessonsData?.length || 48) + (irodoriDialoguesData?.length || 22);
+
   const completedStepsCount = Object.values(appState.completedSteps || {}).filter(Boolean).length;
   const totalSteps = curriculumData?.length || 37;
+
+  const totalScriptpadLessons = (scriptpadUnitsData || []).reduce((acc, u) => acc + (u.lessons || []).length, 0) || 95;
+  const completedScriptpadLessonsCount = Object.keys(appState.completedScriptpadLessons || {}).filter(k => Boolean(appState.completedScriptpadLessons[k])).length;
+
   const allCanDos = (curriculumData || []).flatMap(s => s.can_dos || []);
   const totalCanDos = allCanDos.length || 141;
   const completedCanDosCount = Object.values(appState.completedCanDos || {}).filter(Boolean).length;
@@ -513,44 +574,29 @@ export default function ProgressTab({
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Racha de Estudio</div>
         </div>
 
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%)', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎯</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
+            {progressMetrics.overallInteger}%
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 700 }}>Dominio Integral</div>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>Techos Ponderados (0-100%)</div>
+        </div>
+
         <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>⭐</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
             {xp} XP
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nivel {userLevel} Maestro</div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Esfuerzo Acumulado</div>
         </div>
 
         <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎯</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--success)' }}>
-            {masteredParticlesCount}/{totalParticles}
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🗺️</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
+            {completedStepsCount}/{totalSteps}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Partículas Dominadas</div>
-        </div>
-
-        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 6 }}>漢</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary-light)' }}>
-            {masteredKanjiCount}/{totalKanji}
-          </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Kanjis Aprendidos</div>
-        </div>
-
-        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 6 }}>📚</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--warning)' }}>
-            {masteredVocabCount}/{totalVocab}
-          </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Vocabulario Dominado</div>
-        </div>
-
-        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 6 }}>📖</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#8b5cf6' }}>
-            {completedSentencesCount}/58
-          </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Oraciones de Historia</div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Módulos Curriculares</div>
         </div>
 
         <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
@@ -562,28 +608,327 @@ export default function ProgressTab({
         </div>
 
         <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🗺️</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
-            {completedStepsCount}/{totalSteps}
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>📖</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#8b5cf6' }}>
+            {completedStoriesCount}/{totalStories}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Ruta Consolidada (Módulos)</div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Historias Graduadas</div>
+        </div>
+
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>✍️</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#06b6d4' }}>
+            {completedScriptpadLessonsCount}/{totalScriptpadLessons}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Scriptpad & Caligrafía</div>
+        </div>
+
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>漢</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary-light)' }}>
+            {masteredKanjiCount}/{totalKanji}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Kanjis (N5 a N1)</div>
+        </div>
+
+        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>📚</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--warning)' }}>
+            {masteredVocabCount}/{totalVocab}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Vocabulario Dominado</div>
         </div>
 
         <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
           <div style={{ fontSize: '2rem', marginBottom: 6 }}>🎯</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ec4899' }}>
-            {completedCanDosCount}/{totalCanDos}
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--success)' }}>
+            {masteredParticlesCount}/{totalParticles}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Competencias Can-Do</div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Partículas Dominadas</div>
+        </div>
+      </div>
+
+      {/* SECCIÓN ESTELAR: TABLERO DE TECHOS PONDERADOS Y DOMINIO POR NIVEL JLPT */}
+      <div 
+        className="card" 
+        style={{ 
+          marginBottom: 24, 
+          padding: '24px 20px', 
+          background: 'var(--bg-card)', 
+          border: '1px solid var(--border)', 
+          borderRadius: 16,
+          boxShadow: 'var(--shadow-sm)'
+        }}
+      >
+        {/* Cabecera del Tablero */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div 
+              style={{ 
+                width: 44, 
+                height: 44, 
+                borderRadius: 12, 
+                background: 'rgba(99, 102, 241, 0.12)', 
+                color: 'var(--primary)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <Target size={24} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
+                  Techos de Completación & Dominio del Curso
+                </h3>
+                <span 
+                  style={{ 
+                    fontSize: '0.72rem', 
+                    fontWeight: 800, 
+                    padding: '2px 8px', 
+                    borderRadius: 9999, 
+                    background: 'rgba(16, 185, 129, 0.14)', 
+                    color: 'var(--success)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)'
+                  }}
+                >
+                  Escala 0 - 100%
+                </span>
+              </div>
+              <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
+                Progreso ponderado por destrezas lingüísticas. Las habilidades aplicadas (conversación, lectura y caligrafía motora) constituyen el 50% de todo el temario.
+              </p>
+            </div>
+          </div>
+
+          {/* Switch de Modo de Vista */}
+          <div 
+            style={{ 
+              display: 'inline-flex', 
+              background: 'var(--bg-main)', 
+              padding: 3, 
+              borderRadius: 10, 
+              border: '1px solid var(--border)' 
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setMasteryViewMode('dual')}
+              className={`btn btn-sm ${masteryViewMode === 'dual' ? 'btn-primary' : 'btn-ghost'}`}
+              style={{ fontSize: '0.76rem', padding: '5px 12px', borderRadius: 8, fontWeight: masteryViewMode === 'dual' ? 700 : 500 }}
+            >
+              📊 Dual
+            </button>
+            <button
+              type="button"
+              onClick={() => setMasteryViewMode('percent')}
+              className={`btn btn-sm ${masteryViewMode === 'percent' ? 'btn-primary' : 'btn-ghost'}`}
+              style={{ fontSize: '0.76rem', padding: '5px 12px', borderRadius: 8, fontWeight: masteryViewMode === 'percent' ? 700 : 500 }}
+            >
+              🎯 % Techos
+            </button>
+            <button
+              type="button"
+              onClick={() => setMasteryViewMode('absolute')}
+              className={`btn btn-sm ${masteryViewMode === 'absolute' ? 'btn-primary' : 'btn-ghost'}`}
+              style={{ fontSize: '0.76rem', padding: '5px 12px', borderRadius: 8, fontWeight: masteryViewMode === 'absolute' ? 700 : 500 }}
+            >
+              🔢 Cantidades
+            </button>
+          </div>
         </div>
 
-        <div className="card scroll-craft-reveal" style={{ textAlign: 'center', padding: '20px 16px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 6 }}>🏆</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#8b5cf6' }}>
-            {completedExamsCount}
+        {/* Macro Barra de Progreso del Nivel / Curso */}
+        <div 
+          style={{ 
+            background: 'var(--bg-main)', 
+            border: '1px solid var(--border)', 
+            borderRadius: 14, 
+            padding: '16px 18px', 
+            marginBottom: 20 
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+            <div>
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                {selectedJlptLevel === 'all' ? 'Dominio Global del Curso' : `Nivel Oficial JLPT ${selectedJlptLevel}`}
+              </span>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1.1 }}>
+                {selectedJlptLevel === 'all' ? `${progressMetrics.overallPercent}%` : `${activeLevelData?.percent || 0}%`}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                {selectedJlptLevel === 'all' 
+                  ? `${progressMetrics.xpFormatted} de esfuerzo acumulado` 
+                  : `${activeLevelData?.integer || 0}% de los requisitos ${selectedJlptLevel}`}
+              </span>
+            </div>
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Simulacros JLPT</div>
+
+          <div style={{ width: '100%', height: 10, background: 'var(--border)', borderRadius: 9999, overflow: 'hidden' }}>
+            <div 
+              style={{ 
+                width: `${selectedJlptLevel === 'all' ? progressMetrics.overallPercent : activeLevelData?.percent || 0}%`, 
+                height: '100%', 
+                background: 'linear-gradient(90deg, #6366f1 0%, #10b981 100%)', 
+                borderRadius: 9999,
+                transition: 'width 0.4s ease'
+              }} 
+            />
+          </div>
         </div>
+
+        {/* Selector de Nivel JLPT con % en tiempo real en cada botón */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8 }}>
+            Filtrar avance por nivel oficial JLPT:
+          </div>
+          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 6 }}>
+            <button
+              type="button"
+              onClick={() => setSelectedJlptLevel('all')}
+              className={`btn btn-sm ${selectedJlptLevel === 'all' ? 'btn-primary' : 'btn-outline'}`}
+              style={{ fontWeight: selectedJlptLevel === 'all' ? 700 : 500, borderRadius: 8, padding: '7px 14px', whiteSpace: 'nowrap' }}
+            >
+              🌐 Todo el Curso ({progressMetrics.overallInteger}%)
+            </button>
+            {JLPT_LEVELS.map(lvl => {
+              const lvlInfo = progressMetrics.byLevel[lvl];
+              const isSelected = selectedJlptLevel === lvl;
+              return (
+                <button
+                  key={lvl}
+                  type="button"
+                  onClick={() => setSelectedJlptLevel(lvl)}
+                  className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ fontWeight: isSelected ? 700 : 500, borderRadius: 8, padding: '7px 14px', whiteSpace: 'nowrap' }}
+                >
+                  Nivel {lvl}: {lvlInfo?.integer || 0}%
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Grid de Secciones Ponderadas */}
+        {selectedJlptLevel === 'all' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: 14 }}>
+            {Object.entries(progressMetrics.breakdown).map(([key, item]) => {
+              const showPercent = masteryViewMode === 'percent' || masteryViewMode === 'dual';
+              const showAbsolute = masteryViewMode === 'absolute' || masteryViewMode === 'dual';
+              return (
+                <div 
+                  key={key}
+                  style={{
+                    padding: '16px',
+                    borderRadius: 12,
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 10
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontSize: '1.4rem' }}>{item.icon}</span>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '0.94rem', color: 'var(--text-main)' }}>
+                          {item.label}
+                        </div>
+                        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                          {item.desc}
+                        </div>
+                      </div>
+                    </div>
+                    <span 
+                      style={{ 
+                        fontSize: '0.72rem', 
+                        fontWeight: 800, 
+                        padding: '2px 8px', 
+                        borderRadius: 6,
+                        background: 'rgba(99, 102, 241, 0.12)',
+                        color: 'var(--primary)',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Techo: {item.weight}%
+                    </span>
+                  </div>
+
+                  {/* Barra de progreso del área */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', marginBottom: 5 }}>
+                      <span style={{ fontWeight: 700, color: 'var(--text-muted)' }}>
+                        {showAbsolute && `${item.completed} de ${item.total}`}
+                        {showAbsolute && showPercent && ' · '}
+                        {showPercent && `${item.rawPercent}% completado`}
+                      </span>
+                      <span style={{ fontWeight: 800, color: 'var(--primary)' }}>
+                        +{item.contributedPercent}% al total
+                      </span>
+                    </div>
+                    <div style={{ width: '100%', height: 7, background: 'var(--border)', borderRadius: 9999, overflow: 'hidden' }}>
+                      <div 
+                        style={{ 
+                          width: `${item.rawPercent}%`, 
+                          height: '100%', 
+                          background: 'var(--primary)', 
+                          borderRadius: 9999 
+                        }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: 14 }}>
+            {Object.entries(activeLevelData?.sections || {}).map(([key, sec]) => (
+              <div 
+                key={key}
+                style={{
+                  padding: '16px',
+                  borderRadius: 12,
+                  background: 'var(--bg-main)',
+                  border: '1px solid var(--border)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: 10
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: '1.4rem' }}>{sec.icon}</span>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.94rem', color: 'var(--text-main)' }}>
+                      {sec.label} {selectedJlptLevel}
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                      {sec.completed} de {sec.total} completados ({sec.percent}%)
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ width: '100%', height: 7, background: 'var(--border)', borderRadius: 9999, overflow: 'hidden' }}>
+                  <div 
+                    style={{ 
+                      width: `${sec.percent}%`, 
+                      height: '100%', 
+                      background: 'var(--primary)', 
+                      borderRadius: 9999 
+                    }} 
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Módulos de Seguimiento: Repaso SRS & Simulacros JLPT */}

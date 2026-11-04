@@ -792,8 +792,8 @@ export default function ProductTour({
                         className={`stat-badge ${selectedBadge === 'xp' ? 'active-preview' : ''}`}
                         onClick={() => setSelectedBadge('xp')}
                       >
-                        <Star size={15} className="text-indigo-500" />
-                        <span>Nivel 2 (180 XP)</span>
+                        <Target size={15} className="text-indigo-500" />
+                        <span>28% Dominio</span>
                       </div>
                       <div 
                         className={`stat-badge ${selectedBadge === 'particles' ? 'active-preview' : ''}`}
@@ -852,7 +852,7 @@ export default function ProductTour({
                       )}
                       {selectedBadge === 'xp' && (
                         <div>
-                          <strong>⭐ Puntos de Experiencia (XP):</strong> Ganas XP al resolver ejercicios, escuchar historias y aprender palabras. Cada 100 XP subes de nivel.
+                          <strong>🎯 Porcentaje de Dominio del Curso:</strong> Mide tu avance integral del 0 al 100% mediante techos ponderados que premian las destrezas aplicadas (conversaciones, lectura y caligrafía motora en Scriptpad) junto a los módulos y el léxico.
                         </div>
                       )}
                       {selectedBadge === 'particles' && (

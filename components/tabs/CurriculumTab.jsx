@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import curriculumData from '../../data/curriculum.json';
-import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, ChevronUp, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, ChevronUp, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List, SlidersHorizontal, PenTool } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
@@ -1090,21 +1090,40 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                               </p>
                             </div>
 
-                            <button 
-                              type="button"
-                              className="btn btn-outline btn-sm"
-                              onClick={() => {
-                                const playlist = stepVocabList.map(v => ({ text: v.kanji, desc: `${v.kana} - ${v.meaning}` }));
-                                if (playlist.length > 0) {
-                                  audioManager.setPlaylist(playlist, 0);
-                                  audioManager.speak(playlist[0].text, { autoAdvance: true });
-                                }
-                              }}
-                              title="Reproducción secuencial continua de todo el vocabulario del paso"
-                            >
-                              <Volume2 size={16} />
-                              <span>Reproducir Vocabulario del Paso</span>
-                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                              <button 
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                style={{ borderColor: 'var(--primary)', color: 'var(--primary)', fontWeight: 600 }}
+                                onClick={() => {
+                                  if (contextApp?.navigate) {
+                                    contextApp.navigate(`scriptpad?track=curriculum&unit=curriculum-mod-${selectedStep.step}`);
+                                  } else if (typeof window !== 'undefined') {
+                                    window.location.href = `/scriptpad?track=curriculum&unit=curriculum-mod-${selectedStep.step}`;
+                                  }
+                                }}
+                                title="Practicar caligrafía y escritura de este paso en Scriptpad"
+                              >
+                                <PenTool size={15} />
+                                <span>Practicar en Scriptpad (Paso {selectedStep.step})</span>
+                              </button>
+
+                              <button 
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => {
+                                  const playlist = stepVocabList.map(v => ({ text: v.kanji, desc: `${v.kana} - ${v.meaning}` }));
+                                  if (playlist.length > 0) {
+                                    audioManager.setPlaylist(playlist, 0);
+                                    audioManager.speak(playlist[0].text, { autoAdvance: true });
+                                  }
+                                }}
+                                title="Reproducción secuencial continua de todo el vocabulario del paso"
+                              >
+                                <Volume2 size={16} />
+                                <span>Reproducir Vocabulario</span>
+                              </button>
+                            </div>
                           </div>
 
                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
@@ -1153,6 +1172,22 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                       <Search size={14} />
                                     </button>
                                   )}
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline btn-sm"
+                                    style={{ padding: '6px', borderRadius: '50%', flexShrink: 0 }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (contextApp?.navigate) {
+                                        contextApp.navigate(`scriptpad?track=curriculum&unit=curriculum-mod-${selectedStep.step}`);
+                                      } else if (typeof window !== 'undefined') {
+                                        window.location.href = `/scriptpad?track=curriculum&unit=curriculum-mod-${selectedStep.step}`;
+                                      }
+                                    }}
+                                    title="Practicar escritura en Scriptpad"
+                                  >
+                                    <PenTool size={14} />
+                                  </button>
                                   <button 
                                     type="button"
                                     className="btn btn-outline btn-sm"

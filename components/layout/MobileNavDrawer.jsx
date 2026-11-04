@@ -14,11 +14,13 @@ import {
   Sparkles,
   Layers,
   BarChart3,
-  Grid
+  Grid,
+  Target
 } from 'lucide-react';
 import HeaderDaruma from './HeaderDaruma';
 import { TABS, NAV_CATEGORIES } from './NavigationTabs';
 import useBodyScrollLock from '../../lib/useBodyScrollLock';
+import { calculateOverallProgress } from '../../lib/progressMetrics';
 
 export default function MobileNavDrawer({
   isOpen = false,
@@ -116,7 +118,8 @@ export default function MobileNavDrawer({
 
   const streak = userState?.streak || 1;
   const xp = userState?.xp || 0;
-  const level = Math.floor(xp / 100) + 1;
+  const progressMetrics = React.useMemo(() => calculateOverallProgress(userState), [userState]);
+  const dominioPercent = progressMetrics.overallInteger;
 
   // Filter tabs by category
   const filteredTabs = selectedCategory === 'all'
@@ -231,9 +234,19 @@ export default function MobileNavDrawer({
               <Flame size={14} style={{ color: 'var(--kohaku, #f59e0b)' }} />
               <span>{streak}d racha</span>
             </div>
-            <div className="mobile-footer-stat-chip">
-              <Star size={14} style={{ color: 'var(--primary, #6366f1)' }} />
-              <span>Nivel {level} ({xp} XP)</span>
+            <div 
+              className="mobile-footer-stat-chip"
+              onClick={() => {
+                onClose?.();
+                onNavigate?.('/progress');
+              }}
+              style={{ cursor: 'pointer' }}
+              title="Dominio del curso. Clic para ver desglose en Mi Progreso."
+              role="button"
+              tabIndex={0}
+            >
+              <Target size={14} style={{ color: 'var(--primary, #6366f1)' }} />
+              <span>{dominioPercent}% Dominio</span>
             </div>
           </div>
 

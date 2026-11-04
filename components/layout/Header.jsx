@@ -811,9 +811,17 @@ export default function Header({
             </span>
           </div>
 
-          <div className="stat-badge" title="Puntos de experiencia y nivel">
-            <Star size={16} style={{ color: 'var(--aizome, #6366f1)' }} />
-            <span>Nivel {stats.level} ({stats.xp} XP)</span>
+          <div 
+            className="stat-badge" 
+            title={`Dominio integral del curso: ${stats.dominioPercent ?? 0}%. Clic para consultar desglose en Mi Progreso.`}
+            onClick={() => onNavigate?.('/progress')}
+            style={{ cursor: 'pointer' }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onNavigate?.('/progress'); }}
+          >
+            <Target size={16} style={{ color: 'var(--aizome, #6366f1)' }} />
+            <span style={{ fontWeight: 700 }}>{stats.dominioPercent ?? 0}% Dominio</span>
           </div>
 
           <div className="stat-badge" title="Partículas dominadas">
