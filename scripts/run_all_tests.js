@@ -530,6 +530,108 @@ runTest('HomePage y CurriculumTab integran Scroll-Craft sin interferir con módu
   assert(currCode.includes('ScrollTimelinePath'), 'CurriculumTab debe integrar ScrollTimelinePath');
 });
 
+// --------------------------------------------------------------------------
+// PRONUNCIACIÓN: Aprobación Bidireccional de Kanji y Kana en SpeechPractice
+// --------------------------------------------------------------------------
+console.log('\n--- PRONUNCIACIÓN: Aprobación Bidireccional Kanji / Kana en SpeechPractice ---');
+
+runTest('SpeechPractice aprueba equivalencias entre Kanji, Kana y Okurigana mixto (ej. 土よう日 y 土曜日)', () => {
+  const furiganaDict = require('../data/furigana_dict.json');
+  const wanakana = require('wanakana');
+
+  const KANA_TO_KANJI_MAP = new Map();
+  for (const [kanji, kana] of Object.entries(furiganaDict)) {
+    if (!KANA_TO_KANJI_MAP.has(kana)) KANA_TO_KANJI_MAP.set(kana, new Set());
+    KANA_TO_KANJI_MAP.get(kana).add(kanji);
+  }
+
+  const DICT_KEYS = Object.keys(furiganaDict).sort((a, b) => b.length - a.length);
+  const ESCAPED_DICT_KEYS = DICT_KEYS.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const FURIGANA_REGEX = new RegExp(ESCAPED_DICT_KEYS.join('|'), 'g');
+
+  function cleanText(text) {
+    if (!text) return '';
+    return String(text).replace(/[。、！？!?,，[\]()（）\s]/g, '');
+  }
+
+  function textToHiragana(text) {
+    if (!text) return '';
+    const cleaned = cleanText(text);
+    const replaced = cleaned.replace(FURIGANA_REGEX, (m) => furiganaDict[m] || m);
+    try {
+      return wanakana.toHiragana(replaced);
+    } catch {
+      return replaced;
+    }
+  }
+
+  function getAllVariants(rawText, rawReading = null) {
+    const variants = new Set();
+    const add = (t) => {
+      if (!t) return;
+      const c = cleanText(t);
+      if (!c) return;
+      variants.add(c);
+      const h = textToHiragana(c);
+      if (h) {
+        variants.add(h);
+        try {
+          variants.add(wanakana.toKatakana(h));
+        } catch {}
+        const kanjiForms = KANA_TO_KANJI_MAP.get(h);
+        if (kanjiForms) {
+          kanjiForms.forEach(kf => variants.add(kf));
+        }
+      }
+    };
+
+    add(rawText);
+    if (rawReading) {
+      add(rawReading);
+      const cleanReading = cleanText(rawReading);
+      const rh = textToHiragana(cleanReading);
+      if (rh && rawText) {
+        const cleanRaw = cleanText(rawText);
+        variants.add(cleanRaw);
+        variants.add(cleanReading);
+        variants.add(rh);
+      }
+    }
+    return Array.from(variants);
+  }
+
+  function matches(targetText, targetKana, spoken) {
+    const candidates = getAllVariants(targetText, targetKana);
+    const spokenVariants = getAllVariants(spoken);
+    const spokenHira = textToHiragana(spoken);
+    const targetHira = textToHiragana(targetKana || targetText);
+
+    for (const sv of spokenVariants) {
+      if (candidates.includes(sv)) return true;
+    }
+    if (spokenHira && targetHira && spokenHira === targetHira) return true;
+    for (const cand of candidates) {
+      const candHira = textToHiragana(cand);
+      if (spokenHira && candHira && spokenHira === candHira) return true;
+    }
+    return false;
+  }
+
+  // Caso exacto reportado por el usuario: palabra es '土よう日' (どようび) y audio transcribe '土曜日'
+  assert(matches('土よう日', 'どようび', '土曜日'), 'Debe aprobar 土よう日 cuando el audio reconoce 土曜日');
+  assert(matches('土よう日', 'どようび', 'どようび'), 'Debe aprobar 土よう日 cuando el audio reconoce どようび');
+  assert(matches('土曜日', 'どようび', '土よう日'), 'Debe aprobar 土曜日 cuando el audio reconoce 土よう日');
+  assert(matches('土曜日', null, 'どようび'), 'Debe aprobar 土曜日 sin kana explícito cuando el audio reconoce どようび');
+  assert(matches('先生', 'せんせい', 'せんせい'), 'Debe aprobar 先生 con audio せんせい');
+  assert(matches('先生', null, 'せんせい'), 'Debe aprobar 先生 sin kana explícito con audio せんせい');
+  assert(matches('ご飯', 'ごはん', 'ごはん'), 'Debe aprobar ご飯 con audio ごはん');
+
+  // Rechazo de pronunciaciones erróneas
+  assert(!matches('土よう日', 'どようび', '日曜日'), 'Debe rechazar 日曜日 si se esperaba 土よう日');
+  assert(!matches('土曜日', 'どようび', 'にちようび'), 'Debe rechazar にちようび si se esperaba 土曜日');
+  assert(!matches('先生', 'せんせい', 'がくせい'), 'Debe rechazar がくせい si se esperaba 先生');
+});
+
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);
 console.log('======================================================\n');
