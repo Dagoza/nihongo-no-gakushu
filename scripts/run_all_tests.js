@@ -632,7 +632,9 @@ runTest('SpeechPractice aprueba equivalencias entre Kanji, Kana y Okurigana mixt
   assert(!matches('先生', 'せんせい', 'がくせい'), 'Debe rechazar がくせい si se esperaba 先生');
 });
 
-testGroup('INTEGRIDAD DE PREGUNTAS, BRECHAS (GAPS) Y FURIGANA EN FSRS Y EXÁMENES', () => {
+console.log('\n--- INTEGRIDAD DE PREGUNTAS, BRECHAS (GAPS) Y FURIGANA EN FSRS Y EXÁMENES ---');
+
+runTest('jlpt_exams y FSRS enmascaran adecuadamente furigana y brechas', () => {
   const jlptExams = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'jlpt_exams.json'), 'utf8'));
 
   // 1. jlpt_exams.json: Ninguna pregunta de lectura de kanji debe filtrar la respuesta en furigana antes de responder
