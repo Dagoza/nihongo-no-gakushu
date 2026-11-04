@@ -632,6 +632,56 @@ runTest('SpeechPractice aprueba equivalencias entre Kanji, Kana y Okurigana mixt
   assert(!matches('先生', 'せんせい', 'がくせい'), 'Debe rechazar がくせい si se esperaba 先生');
 });
 
+testGroup('INTEGRIDAD DE PREGUNTAS, BRECHAS (GAPS) Y FURIGANA EN FSRS Y EXÁMENES', () => {
+  const jlptExams = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'jlpt_exams.json'), 'utf8'));
+
+  // 1. jlpt_exams.json: Ninguna pregunta de lectura de kanji debe filtrar la respuesta en furigana antes de responder
+  let kanjiReadingLeaks = 0;
+  jlptExams.forEach(q => {
+    if (q.subType === 'kanji_reading') {
+      const correct = q.options && q.options[q.correctIndex];
+      if (correct && q.furigana && q.furigana.includes(correct)) {
+        kanjiReadingLeaks++;
+      }
+    }
+  });
+  assert(kanjiReadingLeaks === 0, `0 preguntas de lectura de kanji filtran la respuesta en furigana (encontradas: ${kanjiReadingLeaks})`);
+
+  // 2. Las preguntas con brecha o lectura deben retener la brecha 【 ？ 】 o ____ en furigana
+  let missingGaps = 0;
+  jlptExams.forEach(q => {
+    const hasQGap = /【\s*？\s*】|\[\s*\?\s*\]|\(　\)|\( \)|\[___\]/.test(q.question) || q.subType === 'kanji_reading';
+    if (hasQGap) {
+      const hasFGap = /【\s*？\s*】|\[\s*\?\s*\]|\(　\)|\( \)|\[___\]|____ ____ __★__ ____|【　】 【　】 【 ★ 】 【　】/.test(q.furigana);
+      if (!hasFGap) missingGaps++;
+    }
+  });
+  assert(missingGaps === 0, `100% de preguntas con brecha o lectura retienen el Gap en su furigana inicial (faltantes: ${missingGaps})`);
+
+  // 3. Caso específico de la pregunta del screenshot: jlpt_n5_v_01
+  const qHon = jlptExams.find(x => x.id === 'jlpt_n5_v_01');
+  assert(qHon, 'La pregunta jlpt_n5_v_01 existe');
+  assert(qHon.furigana.includes('【 ？ 】'), 'El furigana inicial de jlpt_n5_v_01 contiene la brecha 【 ？ 】 en vez de la respuesta');
+  assert(!qHon.furigana.includes('ほん'), 'El furigana inicial de jlpt_n5_v_01 NO filtra la respuesta ほん');
+  assert(qHon.fullFurigana.includes('ほん'), 'El fullFurigana de jlpt_n5_v_01 contiene la lectura completa para revisión posterior');
+
+  // 4. Validar funciones de srs.js
+  const srs = require('../lib/srs.js');
+  assert(typeof srs.getMaskedQuestionFurigana === 'function', 'getMaskedQuestionFurigana está exportada en lib/srs.js');
+  assert(typeof srs.getQuestionInstruction === 'function', 'getQuestionInstruction está exportada en lib/srs.js');
+
+  const maskedHon = srs.getMaskedQuestionFurigana(qHon, false);
+  const fullHon = srs.getMaskedQuestionFurigana(qHon, true);
+  assert(maskedHon.includes('【 ？ 】'), 'getMaskedQuestionFurigana enmascara antes de responder');
+  assert(fullHon.includes('ほん'), 'getMaskedQuestionFurigana revela lectura completa al responder');
+
+  const instrReading = srs.getQuestionInstruction({ subType: 'kanji_reading' });
+  const instrContext = srs.getQuestionInstruction({ subType: 'context_word' });
+  assert(instrReading && instrReading.includes('lectura'), 'getQuestionInstruction instruye correctamente lectura de kanji');
+  assert(instrContext && instrContext.includes('completa'), 'getQuestionInstruction instruye correctamente completar brecha');
+});
+
+
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);
 console.log('======================================================\n');
