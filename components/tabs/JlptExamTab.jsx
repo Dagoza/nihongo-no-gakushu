@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Award, Clock, CheckCircle2, XCircle, HelpCircle, RotateCcw, Volume2, Eye, EyeOff, ChevronLeft, ChevronRight, Flag, Layers, Target, BookOpen, Headphones, AlertTriangle, Check, Shuffle, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
 import audioManager from '../../lib/audioManager';
-import { SRSRating, reviewQuestionCard } from '../../lib/srs';
+import { SRSRating, reviewQuestionCard, getMaskedQuestionFurigana, getQuestionInstruction } from '../../lib/srs';
 import { saveState, recordActivity } from '../../lib/storage';
 import jlptExamsData from '../../data/jlpt_exams.json';
 
@@ -756,8 +756,11 @@ export default function JlptExamTab() {
                   style={{ padding: '4px 9px', borderRadius: 8 }}
                   onClick={() => {
                     if (!currentQuestion) return;
-                    const text = currentQuestion.furigana || currentQuestion.question;
-                    audioManager.speak(text.replace(/<[^>]*>/g, ''));
+                    const isAnswered = (mode === 'practice' && !!practiceFeedback[currentQuestion.id]) || mode === 'review';
+                    const text = isAnswered 
+                      ? (currentQuestion.fullFurigana || currentQuestion.furigana || currentQuestion.question)
+                      : (currentQuestion.question || currentQuestion.furigana);
+                    audioManager.speak(text.replace(/<[^>]*>/g, '').replace(/【\s*？\s*】|\[\s*\?\s*\]|\(　\)|\[___\]/g, ' '));
                   }}
                   title="Escuchar audio"
                 >
@@ -765,6 +768,13 @@ export default function JlptExamTab() {
                 </button>
               </div>
             </div>
+
+            {/* Question instruction header if available */}
+            {getQuestionInstruction(currentQuestion) && (
+              <div className="daily-goal-instruction-badge" style={{ marginBottom: 14 }}>
+                <span>🎯 {getQuestionInstruction(currentQuestion)}</span>
+              </div>
+            )}
 
             {/* Passage for reading/listening */}
             {currentQuestion?.passage && (
@@ -799,7 +809,7 @@ export default function JlptExamTab() {
               />
             )}
 
-            {showFurigana && currentQuestion?.furigana && (
+            {showFurigana && (currentQuestion?.furigana || currentQuestion?.fullFurigana) && (
               <div style={{ 
                 fontSize: '0.88rem', 
                 color: 'var(--primary)', 
@@ -815,7 +825,7 @@ export default function JlptExamTab() {
                 fontFamily: 'var(--font-jp)'
               }}>
                 <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Furigana:</span>
-                <span>{currentQuestion.furigana}</span>
+                <span>{getMaskedQuestionFurigana(currentQuestion, (mode === 'practice' && !!practiceFeedback[currentQuestion.id]) || mode === 'review')}</span>
               </div>
             )}
 
