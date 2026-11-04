@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { X, Flame, Star, CheckCircle2, RotateCcw, Volume2, Eye, EyeOff, Sparkles, ArrowRight, Bell, Award, Languages, Layers, Target, Check, Settings2, Info, Maximize2 } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
-import { SRSRating, isDue, reviewQuestionCard, getIntervalPreviews } from '../../lib/srs';
+import { SRSRating, isDue, reviewQuestionCard, getIntervalPreviews, getMaskedQuestionFurigana, getQuestionInstruction } from '../../lib/srs';
 import { recordDailyGoalActivity, saveState } from '../../lib/storage';
 import audioManager from '../../lib/audioManager';
 import useFocusTrap from '../../lib/useFocusTrap';
@@ -166,7 +166,8 @@ export default function DailyGoalModal({ isOpen, onClose }) {
             options: finalOpts,
             correctIndex,
             explanation: `• Oración: 「${qi.sentence}」\n${esTrans ? '• ' + esTrans + '\n' : ''}• Partícula correcta: 「${correctOpt}」 (${roleDesc}).\n${formulaDesc ? formulaDesc + '\n' : ''}${noteDesc}`.trim(),
-            furigana: qi.sentence || '',
+            furigana: qi.masked || qi.sentence || '',
+            fullFurigana: qi.sentence || '',
             targetItem: p.particle
           });
         });
@@ -730,8 +731,10 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                     type="button"
                     className="btn btn-outline btn-sm daily-goal-util-btn"
                     onClick={() => {
-                      const textToSpeak = currentQuestion.furigana || currentQuestion.question;
-                      audioManager.speak(textToSpeak.replace(/<[^>]*>/g, ''));
+                      const textToSpeak = feedback 
+                        ? (currentQuestion.fullFurigana || currentQuestion.furigana || currentQuestion.question)
+                        : (currentQuestion.question || currentQuestion.furigana);
+                      audioManager.speak(textToSpeak.replace(/<[^>]*>/g, '').replace(/【\s*？\s*】|\[\s*\?\s*\]|\(　\)|\[___\]/g, ' '));
                     }}
                     title="Escuchar audio de la pregunta"
                   >
@@ -762,6 +765,13 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
                 }}
               >
+                {/* Question instruction header if available */}
+                {getQuestionInstruction(currentQuestion) && (
+                  <div className="daily-goal-instruction-badge">
+                    <span>🎯 {getQuestionInstruction(currentQuestion)}</span>
+                  </div>
+                )}
+
                 {currentQuestion.passage && (
                   <div style={{
                     padding: '12px 14px',
@@ -790,9 +800,9 @@ export default function DailyGoalModal({ isOpen, onClose }) {
                   dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
                 />
 
-                {showFurigana && currentQuestion.furigana && (
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                    {currentQuestion.furigana}
+                {showFurigana && (currentQuestion.furigana || currentQuestion.fullFurigana) && (
+                  <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: 6, letterSpacing: '0.3px' }}>
+                    {getMaskedQuestionFurigana(currentQuestion, !!feedback)}
                   </div>
                 )}
               </div>
