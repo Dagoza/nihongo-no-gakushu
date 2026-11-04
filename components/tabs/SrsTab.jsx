@@ -33,7 +33,9 @@ import {
   isDue, 
   reviewQuestionCard, 
   getDueCounts, 
-  getIntervalPreviews 
+  getIntervalPreviews,
+  getMaskedQuestionFurigana,
+  getQuestionInstruction
 } from '../../lib/srs';
 import { recordDailyGoalActivity, saveState } from '../../lib/storage';
 import audioManager from '../../lib/audioManager';
@@ -149,7 +151,8 @@ export default function SrsTab({ onNavigate }) {
             options: finalOpts,
             correctIndex,
             explanation: `• Oración: 「${qi.sentence}」\n${esTrans ? '• ' + esTrans + '\n' : ''}• Partícula correcta: 「${correctOpt}」 (${roleDesc}).\n${formulaDesc ? formulaDesc + '\n' : ''}${noteDesc}`.trim(),
-            furigana: qi.sentence || '',
+            furigana: qi.masked || qi.sentence || '',
+            fullFurigana: qi.sentence || '',
             targetItem: p.particle
           });
         });
@@ -682,8 +685,10 @@ export default function SrsTab({ onNavigate }) {
                     className="btn btn-outline btn-sm"
                     style={{ padding: '5px 10px', borderRadius: 8 }}
                     onClick={() => {
-                      const textToSpeak = currentQuestion.furigana || currentQuestion.question;
-                      audioManager.speak(textToSpeak.replace(/<[^>]*>/g, ''));
+                      const textToSpeak = feedback 
+                        ? (currentQuestion.fullFurigana || currentQuestion.furigana || currentQuestion.question)
+                        : (currentQuestion.question || currentQuestion.furigana);
+                      audioManager.speak(textToSpeak.replace(/<[^>]*>/g, '').replace(/【\s*？\s*】|\[\s*\?\s*\]|\(　\)|\[___\]/g, ' '));
                     }}
                     title="Escuchar locución neuronal"
                   >
@@ -704,15 +709,21 @@ export default function SrsTab({ onNavigate }) {
 
               {/* Question Text Box */}
               <div className="srs-question-box">
+                {getQuestionInstruction(currentQuestion) && (
+                  <div className="daily-goal-instruction-badge">
+                    <span>🎯 {getQuestionInstruction(currentQuestion)}</span>
+                  </div>
+                )}
+
                 <div 
                   className="jp-text"
                   style={{ fontSize: '1.35rem', fontWeight: 700, lineHeight: 1.6, color: 'var(--text-main)', marginBottom: 8 }}
                   dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
                 />
 
-                {showFurigana && currentQuestion.furigana && (
-                  <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: 6 }}>
-                    {currentQuestion.furigana}
+                {showFurigana && (currentQuestion.furigana || currentQuestion.fullFurigana) && (
+                  <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: 6, letterSpacing: '0.3px' }}>
+                    {getMaskedQuestionFurigana(currentQuestion, !!feedback)}
                   </div>
                 )}
               </div>
