@@ -28,6 +28,7 @@ import useBodyScrollLock from '../../lib/useBodyScrollLock';
 
 // Lazy loading con code-splitting para componentes interactivos de alto impacto
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
+const KanjiSrsReview = dynamic(() => import('../features/KanjiSrsReview'), { ssr: false });
 const KanjiDraw = dynamic(() => import('../features/KanjiDraw'), { ssr: false });
 const SpeechPractice = dynamic(() => import('../features/SpeechPractice'), { ssr: false });
 const AIGeneratorModal = dynamic(() => import('../modals/AIGeneratorModal'), { ssr: false });
@@ -1184,9 +1185,10 @@ export default function KanjiTab({
           )}
         </div>
       ) : srsActive ? (
-        /* MODO REPASO SRS: Solo kanjis aprendidos con espaciado FSRS */
-        <SrsReview 
+        /* MODO REPASO SRS: Kanjis aprendidos con variación interactiva FSRS (Quiz, Dibujo de Trazo y Flashcard) */
+        <KanjiSrsReview 
           queue={srsQueue}
+          allKanjis={kanjiList}
           onRate={handleSrsReview}
           onUndo={handleSrsUndo}
           getCurrentCard={(item) => appState.masteredKanji?.[item.kanji]}
@@ -1195,211 +1197,7 @@ export default function KanjiTab({
             updateParams(searchTerm, 'list', drawingKanji);
           }}
           backLabel="Volver a Kanjis"
-          renderFront={(item) => (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-                <span className="vocab-tag" style={{ fontWeight: 700 }}>{item.level || 'N5'}</span>
-                {item.strokes && (
-                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    {item.strokes} trazos
-                  </span>
-                )}
-                {item.radical && (
-                  <span style={{ fontSize: '0.78rem', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
-                    Radical: <strong className="jp-text">{item.radical}</strong>
-                  </span>
-                )}
-              </div>
-
-              <div 
-                className="kanji-big-char jp-text" 
-                style={{ 
-                  width: 124, 
-                  height: 124, 
-                  fontSize: '4.8rem', 
-                  lineHeight: 1, 
-                  margin: '12px auto 18px auto',
-                  borderRadius: 20,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 16px rgba(99, 102, 241, 0.12)',
-                  flexShrink: 0
-                }}
-              >
-                {item.kanji}
-              </div>
-
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', margin: '0 0 16px 0', maxWidth: 420 }}>
-                ¿Recuerdas las lecturas (Kun/On) y el significado en español?
-              </p>
-
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-                <button 
-                  type="button"
-                  className="btn btn-outline btn-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    audioManager.speak(getPrimaryKanjiReading(item) || item.kanji);
-                  }}
-                  style={{ fontSize: '0.8rem', padding: '4px 10px' }}
-                  title="Escuchar audio de lectura"
-                >
-                  <Volume2 size={14} /> Pista de Audio
-                </button>
-              </div>
-            </div>
-          )}
-          renderBack={(item) => (
-            <>
-              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 16 }}>
-                🇪🇸 {item.meaning_es}
-              </div>
-
-              {/* Bloque ordenado de lecturas Kun y On */}
-              <div style={{ 
-                background: 'var(--bg-surface)', 
-                padding: '16px', 
-                borderRadius: 'var(--radius-md, 12px)', 
-                border: '1px solid var(--border)',
-                fontSize: '0.95rem', 
-                textAlign: 'left', 
-                marginBottom: 18,
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: 12
-              }}>
-                {item.kunyomi && (
-                  <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 8, border: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 2 }}>
-                      Kun'yomi (Lectura Japonesa)
-                    </div>
-                    <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent)' }}>
-                      {item.kunyomi}
-                    </div>
-                  </div>
-                )}
-                {item.onyomi && (
-                  <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 8, border: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: 2 }}>
-                      On'yomi (Lectura China)
-                    </div>
-                    <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary)' }}>
-                      {item.onyomi}
-                    </div>
-                  </div>
-                )}
-                {item.pronunciation && !item.kunyomi && !item.onyomi && (
-                  <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 8, border: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: 2 }}>
-                      Lectura
-                    </div>
-                    <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary)' }}>
-                      {item.pronunciation}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {item.mnemonic && (
-                <div style={{ 
-                  fontSize: '0.92rem', 
-                  color: 'var(--text-main)', 
-                  background: 'rgba(234, 179, 8, 0.08)', 
-                  border: '1px solid rgba(234, 179, 8, 0.25)', 
-                  padding: '12px 16px', 
-                  borderRadius: 10, 
-                  textAlign: 'left', 
-                  marginBottom: 18,
-                  lineHeight: 1.5
-                }}>
-                  <div style={{ fontWeight: 700, color: 'var(--warning, #eab308)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}>
-                    💡 Mnemotécnica para recordar:
-                  </div>
-                  <div style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>
-                    {item.mnemonic}
-                  </div>
-                </div>
-              )}
-
-              {/* Pitch Accent */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-                <PitchAccent 
-                  word={item.words?.[0]?.word || item.kanji} 
-                  reading={item.words?.[0]?.reading || (item.pronunciation ? item.pronunciation.split(',')[0].trim() : '')} 
-                  mode="full" 
-                  size="md" 
-                  showAudio={true} 
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
-                <button 
-                  type="button"
-                  className="btn btn-outline btn-sm"
-                  onClick={() => audioManager.speak(getPrimaryKanjiReading(item) || item.kanji)}
-                >
-                  <Volume2 size={16} /> Escuchar
-                </button>
-                <SpeechPractice 
-                  targetText={item.kanji} 
-                  targetKana={getPrimaryKanjiReading(item)} 
-                  acceptableReadings={getAllKanjiReadings(item)}
-                />
-                <button 
-                  type="button"
-                  className="btn btn-outline btn-sm" 
-                  onClick={() => setDrawingKanji(item.kanji)}
-                >
-                  ✍️ Practicar Trazos
-                </button>
-              </div>
-
-              {/* Vocabulario contextual */}
-              {item.words && item.words.length > 0 && (
-                <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)', textAlign: 'left' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', marginBottom: 10 }}>
-                    📖 Vocabulario con este Kanji:
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8 }}>
-                    {item.words.slice(0, 4).map((w, idx) => (
-                      <div 
-                        key={idx} 
-                        style={{ 
-                          background: 'var(--bg-surface)', 
-                          padding: '8px 12px', 
-                          borderRadius: 8, 
-                          border: '1px solid var(--border)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: 8
-                        }}
-                      >
-                        <div>
-                          <div className="jp-text" style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-main)' }}>
-                            {w.word} <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>({w.reading})</span>
-                          </div>
-                          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                            {w.meaning}
-                          </div>
-                        </div>
-                        <button 
-                          type="button"
-                          className="btn btn-ghost btn-xs"
-                          onClick={() => audioManager.speak(w.reading || w.word)}
-                          style={{ padding: 4, color: 'var(--text-muted)' }}
-                          title="Escuchar palabra"
-                        >
-                          <Volume2 size={14} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+          appState={appState}
         />
       ) : (
         /* MODO ESTUDIAR KANJIS (Muestra solo los que faltan por aprender) */

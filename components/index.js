@@ -49,6 +49,7 @@ export { default as PitchAccent } from './features/PitchAccent';
 export { default as RoleplayChat } from './features/RoleplayChat';
 export { default as SpeechPractice } from './features/SpeechPractice';
 export { default as SrsReview } from './features/SrsReview';
+export { default as KanjiSrsReview } from './features/KanjiSrsReview';
 export { default as YouTubePlayer } from './features/YouTubePlayer';
 export { default as ZenDaruma3D } from './features/ZenDaruma3D';
 export { default as JapanesePillarsGuide } from './features/JapanesePillarsGuide';

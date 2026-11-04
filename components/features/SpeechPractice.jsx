@@ -3,6 +3,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, CheckCircle2, RefreshCw } from 'lucide-react';
 import * as wanakana from 'wanakana';
+import furiganaDict from '../../data/furigana_dict.js';
+
+// Build reverse dictionary mapping kana reading -> Set of Kanji / mixed representations
+export const KANA_TO_KANJI_MAP = new Map();
+for (const [kanji, kana] of Object.entries(furiganaDict)) {
+  if (!KANA_TO_KANJI_MAP.has(kana)) KANA_TO_KANJI_MAP.set(kana, new Set());
+  KANA_TO_KANJI_MAP.get(kana).add(kanji);
+}
+
+// Compile dictionary regex for longest matches first
+const DICT_KEYS = Object.keys(furiganaDict).sort((a, b) => b.length - a.length);
+const ESCAPED_DICT_KEYS = DICT_KEYS.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+const FURIGANA_REGEX = new RegExp(ESCAPED_DICT_KEYS.join('|'), 'g');
 
 // Arabic digit to Kanji digit
 export const DIGIT_TO_KANJI = {
@@ -141,6 +154,71 @@ export function cleanText(text) {
   if (!text) return '';
   const cleaned = String(text).replace(/[。、！？!?,，[\]()（）\s]/g, '');
   return normalizeFullWidthDigits(cleaned);
+}
+
+// Convert Japanese text (with Kanji, Katakana, digits, Romaji) to pure Hiragana reading
+export function textToHiragana(text) {
+  if (!text) return '';
+  const cleaned = cleanText(text);
+  // Replace recognized kanji/jukugo words with their hiragana readings
+  const replaced = cleaned.replace(FURIGANA_REGEX, (m) => furiganaDict[m] || m);
+  try {
+    return wanakana.toHiragana(replaced);
+  } catch {
+    return replaced;
+  }
+}
+
+// Collect all phonetic and orthographic variants (Kanji, Hiragana, Katakana, mixed)
+export function getAllVariants(rawText, rawReading = null) {
+  const variants = new Set();
+  
+  const add = (t) => {
+    if (!t) return;
+    const c = cleanText(t);
+    if (!c) return;
+    variants.add(c);
+    
+    // Number and counter equivalents
+    const numEq = getNumberEquivalents(c);
+    numEq.forEach(eq => variants.add(eq));
+    
+    // Hiragana normalized reading
+    const h = textToHiragana(c);
+    if (h) {
+      variants.add(h);
+      try {
+        variants.add(wanakana.toKatakana(h));
+      } catch {}
+      
+      // Known kanji and mixed writings for this reading
+      const kanjiForms = KANA_TO_KANJI_MAP.get(h);
+      if (kanjiForms) {
+        kanjiForms.forEach(kf => variants.add(kf));
+      }
+    }
+  };
+
+  add(rawText);
+  if (rawReading) {
+    add(rawReading);
+    const cleanReading = cleanText(rawReading);
+    const rh = textToHiragana(cleanReading);
+    if (rh && rawText) {
+      const cleanRaw = cleanText(rawText);
+      variants.add(cleanRaw);
+      variants.add(cleanReading);
+      variants.add(rh);
+      try {
+        variants.add(wanakana.toKatakana(rh));
+      } catch {}
+      const existing = KANA_TO_KANJI_MAP.get(rh);
+      if (existing) {
+        existing.forEach(kf => variants.add(kf));
+      }
+    }
+  }
+  return Array.from(variants);
 }
 
 // Compute Longest Common Subsequence length

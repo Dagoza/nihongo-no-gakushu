@@ -20,12 +20,15 @@ import {
   Check,
   Pause,
   Play,
-  Info
+  Info,
+  LayoutGrid,
+  Columns
 } from 'lucide-react';
+import kanjiData from '../../data/kanji.json';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
 import { SRSRating, reviewCard, getIntervalPreviews, ensureFsrsCard } from '../../lib/srs';
-import { fetchKanjiStrokeData } from '../../lib/kanjiStrokeUtils';
+import { fetchKanjiStrokeData, getCharacterStrokeCount } from '../../lib/kanjiStrokeUtils';
 
 // Estilos de papel para el lienzo de caligrafía
 const PAPER_STYLES = {
@@ -128,6 +131,214 @@ function getRatingInfoFromMistakes(mistakes, wasGuideUsed) {
 // Duración del temporizador de auto-avance al completar una palabra (4 segundos según preferencia)
 const AUTO_ADVANCE_SECONDS = 4;
 
+/**
+ * Casilla de comparación para un carácter en la tira continua de validación.
+ * Muestra el modelo, los trazos dibujados por el usuario y el conteo de trazos.
+ */
+function CharComparisonBox({
+  char,
+  charIndex,
+  totalChars,
+  strokes = [],
+  expectedStrokes,
+  comparisonMode,
+  currentPaper,
+  size = 148,
+  padSize = 270,
+  onRetrace
+}) {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Soporte para pantallas Retina / alta densidad de píxeles
+    const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, size, size);
+
+    // 1. Rejilla de caligrafía japonesa tradicional (Mizige)
+    ctx.save();
+    ctx.strokeStyle = currentPaper.gridColor;
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(5, 5, size - 10, size - 10);
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(size / 2, 5);
+    ctx.lineTo(size / 2, size - 5);
+    ctx.moveTo(5, size / 2);
+    ctx.lineTo(size - 5, size / 2);
+    ctx.moveTo(5, 5);
+    ctx.lineTo(size - 5, size - 5);
+    ctx.moveTo(size - 5, 5);
+    ctx.lineTo(5, size - 5);
+    ctx.stroke();
+    ctx.restore();
+
+    // 2. Modelo de referencia
+    const shouldDrawModel = comparisonMode === 'both' || comparisonMode === 'model';
+    if (shouldDrawModel && char) {
+      ctx.save();
+      ctx.font = `bold ${Math.floor(size * 0.65)}px "Noto Sans JP", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = comparisonMode === 'model'
+        ? (currentPaper.isDark ? '#38bdf8' : '#2563eb')
+        : currentPaper.outlineColor;
+      ctx.fillText(char, size / 2, size / 2 + 4);
+      ctx.restore();
+    }
+
+    // 3. Trazos libres dibujados por el usuario
+    const shouldDrawUserStrokes = comparisonMode === 'both' || comparisonMode === 'drawing';
+    if (shouldDrawUserStrokes && Array.isArray(strokes) && strokes.length > 0) {
+      const scale = size / (padSize || 270);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = currentPaper.drawingColor || currentPaper.strokeColor;
+      ctx.lineWidth = Math.max(5, Math.floor(10 * scale));
+      strokes.forEach(stroke => {
+        if (!stroke || stroke.length === 0) return;
+        ctx.beginPath();
+        ctx.moveTo(stroke[0].x * scale, stroke[0].y * scale);
+        for (let i = 1; i < stroke.length; i++) {
+          ctx.lineTo(stroke[i].x * scale, stroke[i].y * scale);
+        }
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+  }, [char, comparisonMode, currentPaper, padSize, size, strokes]);
+
+  const drawnCount = Array.isArray(strokes) ? strokes.length : 0;
+  const isMatch = expectedStrokes && drawnCount === expectedStrokes;
+  const isOver = expectedStrokes && drawnCount > expectedStrokes;
+
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      background: 'var(--bg-surface)',
+      border: '1.5px solid var(--border)',
+      borderRadius: 18,
+      padding: '10px 8px',
+      gap: 8,
+      boxShadow: 'var(--shadow-xs)',
+      flexShrink: 0
+    }}>
+      {/* Cabecera de la casilla */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: size,
+        padding: '0 2px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span style={{
+            fontSize: '0.72rem',
+            fontWeight: 800,
+            color: 'var(--primary)',
+            background: 'rgba(99, 102, 241, 0.12)',
+            padding: '2px 6px',
+            borderRadius: 6
+          }}>
+            #{charIndex + 1}
+          </span>
+          <span style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'var(--font-jp)' }}>
+            {char}
+          </span>
+        </div>
+
+        {/* Badge de trazos */}
+        <div style={{
+          fontSize: '0.68rem',
+          fontWeight: 800,
+          padding: '2px 7px',
+          borderRadius: 6,
+          background: isMatch 
+            ? 'rgba(16, 185, 129, 0.15)' 
+            : (isOver ? 'rgba(245, 158, 11, 0.15)' : 'var(--bg-hover)'),
+          color: isMatch 
+            ? '#10b981' 
+            : (isOver ? '#f59e0b' : 'var(--text-muted)'),
+          border: `1px solid ${isMatch ? 'rgba(16, 185, 129, 0.35)' : 'transparent'}`,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 3
+        }}>
+          {isMatch && <Check size={11} strokeWidth={3} />}
+          <span>
+            {expectedStrokes ? `${drawnCount}/${expectedStrokes} trazos` : `${drawnCount} trazos`}
+          </span>
+        </div>
+      </div>
+
+      {/* Cuadro con estilo de papel */}
+      <div style={{
+        width: size,
+        height: size,
+        borderRadius: 14,
+        background: currentPaper.bg,
+        border: currentPaper.border,
+        boxShadow: currentPaper.isDark 
+          ? 'inset 0 1px 8px rgba(0,0,0,0.6)' 
+          : 'inset 0 1px 3px rgba(0,0,0,0.04)',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <canvas
+          ref={canvasRef}
+          style={{
+            width: size,
+            height: size,
+            display: 'block'
+          }}
+        />
+      </div>
+
+      {/* Botón Re-trazar este carácter */}
+      {onRetrace && (
+        <button
+          type="button"
+          onClick={() => onRetrace(charIndex)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--text-muted)',
+            fontSize: '0.72rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            padding: '3px 8px',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            transition: 'color 0.15s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+          title={`Re-trazar solamente el carácter ${charIndex + 1} (${char})`}
+        >
+          <RotateCcw size={11} />
+          <span>Re-trazar este</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function ScriptpadSrsReview({
   queue = [],
   onClose,
@@ -181,6 +392,12 @@ export default function ScriptpadSrsReview({
   const fallbackCanvasRef = useRef(null);
   const currentFallbackStrokeRef = useRef([]);
 
+  // Visualización de tira continua: 'strip' (desplazamiento horizontal) o 'grid' (mosaico continuo)
+  const [stripViewMode, setStripViewMode] = useState('strip'); // 'strip' | 'grid'
+  const charBoxRefs = useRef({});
+  const activeStepBtnRef = useRef(null);
+  const stepListContainerRef = useRef(null);
+
   // Auto-avance: 4 segundos para dar tiempo suficiente y cómodo
   const [autoAdvancePaused, setAutoAdvancePaused] = useState(false);
   const [autoAdvanceTimeLeft, setAutoAdvanceTimeLeft] = useState(AUTO_ADVANCE_SECONDS);
@@ -231,6 +448,56 @@ export default function ScriptpadSrsReview({
   }, [currentItem]);
 
   const activeChar = characters[currentCharIndex] || characters[0] || '日';
+
+  // Número esperado de trazos del carácter activo
+  const activeExpectedStrokes = useMemo(() => {
+    return getCharacterStrokeCount(activeChar, kanjiData);
+  }, [activeChar]);
+
+  // Conteo de trazos dibujados actualmente por el usuario para el carácter activo
+  const activeDrawnStrokes = (fallbackStrokesByChar[currentCharIndex] || []).length;
+
+  // Auto-desplazar la barra horizontal de pasos al carácter activo
+  useEffect(() => {
+    if (activeStepBtnRef.current) {
+      activeStepBtnRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [currentCharIndex]);
+
+  // Re-trazar un único carácter desde la tira continua de validación
+  const handleRetraceSingleChar = useCallback((charIdx) => {
+    setIsWordCompleted(false);
+    isWordCompletedRef.current = false;
+    setCurrentCharIndex(charIdx);
+    currentCharIndexRef.current = charIdx;
+    setFallbackStrokesByChar(prev => ({
+      ...prev,
+      [charIdx]: []
+    }));
+  }, []);
+
+  // Volver a trazar la palabra completa de memoria
+  const handleRetraceAll = useCallback(() => {
+    setIsWordCompleted(false);
+    isWordCompletedRef.current = false;
+    setCurrentCharIndex(0);
+    currentCharIndexRef.current = 0;
+    setWordMistakes(0);
+    wordMistakesRef.current = 0;
+    setCharMistakes(0);
+    setShowGhostGuide(false);
+    showGhostGuideRef.current = false;
+    setWasGuideUsed(false);
+    wasGuideUsedRef.current = false;
+    setAssignedRatingInfo(null);
+    setFallbackStrokesByChar({});
+    setWordHadFallback(false);
+    setHasWriterData(true);
+  }, []);
 
   // Reproducir audio nativo o neuronal
   const playAudio = useCallback(() => {
@@ -1025,49 +1292,94 @@ export default function ScriptpadSrsReview({
           {currentItem.meaning_es}
         </div>
 
-        {/* Indicador de pasos si la palabra tiene varios caracteres */}
+        {/* Indicador de pasos con scroll horizontal táctil y sin desborde negativo */}
         {characters.length > 1 && (
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            marginTop: 10
+            position: 'relative',
+            width: '100%',
+            marginTop: 12
           }}>
-            {characters.map((ch, idx) => {
-              const isPast = idx < currentCharIndex;
-              const isCurrent = idx === currentCharIndex;
-              return (
-                <button
-                  type="button"
-                  key={`char-step-${idx}`}
-                  onClick={() => setCurrentCharIndex(idx)}
-                  style={{
-                    padding: '4px 12px',
-                    borderRadius: 10,
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    background: isCurrent 
-                      ? 'var(--primary)' 
-                      : (isPast ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-hover)'),
-                    color: isCurrent 
-                      ? '#ffffff' 
-                      : (isPast ? '#10b981' : 'var(--text-muted)'),
-                    border: `1px solid ${isCurrent ? 'var(--primary)' : 'var(--border)'}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 5,
-                    transition: 'all 0.15s ease'
-                  }}
-                  title={`Ir al carácter ${idx + 1}`}
-                >
-                  {isPast && <Check size={12} strokeWidth={3} />}
-                  <span>Carácter {idx + 1}</span>
-                  {isWordCompleted && <span style={{ opacity: 0.85 }}>({ch})</span>}
-                </button>
-              );
-            })}
+            <div
+              ref={stepListContainerRef}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: characters.length > 3 ? 'flex-start' : 'center',
+                gap: 8,
+                overflowX: 'auto',
+                overflowY: 'hidden',
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '4px 2px 8px 2px',
+                WebkitOverflowScrolling: 'touch',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+            >
+              {characters.map((ch, idx) => {
+                const isPast = idx < currentCharIndex;
+                const isCurrent = idx === currentCharIndex;
+                const charExpected = getCharacterStrokeCount(ch, kanjiData);
+                const charDrawn = (fallbackStrokesByChar[idx] || []).length;
+                const hasStrokes = charDrawn > 0;
+                return (
+                  <button
+                    type="button"
+                    key={`char-step-${idx}`}
+                    ref={isCurrent ? activeStepBtnRef : null}
+                    onClick={() => {
+                      setCurrentCharIndex(idx);
+                      if (isWordCompleted && charBoxRefs.current[idx]) {
+                        charBoxRefs.current[idx].scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'nearest',
+                          inline: 'center'
+                        });
+                      }
+                    }}
+                    style={{
+                      flexShrink: 0,
+                      padding: '6px 12px',
+                      borderRadius: 12,
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      background: isCurrent 
+                        ? 'var(--primary)' 
+                        : (isPast || hasStrokes ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-hover)'),
+                      color: isCurrent 
+                        ? '#ffffff' 
+                        : (isPast || hasStrokes ? '#10b981' : 'var(--text-muted)'),
+                      border: `1.5px solid ${isCurrent ? 'var(--primary)' : (isPast || hasStrokes ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)')}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      transition: 'all 0.15s ease',
+                      boxShadow: isCurrent ? '0 2px 8px rgba(99, 102, 241, 0.35)' : 'none',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title={`Ir al carácter ${idx + 1}: ${ch}`}
+                  >
+                    {(isPast || isWordCompleted) && <Check size={12} strokeWidth={3} />}
+                    <span style={{ fontWeight: 800 }}>#{idx + 1}</span>
+                    <span>Carácter {idx + 1}</span>
+                    {(isWordCompleted || isPast) && (
+                      <span style={{ opacity: 0.9, fontWeight: 800, fontFamily: 'var(--font-jp)' }}>({ch})</span>
+                    )}
+                    {!isWordCompleted && !hasWriterData && hasStrokes && (
+                      <span style={{
+                        fontSize: '0.68rem',
+                        background: isCurrent ? 'rgba(255,255,255,0.25)' : 'rgba(16, 185, 129, 0.2)',
+                        padding: '1px 5px',
+                        borderRadius: 6
+                      }}>
+                        {charDrawn}{charExpected ? `/${charExpected}` : ''}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -1092,159 +1404,425 @@ export default function ScriptpadSrsReview({
         )}
       </div>
 
-      {/* 3. Lienzo de Trazos: HanziWriter "Sin Guía" vs Fallback Caligrafía Libre */}
-      <div style={{
-        background: 'var(--bg-surface)',
-        border: '2px solid var(--border)',
-        borderRadius: 24,
-        padding: 16,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: 'var(--shadow-sm)',
-        position: 'relative'
-      }}>
-        {/* Contenedor cuadrado con estilo de papel y cuadrícula */}
+      {/* 3. TIRA CONTINUA DE VALIDACIÓN (al completar) vs LIENZO DE TRAZOS (al dibujar) */}
+      {isWordCompleted ? (
         <div style={{
-          width: padSize,
-          height: padSize,
-          borderRadius: 20,
-          background: currentPaper.bg,
-          border: currentPaper.border,
-          boxShadow: currentPaper.isDark 
-            ? 'inset 0 2px 14px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.4)' 
-            : 'inset 0 1px 4px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.06)',
-          position: 'relative',
+          background: 'var(--bg-surface)',
+          border: '2px solid var(--border)',
+          borderRadius: 24,
+          padding: '16px 14px',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          touchAction: 'none'
+          flexDirection: 'column',
+          gap: 14,
+          boxShadow: 'var(--shadow-sm)',
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
-          {/* Rejilla de caligrafía japonesa tradicional (SVG) */}
-          <svg
-            width={padSize}
-            height={padSize}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              pointerEvents: 'none',
-              zIndex: 1
-            }}
-          >
-            {/* Marco perimetral */}
-            <rect
-              x={6}
-              y={6}
-              width={padSize - 12}
-              height={padSize - 12}
-              fill="none"
-              stroke={currentPaper.gridColor}
-              strokeWidth={1.5}
-              rx={12}
-            />
-            {/* Cruz central punteada */}
-            <line
-              x1={padSize / 2} y1={6}
-              x2={padSize / 2} y2={padSize - 6}
-              stroke={currentPaper.gridColor}
-              strokeWidth={1.4}
-              strokeDasharray="6 4"
-            />
-            <line
-              x1={6} y1={padSize / 2}
-              x2={padSize - 6} y2={padSize / 2}
-              stroke={currentPaper.gridColor}
-              strokeWidth={1.4}
-              strokeDasharray="6 4"
-            />
-            {/* Diagonales tenues */}
-            <line
-              x1={6} y1={6}
-              x2={padSize - 6} y2={padSize - 6}
-              stroke={currentPaper.gridColor}
-              strokeWidth={1}
-              strokeDasharray="4 4"
-              opacity={0.5}
-            />
-            <line
-              x1={padSize - 6} y1={6}
-              x2={6} y2={padSize - 6}
-              stroke={currentPaper.gridColor}
-              strokeWidth={1}
-              strokeDasharray="4 4"
-              opacity={0.5}
-            />
-          </svg>
+          {/* Cabecera de la tira continua con controles de validación en bloque */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 10,
+            paddingBottom: 10,
+            borderBottom: '1px solid var(--border)'
+          }}>
+            <div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckCircle2 size={18} color="#10b981" />
+                <span>Tira continua de trazos</span>
+              </div>
+              <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                {characters.length} {characters.length === 1 ? 'carácter completado' : 'caracteres completados'} para validar a la vez
+              </div>
+            </div>
 
-          {/* Motor A: HanziWriter cuando hay orden vectorial disponible (siempre montado en DOM para permitir inicialización) */}
-          <div
-            ref={writerContainerRef}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: padSize,
-              height: padSize,
-              zIndex: hasWriterData ? 2 : -1,
-              opacity: hasWriterData ? 1 : 0,
-              pointerEvents: hasWriterData ? 'auto' : 'none',
+            {/* Selector de modo de comparación para toda la tira continua */}
+            <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          />
-
-          {/* Motor B: Canvas de caligrafía libre cuando NO hay orden vectorial disponible */}
-          <canvas
-            ref={fallbackCanvasRef}
-            width={padSize}
-            height={padSize}
-            onPointerDown={handleFallbackPointerDown}
-            onPointerMove={handleFallbackPointerMove}
-            onPointerUp={handleFallbackPointerUp}
-            onPointerCancel={handleFallbackPointerUp}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: padSize,
-              height: padSize,
-              zIndex: !hasWriterData ? 2 : -1,
-              opacity: !hasWriterData ? 1 : 0,
-              pointerEvents: !hasWriterData ? 'auto' : 'none',
-              cursor: 'crosshair',
-              touchAction: 'none'
-            }}
-          />
-
-          {/* Indicador de trazo activo cuando hay motor HanziWriter */}
-          {hasWriterData && !isWordCompleted && strokeProgress.total > 0 && (
-            <div style={{
-              position: 'absolute',
-              bottom: 8,
-              right: 10,
-              zIndex: 3,
-              fontSize: '0.68rem',
-              fontWeight: 800,
-              padding: '2px 8px',
-              borderRadius: 6,
-              background: isDark ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)',
-              color: currentPaper.drawingColor,
-              backdropFilter: 'blur(4px)',
-              pointerEvents: 'none'
+              gap: 4,
+              background: 'var(--bg-hover)',
+              padding: '3px',
+              borderRadius: 12,
+              border: '1px solid var(--border)'
             }}>
-              Trazo {strokeProgress.current} de {strokeProgress.total}
+              <button
+                type="button"
+                onClick={() => setComparisonMode('both')}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: 9,
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  background: comparisonMode === 'both' ? 'var(--primary)' : 'transparent',
+                  color: comparisonMode === 'both' ? '#ffffff' : 'var(--text-muted)',
+                  cursor: 'pointer'
+                }}
+              >
+                Superpuesto
+              </button>
+              <button
+                type="button"
+                onClick={() => setComparisonMode('drawing')}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: 9,
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  background: comparisonMode === 'drawing' ? 'var(--primary)' : 'transparent',
+                  color: comparisonMode === 'drawing' ? '#ffffff' : 'var(--text-muted)',
+                  cursor: 'pointer'
+                }}
+              >
+                Mis Trazos
+              </button>
+              <button
+                type="button"
+                onClick={() => setComparisonMode('model')}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: 9,
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  background: comparisonMode === 'model' ? 'var(--primary)' : 'transparent',
+                  color: comparisonMode === 'model' ? '#ffffff' : 'var(--text-muted)',
+                  cursor: 'pointer'
+                }}
+              >
+                Modelo Solo
+              </button>
+            </div>
+          </div>
+
+          {/* Selector de disposición: Tira Horizontal vs Mosaico (si hay más de 2 caracteres) */}
+          {characters.length > 2 && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              fontSize: '0.74rem',
+              color: 'var(--text-muted)'
+            }}>
+              <span>Visualización de la tira:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button
+                  type="button"
+                  onClick={() => setStripViewMode('strip')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    padding: '4px 8px',
+                    borderRadius: 8,
+                    border: `1px solid ${stripViewMode === 'strip' ? 'var(--primary)' : 'var(--border)'}`,
+                    background: stripViewMode === 'strip' ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
+                    color: stripViewMode === 'strip' ? 'var(--primary)' : 'var(--text-muted)',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Columns size={12} />
+                  <span>Tira horizontal</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStripViewMode('grid')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    padding: '4px 8px',
+                    borderRadius: 8,
+                    border: `1px solid ${stripViewMode === 'grid' ? 'var(--primary)' : 'var(--border)'}`,
+                    background: stripViewMode === 'grid' ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
+                    color: stripViewMode === 'grid' ? 'var(--primary)' : 'var(--text-muted)',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <LayoutGrid size={12} />
+                  <span>Mosaico</span>
+                </button>
+              </div>
             </div>
           )}
-        </div>
 
-        {/* 4. Barra de Acciones durante el trazo */}
-        {!isWordCompleted ? (
-          <>
-            <div style={{
+          {/* Casillas en Tira Continua */}
+          <div
+            style={
+              stripViewMode === 'strip' || characters.length <= 2
+                ? {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: characters.length <= 2 ? 'center' : 'flex-start',
+                    gap: 12,
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    padding: '10px 4px',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    WebkitOverflowScrolling: 'touch',
+                    scrollSnapType: 'x mandatory'
+                  }
+                : {
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(136px, 1fr))',
+                    gap: 12,
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    padding: '6px 2px'
+                  }
+            }
+          >
+            {characters.map((ch, idx) => {
+              const expectedCount = getCharacterStrokeCount(ch, kanjiData);
+              const userStrokes = fallbackStrokesByChar[idx] || [];
+              const boxSize = characters.length === 1 
+                ? Math.min(250, padSize) 
+                : (characters.length <= 2 ? 170 : (stripViewMode === 'grid' ? 134 : 148));
+
+              return (
+                <div 
+                  key={`comparison-box-${idx}-${ch}`}
+                  ref={el => { if (el) charBoxRefs.current[idx] = el; }}
+                  style={{ scrollSnapAlign: 'start' }}
+                >
+                  <CharComparisonBox
+                    char={ch}
+                    charIndex={idx}
+                    totalChars={characters.length}
+                    strokes={userStrokes}
+                    expectedStrokes={expectedCount}
+                    comparisonMode={comparisonMode}
+                    currentPaper={currentPaper}
+                    size={boxSize}
+                    padSize={padSize}
+                    onRetrace={handleRetraceSingleChar}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Botón Volver a trazar todo */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={handleRetraceAll}
+              style={{
+                borderRadius: 12,
+                fontSize: '0.78rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 14px'
+              }}
+            >
+              <RotateCcw size={13} />
+              <span>Volver a trazar todo</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* Lienzo individual de dibujo durante el quiz */
+        <div style={{
+          background: 'var(--bg-surface)',
+          border: '2px solid var(--border)',
+          borderRadius: 24,
+          padding: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: 'var(--shadow-sm)',
+          position: 'relative'
+        }}>
+          {/* Contenedor cuadrado con estilo de papel y cuadrícula */}
+          <div style={{
+            width: padSize,
+            height: padSize,
+            borderRadius: 20,
+            background: currentPaper.bg,
+            border: currentPaper.border,
+            boxShadow: currentPaper.isDark 
+              ? 'inset 0 2px 14px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.4)' 
+              : 'inset 0 1px 4px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.06)',
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            touchAction: 'none'
+          }}>
+            {/* Rejilla de caligrafía japonesa tradicional (SVG) */}
+            <svg
+              width={padSize}
+              height={padSize}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                pointerEvents: 'none',
+                zIndex: 1
+              }}
+            >
+              {/* Marco perimetral */}
+              <rect
+                x={6}
+                y={6}
+                width={padSize - 12}
+                height={padSize - 12}
+                fill="none"
+                stroke={currentPaper.gridColor}
+                strokeWidth={1.5}
+                rx={12}
+              />
+              {/* Cruz central punteada */}
+              <line
+                x1={padSize / 2} y1={6}
+                x2={padSize / 2} y2={padSize - 6}
+                stroke={currentPaper.gridColor}
+                strokeWidth={1.4}
+                strokeDasharray="6 4"
+              />
+              <line
+                x1={6} y1={padSize / 2}
+                x2={padSize - 6} y2={padSize / 2}
+                stroke={currentPaper.gridColor}
+                strokeWidth={1.4}
+                strokeDasharray="6 4"
+              />
+              {/* Diagonales tenues */}
+              <line
+                x1={6} y1={6}
+                x2={padSize - 6} y2={padSize - 6}
+                stroke={currentPaper.gridColor}
+                strokeWidth={1}
+                strokeDasharray="4 4"
+                opacity={0.5}
+              />
+              <line
+                x1={padSize - 6} y1={6}
+                x2={6} y2={padSize - 6}
+                stroke={currentPaper.gridColor}
+                strokeWidth={1}
+                strokeDasharray="4 4"
+                opacity={0.5}
+              />
+            </svg>
+
+            {/* Motor A: HanziWriter cuando hay orden vectorial disponible */}
+            <div
+              ref={writerContainerRef}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: padSize,
+                height: padSize,
+                zIndex: hasWriterData ? 2 : -1,
+                opacity: hasWriterData ? 1 : 0,
+                pointerEvents: hasWriterData ? 'auto' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            />
+
+            {/* Motor B: Canvas de caligrafía libre cuando NO hay orden vectorial disponible */}
+            <canvas
+              ref={fallbackCanvasRef}
+              width={padSize}
+              height={padSize}
+              onPointerDown={handleFallbackPointerDown}
+              onPointerMove={handleFallbackPointerMove}
+              onPointerUp={handleFallbackPointerUp}
+              onPointerCancel={handleFallbackPointerUp}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: padSize,
+                height: padSize,
+                zIndex: !hasWriterData ? 2 : -1,
+                opacity: !hasWriterData ? 1 : 0,
+                pointerEvents: !hasWriterData ? 'auto' : 'none',
+                cursor: 'crosshair',
+                touchAction: 'none'
+              }}
+            />
+
+            {/* Indicador de trazo activo cuando hay motor HanziWriter */}
+            {hasWriterData && !isWordCompleted && strokeProgress.total > 0 && (
+              <div style={{
+                position: 'absolute',
+                bottom: 8,
+                right: 10,
+                zIndex: 3,
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                padding: '2px 8px',
+                borderRadius: 6,
+                background: isDark ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)',
+                color: currentPaper.drawingColor,
+                backdropFilter: 'blur(4px)',
+                pointerEvents: 'none'
+              }}>
+                Trazo {strokeProgress.current} de {strokeProgress.total}
+              </div>
+            )}
+
+            {/* Indicador de trazo activo y contador cuando NO hay motor HanziWriter (modo libre) */}
+            {!hasWriterData && !isWordCompleted && (
+              <div style={{
+                position: 'absolute',
+                bottom: 8,
+                right: 10,
+                zIndex: 3,
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                padding: '3px 10px',
+                borderRadius: 8,
+                background: isDark ? 'rgba(0,0,0,0.78)' : 'rgba(255,255,255,0.92)',
+                color: activeExpectedStrokes && activeDrawnStrokes === activeExpectedStrokes
+                  ? '#10b981'
+                  : (activeExpectedStrokes && activeDrawnStrokes > activeExpectedStrokes ? '#f59e0b' : currentPaper.drawingColor),
+                border: `1.5px solid ${
+                  activeExpectedStrokes && activeDrawnStrokes === activeExpectedStrokes
+                    ? 'rgba(16, 185, 129, 0.45)'
+                    : (activeExpectedStrokes && activeDrawnStrokes > activeExpectedStrokes ? 'rgba(245, 158, 11, 0.45)' : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'))
+                }`,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                backdropFilter: 'blur(6px)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5
+              }}>
+                {activeExpectedStrokes && activeDrawnStrokes === activeExpectedStrokes && (
+                  <Check size={13} strokeWidth={3} />
+                )}
+                <span>
+                  {activeExpectedStrokes
+                    ? `Trazo ${activeDrawnStrokes} de ${activeExpectedStrokes}`
+                    : `${activeDrawnStrokes} ${activeDrawnStrokes === 1 ? 'trazo' : 'trazos'}`}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* 4. Barra de Acciones durante el trazo */}
+          <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1365,6 +1943,17 @@ export default function ScriptpadSrsReview({
                   }}
                 >
                   <span>Siguiente Carácter ({currentCharIndex + 2} de {characters.length})</span>
+                  {activeExpectedStrokes && (
+                    <span style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      background: 'rgba(255,255,255,0.22)',
+                      padding: '2px 7px',
+                      borderRadius: 8
+                    }}>
+                      {activeDrawnStrokes}/{activeExpectedStrokes} trazos
+                    </span>
+                  )}
                   <ArrowRight size={16} />
                 </button>
               ) : (
@@ -1385,7 +1974,18 @@ export default function ScriptpadSrsReview({
                   }}
                 >
                   <Sparkles size={16} />
-                  <span>Comprobar y Revelar Modelo</span>
+                  <span>Comprobar y Revelar Tira Continua</span>
+                  {activeExpectedStrokes && (
+                    <span style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      background: 'rgba(255,255,255,0.22)',
+                      padding: '2px 7px',
+                      borderRadius: 8
+                    }}>
+                      {activeDrawnStrokes}/{activeExpectedStrokes} trazos
+                    </span>
+                  )}
                 </button>
               )}
 
@@ -1403,100 +2003,8 @@ export default function ScriptpadSrsReview({
               </div>
             </div>
           )}
-        </>
-        ) : (
-          /* Controles post-completado */
-          <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-            {/* Si no hay datos vectoriales, permitir cambiar vista de comparación */}
-            {(!hasWriterData || wordHadFallback) && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'var(--bg-hover)',
-                padding: '4px',
-                borderRadius: 12,
-                border: '1px solid var(--border)'
-              }}>
-                <button
-                  type="button"
-                  onClick={() => setComparisonMode('both')}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: 8,
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    border: 'none',
-                    background: comparisonMode === 'both' ? 'var(--primary)' : 'transparent',
-                    color: comparisonMode === 'both' ? '#ffffff' : 'var(--text-muted)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Superpuesto
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setComparisonMode('drawing')}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: 8,
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    border: 'none',
-                    background: comparisonMode === 'drawing' ? 'var(--primary)' : 'transparent',
-                    color: comparisonMode === 'drawing' ? '#ffffff' : 'var(--text-muted)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Mis Trazos
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setComparisonMode('model')}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: 8,
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    border: 'none',
-                    background: comparisonMode === 'model' ? 'var(--primary)' : 'transparent',
-                    color: comparisonMode === 'model' ? '#ffffff' : 'var(--text-muted)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Modelo Solo
-                </button>
-              </div>
-            )}
-
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={() => {
-                setIsWordCompleted(false);
-                isWordCompletedRef.current = false;
-                setCurrentCharIndex(0);
-                currentCharIndexRef.current = 0;
-                setWordMistakes(0);
-                wordMistakesRef.current = 0;
-                setCharMistakes(0);
-                setShowGhostGuide(false);
-                showGhostGuideRef.current = false;
-                setWasGuideUsed(false);
-                wasGuideUsedRef.current = false;
-                setAssignedRatingInfo(null);
-                setFallbackStrokesByChar({});
-                setWordHadFallback(false);
-                setHasWriterData(true);
-              }}
-              style={{ borderRadius: 10, fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 5 }}
-            >
-              <RotateCcw size={13} />
-              <span>Volver a trazar</span>
-            </button>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* 5A. Modo Guiado Vectorial: Banner de Dificultad Percibida Automática */}
       {isWordCompleted && !wordHadFallback && hasWriterData && assignedRatingInfo && (
