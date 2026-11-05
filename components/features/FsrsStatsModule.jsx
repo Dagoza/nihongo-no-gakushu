@@ -1014,6 +1014,8 @@ export default function FsrsStatsModule({
                 <option value="kanji">Kanjis</option>
                 <option value="vocab">Vocabulario</option>
                 <option value="grammar">Gramática</option>
+                <option value="curriculum">Currículum</option>
+                <option value="scriptpad">Scriptpad</option>
               </select>
 
               {/* Nivel JLPT (estándar oficial N5 a N1) */}

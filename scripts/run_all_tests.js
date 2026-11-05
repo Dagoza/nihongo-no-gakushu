@@ -729,6 +729,11 @@ runTest('Validación fonética de kanjis (normalizeKanjiReadingSet: okurigana y 
   execSync('node scripts/test_kanji_normalization.mjs', { stdio: 'pipe' });
 });
 
+runTest('Integridad de nuevos métodos de aprendizaje (Can-Do Scramble, Cloze SRS, SpeechPractice y FSRS v5)', () => {
+  const { execSync } = require('child_process');
+  execSync('node scripts/test_learning_methods_suite.mjs', { stdio: 'pipe' });
+});
+
 
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);

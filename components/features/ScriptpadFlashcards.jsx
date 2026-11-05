@@ -146,17 +146,30 @@ export default function ScriptpadFlashcards({
   const handleRateCard = (rating) => {
     if (!currentWord) return;
     if (onUpdateState) {
-      const srsKey = `vocab_${currentWord.id || currentWord.kanji}`;
+      const wordKey = currentWord.kanji || currentWord.hiragana || currentWord.id;
+      const spKey = `sp_write_${wordKey}`;
+      const vKey = currentWord.id || currentWord.kanji;
+
       onUpdateState(prev => {
         const base = prev || appState || {};
-        const existing = base.srsQuestions?.[srsKey] || getNewCard();
-        const updatedCard = reviewCard(existing, rating);
+        const existingSp = base.srsQuestions?.[spKey] || getNewCard();
+        const updatedSpCard = reviewCard(existingSp, rating);
+
+        let updatedMastered = { ...(base.masteredVocab || {}) };
+        if (vKey) {
+          const existingV = updatedMastered[vKey] && typeof updatedMastered[vKey] === 'object' && updatedMastered[vKey].due
+            ? updatedMastered[vKey]
+            : getNewCard();
+          updatedMastered[vKey] = reviewCard(existingV, rating);
+        }
+
         return {
           ...base,
           srsQuestions: {
             ...(base.srsQuestions || {}),
-            [srsKey]: updatedCard
-          }
+            [spKey]: updatedSpCard
+          },
+          masteredVocab: updatedMastered
         };
       });
     }

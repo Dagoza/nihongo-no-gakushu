@@ -419,7 +419,7 @@ export default function KanjiTab({
     
     const expectedPrimary = getPrimaryKanjiReading(currentStudyItem);
     const validReadings = normalizeKanjiReadingSet(currentStudyItem);
-    const inputHira = katakanaToHiragana(inputVal);
+    const inputHira = katakanaToHiragana(wanakana.toHiragana(inputVal));
 
     const isMatch = validReadings.has(inputVal) || validReadings.has(inputHira) || inputVal === expectedPrimary;
 

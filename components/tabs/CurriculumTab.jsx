@@ -7,7 +7,7 @@ import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpC
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
-import CanDoScrambleChallenge from '../features/CanDoScrambleChallenge';
+import CanDoScrambleChallenge, { isCanDoScrambleEligible } from '../features/CanDoScrambleChallenge';
 import { reviewCard, getNewCard, SRSRating, isDue } from '../../lib/srs';
 import TerminologyTooltip from '../common/TerminologyTooltip';
 import ScrollTimelinePath from '../scroll/ScrollTimelinePath';
@@ -2027,7 +2027,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                   </div>
                                 )}
 
-                                {cd.sample && /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(cd.sample) && (
+                                {isCanDoScrambleEligible(cd) && (
                                   <div style={{ marginTop: 8 }}>
                                     <button
                                       type="button"
@@ -2189,7 +2189,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                           <FuriganaText text={cd.sample} showFurigana={showFurigana} />
                         </div>
                       )}
-                      {cd.sample && /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(cd.sample) && (
+                      {isCanDoScrambleEligible(cd) && (
                         <div style={{ marginTop: 8 }}>
                           <button
                             type="button"

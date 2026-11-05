@@ -110,14 +110,27 @@ export default function ScriptpadWordMatch({
         onUpdateState(prev => {
           const base = prev || appState || {};
           let updatedSrs = { ...(base.srsQuestions || {}) };
+          let updatedMastered = { ...(base.masteredVocab || {}) };
+
           failedWords.forEach(w => {
-            const srsKey = `vocab_${w.id || w.kanji}`;
-            const existing = updatedSrs[srsKey] || getNewCard();
-            updatedSrs[srsKey] = reviewCard(existing, SRSRating.Again);
+            const wordKey = w.kanji || w.hiragana || w.id;
+            const spKey = `sp_write_${wordKey}`;
+            const existingSp = updatedSrs[spKey] || getNewCard();
+            updatedSrs[spKey] = reviewCard(existingSp, SRSRating.Again);
+
+            const vKey = w.id || w.kanji;
+            if (vKey) {
+              const existingV = updatedMastered[vKey] && typeof updatedMastered[vKey] === 'object' && updatedMastered[vKey].due
+                ? updatedMastered[vKey]
+                : getNewCard();
+              updatedMastered[vKey] = reviewCard(existingV, SRSRating.Again);
+            }
           });
+
           return {
             ...base,
-            srsQuestions: updatedSrs
+            srsQuestions: updatedSrs,
+            masteredVocab: updatedMastered
           };
         });
       }

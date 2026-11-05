@@ -469,26 +469,37 @@ export default function KanjiSrsReview({
       if (srsReviewIndex < queue.length) {
         // 1. Fase Pre-Respuesta
         if (!isRevealed) {
-          // Teclas A, B, C, D o 1, 2, 3, 4 en Modo Quiz
-          if ((currentExerciseType === EXERCISE_TYPES.CHOICE_MEANING || currentExerciseType === EXERCISE_TYPES.CHOICE_KANJI) && !quizIsAnswered) {
+          // Teclas A, B, C, D o 1, 2, 3, 4 en Modo Quiz o Jukugo Choice
+          const isStandardQuiz = (currentExerciseType === EXERCISE_TYPES.CHOICE_MEANING || currentExerciseType === EXERCISE_TYPES.CHOICE_KANJI) && !quizIsAnswered;
+          const isJukugoChoice = currentExerciseType === EXERCISE_TYPES.JUKUGO_READING && jukugoSubMode === 'choice' && !quizIsAnswered;
+
+          if (isStandardQuiz || isJukugoChoice) {
+            const selectTarget = (idx) => {
+              if (isStandardQuiz) {
+                handleSelectOption(idx);
+              } else if (isJukugoChoice && currentOptions[idx]) {
+                handleSelectJukugoOption(currentOptions[idx]);
+              }
+            };
+
             if (e.key === '1' || e.key === 'a' || e.key === 'A') {
               e.preventDefault();
-              handleSelectOption(0);
+              selectTarget(0);
               return;
             }
             if (e.key === '2' || e.key === 'b' || e.key === 'B') {
               e.preventDefault();
-              handleSelectOption(1);
+              selectTarget(1);
               return;
             }
             if (e.key === '3' || e.key === 'c' || e.key === 'C') {
               e.preventDefault();
-              handleSelectOption(2);
+              selectTarget(2);
               return;
             }
             if (e.key === '4' || e.key === 'd' || e.key === 'D') {
               e.preventDefault();
-              handleSelectOption(3);
+              selectTarget(3);
               return;
             }
           }

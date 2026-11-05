@@ -2,7 +2,13 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Sparkles, Check, RotateCcw, Volume2, X, ChevronRight, Zap } from 'lucide-react';
-import { smartSegmentJapanese, containsKanji } from '../../lib/japaneseUtils';
+import { 
+  smartSegmentJapanese, 
+  containsKanji, 
+  extractScrambleSentence, 
+  isCanDoScrambleEligible 
+} from '../../lib/japaneseUtils';
+export { extractScrambleSentence, isCanDoScrambleEligible };
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
 import FuriganaText from './FuriganaText';
@@ -22,30 +28,16 @@ export default function CanDoScrambleChallenge({
   onClose,
   showFurigana = true
 }) {
-  // Extraer oración japonesa modelo del Can-Do
-  const targetSentence = useMemo(() => {
-    if (!canDo?.sample) return '';
-    const parts = canDo.sample.split(/[/／]/).map(p => p.trim()).filter(Boolean);
-    const jpPart = parts.find(p => /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(p));
-    return jpPart || parts[0] || '';
+  // Extraer datos de la oración modelo pedagógica
+  const scrambleData = useMemo(() => {
+    return extractScrambleSentence(canDo?.sample);
   }, [canDo]);
 
-  // Segmentación morfológica pedagógica con smartSegmentJapanese
   const originalTokens = useMemo(() => {
-    if (!targetSentence) return [];
-    // Limpiar puntuación final para segmentar las fichas activas
-    const clean = targetSentence.replace(/[。、！？!?…「」『』\n\r]/g, '').trim();
-    const segments = smartSegmentJapanese(clean);
-    const rawTokens = segments.map(s => s.text).filter(Boolean);
+    return scrambleData?.tokens || [];
+  }, [scrambleData]);
 
-    // Si la oración arrojó un solo bloque monolítico pero tiene longitud > 4, desglosar en partes lógicas
-    if (rawTokens.length <= 1 && clean.length > 4) {
-      // Intento con partículas comunes
-      const splitted = clean.split(/(は|が|を|に|で|へ|と|も|から|まで|です|だ)/g).filter(Boolean);
-      return splitted.length > 1 ? splitted : [clean];
-    }
-    return rawTokens.length > 0 ? rawTokens : [clean];
-  }, [targetSentence]);
+  const targetSentence = scrambleData?.originalPart || '';
 
   // Fichas disponibles y fichas seleccionadas
   const [availableTiles, setAvailableTiles] = useState([]);
@@ -89,17 +81,17 @@ export default function CanDoScrambleChallenge({
   };
 
   const handleVerify = () => {
+    if (!scrambleData) return;
     const constructed = selectedTiles.map(t => t.text).join('');
-    const targetClean = targetSentence.replace(/[。、！？!?…「」『』\s]/g, '');
 
-    if (constructed === targetClean) {
+    if (constructed === scrambleData.targetText) {
       setIsCompleted(true);
       setFeedback({
         type: 'success',
         msg: '🎉 ¡Excelente! Estructura sintáctica construida correctamente (+10 XP).'
       });
       triggerCheerConfetti();
-      audioManager.speak(targetSentence);
+      audioManager.speak(targetSentence || scrambleData.targetText);
       if (typeof onComplete === 'function') {
         onComplete(canDo.id);
       }
@@ -111,7 +103,7 @@ export default function CanDoScrambleChallenge({
     }
   };
 
-  if (!targetSentence) return null;
+  if (!scrambleData) return null;
 
   return (
     <div 

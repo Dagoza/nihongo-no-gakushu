@@ -115,11 +115,16 @@ export default function VocabSrsReview({
       }
 
       if (masked !== jp) {
+        const pool = (allVocab && allVocab.length > 10) ? allVocab : queue;
+        const otherWords = pool.filter(v => (v.id || v.kanji) !== (currentItem.id || currentItem.kanji));
+        const dist = [...otherWords].sort(() => 0.5 - Math.random()).slice(0, 3).map(v => v.kanji || v.kana || v.hiragana);
+        const options = [target, ...dist].sort(() => 0.5 - Math.random());
+
         return {
           sentence: jp,
           masked,
           correct: target,
-          options: [],
+          options,
           prompt_es: es,
           explanation: `Palabra objetivo: ${target} (${currentItem.meaning_es || ''})`
         };
@@ -136,11 +141,16 @@ export default function VocabSrsReview({
         masked = jp.replace(target, '【 ？ 】');
       }
       if (masked !== jp) {
+        const pool = (allVocab && allVocab.length > 10) ? allVocab : queue;
+        const otherWords = pool.filter(v => (v.id || v.kanji) !== (currentItem.id || currentItem.kanji));
+        const dist = [...otherWords].sort(() => 0.5 - Math.random()).slice(0, 3).map(v => v.kanji || v.kana || v.hiragana);
+        const options = [target, ...dist].sort(() => 0.5 - Math.random());
+
         return {
           sentence: jp,
           masked,
           correct: target,
-          options: [],
+          options,
           prompt_es: es,
           explanation: `Palabra objetivo: ${target}`
         };
@@ -148,7 +158,7 @@ export default function VocabSrsReview({
     }
 
     return null;
-  }, [currentItem]);
+  }, [currentItem, allVocab, queue]);
 
   // Determinar el modo activo para este ítem
   const activeExerciseType = useMemo(() => {
@@ -254,9 +264,29 @@ export default function VocabSrsReview({
   // Manejador de validación de Cloze por tipeo
   const handleValidateClozeInput = useCallback(() => {
     if (!clozeData || !clozeInput.trim()) return;
-    const cleanInput = katakanaToHiragana(clozeInput.trim());
-    const cleanCorrect = katakanaToHiragana(clozeData.correct.trim());
-    const isCorrect = cleanInput === cleanCorrect || clozeInput.trim() === clozeData.correct.trim();
+    const rawInput = clozeInput.trim();
+    const cleanInput = katakanaToHiragana(rawInput);
+
+    // Conjunto de respuestas válidas: objetivo exacto, lecturas en kana y variantes
+    const validTargets = new Set();
+    const addCandidate = (cand) => {
+      if (!cand || typeof cand !== 'string') return;
+      const t = cand.trim();
+      if (!t) return;
+      validTargets.add(t);
+      const hira = katakanaToHiragana(t);
+      if (hira) validTargets.add(hira);
+    };
+
+    addCandidate(clozeData.correct);
+    if (currentItem) {
+      addCandidate(currentItem.kanji);
+      addCandidate(currentItem.kana);
+      addCandidate(currentItem.hiragana);
+      addCandidate(currentItem.katakana);
+    }
+
+    const isCorrect = validTargets.has(rawInput) || validTargets.has(cleanInput);
 
     setIsRevealed(true);
     setQuizIsAnswered(true);
@@ -277,12 +307,13 @@ export default function VocabSrsReview({
       });
     }
     audioManager.speak(clozeData.sentence);
-  }, [clozeData, clozeInput]);
+  }, [clozeData, clozeInput, currentItem]);
 
   // Manejador de selección de opción en Cloze
   const handleSelectClozeOption = useCallback((option) => {
     if (quizIsAnswered || !clozeData) return;
-    const isCorrect = option === clozeData.correct;
+    const isCorrect = option === clozeData.correct || 
+      (currentItem && (option === currentItem.kanji || option === currentItem.kana || option === currentItem.hiragana));
 
     setIsRevealed(true);
     setQuizIsAnswered(true);
@@ -304,7 +335,7 @@ export default function VocabSrsReview({
       });
     }
     audioManager.speak(clozeData.sentence);
-  }, [quizIsAnswered, clozeData]);
+  }, [quizIsAnswered, clozeData, currentItem]);
 
   // Manejador de selección de opción en quiz
   const handleSelectOption = useCallback((optionIdx) => {
@@ -406,11 +437,20 @@ export default function VocabSrsReview({
           return;
         }
 
-        // Si es un quiz no respondido, selecciona opción (1-4)
-        if (!quizIsAnswered && currentOptions.length >= num) {
-          e.preventDefault();
-          handleSelectOption(num - 1);
-          return;
+        // Si es un quiz o cloze no respondido, selecciona opción (1-4)
+        if (!quizIsAnswered) {
+          if (activeExerciseType === VOCAB_SRS_MODES.CLOZE_SENTENCE) {
+            const clozeOpts = clozeData?.options || [];
+            if (clozeOpts.length >= num) {
+              e.preventDefault();
+              handleSelectClozeOption(clozeOpts[num - 1]);
+              return;
+            }
+          } else if (currentOptions.length >= num) {
+            e.preventDefault();
+            handleSelectOption(num - 1);
+            return;
+          }
         }
       }
     };

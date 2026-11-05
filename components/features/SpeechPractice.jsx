@@ -357,14 +357,20 @@ export default function SpeechPractice({
 
   // Soporte de auto-escucha para bucles continuos (Teleprompter)
   useEffect(() => {
-    if (autoListen && isSupported && recognitionRef.current && !isListening) {
+    if (!autoListen && isListening && recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch {
+        // ignore
+      }
+    } else if (autoListen && isSupported && recognitionRef.current && !isListening) {
       try {
         recognitionRef.current.start();
       } catch (err) {
         // Recognition might already be running
       }
     }
-  }, [autoListen, isSupported, targetText]);
+  }, [autoListen, isSupported, isListening, targetText]);
 
   // Auto dismiss feedback banner after a reasonable delay
   useEffect(() => {
@@ -525,14 +531,30 @@ export default function SpeechPractice({
         const candHira = textToHiragana(candClean);
 
         if (candClean.length > 3 || (candHira && candHira.length > 3)) {
+          // Si el usuario dijo la frase completa más texto adicional (ej. "ええと、こんにちは")
           if (
             cleanSpoken.includes(candClean) || 
-            candClean.includes(cleanSpoken) ||
-            (spokenHira && candHira && (spokenHira.includes(candHira) || candHira.includes(spokenHira)))
+            (spokenHira && candHira && spokenHira.includes(candHira))
           ) {
             isMatch = true;
-            score = Math.max(score, 0.8);
+            score = Math.max(score, 0.85);
             break;
+          }
+
+          // Si el usuario dijo un fragmento de la frase, debe cubrir al menos el umbral estricto
+          if (
+            candClean.includes(cleanSpoken) ||
+            (spokenHira && candHira && candHira.includes(spokenHira))
+          ) {
+            const ratio = Math.max(
+              cleanSpoken.length / (candClean.length || 1),
+              spokenHira ? spokenHira.length / (candHira?.length || 1) : 0
+            );
+            if (ratio >= threshold) {
+              isMatch = true;
+              score = Math.max(score, Math.round(ratio * 100) / 100);
+              break;
+            }
           }
         }
 
