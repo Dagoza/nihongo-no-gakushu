@@ -12,10 +12,10 @@ import FloatingMiniPlayer from './FloatingMiniPlayer';
  */
 export default function AudioPlayerBar({ appState, onUpdateState, onNavigate }) {
   return (
-    <>
+    <div className="audio-player-bar" style={{ display: 'contents' }}>
       <TextSelectionPopup />
       <FloatingMiniPlayer />
-    </>
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-10-26T03:23:39.725Z",
-  "durationMs": 115,
+  "timestamp": "2026-11-05T17:03:34.585Z",
+  "durationMs": 69,
   "total": 15,
   "passed": 15,
   "failed": 0,
@@ -73,7 +73,7 @@
       "id": "T3.1",
       "name": "Interacción Cruzada: Modo Oscuro + AudioPlayerBar + Modales (Jerarquía z-index)",
       "status": "PASSED",
-      "details": "Jerarquía de apilamiento verificada: Header (z:50) < AudioPlayer (z:90) < Modales (z:>=1000). Adaptación dinámica a data-theme=\"dark\"",
+      "details": "Jerarquía de apilamiento verificada: Header (z:50) < AudioPlayer (z:40) < Modales (z:>=1000). Adaptación dinámica a data-theme=\"dark\"",
       "tier": 3
     },
     {

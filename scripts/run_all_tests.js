@@ -353,6 +353,149 @@ runTest('ScriptpadTab importa y ejecuta todas las funciones FSRS de scriptpadDat
   }
 });
 
+runTest('Análisis estático AST: Cero variables o componentes no declarados en app, components y lib', () => {
+  const parser = require('next/dist/compiled/babel/parser');
+  const traverse = require('next/dist/compiled/babel/traverse').default;
+
+  const jsGlobals = new Set([
+    'window', 'document', 'localStorage', 'sessionStorage', 'console', 'Math', 'Date', 'JSON', 
+    'URLSearchParams', 'URL', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval',
+    'Set', 'Map', 'Array', 'Object', 'String', 'Number', 'Boolean', 'RegExp', 'Error', 'TypeError', 'RangeError',
+    'Intl', 'requestAnimationFrame', 'cancelAnimationFrame', 'navigator', 'AudioContext', 'Image', 'Audio',
+    'fetch', 'Headers', 'Request', 'Response', 'FormData', 'Blob', 'File', 'FileReader',
+    'Promise', 'encodeURIComponent', 'decodeURIComponent', 'encodeURI', 'decodeURI',
+    'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'undefined', 'Infinity', 'NaN', 'process',
+    'crypto', 'performance', 'btoa', 'atob', 'alert', 'confirm', 'prompt', 'CustomEvent', 'Event',
+    'MutationObserver', 'ResizeObserver', 'IntersectionObserver', 'history', 'location', 'Node', 'Element', 'HTMLElement',
+    'globalThis', 'structuredClone', 'queueMicrotask', 'Buffer', 'AbortSignal', 'SpeechSynthesisUtterance', 'speechSynthesis',
+    'Notification', 'CSS'
+  ]);
+
+  function getAllFiles(dir, exts = ['.jsx', '.js']) {
+    let res = [];
+    const fullDir = path.join(ROOT_DIR, dir);
+    if (!fs.existsSync(fullDir)) return res;
+    for (const item of fs.readdirSync(fullDir)) {
+      const full = path.join(fullDir, item);
+      const stat = fs.statSync(full);
+      if (stat.isDirectory()) {
+        if (item !== 'node_modules' && item !== '.next' && item !== '.git') {
+          res = res.concat(getAllFiles(path.join(dir, item), exts));
+        }
+      } else if (exts.includes(path.extname(full))) {
+        res.push(path.join(dir, item));
+      }
+    }
+    return res;
+  }
+
+  const files = [
+    ...getAllFiles('app'),
+    ...getAllFiles('components'),
+    ...getAllFiles('lib')
+  ];
+
+  const violations = [];
+
+  for (const relPath of files) {
+    const fullPath = path.join(ROOT_DIR, relPath);
+    const code = fs.readFileSync(fullPath, 'utf8');
+    let ast;
+    try {
+      ast = parser.parse(code, {
+        sourceType: 'module',
+        plugins: ['jsx']
+      });
+    } catch (e) {
+      violations.push(`${relPath}: Error de sintaxis: ${e.message}`);
+      continue;
+    }
+
+    traverse(ast, {
+      ReferencedIdentifier(p) {
+        const name = p.node.name;
+        if (jsGlobals.has(name)) return;
+        if (p.parentPath.isJSXMemberExpression()) return;
+        if (!p.scope.hasBinding(name)) {
+          violations.push(`${relPath}:${p.node.loc?.start?.line} -> Variable no declarada: "${name}"`);
+        }
+      },
+      JSXIdentifier(p) {
+        const name = p.node.name;
+        if (name[0] === name[0].toUpperCase() && !p.parentPath.isJSXMemberExpression()) {
+          if (jsGlobals.has(name)) return;
+          if (!p.scope.hasBinding(name)) {
+            violations.push(`${relPath}:${p.node.loc?.start?.line} -> Componente JSX no declarado: "<${name} />"`);
+          }
+        }
+      }
+    });
+  }
+
+  assert(
+    violations.length === 0,
+    `Se encontraron ${violations.length} identificadores no declarados:\n` + violations.slice(0, 10).join('\n')
+  );
+  assert(files.length >= 100, `Se esperaban al menos 100 archivos analizados por Babel, analizados: ${files.length}`);
+});
+
+runTest('Integridad de enlaces de importación relativa (Dead Import Links)', () => {
+  function getAllFiles(dir, exts = ['.jsx', '.js']) {
+    let res = [];
+    const fullDir = path.join(ROOT_DIR, dir);
+    if (!fs.existsSync(fullDir)) return res;
+    for (const item of fs.readdirSync(fullDir)) {
+      const full = path.join(fullDir, item);
+      const stat = fs.statSync(full);
+      if (stat.isDirectory()) {
+        if (item !== 'node_modules' && item !== '.next' && item !== '.git') {
+          res = res.concat(getAllFiles(path.join(dir, item), exts));
+        }
+      } else if (exts.includes(path.extname(full))) {
+        res.push(path.join(dir, item));
+      }
+    }
+    return res;
+  }
+
+  const files = [
+    ...getAllFiles('app'),
+    ...getAllFiles('components'),
+    ...getAllFiles('lib')
+  ];
+
+  const deadImports = [];
+
+  for (const relPath of files) {
+    const fullPath = path.join(ROOT_DIR, relPath);
+    const content = fs.readFileSync(fullPath, 'utf8');
+    const regex = /(?:from\s+|import\s*\()\s*['"](\.[^'"]+)['"]/g;
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+      const importPath = match[1];
+      const fileDir = path.dirname(fullPath);
+      const resolvedBase = path.resolve(fileDir, importPath);
+
+      const candidates = [
+        resolvedBase,
+        resolvedBase + '.js',
+        resolvedBase + '.jsx',
+        resolvedBase + '.json',
+        resolvedBase + '.mjs',
+        path.join(resolvedBase, 'index.js'),
+        path.join(resolvedBase, 'index.jsx')
+      ];
+
+      const exists = candidates.some(c => fs.existsSync(c));
+      if (!exists) {
+        deadImports.push(`${relPath} importa ruta inexistente: "${importPath}"`);
+      }
+    }
+  }
+
+  assert(deadImports.length === 0, `Se encontraron ${deadImports.length} rutas de importación rotas:\n` + deadImports.join('\n'));
+});
+
 // -----------------------------------------------------------------------------
 // NOTIFICACIONES & FSRS: Integridad y Contenido Dinámico
 // -----------------------------------------------------------------------------

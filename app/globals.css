@@ -2065,6 +2065,7 @@ ruby.is-revealed rt.rt-mastered-hidden,
   max-width: 1300px;
   margin: 0 auto;
   padding: 24px;
+  padding-bottom: calc(var(--audio-player-height, 72px) + env(safe-area-inset-bottom, 16px));
   width: 100%;
   box-sizing: border-box;
   overflow-x: clip;
