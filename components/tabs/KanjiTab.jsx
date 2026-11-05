@@ -11,7 +11,15 @@ import {
 import audioManager from '../../lib/audioManager';
 import kanjiData from '../../data/kanji.json';
 import * as wanakana from 'wanakana';
-import { getNewCard, reviewCard, isDue, ensureFsrsCard } from '../../lib/srs';
+import { 
+  getNewCard, 
+  reviewCard, 
+  isDue, 
+  ensureFsrsCard,
+  computeCardRetrievability,
+  getCardStateInfo,
+  isLeech 
+} from '../../lib/srs';
 import { triggerCheerConfetti } from '../../lib/confetti';
 import { 
   getKanjiTags, 
@@ -191,6 +199,79 @@ export default function KanjiTab({
     setVisibleCount(32);
   }, [searchTerm, level, statusFilter, selectedTag]);
 
+  // Mapa de estado y métricas FSRS en tiempo real para kanjis aprendidos
+  const kanjiFsrsMap = useMemo(() => {
+    const map = {};
+    const now = new Date();
+    const mastered = appState.masteredKanji || {};
+    
+    for (const [char, rawCard] of Object.entries(mastered)) {
+      if (!rawCard) continue;
+      const card = ensureFsrsCard(rawCard);
+      const retrievability = computeCardRetrievability(card, now);
+      const cardDue = isDue(card);
+      const cardLeech = isLeech(card);
+      const stateInfo = getCardStateInfo(card.state);
+
+      let health = 'learning';
+      if (cardDue) {
+        health = 'due';
+      } else if (cardLeech || (card && card.reps > 0 && retrievability.percent < 70) || (card && card.state === 3)) {
+        health = 'weak';
+      } else if (card && !cardDue && (retrievability.percent >= 80 || card.state === 2)) {
+        health = 'strong';
+      }
+
+      let nextReviewText = 'Hoy';
+      if (!cardDue && card.due) {
+        const diffDays = Math.ceil((new Date(card.due).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        nextReviewText = diffDays <= 1 ? 'Mañana' : `En ${diffDays} días`;
+      }
+
+      map[char] = {
+        card,
+        retrievability,
+        isDue: cardDue,
+        isLeech: cardLeech,
+        stateInfo,
+        health,
+        nextReviewText
+      };
+    }
+    return map;
+  }, [appState.masteredKanji]);
+
+  // Resumen estadístico FSRS de kanjis
+  const fsrsStats = useMemo(() => {
+    let due = 0;
+    let strong = 0;
+    let weak = 0;
+    let learning = 0;
+    let totalRet = 0;
+    let retCount = 0;
+
+    for (const info of Object.values(kanjiFsrsMap)) {
+      if (info.health === 'due') due++;
+      else if (info.health === 'weak') weak++;
+      else if (info.health === 'strong') strong++;
+      else learning++;
+
+      if (info.card && info.card.reps > 0) {
+        totalRet += info.retrievability.percent;
+        retCount++;
+      }
+    }
+
+    return {
+      total: Object.keys(kanjiFsrsMap).length,
+      due,
+      strong,
+      weak,
+      learning,
+      avgRetention: retCount > 0 ? Math.round(totalRet / retCount) : 0
+    };
+  }, [kanjiFsrsMap]);
+
   // Kanjis aprendidos y pendientes
   const masteredCount = useMemo(() => {
     return kanjiList.filter(k => Boolean(appState.masteredKanji?.[k.kanji])).length;
@@ -216,16 +297,22 @@ export default function KanjiTab({
     return getAllUniqueTags(kanjiList, appState.kanjiTags);
   }, [kanjiList, appState.kanjiTags]);
 
-  // Filtrado de kanjis para la vista de tarjetas
+  // Filtrado de kanjis para la vista de tarjetas con soporte FSRS detallado
   const filteredKanji = useMemo(() => {
     return kanjiList.filter(k => {
       // Filtro de Nivel JLPT
       if (level !== 'all' && k.level !== level) return false;
 
-      // Filtro por Estado: Aprendidos o Por aprender
-      const isMastered = Boolean(appState.masteredKanji?.[k.kanji]);
+      // Filtro por Estado y Salud FSRS
+      const fsrsInfo = kanjiFsrsMap[k.kanji];
+      const isMastered = Boolean(fsrsInfo || appState.masteredKanji?.[k.kanji]);
+
       if (statusFilter === 'learned' && !isMastered) return false;
       if (statusFilter === 'unlearned' && isMastered) return false;
+      if (statusFilter === 'due' && (!fsrsInfo || !fsrsInfo.isDue)) return false;
+      if (statusFilter === 'strong' && (!fsrsInfo || fsrsInfo.health !== 'strong')) return false;
+      if (statusFilter === 'weak' && (!fsrsInfo || fsrsInfo.health !== 'weak')) return false;
+      if (statusFilter === 'learning' && (!fsrsInfo || fsrsInfo.health !== 'learning')) return false;
 
       // Filtro por Etiqueta personalizada
       if (selectedTag !== 'all') {
@@ -245,7 +332,7 @@ export default function KanjiTab({
         (k.kunyomi && k.kunyomi.toLowerCase().includes(search))
       );
     });
-  }, [kanjiList, level, statusFilter, selectedTag, searchTerm, appState.masteredKanji, appState.kanjiTags]);
+  }, [kanjiList, level, statusFilter, selectedTag, searchTerm, appState.masteredKanji, appState.kanjiTags, kanjiFsrsMap]);
 
   const selectedKanjisForAI = useMemo(() => {
     if (selectedKanjiChars.size === 0) {
@@ -530,52 +617,53 @@ export default function KanjiTab({
 
       {!studyActive && !srsActive ? (
         <div style={{ paddingBottom: selectedKanjiChars.size > 0 ? 110 : 30 }}>
-          {/* Overview Stats Bar: Concisa, sin texto redundante */}
-          <div className="card" style={{ marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-            <div style={{ flex: '1 1 260px' }}>
-              <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 6 }}>
-                Kanjis Dominados: <span style={{ color: 'var(--primary)' }}>{masteredCount} de {kanjiList.length}</span> ({progressPercent}%)
+          {/* Overview Stats Bar: Progreso general y pulso FSRS en tiempo real */}
+          <div className="card" style={{ marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+              <div style={{ flex: '1 1 260px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: 6 }}>
+                  Kanjis Dominados: <span style={{ color: 'var(--primary)' }}>{masteredCount} de {kanjiList.length}</span> ({progressPercent}%)
+                </div>
+                <div style={{ width: '100%', maxWidth: 300, height: 8, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
+                  <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent))', transition: 'width 0.4s' }} />
+                </div>
               </div>
-              <div style={{ width: '100%', maxWidth: 300, height: 8, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
-                <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent))', transition: 'width 0.4s' }} />
-              </div>
-            </div>
 
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-              <button 
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={() => startSrsSession(false)}
-                title="Repasar kanjis aprendidos usando repetición espaciada"
-                style={{
-                  borderRadius: 999,
-                  padding: '6px 14px',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  position: 'relative'
-                }}
-              >
-                <Brain size={15} />
-                <span>Repaso SRS</span>
-                {dueLearnedKanjis.length > 0 && (
-                  <span style={{
-                    background: 'var(--primary)',
-                    color: '#fff',
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => startSrsSession(false)}
+                  title="Repasar kanjis aprendidos usando repetición espaciada"
+                  style={{
                     borderRadius: 999,
-                    padding: '1px 6px',
-                    fontSize: '0.72rem',
-                    fontWeight: 800,
-                    marginLeft: 2
-                  }}>
-                    {dueLearnedKanjis.length}
-                  </span>
-                )}
-              </button>
+                    padding: '6px 14px',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    position: 'relative'
+                  }}
+                >
+                  <Brain size={15} />
+                  <span>Repaso SRS</span>
+                  {dueLearnedKanjis.length > 0 && (
+                    <span style={{
+                      background: 'var(--primary)',
+                      color: '#fff',
+                      borderRadius: 999,
+                      padding: '1px 6px',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      marginLeft: 2
+                    }}>
+                      {dueLearnedKanjis.length}
+                    </span>
+                  )}
+                </button>
 
-              <button 
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={() => {
+                <button 
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => {
                   setStudyIndex(0);
                   setStudyFeedback(null);
                   setStudyInput('');
@@ -609,6 +697,113 @@ export default function KanjiTab({
               </button>
             </div>
           </div>
+
+          {/* Barra interactiva de Salud y Retención FSRS */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            flexWrap: 'wrap',
+            paddingTop: 10,
+            borderTop: '1px solid var(--border)',
+            fontSize: '0.78rem'
+          }}>
+            <span style={{ fontWeight: 800, color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Brain size={14} style={{ color: 'var(--primary)' }} />
+              <span>Estado FSRS:</span>
+            </span>
+
+            <button
+              type="button"
+              onClick={() => setStatusFilter(statusFilter === 'learned' ? 'all' : 'learned')}
+              className={`btn ${statusFilter === 'learned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+              style={{ borderRadius: 999, padding: '3px 10px', fontSize: '0.74rem' }}
+              title="Ver todos los kanjis en el motor FSRS"
+            >
+              🧠 Vistos ({masteredCount})
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStatusFilter(statusFilter === 'due' ? 'all' : 'due')}
+              style={{
+                borderRadius: 999,
+                padding: '3px 10px',
+                fontSize: '0.74rem',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                background: statusFilter === 'due' ? '#f59e0b' : 'rgba(245, 158, 11, 0.1)',
+                color: statusFilter === 'due' ? '#fff' : '#f59e0b',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+              title="Kanjis pendientes de repasar hoy según intervalo FSRS"
+            >
+              🔔 Repasar hoy ({fsrsStats.due})
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStatusFilter(statusFilter === 'strong' ? 'all' : 'strong')}
+              style={{
+                borderRadius: 999,
+                padding: '3px 10px',
+                fontSize: '0.74rem',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                background: statusFilter === 'strong' ? '#10b981' : 'rgba(16, 185, 129, 0.1)',
+                color: statusFilter === 'strong' ? '#fff' : '#10b981',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+              title="Kanjis consolidados con alta retención (≥80%)"
+            >
+              🟢 Van bien ({fsrsStats.strong})
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStatusFilter(statusFilter === 'weak' ? 'all' : 'weak')}
+              style={{
+                borderRadius: 999,
+                padding: '3px 10px',
+                fontSize: '0.74rem',
+                border: '1px solid rgba(239, 68, 68, 0.4)',
+                background: statusFilter === 'weak' ? '#ef4444' : 'rgba(239, 68, 68, 0.1)',
+                color: statusFilter === 'weak' ? '#fff' : '#ef4444',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+              title="Kanjis con baja retención o fallos reiterados"
+            >
+              ⚠️ Repasar más ({fsrsStats.weak})
+            </button>
+
+            {fsrsStats.learning > 0 && (
+              <button
+                type="button"
+                onClick={() => setStatusFilter(statusFilter === 'learning' ? 'all' : 'learning')}
+                style={{
+                  borderRadius: 999,
+                  padding: '3px 10px',
+                  fontSize: '0.74rem',
+                  border: '1px solid rgba(99, 102, 241, 0.4)',
+                  background: statusFilter === 'learning' ? 'var(--primary)' : 'rgba(99, 102, 241, 0.1)',
+                  color: statusFilter === 'learning' ? '#fff' : 'var(--primary)',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+                title="Kanjis en etapa inicial de aprendizaje"
+              >
+                ⏳ En aprendizaje ({fsrsStats.learning})
+              </button>
+            )}
+
+            {masteredCount > 0 && (
+              <span style={{ marginLeft: 'auto', fontSize: '0.74rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                Retención media: <strong style={{ color: fsrsStats.avgRetention >= 80 ? '#10b981' : fsrsStats.avgRetention >= 60 ? '#f59e0b' : '#ef4444' }}>{fsrsStats.avgRetention}%</strong>
+              </span>
+            )}
+          </div>
+        </div>
 
           {/* Search Bar & Botón de Filtros */}
           <div className="vocab-filter-bar" style={{ marginBottom: 14 }}>
@@ -708,15 +903,49 @@ export default function KanjiTab({
                     style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
                     onClick={() => setStatusFilter('learned')}
                   >
-                    ✓ Aprendidos ({masteredCount})
+                    🧠 En FSRS ({masteredCount})
                   </button>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'due' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem', color: statusFilter === 'due' ? '#fff' : '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.4)' }}
+                    onClick={() => setStatusFilter('due')}
+                  >
+                    🔔 Repasar hoy ({fsrsStats.due})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'strong' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem', color: statusFilter === 'strong' ? '#fff' : '#10b981', borderColor: 'rgba(16, 185, 129, 0.4)' }}
+                    onClick={() => setStatusFilter('strong')}
+                  >
+                    🟢 Van bien ({fsrsStats.strong})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${statusFilter === 'weak' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem', color: statusFilter === 'weak' ? '#fff' : '#ef4444', borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                    onClick={() => setStatusFilter('weak')}
+                  >
+                    ⚠️ Repasar más ({fsrsStats.weak})
+                  </button>
+                  {fsrsStats.learning > 0 && (
+                    <button
+                      type="button"
+                      className={`btn ${statusFilter === 'learning' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                      style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
+                      onClick={() => setStatusFilter('learning')}
+                    >
+                      ⏳ En aprendizaje ({fsrsStats.learning})
+                    </button>
+                  )}
                   <button
                     type="button"
                     className={`btn ${statusFilter === 'unlearned' ? 'btn-primary' : 'btn-outline'} btn-xs`}
                     style={{ minWidth: 38, padding: '4px 10px', fontSize: '0.8rem' }}
                     onClick={() => setStatusFilter('unlearned')}
                   >
-                    ⏳ Por aprender ({unlearnedCount})
+                    Por aprender ({unlearnedCount})
                   </button>
                 </div>
               </div>
@@ -1025,6 +1254,106 @@ export default function KanjiTab({
                           </div>
                         )}
                       </div>
+
+                      {/* FSRS Learning Status & Retention Box */}
+                      {(() => {
+                        const fsrs = kanjiFsrsMap[k.kanji];
+                        if (!fsrs) return null;
+
+                        const isDueNow = fsrs.isDue;
+                        const isWeak = fsrs.health === 'weak';
+                        const isStrong = fsrs.health === 'strong';
+                        const retPercent = fsrs.retrievability.percent;
+
+                        const badgeBg = isDueNow
+                          ? 'rgba(245, 158, 11, 0.15)'
+                          : isWeak
+                          ? 'rgba(239, 68, 68, 0.15)'
+                          : isStrong
+                          ? 'rgba(16, 185, 129, 0.15)'
+                          : 'rgba(99, 102, 241, 0.15)';
+
+                        const badgeColor = isDueNow
+                          ? '#f59e0b'
+                          : isWeak
+                          ? '#ef4444'
+                          : isStrong
+                          ? '#10b981'
+                          : 'var(--primary)';
+
+                        const badgeLabel = isDueNow
+                          ? '🔔 Repasar hoy'
+                          : isWeak
+                          ? '⚠️ Repasar más'
+                          : isStrong
+                          ? '🟢 Va bien'
+                          : '⏳ En aprendizaje';
+
+                        const barColor = isDueNow
+                          ? 'linear-gradient(90deg, #f59e0b, #d97706)'
+                          : isWeak
+                          ? 'linear-gradient(90deg, #ef4444, #dc2626)'
+                          : isStrong
+                          ? 'linear-gradient(90deg, #10b981, #059669)'
+                          : 'linear-gradient(90deg, #6366f1, #4f46e5)';
+
+                        return (
+                          <div
+                            style={{
+                              width: '100%',
+                              marginTop: 10,
+                              padding: '8px 10px',
+                              borderRadius: 12,
+                              background: 'var(--bg-main)',
+                              border: `1px solid ${isDueNow ? 'rgba(245, 158, 11, 0.4)' : isWeak ? 'rgba(239, 68, 68, 0.4)' : 'var(--border)'}`,
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginBottom: 5 }}>
+                              <span
+                                style={{
+                                  fontSize: '0.68rem',
+                                  fontWeight: 800,
+                                  padding: '2px 7px',
+                                  borderRadius: 6,
+                                  background: badgeBg,
+                                  color: badgeColor,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4
+                                }}
+                              >
+                                {badgeLabel}
+                              </span>
+                              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: badgeColor }}>
+                                {retPercent > 0 ? `${retPercent}% retención` : 'Nuevo en FSRS'}
+                              </span>
+                            </div>
+
+                            {/* Mini barra de retención FSRS */}
+                            {retPercent > 0 && (
+                              <div style={{ width: '100%', height: 4, background: 'var(--border)', borderRadius: 99, overflow: 'hidden', marginBottom: 6 }}>
+                                <div style={{ width: `${Math.min(100, Math.max(5, retPercent))}%`, height: '100%', background: barColor, transition: 'width 0.3s' }} />
+                              </div>
+                            )}
+
+                            {/* Metadata FSRS */}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.66rem', color: 'var(--text-muted)' }}>
+                              <span>Reps: {fsrs.card.reps || 0}</span>
+                              <span>•</span>
+                              <span>{fsrs.stateInfo.name}</span>
+                              <span>•</span>
+                              <span>{isDueNow ? 'Pendiente' : fsrs.nextReviewText}</span>
+                            </div>
+
+                            {fsrs.isLeech && (
+                              <div style={{ marginTop: 4, fontSize: '0.64rem', color: '#ef4444', fontWeight: 700 }}>
+                                ⚠️ Punto difícil (olvidos frecuentes)
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     {/* Readings centradas con audios */}

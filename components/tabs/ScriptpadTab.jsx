@@ -83,8 +83,13 @@ export default function ScriptpadTab({
   }, [authUser, onTriggerSync]);
 
   // Filtros de navegación
-  const [activeTab, setActiveTab] = useState('thematic'); // 'thematic' | 'curriculum'
+  const [activeTab, setActiveTab] = useState('thematic'); // 'thematic' | 'curriculum' | 'fsrs'
   const [levelFilter, setLevelFilter] = useState('all'); // 'all' | 'N5' | 'N4' | 'N3'
+
+  // Filtros para el panel de progreso FSRS
+  const [fsrsFilterHealth, setFsrsFilterHealth] = useState('all'); // 'all' | 'due' | 'weak' | 'strong' | 'learning'
+  const [fsrsSearch, setFsrsSearch] = useState('');
+  const [fsrsLevel, setFsrsLevel] = useState('all');
 
   // Navegación de unidades y lecciones
   const [selectedUnitId, setSelectedUnitId] = useState(initialUnitId);
@@ -196,6 +201,60 @@ export default function ScriptpadTab({
   const srsQueue = useMemo(() => {
     return getScriptpadSrsQueue(appState, 20);
   }, [appState]);
+
+  // Palabras ya practicadas o en FSRS de Scriptpad
+  const studiedWords = useMemo(() => {
+    return getScriptpadStudiedWords(appState);
+  }, [appState]);
+
+  // Resumen estadístico FSRS de Scriptpad
+  const fsrsSummary = useMemo(() => {
+    let due = 0;
+    let strong = 0;
+    let weak = 0;
+    let learning = 0;
+    let totalRet = 0;
+    let retCount = 0;
+
+    studiedWords.forEach(w => {
+      if (w.health === 'due') due++;
+      else if (w.health === 'weak') weak++;
+      else if (w.health === 'strong') strong++;
+      else learning++;
+
+      if (w.card && (w.card.reps > 0 || w.timesWritten > 0)) {
+        totalRet += w.retrievability.percent;
+        retCount++;
+      }
+    });
+
+    return {
+      total: studiedWords.length,
+      due,
+      strong,
+      weak,
+      learning,
+      avgRetention: retCount > 0 ? Math.round(totalRet / retCount) : 0
+    };
+  }, [studiedWords]);
+
+  // Palabras filtradas para el panel de progreso FSRS
+  const filteredStudiedWords = useMemo(() => {
+    return studiedWords.filter(w => {
+      if (fsrsLevel !== 'all' && w.level !== fsrsLevel) return false;
+      if (fsrsFilterHealth === 'due' && !w.isDue) return false;
+      if (fsrsFilterHealth === 'strong' && w.health !== 'strong') return false;
+      if (fsrsFilterHealth === 'weak' && w.health !== 'weak') return false;
+      if (fsrsFilterHealth === 'learning' && w.health !== 'learning') return false;
+      const q = fsrsSearch.trim().toLowerCase();
+      if (!q) return true;
+      return (
+        (w.kanji && w.kanji.toLowerCase().includes(q)) ||
+        (w.hiragana && w.hiragana.toLowerCase().includes(q)) ||
+        (w.meaning_es && w.meaning_es.toLowerCase().includes(q))
+      );
+    });
+  }, [studiedWords, fsrsLevel, fsrsFilterHealth, fsrsSearch]);
 
   // Iniciar estudio de una lección en un modo específico
   const handleStartStudy = (lesson, mode) => {
@@ -975,17 +1034,43 @@ export default function ScriptpadTab({
                               </div>
                             </div>
 
-                            <span style={{
-                              fontSize: '0.62rem',
-                              fontWeight: 800,
-                              background: 'rgba(99, 102, 241, 0.12)',
-                              color: 'var(--primary)',
-                              padding: '1px 5px',
-                              borderRadius: 4,
-                              flexShrink: 0
-                            }}>
-                              {w.level || 'N5'}
-                            </span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                              {(() => {
+                                const fStatus = getScriptpadWordFsrsStatus(w, appState);
+                                if (!fStatus.hasCard && fStatus.timesWritten === 0) return null;
+                                return (
+                                  <span
+                                    style={{
+                                      fontSize: '0.62rem',
+                                      fontWeight: 800,
+                                      padding: '1px 6px',
+                                      borderRadius: 4,
+                                      background: fStatus.badgeBg,
+                                      color: fStatus.badgeColor,
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: 3,
+                                      whiteSpace: 'nowrap'
+                                    }}
+                                    title={`Retención FSRS: ${fStatus.retrievability.formatted} • Estado: ${fStatus.stateInfo?.name || 'Nuevo'} • Trazado: ${fStatus.timesWritten}x`}
+                                  >
+                                    <span>{fStatus.retrievability.percent > 0 ? fStatus.retrievability.formatted : fStatus.statusLabel}</span>
+                                  </span>
+                                );
+                              })()}
+
+                              <span style={{
+                                fontSize: '0.62rem',
+                                fontWeight: 800,
+                                background: 'rgba(99, 102, 241, 0.12)',
+                                color: 'var(--primary)',
+                                padding: '1px 5px',
+                                borderRadius: 4,
+                                flexShrink: 0
+                              }}>
+                                {w.level || 'N5'}
+                              </span>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1108,42 +1193,63 @@ export default function ScriptpadTab({
           </div>
         </div>
 
-        <button
-          type="button"
-          className="btn btn-primary btn-sm"
-          disabled={srsQueue.length === 0}
-          onClick={() => {
-            if (srsQueue.length > 0) setActiveMode('srs');
-          }}
-          style={{ 
-            padding: '7px 14px', 
-            borderRadius: 10, 
-            fontSize: '0.76rem', 
-            fontWeight: 700,
-            opacity: srsQueue.length === 0 ? 0.55 : 1,
-            cursor: srsQueue.length === 0 ? 'not-allowed' : 'pointer',
-            pointerEvents: srsQueue.length === 0 ? 'none' : 'auto',
-            background: srsQueue.length === 0 ? 'var(--bg-surface-elevated, #374151)' : undefined,
-            borderColor: srsQueue.length === 0 ? 'transparent' : undefined,
-            color: srsQueue.length === 0 ? 'var(--text-muted, #9ca3af)' : undefined,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            flexShrink: 0
-          }}
-        >
-          {srsQueue.length === 0 ? (
-            <>
-              <CheckCircle2 size={13} />
-              <span>Al día</span>
-            </>
-          ) : (
-            <>
-              <span>Practicar Repaso</span>
-              <ArrowRight size={13} />
-            </>
-          )}
-        </button>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => setActiveTab('fsrs')}
+            style={{
+              padding: '7px 12px',
+              borderRadius: 10,
+              fontSize: '0.76rem',
+              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5
+            }}
+            title="Ver todas las palabras estudiadas y su retención FSRS"
+          >
+            <Brain size={13} />
+            <span>Ver Progreso</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            disabled={srsQueue.length === 0}
+            onClick={() => {
+              if (srsQueue.length > 0) setActiveMode('srs');
+            }}
+            style={{ 
+              padding: '7px 14px', 
+              borderRadius: 10, 
+              fontSize: '0.76rem', 
+              fontWeight: 700,
+              opacity: srsQueue.length === 0 ? 0.55 : 1,
+              cursor: srsQueue.length === 0 ? 'not-allowed' : 'pointer',
+              pointerEvents: srsQueue.length === 0 ? 'none' : 'auto',
+              background: srsQueue.length === 0 ? 'var(--bg-surface-elevated, #374151)' : undefined,
+              borderColor: srsQueue.length === 0 ? 'transparent' : undefined,
+              color: srsQueue.length === 0 ? 'var(--text-muted, #9ca3af)' : undefined,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              flexShrink: 0
+            }}
+          >
+            {srsQueue.length === 0 ? (
+              <>
+                <CheckCircle2 size={13} />
+                <span>Al día</span>
+              </>
+            ) : (
+              <>
+                <span>Practicar Repaso</span>
+                <ArrowRight size={13} />
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Pestañas de Track y Filtros de Nivel JLPT */}
@@ -1165,7 +1271,8 @@ export default function ScriptpadTab({
             padding: 2,
             borderRadius: 10,
             border: '1px solid var(--border)',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            flexWrap: 'wrap'
           }}
         >
           <button
@@ -1177,9 +1284,9 @@ export default function ScriptpadTab({
               borderRadius: 8,
               border: 'none',
               fontSize: '0.78rem',
-              fontWeight: activeTab !== 'curriculum' ? 700 : 500,
-              background: activeTab !== 'curriculum' ? 'var(--primary)' : 'transparent',
-              color: activeTab !== 'curriculum' ? '#fff' : 'var(--text-muted)',
+              fontWeight: activeTab === 'thematic' ? 700 : 500,
+              background: activeTab === 'thematic' ? 'var(--primary)' : 'transparent',
+              color: activeTab === 'thematic' ? '#fff' : 'var(--text-muted)',
               cursor: 'pointer'
             }}
           >
@@ -1202,37 +1309,540 @@ export default function ScriptpadTab({
           >
             Ruta del Currículum
           </button>
+          <button
+            type="button"
+            className="scriptpad-track-btn"
+            onClick={() => setActiveTab('fsrs')}
+            style={{
+              padding: '5px 12px',
+              borderRadius: 8,
+              border: 'none',
+              fontSize: '0.78rem',
+              fontWeight: activeTab === 'fsrs' ? 700 : 500,
+              background: activeTab === 'fsrs' ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'transparent',
+              color: activeTab === 'fsrs' ? '#fff' : 'var(--text-muted)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5
+            }}
+          >
+            <Brain size={13} />
+            <span>Progreso FSRS ({studiedWords.length})</span>
+          </button>
         </div>
 
         {/* Filtros por nivel JLPT */}
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>Nivel:</span>
-          {['all', 'N5', 'N4', 'N3'].map(lvl => (
-            <button
-              key={lvl}
-              type="button"
-              onClick={() => setLevelFilter(lvl)}
-              className={`btn ${levelFilter === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
-              style={{ padding: '2px 7px', fontSize: '0.7rem', borderRadius: 6, minWidth: 30 }}
-            >
-              {lvl === 'all' ? 'Todos' : lvl}
-            </button>
-          ))}
-        </div>
+        {activeTab !== 'fsrs' && (
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>Nivel:</span>
+            {['all', 'N5', 'N4', 'N3'].map(lvl => (
+              <button
+                key={lvl}
+                type="button"
+                onClick={() => setLevelFilter(lvl)}
+                className={`btn ${levelFilter === lvl ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                style={{ padding: '2px 7px', fontSize: '0.7rem', borderRadius: 6, minWidth: 30 }}
+              >
+                {lvl === 'all' ? 'Todos' : lvl}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div style={{
-        fontSize: '0.7rem',
-        fontWeight: 800,
-        color: 'var(--text-muted)',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginBottom: 10
-      }}>
-        {activeTab !== 'curriculum' 
-          ? 'Ruta de Aprendizaje Unificada (95 Lecciones • 1,153 Palabras Únicas)' 
-          : 'Módulos del Currículum para Escritura'}
-      </div>
+      {activeTab === 'fsrs' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Métricas Generales FSRS de Scriptpad */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+            gap: 10
+          }}>
+            <div style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 14,
+              padding: '12px 14px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                Palabras en FSRS
+              </div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--primary)', marginTop: 4 }}>
+                {fsrsSummary.total}
+              </div>
+            </div>
+
+            <div style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 14,
+              padding: '12px 14px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                Retención Media
+              </div>
+              <div style={{
+                fontSize: '1.4rem',
+                fontWeight: 900,
+                color: fsrsSummary.avgRetention >= 80 ? '#10b981' : fsrsSummary.avgRetention >= 60 ? '#f59e0b' : '#ef4444',
+                marginTop: 4
+              }}>
+                {fsrsSummary.avgRetention}%
+              </div>
+            </div>
+
+            <div
+              onClick={() => setFsrsFilterHealth(fsrsFilterHealth === 'due' ? 'all' : 'due')}
+              style={{
+                background: fsrsFilterHealth === 'due' ? 'rgba(245, 158, 11, 0.15)' : 'var(--bg-surface)',
+                border: `1px solid ${fsrsFilterHealth === 'due' ? '#f59e0b' : 'var(--border)'}`,
+                borderRadius: 14,
+                padding: '12px 14px',
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase' }}>
+                🔔 Por repasar hoy
+              </div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#f59e0b', marginTop: 4 }}>
+                {fsrsSummary.due}
+              </div>
+            </div>
+
+            <div
+              onClick={() => setFsrsFilterHealth(fsrsFilterHealth === 'strong' ? 'all' : 'strong')}
+              style={{
+                background: fsrsFilterHealth === 'strong' ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-surface)',
+                border: `1px solid ${fsrsFilterHealth === 'strong' ? '#10b981' : 'var(--border)'}`,
+                borderRadius: 14,
+                padding: '12px 14px',
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#10b981', textTransform: 'uppercase' }}>
+                🟢 Van bien
+              </div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#10b981', marginTop: 4 }}>
+                {fsrsSummary.strong}
+              </div>
+            </div>
+
+            <div
+              onClick={() => setFsrsFilterHealth(fsrsFilterHealth === 'weak' ? 'all' : 'weak')}
+              style={{
+                background: fsrsFilterHealth === 'weak' ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-surface)',
+                border: `1px solid ${fsrsFilterHealth === 'weak' ? '#ef4444' : 'var(--border)'}`,
+                borderRadius: 14,
+                padding: '12px 14px',
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#ef4444', textTransform: 'uppercase' }}>
+                ⚠️ Repasar más
+              </div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#ef4444', marginTop: 4 }}>
+                {fsrsSummary.weak}
+              </div>
+            </div>
+          </div>
+
+          {/* Barra de Filtros y Búsqueda */}
+          <div style={{
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 16,
+            padding: '12px 14px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <div style={{ position: 'relative', flex: '1 1 200px' }}>
+                <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  type="text"
+                  placeholder="Buscar palabra por kanji, hiragana o español..."
+                  value={fsrsSearch}
+                  onChange={(e) => setFsrsSearch(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 32px 8px 36px',
+                    borderRadius: 10,
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-main)',
+                    color: 'var(--text-main)',
+                    fontSize: '0.82rem',
+                    boxSizing: 'border-box'
+                  }}
+                />
+                {fsrsSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setFsrsSearch('')}
+                    style={{
+                      position: 'absolute',
+                      right: 10,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              {/* Filtro nivel */}
+              <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>Nivel:</span>
+                {['all', 'N5', 'N4', 'N3'].map(lvl => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setFsrsLevel(lvl)}
+                    className={`btn ${fsrsLevel === lvl ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                    style={{ padding: '3px 8px', fontSize: '0.72rem', borderRadius: 6 }}
+                  >
+                    {lvl === 'all' ? 'Todos' : lvl}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Chips de salud */}
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>Estado:</span>
+              <button
+                type="button"
+                onClick={() => setFsrsFilterHealth('all')}
+                className={`btn ${fsrsFilterHealth === 'all' ? 'btn-primary' : 'btn-outline'} btn-xs`}
+                style={{ borderRadius: 8, padding: '3px 10px', fontSize: '0.74rem' }}
+              >
+                Todos ({studiedWords.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFsrsFilterHealth('due')}
+                style={{
+                  borderRadius: 8,
+                  padding: '3px 10px',
+                  fontSize: '0.74rem',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  background: fsrsFilterHealth === 'due' ? '#f59e0b' : 'transparent',
+                  color: fsrsFilterHealth === 'due' ? '#fff' : '#f59e0b',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                🔔 Repasar hoy ({fsrsSummary.due})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFsrsFilterHealth('strong')}
+                style={{
+                  borderRadius: 8,
+                  padding: '3px 10px',
+                  fontSize: '0.74rem',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  background: fsrsFilterHealth === 'strong' ? '#10b981' : 'transparent',
+                  color: fsrsFilterHealth === 'strong' ? '#fff' : '#10b981',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                🟢 Van bien ({fsrsSummary.strong})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFsrsFilterHealth('weak')}
+                style={{
+                  borderRadius: 8,
+                  padding: '3px 10px',
+                  fontSize: '0.74rem',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  background: fsrsFilterHealth === 'weak' ? '#ef4444' : 'transparent',
+                  color: fsrsFilterHealth === 'weak' ? '#fff' : '#ef4444',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                ⚠️ Repasar más ({fsrsSummary.weak})
+              </button>
+              {fsrsSummary.learning > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setFsrsFilterHealth('learning')}
+                  style={{
+                    borderRadius: 8,
+                    padding: '3px 10px',
+                    fontSize: '0.74rem',
+                    border: '1px solid rgba(99, 102, 241, 0.4)',
+                    background: fsrsFilterHealth === 'learning' ? 'var(--primary)' : 'transparent',
+                    color: fsrsFilterHealth === 'learning' ? '#fff' : 'var(--primary)',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  ⏳ En aprendizaje ({fsrsSummary.learning})
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Lista o Grid de Palabras Estudiadas */}
+          {studiedWords.length === 0 ? (
+            <div style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 20,
+              padding: '40px 20px',
+              textAlign: 'center',
+              color: 'var(--text-muted)'
+            }}>
+              <Brain size={44} style={{ color: 'var(--primary)', margin: '0 auto 14px', opacity: 0.8 }} />
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>
+                Aún no has registrado palabras en FSRS
+              </h3>
+              <p style={{ fontSize: '0.86rem', maxWidth: 440, margin: '0 auto 20px', lineHeight: 1.5 }}>
+                Cada vez que practicas el trazo o completas una lección de escritura, las palabras se incorporan automáticamente a tu motor de Repetición Espaciada FSRS para optimizar tu memoria.
+              </p>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  setActiveTab('thematic');
+                  setSelectedUnitId('unit-1-fundamentos');
+                }}
+                style={{ padding: '8px 20px', borderRadius: 12, fontWeight: 700 }}
+              >
+                Comenzar Unidad 1: Fundamentos
+              </button>
+            </div>
+          ) : filteredStudiedWords.length === 0 ? (
+            <div style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 20,
+              padding: '36px 20px',
+              textAlign: 'center',
+              color: 'var(--text-muted)'
+            }}>
+              <p style={{ fontSize: '0.95rem', marginBottom: 12 }}>
+                No se encontraron palabras con los filtros seleccionados.
+              </p>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setFsrsSearch('');
+                  setFsrsFilterHealth('all');
+                  setFsrsLevel('all');
+                }}
+                style={{ padding: '6px 16px', borderRadius: 10 }}
+              >
+                Restablecer filtros
+              </button>
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 12
+            }}>
+              {filteredStudiedWords.map((word) => {
+                const ret = word.retrievability;
+                const isDueNow = word.isDue;
+                const isWeak = word.health === 'weak';
+                const isStrong = word.health === 'strong';
+
+                const badgeBg = isDueNow
+                  ? 'rgba(245, 158, 11, 0.15)'
+                  : isWeak
+                  ? 'rgba(239, 68, 68, 0.15)'
+                  : isStrong
+                  ? 'rgba(16, 185, 129, 0.15)'
+                  : 'rgba(99, 102, 241, 0.15)';
+
+                const badgeColor = isDueNow
+                  ? '#f59e0b'
+                  : isWeak
+                  ? '#ef4444'
+                  : isStrong
+                  ? '#10b981'
+                  : 'var(--primary)';
+
+                const badgeLabel = isDueNow
+                  ? '🔔 Repasar hoy'
+                  : isWeak
+                  ? '⚠️ Repasar más'
+                  : isStrong
+                  ? '🟢 Va bien'
+                  : '⏳ En aprendizaje';
+
+                const barColor = isDueNow
+                  ? 'linear-gradient(90deg, #f59e0b, #d97706)'
+                  : isWeak
+                  ? 'linear-gradient(90deg, #ef4444, #dc2626)'
+                  : isStrong
+                  ? 'linear-gradient(90deg, #10b981, #059669)'
+                  : 'linear-gradient(90deg, #6366f1, #4f46e5)';
+
+                return (
+                  <div
+                    key={word.wordKey}
+                    style={{
+                      background: 'var(--bg-surface)',
+                      border: `1px solid ${isDueNow ? 'rgba(245, 158, 11, 0.4)' : isWeak ? 'rgba(239, 68, 68, 0.35)' : 'var(--border)'}`,
+                      borderRadius: 16,
+                      padding: '12px 14px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
+                  >
+                    {/* Fila 1: Nivel, Badge de Salud y botón de audio */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{
+                          fontSize: '0.64rem',
+                          fontWeight: 800,
+                          background: 'rgba(99, 102, 241, 0.12)',
+                          color: 'var(--primary)',
+                          padding: '1px 6px',
+                          borderRadius: 4
+                        }}>
+                          {word.level || 'N5'}
+                        </span>
+                        <span style={{
+                          fontSize: '0.64rem',
+                          fontWeight: 800,
+                          padding: '1px 7px',
+                          borderRadius: 4,
+                          background: badgeBg,
+                          color: badgeColor
+                        }}>
+                          {badgeLabel}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => handlePlayWordAudio(e, word)}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--primary)',
+                          cursor: 'pointer',
+                          padding: 2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title="Escuchar pronunciación"
+                      >
+                        <Volume2 size={16} />
+                      </button>
+                    </div>
+
+                    {/* Fila 2: Palabra en grande y significado */}
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                        <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: 0.5 }}>
+                          {word.kanji}
+                        </span>
+                        {word.hiragana && word.hiragana !== word.kanji && (
+                          <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                            {word.hiragana}
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 2, fontWeight: 500 }}>
+                        {word.meaning_es}
+                      </div>
+                    </div>
+
+                    {/* Fila 3: Porcentaje de Retención y Barra FSRS */}
+                    <div style={{ background: 'var(--bg-main)', padding: '8px 10px', borderRadius: 10, border: '1px solid var(--border)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.72rem', marginBottom: 4 }}>
+                        <span style={{ fontWeight: 700, color: 'var(--text-muted)' }}>Retención esperada:</span>
+                        <strong style={{ color: badgeColor }}>{ret.percent > 0 ? ret.formatted : (word.timesWritten > 0 ? 'Reciente' : 'Nueva')}</strong>
+                      </div>
+                      <div style={{ width: '100%', height: 4, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
+                        <div style={{ width: `${Math.min(100, Math.max(5, ret.percent))}%`, height: '100%', background: barColor, transition: 'width 0.3s' }} />
+                      </div>
+                    </div>
+
+                    {/* Fila 4: Detalle de repeticiones y botón de práctica */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <span>Trazada: <strong>{word.timesWritten}x</strong> • Reps SRS: <strong>{word.card?.reps || 0}</strong></span>
+                        <span style={{ fontSize: '0.64rem' }}>{word.unitTitle ? `${word.unitTitle}` : ''}</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleStartStudy({
+                            id: `adhoc-${word.wordKey}`,
+                            number: 1,
+                            title: `Práctica: ${word.kanji || word.hiragana}`,
+                            words: [word],
+                            unitId: word.unitId
+                          }, 'write');
+                        }}
+                        className="btn btn-outline btn-xs"
+                        style={{
+                          borderRadius: 8,
+                          padding: '4px 10px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          borderColor: isWeak ? '#ef4444' : isDueNow ? '#f59e0b' : 'var(--primary)',
+                          color: isWeak ? '#ef4444' : isDueNow ? '#f59e0b' : 'var(--primary)'
+                        }}
+                      >
+                        <PenTool size={11} />
+                        <span>Trazar</span>
+                      </button>
+                    </div>
+
+                    {word.isLeech && (
+                      <div style={{ fontSize: '0.64rem', color: '#ef4444', fontWeight: 700, marginTop: -2 }}>
+                        ⚠️ Punto débil (olvidos reiterados)
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          <div style={{
+            fontSize: '0.7rem',
+            fontWeight: 800,
+            color: 'var(--text-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: 1,
+            marginBottom: 10
+          }}>
+            {activeTab !== 'curriculum' 
+              ? 'Ruta de Aprendizaje Unificada (95 Lecciones • 1,153 Palabras Únicas)' 
+              : 'Módulos del Currículum para Escritura'}
+          </div>
 
       {/* Lista de Unidades en Español con tipografía optimizada y grid responsivo */}
       <div className="scriptpad-units-grid">
@@ -1366,6 +1976,8 @@ export default function ScriptpadTab({
           </div>
         ))}
       </div>
+        </>
+      )}
     </div>
   );
 }
