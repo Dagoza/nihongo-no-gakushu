@@ -1,9 +1,9 @@
 'use client';
-
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Volume2, ChevronLeft, ChevronRight, RotateCcw, Check, ArrowRight, Layers, CheckCircle2, Award } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { Volume2, ChevronLeft, ChevronRight, RotateCcw, Check, ArrowRight, Layers, CheckCircle2, Award, PenTool, Trash2, Eye } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
+import { reviewCard, getNewCard, SRSRating } from '../../lib/srs';
 
 export default function ScriptpadFlashcards({
   lesson,
@@ -56,10 +56,117 @@ export default function ScriptpadFlashcards({
     }
   }, [currentWord]);
 
+  // Mini lienzo borrador (Scratchpad) para trazado en anverso
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [hasDrawn, setHasDrawn] = useState(false);
+  const [overlayDataUrl, setOverlayDataUrl] = useState(null);
+  const lastPosRef = useRef({ x: 0, y: 0 });
+
+  const clearCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    setHasDrawn(false);
+    setOverlayDataUrl(null);
+  }, []);
+
+  const handleFlipCard = useCallback(() => {
+    if (!isFlipped && canvasRef.current && hasDrawn) {
+      try {
+        setOverlayDataUrl(canvasRef.current.toDataURL());
+      } catch (e) {
+        console.warn('Canvas toDataURL error', e);
+      }
+    }
+    setIsFlipped(prev => !prev);
+  }, [isFlipped, hasDrawn]);
+
   useEffect(() => {
     setIsFlipped(false);
+    clearCanvas();
     playAudio();
-  }, [currentIndex, playAudio]);
+  }, [currentIndex, playAudio, clearCanvas]);
+
+  const handlePointerDown = (e) => {
+    e.stopPropagation();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    lastPosRef.current = { x, y };
+    setIsDrawing(true);
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#6366f1';
+    ctx.fill();
+    setHasDrawn(true);
+  };
+
+  const handlePointerMove = (e) => {
+    e.stopPropagation();
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.beginPath();
+    ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    lastPosRef.current = { x, y };
+    setHasDrawn(true);
+  };
+
+  const handlePointerUp = (e) => {
+    if (e) e.stopPropagation();
+    setIsDrawing(false);
+  };
+
+  // Calificar tarjeta en FSRS directamente desde la flashcard
+  const handleRateCard = (rating) => {
+    if (!currentWord) return;
+    if (onUpdateState) {
+      const srsKey = `vocab_${currentWord.id || currentWord.kanji}`;
+      onUpdateState(prev => {
+        const base = prev || appState || {};
+        const existing = base.srsQuestions?.[srsKey] || getNewCard();
+        const updatedCard = reviewCard(existing, rating);
+        return {
+          ...base,
+          srsQuestions: {
+            ...(base.srsQuestions || {}),
+            [srsKey]: updatedCard
+          }
+        };
+      });
+    }
+    if (rating === SRSRating.Good || rating === SRSRating.Easy) {
+      const nextSet = new Set(knownWords);
+      nextSet.add(currentWord.id);
+      setKnownWords(nextSet);
+    }
+    handleNext();
+  };
 
   const handleNext = () => {
     if (currentIndex < words.length - 1) {
@@ -352,7 +459,7 @@ export default function ScriptpadFlashcards({
 
       {/* Tarjeta Flip 3D */}
       <div 
-        onClick={() => setIsFlipped(!isFlipped)}
+        onClick={handleFlipCard}
         style={{
           perspective: 1000,
           cursor: 'pointer',
@@ -372,7 +479,7 @@ export default function ScriptpadFlashcards({
           background: 'var(--bg-surface)',
           border: '2px solid var(--border)',
           borderRadius: 24,
-          padding: '28px 16px',
+          padding: '24px 16px',
           boxShadow: 'var(--shadow-md)',
           display: 'flex',
           flexDirection: 'column',
@@ -380,13 +487,13 @@ export default function ScriptpadFlashcards({
           justifyContent: 'center',
           boxSizing: 'border-box'
         }}>
-          {/* LADO FRONTAL (Pregunta / Kanji) */}
+          {/* LADO FRONTAL (Pregunta / Kanji + Scratchpad activo) */}
           <div style={{
             backfaceVisibility: 'hidden',
             display: isFlipped ? 'none' : 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 12,
+            gap: 10,
             width: '100%',
             boxSizing: 'border-box'
           }}>
@@ -401,7 +508,7 @@ export default function ScriptpadFlashcards({
               {currentWord.level || 'N5'}
             </span>
             <div style={{
-              fontSize: 'clamp(2.4rem, 10vw, 3.2rem)',
+              fontSize: 'clamp(2.2rem, 9vw, 2.8rem)',
               fontWeight: 900,
               color: 'var(--text-main)',
               letterSpacing: 2,
@@ -410,24 +517,152 @@ export default function ScriptpadFlashcards({
             }}>
               {currentWord.kanji}
             </div>
-            <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 8 }}>
-              Toca para voltear y ver significado ↺
+
+            {/* Lienzo Scratchpad interactivo para trazar previo a voltear */}
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'relative',
+                width: 240,
+                height: 150,
+                background: 'rgba(99, 102, 241, 0.03)',
+                borderRadius: 16,
+                border: '2px dashed var(--border)',
+                overflow: 'hidden',
+                touchAction: 'none',
+                marginTop: 4
+              }}
+            >
+              {/* Cuadrícula suave de centrado */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                opacity: 0.25
+              }}>
+                <div style={{ position: 'absolute', top: '50%', width: '100%', height: 1, borderTop: '1px dashed var(--text-muted)' }} />
+                <div style={{ position: 'absolute', left: '50%', height: '100%', width: 1, borderLeft: '1px dashed var(--text-muted)' }} />
+              </div>
+
+              <canvas
+                ref={canvasRef}
+                width={240}
+                height={150}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'block',
+                  cursor: 'crosshair',
+                  touchAction: 'none'
+                }}
+              />
+
+              {!hasDrawn && (
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  color: 'var(--text-muted)',
+                  fontSize: '0.78rem',
+                  fontWeight: 600
+                }}>
+                  <PenTool size={13} />
+                  <span>Traza aquí antes de voltear</span>
+                </div>
+              )}
+
+              {hasDrawn && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearCanvas();
+                  }}
+                  className="btn btn-sm"
+                  style={{
+                    position: 'absolute',
+                    top: 6,
+                    right: 6,
+                    padding: '2px 8px',
+                    fontSize: '0.7rem',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}
+                  title="Borrar trazo"
+                >
+                  <Trash2 size={11} />
+                  <span>Borrar</span>
+                </button>
+              )}
+            </div>
+
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 4 }}>
+              Toca fuera del lienzo para voltear ↺
             </div>
           </div>
 
-          {/* LADO TRASERO (Respuesta / Significado) */}
+          {/* LADO TRASERO (Respuesta / Significado con Superposición Visual) */}
           <div style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
             display: isFlipped ? 'flex' : 'none',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 10,
+            gap: 8,
             width: '100%',
             boxSizing: 'border-box'
           }}>
+            {/* Contenedor con superposición visual si el usuario trazó */}
+            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{
+                fontSize: 'clamp(2rem, 8vw, 2.6rem)',
+                fontWeight: 900,
+                color: 'var(--text-main)',
+                letterSpacing: 2
+              }}>
+                {currentWord.kanji}
+              </div>
+
+              {overlayDataUrl && (
+                <img
+                  src={overlayDataUrl}
+                  alt="Superposición de trazo"
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 240,
+                    height: 150,
+                    objectFit: 'contain',
+                    opacity: 0.45,
+                    pointerEvents: 'none',
+                    filter: 'drop-shadow(0 0 2px rgba(99, 102, 241, 0.9))'
+                  }}
+                />
+              )}
+            </div>
+
+            {overlayDataUrl && (
+              <span style={{ fontSize: '0.72rem', color: 'var(--primary)', fontWeight: 700 }}>
+                ✨ Superposición visual de tu trazo
+              </span>
+            )}
+
             <div style={{
-              fontSize: 'clamp(1.4rem, 6vw, 1.8rem)',
+              fontSize: 'clamp(1.3rem, 5.5vw, 1.6rem)',
               fontWeight: 800,
               color: 'var(--primary)',
               wordBreak: 'break-word',
@@ -435,23 +670,84 @@ export default function ScriptpadFlashcards({
             }}>
               {currentWord.hiragana}
             </div>
+
             {currentWord.romaji && (
-              <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                 {currentWord.romaji}
               </div>
             )}
+
             <div style={{
-              fontSize: 'clamp(1.15rem, 5vw, 1.35rem)',
+              fontSize: 'clamp(1.05rem, 4.5vw, 1.25rem)',
               fontWeight: 700,
               color: 'var(--text-main)',
-              marginTop: 6,
+              marginTop: 2,
               wordBreak: 'break-word',
               maxWidth: '100%'
             }}>
               {currentWord.meaning_es}
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 10 }}>
-              Toca para volver a voltear ↻
+
+            {/* Botones de Calificación FSRS en Flashcard */}
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: 'flex',
+                gap: 8,
+                marginTop: 10,
+                width: '100%',
+                justifyContent: 'center',
+                flexWrap: 'wrap'
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => handleRateCard(SRSRating.Again)}
+                className="btn btn-sm"
+                style={{
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  borderRadius: 10,
+                  padding: '6px 12px',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: '#ef4444',
+                  border: '1px solid rgba(239, 68, 68, 0.3)'
+                }}
+              >
+                Olvidé (Again)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRateCard(SRSRating.Good)}
+                className="btn btn-sm"
+                style={{
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  borderRadius: 10,
+                  padding: '6px 14px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  color: '#10b981',
+                  border: '1px solid rgba(16, 185, 129, 0.3)'
+                }}
+              >
+                Recordé (Good)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRateCard(SRSRating.Easy)}
+                className="btn btn-sm"
+                style={{
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  borderRadius: 10,
+                  padding: '6px 12px',
+                  background: 'rgba(99, 102, 241, 0.1)',
+                  color: 'var(--primary)',
+                  border: '1px solid rgba(99, 102, 241, 0.3)'
+                }}
+              >
+                Fácil (Easy)
+              </button>
             </div>
           </div>
         </div>

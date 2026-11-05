@@ -16114,3 +16114,27 @@ html {
   color: var(--primary, #6366f1);
 }
 
+/* ==========================================================================
+   Soundwave Equalizer & AudioPlayButton Animations
+   ========================================================================== */
+@keyframes audioBarPulse {
+  0%, 100% {
+    transform: scaleY(0.3);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.btn-audio-play {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-audio-play.is-playing {
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.35);
+}
+
+

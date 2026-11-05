@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Sparkles, Award, Check, ChevronRight, ChevronLeft, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter, SlidersHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -329,6 +329,177 @@ export default function ConversationTab({
   const savedSpeakers = selectedSavedConv?.dialogue 
     ? Array.from(new Set(selectedSavedConv.dialogue.map(d => d.speaker))).filter(Boolean)
     : [];
+
+  // Modo Teleprompter Manos Libres continuo
+  const [teleprompterActive, setTeleprompterActive] = useState(false);
+  const [teleprompterIndex, setTeleprompterIndex] = useState(0);
+  const [teleprompterPhase, setTeleprompterPhase] = useState('idle'); // 'idle' | 'playing_partner' | 'countdown' | 'listening' | 'success'
+  const [countdownSeconds, setCountdownSeconds] = useState(3);
+  const [teleprompterScore, setTeleprompterScore] = useState(null);
+  const teleprompterTimerRef = useRef(null);
+
+  const stopTeleprompter = useCallback(() => {
+    if (teleprompterTimerRef.current) {
+      clearTimeout(teleprompterTimerRef.current);
+      clearInterval(teleprompterTimerRef.current);
+      teleprompterTimerRef.current = null;
+    }
+    audioManager.stopActivePlayback();
+    setTeleprompterActive(false);
+    setTeleprompterPhase('idle');
+    setTeleprompterScore(null);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (teleprompterTimerRef.current) {
+        clearTimeout(teleprompterTimerRef.current);
+        clearInterval(teleprompterTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    stopTeleprompter();
+  }, [selectedDialogueId, selectedSavedConvId, stopTeleprompter]);
+
+  const startCountdown = useCallback((idx, studentRole, list) => {
+    setTeleprompterIndex(idx);
+    setTeleprompterPhase('countdown');
+    setCountdownSeconds(3);
+
+    let sec = 3;
+    const interval = setInterval(() => {
+      sec -= 1;
+      if (sec > 0) {
+        setCountdownSeconds(sec);
+      } else {
+        clearInterval(interval);
+        setTeleprompterPhase('listening');
+      }
+    }, 1000);
+    teleprompterTimerRef.current = interval;
+  }, []);
+
+  const runTeleprompterStep = useCallback((idx, studentRole, list) => {
+    if (!list || list.length === 0) return;
+
+    if (idx >= list.length) {
+      // Fin del diálogo
+      triggerGrandConfetti();
+      setTeleprompterPhase('idle');
+      setTeleprompterActive(false);
+      showAlert({
+        title: '¡Shadowing Completado!',
+        message: '¡Excelente trabajo! Has completado el diálogo en modo teleprompter manos libres (+30 XP).'
+      });
+      if (onUpdateState && appState && currentDialogue) {
+        const newCompleted = { ...(appState.completedConversations || {}) };
+        newCompleted[currentDialogue.id] = true;
+        if (currentDialogue.lessonNum) newCompleted[currentDialogue.lessonNum] = true;
+        onUpdateState({
+          ...appState,
+          xp: (appState.xp || 0) + 30,
+          completedConversations: newCompleted
+        });
+      }
+      return;
+    }
+
+    const currentLine = list[idx];
+    if (!currentLine) return;
+
+    setTeleprompterIndex(idx);
+    const isStudentTurn = currentLine.speaker === studentRole;
+
+    if (!isStudentTurn) {
+      // Turno del interlocutor: reproduce su audio nativo/neuronal
+      setTeleprompterPhase('playing_partner');
+      const lineText = currentLine.jp || currentLine.japanese || '';
+      const voice = getSpeakerVoice(currentLine.speaker, idx);
+
+      audioManager.speak(lineText, {
+        voice,
+        onEnded: () => {
+          teleprompterTimerRef.current = setTimeout(() => {
+            const nextIdx = idx + 1;
+            if (nextIdx < list.length) {
+              const nextLine = list[nextIdx];
+              if (nextLine.speaker === studentRole) {
+                startCountdown(nextIdx, studentRole, list);
+              } else {
+                runTeleprompterStep(nextIdx, studentRole, list);
+              }
+            } else {
+              runTeleprompterStep(nextIdx, studentRole, list);
+            }
+          }, 500);
+        }
+      });
+    } else {
+      // Turno del estudiante
+      startCountdown(idx, studentRole, list);
+    }
+  }, [currentDialogue, appState, onUpdateState, showAlert, startCountdown]);
+
+  const startTeleprompter = useCallback((startIndex = 0) => {
+    const list = currentDialogue?.dialogue || [];
+    if (!list || list.length === 0) return;
+
+    let studentRole = mutedSpeaker;
+    if (!studentRole) {
+      studentRole = currentSpeakers[1] || currentSpeakers[0];
+      setMutedSpeaker(studentRole);
+    }
+
+    setTeleprompterActive(true);
+    setTeleprompterIndex(startIndex);
+    setTeleprompterScore(null);
+
+    runTeleprompterStep(startIndex, studentRole, list);
+  }, [currentDialogue, mutedSpeaker, currentSpeakers, runTeleprompterStep]);
+
+  const handleTeleprompterSpeechSuccess = useCallback((spoken, score) => {
+    if (!teleprompterActive || teleprompterPhase !== 'listening') return;
+    setTeleprompterScore(score);
+    setTeleprompterPhase('success');
+
+    if (onUpdateState && appState) {
+      onUpdateState(prev => ({
+        ...prev,
+        xp: (prev?.xp || 0) + 10
+      }));
+    }
+
+    teleprompterTimerRef.current = setTimeout(() => {
+      const list = currentDialogue?.dialogue || [];
+      const nextIdx = teleprompterIndex + 1;
+      setTeleprompterScore(null);
+      runTeleprompterStep(nextIdx, mutedSpeaker || (currentSpeakers[1] || currentSpeakers[0]), list);
+    }, 1200);
+  }, [teleprompterActive, teleprompterPhase, teleprompterIndex, currentDialogue, mutedSpeaker, currentSpeakers, onUpdateState, appState, runTeleprompterStep]);
+
+  const handleTeleprompterSkip = useCallback(() => {
+    if (!teleprompterActive) return;
+    if (teleprompterTimerRef.current) {
+      clearTimeout(teleprompterTimerRef.current);
+      clearInterval(teleprompterTimerRef.current);
+    }
+    const list = currentDialogue?.dialogue || [];
+    const nextIdx = teleprompterIndex + 1;
+    setTeleprompterScore(null);
+    runTeleprompterStep(nextIdx, mutedSpeaker || (currentSpeakers[1] || currentSpeakers[0]), list);
+  }, [teleprompterActive, teleprompterIndex, currentDialogue, mutedSpeaker, currentSpeakers, runTeleprompterStep]);
+
+  // Auto-scroll al elemento activo durante el bucle de teleprompter
+  useEffect(() => {
+    if (teleprompterActive && typeof document !== 'undefined') {
+      const el = document.getElementById(`dialogue-line-${teleprompterIndex}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [teleprompterActive, teleprompterIndex]);
 
   // Filter dialogues
   const visibleDialogues = useMemo(() => {
@@ -1305,6 +1476,31 @@ export default function ConversationTab({
                     <Play size={16} /> {mutedSpeaker ? `Reproducir sin ${mutedSpeaker}` : 'Diálogo Línea a Línea'}
                   </button>
 
+                  <button
+                    type="button"
+                    className={`btn ${teleprompterActive ? 'btn-danger' : 'btn-outline'}`}
+                    onClick={() => {
+                      if (teleprompterActive) {
+                        stopTeleprompter();
+                      } else {
+                        startTeleprompter(0);
+                      }
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      borderColor: teleprompterActive ? '#ef4444' : '#8b5cf6',
+                      color: teleprompterActive ? '#fff' : '#8b5cf6',
+                      background: teleprompterActive ? '#ef4444' : 'rgba(139, 92, 246, 0.08)',
+                      fontWeight: 700
+                    }}
+                    title="Bucle interactivo: el interlocutor habla, cuenta regresiva de 3s, micrófono automático y validación continua con >=75% de precisión"
+                  >
+                    <Mic size={16} />
+                    <span>{teleprompterActive ? 'Detener Teleprompter' : '🎙️ Teleprompter Manos Libres'}</span>
+                  </button>
+
                   {(currentDialogue.audio_url || currentDialogue.audio_local) && (
                     <button 
                       className="btn btn-outline"
@@ -1467,6 +1663,80 @@ export default function ConversationTab({
                 </div>
               </div>
 
+              {/* Barra de Control Sticky del Modo Teleprompter Manos Libres */}
+              {teleprompterActive && (
+                <div style={{
+                  position: 'sticky',
+                  top: 70,
+                  zIndex: 40,
+                  background: 'var(--bg-surface)',
+                  border: '2px solid #8b5cf6',
+                  boxShadow: '0 8px 30px rgba(139, 92, 246, 0.25)',
+                  borderRadius: 20,
+                  padding: '14px 20px',
+                  marginBottom: 20,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 14,
+                  flexWrap: 'wrap'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: '50%',
+                      background: teleprompterPhase === 'listening' ? '#ef4444' : (teleprompterPhase === 'success' ? '#10b981' : '#8b5cf6'),
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 900,
+                      fontSize: '1.2rem',
+                      animation: (teleprompterPhase === 'listening' || teleprompterPhase === 'countdown') ? 'pulse 1s infinite' : 'none'
+                    }}>
+                      {teleprompterPhase === 'countdown' ? countdownSeconds : (teleprompterPhase === 'listening' ? <Mic size={22} /> : (teleprompterPhase === 'success' ? <Check size={24} /> : <Volume2 size={22} />))}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span>Teleprompter Manos Libres</span>
+                        <span style={{ fontSize: '0.72rem', background: 'rgba(139, 92, 246, 0.15)', color: '#8b5cf6', padding: '2px 8px', borderRadius: 8 }}>
+                          Línea {teleprompterIndex + 1} de {currentDialogue.dialogue.length}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                        {teleprompterPhase === 'playing_partner' && `Escuchando a ${currentDialogue.dialogue[teleprompterIndex]?.speaker || 'interlocutor'}...`}
+                        {teleprompterPhase === 'countdown' && `¡Prepárate! Tu turno en ${countdownSeconds} segundo${countdownSeconds > 1 ? 's' : ''}...`}
+                        {teleprompterPhase === 'listening' && '🎙️ ¡Tu turno! Habla claro al micrófono (umbral estricto 75%)'}
+                        {teleprompterPhase === 'success' && `✓ ¡Pronunciación validada con éxito! (${Math.round((teleprompterScore || 1) * 100)}%) Avanzando...`}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    {teleprompterPhase === 'listening' && (
+                      <button
+                        type="button"
+                        onClick={handleTeleprompterSkip}
+                        className="btn btn-outline btn-sm"
+                        style={{ borderRadius: 10, fontSize: '0.78rem', fontWeight: 700 }}
+                        title="Saltar esta frase si no puedes pronunciarla ahora"
+                      >
+                        Saltar frase ⏭️
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={stopTeleprompter}
+                      className="btn btn-danger btn-sm"
+                      style={{ borderRadius: 10, fontSize: '0.78rem', fontWeight: 700 }}
+                    >
+                      Detener
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Chat-style Dialogue Stream */}
               <div className="dialogue-chat-stream">
                 {currentDialogue.dialogue.map((d, idx) => {
@@ -1481,11 +1751,21 @@ export default function ConversationTab({
                   const bubbleAlignClass = isSecondSpeaker ? 'bubble-right' : 'bubble-left';
                   const isKanaRevealed = !!revealedKanaIndices[idx];
                   const isEsRevealed = !!revealedEsIndices[idx];
+                  const isTeleprompterCurrent = teleprompterActive && teleprompterIndex === idx;
 
                   return (
                     <div 
                       key={idx}
-                      className={`dialogue-card-item dialogue-chat-bubble ${bubbleAlignClass} ${isMuted ? 'is-roleplay-user' : ''}`}
+                      id={`dialogue-line-${idx}`}
+                      className={`dialogue-card-item dialogue-chat-bubble ${bubbleAlignClass} ${isMuted ? 'is-roleplay-user' : ''} ${isTeleprompterCurrent ? 'teleprompter-active-card' : ''}`}
+                      style={isTeleprompterCurrent ? {
+                        border: '2.5px solid #8b5cf6',
+                        boxShadow: '0 0 24px rgba(139, 92, 246, 0.4)',
+                        transform: 'scale(1.01)',
+                        transition: 'all 0.3s ease'
+                      } : {
+                        transition: 'all 0.3s ease'
+                      }}
                     >
                       {/* Top Header Row: Speaker Identification on Left, Action Buttons on Right */}
                       <div className="dialogue-card-header">
@@ -1517,6 +1797,23 @@ export default function ConversationTab({
                           ) : (
                             <span className="dialogue-turn-tag">#{idx + 1}</span>
                           )}
+
+                          {isTeleprompterCurrent && (
+                            <span style={{
+                              fontSize: '0.72rem',
+                              background: teleprompterPhase === 'listening' ? '#ef4444' : (teleprompterPhase === 'success' ? '#10b981' : '#8b5cf6'),
+                              color: '#fff',
+                              padding: '2px 8px',
+                              borderRadius: 8,
+                              fontWeight: 800,
+                              animation: (teleprompterPhase === 'listening' || teleprompterPhase === 'countdown') ? 'pulse 1s infinite' : 'none'
+                            }}>
+                              {teleprompterPhase === 'playing_partner' && '🔊 Hablando...'}
+                              {teleprompterPhase === 'countdown' && `⏱️ Tu turno en ${countdownSeconds}s`}
+                              {teleprompterPhase === 'listening' && '🎙️ ¡HABLA AHORA!'}
+                              {teleprompterPhase === 'success' && `✓ Aprobado (${Math.round((teleprompterScore || 1) * 100)}%)`}
+                            </span>
+                          )}
                         </div>
 
                         {/* Action buttons toolbar: Audio, SpeechPractice & Handwriting practice */}
@@ -1536,8 +1833,12 @@ export default function ConversationTab({
                             targetText={lineJp} 
                             targetKana={lineKana} 
                             compact={true} 
-                            onMatch={() => {
-                              if (onUpdateState && appState) {
+                            threshold={0.75}
+                            autoListen={teleprompterActive && teleprompterPhase === 'listening' && teleprompterIndex === idx}
+                            onMatch={(spoken, score) => {
+                              if (teleprompterActive && teleprompterIndex === idx) {
+                                handleTeleprompterSpeechSuccess(spoken, score);
+                              } else if (onUpdateState && appState) {
                                 onUpdateState({
                                   ...appState,
                                   xp: (appState.xp || 0) + 5

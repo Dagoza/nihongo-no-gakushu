@@ -277,7 +277,16 @@ export function diffStrings(spoken, target) {
   return { sDiff, tDiff };
 }
 
-export default function SpeechPractice({ targetText, targetKana, acceptableReadings, onMatch, compact = false }) {
+export default function SpeechPractice({
+  targetText,
+  targetKana,
+  acceptableReadings,
+  onMatch,
+  onResult,
+  compact = false,
+  threshold = 0.75,
+  autoListen = false
+}) {
   const [mounted, setMounted] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -345,6 +354,17 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
       evaluatePronunciation(transcript);
     }
   }, [isListening, transcript]);
+
+  // Soporte de auto-escucha para bucles continuos (Teleprompter)
+  useEffect(() => {
+    if (autoListen && isSupported && recognitionRef.current && !isListening) {
+      try {
+        recognitionRef.current.start();
+      } catch (err) {
+        // Recognition might already be running
+      }
+    }
+  }, [autoListen, isSupported, targetText]);
 
   // Auto dismiss feedback banner after a reasonable delay
   useEffect(() => {
@@ -447,11 +467,13 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
     const targetHira = textToHiragana(targetKana || targetText);
 
     let isMatch = false;
+    let score = 0;
 
     // 1. Direct variant match (accepts both Kanji and Kana, okurigana variations, numbers)
     for (const sv of spokenVariants) {
       if (candidates.includes(sv)) {
         isMatch = true;
+        score = 1.0;
         break;
       }
     }
@@ -460,6 +482,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
     if (!isMatch && spokenHira && targetHira) {
       if (spokenHira === targetHira) {
         isMatch = true;
+        score = 1.0;
       }
     }
 
@@ -470,8 +493,27 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
         const candHira = textToHiragana(cand);
         if (spokenHira === candHira) {
           isMatch = true;
+          score = 1.0;
           break;
         }
+      }
+    }
+
+    // Calcular score de similitud LCS con el mejor candidato fonético
+    const bestCand = getBestCandidate(spoken);
+    const bestCandHira = textToHiragana(cleanText(bestCand));
+    const lcsDirect = getLcsLength(cleanSpoken, cleanText(bestCand));
+    const maxDirectLen = Math.max(cleanSpoken.length, cleanText(bestCand).length) || 1;
+    const lcsHira = getLcsLength(spokenHira, bestCandHira);
+    const maxHiraLen = Math.max(spokenHira.length, bestCandHira.length) || 1;
+    const similarityScore = Math.max(lcsDirect / maxDirectLen, lcsHira / maxHiraLen);
+
+    if (isMatch) {
+      score = Math.max(score, similarityScore, 0.95);
+    } else {
+      score = similarityScore;
+      if (score >= threshold) {
+        isMatch = true;
       }
     }
 
@@ -489,6 +531,7 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
             (spokenHira && candHira && (spokenHira.includes(candHira) || candHira.includes(spokenHira)))
           ) {
             isMatch = true;
+            score = Math.max(score, 0.8);
             break;
           }
         }
@@ -499,17 +542,24 @@ export default function SpeechPractice({ targetText, targetKana, acceptableReadi
           const maxLen = Math.max(spokenHira.length, candHira.length);
           if (lcs / maxLen >= 0.85) {
             isMatch = true;
+            score = Math.max(score, lcs / maxLen);
             break;
           }
         }
       }
     }
 
+    score = Math.round(score * 100) / 100;
+
     if (isMatch) {
       setFeedback('match');
-      if (onMatch) onMatch(spoken);
+      if (onMatch) onMatch(spoken, score);
     } else {
       setFeedback('nomatch');
+    }
+
+    if (onResult) {
+      onResult({ isMatch, score, spoken });
     }
   };
 

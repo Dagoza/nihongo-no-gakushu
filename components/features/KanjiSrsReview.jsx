@@ -17,6 +17,7 @@ import {
   BookOpen, 
   Zap
 } from 'lucide-react';
+import * as wanakana from 'wanakana';
 import audioManager from '../../lib/audioManager';
 import { 
   SRSRating, 
@@ -24,10 +25,12 @@ import {
   getRatingInfoFromMistakes, 
   triggerSrsFeedback 
 } from '../../lib/srs';
-import { getPrimaryKanjiReading, getAllKanjiReadings } from '../../lib/japaneseUtils';
+import { getPrimaryKanjiReading, getAllKanjiReadings, katakanaToHiragana } from '../../lib/japaneseUtils';
 import { triggerCheerConfetti } from '../../lib/confetti';
 import kanjiDataDefault from '../../data/kanji.json';
 import KanjiDraw from './KanjiDraw';
+import AudioPlayButton from '../common/AudioPlayButton';
+import QuizOptionsGrid from '../common/QuizOptionsGrid';
 import PitchAccent from './PitchAccent';
 import SpeechPractice from './SpeechPractice';
 
@@ -36,8 +39,9 @@ const KANJI_SRS_MODE_STORAGE_KEY = 'nihongo_kanji_srs_mode_v2';
 
 // Modos de repaso generales
 const REVIEW_MODES = [
-  { id: 'mix', label: 'Mix Dinámico', icon: Shuffle, desc: 'Alterna entre dibujo, test y memoria' },
+  { id: 'mix', label: 'Mix Dinámico', icon: Shuffle, desc: 'Alterna entre dibujo, jukugo, test y memoria' },
   { id: 'choice', label: 'Selección Múltiple', icon: ListChecks, desc: 'Quiz interactivo de significado y kanji' },
+  { id: 'jukugo', label: 'Jukugo Matrix', icon: Sparkles, desc: 'Lectura y significado de compuestos' },
   { id: 'draw', label: 'Dibujar Trazo', icon: PenTool, desc: 'Escribe el kanji con el componente KanjiDraw' },
   { id: 'flashcard', label: 'Flashcard Clásica', icon: Layers, desc: 'Tarjeta de memoria tradicional con volteo' },
 ];
@@ -47,7 +51,8 @@ const EXERCISE_TYPES = {
   CHOICE_MEANING: 'choice_meaning', // Dado Kanji -> Elegir significado
   CHOICE_KANJI: 'choice_kanji',     // Dado significado -> Elegir Kanji
   DRAW: 'draw',                     // Dibujar Kanji con KanjiDraw
-  FLASHCARD: 'flashcard'            // Tarjeta clásica de memoria
+  FLASHCARD: 'flashcard',            // Tarjeta clásica de memoria
+  JUKUGO_READING: 'jukugo_reading'  // Compuestos jukugo (Wanakana + Choice)
 };
 
 // Mezclador Fisher-Yates
@@ -81,7 +86,7 @@ export default function KanjiSrsReview({
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem(KANJI_SRS_MODE_STORAGE_KEY);
-        if (saved && ['mix', 'choice', 'draw', 'flashcard'].includes(saved)) {
+        if (saved && ['mix', 'choice', 'jukugo', 'draw', 'flashcard'].includes(saved)) {
           return saved;
         }
       } catch {}
@@ -100,11 +105,24 @@ export default function KanjiSrsReview({
   const [quizSelectedOption, setQuizSelectedOption] = useState(null);
   const [quizIsAnswered, setQuizIsAnswered] = useState(false);
 
+  // Estados del Modo Jukugo Matrix Drill (Dual: tipeo directo + selección múltiple)
+  const [jukugoSubMode, setJukugoSubMode] = useState('typing'); // 'typing' | 'choice'
+  const [jukugoInput, setJukugoInput] = useState('');
+  const [jukugoFeedback, setJukugoFeedback] = useState(null);
+
   // Caché de opciones generadas para evitar re-mezclar en cada render
   const optionsCacheRef = useRef({});
 
   // Elemento activo
   const currentItem = queue[srsReviewIndex];
+
+  // Compuesto Jukugo activo para el kanji actual
+  const targetJukugo = useMemo(() => {
+    if (!currentItem || !currentItem.words || currentItem.words.length === 0) return null;
+    const wordList = currentItem.words.filter(w => w.reading && (w.meaning || w.meaning_es));
+    const listToUse = wordList.length > 0 ? wordList : currentItem.words;
+    return listToUse[srsReviewIndex % listToUse.length];
+  }, [currentItem, srsReviewIndex]);
 
   // Determinar el tipo de ejercicio para el kanji actual
   const currentExerciseType = useMemo(() => {
@@ -120,6 +138,13 @@ export default function KanjiSrsReview({
       return srsReviewIndex % 2 === 0 ? EXERCISE_TYPES.CHOICE_MEANING : EXERCISE_TYPES.CHOICE_KANJI;
     }
 
+    if (activeMode === 'jukugo') {
+      if (currentItem.words && currentItem.words.length > 0) {
+        return EXERCISE_TYPES.JUKUGO_READING;
+      }
+      return EXERCISE_TYPES.CHOICE_MEANING;
+    }
+
     if (activeMode === 'draw') {
       return EXERCISE_TYPES.DRAW;
     }
@@ -129,12 +154,13 @@ export default function KanjiSrsReview({
     }
 
     // Modo MIX DINÁMICO: Distribución balanceada e interactiva
-    // 0: Meaning Quiz -> 1: Dibujar Trazo -> 2: Kanji Quiz -> 3: Dibujar Trazo -> 4: Flashcard
-    const cycle = srsReviewIndex % 5;
+    // 0: Meaning Quiz -> 1: Dibujar Trazo -> 2: Jukugo Drill (si tiene words) -> 3: Kanji Quiz -> 4: Dibujar Trazo -> 5: Flashcard
+    const cycle = srsReviewIndex % 6;
     if (cycle === 0) return EXERCISE_TYPES.CHOICE_MEANING;
     if (cycle === 1) return EXERCISE_TYPES.DRAW;
-    if (cycle === 2) return EXERCISE_TYPES.CHOICE_KANJI;
-    if (cycle === 3) return EXERCISE_TYPES.DRAW;
+    if (cycle === 2 && currentItem.words && currentItem.words.length > 0) return EXERCISE_TYPES.JUKUGO_READING;
+    if (cycle === 3) return EXERCISE_TYPES.CHOICE_KANJI;
+    if (cycle === 4) return EXERCISE_TYPES.DRAW;
     return EXERCISE_TYPES.FLASHCARD;
   }, [currentItem, cardOverrideMap, activeMode, srsReviewIndex]);
 
@@ -160,6 +186,8 @@ export default function KanjiSrsReview({
     setSuggestedRating(null);
     setQuizSelectedOption(null);
     setQuizIsAnswered(false);
+    setJukugoInput('');
+    setJukugoFeedback(null);
   };
 
   // Generación inteligente de opciones para preguntas de selección múltiple
@@ -234,8 +262,34 @@ export default function KanjiSrsReview({
       return finalOptions;
     }
 
+    if (currentExerciseType === EXERCISE_TYPES.JUKUGO_READING && targetJukugo) {
+      const correctOption = {
+        id: 'correct',
+        reading: targetJukugo.reading,
+        meaning: targetJukugo.meaning || targetJukugo.meaning_es || '',
+        kanji: targetJukugo.word,
+        isCorrect: true
+      };
+
+      const allOtherWords = kanjiListPool
+        .flatMap(k => k.words || [])
+        .filter(w => w && w.reading && w.word !== targetJukugo.word && w.reading !== targetJukugo.reading);
+
+      const shuffledDistractors = shuffleList(allOtherWords).slice(0, 3).map((w, i) => ({
+        id: `dist_${w.word}_${i}`,
+        reading: w.reading,
+        meaning: w.meaning || w.meaning_es || '',
+        kanji: w.word,
+        isCorrect: false
+      }));
+
+      const finalOptions = shuffleList([correctOption, ...shuffledDistractors]);
+      optionsCacheRef.current[cacheKey] = finalOptions;
+      return finalOptions;
+    }
+
     return [];
-  }, [currentItem, currentExerciseType, allKanjis]);
+  }, [currentItem, currentExerciseType, allKanjis, targetJukugo]);
 
   // Limpiar y resetear estados al cambiar de tarjeta
   const resetCardState = useCallback(() => {
@@ -243,7 +297,68 @@ export default function KanjiSrsReview({
     setSuggestedRating(null);
     setQuizSelectedOption(null);
     setQuizIsAnswered(false);
+    setJukugoInput('');
+    setJukugoFeedback(null);
   }, []);
+
+  // Manejo de Respuesta para Jukugo Matrix Drill (Tipeo)
+  const handleValidateJukugoInput = useCallback(() => {
+    if (!targetJukugo || !jukugoInput.trim()) return;
+    const cleanInput = katakanaToHiragana(jukugoInput.trim());
+    const expectedHira = katakanaToHiragana(targetJukugo.reading.trim());
+    const isCorrect = cleanInput === expectedHira;
+
+    setIsRevealed(true);
+    setQuizIsAnswered(true);
+
+    if (isCorrect) {
+      setJukugoFeedback({
+        type: 'correct',
+        msg: '🎉 ¡Lectura contextual correcta!',
+        reading: `${targetJukugo.word} = ${targetJukugo.reading}`
+      });
+      setSuggestedRating(SRSRating.GOOD);
+      triggerCheerConfetti();
+      triggerSrsFeedback(SRSRating.GOOD);
+    } else {
+      setJukugoFeedback({
+        type: 'wrong',
+        msg: `❌ Incorrecto. Lectura correcta: ${targetJukugo.reading}`,
+        reading: `${targetJukugo.word} = ${targetJukugo.reading}`
+      });
+      setSuggestedRating(SRSRating.AGAIN);
+      triggerSrsFeedback(SRSRating.AGAIN);
+    }
+    audioManager.speak(targetJukugo.reading);
+  }, [targetJukugo, jukugoInput]);
+
+  // Manejo de Respuesta para Jukugo Matrix Drill (Opción Múltiple)
+  const handleSelectJukugoOption = useCallback((opt) => {
+    if (quizIsAnswered || !targetJukugo) return;
+    setIsRevealed(true);
+    setQuizIsAnswered(true);
+    setQuizSelectedOption(opt.id);
+
+    if (opt.isCorrect) {
+      setJukugoFeedback({
+        type: 'correct',
+        msg: '🎉 ¡Compuesto acertado!',
+        reading: `${targetJukugo.word} = ${targetJukugo.reading}`
+      });
+      setSuggestedRating(SRSRating.GOOD);
+      triggerCheerConfetti();
+      triggerSrsFeedback(SRSRating.GOOD);
+    } else {
+      setJukugoFeedback({
+        type: 'wrong',
+        msg: `❌ Incorrecto. Lectura correcta: ${targetJukugo.reading}`,
+        reading: `${targetJukugo.word} = ${targetJukugo.reading}`
+      });
+      setSuggestedRating(SRSRating.AGAIN);
+      triggerSrsFeedback(SRSRating.AGAIN);
+    }
+    audioManager.speak(targetJukugo.reading);
+  }, [quizIsAnswered, targetJukugo]);
 
   // Manejo de Respuesta en Selección Múltiple
   const handleSelectOption = useCallback((index) => {
@@ -697,6 +812,24 @@ export default function KanjiSrsReview({
             >
               🎴 Card
             </button>
+            {currentItem?.words && currentItem.words.length > 0 && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs"
+                onClick={() => handleOverrideExercise(EXERCISE_TYPES.JUKUGO_READING)}
+                style={{
+                  fontSize: '0.72rem',
+                  padding: '3px 8px',
+                  borderRadius: 6,
+                  fontWeight: currentExerciseType === EXERCISE_TYPES.JUKUGO_READING ? 700 : 400,
+                  color: currentExerciseType === EXERCISE_TYPES.JUKUGO_READING ? 'var(--primary)' : 'var(--text-muted)',
+                  background: currentExerciseType === EXERCISE_TYPES.JUKUGO_READING ? 'rgba(99, 102, 241, 0.12)' : 'transparent'
+                }}
+                title="Cambiar a Jukugo Matrix Drill"
+              >
+                🧩 Jukugo
+              </button>
+            )}
           </div>
         </div>
 
@@ -729,100 +862,24 @@ export default function KanjiSrsReview({
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}>
-              <button 
-                type="button"
-                className="btn btn-outline btn-xs"
-                onClick={() => audioManager.speak(primaryReading || currentItem.kanji)}
-                style={{ fontSize: '0.75rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 5 }}
+              <AudioPlayButton
+                text={currentItem.kanji}
+                reading={primaryReading}
+                size="xs"
+                variant="outline"
+                label="Pista de Audio"
                 title="Escuchar audio de lectura"
-              >
-                <Volume2 size={13} /> Pista de Audio
-              </button>
+              />
             </div>
 
             {/* Grid de 4 opciones */}
-            <div 
-              style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
-                gap: 10,
-                marginTop: 8,
-                marginBottom: 16
-              }}
-            >
-              {currentOptions.map((opt, idx) => {
-                const letters = ['A', 'B', 'C', 'D'];
-                const isSelected = quizSelectedOption === idx;
-                const isCorrect = opt.isCorrect;
-                
-                let btnStyle = {
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  padding: '12px 14px',
-                  borderRadius: 12,
-                  border: '1.5px solid var(--border)',
-                  background: 'var(--bg-surface)',
-                  color: 'var(--text-main)',
-                  cursor: quizIsAnswered ? 'default' : 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.18s ease',
-                  fontSize: '0.9rem',
-                  gap: 10
-                };
-
-                if (quizIsAnswered) {
-                  if (isCorrect) {
-                    btnStyle.background = 'rgba(16, 185, 129, 0.14)';
-                    btnStyle.borderColor = '#10b981';
-                    btnStyle.color = '#10b981';
-                  } else if (isSelected && !isCorrect) {
-                    btnStyle.background = 'rgba(239, 68, 68, 0.14)';
-                    btnStyle.borderColor = '#ef4444';
-                    btnStyle.color = '#ef4444';
-                  } else {
-                    btnStyle.opacity = 0.55;
-                  }
-                }
-
-                return (
-                  <button
-                    key={opt.id || idx}
-                    type="button"
-                    onClick={() => handleSelectOption(idx)}
-                    disabled={quizIsAnswered}
-                    style={btnStyle}
-                  >
-                    <span 
-                      style={{ 
-                        width: 26, 
-                        height: 26, 
-                        borderRadius: '50%', 
-                        background: isSelected && !isCorrect ? '#ef4444' : (quizIsAnswered && isCorrect ? '#10b981' : 'var(--bg-main)'),
-                        color: (quizIsAnswered && (isCorrect || (isSelected && !isCorrect))) ? '#ffffff' : 'var(--text-muted)',
-                        border: '1px solid var(--border)',
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        flexShrink: 0
-                      }}
-                    >
-                      {quizIsAnswered && isCorrect ? <Check size={14} /> : (quizIsAnswered && isSelected && !isCorrect ? <X size={14} /> : letters[idx])}
-                    </span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{opt.meaning}</div>
-                      {opt.reading && (
-                        <div className="jp-text" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                          {opt.reading}
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+            <QuizOptionsGrid
+              options={currentOptions}
+              selectedOption={quizSelectedOption}
+              isAnswered={quizIsAnswered}
+              onSelect={(idx) => handleSelectOption(idx)}
+              layout="grid"
+            />
           </div>
         )}
 
@@ -849,89 +906,14 @@ export default function KanjiSrsReview({
             </p>
 
             {/* Grid de 4 Kanjis */}
-            <div 
-              style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(2, 1fr)', 
-                gap: 12,
-                maxWidth: 440,
-                margin: '0 auto 16px auto'
-              }}
-            >
-              {currentOptions.map((opt, idx) => {
-                const letters = ['A', 'B', 'C', 'D'];
-                const isSelected = quizSelectedOption === idx;
-                const isCorrect = opt.isCorrect;
-
-                let btnStyle = {
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px 12px',
-                  borderRadius: 14,
-                  border: '2px solid var(--border)',
-                  background: 'var(--bg-surface)',
-                  color: 'var(--text-main)',
-                  cursor: quizIsAnswered ? 'default' : 'pointer',
-                  transition: 'all 0.18s ease',
-                  position: 'relative'
-                };
-
-                if (quizIsAnswered) {
-                  if (isCorrect) {
-                    btnStyle.background = 'rgba(16, 185, 129, 0.14)';
-                    btnStyle.borderColor = '#10b981';
-                    btnStyle.color = '#10b981';
-                  } else if (isSelected && !isCorrect) {
-                    btnStyle.background = 'rgba(239, 68, 68, 0.14)';
-                    btnStyle.borderColor = '#ef4444';
-                    btnStyle.color = '#ef4444';
-                  } else {
-                    btnStyle.opacity = 0.5;
-                  }
-                }
-
-                return (
-                  <button
-                    key={opt.id || idx}
-                    type="button"
-                    onClick={() => handleSelectOption(idx)}
-                    disabled={quizIsAnswered}
-                    style={btnStyle}
-                  >
-                    <span 
-                      style={{ 
-                        position: 'absolute', 
-                        top: 8, 
-                        left: 8, 
-                        width: 22, 
-                        height: 22, 
-                        borderRadius: '50%', 
-                        background: 'var(--bg-main)', 
-                        border: '1px solid var(--border)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '0.72rem',
-                        fontWeight: 700,
-                        color: 'var(--text-muted)'
-                      }}
-                    >
-                      {letters[idx]}
-                    </span>
-                    <span className="jp-text" style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1.1 }}>
-                      {opt.kanji}
-                    </span>
-                    {opt.strokes && (
-                      <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                        {opt.strokes} trazos
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+            <QuizOptionsGrid
+              options={currentOptions}
+              selectedOption={quizSelectedOption}
+              isAnswered={quizIsAnswered}
+              onSelect={(idx) => handleSelectOption(idx)}
+              layout="kanji-cards"
+              columns={2}
+            />
           </div>
         )}
 
@@ -1000,21 +982,162 @@ export default function KanjiSrsReview({
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-              <button 
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={() => audioManager.speak(primaryReading || currentItem.kanji)}
-                style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+              <AudioPlayButton
+                text={currentItem.kanji}
+                reading={primaryReading}
+                size="sm"
+                variant="outline"
+                label="Pista de Audio"
                 title="Escuchar audio de lectura"
-              >
-                <Volume2 size={14} /> Pista de Audio
-              </button>
+              />
             </div>
           </div>
         )}
 
+        {/* ------------------------------------------------------------- */}
+        {/* FORMATO 5: JUKUGO MATRIX DRILL - LECTURA & SIGNIFICADO DUAL   */}
+        {/* ------------------------------------------------------------- */}
+        {currentExerciseType === EXERCISE_TYPES.JUKUGO_READING && targetJukugo && (
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', background: 'rgba(99, 102, 241, 0.12)', color: 'var(--primary)', borderRadius: 20, fontSize: '0.78rem', fontWeight: 700, marginBottom: 12 }}>
+              <Sparkles size={14} />
+              <span>Jukugo Matrix Drill · Compuesto Contextual</span>
+            </div>
+
+            {/* Palabra Compuesta en Grande */}
+            <div 
+              className="kanji-big-char jp-text" 
+              style={{ 
+                minWidth: 160,
+                padding: '12px 24px',
+                height: 'auto', 
+                fontSize: 'clamp(2.4rem, 8vw, 3.8rem)', 
+                lineHeight: 1.2, 
+                margin: '6px auto 12px auto',
+                borderRadius: 20,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 16px rgba(99, 102, 241, 0.12)',
+                background: 'var(--bg-surface)',
+                border: '1.5px solid var(--border)'
+              }}
+            >
+              {targetJukugo.word}
+            </div>
+
+            <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+              Kanji objetivo: <strong style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>{currentItem.kanji}</strong> · Significado del compuesto: <strong>「{targetJukugo.meaning || targetJukugo.meaning_es}」</strong>
+            </p>
+
+            {/* Alternador de Modo Dual: Tipeo directo Wanakana vs Opción Múltiple */}
+            <div style={{ display: 'inline-flex', gap: 6, background: 'var(--bg-main)', padding: 4, borderRadius: 12, border: '1px solid var(--border)', marginBottom: 16 }}>
+              <button
+                type="button"
+                className={`btn btn-xs ${jukugoSubMode === 'typing' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setJukugoSubMode('typing')}
+                style={{ fontSize: '0.78rem', padding: '4px 10px', borderRadius: 8 }}
+              >
+                ⌨️ Tipear Lectura
+              </button>
+              <button
+                type="button"
+                className={`btn btn-xs ${jukugoSubMode === 'choice' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setJukugoSubMode('choice')}
+                style={{ fontSize: '0.78rem', padding: '4px 10px', borderRadius: 8 }}
+              >
+                🔘 Opción Múltiple
+              </button>
+            </div>
+
+            {/* Modo Tipeo Directo con IME Wanakana */}
+            {jukugoSubMode === 'typing' && !quizIsAnswered && (
+              <div style={{ maxWidth: 360, margin: '0 auto 16px auto' }}>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input
+                    type="text"
+                    className="japanese-input jp-text"
+                    placeholder="Lectura en hiragana..."
+                    value={jukugoInput}
+                    onChange={(e) => {
+                      const converted = wanakana.toKana(e.target.value, { IMEMode: true });
+                      setJukugoInput(converted);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleValidateJukugoInput();
+                    }}
+                    autoFocus
+                    style={{ flex: 1, padding: '10px 14px', fontSize: '1.1rem', textAlign: 'center', borderRadius: 12, border: '1.5px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleValidateJukugoInput}
+                    style={{ padding: '10px 18px', borderRadius: 12, fontWeight: 700 }}
+                  >
+                    Validar
+                  </button>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 6 }}>
+                  🇯🇵 IME Romaji → Kana activo (ej. gakusei → がくせい)
+                </div>
+              </div>
+            )}
+
+            {/* Modo Opción Múltiple */}
+            {jukugoSubMode === 'choice' && !quizIsAnswered && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10, maxWidth: 440, margin: '0 auto 16px auto' }}>
+                {currentOptions.map((opt, i) => (
+                  <button
+                    key={opt.id || i}
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={() => handleSelectJukugoOption(opt)}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: 12,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                  >
+                    <span className="jp-text" style={{ fontSize: '1.15rem', fontWeight: 700 }}>{opt.reading}</span>
+                    {opt.meaning && (
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{opt.meaning}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Feedback del ejercicio Jukugo */}
+            {jukugoFeedback && (
+              <div 
+                style={{ 
+                  marginTop: 12, 
+                  padding: '12px 16px', 
+                  borderRadius: 12, 
+                  background: jukugoFeedback.type === 'correct' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                  border: `1.5px solid ${jukugoFeedback.type === 'correct' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
+                  color: jukugoFeedback.type === 'correct' ? 'var(--success)' : 'var(--danger)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 6
+                }}
+              >
+                <div style={{ fontWeight: 700, fontSize: '0.98rem' }}>{jukugoFeedback.msg}</div>
+                <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 800 }}>
+                  {jukugoFeedback.reading}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ACCIÓN: BOTÓN MOSTRAR RESPUESTA (SI NO ESTÁ REVELADA Y NO ES QUIZ) */}
-        {!isRevealed && currentExerciseType === EXERCISE_TYPES.FLASHCARD && (
+        {!isRevealed && (currentExerciseType === EXERCISE_TYPES.FLASHCARD || currentExerciseType === EXERCISE_TYPES.JUKUGO_READING) && (
           <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
             <button 
               type="button"
@@ -1128,13 +1251,13 @@ export default function KanjiSrsReview({
 
             {/* Botones de Audio y Pronunciación */}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
-              <button 
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={() => audioManager.speak(primaryReading || currentItem.kanji)}
-              >
-                <Volume2 size={15} /> Escuchar
-              </button>
+              <AudioPlayButton
+                text={currentItem.kanji}
+                reading={primaryReading}
+                size="sm"
+                variant="outline"
+                label="Escuchar"
+              />
               <SpeechPractice 
                 targetText={currentItem.kanji} 
                 targetKana={primaryReading} 
@@ -1171,15 +1294,13 @@ export default function KanjiSrsReview({
                           {w.meaning}
                         </div>
                       </div>
-                      <button 
-                        type="button"
-                        className="btn btn-ghost btn-xs"
-                        onClick={() => audioManager.speak(w.reading || w.word)}
-                        style={{ padding: 4, color: 'var(--text-muted)' }}
+                      <AudioPlayButton
+                        text={w.word}
+                        reading={w.reading}
+                        size="xs"
+                        variant="ghost"
                         title="Escuchar palabra"
-                      >
-                        <Volume2 size={13} />
-                      </button>
+                      />
                     </div>
                   ))}
                 </div>

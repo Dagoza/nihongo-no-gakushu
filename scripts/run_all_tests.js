@@ -724,6 +724,11 @@ runTest('calculateOverallProgress calcula techos correctamente y no desborda 100
   assert(typeof partialRes.byLevel.N5.integer === 'number', 'Avance por nivel N5 calculado');
 });
 
+runTest('Validación fonética de kanjis (normalizeKanjiReadingSet: okurigana y cero falsos positivos)', () => {
+  const { execSync } = require('child_process');
+  execSync('node scripts/test_kanji_normalization.mjs', { stdio: 'pipe' });
+});
+
 
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);

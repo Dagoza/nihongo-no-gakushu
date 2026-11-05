@@ -7,6 +7,8 @@ import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpC
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
+import CanDoScrambleChallenge from '../features/CanDoScrambleChallenge';
+import { reviewCard, getNewCard, SRSRating, isDue } from '../../lib/srs';
 import TerminologyTooltip from '../common/TerminologyTooltip';
 import ScrollTimelinePath from '../scroll/ScrollTimelinePath';
 import { triggerGrandConfetti } from '../../lib/confetti';
@@ -148,6 +150,21 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const [selectedStatus, setSelectedStatus] = useState('all'); // 'all' | 'pending' | 'completed'
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // Estado para reto interactivo Can-Do Sentence Scramble
+  const [activeScrambleCanDoId, setActiveScrambleCanDoId] = useState(null);
+
+  // Conteo de repasos curriculares pendientes según FSRS
+  const dueCurriculumCount = useMemo(() => {
+    if (!userState?.srsQuestions) return 0;
+    let count = 0;
+    Object.entries(userState.srsQuestions).forEach(([k, card]) => {
+      if (k.startsWith('cur_ex_') && isDue(card)) {
+        count++;
+      }
+    });
+    return count;
+  }, [userState?.srsQuestions]);
 
   const curriculumTrailRef = useRef(null);
 
@@ -390,17 +407,29 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
       }
     }));
 
-    if (isCorrect && userState && onUpdateState) {
+    if (userState && onUpdateState) {
       // Award XP once and record exercise completion
       const alreadyDone = !!userState.completedExercises?.[exercise.id];
       const updatedExercises = {
         ...(userState.completedExercises || {}),
-        [exercise.id]: true
+        [exercise.id]: isCorrect ? true : (userState.completedExercises?.[exercise.id] || false)
       };
+
+      // FSRS integration: mapear clave cur_ex_${selectedStepNum}_${idx}
+      const curStepObj = steps.find(s => s.step === selectedStepNum);
+      const exIdx = (curStepObj?.exercises || []).findIndex(e => e.id === exercise.id);
+      const exKey = `cur_ex_${selectedStepNum || 1}_${exIdx >= 0 ? exIdx : 0}`;
+      const existingCard = userState.srsQuestions?.[exKey] || userState.srsQuestions?.[exercise.id] || getNewCard();
+      const updatedCard = reviewCard(existingCard, isCorrect ? SRSRating.Good : SRSRating.Again);
+
       onUpdateState({
         ...userState,
         completedExercises: updatedExercises,
-        xp: (userState.xp || 0) + (!alreadyDone ? 5 : 0)
+        srsQuestions: {
+          ...(userState.srsQuestions || {}),
+          [exKey]: updatedCard
+        },
+        xp: (userState.xp || 0) + (isCorrect && !alreadyDone ? 5 : 0)
       });
     }
   };
@@ -1997,6 +2026,41 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                                     </button>
                                   </div>
                                 )}
+
+                                {cd.sample && /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(cd.sample) && (
+                                  <div style={{ marginTop: 8 }}>
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline btn-xs"
+                                      onClick={() => setActiveScrambleCanDoId(activeScrambleCanDoId === cd.id ? null : cd.id)}
+                                      style={{
+                                        fontSize: '0.78rem',
+                                        padding: '4px 10px',
+                                        borderRadius: 8,
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: 5,
+                                        fontWeight: 700,
+                                        color: activeScrambleCanDoId === cd.id ? 'var(--primary)' : 'var(--text-muted)',
+                                        borderColor: activeScrambleCanDoId === cd.id ? 'var(--primary)' : 'var(--border)'
+                                      }}
+                                    >
+                                      <Zap size={13} />
+                                      <span>⚡ Reto Can-Do: Construir Oración</span>
+                                    </button>
+                                  </div>
+                                )}
+
+                                {activeScrambleCanDoId === cd.id && (
+                                  <CanDoScrambleChallenge
+                                    canDo={cd}
+                                    showFurigana={showFurigana}
+                                    onClose={() => setActiveScrambleCanDoId(null)}
+                                    onComplete={() => {
+                                      toggleCanDoCompleted(cd.id);
+                                    }}
+                                  />
+                                )}
                               </div>
                             );
                           })}
@@ -2124,6 +2188,39 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                         <div className="cando-expression-text jp-text" style={{ lineHeight: 1.5 }}>
                           <FuriganaText text={cd.sample} showFurigana={showFurigana} />
                         </div>
+                      )}
+                      {cd.sample && /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(cd.sample) && (
+                        <div style={{ marginTop: 8 }}>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-xs"
+                            onClick={() => setActiveScrambleCanDoId(activeScrambleCanDoId === cd.id ? null : cd.id)}
+                            style={{
+                              fontSize: '0.78rem',
+                              padding: '4px 10px',
+                              borderRadius: 8,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 5,
+                              fontWeight: 700,
+                              color: activeScrambleCanDoId === cd.id ? 'var(--primary)' : 'var(--text-muted)',
+                              borderColor: activeScrambleCanDoId === cd.id ? 'var(--primary)' : 'var(--border)'
+                            }}
+                          >
+                            <Zap size={13} />
+                            <span>⚡ Reto Can-Do: Construir Oración</span>
+                          </button>
+                        </div>
+                      )}
+                      {activeScrambleCanDoId === cd.id && (
+                        <CanDoScrambleChallenge
+                          canDo={cd}
+                          showFurigana={showFurigana}
+                          onClose={() => setActiveScrambleCanDoId(null)}
+                          onComplete={() => {
+                            toggleCanDoCompleted(cd.id);
+                          }}
+                        />
                       )}
                     </div>
                   ))}
@@ -2628,6 +2725,37 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           </div>
         </div>
       </div>
+
+      {/* Banner de Repasos Curriculares Pendientes FSRS */}
+      {dueCurriculumCount > 0 && (
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%)',
+          border: '1.5px solid rgba(99, 102, 241, 0.35)',
+          borderRadius: 16,
+          padding: '14px 20px',
+          marginBottom: 20,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 12
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: '1.5rem' }}>⚡</span>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--text-main)' }}>
+                {dueCurriculumCount} ejercicio{dueCurriculumCount > 1 ? 's' : ''} curricular{dueCurriculumCount > 1 ? 'es' : ''} pendiente{dueCurriculumCount > 1 ? 's' : ''} de repaso espaciado
+              </div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                El algoritmo FSRS v5 ha programado la revisión de estos conceptos para consolidar la memoria a largo plazo.
+              </div>
+            </div>
+          </div>
+          <span className="vocab-tag" style={{ background: 'var(--primary)', color: '#fff', fontWeight: 700, padding: '4px 12px' }}>
+            FSRS v5 Activo
+          </span>
+        </div>
+      )}
 
       {/* Overall Progress Banner */}
       {(() => {

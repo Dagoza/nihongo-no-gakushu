@@ -29,8 +29,10 @@ import {
   getWordKey
 } from '../../lib/vocabTags';
 import useBodyScrollLock from '../../lib/useBodyScrollLock';
+import TagEditorModal from '../modals/TagEditorModal';
 
 // Lazy loading con code-splitting para componentes de alto peso e interactividad
+const VocabSrsReview = dynamic(() => import('../features/VocabSrsReview'), { ssr: false });
 const SrsReview = dynamic(() => import('../features/SrsReview'), { ssr: false });
 const SpeechPractice = dynamic(() => import('../features/SpeechPractice'), { ssr: false });
 const EditWordModal = dynamic(() => import('../modals/EditWordModal'), { ssr: false });
@@ -2029,169 +2031,18 @@ export default function VocabTab({
       )}
 
       {/* MODAL GESTOR DE ETIQUETAS (TAGS) PERSONALIZADAS PARA VOCABULARIO */}
-      {tagEditorWord && (
-        <div 
-          role="dialog"
-          aria-modal="true"
-          aria-label="Gestor de etiquetas para vocabulario"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setTagEditorWord(null);
-              setNewTagInput('');
-            }
-          }}
-          style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-            background: 'rgba(0,0,0,0.6)', zIndex: 1100,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
-            backdropFilter: 'blur(4px)',
-            overscrollBehavior: 'contain'
-          }}
-        >
-          <div className="card" style={{ maxWidth: 440, width: '100%', position: 'relative', padding: '24px 20px', overscrollBehavior: 'contain' }}>
-            <button 
-              type="button"
-              className="btn btn-ghost btn-xs"
-              style={{ position: 'absolute', top: 12, right: 12, borderRadius: '50%', width: 30, height: 30, padding: 0 }}
-              onClick={() => {
-                setTagEditorWord(null);
-                setNewTagInput('');
-              }}
-              title="Cerrar"
-            >
-              <X size={16} />
-            </button>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-              <div className="jp-text" style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>
-                {tagEditorWord.kanji || tagEditorWord.kana}
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
-                  Etiquetas de Vocabulario
-                </h3>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  {tagEditorWord.meaning_es}
-                </div>
-              </div>
-            </div>
-
-            {/* Etiquetas activas */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
-                Etiquetas asignadas:
-              </div>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {getVocabTags(tagEditorWord, appState?.vocabTags).map(tag => (
-                  <span
-                    key={tag}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      background: 'rgba(99, 102, 241, 0.12)',
-                      color: 'var(--primary)',
-                      border: '1px solid rgba(99, 102, 241, 0.3)',
-                      padding: '3px 8px',
-                      borderRadius: 12,
-                      fontSize: '0.82rem',
-                      fontWeight: 700
-                    }}
-                  >
-                    <span>#{tag}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveTagFromCurrent(tag)}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: 'var(--primary)',
-                        padding: 0,
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                      title="Eliminar etiqueta"
-                    >
-                      <X size={13} />
-                    </button>
-                  </span>
-                ))}
-                {getVocabTags(tagEditorWord, appState?.vocabTags).length === 0 && (
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Sin etiquetas asignadas.
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Sugerencias populares */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>
-                Sugerencias populares (haz clic para agregar):
-              </div>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {POPULAR_VOCAB_TAG_SUGGESTIONS.map(sugg => {
-                  const currentTags = getVocabTags(tagEditorWord, appState?.vocabTags);
-                  const isPresent = currentTags.includes(sugg);
-                  return (
-                    <button
-                      key={sugg}
-                      type="button"
-                      className={`btn btn-xs ${isPresent ? 'btn-primary' : 'btn-outline'}`}
-                      style={{ borderRadius: 12, fontSize: '0.75rem', padding: '2px 8px' }}
-                      onClick={() => {
-                        if (isPresent) handleRemoveTagFromCurrent(sugg);
-                        else handleAddTagToCurrent(sugg);
-                      }}
-                    >
-                      {isPresent ? `✓ ${sugg}` : `+ ${sugg}`}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Input para nueva etiqueta personalizada */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              <input 
-                type="text" 
-                className="input-text" 
-                style={{ flex: 1, fontSize: '0.88rem' }}
-                placeholder="Crear nueva etiqueta (ej. Trabajo, Viaje)..."
-                value={newTagInput}
-                onChange={(e) => setNewTagInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAddTagToCurrent(newTagInput);
-                  }
-                }}
-              />
-              <button 
-                type="button" 
-                className="btn btn-primary btn-sm"
-                onClick={() => handleAddTagToCurrent(newTagInput)}
-                disabled={!newTagInput.trim()}
-              >
-                Añadir
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={() => {
-                  setTagEditorWord(null);
-                  setNewTagInput('');
-                }}
-              >
-                Listo
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <TagEditorModal
+        isOpen={Boolean(tagEditorWord)}
+        item={tagEditorWord}
+        type="vocab"
+        currentTags={tagEditorWord ? getVocabTags(tagEditorWord, appState?.vocabTags) : []}
+        onAddTag={handleAddTagToCurrent}
+        onRemoveTag={handleRemoveTagFromCurrent}
+        onClose={() => {
+          setTagEditorWord(null);
+          setNewTagInput('');
+        }}
+      />
 
       {/* Modal para Editar Palabra y Agregar Notas */}
       {editingWord && (

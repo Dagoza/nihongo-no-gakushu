@@ -16,6 +16,7 @@ import jlptExamsData from '../../data/jlpt_exams.json';
 import kanjiData from '../../data/kanji.json';
 import vocabularyData from '../../data/vocabulary.json';
 import particlesData from '../../data/particles.json';
+import curriculumData from '../../data/curriculum.json';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -58,7 +59,8 @@ export default function FsrsStatsModule({
     jlptExams: jlptExamsData || [],
     kanji: kanjiData || [],
     vocabulary: vocabularyData || [],
-    particles: particlesData || []
+    particles: particlesData || [],
+    curriculum: curriculumData || []
   }), []);
 
   // Resumen analítico global de FSRS

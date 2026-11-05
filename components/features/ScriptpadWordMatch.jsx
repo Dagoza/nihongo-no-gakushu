@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, RotateCcw, CheckCircle2, Sparkles, Volume2, ArrowRight, Grid } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { triggerCheerConfetti } from '../../lib/confetti';
+import { reviewCard, getNewCard, SRSRating } from '../../lib/srs';
 
 function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -12,7 +13,9 @@ function shuffle(arr) {
 export default function ScriptpadWordMatch({
   lesson,
   onClose,
-  onComplete
+  onComplete,
+  appState = {},
+  onUpdateState
 }) {
   const allWords = lesson?.words || [];
   const [round, setRound] = useState(0);
@@ -100,6 +103,25 @@ export default function ScriptpadWordMatch({
     } else {
       // Error
       setErrorPair({ leftId: left.id, rightId: right.id });
+
+      // Cierre del bucle FSRS: Penalizar las palabras falladas
+      if (onUpdateState) {
+        const failedWords = [left.word, right.word].filter(Boolean);
+        onUpdateState(prev => {
+          const base = prev || appState || {};
+          let updatedSrs = { ...(base.srsQuestions || {}) };
+          failedWords.forEach(w => {
+            const srsKey = `vocab_${w.id || w.kanji}`;
+            const existing = updatedSrs[srsKey] || getNewCard();
+            updatedSrs[srsKey] = reviewCard(existing, SRSRating.Again);
+          });
+          return {
+            ...base,
+            srsQuestions: updatedSrs
+          };
+        });
+      }
+
       setTimeout(() => {
         setSelectedLeft(null);
         setSelectedRight(null);
