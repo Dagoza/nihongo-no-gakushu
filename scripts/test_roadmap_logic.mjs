@@ -8,7 +8,9 @@ import {
   evaluateSentenceMiningScore, 
   calculateImmersionCoverage,
   getStudyPhase,
-  calculateReviewLoadForecast
+  calculateReviewLoadForecast,
+  isWordMatureInFSRS,
+  isSentenceFSRSMature
 } from '../lib/roadmapLogic.js';
 import { smartSegmentJapanese } from '../lib/japaneseUtils.js';
 
@@ -155,6 +157,31 @@ const forecastPace20 = calculateReviewLoadForecast(20);
 assert(forecastPace20.warning && forecastPace20.warning.includes('Alerta de Sobrecarga'), '20 tarjetas/día debe alertar sobrecarga');
 
 console.log('  ✓ Cálculo de fases (1, 2, 3) y alertas de sobrecarga validadas exitosamente.\n');
+
+
+// --------------------------------------------------------------------------
+// TEST 5: MADUREZ FSRS Y FURIGANA DINÁMICO
+// --------------------------------------------------------------------------
+console.log('5. Probando Madurez FSRS para Furigana Inteligente...');
+
+const matureMockSrs = {
+  'vocab_図書館': {
+    scheduled_days: 25,
+    interval: 25
+  },
+  'vocab_学校': {
+    scheduled_days: 5,
+    interval: 5
+  }
+};
+
+assert.strictEqual(isWordMatureInFSRS('図書館', {}, matureMockSrs), true, 'Palabra con scheduled_days >= 21 debe ser madura');
+assert.strictEqual(isWordMatureInFSRS('学校', {}, matureMockSrs), false, 'Palabra con scheduled_days < 21 no debe ser madura');
+assert.strictEqual(isWordMatureInFSRS('猫', { '猫': true }, {}), true, 'Palabra en masteredVocab debe ser madura');
+assert.strictEqual(isSentenceFSRSMature('図書館へ行く', { '行く': true }, matureMockSrs), true, 'Oración con todas las palabras maduras debe ser madura');
+assert.strictEqual(isSentenceFSRSMature('学校へ行く', { '行く': true }, matureMockSrs), false, 'Oración con palabra inmadura no debe ser madura');
+
+console.log('  ✓ isWordMatureInFSRS e isSentenceFSRSMature validan correctamente el umbral >= 21 días de FSRS.\n');
 
 console.log('======================================================');
 console.log('✓ TODOS LOS CASOS DE PRUEBA DE HOJA DE RUTA SUPERADOS');

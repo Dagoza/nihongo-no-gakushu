@@ -332,6 +332,12 @@ export default function StoryTab({
           return `<ruby class="ruby-clickable furigana-ruby fsrs-known" data-word="${k}" title="Dominada / FSRS ≥ 21 días (Furigana oculto)">${k}</ruby>`;
         }
       }
+      if (readingMode === 'jlpt_level') {
+        const isBasicKanji = /^[一-龯]+$/.test(k) && (appState?.masteredKanji?.[k] || ['一','二','三','四','五','六','七','八','九','十','百','千','万','日','月','火','水','木','金','土','年','時','分','人','男','女','子','友','何','大','小','中','上','下','前','後','右','左','本','語','行','来','見','聞','食','飲','買','書','話','読'].includes(k));
+        if (isBasicKanji) {
+          return `<ruby class="ruby-clickable furigana-ruby jlpt-known" data-word="${k}" title="Kanji elemental N5 (Furigana oculto)">${k}</ruby>`;
+        }
+      }
       return `<ruby class="ruby-clickable furigana-ruby" data-word="${k}">${k}<rt>${mergedDict[k]}</rt></ruby>`;
     });
 
@@ -992,6 +998,16 @@ export default function StoryTab({
             title="Oculta el furigana solo en kanjis y palabras maduras (FSRS ≥ 21 días o dominadas)"
           >
             🧠 FSRS Inteligente
+          </button>
+          <button 
+            className={`mode-btn ${readingMode === 'jlpt_level' ? 'active' : ''}`}
+            onClick={() => {
+              setReadingMode('jlpt_level');
+              if (onParamsChange) onParamsChange({ id: selectedStoryId, chapter: currentChapter, mode: 'jlpt_level' });
+            }}
+            title="Oculta el furigana en kanjis elementales del nivel base (N5) estilo Mekuru"
+          >
+            🎯 Según Nivel JLPT
           </button>
           <button 
             className={`mode-btn ${readingMode === 'hiragana' ? 'active' : ''}`}

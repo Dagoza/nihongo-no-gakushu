@@ -10,7 +10,7 @@ import irodoriDialoguesData from '../../data/irodori_dialogues.json';
 import conversationExercisesData from '../../data/conversation_exercises.json';
 import { useApp } from '../../lib/AppContext';
 import { triggerGrandConfetti } from '../../lib/confetti';
-import { calculateImmersionCoverage, evaluateSentenceMiningScore } from '../../lib/roadmapLogic';
+import { calculateImmersionCoverage, evaluateSentenceMiningScore, isSentenceFSRSMature } from '../../lib/roadmapLogic';
 import { getNewCard } from '../../lib/srs';
 
 // Lazy loading con code-splitting para componentes pesados
@@ -211,6 +211,17 @@ export default function ConversationTab({
   // Raw Listening 2-Step Mode (Shoui Method)
   const [rawListeningActive, setRawListeningActive] = useState(false);
   const [rawListeningStep, setRawListeningStep] = useState(1); // 1: Texto Difuminado, 2: Revelado & Minado
+
+  // Auto-transición en Modo Raw Listening cuando termina la reproducción de audio
+  useEffect(() => {
+    if (!rawListeningActive || rawListeningStep !== 1) return;
+    const unsubscribe = audioManager.subscribe((info) => {
+      if (info.state === 'idle') {
+        setRawListeningStep(2);
+      }
+    });
+    return unsubscribe;
+  }, [rawListeningActive, rawListeningStep]);
 
   // Smart 1T Sentence Mining & Mental Output
   const [minedDialogueSentences, setMinedDialogueSentences] = useState({});
@@ -2097,7 +2108,7 @@ export default function ConversationTab({
 
                             {/* Pronunciation / Kana Reading with Active Recall toggle & FSRS Smart mode */}
                             {lineKana && lineKana !== lineJp && (
-                              (showFurigana && (!smartFuriganaFsrs || !appState?.masteredVocab?.[lineJp])) ? (
+                              (showFurigana && (!smartFuriganaFsrs || !isSentenceFSRSMature(lineJp, appState?.masteredVocab, appState?.srsQuestions))) ? (
                                 <div 
                                   className="dialogue-card-kana jp-text"
                                   style={rawListeningActive && rawListeningStep === 1 ? { filter: 'blur(7px)', userSelect: 'none' } : {}}
@@ -2272,9 +2283,24 @@ export default function ConversationTab({
                           Adquisición Subconsciente
                         </span>
                       </div>
-                      <p style={{ fontSize: '0.88rem', color: 'var(--text-main)', margin: 0, lineHeight: 1.5 }}>
-                        Antes de pasar a otro diálogo: cierra los ojos durante 30 segundos y visualízate en Japón. Recrea en tu mente cómo responderías a cada interlocutor, sintiendo la cadencia tonal sin traducir al español.
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-main)', margin: '0 0 8px 0', lineHeight: 1.5 }}>
+                        <strong>Reto de 1 oración (Shoui Method):</strong> ¿Cómo dirías esta frase cambiando un elemento con tus propias palabras?
                       </p>
+                      {(() => {
+                        const modelTurn = currentDialogue?.dialogue?.find(d => (d.jp || d.japanese || '').length >= 6) || currentDialogue?.dialogue?.[0];
+                        const modelJp = modelTurn?.jp || modelTurn?.japanese || '初めまして。よろしくお願いします。';
+                        const modelEs = modelTurn?.es || modelTurn?.spanish || 'Mucho gusto.';
+                        return (
+                          <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 8, border: '1px solid var(--border)', fontSize: '0.82rem' }}>
+                            <div className="jp-text" style={{ fontWeight: 700, color: 'var(--primary)' }}>
+                              Frase modelo: {modelJp}
+                            </div>
+                            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                              ({modelEs}) — Adapta mentalmente un elemento (sujeto, lugar, objeto) y pronúncialo mentalmente.
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
@@ -3095,7 +3121,7 @@ export default function ConversationTab({
 
                                 {/* Pronunciation / Kana Reading with Active Recall toggle */}
                                 {lineKana && lineKana !== lineJp && (
-                                  showFurigana ? (
+                                  (showFurigana && (!smartFuriganaFsrs || !isSentenceFSRSMature(lineJp, appState?.masteredVocab, appState?.srsQuestions))) ? (
                                     <div className="dialogue-card-kana jp-text">
                                       {lineKana}
                                     </div>

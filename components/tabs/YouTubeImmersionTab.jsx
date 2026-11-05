@@ -10,6 +10,7 @@ import youtubeCatalog from '../../data/youtube_catalog.json';
 import vocabularyData from '../../data/vocabulary.json';
 import kanjiData from '../../data/kanji.json';
 import { tokenizeJapanese, formatTimestamp, containsKanji, katakanaToHiragana } from '../../lib/japaneseUtils';
+import { isWordMatureInFSRS } from '../../lib/roadmapLogic';
 
 const YouTubePlayer = dynamic(() => import('../features/YouTubePlayer'), { ssr: false });
 const SaveVocabModal = dynamic(() => import('../modals/SaveVocabModal'), { ssr: false });
@@ -87,9 +88,27 @@ export default function YouTubeImmersionTab({
   const [autoPauseAfterCue, setAutoPauseAfterCue] = useState(false);
   const [showSpanishTranslation, setShowSpanishTranslation] = useState(true);
   const [showFurigana, setShowFurigana] = useState(true);
+  const [furiganaMode, setFuriganaMode] = useState('all'); // 'all' (Todos) | 'jlpt' (Según Nivel JLPT) | 'smart' (Inteligente FSRS >= 21 días) | 'off'
+  const [rawListeningActive, setRawListeningActive] = useState(false);
+  const [rawListeningStep, setRawListeningStep] = useState(1); // 1: Solo Oído (difuminado), 2: Revelado & Minado
   const [transcriptSearch, setTranscriptSearch] = useState('');
   const [activeTrackLang, setActiveTrackLang] = useState(currentVideo?.spokenLanguage || 'ja');
   const [changingTrackLoading, setChangingTrackLoading] = useState(false);
+
+  // Helper para Furigana Dinámico estilo Mekuru en subtítulos
+  const shouldShowFurigana = (wordText, hasKanji, readingKana) => {
+    if (!hasKanji || !readingKana || !showFurigana || furiganaMode === 'off') return false;
+    if (furiganaMode === 'all') return true;
+    if (furiganaMode === 'smart') {
+      const isMature = isWordMatureInFSRS(wordText, appState?.masteredVocab, appState?.srsQuestions);
+      return !isMature;
+    }
+    if (furiganaMode === 'jlpt') {
+      const isBasicN5 = (appState?.masteredKanji?.[wordText] || ['一','二','三','四','五','六','七','八','九','十','百','千','万','日','月','火','水','木','金','土','年','時','分','人','男','女','子','友','何','大','小','中','上','下','前','後','右','左','本','語','行','来','見','聞','食','飲','買','書','話','読'].includes(wordText));
+      return !isBasicN5;
+    }
+    return true;
+  };
 
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
@@ -561,7 +580,7 @@ export default function YouTubeImmersionTab({
                   }}
                   title={readingKana ? `${token.text} [${readingKana}] (${token.pos || 'palabra'}) - Clic para guardar` : `Clic para guardar: ${token.text}`}
                 >
-                  {showFurigana && hasKanji && readingKana ? (
+                  {shouldShowFurigana(token.lemma || token.text, hasKanji, readingKana) ? (
                     <ruby className="furigana-ruby">
                       {token.text}
                       <rt className="furigana-rt">{readingKana}</rt>
@@ -606,7 +625,7 @@ export default function YouTubeImmersionTab({
                 }}
                 title={readingKana ? `${token.text} [${readingKana}] - Clic para analizar y guardar` : `Clic para analizar y guardar: ${token.text}`}
               >
-                {showFurigana && hasKanji && readingKana ? (
+                {shouldShowFurigana(token.text, hasKanji, readingKana) ? (
                   <ruby className="furigana-ruby">
                     {token.text}
                     <rt className="furigana-rt">{readingKana}</rt>
@@ -1404,16 +1423,60 @@ export default function YouTubeImmersionTab({
                 </div>
               )}
 
+              {/* Banner de Modo Raw Listening */}
+              {rawListeningActive && (
+                <div style={{
+                  padding: '10px 14px',
+                  background: rawListeningStep === 1 ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.12) 100%)' : 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%)',
+                  border: rawListeningStep === 1 ? '1.5px solid rgba(239, 68, 68, 0.35)' : '1.5px solid rgba(16, 185, 129, 0.35)',
+                  borderRadius: 'var(--radius-md)',
+                  marginBottom: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                  flexWrap: 'wrap'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: '1.2rem' }}>{rawListeningStep === 1 ? '🎧' : '👁️'}</span>
+                    <div>
+                      <strong style={{ fontSize: '0.86rem', color: rawListeningStep === 1 ? '#dc2626' : '#059669' }}>
+                        {rawListeningStep === 1 ? '1ª Pasada: Solo Oído (Subtítulos Difuminados)' : '2ª Pasada: Subtítulos Revelados & Minado Desbloqueado'}
+                      </strong>
+                      <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                        {rawListeningStep === 1
+                          ? 'Escucha en crudo sin soporte visual de kanjis (Shoui Method).'
+                          : 'Comprueba tu audición y mina palabras/frases hacia tu cuaderno.'}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className={`btn btn-xs ${rawListeningStep === 1 ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setRawListeningStep(rawListeningStep === 1 ? 2 : 1)}
+                    style={{ fontWeight: 800 }}
+                  >
+                    {rawListeningStep === 1 ? 'Pasar a 2ª Pasada (Revelar) 👁️' : 'Repetir 1ª Pasada (Difuminar) 🎧'}
+                  </button>
+                </div>
+              )}
+
               {/* Subtítulo Dinámico Karaoke debajo del video */}
               <div className="karaoke-subtitle-box">
                 {activeCue ? (
                   <div className="active-cue-display">
-                    <div className="active-cue-japanese jp-text">
+                    <div 
+                      className="active-cue-japanese jp-text"
+                      style={rawListeningActive && rawListeningStep === 1 ? { filter: 'blur(7px)', userSelect: 'none', transition: 'filter 0.3s' } : { transition: 'filter 0.3s' }}
+                    >
                       {renderInteractiveSentence(activeCue.text, activeCue)}
                     </div>
 
                     {showSpanishTranslation && (
-                      <div className="active-cue-spanish">
+                      <div 
+                        className="active-cue-spanish"
+                        style={rawListeningActive && rawListeningStep === 1 ? { filter: 'blur(7px)', userSelect: 'none', transition: 'filter 0.3s' } : { transition: 'filter 0.3s' }}
+                      >
                         {(activeCue.translation_es || activeCue.translation_en) ? (
                           activeCue.translation_es || activeCue.translation_en
                         ) : (
@@ -1434,14 +1497,16 @@ export default function YouTubeImmersionTab({
                         <span>Escuchar</span>
                       </button>
 
-                      <button
-                        className="cue-action-btn"
-                        onClick={() => handleOpenSavePhrase(activeCue)}
-                        title="Guardar esta frase en mi cuaderno con timestamp"
-                      >
-                        <Bookmark size={15} />
-                        <span>Guardar Frase</span>
-                      </button>
+                      {(!rawListeningActive || rawListeningStep === 2) && (
+                        <button
+                          className="cue-action-btn"
+                          onClick={() => handleOpenSavePhrase(activeCue)}
+                          title="Guardar esta frase en mi cuaderno con timestamp"
+                        >
+                          <Bookmark size={15} />
+                          <span>Guardar Frase</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -1513,15 +1578,42 @@ export default function YouTubeImmersionTab({
                     <span>Modo Shadowing {autoPauseAfterCue ? '(Activado)' : ''}</span>
                   </button>
 
-                  {/* Toggle Furigana */}
+                  {/* Modo Raw Listening */}
                   <button
-                    className={`toggle-feature-btn ${showFurigana ? 'active' : ''}`}
-                    onClick={() => setShowFurigana(!showFurigana)}
-                    title="Activar u ocultar lectura furigana sobre los kanjis"
+                    className={`toggle-feature-btn ${rawListeningActive ? 'active' : ''}`}
+                    onClick={() => {
+                      setRawListeningActive(!rawListeningActive);
+                      setRawListeningStep(1);
+                    }}
+                    title="Modo Raw Listening (Shoui Method): 1ª pasada solo oído (subtítulos difuminados) y 2ª pasada con subtítulos revelados para minado"
                   >
-                    <Languages size={16} />
-                    <span>{showFurigana ? 'Furigana On' : 'Furigana Off'}</span>
+                    <span>{rawListeningActive ? '🎧 Solo Oído ACTIVO' : '🎧 Raw Listening'}</span>
                   </button>
+
+                  {/* Selector Furigana Dinámico Estilo Mekuru */}
+                  <div style={{ display: 'inline-flex', alignItems: 'center', background: 'var(--bg-card)', padding: '2px 4px', borderRadius: 8, border: '1px solid var(--border)', gap: 3 }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '0 4px', color: 'var(--text-muted)' }}>Furigana:</span>
+                    {[
+                      { id: 'all', label: 'Todos' },
+                      { id: 'jlpt', label: 'JLPT' },
+                      { id: 'smart', label: '🧠 FSRS' },
+                      { id: 'off', label: 'Off' }
+                    ].map(m => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        className={`btn btn-xs ${furiganaMode === m.id ? 'btn-primary' : 'btn-ghost'}`}
+                        onClick={() => {
+                          setFuriganaMode(m.id);
+                          setShowFurigana(m.id !== 'off');
+                        }}
+                        style={{ padding: '2px 8px', fontSize: '0.72rem', fontWeight: 700, borderRadius: 6 }}
+                        title={m.id === 'smart' ? 'Oculta furigana en palabras maduras en FSRS (>= 21 días)' : (m.id === 'jlpt' ? 'Oculta furigana en kanjis elementales N5' : (m.id === 'all' ? 'Muestra furigana en todos los kanjis' : 'Oculta todo el furigana'))}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
 
                   {/* Toggle Traducción Español (Subtítulos Bilingües) */}
                   <button

@@ -185,6 +185,7 @@ export default function PitchAccentMinimalPairs({
   const audioCtxRef = useRef(null);
   const audioSourceRef = useRef(null);
   const filterNodeRef = useRef(null);
+  const currentAudioElementRef = useRef(null);
 
   const activePair = TOKYO_MINIMAL_PAIRS[currentPairIndex] || TOKYO_MINIMAL_PAIRS[0];
   const currentTarget = activePair.options[targetOptionIndex] || activePair.options[0];
@@ -203,9 +204,31 @@ export default function PitchAccentMinimalPairs({
     setupQuestion(currentPairIndex);
   }, [currentPairIndex, setupQuestion]);
 
+  // Limpieza al desmontar
+  useEffect(() => {
+    return () => {
+      if (currentAudioElementRef.current) {
+        try {
+          currentAudioElementRef.current.pause();
+          currentAudioElementRef.current.currentTime = 0;
+        } catch {}
+      }
+    };
+  }, []);
+
   // Reproducir audio con o sin filtro de amortiguamiento (Muffle Audio paso bajo)
   const playTargetAudio = useCallback(() => {
     const textToSpeak = useParticle ? `${currentTarget.reading}が` : currentTarget.reading;
+
+    // Detener audio anterior para evitar superposiciones
+    if (currentAudioElementRef.current) {
+      try {
+        currentAudioElementRef.current.pause();
+        currentAudioElementRef.current.currentTime = 0;
+      } catch {}
+      currentAudioElementRef.current = null;
+    }
+    audioManager.stopActivePlayback();
 
     if (!isMuffled) {
       // Reproducción nítida estándar
@@ -227,6 +250,7 @@ export default function PitchAccentMinimalPairs({
         const ttsUrl = `/api/tts?text=${encodeURIComponent(textToSpeak)}&voice=ja-JP-NanamiNeural`;
         const audio = new Audio(ttsUrl);
         audio.crossOrigin = 'anonymous';
+        currentAudioElementRef.current = audio;
 
         const source = audioCtxRef.current.createMediaElementSource(audio);
         const filter = audioCtxRef.current.createBiquadFilter();
@@ -406,7 +430,7 @@ export default function PitchAccentMinimalPairs({
         </div>
 
         <div className="jp-text" style={{ fontSize: '2.4rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: 12 }}>
-          {activePair.kana} {useParticle ? '<span style="color: var(--primary); font-size: 1.6rem">が</span>' : ''}
+          {activePair.kana} {useParticle && <span style={{ color: 'var(--primary)', fontSize: '1.6rem', marginLeft: 4 }}>が</span>}
         </div>
 
         <button

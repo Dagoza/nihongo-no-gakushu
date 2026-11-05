@@ -353,6 +353,18 @@ export default function KanjiSrsReview({
     };
   }, [srsReviewIndex, isRevealed, quizIsAnswered, speedTimerLimit, currentItem]);
 
+  // Intervención automática See-Link-Go cuando se detecta un Leech de Kanji
+  const hasTriggeredLeechModalRef = useRef(new Set());
+  useEffect(() => {
+    if (!currentItem || !getCurrentCard) return;
+    const cardData = getCurrentCard(currentItem);
+    const kanjiChar = currentItem.kanji;
+    if (cardData && isLeech(cardData) && findConfusionMatch(kanjiChar) && !hasTriggeredLeechModalRef.current.has(kanjiChar)) {
+      hasTriggeredLeechModalRef.current.add(kanjiChar);
+      setShowConfusionModal(true);
+    }
+  }, [currentItem, getCurrentCard]);
+
 
   // Manejo de Respuesta para Jukugo Matrix Drill (Tipeo)
   const handleValidateJukugoInput = useCallback(() => {
