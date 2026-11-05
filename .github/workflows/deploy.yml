@@ -3,7 +3,7 @@ name: Vercel Production Deployment
 on:
   # Ejecución periódica cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 0,6,12,18 * * *'
 
   # Ejecución manual bajo demanda desde GitHub Actions
   workflow_dispatch:
@@ -48,7 +48,7 @@ jobs:
           fi
 
       - name: Disparar Vercel Deploy Hook
-        if: steps:check_changes.outputs.should_deploy == 'true'
+        if: steps.check_changes.outputs.should_deploy == 'true'
         run: |
           if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK }}" ]; then
             echo "❌ Error: El secret VERCEL_DEPLOY_HOOK no está configurado en GitHub Secrets."
