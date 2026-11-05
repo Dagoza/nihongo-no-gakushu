@@ -1433,8 +1433,8 @@ export default function ScriptpadSrsReview({
         )}
       </div>
 
-      {/* 3. TIRA DE CARACTERES COMPLETADOS (al finalizar) vs LIENZO DE TRAZO (durante el quiz) */}
-      {isWordCompleted ? (
+      {/* 3. VISTA DE VALIDACIÓN CON VARIOS CARACTERES (al completar) vs LIENZO DE TRAZO (durante el quiz o si es un solo carácter) */}
+      {isWordCompleted && characters.length > 1 ? (
         <div 
           key="srs-completed-pad-card"
           style={{
@@ -1855,186 +1855,281 @@ export default function ScriptpadSrsReview({
             )}
           </div>
 
-          {/* 4. Barra de Acciones durante el trazo */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            width: '100%',
-            maxWidth: padSize + 20,
-            marginTop: 12,
-            gap: 6
-          }}>
-            {/* Botón Reiniciar / Limpiar */}
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={handleResetCurrentChar}
-              style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
-              title={hasWriterData ? "Reiniciar trazos desde el inicio" : "Limpiar lienzo"}
-            >
-              <RotateCcw size={13} />
-              <span>{hasWriterData ? 'Reiniciar' : 'Borrar'}</span>
-            </button>
-
-            {/* En modo libre: Botón Deshacer último trazo */}
-            {!hasWriterData && (
-              <button
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={handleUndoFallbackStroke}
-                disabled={!(fallbackStrokesByChar[currentCharIndex]?.length > 0)}
-                style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
-                title="Deshacer último trazo dibujado"
-              >
-                <Undo2 size={13} />
-                <span>Deshacer</span>
-              </button>
-            )}
-
-            {/* Botón Toggle Ver Guía / Ocultar Guía */}
-            <button
-              type="button"
-              className={`btn btn-sm ${showGhostGuide ? 'btn-primary' : 'btn-outline'}`}
-              onClick={handleToggleGuide}
-              style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
-              title={showGhostGuide ? "Ocultar silueta de guía" : "Mostrar silueta de guía"}
-            >
-              {showGhostGuide ? <EyeOff size={13} /> : <Eye size={13} />}
-              <span>{showGhostGuide ? 'Ocultar Guía' : 'Ver Guía'}</span>
-            </button>
-
-            {/* Botón SÍ ERA: anula error de trazo, acepta y dibuja el trazo si hubo fallo de dedo o lápiz en HanziWriter */}
-            {hasWriterData && (
-              <button
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={handleAcceptStroke}
-                style={{
-                  borderRadius: 10,
-                  fontSize: '0.76rem',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  color: '#10b981',
-                  borderColor: 'rgba(16, 185, 129, 0.4)',
-                  background: 'rgba(16, 185, 129, 0.08)'
-                }}
-              >
-                <Check size={13} strokeWidth={2.5} />
-                <span>Sí era</span>
-              </button>
-            )}
-
-            {/* Botón No me acuerdo */}
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={handleGiveUp}
-              style={{
-                borderRadius: 10,
-                fontSize: '0.76rem',
-                color: '#ef4444',
-                borderColor: 'rgba(239, 68, 68, 0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4
-              }}
-              title="Rendirse y ver el modelo completo"
-            >
-              <Flag size={13} />
-              <span>No sé</span>
-            </button>
-          </div>
-
-          {/* En modo libre sin vector: Botón integrado para avanzar de carácter o revelar modelo */}
-          {!hasWriterData && (
-            <div style={{
-              width: '100%',
-              maxWidth: padSize,
-              marginTop: 10,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 6
-            }}>
-              {characters.length > 1 && currentCharIndex < characters.length - 1 ? (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => setCurrentCharIndex(prev => prev + 1)}
-                  style={{
-                    padding: '11px 18px',
-                    borderRadius: 14,
-                    fontSize: '0.92rem',
-                    fontWeight: 800,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
-                  }}
-                >
-                  <span>Siguiente Carácter ({currentCharIndex + 2} de {characters.length})</span>
-                  {activeExpectedStrokes && (
-                    <span style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      background: 'rgba(255,255,255,0.22)',
-                      padding: '2px 7px',
-                      borderRadius: 8
-                    }}>
-                      {activeDrawnStrokes}/{activeExpectedStrokes} trazos
-                    </span>
-                  )}
-                  <ArrowRight size={16} />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleCompleteFallbackWord}
-                  style={{
-                    padding: '11px 18px',
-                    borderRadius: 14,
-                    fontSize: '0.92rem',
-                    fontWeight: 800,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
-                  }}
-                >
-                  <Sparkles size={16} />
-                  <span>Comprobar y Revelar Tira Continua</span>
-                  {activeExpectedStrokes && (
-                    <span style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      background: 'rgba(255,255,255,0.22)',
-                      padding: '2px 7px',
-                      borderRadius: 8
-                    }}>
-                      {activeDrawnStrokes}/{activeExpectedStrokes} trazos
-                    </span>
-                  )}
-                </button>
-              )}
-
+          {/* 4. Barra de Acciones: Durante el trazo vs Controles post-completado (cuando es 1 solo carácter) */}
+          {!isWordCompleted ? (
+            <>
               <div style={{
-                fontSize: '0.72rem',
-                color: 'var(--text-muted)',
-                textAlign: 'center',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 4
+                flexWrap: 'wrap',
+                width: '100%',
+                maxWidth: padSize + 20,
+                marginTop: 12,
+                gap: 6
               }}>
-                <Info size={12} />
-                <span>Sin vector interactivo. Traza de memoria y avanza para comparar.</span>
+                {/* Botón Reiniciar / Limpiar */}
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={handleResetCurrentChar}
+                  style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                  title={hasWriterData ? "Reiniciar trazos desde el inicio" : "Limpiar lienzo"}
+                >
+                  <RotateCcw size={13} />
+                  <span>{hasWriterData ? 'Reiniciar' : 'Borrar'}</span>
+                </button>
+
+                {/* En modo libre: Botón Deshacer último trazo */}
+                {!hasWriterData && (
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={handleUndoFallbackStroke}
+                    disabled={!(fallbackStrokesByChar[currentCharIndex]?.length > 0)}
+                    style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                    title="Deshacer último trazo dibujado"
+                  >
+                    <Undo2 size={13} />
+                    <span>Deshacer</span>
+                  </button>
+                )}
+
+                {/* Botón Toggle Ver Guía / Ocultar Guía */}
+                <button
+                  type="button"
+                  className={`btn btn-sm ${showGhostGuide ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={handleToggleGuide}
+                  style={{ borderRadius: 10, fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                  title={showGhostGuide ? "Ocultar silueta de guía" : "Mostrar silueta de guía"}
+                >
+                  {showGhostGuide ? <EyeOff size={13} /> : <Eye size={13} />}
+                  <span>{showGhostGuide ? 'Ocultar Guía' : 'Ver Guía'}</span>
+                </button>
+
+                {/* Botón SÍ ERA: anula error de trazo, acepta y dibuja el trazo si hubo fallo de dedo o lápiz en HanziWriter */}
+                {hasWriterData && (
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={handleAcceptStroke}
+                    style={{
+                      borderRadius: 10,
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      color: '#10b981',
+                      borderColor: 'rgba(16, 185, 129, 0.4)',
+                      background: 'rgba(16, 185, 129, 0.08)'
+                    }}
+                  >
+                    <Check size={13} strokeWidth={2.5} />
+                    <span>Sí era</span>
+                  </button>
+                )}
+
+                {/* Botón No me acuerdo */}
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={handleGiveUp}
+                  style={{
+                    borderRadius: 10,
+                    fontSize: '0.76rem',
+                    color: '#ef4444',
+                    borderColor: 'rgba(239, 68, 68, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}
+                  title="Rendirse y ver el modelo completo"
+                >
+                  <Flag size={13} />
+                  <span>No sé</span>
+                </button>
               </div>
+
+              {/* En modo libre sin vector: Botón integrado para avanzar de carácter o revelar modelo */}
+              {!hasWriterData && (
+                <div style={{
+                  width: '100%',
+                  maxWidth: padSize,
+                  marginTop: 10,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6
+                }}>
+                  {characters.length > 1 && currentCharIndex < characters.length - 1 ? (
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => setCurrentCharIndex(prev => prev + 1)}
+                      style={{
+                        padding: '11px 18px',
+                        borderRadius: 14,
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
+                      }}
+                    >
+                      <span>Siguiente Carácter ({currentCharIndex + 2} de {characters.length})</span>
+                      {activeExpectedStrokes && (
+                        <span style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          background: 'rgba(255,255,255,0.22)',
+                          padding: '2px 7px',
+                          borderRadius: 8
+                        }}>
+                          {activeDrawnStrokes}/{activeExpectedStrokes} trazos
+                        </span>
+                      )}
+                      <ArrowRight size={16} />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleCompleteFallbackWord}
+                      style={{
+                        padding: '11px 18px',
+                        borderRadius: 14,
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)'
+                      }}
+                    >
+                      <Sparkles size={16} />
+                      <span>Comprobar y Revelar Modelo</span>
+                      {activeExpectedStrokes && (
+                        <span style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          background: 'rgba(255,255,255,0.22)',
+                          padding: '2px 7px',
+                          borderRadius: 8
+                        }}>
+                          {activeDrawnStrokes}/{activeExpectedStrokes} trazos
+                        </span>
+                      )}
+                    </button>
+                  )}
+
+                  <div style={{
+                    fontSize: '0.72rem',
+                    color: 'var(--text-muted)',
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 4
+                  }}>
+                    <Info size={12} />
+                    <span>Sin vector interactivo. Traza de memoria y avanza para comparar.</span>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            /* Controles post-completado cuando la palabra tiene 1 solo carácter (se mantiene en el lienzo principal) */
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 10,
+              marginTop: 12,
+              width: '100%'
+            }}>
+              {/* Selector Superpuesto / Mis Trazos / Modelo Solo si fue modo libre */}
+              {(!hasWriterData || wordHadFallback) && (
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                  background: 'var(--bg-hover)',
+                  padding: '3px',
+                  borderRadius: 12,
+                  border: '1px solid var(--border)'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => setComparisonMode('both')}
+                    style={{
+                      padding: '5px 10px',
+                      borderRadius: 9,
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      background: comparisonMode === 'both' ? 'var(--primary)' : 'transparent',
+                      color: comparisonMode === 'both' ? '#ffffff' : 'var(--text-muted)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Superpuesto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setComparisonMode('drawing')}
+                    style={{
+                      padding: '5px 10px',
+                      borderRadius: 9,
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      background: comparisonMode === 'drawing' ? 'var(--primary)' : 'transparent',
+                      color: comparisonMode === 'drawing' ? '#ffffff' : 'var(--text-muted)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Mis Trazos
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setComparisonMode('model')}
+                    style={{
+                      padding: '5px 10px',
+                      borderRadius: 9,
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      background: comparisonMode === 'model' ? 'var(--primary)' : 'transparent',
+                      color: comparisonMode === 'model' ? '#ffffff' : 'var(--text-muted)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Modelo Solo
+                  </button>
+                </div>
+              )}
+
+              {/* Botón Volver a trazar */}
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={handleRetraceAll}
+                style={{
+                  borderRadius: 10,
+                  fontSize: '0.78rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 14px'
+                }}
+              >
+                <RotateCcw size={13} />
+                <span>Volver a trazar</span>
+              </button>
             </div>
           )}
         </div>
