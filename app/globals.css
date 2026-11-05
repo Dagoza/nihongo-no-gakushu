@@ -114,6 +114,19 @@
   --audio-player-height: 72px;
 
   /* ==========================================================================
+     4.1. Japandi Ma Geometry, Densities & Keyword Interpolation (2026 Standard)
+     ========================================================================== */
+  --bg-washi-warm: #FAF8F5;
+  --surface-washi-card: #F0EDE8;
+  --border-washi-fine: #E5E0D8;
+  --border-washi-strong: #C5BDB0;
+  --bento-gap: 20px;
+  --bento-padding: 24px;
+  --section-spacing: 64px;
+
+  interpolate-size: allow-keywords;
+
+  /* ==========================================================================
      5. Standard Card Padding Design Tokens (SRS Desktop Architecture Standard)
      ========================================================================== */
   --card-padding-hero: 24px 28px;       /* Hero Cards (srs-hero-card, module-hero-card, jlpt-top-banner) */
@@ -241,6 +254,26 @@
   --text-primary: var(--text-main);
   --text-secondary: var(--text-muted);
   --amber-700: #f59e0b;
+
+  --bg-washi-warm: #090d16;
+  --surface-washi-card: #111827;
+  --border-washi-fine: #1f2937;
+  --border-washi-strong: #374151;
+}
+
+/* ==========================================================================
+   4.2. Density Modifiers (Spacious / Comfortable / Compact)
+   ========================================================================== */
+[data-density="compact"] {
+  --bento-gap: 12px;
+  --bento-padding: 16px;
+  --section-spacing: 40px;
+}
+
+[data-density="spacious"] {
+  --bento-gap: 28px;
+  --bento-padding: 32px;
+  --section-spacing: 80px;
 }
 
 * {
@@ -287,8 +320,123 @@ body {
   color: #fce7f3;
 }
 
-.jp-text {
+/* ==========================================================================
+   4.3. CJK Japanese Typography & Kinsoku Shori (2026 Standard)
+   ========================================================================== */
+:lang(ja), .jp-text, .jp-content {
   font-family: var(--font-jp);
+  font-size: calc(1em + 0.5px);
+  line-height: 1.75;
+  letter-spacing: normal;
+  word-break: auto-phrase;
+  text-spacing-trim: normal;
+}
+
+ruby {
+  ruby-position: over;
+  ruby-align: center;
+}
+
+rt {
+  font-family: var(--font-jp);
+  font-size: 0.54em;
+  line-height: 1;
+  color: var(--text-muted);
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Furigana Inteligente / Adaptación Cognitiva FSRS */
+.rt-mastered-hidden rt {
+  opacity: 0;
+}
+.rt-mastered-hidden:hover rt,
+.rt-mastered-hidden:focus-within rt {
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   4.4. Native Exclusive Accordion (<details name="..."> + ::details-content)
+   ========================================================================== */
+.japandi-accordion {
+  border-top: 1px solid var(--border);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.japandi-accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding: 10px 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.japandi-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.japandi-accordion summary:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.japandi-chevron {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.japandi-accordion[open] > summary .japandi-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .japandi-accordion::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition: block-size 220ms ease-out, opacity 180ms ease-out, content-visibility 220ms ease-out;
+    transition-behavior: allow-discrete;
+  }
+
+  .japandi-accordion[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+.japandi-accordion-panel {
+  padding: 8px 0 14px 0;
+  font-size: 0.86rem;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   4.5. Scroll-Driven Reading Progress (CSS Compositor Thread)
+   ========================================================================== */
+@keyframes scrollProgressScale {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    .reading-scroll-progress-bar {
+      transform-origin: left center;
+      animation: scrollProgressScale linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
 }
 
 /* Header & Navigation Bar */
