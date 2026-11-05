@@ -405,6 +405,8 @@ export function AppProvider({ children }) {
     if (saved.theme) {
       document.body.setAttribute('data-theme', saved.theme);
     }
+    const currentDensity = saved.density || (typeof window !== 'undefined' ? localStorage.getItem('nihongo_density') : null) || 'comfortable';
+    document.documentElement.setAttribute('data-density', currentDensity);
     setMounted(true);
 
     // Global manual tour triggers (fallback for any child component or event)
@@ -568,6 +570,21 @@ export function AppProvider({ children }) {
     });
   }, []);
 
+  const handleSetDensity = useCallback((newDensity) => {
+    if (!['compact', 'comfortable', 'spacious'].includes(newDensity)) return;
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-density', newDensity);
+    }
+    try {
+      localStorage.setItem('nihongo_density', newDensity);
+    } catch {}
+    setAppState(prev => {
+      const updated = { ...prev, density: newDensity };
+      saveState(updated, true);
+      return updated;
+    });
+  }, []);
+
   const handleSignOut = useCallback(async () => {
     const ok = await showConfirm({
       title: '¿Cerrar Sesión?',
@@ -657,6 +674,8 @@ export function AppProvider({ children }) {
     userState: appState,
     theme: appState.theme || 'light',
     onToggleTheme: handleToggleTheme,
+    density: appState.density || 'comfortable',
+    onSetDensity: handleSetDensity,
     currentTab,
     navigate,
     onNavigate: navigate,

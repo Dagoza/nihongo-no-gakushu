@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import curriculumData from '../../data/curriculum.json';
-import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, ChevronUp, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List, SlidersHorizontal, PenTool } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle2, BookOpen, Sparkles, Volume2, HelpCircle, ChevronRight, ChevronDown, ChevronUp, RotateCcw, Check, X, GraduationCap, Search, Target, Info, MessageSquare, Eye, EyeOff, Compass, LayoutGrid, List, SlidersHorizontal, PenTool, Zap } from 'lucide-react';
 import audioManager from '../../lib/audioManager';
 import { useAppContext } from '../../lib/AppContext';
 import FuriganaText from '../features/FuriganaText';
@@ -538,6 +538,9 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
 
     return (
       <div className="curriculum-detail-view animate-fade-in">
+        {/* Barra de progreso de lectura en hilo compositor CSS (2026 Standard) */}
+        <div className="reading-scroll-progress-bar" style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 3, background: 'var(--primary)', zIndex: 9999, pointerEvents: 'none' }} />
+
         {/* Navigation & Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -3244,7 +3247,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
                     </div>
                   </div>
                 )}
-                <div className={`curriculum-step-card scroll-craft-reveal ${isDone ? 'completed' : ''}`}>
+                <div className={`curriculum-step-card scroll-craft-reveal bento-card-reveal ${isDone ? 'completed' : ''}`}>
                 {/* Header Row: Badge + Titles + Actions */}
                 <div className="step-card-header">
                   <div className="step-number-badge">

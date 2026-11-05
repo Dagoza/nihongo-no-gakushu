@@ -300,6 +300,59 @@ runTest('Todos los componentes y modales importan correctamente los React Hooks 
   assert(checkedCount >= 50, `Se esperaban al menos 50 componentes verificados, revisados: ${checkedCount}`);
 });
 
+runTest('Todos los componentes importan correctamente los iconos de Lucide-React que utilizan', () => {
+  const lucide = require('lucide-react');
+  let checkedCount = 0;
+
+  function checkComponentFile(filePath) {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const importsBlock = content.match(/import\s*\{([\s\S]*?)\}\s*from\s*[\x27"]lucide-react[\x27"]/);
+    const importedIcons = new Set(importsBlock ? importsBlock[1].split(',').map(s => s.trim().split(/\s+as\s+/)[0]).filter(Boolean) : []);
+
+    const jsxTags = [...new Set(content.match(/<([A-Z][A-Za-z0-9_]*)/g)?.map(t => t.slice(1)) || [])];
+    
+    for (const tag of jsxTags) {
+      if (lucide[tag] !== undefined && !importedIcons.has(tag)) {
+        const isImportedElsewhere = new RegExp(`import\\s+(?:\\{[^}]*\\b${tag}\\b[^}]*\\}|${tag})\\s+from`).test(content);
+        const isDeclaredLocally = new RegExp(`(?:const|let|var|function|class)\\s+${tag}\\b`).test(content);
+        const isProp = new RegExp(`as:\\s*${tag}\\b`).test(content);
+        assert(
+          isImportedElsewhere || isDeclaredLocally || isProp,
+          `En ${path.relative(ROOT_DIR, filePath)} se usa <${tag} /> pero NO está importado de 'lucide-react'`
+        );
+      }
+    }
+    checkedCount++;
+  }
+
+  function walk(dir) {
+    const fullDir = path.join(ROOT_DIR, dir);
+    if (!fs.existsSync(fullDir)) return;
+    for (const f of fs.readdirSync(fullDir)) {
+      const full = path.join(fullDir, f);
+      if (fs.statSync(full).isDirectory()) {
+        if (f !== 'node_modules' && f !== '.next' && f !== '.git') walk(path.join(dir, f));
+      } else if (f.endsWith('.jsx')) {
+        checkComponentFile(full);
+      }
+    }
+  }
+
+  walk('components');
+  assert(checkedCount >= 30, `Se esperaban componentes verificados para iconos, revisados: ${checkedCount}`);
+});
+
+runTest('ScriptpadTab importa y ejecuta todas las funciones FSRS de scriptpadData', () => {
+  const scriptpadTabPath = path.join(ROOT_DIR, 'components', 'tabs', 'ScriptpadTab.jsx');
+  assert(fs.existsSync(scriptpadTabPath), 'ScriptpadTab.jsx debe existir');
+  const code = fs.readFileSync(scriptpadTabPath, 'utf8');
+
+  const requiredExports = ['getScriptpadUnits', 'getScriptpadSrsQueue', 'getScriptpadStudiedWords', 'getScriptpadWordFsrsStatus'];
+  for (const fn of requiredExports) {
+    assert(code.includes(fn), `ScriptpadTab.jsx debe importar y usar ${fn}`);
+  }
+});
+
 // -----------------------------------------------------------------------------
 // NOTIFICACIONES & FSRS: Integridad y Contenido Dinámico
 // -----------------------------------------------------------------------------

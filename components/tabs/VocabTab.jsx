@@ -6,7 +6,7 @@ import {
   Volume2, Search, ArrowRight, ArrowLeft, Lightbulb, Keyboard, 
   BookOpen, Layers, Edit3, StickyNote, Plus, RotateCcw, Sparkles, 
   MessageSquare, PenTool, Info, CheckCircle2, Brain, Tag, X, Filter,
-  SlidersHorizontal, ChevronDown, ChevronUp
+  SlidersHorizontal, ChevronDown, ChevronUp, Check
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
@@ -62,6 +62,7 @@ export default function VocabTab({
   const [areTagsExpanded, setAreTagsExpanded] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+  const [density, setDensity] = useState('comfortable'); // 'comfortable' | 'compact'
 
   useEffect(() => {
     if (initialMode) {
@@ -1152,20 +1153,29 @@ export default function VocabTab({
               )}
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Mostrando: <strong>{filteredVocab.length}</strong> de {effectiveVocabList.length}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              <span>Mostrando: <strong>{filteredVocab.length}</strong> de {effectiveVocabList.length}</span>
+              <button
+                type="button"
+                className="btn btn-xs btn-outline"
+                onClick={() => setDensity(prev => prev === 'compact' ? 'comfortable' : 'compact')}
+                title={`Cambiar a vista ${density === 'compact' ? 'Cómoda (Ma)' : 'Compacta'}`}
+                style={{ fontSize: '0.75rem', padding: '2px 8px', height: 'auto', borderRadius: 'var(--radius-sm)' }}
+              >
+                {density === 'compact' ? '⊞ Vista Cómoda' : '⊟ Vista Compacta'}
+              </button>
             </div>
           </div>
 
           {/* Cards Grid */}
           {isLoading ? (
-            <div className="vocab-grid">
+            <div className="vocab-grid" data-density={density}>
               {Array.from({ length: 8 }).map((_, idx) => (
                 <div key={idx} className="vocab-card skeleton-shimmer skeleton-card" style={{ opacity: 0.75 }} />
               ))}
             </div>
           ) : (
-            <div className="vocab-grid">
+            <div className="vocab-grid" data-density={density}>
               {filteredVocab.slice(0, visibleCount).map((item) => {
                 const isMastered = isWordMastered(item);
                 const wordKey = item.id || item.kanji;
@@ -1175,7 +1185,7 @@ export default function VocabTab({
                 return (
                   <div 
                     key={item.id || item.kanji} 
-                    className={`vocab-card ${isSelected ? 'selected-card' : ''}`}
+                    className={`vocab-card bento-card-reveal ${isSelected ? 'selected-card' : ''}`}
                     style={{ 
                       borderColor: isSelected 
                         ? 'var(--primary)' 

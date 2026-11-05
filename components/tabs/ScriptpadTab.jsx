@@ -14,7 +14,9 @@ import {
   Check, 
   ArrowRight,
   BookOpen,
-  Compass
+  Compass,
+  Search,
+  X
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useApp } from '../../lib/AppContext';
@@ -24,7 +26,9 @@ import {
   getLessonById, 
   getLessonStatus, 
   recordLessonCompletion, 
-  getScriptpadSrsQueue 
+  getScriptpadSrsQueue,
+  getScriptpadStudiedWords,
+  getScriptpadWordFsrsStatus
 } from '../../lib/scriptpadData';
 import { getNewCard } from '../../lib/srs';
 
@@ -1037,7 +1041,7 @@ export default function ScriptpadTab({
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                               {(() => {
                                 const fStatus = getScriptpadWordFsrsStatus(w, appState);
-                                if (!fStatus.hasCard && fStatus.timesWritten === 0) return null;
+                                if (!fStatus || (!fStatus.hasCard && fStatus.timesWritten === 0)) return null;
                                 return (
                                   <span
                                     style={{
@@ -1045,16 +1049,16 @@ export default function ScriptpadTab({
                                       fontWeight: 800,
                                       padding: '1px 6px',
                                       borderRadius: 4,
-                                      background: fStatus.badgeBg,
-                                      color: fStatus.badgeColor,
+                                      background: fStatus.badgeBg || 'rgba(99, 102, 241, 0.15)',
+                                      color: fStatus.badgeColor || 'var(--primary)',
                                       display: 'inline-flex',
                                       alignItems: 'center',
                                       gap: 3,
                                       whiteSpace: 'nowrap'
                                     }}
-                                    title={`Retención FSRS: ${fStatus.retrievability.formatted} • Estado: ${fStatus.stateInfo?.name || 'Nuevo'} • Trazado: ${fStatus.timesWritten}x`}
+                                    title={`Retención FSRS: ${fStatus.retrievability?.formatted || '0%'} • Estado: ${fStatus.stateInfo?.name || 'Nuevo'} • Trazado: ${fStatus.timesWritten || 0}x`}
                                   >
-                                    <span>{fStatus.retrievability.percent > 0 ? fStatus.retrievability.formatted : fStatus.statusLabel}</span>
+                                    <span>{fStatus.retrievability?.percent > 0 ? fStatus.retrievability.formatted : (fStatus.statusLabel || 'En repaso')}</span>
                                   </span>
                                 );
                               })()}

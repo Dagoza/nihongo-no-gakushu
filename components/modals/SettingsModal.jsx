@@ -34,6 +34,21 @@ export default function SettingsModal({
     appState?.confettiEnabled !== false
   );
 
+  const currentDensity = contextApp?.density || appState?.density || 'comfortable';
+  const handleSelectDensity = (val) => {
+    if (contextApp?.onSetDensity) {
+      contextApp.onSetDensity(val);
+    } else {
+      if (typeof document !== 'undefined') {
+        document.documentElement.setAttribute('data-density', val);
+      }
+      try { localStorage.setItem('nihongo_density', val); } catch {}
+      if (handleUpdateState && appState) {
+        handleUpdateState({ ...appState, density: val });
+      }
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       setSelectedVoice(appState?.preferredVoice || audioManager.voiceName || 'ja-JP-NanamiNeural');
@@ -456,6 +471,49 @@ export default function SettingsModal({
               {confettiEnabled ? <Check size={14} /> : null}
               <span>{confettiEnabled ? 'Activado' : 'Desactivado'}</span>
             </button>
+          </div>
+
+          {/* Section: Densidad de Interfaz (Espacio Japandi Ma) */}
+          <div style={{
+            padding: '16px',
+            borderRadius: 12,
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Sliders size={16} style={{ color: 'var(--primary)' }} />
+                  <span>Densidad de Interfaz (Espacio &quot;Ma&quot; 間)</span>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                  Ajusta el espaciado negativo entre tarjetas y módulos para reducir la fatiga visual
+                </div>
+              </div>
+
+              <div style={{ display: 'inline-flex', background: 'var(--bg-main)', padding: '3px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', gap: 4 }}>
+                {[
+                  { id: 'compact', label: 'Compacto', icon: '⊟', desc: 'Menor margen' },
+                  { id: 'comfortable', label: 'Cómodo', icon: '⊞', desc: 'Balance ideal' },
+                  { id: 'spacious', label: 'Espacioso', icon: '⊡', desc: 'Máximo Ma' }
+                ].map(opt => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    className={`btn btn-xs ${currentDensity === opt.id ? 'btn-primary' : 'btn-ghost'}`}
+                    onClick={() => handleSelectDensity(opt.id)}
+                    style={{ fontSize: '0.76rem', padding: '4px 9px', borderRadius: 6, fontWeight: currentDensity === opt.id ? 700 : 500 }}
+                    title={`${opt.label}: ${opt.desc}`}
+                  >
+                    <span style={{ marginRight: 4 }}>{opt.icon}</span>
+                    <span>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Section 5: Theme Toggle & Cloud Account */}

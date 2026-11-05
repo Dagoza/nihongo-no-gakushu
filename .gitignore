@@ -39,4 +39,6 @@ yarn-error.log*
 /material_de_estudio
 
 # Agents and teamwork temporary artifacts
-.agents/
+.agents/*
+!.agents/skills/
+!.agents/skills/**

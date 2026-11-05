@@ -239,3 +239,48 @@ Todo diálogo, lección o frase de un curso estructurado debe contener los campo
 - [ ] ¿Se conectaron los botones de la interfaz a `audioManager` para permitir la reproducción individual y del diálogo completo?
 - [ ] ¿Se probó que las palabras y frases complementarias se sinteticen con la voz neuronal de `/api/tts`?
 
+---
+
+## 6. Estándar Exclusivo de Niveles Oficiales JLPT (N5 a N1)
+
+En toda la aplicación, modelos de datos, currículum, vocabulario, kanjis, catálogo de materiales/PDFs, simuladores y tours de bienvenida:
+1. **Regla de Oro**: Se utiliza **única y exclusivamente** el marco oficial de niveles **JLPT (N5, N4, N3, N2, N1)**.
+2. **Prohibición de Marcos Externos**: Queda terminantemente prohibido utilizar el estándar europeo CEFR (A1, A2, B1, etc.) o etiquetas genéricas ambiguas (Principiante, Intermedio) en campos o filtros de nivel.
+3. **Mapeo Canónico**: Materiales de origen CEFR como *Irodori Starter* (A1) se registran estrictamente como `N5`, e *Irodori Elementary* (A2) como `N4`.
+
+---
+
+## 7. Estándar de Diseño UI/UX Japandi 2026, Tipografía CJK y Revelación Progresiva
+
+Para garantizar una experiencia visual serena, accesible y libre de sobrecarga cognitiva ("verbosidad"), cualquier cambio o creación de componentes de interfaz debe obedecer las directrices consolidadas en [`docs/UI_UX_DESIGN_SYSTEM_TRENDS.md`](docs/UI_UX_DESIGN_SYSTEM_TRENDS.md) y el skill `.agents/skills/nihongo-ui-design-system/`:
+
+### 7.1. Filosofía Japandi y Espacio Negativo "Ma" (間)
+- **Fondo Washi Cálido**: Usar `--bg-washi-warm` (`#FAF8F5`) y tarjetas elevadas `--surface-washi-card` (`#F0EDE8`) con bordes finos de 1px (`#E5E0D8`). Evitar sombras pesadas o difusas (`box-shadow`).
+- **Paleta Dentou-iro**: Preservar los 8 pigmentos tradicionales (Aizome índigo, Shu-iro bermellón, Macha matcha, Kohaku ámbar JLPT) que aportan jerarquía semántica a la aplicación.
+- **Conmutador de Densidad**: Soportar los tres niveles de espaciado (`[data-density="compact" | "comfortable" | "spacious"]`) gobernados por `--bento-gap` y `--bento-padding`.
+
+### 7.2. Calibración Tipográfica CJK y Kinsoku Shori
+- **Quiebre de Frase**: En todo texto japonés incluir obligatoriamente `word-break: auto-phrase` (BudouX) y `text-spacing-trim: normal`.
+- **Ritmo Vertical**: `line-height: 1.75` para cuerpo de texto japonés y `line-height: 1.3` con `font-weight: 500` para encabezados CJK (`:lang(ja) h1–h3`).
+- **Furigana Zero-CLS**: En kanjis dominados (FSRS v5 `stability >= 21` días), aplicar exclusivamente `opacity: 0` mediante `rt.rt-mastered-hidden` (**NUNCA `display: none`**), permitiendo revelación suave en hover o tap sin provocar saltos de diseño (CLS < 0.1).
+
+### 7.3. Revelación Progresiva en 3 Capas
+1. **Capa 0 (Esencia Nuclear)**: Siempre visible en la tarjeta: concepto central, badge JLPT, rol en 1 línea y 1 ejemplo canónico destacado con audio nativo.
+2. **Capa 1 (Acordeones Nativos Exclusivos)**: Fórmulas y ejemplos secundarios agrupados en `<details name="capa-id" class="japandi-accordion">` con `::details-content`. Abrir uno cierra automáticamente el anterior.
+3. **Capa 2 (Micro-contexto)**: Notas léxicas y diagramas de pitch accent en popovers o tooltips anclados.
+
+### 7.4. Salvaguardas de Usabilidad y Contrato Zen
+- **Prohibición de Anidamiento**: Nunca anidar un `<details>` dentro de otro `<details>`.
+- **Comparación Simultánea**: Cuando se comparen dos partículas (ej. は vs が) o cadenas de cortesía Keigo, mostrarlas **lado a lado (side-by-side)** en paneles paralelos, sin forzar alternancia de pestañas.
+- **Contrato Zen en Ejercicios**: Cero sacudidas (*shake*) de pantalla al errar una respuesta. Usar tachado `line-through` en opciones incorrectas (**WCAG 2.2 / JIS X 8341-3**). Micro-interacción `:active { transform: scale(0.97) }` en pantallas móviles (≤768px). Confeti reservado únicamente para hitos mayores de sesión.
+
+### 7.5. Checklist de Verificación de UI
+- [ ] ¿El componente respeta la paleta Dentou-iro sobre fondo Washi cálido?
+- [ ] ¿El texto japonés incluye `word-break: auto-phrase`, `ruby-merge: separate` y line-height adaptado?
+- [ ] ¿El furigana adaptativo usa `opacity: 0` (zero CLS) en kanjis dominados?
+- [ ] ¿La tarjeta muestra en superficie solo la Capa 0 y oculta detalles en acordeón exclusivo plano?
+- [ ] ¿Se respetó la prohibición de acordeones anidados?
+- [ ] ¿Las comparativas confusas se muestran lado a lado (side-by-side)?
+- [ ] ¿Los ejercicios usan tachado `line-through` sin sacudidas ni confeti rutinario?
+- [ ] ¿La suite `npm test` y `npm run build` pasan sin errores?
+

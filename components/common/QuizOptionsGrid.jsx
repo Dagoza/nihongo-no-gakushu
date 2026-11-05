@@ -228,7 +228,12 @@ export default function QuizOptionsGrid({
             {/* Contenido en lista/grid estándar (texto y lecturas) */}
             {!isKanjiLayout && (
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                <div style={{ fontWeight: 700, fontSize: '0.92rem', lineHeight: 1.3 }}>
+                <div style={{ 
+                  fontWeight: 700, 
+                  fontSize: '0.92rem', 
+                  lineHeight: 1.3,
+                  textDecoration: isAnswered && isSelected && !isCorrect ? 'line-through' : 'none'
+                }}>
                   {opt.label || opt.meaning || opt.text || opt.es}
                 </div>
                 {(opt.sublabel || opt.reading || opt.kana) && (

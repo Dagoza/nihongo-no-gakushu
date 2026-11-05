@@ -1,7 +1,7 @@
 # Reporte de Auditoría UI & Modales - Nihongo Master
 
-**Fecha de ejecución:** jueves, 8 de octubre de 2026, 15:07:43  
-**Versión de Node.js:** v22.20.0  
+**Fecha de ejecución:** jueves, 5 de noviembre de 2026, 8:22:14  
+**Versión de Node.js:** v22.22.3  
 **Motor de Navegación:** Google Chrome (`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`)  
 **Playwright:** 1.50.0  
 **URL Base de Pruebas:** `http://localhost:3000`  
