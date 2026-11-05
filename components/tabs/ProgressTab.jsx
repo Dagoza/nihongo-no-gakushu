@@ -46,6 +46,7 @@ import scriptpadUnitsData from '../../data/scriptpad_units.json';
 import jlptKanjiCatalog from '../../data/jlpt_kanji_catalog.json';
 import { calculateOverallProgress, JLPT_LEVELS, WEIGHTS } from '../../lib/progressMetrics';
 import { useApp } from '../../lib/AppContext';
+import StudyRoadmapModule from '../features/StudyRoadmapModule';
 
 function detectUserOS() {
   if (typeof window === 'undefined') return 'macos';
@@ -326,8 +327,8 @@ export default function ProgressTab({
   const [detectedOS, setDetectedOS] = useState('macos');
   const [testInput, setTestInput] = useState('');
 
-  // Sección activa en la página de Progreso ('cloud' por defecto tras mover FSRS a la página de SRS)
-  const [activeSection, setActiveSection] = useState('cloud'); // 'cloud' | 'backup' | 'keyboard'
+  // Sección activa en la página de Progreso ('roadmap' por defecto con Hoja de Ruta Temporal)
+  const [activeSection, setActiveSection] = useState('roadmap'); // 'roadmap' | 'cloud' | 'backup' | 'keyboard'
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -343,7 +344,7 @@ export default function ProgressTab({
           return;
         }
       }
-      if (sec && ['cloud', 'backup', 'keyboard'].includes(sec)) {
+      if (sec && ['roadmap', 'cloud', 'backup', 'keyboard'].includes(sec)) {
         setActiveSection(sec);
       }
 
@@ -1053,6 +1054,16 @@ export default function ProgressTab({
       >
         <button
           type="button"
+          onClick={() => setActiveSection('roadmap')}
+          className={`btn btn-sm ${activeSection === 'roadmap' ? 'btn-primary' : 'btn-outline'}`}
+          style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 16px' }}
+        >
+          <Compass size={16} />
+          <span>🗺️ Hoja de Ruta Temporal</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveSection('cloud')}
           className={`btn btn-sm ${activeSection === 'cloud' ? 'btn-primary' : 'btn-outline'}`}
           style={{ fontWeight: 700, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 16px' }}
@@ -1081,6 +1092,14 @@ export default function ProgressTab({
           <span>⌨️ Teclados Japonés (IME)</span>
         </button>
       </div>
+
+      {/* SECCIÓN 0: HOJA DE RUTA TEMPORAL (PLAYBOOK AUTODIDACTA) */}
+      {activeSection === 'roadmap' && (
+        <StudyRoadmapModule 
+          appState={appState} 
+          onNavigate={contextApp?.navigate} 
+        />
+      )}
 
       {/* SECCIÓN 1: NUBE Y CUENTA */}
       {activeSection === 'cloud' && (

@@ -6,10 +6,12 @@ import dynamic from 'next/dynamic';
 import storiesData from '../../data/stories.json';
 import furiganaDict from '../../data/furigana_dict.js';
 import audioManager from '../../lib/audioManager';
-import { Volume2, Sparkles, BookOpen, PenTool, Info, Search, ArrowRight, ArrowLeft, SlidersHorizontal, ChevronDown, ChevronUp, ChevronRight, ChevronLeft, X, Check, CheckCircle2 } from 'lucide-react';
+import { Volume2, Sparkles, BookOpen, PenTool, Info, Search, ArrowRight, ArrowLeft, SlidersHorizontal, ChevronDown, ChevronUp, ChevronRight, ChevronLeft, X, Check, CheckCircle2, Zap } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import { useApp } from '../../lib/AppContext';
 import { triggerGrandConfetti } from '../../lib/confetti';
+import { calculateImmersionCoverage, evaluateSentenceMiningScore } from '../../lib/roadmapLogic';
+import { getNewCard } from '../../lib/srs';
 
 // Lazy loading con code-splitting
 const SpeechPractice = dynamic(() => import('../features/SpeechPractice'), { ssr: false });
@@ -38,11 +40,12 @@ export default function StoryTab({
 
   const [selectedStoryId, setSelectedStoryId] = useState(initialStoryId || null);
   const [currentChapter, setCurrentChapter] = useState(initialChapter ? parseInt(initialChapter, 10) : 1);
-  const [readingMode, setReadingMode] = useState(initialMode || 'natural'); // 'natural', 'hiragana', 'kanji_only'
+  const [readingMode, setReadingMode] = useState(initialMode || 'natural'); // 'natural', 'fsrs_smart', 'hiragana', 'kanji_only'
   const [storyLevelFilter, setStoryLevelFilter] = useState('Todos'); // 'Todos', 'N5', 'N4', 'N3', 'N2', 'N1', 'Personalizadas'
   const [storyStatusFilter, setStoryStatusFilter] = useState('all'); // 'all' | 'pending' | 'completed'
   const [storySearch, setStorySearch] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [minedSentences, setMinedSentences] = useState({});
 
   const activeFilterCount = (storyLevelFilter !== 'Todos' ? 1 : 0) + (storyStatusFilter !== 'all' ? 1 : 0);
   const handleResetFilters = () => {
@@ -69,7 +72,7 @@ export default function StoryTab({
   }, [initialChapter]);
 
   useEffect(() => {
-    if (initialMode && ['natural', 'hiragana', 'kanji_only'].includes(initialMode)) {
+    if (initialMode && ['natural', 'fsrs_smart', 'hiragana', 'kanji_only'].includes(initialMode)) {
       setReadingMode(initialMode);
     }
   }, [initialMode]);
@@ -91,13 +94,57 @@ export default function StoryTab({
         const ch = parseInt(chapter, 10);
         if (ch) setCurrentChapter(ch);
       }
-      if (mode && ['natural', 'hiragana', 'kanji_only'].includes(mode)) {
+      if (mode && ['natural', 'fsrs_smart', 'hiragana', 'kanji_only'].includes(mode)) {
         setReadingMode(mode);
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [allStories]);
+
+  const handleMineSentence = (sentenceObj) => {
+    if (!sentenceObj || !sentenceObj.japanese) return;
+    const cardId = `mined_sent_${sentenceObj.id || String(sentenceObj.japanese).slice(0, 16)}`;
+    const newCard = getNewCard();
+    const miningEval = evaluateSentenceMiningScore(sentenceObj.japanese, appState?.masteredVocab, appState?.srsQuestions);
+    const targetWord = miningEval.unknownWords?.[0] || '';
+
+    const minedItem = {
+      ...newCard,
+      id: cardId,
+      type: 'sentence',
+      source: 'story',
+      japanese: sentenceObj.japanese,
+      reading: sentenceObj.clean_target || sentenceObj.hiragana || '',
+      translation: sentenceObj.translation_es || sentenceObj.spanish || sentenceObj.english || '',
+      targetWord,
+      minedAt: new Date().toISOString()
+    };
+
+    const updatedSrs = {
+      ...(appState?.srsQuestions || {}),
+      [cardId]: minedItem
+    };
+
+    if (onUpdateState) {
+      onUpdateState({
+        ...appState,
+        srsQuestions: updatedSrs,
+        xp: (appState?.xp || 0) + 15
+      });
+    }
+
+    setMinedSentences(prev => ({ ...prev, [cardId]: true }));
+    try {
+      triggerGrandConfetti?.();
+    } catch {}
+    if (contextApp?.showAlert) {
+      contextApp.showAlert({
+        title: '¡Oración Minada a FSRS! ⚡',
+        message: `Se añadió "${sentenceObj.japanese}" a tus repasos FSRS (+15 XP). ${targetWord ? `Palabra clave: ${targetWord}` : ''}`
+      });
+    }
+  };
 
   const completedStories = appState?.completedStories || userState?.completedStories || {};
   const isStoryCompleted = (s) => {
@@ -273,7 +320,20 @@ export default function StoryTab({
 
     const escapedKeys = sortedKeys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
     const reg = new RegExp(escapedKeys.join('|'), 'g');
-    const html = rawJp.replace(reg, (k) => `<ruby class="ruby-clickable furigana-ruby" data-word="${k}">${k}<rt>${mergedDict[k]}</rt></ruby>`);
+    const html = rawJp.replace(reg, (k) => {
+      if (readingMode === 'fsrs_smart') {
+        const isMastered = Boolean(appState?.masteredVocab?.[k]);
+        const srsCard = appState?.srsQuestions?.[k];
+        const isMature = Boolean(
+          (srsCard?.fsrs?.scheduled_days >= 21) || 
+          (srsCard?.interval >= 21)
+        );
+        if (isMastered || isMature) {
+          return `<ruby class="ruby-clickable furigana-ruby fsrs-known" data-word="${k}" title="Dominada / FSRS ≥ 21 días (Furigana oculto)">${k}</ruby>`;
+        }
+      }
+      return `<ruby class="ruby-clickable furigana-ruby" data-word="${k}">${k}<rt>${mergedDict[k]}</rt></ruby>`;
+    });
 
     return (
       <div 
@@ -646,6 +706,33 @@ export default function StoryTab({
                         <p className="step-subtitle" style={{ fontSize: '0.92rem', color: 'var(--text-muted)', margin: 0 }}>
                           {s.title_es || s.description || 'Lectura graduada interactiva'}
                         </p>
+
+                        {(() => {
+                          const storyText = (s.paragraphs || []).map(p => p.japanese).join(' ') || s.title || '';
+                          const cov = calculateImmersionCoverage(storyText, appState?.masteredVocab, appState?.srsQuestions);
+                          return (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                              <span style={{
+                                fontSize: '0.74rem',
+                                fontWeight: 700,
+                                color: cov.color,
+                                background: `${cov.color}18`,
+                                border: `1px solid ${cov.color}40`,
+                                borderRadius: 6,
+                                padding: '2px 8px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4
+                              }}>
+                                <span>📊</span>
+                                <span>{cov.percentage}% conocido ({cov.label})</span>
+                              </span>
+                              <div style={{ width: 80, height: 5, background: 'var(--bg-main)', borderRadius: 999, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                                <div style={{ width: `${cov.percentage}%`, height: '100%', background: cov.color, borderRadius: 999 }} />
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       <div className="step-card-actions" onClick={(e) => e.stopPropagation()}>
@@ -849,6 +936,21 @@ export default function StoryTab({
               ))}
             </div>
           )}
+
+          {(() => {
+            const storyText = (paragraphs || []).map(p => p.japanese).join(' ') || story.title || '';
+            const cov = calculateImmersionCoverage(storyText, appState?.masteredVocab, appState?.srsQuestions);
+            return (
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 10, background: 'var(--bg-main)', border: `1px solid ${cov.color}40`, borderRadius: 'var(--radius-sm)', padding: '5px 12px' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: cov.color }}>
+                  📊 Cobertura Pre-Inmersión: {cov.percentage}% ({cov.label})
+                </span>
+                <div style={{ width: 80, height: 6, background: 'var(--bg-surface)', borderRadius: 999, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  <div style={{ width: `${cov.percentage}%`, height: '100%', background: cov.color, borderRadius: 999 }} />
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         <button
@@ -880,6 +982,16 @@ export default function StoryTab({
             }}
           >
             🎌 Kanji + Furigana
+          </button>
+          <button 
+            className={`mode-btn ${readingMode === 'fsrs_smart' ? 'active' : ''}`}
+            onClick={() => {
+              setReadingMode('fsrs_smart');
+              if (onParamsChange) onParamsChange({ id: selectedStoryId, chapter: currentChapter, mode: 'fsrs_smart' });
+            }}
+            title="Oculta el furigana solo en kanjis y palabras maduras (FSRS ≥ 21 días o dominadas)"
+          >
+            🧠 FSRS Inteligente
           </button>
           <button 
             className={`mode-btn ${readingMode === 'hiragana' ? 'active' : ''}`}
@@ -1016,6 +1128,87 @@ export default function StoryTab({
               </div>
             </div>
 
+            {/* Smart 1T (i+1) Mining Validation & Mining Button */}
+            {(() => {
+              const miningEval = evaluateSentenceMiningScore(activeSentence.japanese, appState?.masteredVocab, appState?.srsQuestions);
+              const cardId = `mined_sent_${activeSentence.id || String(activeSentence.japanese).slice(0, 16)}`;
+              const isMined = !!minedSentences[cardId] || !!appState?.srsQuestions?.[cardId];
+
+              return (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, margin: '12px 0 14px 0', padding: '10px 14px', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    {miningEval.isTarget1T ? (
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        background: 'rgba(16, 185, 129, 0.15)',
+                        color: '#059669',
+                        fontWeight: 800,
+                        fontSize: '0.8rem',
+                        border: '1px solid rgba(16, 185, 129, 0.3)'
+                      }}>
+                        🎯 Oración Ideal i+1 ({miningEval.unknownWords[0]} es la única palabra nueva)
+                      </span>
+                    ) : miningEval.unknownCount === 0 ? (
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        background: 'rgba(99, 102, 241, 0.12)',
+                        color: '#6366f1',
+                        fontWeight: 700,
+                        fontSize: '0.78rem'
+                      }}>
+                        ✓ 100% Comprensible ({miningEval.knownCount} palabras conocidas)
+                      </span>
+                    ) : (
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        background: 'rgba(245, 158, 11, 0.12)',
+                        color: '#d97706',
+                        fontWeight: 700,
+                        fontSize: '0.78rem'
+                      }}>
+                        Desafío ({miningEval.unknownCount} palabras desconocidas)
+                      </span>
+                    )}
+
+                    <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                      Zona de Comprensión: {miningEval.coveragePercent}%
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${isMined ? 'btn-outline' : 'btn-primary'}`}
+                    onClick={() => handleMineSentence(activeSentence)}
+                    disabled={isMined}
+                    style={{
+                      fontSize: '0.8rem',
+                      padding: '5px 14px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      fontWeight: 800
+                    }}
+                    title="Minar esta oración y su audio al mazo de repetición espaciada FSRS"
+                  >
+                    <Zap size={14} color={isMined ? 'var(--success)' : '#f59e0b'} fill={isMined ? 'var(--success)' : '#f59e0b'} />
+                    <span>{isMined ? '⚡ Minada en FSRS ✓' : '⚡ Minar Oración (FSRS)'}</span>
+                  </button>
+                </div>
+              );
+            })()}
+
             <div className="breakdown-translations">
               <div className="trans-item">
                 <strong>{activeSentence.translation_es ? '🇪🇸 Traducción:' : '🌐 Significado:'}</strong> {activeSentence.translation_es || activeSentence.spanish || activeSentence.english}
@@ -1109,6 +1302,17 @@ export default function StoryTab({
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+                      {(() => {
+                        const sentEval = evaluateSentenceMiningScore(s.japanese, appState?.masteredVocab, appState?.srsQuestions);
+                        if (sentEval.isTarget1T) {
+                          return (
+                            <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.15)', color: '#059669', padding: '2px 6px', borderRadius: 4, fontWeight: 800 }}>
+                              🎯 i+1
+                            </span>
+                          );
+                        }
+                        return null;
+                      })()}
                       {isDone && (
                         <span style={{ color: 'var(--success)', fontWeight: 'bold', fontSize: '0.85rem' }}>
                           ✓ Dominada

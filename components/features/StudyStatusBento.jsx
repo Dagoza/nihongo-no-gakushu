@@ -12,6 +12,7 @@ import {
   Award 
 } from 'lucide-react';
 import { calculateOverallProgress } from '../../lib/progressMetrics';
+import { getStudyPhase, calculateBalancedDailyBudget } from '../../lib/roadmapLogic';
 
 export default function StudyStatusBento({ appState, onNavigate }) {
   const streak = appState?.streak || 1;
@@ -24,6 +25,15 @@ export default function StudyStatusBento({ appState, onNavigate }) {
   const masteredKanjiCount = Object.values(appState?.masteredKanji || {}).filter(Boolean).length;
   const masteredParticlesCount = Object.values(appState?.masteredParticles || {}).filter(Boolean).length;
   const currentModuleStep = appState?.currentModuleStep || 1;
+  const completedStepsCount = Object.values(appState?.completedSteps || {}).filter(Boolean).length;
+
+  const currentPhase = React.useMemo(() => {
+    return getStudyPhase(masteredVocabCount, masteredKanjiCount, completedStepsCount);
+  }, [masteredVocabCount, masteredKanjiCount, completedStepsCount]);
+
+  const budget = React.useMemo(() => {
+    return calculateBalancedDailyBudget(appState);
+  }, [appState]);
 
   return (
     <div className="bento-card">
@@ -62,6 +72,22 @@ export default function StudyStatusBento({ appState, onNavigate }) {
                 }}
               >
                 Activo hoy
+              </span>
+              <span 
+                style={{ 
+                  fontSize: '0.68rem', 
+                  fontWeight: 800, 
+                  padding: '2px 8px', 
+                  borderRadius: 9999, 
+                  background: `${currentPhase.color}15`, 
+                  color: currentPhase.color,
+                  border: `1px solid ${currentPhase.color}35`,
+                  cursor: 'pointer'
+                }}
+                onClick={() => onNavigate?.('/progress?section=roadmap')}
+                title="Ver tu hoja de ruta completa en Progreso"
+              >
+                {currentPhase.name} · {masteredVocabCount}/{currentPhase.targetVocab} voc
               </span>
             </div>
             <h3 className="home-section-title" style={{ fontSize: '1.25rem' }}>
@@ -155,6 +181,52 @@ export default function StudyStatusBento({ appState, onNavigate }) {
             <span className="study-stat-value" style={{ fontSize: '1rem' }}>
               {masteredParticlesCount} / 99 dominadas
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Presupuesto Balanceado: Estudio Teórico vs Inmersión Práctica (Guía Manabe) */}
+      <div style={{
+        marginTop: 16,
+        marginBottom: 16,
+        padding: '12px 14px',
+        borderRadius: 12,
+        background: 'var(--bg-subtle, #f8fafc)',
+        border: '1px solid var(--border)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, fontSize: '0.78rem' }}>
+          <span style={{ fontWeight: 800, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <TrendingUp size={14} color="var(--primary)" /> Presupuesto Balanceado Diario (Guía Manabe)
+          </span>
+          <span 
+            style={{ color: 'var(--primary)', fontWeight: 700, cursor: 'pointer', fontSize: '0.74rem' }}
+            onClick={() => onNavigate?.('/progress?section=roadmap')}
+          >
+            Ver Hoja de Ruta →
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {/* Cuota Estudio */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: 3 }}>
+              <span>📚 Cuota Estudio (SRS)</span>
+              <strong style={{ color: '#3b82f6' }}>{budget.studyPercent}%</strong>
+            </div>
+            <div style={{ width: '100%', height: 5, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
+              <div style={{ width: `${budget.studyPercent}%`, height: '100%', background: '#3b82f6' }} />
+            </div>
+          </div>
+
+          {/* Cuota Habilidad */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: 3 }}>
+              <span>🎧 Cuota Inmersión</span>
+              <strong style={{ color: '#10b981' }}>{budget.skillPercent}%</strong>
+            </div>
+            <div style={{ width: '100%', height: 5, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
+              <div style={{ width: `${budget.skillPercent}%`, height: '100%', background: '#10b981' }} />
+            </div>
           </div>
         </div>
       </div>

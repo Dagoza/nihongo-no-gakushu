@@ -123,6 +123,8 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
   const [selectedStepNum, setSelectedStepNum] = useState(initialStep);
   // Active sub-step state for the selected module
   const [activeSubStep, setActiveSubStep] = useState(1);
+  // Mode toggle: 'full' (Práctica Activa y Ejercicios) vs 'gist' (Modo Resumen Esencial / The Gist - Yokubi)
+  const [moduleStudyMode, setModuleStudyMode] = useState('full');
 
   // Sync activeSubStep whenever selectedStepNum or userState changes
   React.useEffect(() => {
@@ -751,16 +753,178 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
           </div>
         </div>
 
-        {/* Sectioned Steps Architecture */}
-        {selectedStep.sections && selectedStep.sections.length > 0 ? (() => {
-          const sections = selectedStep.sections;
-          const completedSubStepsCount = sections.filter(s => !!userState?.completedSubSteps?.[`${selectedStep.step}_${s.substep}`]).length;
-          const subStepsPercent = Math.round((completedSubStepsCount / sections.length) * 100);
-          const currentSection = sections.find(s => s.substep === activeSubStep) || sections[0];
-          const isSubStepDone = !!userState?.completedSubSteps?.[`${selectedStep.step}_${currentSection.substep}`];
+        {/* Mode Selector: Práctica Activa vs The Gist (Yokubi / Inmersión Rápida) */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '20px 0 18px', flexWrap: 'wrap', gap: 12 }}>
+          <div className="reading-mode-selector" style={{ margin: 0 }}>
+            <button
+              type="button"
+              className={`mode-btn ${moduleStudyMode === 'full' ? 'active' : ''}`}
+              onClick={() => setModuleStudyMode('full')}
+            >
+              <span>⚡ Práctica Activa (Pasos & Ejercicios)</span>
+            </button>
+            <button
+              type="button"
+              className={`mode-btn ${moduleStudyMode === 'gist' ? 'active' : ''}`}
+              onClick={() => setModuleStudyMode('gist')}
+              title="Resumen ejecutivo ultra-compacto estilo Yokubi para saltar rápido a inmersión sin atascarse"
+            >
+              <span>📖 Resumen Esencial (The Gist / Yokubi)</span>
+            </button>
+          </div>
 
-          return (
-            <div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+            {moduleStudyMode === 'gist' 
+              ? '🎯 Filosofía Manabe / TheMoeWay: Asimila el esquema nuclear y salta a inmersión.' 
+              : '✍️ Evaluación didáctica paso a paso con ejercicios interactivos.'}
+          </div>
+        </div>
+
+        {/* GIST VIEW (Modo Resumen Esencial Estilo Yokubi) */}
+        {moduleStudyMode === 'gist' ? (
+          <div className="card" style={{ padding: '24px 28px', borderRadius: 'var(--radius-lg, 16px)', border: '1.5px solid var(--border)', background: 'var(--bg-card)', marginBottom: 30 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 20 }}>
+              <div>
+                <span className="vocab-tag" style={{ background: 'rgba(99, 102, 241, 0.12)', color: '#6366f1', fontWeight: 800, fontSize: '0.78rem', marginBottom: 8, display: 'inline-block' }}>
+                  Esquema Nuclear · Módulo {selectedStep.step} ({selectedStep.level})
+                </span>
+                <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: '4px 0 6px 0', color: 'var(--text-main)' }}>
+                  {selectedStep.title}
+                </h2>
+                <p style={{ fontSize: '0.96rem', color: 'var(--text-muted)', margin: 0 }}>
+                  <FuriganaText text={selectedStep.subtitle} showFurigana={showFurigana} />
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className={`btn ${isDone ? 'btn-outline' : 'btn-success'} btn-sm`}
+                onClick={() => {
+                  if (!isDone) toggleStepCompleted(selectedStep.step);
+                  if (selectedStep.step < steps.length) {
+                    handleOpenModule(selectedStep.step + 1);
+                  }
+                }}
+                style={{ fontWeight: 800, fontSize: '0.85rem', padding: '8px 18px', display: 'inline-flex', alignItems: 'center', gap: 8 }}
+              >
+                <CheckCircle2 size={16} />
+                <span>{isDone ? `Pasar al Módulo ${selectedStep.step + 1} ⏭️` : 'Comprendido · Pasar al Siguiente (+25 XP) 🚀'}</span>
+              </button>
+            </div>
+
+            {/* 1. Fórmula Nuclear */}
+            <div style={{ marginBottom: 22, padding: '16px 20px', background: 'var(--primary-bg)', borderLeft: '4px solid var(--primary)', borderRadius: '0 var(--radius-sm) var(--radius-sm) 0' }}>
+              <div style={{ fontWeight: 800, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', marginBottom: 6 }}>
+                📌 Patrón / Fórmula Gramatical
+              </div>
+              <div className="jp-text" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary-dark)', marginBottom: 6 }}>
+                {selectedStep.pattern || selectedStep.subtitle}
+              </div>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
+                {selectedStep.detailed_guide ? selectedStep.detailed_guide.split('.')[0] + '.' : 'Estructura nuclear para este nivel.'}
+              </div>
+            </div>
+
+            {/* 2. Ejemplos Nucleares con Audio */}
+            <div style={{ marginBottom: 22 }}>
+              <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span>🎯</span> Ejemplos Nucleares de Reconocimiento Rápido:
+              </h4>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {(selectedStep.sections || [])
+                  .filter(s => !s.is_exercise_step)
+                  .slice(0, 3)
+                  .map((sec, idx) => {
+                    const exSentence = (sec.grammar_points || sec.examples || [])[0];
+                    const rawJp = typeof exSentence === 'string' ? exSentence : (exSentence?.jp || sec.title);
+                    const cleanJp = rawJp.replace(/\(.*?\)/g, '').replace(/（.*?）/g, '').trim();
+
+                    return (
+                      <div 
+                        key={idx}
+                        style={{
+                          padding: '12px 16px',
+                          background: 'var(--bg-main)',
+                          border: '1px solid var(--border)',
+                          borderRadius: 'var(--radius-sm)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 12
+                        }}
+                      >
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div className="jp-text" style={{ fontSize: '1.08rem', fontWeight: 700, marginBottom: 2, color: 'var(--text-main)' }}>
+                            <FuriganaText text={cleanJp} showFurigana={showFurigana} />
+                          </div>
+                          <div style={{ fontSize: '0.86rem', color: 'var(--text-muted)' }}>
+                            {sec.title} · {sec.objective ? sec.objective.slice(0, 75) + '...' : ''}
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="audio-btn"
+                          onClick={() => audioManager.speak(cleanJp)}
+                          title="Escuchar audio nativo"
+                        >
+                          <Volume2 size={16} />
+                        </button>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* 3. Regla de Oro Rápida (Mnemotecnia para Inmersión) */}
+            <div style={{ padding: '14px 18px', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: 'var(--radius-sm)', marginBottom: 22 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <span style={{ fontSize: '1.3rem' }}>💡</span>
+                <div>
+                  <strong style={{ color: '#d97706', fontSize: '0.9rem' }}>Regla de Oro Rápida para Inmersión:</strong>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
+                    No memorices excepciones raras en esta fase. Al consumir anime, podcasts o lecturas graduadas, tu objetivo es <em>reconocer</em> cuándo el hablante utiliza <strong>{selectedStep.title}</strong> para modular su intención. La comprensión intuitiva se consolidará automáticamente por exposición repetida.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setModuleStudyMode('full')}
+              >
+                Ver Práctica Detallada y Ejercicios 📝
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => {
+                  if (!isDone) toggleStepCompleted(selectedStep.step);
+                  if (selectedStep.step < steps.length) {
+                    handleOpenModule(selectedStep.step + 1);
+                  }
+                }}
+                style={{ fontWeight: 800 }}
+              >
+                Comprendido · Siguiente Módulo (+25 XP) 🚀
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* FULL ACTIVE PRACTICE STEPS */
+          selectedStep.sections && selectedStep.sections.length > 0 ? (() => {
+            const sections = selectedStep.sections;
+            const completedSubStepsCount = sections.filter(s => !!userState?.completedSubSteps?.[`${selectedStep.step}_${s.substep}`]).length;
+            const subStepsPercent = Math.round((completedSubStepsCount / sections.length) * 100);
+            const currentSection = sections.find(s => s.substep === activeSubStep) || sections[0];
+            const isSubStepDone = !!userState?.completedSubSteps?.[`${selectedStep.step}_${currentSection.substep}`];
+
+            return (
+              <div>
               {/* Stepper Navigation Bar */}
               <div className="curriculum-stepper-container">
                 <div className="curriculum-stepper-header">
@@ -2228,7 +2392,7 @@ export default function CurriculumTab({ onNavigate, userState, onUpdateState, in
               </div>
             )}
           </div>
-        )}
+        ))}
 
         {/* Practical Interactive Exercises (Fallback only if no sections defined) */}
         {(!selectedStep.sections || selectedStep.sections.length === 0) && selectedStep.exercises && selectedStep.exercises.length > 0 && (() => {

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Sparkles, Award, Check, ChevronRight, ChevronLeft, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter, SlidersHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Volume2, Play, BookOpen, MessageSquare, HelpCircle, CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, Sparkles, Award, Check, ChevronRight, ChevronLeft, Radio, Eye, EyeOff, UserX, BookmarkCheck, Trash2, Mic, Plus, Users, User, Bot, Calendar, PenTool, Info, Search, Filter, SlidersHorizontal, ChevronDown, ChevronUp, X, Zap, Headphones } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import audioManager from '../../lib/audioManager';
 import nhkLessonsData from '../../data/nhk_lessons.json';
@@ -10,6 +10,8 @@ import irodoriDialoguesData from '../../data/irodori_dialogues.json';
 import conversationExercisesData from '../../data/conversation_exercises.json';
 import { useApp } from '../../lib/AppContext';
 import { triggerGrandConfetti } from '../../lib/confetti';
+import { calculateImmersionCoverage, evaluateSentenceMiningScore } from '../../lib/roadmapLogic';
+import { getNewCard } from '../../lib/srs';
 
 // Lazy loading con code-splitting para componentes pesados
 const RoleplayChat = dynamic(() => import('../features/RoleplayChat'), { ssr: false });
@@ -201,12 +203,87 @@ export default function ConversationTab({
 
   // Active Recall: Hide/Show Furigana (reading) & Spanish Translation
   const [showFurigana, setShowFurigana] = useState(true);
+  const [smartFuriganaFsrs, setSmartFuriganaFsrs] = useState(false);
   const [showSpanish, setShowSpanish] = useState(true);
   const [revealedKanaIndices, setRevealedKanaIndices] = useState({});
   const [revealedEsIndices, setRevealedEsIndices] = useState({});
 
+  // Raw Listening 2-Step Mode (Shoui Method)
+  const [rawListeningActive, setRawListeningActive] = useState(false);
+  const [rawListeningStep, setRawListeningStep] = useState(1); // 1: Texto Difuminado, 2: Revelado & Minado
+
+  // Smart 1T Sentence Mining & Mental Output
+  const [minedDialogueSentences, setMinedDialogueSentences] = useState({});
+  const [mentalOutputCompleted, setMentalOutputCompleted] = useState({});
+
   // Modal for AI Conversation Generation
   const [isGenModalOpen, setIsGenModalOpen] = useState(false);
+
+  const handleMineDialogueSentence = (lineObj, idx) => {
+    const textJp = lineObj?.jp || lineObj?.japanese || '';
+    if (!textJp) return;
+    const cardId = `mined_conv_${currentDialogue?.id || 'd'}_${idx}`;
+    const newCard = getNewCard();
+    const miningEval = evaluateSentenceMiningScore(textJp, appState?.masteredVocab, appState?.srsQuestions);
+    const targetWord = miningEval.unknownWords?.[0] || '';
+
+    const minedItem = {
+      ...newCard,
+      id: cardId,
+      type: 'sentence',
+      source: 'conversation',
+      japanese: textJp,
+      reading: lineObj.furigana || lineObj.kana || '',
+      translation: lineObj.es || lineObj.spanish || '',
+      speaker: lineObj.speaker || '',
+      targetWord,
+      minedAt: new Date().toISOString()
+    };
+
+    const updatedSrs = {
+      ...(appState?.srsQuestions || {}),
+      [cardId]: minedItem
+    };
+
+    if (onUpdateState) {
+      onUpdateState({
+        ...appState,
+        srsQuestions: updatedSrs,
+        xp: (appState?.xp || 0) + 15
+      });
+    }
+
+    setMinedDialogueSentences(prev => ({ ...prev, [cardId]: true }));
+    try {
+      triggerGrandConfetti?.();
+    } catch {}
+    if (contextApp?.showAlert) {
+      contextApp.showAlert({
+        title: '¡Oración Minada a FSRS! ⚡',
+        message: `Se añadió "${textJp}" a tus repasos FSRS (+15 XP). ${targetWord ? `Palabra clave: ${targetWord}` : ''}`
+      });
+    }
+  };
+
+  const handleCompleteMentalOutput = () => {
+    if (!currentDialogue) return;
+    setMentalOutputCompleted(prev => ({ ...prev, [currentDialogue.id]: true }));
+    if (onUpdateState) {
+      onUpdateState({
+        ...appState,
+        xp: (appState?.xp || 0) + 10
+      });
+    }
+    try {
+      triggerGrandConfetti?.();
+    } catch {}
+    if (contextApp?.showAlert) {
+      contextApp.showAlert({
+        title: '¡Simulación Mental de Output Completada! 🧠',
+        message: 'Has consolidado tus respuestas orales y cadencia tonal sin traducción (+10 XP).'
+      });
+    }
+  };
 
   const updateParams = (newDialogueId, newTab, newStatus, newType) => {
     if (onParamsChange) {
@@ -1223,6 +1300,33 @@ export default function ConversationTab({
                             <p className="step-subtitle" style={{ fontSize: '0.92rem', color: 'var(--text-muted)', margin: 0 }}>
                               🇪🇸 {d.title_es}
                             </p>
+
+                            {(() => {
+                              const dialogueText = (d.dialogue || []).map(l => l.jp || l.japanese || '').join(' ') || d.title_jp || '';
+                              const cov = calculateImmersionCoverage(dialogueText, appState?.masteredVocab, appState?.srsQuestions);
+                              return (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                                  <span style={{
+                                    fontSize: '0.74rem',
+                                    fontWeight: 700,
+                                    color: cov.color,
+                                    background: `${cov.color}18`,
+                                    border: `1px solid ${cov.color}40`,
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 4
+                                  }}>
+                                    <span>📊</span>
+                                    <span>{cov.percentage}% conocido ({cov.label})</span>
+                                  </span>
+                                  <div style={{ width: 75, height: 5, background: 'var(--bg-main)', borderRadius: 999, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                                    <div style={{ width: `${cov.percentage}%`, height: '100%', background: cov.color, borderRadius: 999 }} />
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </div>
 
                           <div className="step-card-actions" onClick={(e) => e.stopPropagation()}>
@@ -1412,6 +1516,21 @@ export default function ConversationTab({
                   <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', marginTop: 4 }}>
                     🇪🇸 {currentDialogue.title_es}
                   </p>
+
+                  {(() => {
+                    const dialogueText = (currentDialogue.dialogue || []).map(l => l.jp || l.japanese || '').join(' ') || currentDialogue.title_jp || '';
+                    const cov = calculateImmersionCoverage(dialogueText, appState?.masteredVocab, appState?.srsQuestions);
+                    return (
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 8, background: 'var(--bg-main)', border: `1px solid ${cov.color}40`, borderRadius: 'var(--radius-sm)', padding: '5px 12px' }}>
+                        <span style={{ fontSize: '0.82rem', fontWeight: 800, color: cov.color }}>
+                          📊 Cobertura Pre-Inmersión: {cov.percentage}% ({cov.label})
+                        </span>
+                        <div style={{ width: 80, height: 6, background: 'var(--bg-surface)', borderRadius: 999, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                          <div style={{ width: `${cov.percentage}%`, height: '100%', background: cov.color, borderRadius: 999 }} />
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Real-life Situation Context Box (Irodori) */}
                   {currentDialogue.situation && (
@@ -1649,6 +1768,16 @@ export default function ConversationTab({
 
                   <button
                     type="button"
+                    className={`btn btn-sm ${smartFuriganaFsrs ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setSmartFuriganaFsrs(!smartFuriganaFsrs)}
+                    style={{ fontSize: '0.8rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                    title="Oculta automáticamente el kana en palabras con intervalo FSRS ≥ 21 días o dominadas"
+                  >
+                    <span>🧠 FSRS Dinámico</span>
+                  </button>
+
+                  <button
+                    type="button"
                     className={`btn btn-sm ${showSpanish ? 'btn-outline' : 'btn-ghost'}`}
                     onClick={() => {
                       setShowSpanish(!showSpanish);
@@ -1660,8 +1789,74 @@ export default function ConversationTab({
                     {showSpanish ? <Eye size={13} /> : <EyeOff size={13} />}
                     <span>{showSpanish ? 'Traducción 🇪🇸' : 'Traducción Oculta'}</span>
                   </button>
+
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${rawListeningActive ? 'btn-danger' : 'btn-outline'}`}
+                    onClick={() => {
+                      setRawListeningActive(!rawListeningActive);
+                      setRawListeningStep(1);
+                    }}
+                    style={{ fontSize: '0.8rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 5, fontWeight: rawListeningActive ? 800 : 600 }}
+                    title="Modo Escucha en Crudo (Shoui Method): Entrena primero el oído sin soporte visual y revela en la 2ª pasada"
+                  >
+                    <Headphones size={13} />
+                    <span>{rawListeningActive ? 'Escucha Cruda ACTIVA' : '🎧 Modo Escucha Cruda'}</span>
+                  </button>
                 </div>
               </div>
+
+              {/* Raw Listening 2-Step Mode Banner (Shoui Method) */}
+              {rawListeningActive && (
+                <div style={{
+                  padding: '12px 18px',
+                  background: rawListeningStep === 1 ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.12) 100%)' : 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%)',
+                  border: rawListeningStep === 1 ? '1.5px solid rgba(239, 68, 68, 0.35)' : '1.5px solid rgba(16, 185, 129, 0.35)',
+                  borderRadius: 'var(--radius-md)',
+                  marginBottom: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                  flexWrap: 'wrap'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontSize: '1.4rem' }}>{rawListeningStep === 1 ? '🎧' : '👁️'}</span>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '0.9rem', color: rawListeningStep === 1 ? '#dc2626' : '#059669' }}>
+                        {rawListeningStep === 1 ? '1ª Pasada: Solo Oído (Texto Difuminado)' : '2ª Pasada: Texto Revelado & Minado FSRS'}
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        {rawListeningStep === 1
+                          ? 'El texto japonés permanece difuminado para entrenar tu cerebro a decodificar por vía auditiva pura sin muleta visual.'
+                          : 'Revisa las frases, valida tu comprensión auditiva y mina oraciones 1T (i+1) a FSRS.'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {rawListeningStep === 1 ? (
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() => setRawListeningStep(2)}
+                        style={{ fontSize: '0.8rem', fontWeight: 800 }}
+                      >
+                        Pasar a 2ª Pasada (Revelar Texto) 👁️
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => setRawListeningStep(1)}
+                        style={{ fontSize: '0.8rem' }}
+                      >
+                        Repetir 1ª Pasada (Difuminar) 🎧
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Barra de Control Sticky del Modo Teleprompter Manos Libres */}
               {teleprompterActive && (
@@ -1893,14 +2088,20 @@ export default function ConversationTab({
                           </div>
                         ) : (
                           <div>
-                            <div className="dialogue-card-jp jp-text">
+                            <div 
+                              className="dialogue-card-jp jp-text"
+                              style={rawListeningActive && rawListeningStep === 1 ? { filter: 'blur(7px)', userSelect: 'none', transition: 'filter 0.3s' } : { transition: 'filter 0.3s' }}
+                            >
                               {lineJp}
                             </div>
 
-                            {/* Pronunciation / Kana Reading with Active Recall toggle */}
+                            {/* Pronunciation / Kana Reading with Active Recall toggle & FSRS Smart mode */}
                             {lineKana && lineKana !== lineJp && (
-                              showFurigana ? (
-                                <div className="dialogue-card-kana jp-text">
+                              (showFurigana && (!smartFuriganaFsrs || !appState?.masteredVocab?.[lineJp])) ? (
+                                <div 
+                                  className="dialogue-card-kana jp-text"
+                                  style={rawListeningActive && rawListeningStep === 1 ? { filter: 'blur(7px)', userSelect: 'none' } : {}}
+                                >
                                   {lineKana}
                                 </div>
                               ) : isKanaRevealed ? (
@@ -1941,38 +2142,100 @@ export default function ConversationTab({
                         )}
 
                         {/* Spanish Translation Prompt with Active Recall toggle */}
-                        {showSpanish ? (
-                          <div className="dialogue-card-es">
-                            <span style={{ marginRight: 6 }}>🇪🇸</span>
-                            <span>{lineEs}</span>
-                          </div>
-                        ) : isEsRevealed ? (
-                          <div className="dialogue-card-es">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6 }}>
-                              <div>
-                                <span style={{ marginRight: 6 }}>🇪🇸</span>
-                                <span>{lineEs}</span>
-                              </div>
-                              <button
-                                type="button"
-                                className="dialogue-hide-btn"
-                                onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: false }))}
-                              >
-                                <EyeOff size={11} /> Ocultar
-                              </button>
+                        <div style={rawListeningActive && rawListeningStep === 1 ? { filter: 'blur(7px)', userSelect: 'none' } : {}}>
+                          {showSpanish ? (
+                            <div className="dialogue-card-es">
+                              <span style={{ marginRight: 6 }}>🇪🇸</span>
+                              <span>{lineEs}</span>
                             </div>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            className="dialogue-peek-btn"
-                            style={{ marginTop: 6 }}
-                            onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: true }))}
-                            title="Ver traducción al español de esta frase"
-                          >
-                            <Eye size={12} /> Ver traducción 🇪🇸
-                          </button>
-                        )}
+                          ) : isEsRevealed ? (
+                            <div className="dialogue-card-es">
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6 }}>
+                                <div>
+                                  <span style={{ marginRight: 6 }}>🇪🇸</span>
+                                  <span>{lineEs}</span>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="dialogue-hide-btn"
+                                  onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: false }))}
+                                >
+                                  <EyeOff size={11} /> Ocultar
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              className="dialogue-peek-btn"
+                              style={{ marginTop: 6 }}
+                              onClick={() => setRevealedEsIndices(prev => ({ ...prev, [idx]: true }))}
+                              title="Ver traducción al español de esta frase"
+                            >
+                              <Eye size={12} /> Ver traducción 🇪🇸
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Smart 1T (i+1) Sentence Mining Evaluation & Mining Action */}
+                        {(() => {
+                          const miningEval = evaluateSentenceMiningScore(lineJp, appState?.masteredVocab, appState?.srsQuestions);
+                          const cardId = `mined_conv_${currentDialogue?.id || 'd'}_${idx}`;
+                          const isMined = !!minedDialogueSentences[cardId] || !!appState?.srsQuestions?.[cardId];
+
+                          return (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginTop: 8, paddingTop: 6, borderTop: '1px dashed var(--border)' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                {miningEval.isTarget1T ? (
+                                  <span style={{
+                                    fontSize: '0.73rem',
+                                    fontWeight: 800,
+                                    color: '#059669',
+                                    background: 'rgba(16, 185, 129, 0.15)',
+                                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                                    borderRadius: 4,
+                                    padding: '2px 8px'
+                                  }}>
+                                    🎯 i+1 ({miningEval.unknownWords[0]} es nueva)
+                                  </span>
+                                ) : miningEval.unknownCount === 0 ? (
+                                  <span style={{ fontSize: '0.72rem', color: '#6366f1', background: 'rgba(99, 102, 241, 0.1)', borderRadius: 4, padding: '2px 6px', fontWeight: 600 }}>
+                                    ✓ 100% conocida
+                                  </span>
+                                ) : (
+                                  <span style={{ fontSize: '0.72rem', color: '#d97706', background: 'rgba(245, 158, 11, 0.1)', borderRadius: 4, padding: '2px 6px', fontWeight: 600 }}>
+                                    Desafío ({miningEval.unknownCount} nuevas)
+                                  </span>
+                                )}
+                              </div>
+
+                              {(!rawListeningActive || rawListeningStep === 2) && (
+                                <button
+                                  type="button"
+                                  className="btn btn-outline btn-xs"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMineDialogueSentence(d, idx);
+                                  }}
+                                  disabled={isMined}
+                                  style={{
+                                    fontSize: '0.73rem',
+                                    padding: '2px 8px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                    fontWeight: 700,
+                                    borderColor: isMined ? 'var(--success)' : 'var(--border)'
+                                  }}
+                                  title="Minar esta oración y su audio al mazo FSRS"
+                                >
+                                  <Zap size={11} color={isMined ? 'var(--success)' : '#f59e0b'} fill={isMined ? 'var(--success)' : '#f59e0b'} />
+                                  <span>{isMined ? 'Minada ✓' : 'Minar ⚡'}</span>
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       {/* Interactive Pronunciation Evaluation Footer for Muted Character */}
@@ -1986,6 +2249,46 @@ export default function ConversationTab({
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Simulación Mental de Output (Shoui Method) */}
+              <div 
+                className="card"
+                style={{
+                  marginBottom: 20,
+                  padding: '18px 22px',
+                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%)',
+                  border: '1.5px solid rgba(139, 92, 246, 0.25)',
+                  borderRadius: 'var(--radius-md)'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 260 }}>
+                    <span style={{ fontSize: '1.8rem', lineHeight: 1 }}>🧠</span>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '0.98rem', color: '#8b5cf6', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span>Simulación Mental de Output (Shoui Method)</span>
+                        <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: 4, background: 'rgba(139, 92, 246, 0.15)', color: '#8b5cf6' }}>
+                          Adquisición Subconsciente
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-main)', margin: 0, lineHeight: 1.5 }}>
+                        Antes de pasar a otro diálogo: cierra los ojos durante 30 segundos y visualízate en Japón. Recrea en tu mente cómo responderías a cada interlocutor, sintiendo la cadencia tonal sin traducir al español.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={`btn ${mentalOutputCompleted[currentDialogue.id] ? 'btn-outline' : 'btn-primary'} btn-sm`}
+                    onClick={handleCompleteMentalOutput}
+                    disabled={mentalOutputCompleted[currentDialogue.id]}
+                    style={{ fontWeight: 800, fontSize: '0.82rem', padding: '7px 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <CheckCircle2 size={15} color={mentalOutputCompleted[currentDialogue.id] ? 'var(--success)' : '#fff'} />
+                    <span>{mentalOutputCompleted[currentDialogue.id] ? 'Simulación Realizada ✓' : 'Completar Simulación (+10 XP)'}</span>
+                  </button>
+                </div>
               </div>
 
               {/* Grammar Notes in Spanish */}

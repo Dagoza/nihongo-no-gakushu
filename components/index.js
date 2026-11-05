@@ -57,3 +57,6 @@ export { default as StudyStatusBento } from './features/StudyStatusBento';
 export { default as TerminologyDetailModal } from './modals/TerminologyDetailModal';
 export { default as TerminologyGuideView } from './features/TerminologyGuideView';
 export { default as TerminologyTooltip } from './common/TerminologyTooltip';
+export { default as ConfusionComparator } from './features/ConfusionComparator';
+export { default as PitchAccentMinimalPairs } from './features/PitchAccentMinimalPairs';
+export { default as StudyRoadmapModule } from './features/StudyRoadmapModule';

@@ -38,6 +38,7 @@ const SpeechPractice = dynamic(() => import('../features/SpeechPractice'), { ssr
 const EditWordModal = dynamic(() => import('../modals/EditWordModal'), { ssr: false });
 const SaveVocabModal = dynamic(() => import('../modals/SaveVocabModal'), { ssr: false });
 const AIGeneratorModal = dynamic(() => import('../modals/AIGeneratorModal'), { ssr: false });
+const PitchAccentMinimalPairs = dynamic(() => import('../features/PitchAccentMinimalPairs'), { ssr: false });
 
 export default function VocabTab({ 
   appState, 
@@ -54,7 +55,7 @@ export default function VocabTab({
   
   // Normalizar modo inicial: 'study' o 'typing' abren el modo de estudio
   const resolvedInitialMode = (initialMode === 'typing' || initialMode === 'study') ? 'study' : (initialMode || 'cards');
-  const [mode, setMode] = useState(resolvedInitialMode); // 'cards' | 'study' | 'srs' | 'n4_exercises'
+  const [mode, setMode] = useState(resolvedInitialMode); // 'cards' | 'study' | 'srs' | 'n4_exercises' | 'pitch_pairs'
   const [level, setLevel] = useState(initialLevel || 'all'); // 'all' | 'N5' | 'N4' | ...
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'learned' | 'unlearned'
   const [selectedTag, setSelectedTag] = useState(initialCategory || 'all');
@@ -65,7 +66,7 @@ export default function VocabTab({
   useEffect(() => {
     if (initialMode) {
       if (initialMode === 'typing' || initialMode === 'study') setMode('study');
-      else if (['cards', 'srs', 'n4_exercises'].includes(initialMode)) setMode(initialMode);
+      else if (['cards', 'srs', 'n4_exercises', 'pitch_pairs'].includes(initialMode)) setMode(initialMode);
     }
   }, [initialMode]);
 
@@ -732,6 +733,18 @@ export default function VocabTab({
           >
             <PenTool size={16} />
             <span>📝 Ejercicios ({n4Exercises.length})</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mode-btn ${mode === 'pitch_pairs' ? 'active' : ''}`}
+            onClick={() => {
+              setMode('pitch_pairs');
+              updateParams('pitch_pairs', level, selectedTag, searchTerm);
+            }}
+            title="Entrenador auditivo de acento tonal y pares mínimos con filtro paso bajo (Muffle Audio)"
+          >
+            <span>🎵 Pares Mínimos Pitch</span>
           </button>
         </div>
       </div>
@@ -2027,6 +2040,13 @@ export default function VocabTab({
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* MODE 5: PITCH ACCENT MINIMAL PAIRS TRAINER */}
+      {mode === 'pitch_pairs' && (
+        <div style={{ paddingBottom: 40 }}>
+          <PitchAccentMinimalPairs onBack={() => setMode('cards')} />
         </div>
       )}
 

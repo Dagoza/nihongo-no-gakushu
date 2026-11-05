@@ -15,7 +15,9 @@ import {
   Layers, 
   Shuffle, 
   BookOpen, 
-  Zap
+  Zap,
+  Timer,
+  AlertTriangle
 } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import audioManager from '../../lib/audioManager';
@@ -23,7 +25,8 @@ import {
   SRSRating, 
   getIntervalPreviews, 
   getRatingInfoFromMistakes, 
-  triggerSrsFeedback 
+  triggerSrsFeedback,
+  isLeech 
 } from '../../lib/srs';
 import { getPrimaryKanjiReading, getAllKanjiReadings, katakanaToHiragana } from '../../lib/japaneseUtils';
 import { triggerCheerConfetti } from '../../lib/confetti';
@@ -33,6 +36,7 @@ import AudioPlayButton from '../common/AudioPlayButton';
 import QuizOptionsGrid from '../common/QuizOptionsGrid';
 import PitchAccent from './PitchAccent';
 import SpeechPractice from './SpeechPractice';
+import ConfusionComparator, { findConfusionMatch } from './ConfusionComparator';
 
 // Clave de almacenamiento local para persistir la preferencia de modo de repaso
 const KANJI_SRS_MODE_STORAGE_KEY = 'nihongo_kanji_srs_mode_v2';
@@ -100,6 +104,15 @@ export default function KanjiSrsReview({
   // Estados comunes de resolución de la tarjeta activa
   const [isRevealed, setIsRevealed] = useState(false);
   const [suggestedRating, setSuggestedRating] = useState(null);
+
+  // Speed Focus Timer (5s / 8s / 0 para desactivar) - Previene Difficulty Hell en FSRS
+  const [speedTimerLimit, setSpeedTimerLimit] = useState(5);
+  const [timerSecondsLeft, setTimerSecondsLeft] = useState(5);
+  const [isTimerExpired, setIsTimerExpired] = useState(false);
+  const timerIntervalRef = useRef(null);
+
+  // Modal de intervención See-Link-Go para Leeches
+  const [showConfusionModal, setShowConfusionModal] = useState(false);
 
   // Estados de Selección Múltiple (Quiz)
   const [quizSelectedOption, setQuizSelectedOption] = useState(null);
@@ -299,7 +312,47 @@ export default function KanjiSrsReview({
     setQuizIsAnswered(false);
     setJukugoInput('');
     setJukugoFeedback(null);
+    setIsTimerExpired(false);
   }, []);
+
+  // Countdown timer para Speed Focus
+  useEffect(() => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+
+    if (!currentItem || isRevealed || quizIsAnswered || speedTimerLimit <= 0) {
+      setIsTimerExpired(false);
+      setTimerSecondsLeft(speedTimerLimit);
+      return;
+    }
+
+    setTimerSecondsLeft(speedTimerLimit);
+    setIsTimerExpired(false);
+    const startTime = Date.now();
+    const durationMs = speedTimerLimit * 1000;
+
+    timerIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const remainingSec = Math.max(0, +((durationMs - elapsed) / 1000).toFixed(1));
+      setTimerSecondsLeft(remainingSec);
+
+      if (elapsed >= durationMs) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+        setIsTimerExpired(true);
+      }
+    }, 100);
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    };
+  }, [srsReviewIndex, isRevealed, quizIsAnswered, speedTimerLimit, currentItem]);
+
 
   // Manejo de Respuesta para Jukugo Matrix Drill (Tipeo)
   const handleValidateJukugoInput = useCallback(() => {
@@ -666,6 +719,39 @@ export default function KanjiSrsReview({
           >
             <Undo2 size={15} /> Deshacer
           </button>
+
+          <button
+            type="button"
+            className={`btn btn-xs ${speedTimerLimit > 0 ? 'btn-outline' : 'btn-ghost'}`}
+            onClick={() => setSpeedTimerLimit(prev => (prev === 5 ? 8 : (prev === 8 ? 0 : 5)))}
+            title="Speed Focus Timer: alternar entre 5s, 8s o Desactivado (Previene Difficulty Hell)"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.74rem' }}
+          >
+            <Timer size={12} />
+            <span>{speedTimerLimit > 0 ? `${speedTimerLimit}s Focus` : 'Timer Off'}</span>
+          </button>
+
+          {(isLeech(currentCardData) || findConfusionMatch(currentItem?.kanji)) && (
+            <button
+              type="button"
+              className="btn btn-xs btn-outline"
+              onClick={() => setShowConfusionModal(true)}
+              style={{
+                borderColor: isLeech(currentCardData) ? '#ef4444' : 'var(--primary)',
+                color: isLeech(currentCardData) ? '#ef4444' : 'var(--primary)',
+                background: isLeech(currentCardData) ? 'rgba(239, 68, 68, 0.08)' : 'transparent',
+                fontWeight: 700,
+                fontSize: '0.74rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4
+              }}
+              title="Intervención See-Link-Go: ver diferencias con kanjis visualmente parecidos"
+            >
+              <AlertTriangle size={12} />
+              <span>{isLeech(currentCardData) ? '🚨 Leech: See-Link-Go' : 'Kanji Similar'}</span>
+            </button>
+          )}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -756,6 +842,54 @@ export default function KanjiSrsReview({
           overflow: 'hidden'
         }}
       >
+        {/* Speed Focus Timer Bar (5s / 8s) */}
+        {speedTimerLimit > 0 && !isRevealed && !quizIsAnswered && (
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: isTimerExpired ? '#ef4444' : 'var(--text-muted)', marginBottom: 4, fontWeight: 700 }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Timer size={12} /> Speed Focus
+              </span>
+              <span>{isTimerExpired ? '¡Tiempo expirado!' : `${timerSecondsLeft.toFixed(1)}s`}</span>
+            </div>
+            <div style={{ width: '100%', height: 4, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+              <div 
+                style={{ 
+                  width: `${Math.min(100, (timerSecondsLeft / speedTimerLimit) * 100)}%`, 
+                  height: '100%', 
+                  background: isTimerExpired ? '#ef4444' : (timerSecondsLeft < 2 ? '#f59e0b' : 'var(--primary)'),
+                  transition: 'width 0.1s linear'
+                }} 
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Aviso pedagógico Anti-Difficulty Hell si expira el tiempo */}
+        {isTimerExpired && !isRevealed && !quizIsAnswered && (
+          <div 
+            style={{ 
+              margin: '0 0 16px 0', 
+              padding: '10px 14px', 
+              borderRadius: 8, 
+              background: 'rgba(239, 68, 68, 0.08)', 
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              fontSize: '0.78rem',
+              lineHeight: 1.45,
+              color: 'var(--text-main)',
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 800, color: '#ef4444', marginBottom: 2 }}>
+              <Timer size={13} />
+              <span>Tiempo de recuperación inmediata agotado ({speedTimerLimit}s)</span>
+            </div>
+            <span>
+              Si no recordaste el kanji de inmediato, revela y marca <strong>Otra vez (Again / Olvidé)</strong>. 
+              <em>Aviso FSRS:</em> Evita abusar de &quot;Difícil&quot; en dudas para prevenir el <strong>Difficulty Hell</strong> (resérvalo únicamente para aciertos logrados con esfuerzo dentro del tiempo).
+            </span>
+          </div>
+        )}
+
         {/* ENCABEZADO DE EJERCICIO Y SWITCH RÁPIDO */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -1370,10 +1504,15 @@ export default function KanjiSrsReview({
                 borderRadius: 12,
                 transition: 'all 0.15s ease',
                 position: 'relative',
-                boxShadow: suggestedRating === SRSRating.AGAIN ? '0 0 0 2.5px #ef4444' : 'none'
+                boxShadow: (isTimerExpired || suggestedRating === SRSRating.AGAIN) ? '0 0 0 2.5px #ef4444' : 'none'
               }}
               title="Atajo: Tecla [1]"
             >
+              {isTimerExpired && (
+                <span style={{ fontSize: '0.6rem', background: '#ef4444', color: '#fff', padding: '1px 5px', borderRadius: 4, fontWeight: 900, marginBottom: 1 }}>
+                  Sugerido
+                </span>
+              )}
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, fontSize: '0.88rem' }}>
                 <RotateCcw size={14} /> Olvidé
               </div>
@@ -1400,13 +1539,16 @@ export default function KanjiSrsReview({
                 transition: 'all 0.15s ease',
                 boxShadow: suggestedRating === SRSRating.HARD ? '0 0 0 2.5px #eab308' : 'none'
               }}
-              title="Atajo: Tecla [2]"
+              title="Reserva Difícil solo para aciertos que requirieron esfuerzo dentro del tiempo (no para olvidos)"
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, fontSize: '0.88rem' }}>
                 <Zap size={14} /> Difícil
               </div>
               <span style={{ fontSize: '0.72rem', opacity: 0.9, fontWeight: 600 }}>
                 {intervalPreviews[SRSRating.HARD]} <span style={{ opacity: 0.65, fontSize: '0.65rem' }}>[2]</span>
+              </span>
+              <span style={{ fontSize: '0.58rem', color: '#eab308', opacity: 0.85, marginTop: 1 }}>
+                Solo aciertos
               </span>
             </button>
 
@@ -1476,6 +1618,12 @@ export default function KanjiSrsReview({
         <span><kbd style={{ padding: '1px 5px', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 3 }}>Esc</kbd> Salir</span>
       </div>
 
+      {/* Modal de intervención See-Link-Go */}
+      <ConfusionComparator
+        targetKanji={currentItem?.kanji}
+        isOpen={showConfusionModal}
+        onClose={() => setShowConfusionModal(false)}
+      />
     </div>
   );
 }

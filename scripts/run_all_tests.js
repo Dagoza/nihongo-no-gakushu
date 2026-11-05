@@ -734,6 +734,12 @@ runTest('Integridad de nuevos métodos de aprendizaje (Can-Do Scramble, Cloze SR
   execSync('node scripts/test_learning_methods_suite.mjs', { stdio: 'pipe' });
 });
 
+runTest('Lógica de Hoja de Ruta, Review-First Gate, Minado 1T y Cobertura de Inmersión', () => {
+  const { execSync } = require('child_process');
+  execSync('node scripts/test_roadmap_logic.mjs', { stdio: 'pipe' });
+});
+
+
 
 console.log('\n======================================================');
 console.log(`Resumen: ${passedTests}/${totalTests} pruebas superadas con éxito (100%)`);

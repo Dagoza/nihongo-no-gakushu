@@ -13,7 +13,8 @@ import {
   ListChecks, 
   Layers, 
   Shuffle, 
-  Volume2
+  Volume2,
+  Timer
 } from 'lucide-react';
 import * as wanakana from 'wanakana';
 import exercisesData from '../../data/exercises.json';
@@ -71,9 +72,54 @@ export default function VocabSrsReview({
   // Historial de respuestas para deshacer
   const [reviewHistory, setReviewHistory] = useState([]);
 
+  // Speed Focus Timer (5s / 8s / 0 para desactivar) - Previene fatiga y Difficulty Hell en FSRS
+  const [speedTimerLimit, setSpeedTimerLimit] = useState(5);
+  const [timerSecondsLeft, setTimerSecondsLeft] = useState(5);
+  const [isTimerExpired, setIsTimerExpired] = useState(false);
+  const timerIntervalRef = useRef(null);
+
   // Ítem actual
   const currentItem = queue[currentIndex] || null;
   const isFinished = queue.length > 0 && currentIndex >= queue.length;
+
+  // Countdown timer para Speed Focus
+  useEffect(() => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+
+    if (!currentItem || isRevealed || quizIsAnswered || speedTimerLimit <= 0) {
+      setIsTimerExpired(false);
+      setTimerSecondsLeft(speedTimerLimit);
+      return;
+    }
+
+    setTimerSecondsLeft(speedTimerLimit);
+    setIsTimerExpired(false);
+    const startTime = Date.now();
+    const durationMs = speedTimerLimit * 1000;
+
+    timerIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const remainingSec = Math.max(0, +((durationMs - elapsed) / 1000).toFixed(1));
+      setTimerSecondsLeft(remainingSec);
+
+      if (elapsed >= durationMs) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+        setIsTimerExpired(true);
+      }
+    }, 100);
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    };
+  }, [currentIndex, isRevealed, quizIsAnswered, speedTimerLimit, currentItem]);
+
 
   // Resolvedor contextual de oraciones Cloze (data/exercises.json + data/vocabulary.json tatoeba)
   const clozeData = useMemo(() => {
@@ -499,6 +545,16 @@ export default function VocabSrsReview({
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            type="button"
+            className={`btn btn-xs ${speedTimerLimit > 0 ? 'btn-outline' : 'btn-ghost'}`}
+            onClick={() => setSpeedTimerLimit(prev => (prev === 5 ? 8 : (prev === 8 ? 0 : 5)))}
+            title="Speed Focus Timer: cambiar entre 5s, 8s o Desactivado (Previene Difficulty Hell)"
+            style={{ gap: 4, fontSize: '0.74rem' }}
+          >
+            <Timer size={12} />
+            <span>{speedTimerLimit > 0 ? `${speedTimerLimit}s Focus` : 'Timer Off'}</span>
+          </button>
           {reviewHistory.length > 0 && (
             <button
               type="button"
@@ -597,6 +653,54 @@ export default function VocabSrsReview({
             {activeExerciseType === VOCAB_SRS_MODES.CLOZE_SENTENCE && '🧩 Oración Cloze'}
           </span>
         </div>
+
+        {/* Speed Focus Timer Bar (5s / 8s) */}
+        {speedTimerLimit > 0 && !isRevealed && !quizIsAnswered && (
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: isTimerExpired ? '#ef4444' : 'var(--text-muted)', marginBottom: 4, fontWeight: 700 }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Timer size={12} /> Speed Focus
+              </span>
+              <span>{isTimerExpired ? '¡Tiempo expirado!' : `${timerSecondsLeft.toFixed(1)}s`}</span>
+            </div>
+            <div style={{ width: '100%', height: 4, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+              <div 
+                style={{ 
+                  width: `${Math.min(100, (timerSecondsLeft / speedTimerLimit) * 100)}%`, 
+                  height: '100%', 
+                  background: isTimerExpired ? '#ef4444' : (timerSecondsLeft < 2 ? '#f59e0b' : 'var(--primary)'),
+                  transition: 'width 0.1s linear'
+                }} 
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Aviso pedagógico Anti-Difficulty Hell si expira el tiempo */}
+        {isTimerExpired && !isRevealed && !quizIsAnswered && (
+          <div 
+            style={{ 
+              margin: '0 0 16px 0', 
+              padding: '10px 14px', 
+              borderRadius: 8, 
+              background: 'rgba(239, 68, 68, 0.08)', 
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              fontSize: '0.78rem',
+              lineHeight: 1.45,
+              color: 'var(--text-main)',
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 800, color: '#ef4444', marginBottom: 2 }}>
+              <Timer size={13} />
+              <span>Tiempo de recuperación inmediata agotado ({speedTimerLimit}s)</span>
+            </div>
+            <span>
+              Si no recordaste la palabra de inmediato, revela la tarjeta y pulsa <strong>Otra vez (Again)</strong>. 
+              <em>Regla FSRS:</em> Evita usar &quot;Difícil&quot; ante dudas o fallos para no caer en el <strong>Difficulty Hell</strong> (reserva &quot;Difícil&quot; únicamente para aciertos logrados con esfuerzo dentro del tiempo).
+            </span>
+          </div>
+        )}
 
         {/* ------------------------------------------------------------------ */}
         {/* MODO 1: TEST DE SIGNIFICADO (PALABRA -> 4 SIGNIFICADOS EN ESPAÑOL) */}
@@ -965,9 +1069,18 @@ export default function VocabSrsReview({
               onClick={() => handleRate(SRSRating.Again)}
               style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 4px',
-                borderColor: 'rgba(239, 68, 68, 0.4)', background: 'rgba(239, 68, 68, 0.06)', borderRadius: 10
+                borderColor: isTimerExpired ? '#ef4444' : 'rgba(239, 68, 68, 0.4)', 
+                background: isTimerExpired ? 'rgba(239, 68, 68, 0.16)' : 'rgba(239, 68, 68, 0.06)', 
+                borderRadius: 10,
+                boxShadow: isTimerExpired ? '0 0 10px rgba(239, 68, 68, 0.35)' : 'none',
+                position: 'relative'
               }}
             >
+              {isTimerExpired && (
+                <span style={{ fontSize: '0.6rem', background: '#ef4444', color: '#fff', padding: '1px 5px', borderRadius: 4, fontWeight: 900, marginBottom: 2 }}>
+                  Sugerido
+                </span>
+              )}
               <span style={{ fontSize: '0.74rem', color: '#ef4444', fontWeight: 800 }}>1 · Otra vez</span>
               <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#ef4444', marginTop: 2 }}>
                 {intervals[SRSRating.Again] || '<10m'}
@@ -983,10 +1096,14 @@ export default function VocabSrsReview({
                 display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 4px',
                 borderColor: 'rgba(245, 158, 11, 0.4)', background: 'rgba(245, 158, 11, 0.06)', borderRadius: 10
               }}
+              title="Reserva Difícil solo para aciertos que requirieron esfuerzo dentro del tiempo (no para olvidos)"
             >
               <span style={{ fontSize: '0.74rem', color: '#f59e0b', fontWeight: 800 }}>2 · Difícil</span>
               <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#f59e0b', marginTop: 2 }}>
                 {intervals[SRSRating.Hard] || '1d'}
+              </span>
+              <span style={{ fontSize: '0.58rem', color: '#f59e0b', opacity: 0.8, marginTop: 1 }}>
+                Solo aciertos
               </span>
             </button>
 
